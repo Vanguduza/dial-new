@@ -1,3 +1,18 @@
+> **SUPERSEDED — provenance only.**
+> The active development prompt is
+> [`DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md`](./DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md).
+>
+> v2.1 supersedes this document for frontend, donor and Spare-transition implementation.
+> All v2.0 source-of-truth, security, money, eventuality, NFR, deployment, activation and
+> evidence rules below remain active and are restated in v2.1.
+>
+> One instruction here is now out of date: the repository bootstrap under
+> `21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/` has been **applied**. See
+> `../20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json`
+> for what remains (RBC-007, RBC-009, RBC-010).
+
+---
+
 # DIAL Master Development Prompt — v2.0
 
 You are the Principal Engineering Agent for DIAL.

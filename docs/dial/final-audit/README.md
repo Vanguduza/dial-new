@@ -1,85 +1,68 @@
-# DIAL Final 360° Ecosystem Audit & Development System v1.6
+# DIAL Consolidated Development Pack v2.2
 
-Start:
-1. `00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md`
-2. `01_AUDIT/GAP_AND_CONFLICT_REGISTER.md`
-3. `04_DIVISIONS/`
-4. `03_DONORS/GLOBAL_DONOR_ASSIMILATION_REGISTRY.md`
-5. `06_DEVELOPMENT_SYSTEM/CLAUDE_CODE_NATIVE_SETUP.md`
-6. `07_IMPLEMENTATION/FULL_TARGET_IMPLEMENTATION_PLAN.md`
+**Active authority.** Start here; everything else in this pack is subordinate to the
+anchor index below.
 
-`06_DEVELOPMENT_SYSTEM/ready_to_copy/` is a proposed Claude Code-native harness. Apply through a reviewed repository branch. `.mcp.json.example` remains disabled until the DIAL Truth MCP is implemented/tested.
+## Start
 
-The plan is full-target; dependency order does not reduce scope.
+1. `00_MASTER/V2_2_ANCHOR_INDEX.md` — where every contract lives
+2. `00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md` — the closure canon
+3. `00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md` — the active plan
+4. `13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md` — the active development prompt
+5. `00_MASTER/BUILD_READINESS_SCORECARD.json` — current gate status
 
-## v1.1 corrections
-- FixItNow: `Sachinrajawat/FixItNow` → `PORT-WHOLESALE`, MIT.
-- Dial Health/ZHOTN: required standalone DIAL division and Command Centre room.
+## What v2.2 is
 
-## v1.2 — comprehensive master development prompt
+v2.2 is a **reconciliation release**. It adds no product scope.
 
-Added:
+v2.1 was authored as a twelve-file overlay on v2.0 carrying four decisions — the
+Shop-Ecommerce frontend donor, the frozen transition/EPC contracts, the eleven-stage
+vehicle readiness gate, and the v2.1 development prompt — but it was packaged as a
+replacement pack. That dropped 181 of v2.0's 199 files, including all 33 machine
+registries and the ready-to-apply repository bootstrap that the closure canon names as
+the mechanism for clearing CT-6.
 
-`07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md`
+v2.2 restores the v2.0 substrate underneath the v2.1 decisions, applies the bootstrap,
+and corrects two closure tests that were green on the wrong measurement.
 
-This is the canonical implementation execution document and is designed to be used directly as the principal Claude Code/Cursor development prompt. The prior `FULL_TARGET_IMPLEMENTATION_PLAN.md` remains only a compact dependency map.
+| | v2.0 | v2.1 | v2.2 |
+|---|---:|---:|---:|
+| Files in pack | 199 | 30 | 211 |
+| Machine registries | 33 | 0 | 33 |
+| Repository bootstrap | present | absent | applied |
+| Harness executes | no | no | yes |
 
-## v1.3 — final feature realization / client / support layer
+## Status
 
-Added:
-- 186 detailed Feature Realization Records;
-- 1,674 mandatory realization facets;
-- 125 non-top-level supporting capabilities;
-- 254 eventuality/recovery playbooks;
-- 166 customer endpoint records;
-- global donor customization registry;
-- DIAL Consumer / Health / Business client architecture;
-- automated + human Customer Service OS;
-- EPC + hero/CGI/exploded visual integration contract;
-- realization coverage CI script;
-- Master Development Prompt v1.5.
+```text
+CT-1  Concrete Feature Contracts    AMBER   re-scored on semantics
+CT-2  Executable Eventualities      AMBER   re-scored on semantics
+CT-3  Donor Qualification           GREEN
+CT-4  NFR / Deployment              GREEN
+CT-5  Activation Blockers           GREEN
+CT-6  Repository Alignment          AMBER   7 of 10 tasks complete
+CT-7  Contract Specificity          AMBER   new; regression-blocking
+```
 
-## v1.4 — Home, universal credentials and first-class WhatsApp
+CT-1 and CT-2 moved from GREEN to AMBER because the metric behind them counted command
+and event **names**, which embed their own aggregate name and are therefore distinct by
+construction. No contract was removed or weakened. See
+`20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md`.
 
-Added:
-- public DIAL Home / Service Router;
-- MIT landing-page donor selection and customization plan;
-- universal cross-division DIAL credentials/SSO;
-- canonical WhatsApp Cloud API + Flows architecture;
-- 59 branch/global WhatsApp Flow definitions;
-- Paynow / ContiPay / USD payment-channel design;
-- Chatwoot API-channel human-support bridge;
-- WhatsApp channel certification matrix.
+## Gates
 
-## v1.5 — Premium Solutions Environment + Secure-by-Design
+Run from the repository root:
 
-Locked:
-- `DIAL Premium Solutions Environment` as the final Home art direction;
-- shadcn landing repository remains only the MIT component/composition substrate;
-- security becomes the ninth mandatory realization facet for every top-level Feature ID;
-- 120 machine-readable security controls;
-- 186 Feature Security Profiles;
-- ASVS 5.0 / API Top 10 / MASVS / NIST SSDF-aligned security gates;
-- all 20 security points from the supplied screenshots explicitly mapped and strengthened;
-- security CI/toolchain, data classification, web/API/mobile standards, incident response and release gates;
-- Master Development Prompt v1.5.
+```text
+npm run verify                      typecheck, schemas, manifest, drift, closure, tests
+npm run agent:v2-closure-check      the six closure tests
+npm run agent:manifest-check        manifest completeness and canon-referenced paths
+npm run agent:drift-check           stale authority detection
+npm run schema:check                schemas parse; generated packs conform
+node agent-system/bin/contract-specificity.mjs   CT-7
+```
 
-## v1.6 — payments, finance books, positions and onboarding
+## Superseded
 
-Locked:
-- Cash, EcoCash Direct USSD Push, Paynow, ContiPay and PayPal under one PaymentIntent/Ledger architecture;
-- full internal confirmation/callback/refresh/refund routing for each channel;
-- 11 business-unit Finance Books with dedicated channel accounts/journals;
-- non-posting combined BU collections roll-up to prevent double counting;
-- per-BU Petty Cash, Returns and Disputes journals;
-- bank-statement-style Debit/Credit/Balance UI with deep transaction details;
-- single-transaction and date-range PDF statement exports;
-- petty-cash requisition → approval → release → custody workflow;
-- position-based requester/approver/release/custodian authority;
-- versioned Company Positions with role-based contracts and PermissionBundles;
-- employee photo capture through image picker/camera during onboarding;
-- mover/leaver permission and financial-authority revocation;
-- 59 WhatsApp Flows including channel-specific payment flows;
-- 120 security controls including payment/finance/HR hardening;
-- Master Development Prompt v1.6.
-
+`ARCHIVE/` holds the v1.6 and v2.0 entry points, anchor indexes and manifests. They are
+provenance. They are not authority, and no agent should open them to decide what to build.

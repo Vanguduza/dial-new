@@ -37,6 +37,10 @@ Consumers:
 - use upcasters/adapters when event schema evolves;
 - keep replay tests.
 
+The envelope type is defined once, in `packages/contracts`, and every producer emits
+through it. Retrofitting an envelope after consumers exist is the migration this canon
+exists to avoid — so a new producer adds the envelope on its first event, not later.
+
 ## Temporal workflows
 
 Workflow code changes must preserve deterministic replay.

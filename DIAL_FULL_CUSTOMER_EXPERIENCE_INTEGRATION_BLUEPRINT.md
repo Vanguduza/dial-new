@@ -2,7 +2,7 @@
 
 ## Focused specification for vehicle selection, visual transition, EPC browsing, and My Garage
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Date:** 29 August 2026
 
 ---
@@ -122,7 +122,7 @@ When the customer has a primary or active Garage vehicle:
 2. retain all fields as normal editable values;
 3. let Search confirm that vehicle;
 4. resolve the current published catalog and flow-pack versions;
-5. start the transition automatically.
+5. start the transition automatically only when that exact vehicle has not already completed the flow in the active customer session; otherwise restore the settled exploded view.
 
 An asynchronously loaded Garage vehicle must not overwrite an explicit selection the customer has already started in the current tab.
 
@@ -152,9 +152,11 @@ userPlayControl = false
 Search performs two operations in order:
 
 1. commit the exact resolved vehicle context;
-2. start its approved transition flow automatically.
+2. start its approved transition flow automatically when the resolved vehicle fingerprint differs from the completed-flow fingerprint.
 
 The transition must not begin from incomplete client-side labels while vehicle resolution is still pending.
+
+If Search resolves the same unchanged vehicle whose flow is already complete, do not replay automatically. Restore the settled exploded view. Editing any identity-bearing cascade value invalidates that completion match and allows the newly resolved vehicle flow to run.
 
 ---
 
@@ -174,9 +176,17 @@ Approved hero image
 
 There is no customer-visible Technical stage. A technical render may exist internally as an asset-production aid, but it must not appear in the transition, public flow manifest, website labels, or visible stage sequence.
 
-### 4.2 Transition window content
+### 4.2 Transition window content and placement
 
-The visual window may display only this headline pattern:
+The visual window may display only these two text elements:
+
+At the top:
+
+```text
+click on the category image to browse parts
+```
+
+At the bottom-left, in compact type that does not cover the vehicle:
 
 ```text
 Know your {exact chosen model}. Find the right part.
@@ -187,6 +197,8 @@ Example:
 ```text
 Know your Toyota Hilux AN120/AN130. Find the right part.
 ```
+
+The bottom-left headline must use a restrained responsive size and maximum width. Its bounding box must remain in the negative-space area of every approved hero, line-art, motion, and exploded crop.
 
 Do not show any other visible text or interface inside the transition window. Specifically remove:
 
@@ -220,6 +232,8 @@ The required motion is:
 
 The motion engine must produce component or group layers, masks, depth order, origin, destination, vector, timing, and easing. A flattened start image and flattened end image alone are not sufficient for a production flow.
 
+For true 3D assets, keep body and component meshes separately named and interpolate each mesh from its assembled transform to its approved explosion transform. For raster delivery, render the same continuous motion as a frame sequence or video from that part-based scene. Cropping pieces from an already-exploded still and sliding those crops into view is not an acceptable production method.
+
 Minimum explosion-plan record:
 
 ```json
@@ -241,6 +255,8 @@ Acceptance conditions:
 - Each major group can be followed visually from assembled to separated position.
 - The last moving frame and final interactive frame align without a jump.
 - Desktop and mobile profiles preserve the same group relationships.
+- A physical wheel position contains at most one tyre. Do not show an attached tyre and a separated duplicate for the same position.
+- Loose spare tyres appear only when the vehicle configuration genuinely includes them and the explosion plan identifies them as a separate component.
 - Reduced-motion mode cuts directly to the stable exploded result.
 
 ### 4.4 Loading behavior
@@ -250,6 +266,24 @@ Acceptance conditions:
 - Load explosion layers before their movement begins.
 - If later assets cannot load, keep the last valid visual and provide a direct EPC fallback outside the window.
 - Do not show a progress UI inside the visual window while loading.
+
+### 4.5 Completion memory and return behavior
+
+Store a non-sensitive completed-flow fingerprint for the active vehicle context:
+
+```text
+catalogReleaseId + fitmentId + visualFamilyId + flowPackId + variantId
+```
+
+When the customer enters EPC from the exploded view and later navigates back to the homepage:
+
+1. compare the active vehicle fingerprint with the completed-flow fingerprint;
+2. if they match, render the settled exploded view immediately and do not replay;
+3. keep the invisible category map active;
+4. retain the committed cascade values as faint grey text;
+5. if any identity-bearing selection changes, invalidate the match and run the new vehicle’s flow after Search.
+
+The preview may use session storage. Production should keep the authoritative active-vehicle identity server-backed and may cache this non-sensitive completion fingerprint in the browser for immediate restoration.
 
 ---
 
@@ -399,7 +433,7 @@ identity status
 created and updated timestamps
 ```
 
-Production Garage state is server-backed and customer-owned. Browser storage may cache only a non-sensitive active choice.
+Production Garage state is server-backed and customer-owned. Browser storage may cache only a non-sensitive active choice and completed-flow fingerprint.
 
 ### 7.2 Garage actions
 
@@ -510,6 +544,8 @@ The pack must declare:
 - hero, CGI, line-art, explosion-layer, final exploded, and invisible hit-map assets;
 - category-family route mapping;
 - reduced-motion behavior;
+- unchanged-vehicle completion memory and settled-exploded return behavior;
+- a one-tyre-per-physical-wheel-position explosion policy;
 - automated QA and human review state.
 
 The technical render is not a public flow-pack stage.
@@ -539,7 +575,7 @@ For this integration:
 - `TRANSITION_READY` requires the shortened visible sequence and continuous line-art explosion.
 - `HOTSPOT_READY` includes the invisible exploded-vehicle hit map and category-family fallbacks.
 - `ROUTING_READY` requires every hit region to remain inside the selected release and vehicle family.
-- `QA_READY` confirms that no progress UI, visible click markers, or Technical stage appears in the transition window.
+- `QA_READY` confirms that no progress UI, visible click markers, or Technical stage appears in the transition window; wheel multiplicity also passes automated metadata validation and human visual review.
 
 Incomplete records remain internal.
 
@@ -560,11 +596,16 @@ Incomplete records remain internal.
 
 - Search starts the flow automatically.
 - No Play control appears.
-- Only the exact-model headline appears inside the visual window.
-- No progress bar, percentage, stage bar, badge, helper copy, or visible hotspot appears.
+- The browse instruction appears at the top of the visual window.
+- The compact exact-model headline appears at the bottom-left without covering the vehicle.
+- No text other than those two required elements appears inside the window.
+- No progress bar, percentage, stage bar, badge, extra helper copy, or visible hotspot appears.
 - The Technical view never appears.
 - Line art separates continuously into the final exploded composition.
+- Each rendered wheel position contains exactly one tyre, with no attached/separated duplicate.
 - Reduced motion cuts directly to the stable exploded result.
+- Returning from EPC with the same vehicle restores the settled exploded view without replay.
+- Changing the vehicle invalidates completion memory and enables the newly selected flow.
 
 ### Invisible navigation
 

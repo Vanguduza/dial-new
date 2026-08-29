@@ -1,3 +1,13 @@
+> **SUPERSEDED — provenance only.**
+> The active pack README is [`README.md`](./README.md) (v2.2).
+>
+> This document describes the v2.1 overlay. It was accurate about the four decisions v2.1
+> made, and inaccurate in implying the pack was self-contained: v2.1 shipped 30 files where
+> v2.0 had 199, dropping the machine registries and the repository bootstrap.
+> Its "Active starting documents" list remains correct and is carried into v2.2.
+
+---
+
 # DIAL Consolidated Development Pack v2.1
 
 This is the single active consolidation pack for the next DIAL development phase.

@@ -61,7 +61,16 @@ if(branches.length<10) fail.push(`branch activation registry unexpectedly thin: 
 
 const textFiles=[
  "docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+ "docs/dial/final-audit/00_MASTER/V2_2_ANCHOR_INDEX.md",
+ "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
+ // v2.1 supersedes the v2.0 prompt for frontend/donor/Spare-transition work.
+ // Both must be present: the v2.0 document remains active for everything v2.1
+ // does not restate, and is retained with a supersession banner.
  "docs/dial/final-audit/13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2.md",
+ "docs/dial/final-audit/13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md",
+ "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/02_TRANSITION_EPC_LOCK/TRANSITION_EPC_INTEGRATION_LOCK.md",
+ "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
+ "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md",
  "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/ACTUAL_GITHUB_REPOSITORY_ALIGNMENT_AUDIT.md"
 ];
 for(const p of textFiles) if(!exists(p)) fail.push(`missing ${p}`);
@@ -71,8 +80,11 @@ if(fail.length){
   console.error(fail.join("\n"));
   process.exit(1);
 }
+const pendingBootstrap=repo.filter(x=>x.status!=="COMPLETE");
 console.log(JSON.stringify({
-  status:"CANON_GREEN_REPOSITORY_BOOTSTRAP_REQUIRED",
+  status: pendingBootstrap.length
+    ? "CANON_CLOSED_PILOT_REQUIRED_BEFORE_FANOUT"
+    : "CANON_CLOSED_REPOSITORY_ALIGNED",
   features:features.length,
   facets:facets.length,
   frcs:frcs.length,
@@ -81,5 +93,7 @@ console.log(JSON.stringify({
   nfr_systems:nfr.length,
   environments:envs.length,
   activation_blockers:blockers.length,
-  repo_bootstrap_tasks_pending:repo.filter(x=>x.status!=="GREEN").length
+  repo_bootstrap_tasks_pending:pendingBootstrap.length,
+  repo_bootstrap_pending_ids:pendingBootstrap.map(x=>x.id),
+  contract_specificity:"see: node agent-system/bin/contract-specificity.mjs (CT-7)"
 },null,2));

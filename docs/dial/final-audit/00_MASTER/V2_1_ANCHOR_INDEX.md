@@ -1,3 +1,12 @@
+> **SUPERSEDED — provenance only.**
+> The active anchor index is [`V2_2_ANCHOR_INDEX.md`](./V2_2_ANCHOR_INDEX.md).
+>
+> The paths below were written against the v2.1 overlay, which did not contain the
+> registries, the realization layer, the security registries or the repository bootstrap.
+> v2.2 restores them; the v2.2 index maps all of it.
+
+---
+
 # DIAL v2.1 Anchor Index
 
 - Active consolidated plan → `DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md`

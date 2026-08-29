@@ -36,10 +36,17 @@ Use narrow subagents:
 - `eventuality-reviewer`
 - `security-reviewer`
 - `money-reviewer`
+- `health-reviewer`
 - `donor-reviewer`
 - `nfr-reviewer`
 - `ui-reviewer`
 - `migration-reviewer`
+
+Nine agents, matching the nine review triggers in the closure canon §7. The v2.0 plugin
+shipped eight and omitted `health-reviewer`, leaving the canon's Health trigger — clinical,
+medicine, prescription, consent/delegation, health safety, medical aid — with no reviewer
+to route to. Health is a standalone specialist division with stronger safety and consent
+boundaries; it does not fall back to the security reviewer.
 
 The implementing agent cannot self-certify a triggered specialist gate.
 
@@ -53,6 +60,16 @@ Project safety hooks should cover:
 - PreCompact: write compact checkpoint;
 - Stop: run targeted verification and require evidence/handoff.
 
+All six are now declared in `dial-development-governor/hooks/hooks.json`. The v2.0 plugin
+declared only four: `PreToolUse` and `PostToolUse` — the two that actually protect the
+repository and produce evidence — were absent, so destructive and canon-modifying writes
+were unguarded through the plugin path and no changed-path record was ever written.
+
+Hook input arrives as **JSON on stdin**, not as an environment variable. The v2.0
+`prompt-scope-check` read `process.env.CLAUDE_USER_PROMPT`, which is never set, so the
+unbounded-prompt guard silently passed every prompt. Any hook script added here must read
+stdin and tolerate malformed input.
+
 ### Subagent caveat
 
 Do **not** rely on plugin hook propagation alone for safety. Current Claude Code issue history has shown hook/subagent propagation edge cases. Critical checks therefore also exist:
@@ -63,6 +80,11 @@ Do **not** rely on plugin hook propagation alone for safety. Current Claude Code
 ## MCP
 
 Default DIAL MCP is read-only Project Truth.
+
+**Not yet implemented.** `agent-system/mcp/dial-truth-server.mjs` does not exist, so the
+plugin's MCP configuration ships as `.mcp.json.example` and is inert. Until the server is
+built, bounded context comes from `agent-system/bin/context-get.mjs`, which resolves the
+same content from the registries directly.
 
 Tools:
 - get_feature

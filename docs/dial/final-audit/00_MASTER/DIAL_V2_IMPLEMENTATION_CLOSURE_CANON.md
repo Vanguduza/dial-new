@@ -2,9 +2,16 @@
 
 **Purpose:** end broad design expansion, convert DIAL into implementation-grade contracts, and create the gate that allows controlled engineering to begin without reopening architecture in every coding session.
 
-**Status:** `CANON BUILD-READY`  
-**Repository status:** `BOOTSTRAP REQUIRED BEFORE BROAD FEATURE FAN-OUT`  
+**Status:** `CANON BUILD-READY — CT-1/CT-2 AMBER ON CONTRACT SPECIFICITY`  
+**Repository status:** `BOOTSTRAP APPLIED; PILOT REQUIRED BEFORE BROAD FEATURE FAN-OUT`  
 **Activation status:** branch-specific; external/regulatory blockers may remain open while software is built.
+
+**Reconciled by Consolidated Development Pack v2.2.** v2.1 layered four decisions on this
+canon — the Shop-Ecommerce frontend donor, the frozen transition/EPC contracts, the
+eleven-stage vehicle readiness gate and the v2.1 development prompt — and those remain
+active. v2.1 also shipped as a twelve-file overlay packaged as a replacement, dropping the
+registries and the bootstrap this document depends on; v2.2 restores them. See
+`../20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md`.
 
 ---
 
@@ -89,6 +96,11 @@ The authoritative machine file is:
 
 No `feature-specific command TBD` placeholder is permitted.
 
+**Specificity is part of this test, and is measured.** Command and event names embed their
+aggregate name, so counting distinct names proves nothing. CT-7 substitutes the aggregate
+out and measures what is actually feature-specific. CT-1 is AMBER until each feature
+entering implementation has its own acceptance contract and permission set.
+
 ## CT-2 — Executable Eventuality Contract
 
 Every eventuality resolves to:
@@ -104,6 +116,9 @@ Every eventuality resolves to:
 - tests.
 
 Material eventualities cannot be satisfied by prose saying "ops will handle it".
+
+Nor by a shared test block. Eight test definitions currently span 254 contracts; CT-2 is
+AMBER until material, customer-visible, money- and safety-touching contracts carry their own.
 
 ## CT-3 — Donor Qualification
 
@@ -151,6 +166,27 @@ The active repository must:
 - run drift/closure/security/realization checks.
 
 Broad multi-worktree development is blocked until the repository bootstrap is green.
+
+## CT-7 — Contract Specificity
+
+Introduced in v2.2 because CT-1 and CT-2 were reported green on a metric that counted
+interpolated names.
+
+CT-7 measures, after substituting each aggregate's name out of its own commands:
+- distinct command skeletons;
+- lifecycle-boilerplate ratio;
+- distinct state models;
+- distinct acceptance contracts;
+- distinct permission skeletons;
+- distinct eventuality test definitions and compensation rules.
+
+It is a **regression gate**. The committed baseline records the current values as a floor
+and the check fails if any of them falls. Contracts may only become more specific.
+
+```text
+node agent-system/bin/contract-specificity.mjs
+agent-system/registries/CONTRACT_SPECIFICITY_BASELINE.json
+```
 
 ---
 
@@ -297,17 +333,38 @@ Parallelism may expand only after shared contracts are stable.
 
 # 9. Repository truth
 
-At the v2 audit date the connected GitHub repository is still on the old active authority model and lacks root `CLAUDE.md`.
+At the v2 audit date the connected GitHub repository was still on the old active authority
+model and lacked root `CLAUDE.md`. The **first development change was repository bootstrap**,
+not a customer feature.
 
-Therefore the **first development change is repository bootstrap**, not a customer feature.
-
-Use:
+That bootstrap has now been applied from:
 
 `21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/`
 
-and:
+Current state is tracked in:
 
 `20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json`
+
+Seven of ten tasks are complete. Three remain, and they gate broad fan-out:
+
+```text
+RBC-007  map source/test paths to the Feature Registry     PENDING
+RBC-009  prove one pilot Feature to DOMAIN_TESTED          PENDING
+RBC-010  enable broad multi-worktree development           BLOCKED
+```
+
+The harness executes. From the repository root:
+
+```text
+npm run verify                    typecheck, schemas, manifest, drift, closure, tests
+npm run agent:v2-closure-check    the closure tests
+npm run agent:manifest-check      manifest completeness and canon-referenced paths
+```
+
+`agent:manifest-check` exists because this canon previously referenced
+`21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/` and the bootstrap checklist while neither was
+present in the shipped pack. A canon-referenced path that does not exist is now a build
+failure.
 
 ---
 
@@ -322,6 +379,11 @@ Use:
 - read-only Project Truth MCP;
 - bounded registry retrieval;
 - compact checkpoints before context compression.
+
+The Project Truth MCP server is **not yet implemented**. `dial-development-governor/.mcp.json`
+is therefore shipped as `.mcp.json.example` and is inert. Bounded context comes from
+`agent-system/bin/context-get.mjs` until the server exists. Do not enable the MCP config
+against a server that is not there.
 
 Critical security/review behavior may not depend solely on plugin hook propagation; CI and explicit reviewer contracts enforce the same gates.
 

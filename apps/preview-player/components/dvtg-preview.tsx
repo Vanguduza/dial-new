@@ -39,7 +39,7 @@ const sceneVisuals = {
   hero: `${demo}/hero.avif`,
   cgi: `${demo}/cgi.avif`,
   lineArt: `${demo}/line-art.avif`,
-  exploded: `${demo}/exploded-single-wheel.avif`,
+  exploded: `${demo}/exploded-single-wheel-v2.avif`,
 } as const;
 
 const categoryHitAreas: Array<{
@@ -388,12 +388,10 @@ export function DvtgPreview() {
     if (reducedMotion && !alreadyCompleted) rememberCompletedVehicle(selection);
     window.setTimeout(
       () =>
-        document
-          .querySelector('#explore')
-          ?.scrollIntoView({
-            behavior: reducedMotion ? 'auto' : 'smooth',
-            block: 'start',
-          }),
+        document.querySelector('#explore')?.scrollIntoView({
+          behavior: reducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        }),
       40,
     );
   }, [reducedMotion, selection]);

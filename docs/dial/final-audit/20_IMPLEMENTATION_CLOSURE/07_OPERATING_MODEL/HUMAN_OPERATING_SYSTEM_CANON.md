@@ -21,6 +21,14 @@ A queue item contains:
 - assigned role/person;
 - escalation path.
 
+## Where the queues are defined
+
+`OPERATIONAL_RESPONSIBILITY_REGISTRY.json` in this directory holds the 12 operational
+responsibility records. Every Material eventuality's `owner_queue` must resolve to one of
+them. Positions, permission bundles and financial authority are defined in
+`../../18_FINANCE_PEOPLE/FINANCE_ROLE_AND_AUTHORITY_REGISTRY.json` and
+`../../18_FINANCE_PEOPLE/POSITIONS_ROLE_CONTRACTS_PERMISSIONS_AND_ONBOARDING.md`.
+
 ## Role resolution
 
 Use Position/PermissionBundle/FinancialAuthority rather than hard-coded individual emails.

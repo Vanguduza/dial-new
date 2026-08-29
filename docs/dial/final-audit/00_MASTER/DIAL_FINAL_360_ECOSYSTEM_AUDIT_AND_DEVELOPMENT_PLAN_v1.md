@@ -1,3 +1,13 @@
+> **SUPERSEDED — provenance only.**
+> Active authority is `DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md` and
+> `DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md`, mapped by `V2_2_ANCHOR_INDEX.md`.
+>
+> This is the v1.6 full-target plan. Its product coverage is still the broadest statement of
+> DIAL's scope and is cited by the realization registries. It is not the implementation
+> authority: v2 closed the interpretation latitude this document leaves open.
+
+---
+
 # DIAL Final 360° Ecosystem Audit & Development System — v1.6
 
 **Status:** Final audited target architecture, feature-realization, customer-channel and secure-development baseline — v1.6  

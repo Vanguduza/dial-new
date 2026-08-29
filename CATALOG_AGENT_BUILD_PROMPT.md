@@ -46,7 +46,9 @@ The catalog must support this exact flow:
 customer selects or restores vehicle
 → catalog resolves exact active vehicle context
 → website commits Search
-→ approved transition starts automatically
+→ website compares the resolved vehicle fingerprint with completed-flow state
+→ approved transition starts automatically only for a new or changed vehicle
+→ unchanged completed vehicle restores the settled exploded view
 → exploded vehicle exposes an invisible category hit map
 → click opens selected vehicle’s category family
 → customer browses assembly groups, diagrams, positions, and parts
@@ -96,6 +98,7 @@ Rules:
 - A Garage record must restore stable IDs, not only labels.
 - No public route or API may use an unscoped source node as identity.
 - Unknown values are `NULL`, never empty strings.
+- Return enough stable IDs to compute `catalogReleaseId + fitmentId + visualFamilyId + flowPackId + variantId` as the completed-flow fingerprint. Labels are not sufficient.
 
 ---
 
@@ -368,8 +371,11 @@ The catalog must provide the release and route evidence needed for:
 - Body & Exterior fallback for an unclassified visible part;
 - direct EPC fallback when visual assets fail;
 - Garage visual and direct-EPC entry modes.
+- unchanged-vehicle restoration to the settled exploded view without automatic replay;
+- invalidation of completion memory when an identity-bearing vehicle choice changes;
+- the DVTG requirement that each rendered physical wheel position contains one tyre, with no attached/separated duplicate.
 
-Do not build animation frames in the catalog repository. Publish compatibility and mapping evidence for the DVTG flow pack.
+Do not build animation frames or alter visual assets in the catalog repository. Publish compatibility, identity, route, and QA-policy evidence for the DVTG flow pack. The DVTG pack must declare its wheel-position audit and production human-review status before the catalog marks the combined flow customer-ready.
 
 ---
 
@@ -526,11 +532,13 @@ The catalog integration is complete only when:
 - homepage Search can resolve an exact active vehicle before autoplay;
 - My Garage can restore that vehicle and offer visual or direct-EPC routes;
 - Browse EPC can open the active vehicle’s category homepage;
+- the active context exposes a stable completed-flow fingerprint so returning from EPC with the same vehicle does not autoplay again;
 - every invisible exploded-vehicle region resolves to the correct category family;
 - an unclassified depicted part has a safe vehicle-scoped fallback;
 - Technical is absent from the customer-visible transition contract;
 - public diagram URLs use internal `DGM-...` IDs;
 - category, group, diagram, part, and fitment data remain release- and vehicle-scoped;
 - incomplete vehicles do not appear in the public selector;
+- compatibility rejects a flow pack whose exploded-view wheel audit shows more than one tyre for any rendered wheel position;
 - all tests and blocking release gates pass;
 - the agent returns migrations, code, tests, exports, reports, and a reproducible build command—not only an architecture explanation.

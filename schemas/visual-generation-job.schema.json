@@ -3,7 +3,20 @@
   "$id": "https://dial.example/schemas/visual-generation-job.schema.json",
   "title": "VisualGenerationJob",
   "type": "object",
-  "required": ["visualFamilyId", "make", "model", "generation", "bodyStyle", "visualPhase", "yearFrom", "references", "provenance", "enabledCategories", "fitmentMapping", "explodedViewPolicy"],
+  "required": [
+    "visualFamilyId",
+    "make",
+    "model",
+    "generation",
+    "bodyStyle",
+    "visualPhase",
+    "yearFrom",
+    "references",
+    "provenance",
+    "enabledCategories",
+    "fitmentMapping",
+    "explodedViewPolicy"
+  ],
   "properties": {
     "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
     "make": { "type": "string", "minLength": 1 },
@@ -13,9 +26,18 @@
     "visualPhase": { "type": "string", "minLength": 1 },
     "yearFrom": { "type": "integer", "minimum": 1900 },
     "yearTo": { "type": ["integer", "null"] },
-    "references": { "type": "object", "required": ["frontThreeQuarter"], "properties": { "frontThreeQuarter": { "type": "string", "minLength": 1 } } },
+    "references": {
+      "type": "object",
+      "required": ["frontThreeQuarter"],
+      "properties": { "frontThreeQuarter": { "type": "string", "minLength": 1 } }
+    },
     "provenance": { "type": "object" },
-    "enabledCategories": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^VC-[A-Z]+$" }, "uniqueItems": true },
+    "enabledCategories": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^VC-[A-Z]+$" },
+      "uniqueItems": true
+    },
     "fitmentMapping": { "$ref": "./visual-epc-mapping.schema.json" },
     "explodedViewPolicy": {
       "type": "object",
