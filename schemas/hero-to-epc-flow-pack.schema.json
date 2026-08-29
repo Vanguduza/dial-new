@@ -94,8 +94,18 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "customerReady": { "const": true } }, "required": ["customerReady"] },
-      "then": { "properties": { "status": { "const": "PRODUCTION_READY" }, "readiness": { "properties": { "productionBlocker": { "type": "null" } } } }
+      "if": {
+        "properties": { "customerReady": { "const": true } },
+        "required": ["customerReady"]
+      },
+      "then": {
+        "properties": {
+          "status": { "const": "PRODUCTION_READY" },
+          "readiness": {
+            "properties": { "productionBlocker": { "type": "null" } }
+          }
+        }
+      }
     }
   ]
 }

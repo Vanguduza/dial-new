@@ -1,0 +1,6 @@
+{
+  "name": "dial-development-governor",
+  "version": "2.1.0",
+  "description": "DIAL feature-driven bounded-context engineering governor (v2.1 authority)",
+  "hooks": "./hooks/hooks.json"
+}

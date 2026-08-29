@@ -9,6 +9,8 @@
     "workers/*"
   ],
   "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint .",
     "build:core": "tsc -p tsconfig.build.json",
     "build": "npm run build:core && npm run build --workspace @dial/preview-player",
     "test": "vitest run",
@@ -18,7 +20,16 @@
     "preview": "npm --prefix apps/preview-player run dev --workspaces=false",
     "generate:hilux": "npm run dial-visual -- generate examples/hilux-an130/job.json",
     "catalog:coverage": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js build",
-    "catalog:coverage:check": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js check"
+    "catalog:coverage:check": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js check",
+    "schema:check": "node agent-system/bin/schema-check.mjs",
+    "agent:context": "node agent-system/bin/context-get.mjs",
+    "agent:drift-check": "node agent-system/bin/drift-check.mjs",
+    "agent:feature-coverage": "node agent-system/bin/feature-coverage.mjs",
+    "agent:realization-coverage": "node agent-system/bin/realization-coverage.mjs",
+    "agent:security-coverage": "node agent-system/bin/security-coverage.mjs",
+    "agent:v2-closure-check": "node agent-system/bin/v2-closure-check.mjs",
+    "agent:manifest-check": "node agent-system/bin/manifest-check.mjs",
+    "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:drift-check && npm run agent:v2-closure-check && npm run test"
   },
   "dependencies": {
     "sharp": "0.35.4",
@@ -26,8 +37,12 @@
   },
   "devDependencies": {
     "@types/node": "22.19.19",
+    "oxlint": "1.76.0",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
     "vitest": "3.2.7"
+  },
+  "engines": {
+    "node": ">=22.13.0"
   }
 }

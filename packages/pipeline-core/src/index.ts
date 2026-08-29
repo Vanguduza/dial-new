@@ -17,8 +17,8 @@ import { vehicleSceneSvg } from '../../technical-render/src/scene.js';
 import { ensureDir, readJson, writeJsonAtomic } from './fs.js';
 import { hashFile, sha256, stableStringify } from './hash.js';
 
-export const PIPELINE_VERSION = '0.4.0';
-const STAGE_VERSION = '4.0.0';
+export const PIPELINE_VERSION = '0.5.0';
+const STAGE_VERSION = '5.0.0';
 
 export interface PipelineState {
   jobId: string;
@@ -181,13 +181,13 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
       }
       case '15_QA': {
         const hotspots = (await readJson<{hotspots: ReturnType<typeof buildHotspots>}>(join(packRoot,'navigation','hotspots.json'))).hotspots;
-        const qa = runAutomatedQa(DEVELOPMENT_IDENTITY_METRICS, hotspots); if (!qa.passed) throw new Error('Automated identity or hotspot QA failed');
+        const qa = runAutomatedQa(DEVELOPMENT_IDENTITY_METRICS, hotspots, job.explodedViewPolicy); if (!qa.passed) throw new Error('Automated identity, wheel-multiplicity, or hotspot QA failed');
         const path = join(packRoot, 'qa', 'qa.json'); await writeJsonAtomic(path, qa);
         const sheet = join(packRoot, 'qa', 'comparison-contact-sheet.jpg'); await makeContactSheet([
           join(packRoot,'hero','hero-clean.avif'), join(packRoot,'hero','depth-active.avif'), join(packRoot,'cgi','cgi-master.avif'), join(packRoot,'technical','technical-shaded.avif'), join(packRoot,'technical','line-art.avif'), join(packRoot,'exploded','exploded-master.avif')
         ], sheet);
-        await writeJsonAtomic(join(packRoot,'qa','review-status.json'), { productionPublishable: false, gates: ['licensing','sourceIdentity','cgi','technical','lineArt','explodedView','finalMotion','epcMapping'].map((gate) => ({ gate, status: 'PENDING_HUMAN_APPROVAL', reviewer: null, timestamp: null, notes: job.developmentMode ? 'Development fixture cannot receive production approval.' : null })) });
-        return { files: [path,sheet], logs: ['Identity drift and hotspot checks passed; human approval gates remain pending.'] };
+        await writeJsonAtomic(join(packRoot,'qa','review-status.json'), { productionPublishable: false, gates: ['licensing','sourceIdentity','cgi','technical','lineArt','explodedView','wheelMultiplicity','finalMotion','epcMapping'].map((gate) => ({ gate, status: 'PENDING_HUMAN_APPROVAL', reviewer: null, timestamp: null, notes: job.developmentMode ? 'Development fixture cannot receive production approval.' : null })) });
+        return { files: [path,sheet], logs: ['Identity drift, one-tyre-per-wheel-position, and hotspot checks passed; human approval gates remain pending.'] };
       }
       case '16_PACKAGE': {
         const metaPath = join(packRoot, 'meta.json'); await writeJsonAtomic(metaPath, { visualFamilyId: job.visualFamilyId, displayName: `${job.make} ${job.model} ${job.generation} ${job.bodyStyle}`, visualPhase: job.visualPhase, yearFrom: job.yearFrom, yearTo: job.yearTo, developmentMode: job.developmentMode, productionPublishable: false, pipelineVersion: PIPELINE_VERSION, fitmentAuthority: 'fitmentMapping.fitmentId + structured catalog route target', catalogAuthority: `${job.fitmentMapping.catalogReleaseId} / ${job.fitmentMapping.vehicleContext.catalogFamilyId}`, visualFamilyAuthority: 'visualFamilyId', generatedAt: new Date().toISOString(), warning: job.developmentMode ? 'Synthetic development fixture. Not licensed production vehicle art.' : 'Production human-approval gates remain required.' });
@@ -216,11 +216,23 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             userPlayControl: false,
             reducedMotionBehavior: 'CUT_TO_NAVIGATION_READY',
             replayAllowedFromVehicleSummary: true,
+            automaticReplayWhenVehicleUnchanged: false,
+            completedVehicleReturnState: 'RESTORE_SETTLED_EXPLODED',
           },
           retainedSelection: {
             preserveUntilEdited: true,
             committedTextAppearance: 'FAINT_GREY',
             contextPropagation: ['homepage', 'header', 'search', 'epc', 'cart', 'garage'],
+          },
+          transitionWindow: {
+            topInstruction: 'click on the category image to browse parts',
+            headlinePattern: 'Know your {exact chosen model}. Find the right part.',
+            headlinePlacement: 'BOTTOM_LEFT',
+            visibleProgressUi: false,
+          },
+          visualIntegrity: {
+            explodedViewPolicy: job.explodedViewPolicy,
+            wheelMultiplicityRule: 'EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION',
           },
           stages: [
             { id: 'HERO_PHOTOGRAPHY', asset: 'hero/hero-clean.avif', required: true },
