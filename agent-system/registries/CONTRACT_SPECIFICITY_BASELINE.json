@@ -1,6 +1,6 @@
 {
   "note": "Floor, not a target. Every value below must rise (or hold) as contracts are made specific. Regenerate with: node agent-system/bin/contract-specificity.mjs --write-baseline",
-  "recorded_at": "2026-08-29T20:48:25.803Z",
+  "recorded_at": "2026-08-29T21:59:10.653Z",
   "metrics": {
     "ct1": {
       "features": 186,
@@ -9,8 +9,8 @@
       "total_commands": 1450,
       "feature_specific_command_ratio": 0.532,
       "distinct_state_models": 12,
-      "distinct_acceptance_contracts": 1,
-      "distinct_permission_skeletons": 2,
+      "distinct_acceptance_contracts": 2,
+      "distinct_permission_skeletons": 3,
       "distinct_eventuality_ref_sets": 11
     },
     "ct2": {

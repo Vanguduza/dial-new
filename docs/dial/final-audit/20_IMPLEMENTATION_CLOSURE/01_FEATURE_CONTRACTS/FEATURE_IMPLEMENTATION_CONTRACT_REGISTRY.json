@@ -4,7 +4,7 @@
     "module": "SPARE",
     "outcome": "Vehicle selection & garage",
     "planning_status": "FRC_CLOSED",
-    "implementation_status": "PLANNED",
+    "implementation_status": "CODE_PRESENT",
     "domain_owner": "vehicles/vehicle-hub",
     "aggregate": "VehicleProfile",
     "archetype": "WORKFLOW",
@@ -53,9 +53,14 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "spare.vehicle-profile.read",
-      "spare.vehicle-profile.create",
-      "spare.vehicle-profile.act"
+      "spare.vehicle-profile.read.own",
+      "spare.vehicle-profile.create.own",
+      "spare.vehicle-profile.update.own",
+      "spare.vehicle-profile.delete.own",
+      "spare.vehicle-profile.set-primary.own",
+      "spare.vehicle-profile.read.delegated",
+      "spare.vehicle-profile.read.support",
+      "spare.vehicle-profile.merge"
     ],
     "data_entities": [
       "VehicleProfile",
@@ -113,16 +118,31 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "POST /api/vehicles/resolve returns exactly one vehicle context or a typed refusal; no partial or ambiguous context is returned",
+      "a transition cannot start from client-supplied labels; resolution must have committed first",
+      "changing an upstream cascade field clears every incompatible downstream value",
+      "a cascade step with a single real option collapses and does not appear",
+      "a vehicle failing any of the eleven readiness stages is absent from the selector and unreachable by direct request",
+      "Garage records persist server-side and restore by stable ID, not by label",
+      "reading or mutating another customer's Garage record is refused server-side (negative object-level authorization, S2 mandatory)",
+      "exactly one vehicle per customer is primary; setting a new primary clears the previous one atomically",
+      "SelectVehicle, AddVehicle and CreateVehicleProfile are idempotent under retry with the same idempotency key",
+      "VehicleSelected, VehicleAdded and VehicleProfileCreated are outboxed before any projection reads them",
+      "on release supersession an unambiguous match is retained automatically; an ambiguous one enters BLOCKED pending customer confirmation",
+      "no saved vehicle is reattached to a different maker, family or chassis without explicit customer confirmation",
+      "both Garage actions resolve the same context; Open EPC categories reaches EPC without the transition running",
+      "committed cascade values meet WCAG AA contrast in their faint state and retain their accessible names",
+      "allowed actions are derived server-side from state; the client never decides which commands are offered",
+      "rate limiting applies to resolve and Garage mutation (S2 abuse control)",
+      "a masked VIN is never returned in a list response; only on explicit single-record read by the owner",
+      "support access to a customer's vehicle context requires an open case reference and is audited"
+    ],
+    "permission_model": {
+      "scope": "OBJECT_OWNER",
+      "note": ".own permissions evaluate against the record's owner, never against the request. .support and .merge are separate roles and may not be held by the same Position as a customer-facing operator (SoD).",
+      "delegation": "read.delegated is granted through VHUB-F013 vehicle sharing and is revocable by the owner."
+    },
+    "acceptance_contract_doc": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "SPARE-F002",

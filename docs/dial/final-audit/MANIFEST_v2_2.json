@@ -6,9 +6,9 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-29T20:52:58.518739+00:00",
+  "generated_at": "2026-08-29T22:00:16.068Z",
   "kind": "COMPLETE_PACK",
-  "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A future release that changes only some files must still regenerate this manifest over the whole pack. npm run agent:manifest-check fails on an incomplete manifest, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
+  "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
   "active_anchor_index": "00_MASTER/V2_2_ANCHOR_INDEX.md",
   "active_master_plan": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 206,
+  "file_count": 207,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -182,16 +182,6 @@
       "sha256": "0c9303827369d4f3f1808de96497ea86fd7c87aca93bc82e30e74521393c5b92"
     },
     {
-      "path": "06_DEVELOPMENT_SYSTEM/REPOSITORY_APPLY_PLAN.md",
-      "bytes": 2003,
-      "sha256": "3352821aea001369bad97dadf9dafff5852c9db41cdf769dd7288ed7e22e50cb"
-    },
-    {
-      "path": "06_DEVELOPMENT_SYSTEM/SESSION_HANDOFF_TEMPLATE.md",
-      "bytes": 277,
-      "sha256": "f4f3442f9b6c91c1bba16f8b2b4d280223e9bf4df31b5d7ef142117cd8963362"
-    },
-    {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-context-librarian.md",
       "bytes": 392,
       "sha256": "7b58716815854702763727be4bfbb7fbe1dc54429e94d745ff7e6e3ef66d3091"
@@ -312,16 +302,6 @@
       "sha256": "a9df1d9b7809afb31618fc492e3d16e5427c19f91026f8dcf0059ce14922281c"
     },
     {
-      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/CLAUDE.md",
-      "bytes": 2083,
-      "sha256": "cc188dc8f29ebff24cf0772ea6019105afaa560d2a7ecaef05bd456a297f1777"
-    },
-    {
-      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/MASTER_DEVELOPMENT_ENTRY_PROMPT.md",
-      "bytes": 318,
-      "sha256": "bfd751c79726797f8300e9db9a5fbb1a9297f8a8d9e1a378c0824e97e598d1a7"
-    },
-    {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/context-get.mjs",
       "bytes": 2271,
       "sha256": "300fb007792bea939462acc4d5fcd829c01ff57e1c8316248e85f90610782b2b"
@@ -422,6 +402,26 @@
       "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/CLAUDE.md",
+      "bytes": 2083,
+      "sha256": "cc188dc8f29ebff24cf0772ea6019105afaa560d2a7ecaef05bd456a297f1777"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/MASTER_DEVELOPMENT_ENTRY_PROMPT.md",
+      "bytes": 318,
+      "sha256": "bfd751c79726797f8300e9db9a5fbb1a9297f8a8d9e1a378c0824e97e598d1a7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/REPOSITORY_APPLY_PLAN.md",
+      "bytes": 2003,
+      "sha256": "3352821aea001369bad97dadf9dafff5852c9db41cdf769dd7288ed7e22e50cb"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/SESSION_HANDOFF_TEMPLATE.md",
+      "bytes": 277,
+      "sha256": "f4f3442f9b6c91c1bba16f8b2b4d280223e9bf4df31b5d7ef142117cd8963362"
+    },
+    {
       "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
       "bytes": 55734,
       "sha256": "8219a9e8d2c4b10022b1519532d9fed878fb8504f7075c20da7c8e23f8f4298f"
@@ -503,8 +503,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 44946,
-      "sha256": "e7066d9e066311891ff99141dd1dcc65981653cd7e1a9c15e8a10238ac9a19e7"
+      "bytes": 57783,
+      "sha256": "d4f29da22942850e125c83a8e23a4f72847d71e4462f4824a9b3e8a01cc1a97e"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
@@ -542,14 +542,14 @@
       "sha256": "08b3d6b64c6d95f59baae3b4e5452ffdcfef7dabc101ba7a2f655226d1505c81"
     },
     {
-      "path": "13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2.md",
-      "bytes": 4344,
-      "sha256": "580b82ddd527ef46230222c9f1fe85e33ceffc43e17de2f04e8eebf7434614b6"
-    },
-    {
       "path": "13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md",
       "bytes": 7038,
       "sha256": "99435e61771df862d8fef5be05efb5301456c61c1d0c649496b285cebc0ce15a"
+    },
+    {
+      "path": "13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2.md",
+      "bytes": 4344,
+      "sha256": "580b82ddd527ef46230222c9f1fe85e33ceffc43e17de2f04e8eebf7434614b6"
     },
     {
       "path": "14_CATALOG_VISUAL_EPC/EPC_AND_VISUAL_TRANSFORMATION_INTEGRATION_CONTRACT.md",
@@ -758,8 +758,13 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 720631,
-      "sha256": "75a8a56ee08a2b4f40fcb17e70488d04ef4f302f6ffc97a9957abed58bcef156"
+      "bytes": 722760,
+      "sha256": "09b376226773975d8e132d29c86183036fb5749d3d852721643c81411bea0086"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
+      "bytes": 10773,
+      "sha256": "a7d45702c3a886360aad6e69dcb1420eaf55e93c6b31bcad175b6ba210f0e4d5"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EVENTUALITY_CLOSURE_STANDARD.md",
@@ -853,8 +858,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
-      "bytes": 3158,
-      "sha256": "2cd5b6cdca4ed6de0a7b658667c17cb03e92da61e0659731bb07007a0a8edd73"
+      "bytes": 3348,
+      "sha256": "756821c64426c2d918b6af1478e1c30180a1d0d862e5d6555cd81815e4e418ac"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/12_DEVELOPMENT_SYSTEM/CLAUDE_CODE_V2_OPERATING_MODEL.md",
@@ -872,14 +877,14 @@
       "sha256": "33b3bd043ff765f47f5f8a7ef02b83414067595486d44970d9a6b5fc4cd319cc"
     },
     {
-      "path": "21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/CLAUDE.md",
-      "bytes": 1076,
-      "sha256": "13e9495770d721c8929e4c798369a4b5353f4f14eb70d357f9e8de2f38ba6729"
-    },
-    {
       "path": "21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/agent-system/bin/v2-closure-check.mjs",
       "bytes": 4944,
       "sha256": "df11502e3bc6f6044f2ec978316f37e5fe6486b8b32e3d0b454d503d517ee5c8"
+    },
+    {
+      "path": "21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/CLAUDE.md",
+      "bytes": 1076,
+      "sha256": "13e9495770d721c8929e4c798369a4b5353f4f14eb70d357f9e8de2f38ba6729"
     },
     {
       "path": "21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/dial-development-governor/.claude-plugin/plugin.json",
@@ -1047,14 +1052,14 @@
       "sha256": "3d92a227149e9f6747ff97d6ff7d584f1f5c7e51077544bd81675d72ab2871ff"
     },
     {
-      "path": "README.md",
-      "bytes": 2836,
-      "sha256": "1b923ef2e640fdd67a4cbe23633080f146d33a0639ef7b54be050c9a5021b2ed"
-    },
-    {
       "path": "README_v2_1.md",
       "bytes": 2033,
       "sha256": "9cbd3eb1e4ee770e8179d02ec52cd4f0b2f145711f64e929e38360960e58f119"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2836,
+      "sha256": "1b923ef2e640fdd67a4cbe23633080f146d33a0639ef7b54be050c9a5021b2ed"
     }
   ]
 }

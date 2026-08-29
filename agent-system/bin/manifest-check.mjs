@@ -57,8 +57,28 @@ for (const name of manifests) {
       mismatched += 1;
     }
   }
+  // A file present in the pack but absent from the manifest is the same defect
+  // seen from the other side: the manifest no longer describes the pack.
+  const declared = new Set(files.map((entry) => entry.path));
+  const present = [];
+  const walkPack = (dir) => {
+    for (const entry of fs.readdirSync(abs(dir), { withFileTypes: true })) {
+      if (entry.name === 'ARCHIVE') continue;
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walkPack(rel);
+      else if (!/^MANIFEST.*\.json$/.test(entry.name)) {
+        present.push(path.relative(pack, rel).replaceAll('\\', '/'));
+      }
+    }
+  };
+  walkPack(pack);
+  const undeclared = present.filter((file) => !declared.has(file));
+  for (const file of undeclared) {
+    failures.push(`${name}: pack contains a file the manifest does not declare — ${file}`);
+  }
+
   notes.push(
-    `${name}: ${files.length} declared, ${missing} missing, ${mismatched} hash-mismatched`,
+    `${name}: ${files.length} declared, ${missing} missing, ${mismatched} hash-mismatched, ${undeclared.length} undeclared`,
   );
 }
 
