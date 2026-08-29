@@ -1,0 +1,159 @@
+{
+  "grammarVersion": "1.0.0",
+  "groups": [
+    {
+      "visualCategoryId": "VC-BODY",
+      "origin": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "destination": {
+        "x": 0.5,
+        "y": 0.34
+      },
+      "explosionVector": {
+        "x": 0,
+        "y": -0.16
+      },
+      "depth": 6,
+      "labelAnchor": {
+        "x": 0.5,
+        "y": 0.21
+      },
+      "order": 2,
+      "easingProfile": "shell-lift"
+    },
+    {
+      "visualCategoryId": "VC-ENG",
+      "origin": {
+        "x": 0.62,
+        "y": 0.55
+      },
+      "destination": {
+        "x": 0.78,
+        "y": 0.35
+      },
+      "explosionVector": {
+        "x": 0.16,
+        "y": -0.2
+      },
+      "depth": 5,
+      "labelAnchor": {
+        "x": 0.82,
+        "y": 0.29
+      },
+      "order": 3,
+      "easingProfile": "mechanical-out"
+    },
+    {
+      "visualCategoryId": "VC-TRN",
+      "origin": {
+        "x": 0.5,
+        "y": 0.62
+      },
+      "destination": {
+        "x": 0.52,
+        "y": 0.8
+      },
+      "explosionVector": {
+        "x": 0.02,
+        "y": 0.18
+      },
+      "depth": 3,
+      "labelAnchor": {
+        "x": 0.54,
+        "y": 0.84
+      },
+      "order": 4,
+      "easingProfile": "mechanical-out"
+    },
+    {
+      "visualCategoryId": "VC-FBRK",
+      "origin": {
+        "x": 0.72,
+        "y": 0.67
+      },
+      "destination": {
+        "x": 0.88,
+        "y": 0.7
+      },
+      "explosionVector": {
+        "x": 0.16,
+        "y": 0.03
+      },
+      "depth": 4,
+      "labelAnchor": {
+        "x": 0.89,
+        "y": 0.64
+      },
+      "order": 5,
+      "easingProfile": "radial-out"
+    },
+    {
+      "visualCategoryId": "VC-RBRK",
+      "origin": {
+        "x": 0.27,
+        "y": 0.67
+      },
+      "destination": {
+        "x": 0.12,
+        "y": 0.7
+      },
+      "explosionVector": {
+        "x": -0.15,
+        "y": 0.03
+      },
+      "depth": 4,
+      "labelAnchor": {
+        "x": 0.11,
+        "y": 0.64
+      },
+      "order": 5,
+      "easingProfile": "radial-out"
+    },
+    {
+      "visualCategoryId": "VC-FSUS",
+      "origin": {
+        "x": 0.72,
+        "y": 0.61
+      },
+      "destination": {
+        "x": 0.82,
+        "y": 0.76
+      },
+      "explosionVector": {
+        "x": 0.1,
+        "y": 0.15
+      },
+      "depth": 2,
+      "labelAnchor": {
+        "x": 0.8,
+        "y": 0.84
+      },
+      "order": 6,
+      "easingProfile": "mechanical-out"
+    },
+    {
+      "visualCategoryId": "VC-RSUS",
+      "origin": {
+        "x": 0.27,
+        "y": 0.61
+      },
+      "destination": {
+        "x": 0.17,
+        "y": 0.76
+      },
+      "explosionVector": {
+        "x": -0.1,
+        "y": 0.15
+      },
+      "depth": 2,
+      "labelAnchor": {
+        "x": 0.18,
+        "y": 0.84
+      },
+      "order": 6,
+      "easingProfile": "mechanical-out"
+    }
+  ]
+}

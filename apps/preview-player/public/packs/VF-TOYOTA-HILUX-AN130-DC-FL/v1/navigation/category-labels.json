@@ -1,0 +1,9 @@
+{
+  "VC-ENG": "Engine",
+  "VC-TRN": "Transmission",
+  "VC-FBRK": "Front Brakes",
+  "VC-RBRK": "Rear Brakes",
+  "VC-FSUS": "Front Suspension",
+  "VC-RSUS": "Rear Suspension",
+  "VC-BODY": "Body & Exterior"
+}

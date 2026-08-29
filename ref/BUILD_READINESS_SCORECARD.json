@@ -1,0 +1,75 @@
+{
+  "version": "2.0",
+  "overall_canon_status": "GREEN",
+  "repository_status": "BOOTSTRAP_REQUIRED",
+  "broad_feature_fanout_authorized": false,
+  "controlled_foundation_engineering_authorized": true,
+  "authorization_condition": "Apply repository v2 bootstrap, run closure/drift/security/realization gates, and prove one pilot Feature end-to-end.",
+  "closure_tests": [
+    {
+      "test": "CT-1 Concrete Feature Contracts",
+      "status": "GREEN",
+      "evidence": {
+        "features": 186,
+        "frcs": 186,
+        "distinct_command_sets": 183,
+        "distinct_event_sets": 183
+      }
+    },
+    {
+      "test": "CT-2 Executable Eventuality Contracts",
+      "status": "GREEN",
+      "evidence": {
+        "eventualities": 254,
+        "material": 233
+      }
+    },
+    {
+      "test": "CT-3 Donor Qualification Architecture",
+      "status": "GREEN",
+      "evidence": {
+        "donors": 43,
+        "policy": "adoption mode locked; exact commit pin at first import"
+      }
+    },
+    {
+      "test": "CT-4 NFR + Deployment Closure",
+      "status": "GREEN",
+      "evidence": {
+        "nfr_systems": 17,
+        "environments": 7
+      }
+    },
+    {
+      "test": "CT-5 Activation Blocker Closure",
+      "status": "GREEN",
+      "evidence": {
+        "named_activation_blockers": 11,
+        "hidden_external_assumptions_allowed": false
+      }
+    },
+    {
+      "test": "CT-6 Canon / Actual Repository Alignment",
+      "status": "AMBER_PENDING_APPLY",
+      "evidence": {
+        "repo_bootstrap_tasks": 10,
+        "pending": 10,
+        "reason": "current GitHub still uses old authority and lacks v2 bootstrap"
+      }
+    }
+  ],
+  "counts": {
+    "top_level_features": 186,
+    "mandatory_realization_facets": 1674,
+    "feature_implementation_contracts": 186,
+    "executable_eventuality_contracts": 254,
+    "material_eventualities": 233,
+    "qualified_donor_records": 43,
+    "nfr_system_profiles": 17,
+    "deployment_environments": 7,
+    "activation_blockers": 11,
+    "operational_responsibility_records": 12,
+    "master_data_families": 13,
+    "branch_activation_records": 10
+  }
+}

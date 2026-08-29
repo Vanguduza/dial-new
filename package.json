@@ -1,0 +1,33 @@
+{
+  "name": "dial-visual-transformation-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "workers/*"
+  ],
+  "scripts": {
+    "build:core": "tsc -p tsconfig.build.json",
+    "build": "npm run build:core && npm run build --workspace @dial/preview-player",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dial-visual": "npm run build:core --silent && node dist/apps/cli/src/index.js",
+    "api": "npm run build:core --silent && node dist/apps/api/src/server.js",
+    "preview": "npm --prefix apps/preview-player run dev --workspaces=false",
+    "generate:hilux": "npm run dial-visual -- generate examples/hilux-an130/job.json",
+    "catalog:coverage": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js build",
+    "catalog:coverage:check": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js check"
+  },
+  "dependencies": {
+    "sharp": "0.35.4",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

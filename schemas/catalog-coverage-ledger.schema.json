@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial-a-spare.example/schemas/catalog-coverage-ledger.schema.json",
+  "title": "Dial Catalog Coverage Ledger",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "catalogMeta", "integrity", "publicationPolicy", "observedMakers", "acquisitionBacklog", "developmentFlowPacks"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "catalogMeta": { "type": "object" },
+    "integrity": {
+      "type": "object",
+      "required": ["status", "globalDiagramIdentitySafe", "crossMakerNodeCollisionCount", "notes"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL"] },
+        "globalDiagramIdentitySafe": { "type": "boolean" },
+        "crossMakerNodeCollisionCount": { "type": "integer", "minimum": 0 },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "publicationPolicy": { "type": "object" },
+    "observedMakers": { "type": "array" },
+    "acquisitionBacklog": { "type": "array" },
+    "developmentFlowPacks": { "type": "array" }
+  }
+}

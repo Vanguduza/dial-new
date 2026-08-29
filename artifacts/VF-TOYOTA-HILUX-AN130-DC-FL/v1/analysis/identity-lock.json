@@ -1,0 +1,119 @@
+{
+  "version": "1.0.0",
+  "coordinateSystem": "normalized-0-1",
+  "vehicleBoundingBox": {
+    "x": 0.17,
+    "y": 0.33,
+    "width": 0.67,
+    "height": 0.37
+  },
+  "silhouette": [
+    [
+      0.17,
+      0.63
+    ],
+    [
+      0.22,
+      0.49
+    ],
+    [
+      0.32,
+      0.45
+    ],
+    [
+      0.41,
+      0.34
+    ],
+    [
+      0.62,
+      0.34
+    ],
+    [
+      0.69,
+      0.45
+    ],
+    [
+      0.82,
+      0.52
+    ],
+    [
+      0.84,
+      0.64
+    ]
+  ],
+  "wheelCentres": [
+    {
+      "x": 0.274,
+      "y": 0.674
+    },
+    {
+      "x": 0.725,
+      "y": 0.674
+    }
+  ],
+  "wheelbaseRatio": 0.451,
+  "roofline": [
+    [
+      0.41,
+      0.34
+    ],
+    [
+      0.62,
+      0.34
+    ]
+  ],
+  "lampLandmarks": [
+    {
+      "x": 0.78,
+      "y": 0.54
+    },
+    {
+      "x": 0.22,
+      "y": 0.55
+    }
+  ],
+  "glazingBoundaries": [
+    [
+      0.4,
+      0.36
+    ],
+    [
+      0.61,
+      0.36
+    ],
+    [
+      0.68,
+      0.45
+    ],
+    [
+      0.35,
+      0.45
+    ]
+  ],
+  "panelLines": [
+    [
+      0.5,
+      0.35
+    ],
+    [
+      0.5,
+      0.62
+    ],
+    [
+      0.68,
+      0.45
+    ],
+    [
+      0.71,
+      0.61
+    ]
+  ],
+  "doorCount": 4,
+  "cabBedBoundary": {
+    "x": 0.7,
+    "yFrom": 0.45,
+    "yTo": 0.63
+  },
+  "source": "synthetic-development-fixture",
+  "productionApproval": false
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs><radialGradient id="bg"><stop stop-color="#263541"/><stop offset="1" stop-color="#080d12"/></radialGradient><linearGradient id="p"><stop stop-color="#8c251c"/><stop offset=".48" stop-color="#df5835"/><stop offset="1" stop-color="#57140f"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#bg)"/><ellipse cx="800" cy="690" rx="590" ry="45" fill="#000" opacity=".45"/>
+  <path d="M286 565 L342 440 L515 403 L650 300 L986 302 L1106 406 L1300 470 L1340 570 L1254 590 L1178 510 L1091 586 L526 586 L445 510 L358 584 L270 570 Z" fill="url(#p)" stroke="#f6c2a8" stroke-width="3"/>
+  <path d="M658 321 L788 321 L790 405 L555 405 Z M814 321 L978 323 L1071 405 L815 405 Z" fill="#0d1b24" stroke="#93aeb9" stroke-width="3"/>
+  <path d="M548 419 H1099 M795 310 V560 M1080 407 L1130 553" fill="none" stroke="#f2aa8b" stroke-width="3" opacity=".7"/>
+  <circle cx="438" cy="606" r="93" fill="#10161b" stroke="#283843" stroke-width="18"/><circle cx="438" cy="606" r="50" fill="#9aa5aa"/><circle cx="1160" cy="606" r="93" fill="#10161b" stroke="#283843" stroke-width="18"/><circle cx="1160" cy="606" r="50" fill="#9aa5aa"/>
+  <text x="70" y="90" fill="#f3f7f8" font-family="Arial" font-size="22" letter-spacing="5">SYNTHETIC PICKUP DEVELOPMENT REFERENCE</text><text x="70" y="125" fill="#9eb1ba" font-family="Arial" font-size="16">Not production vehicle art · original DVTG deterministic fixture</text>
+</svg>

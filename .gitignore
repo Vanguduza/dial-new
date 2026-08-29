@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.dvtg/
+apps/preview-player/.vinext/
+apps/preview-player/.wrangler/
+apps/preview-player/dist/
+*.log
+
+# generated catalog artifacts (rebuild via npm run catalog:coverage)
+catalog-data/generated/catalog-coverage-ledger.json
+.archive/

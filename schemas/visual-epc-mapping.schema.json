@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.example/schemas/visual-epc-mapping.schema.json",
+  "title": "VisualEpcMapping",
+  "description": "Versioned binding between a visual-family pack and an authoritative, scoped EPC catalog release.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "mappingId",
+    "catalogReleaseId",
+    "fitmentId",
+    "visualFamilyId",
+    "vehicleContext",
+    "categories",
+    "componentFamilies",
+    "provenance"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "2.0.0" },
+    "mappingId": { "type": "string", "pattern": "^VEM-[A-Z0-9-]+$" },
+    "catalogReleaseId": { "type": "string", "pattern": "^CAT-[A-Z0-9-]+$" },
+    "fitmentId": { "type": "string", "minLength": 1 },
+    "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
+    "vehicleContext": { "$ref": "#/$defs/vehicleContext" },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/categoryBinding" }
+    },
+    "componentFamilies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/componentFamily" }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "source", "sourceVersion", "confidence", "reviewedAt"],
+      "properties": {
+        "authority": { "const": "CATALOG" },
+        "source": { "type": "string", "minLength": 1 },
+        "sourceVersion": { "type": "string", "minLength": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reviewedAt": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "$defs": {
+    "readiness": {
+      "enum": ["BROWSE_READY", "SEARCH_READY", "DIAGRAM_READY", "HOTSPOT_READY", "FITMENT_READY", "SELL_READY"]
+    },
+    "vehicleContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["makerSlug", "catalogFamilyId", "familySlug", "variantId", "variantSlug", "chassisCodes", "engineCodes", "market", "attributes"],
+      "properties": {
+        "makerSlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "catalogFamilyId": { "type": "string", "pattern": "^CF-[A-Z0-9-]+$" },
+        "familySlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "variantId": { "type": ["string", "null"], "pattern": "^CV-[A-Z0-9-]+$" },
+        "variantSlug": { "type": ["string", "null"], "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "chassisCodes": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "engineCodes": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "market": { "type": ["string", "null"] },
+        "attributes": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "routeTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sectionSlug", "groupId", "groupSlug", "defaultDiagramId", "fallbackQuery", "selectionMode", "minimumReadiness"],
+      "properties": {
+        "sectionSlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "groupId": { "type": ["string", "null"] },
+        "groupSlug": { "type": ["string", "null"], "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "defaultDiagramId": { "type": ["string", "null"], "pattern": "^DGM-[A-Z0-9-]+$" },
+        "fallbackQuery": { "type": ["string", "null"] },
+        "selectionMode": { "enum": ["SECTION", "GROUP", "DIAGRAM", "SEARCH"] },
+        "minimumReadiness": { "$ref": "#/$defs/readiness" }
+      }
+    },
+    "categoryBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visualCategoryId", "componentFamilyId", "label", "target"],
+      "properties": {
+        "visualCategoryId": { "type": "string", "pattern": "^VC-[A-Z]+$" },
+        "componentFamilyId": { "type": "string", "pattern": "^VCF-[A-Z0-9-]+$" },
+        "label": { "type": "string", "minLength": 1 },
+        "target": { "$ref": "#/$defs/routeTarget" }
+      }
+    },
+    "componentFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["componentFamilyId", "visualCategoryId", "label", "aliases", "target"],
+      "properties": {
+        "componentFamilyId": { "type": "string", "pattern": "^VCF-[A-Z0-9-]+$" },
+        "visualCategoryId": { "type": "string", "pattern": "^VC-[A-Z]+$" },
+        "label": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "target": { "$ref": "#/$defs/routeTarget" }
+      }
+    }
+  }
+}

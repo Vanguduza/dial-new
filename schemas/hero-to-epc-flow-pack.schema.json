@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial-a-spare.example/schemas/hero-to-epc-flow-pack.schema.json",
+  "title": "Dial Hero-to-EPC Flow Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "flowPackId", "status", "customerReady", "vehicle", "entryModes", "autoplay", "retainedSelection", "stages", "catalogHandoff", "readiness"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "flowPackId": { "type": "string", "pattern": "^H2E-[A-Z0-9-]+-V[0-9]+$" },
+    "status": { "enum": ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "DEVELOPMENT_COMPLETE", "PRODUCTION_REVIEW_REQUIRED", "PRODUCTION_READY"] },
+    "customerReady": { "type": "boolean" },
+    "vehicle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visualFamilyId", "fitmentId", "catalogReleaseId", "catalogFamilyId", "variantId", "familySlug", "make", "model", "generation", "bodyStyle", "visualPhase"],
+      "properties": {
+        "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
+        "fitmentId": { "type": "string", "minLength": 1 },
+        "catalogReleaseId": { "type": "string", "pattern": "^CAT-[A-Z0-9-]+$" },
+        "catalogFamilyId": { "type": "string", "pattern": "^CF-[A-Z0-9-]+$" },
+        "variantId": { "type": ["string", "null"] },
+        "familySlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "make": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "generation": { "type": "string", "minLength": 1 },
+        "bodyStyle": { "type": "string", "minLength": 1 },
+        "visualPhase": { "type": "string", "minLength": 1 }
+      }
+    },
+    "entryModes": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 4,
+      "items": { "enum": ["CASCADE_SEARCH", "GARAGE_VISUAL_FLOW", "GARAGE_EPC_DIRECT", "MENU_EPC_BROWSE"] }
+    },
+    "autoplay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger", "userPlayControl", "reducedMotionBehavior", "replayAllowedFromVehicleSummary"],
+      "properties": {
+        "trigger": { "const": "VEHICLE_SEARCH_COMMITTED" },
+        "userPlayControl": { "const": false },
+        "reducedMotionBehavior": { "const": "CUT_TO_NAVIGATION_READY" },
+        "replayAllowedFromVehicleSummary": { "type": "boolean" }
+      }
+    },
+    "retainedSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preserveUntilEdited", "committedTextAppearance", "contextPropagation"],
+      "properties": {
+        "preserveUntilEdited": { "const": true },
+        "committedTextAppearance": { "const": "FAINT_GREY" },
+        "contextPropagation": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "required"],
+        "properties": {
+          "id": { "enum": ["HERO_PHOTOGRAPHY", "IDENTITY_LOCK", "STUDIO_CGI", "ENGINEERING_LINE_ART", "EXPLODED_SYSTEMS", "VISUAL_HIT_MAP", "EPC_SECTION_HANDOFF", "EPC_DIAGRAM_AND_PARTS"] },
+          "asset": { "type": "string" },
+          "fallback": { "type": "string" },
+          "route": { "type": "string" },
+          "required": { "const": true }
+        }
+      }
+    },
+    "catalogHandoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapping", "navigationManifest", "vehicleRoute"],
+      "properties": {
+        "mapping": { "type": "string" },
+        "navigationManifest": { "type": "string" },
+        "vehicleRoute": { "type": "string", "pattern": "^/epc/vehicles/" }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["automatedQa", "humanReview", "productionBlocker"],
+      "properties": {
+        "automatedQa": { "type": "string" },
+        "humanReview": { "type": "string" },
+        "productionBlocker": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "customerReady": { "const": true } }, "required": ["customerReady"] },
+      "then": { "properties": { "status": { "const": "PRODUCTION_READY" }, "readiness": { "properties": { "productionBlocker": { "type": "null" } } } }
+    }
+  ]
+}

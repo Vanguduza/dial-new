@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0.0",
+  "flowPackId": "H2E-TOYOTA-HILUX-AN130-DC-FL-V1",
+  "status": "DEVELOPMENT_COMPLETE",
+  "customerReady": false,
+  "vehicle": {
+    "visualFamilyId": "VF-TOYOTA-HILUX-AN130-DC-FL",
+    "fitmentId": "FIT-DEMO-ZA-HILUX-AN130-2020-2GD-6MT",
+    "catalogReleaseId": "CAT-DEVELOPMENT-HILUX-V2",
+    "catalogFamilyId": "CF-TOYOTA-HILUX-AN120-AN130",
+    "variantId": "CV-TOYOTA-HILUX-AN130-DC-2GD-6MT",
+    "familySlug": "hilux-an120-an130",
+    "make": "Toyota",
+    "model": "Hilux",
+    "generation": "AN120/AN130",
+    "bodyStyle": "Double Cab",
+    "visualPhase": "2020 Facelift"
+  },
+  "entryModes": [
+    "CASCADE_SEARCH",
+    "GARAGE_VISUAL_FLOW",
+    "GARAGE_EPC_DIRECT",
+    "MENU_EPC_BROWSE"
+  ],
+  "autoplay": {
+    "trigger": "VEHICLE_SEARCH_COMMITTED",
+    "userPlayControl": false,
+    "reducedMotionBehavior": "CUT_TO_NAVIGATION_READY",
+    "replayAllowedFromVehicleSummary": true
+  },
+  "retainedSelection": {
+    "preserveUntilEdited": true,
+    "committedTextAppearance": "FAINT_GREY",
+    "contextPropagation": [
+      "homepage",
+      "header",
+      "search",
+      "epc",
+      "cart",
+      "garage"
+    ]
+  },
+  "stages": [
+    {
+      "id": "HERO_PHOTOGRAPHY",
+      "asset": "hero/hero-clean.avif",
+      "required": true
+    },
+    {
+      "id": "IDENTITY_LOCK",
+      "asset": "analysis/identity-lock.json",
+      "required": true
+    },
+    {
+      "id": "STUDIO_CGI",
+      "asset": "cgi/cgi-master.avif",
+      "required": true
+    },
+    {
+      "id": "ENGINEERING_LINE_ART",
+      "asset": "technical/line-art.svg",
+      "fallback": "technical/line-art.avif",
+      "required": true
+    },
+    {
+      "id": "EXPLODED_SYSTEMS",
+      "asset": "exploded/exploded-master.avif",
+      "required": true
+    },
+    {
+      "id": "VISUAL_HIT_MAP",
+      "asset": "navigation/hotspots.json",
+      "required": true
+    },
+    {
+      "id": "EPC_SECTION_HANDOFF",
+      "asset": "navigation/epc-mapping.json",
+      "required": true
+    },
+    {
+      "id": "EPC_DIAGRAM_AND_PARTS",
+      "route": "/epc/vehicles/hilux-an120-an130",
+      "required": true
+    }
+  ],
+  "catalogHandoff": {
+    "mapping": "navigation/epc-mapping.json",
+    "navigationManifest": "navigation/navigation-manifest.json",
+    "vehicleRoute": "/epc/vehicles/hilux-an120-an130"
+  },
+  "readiness": {
+    "automatedQa": "qa/qa.json",
+    "humanReview": "qa/review-status.json",
+    "productionBlocker": "Development fixtures require licensed production assets and human approvals."
+  }
+}

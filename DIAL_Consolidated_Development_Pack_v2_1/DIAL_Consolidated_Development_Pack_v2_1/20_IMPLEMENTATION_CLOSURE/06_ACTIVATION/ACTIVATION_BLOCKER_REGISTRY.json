@@ -1,0 +1,205 @@
+[
+  {
+    "blocker_id": "ACT-REG-001",
+    "area": "MONEY",
+    "name": "Licensed hold-and-release / Job Reserve operating arrangement",
+    "affected": [
+      "TECH",
+      "PROJECTS",
+      "CARE where protected hold applies"
+    ],
+    "can_build_now": true,
+    "development_mode": "EscrowAdapter interface + simulator/sandbox",
+    "cannot_activate_until": [
+      "executed provider/bank/PSP arrangement",
+      "legal/regulatory review",
+      "live settlement/payout contract tests",
+      "AML/KYC responsibility matrix"
+    ],
+    "owner": "Commercial + Legal + Finance",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-002",
+    "area": "PAYMENTS",
+    "name": "Live EcoCash Direct merchant/developer contract",
+    "affected": [
+      "ALL payment-enabled divisions"
+    ],
+    "can_build_now": true,
+    "development_mode": "adapter against authenticated sandbox/current docs",
+    "cannot_activate_until": [
+      "production merchant/API credentials",
+      "callback/HMAC contract verified",
+      "settlement and support process signed off"
+    ],
+    "owner": "Finance + Payments",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-003",
+    "area": "PAYMENTS",
+    "name": "Live Paynow/ContiPay/PayPal merchant configurations",
+    "affected": [
+      "ALL eligible divisions"
+    ],
+    "can_build_now": true,
+    "development_mode": "sandbox adapter/contract tests",
+    "cannot_activate_until": [
+      "merchant accounts approved",
+      "live webhook/return domains configured",
+      "currency/method availability verified",
+      "refund/dispute/settlement process tested"
+    ],
+    "owner": "Finance + Payments",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-004",
+    "area": "FISCAL_TAX",
+    "name": "Zimbabwe fiscalisation and current tax treatment",
+    "affected": [
+      "ALL revenue-generating divisions",
+      "CORPORATE"
+    ],
+    "can_build_now": true,
+    "development_mode": "tax/fiscal adapter interface + versioned rules + simulator",
+    "cannot_activate_until": [
+      "accountant/tax counsel review",
+      "fiscalisation solution/provider/API confirmed",
+      "current VAT/IMTT/WHT rules loaded and independently checked"
+    ],
+    "owner": "Finance + Tax/Legal",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-005",
+    "area": "DATA_PROTECTION",
+    "name": "Data controller/DPO/processor/cross-border compliance readiness",
+    "affected": [
+      "ALL",
+      "HEALTH especially"
+    ],
+    "can_build_now": true,
+    "development_mode": "privacy-by-design, local/synthetic data, processor registry",
+    "cannot_activate_until": [
+      "required registration/licensing confirmed",
+      "DPO responsibilities satisfied",
+      "processor agreements",
+      "cross-border transfer basis/authorisations/consents where applicable",
+      "incident/breach process"
+    ],
+    "owner": "Privacy + Legal + Security",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-006",
+    "area": "HEALTH",
+    "name": "Dial Health operating/licensing/compliance matrix",
+    "affected": [
+      "HEALTH"
+    ],
+    "can_build_now": true,
+    "development_mode": "standalone Health division using specialist safety/consent boundaries and test data",
+    "cannot_activate_until": [
+      "pharmacy/practice/hospital/provider role requirements confirmed",
+      "prescription/dispensing rules validated",
+      "clinical governance and responsible persons assigned",
+      "health data/medical aid partner obligations resolved"
+    ],
+    "owner": "Health Legal/Clinical Governance",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-007",
+    "area": "CARE_INSURANCE",
+    "name": "Dial Care insurance/benefit regulatory characterization",
+    "affected": [
+      "CARE"
+    ],
+    "can_build_now": true,
+    "development_mode": "plan/entitlement engine with products dormant",
+    "cannot_activate_until": [
+      "IPEC/legal route confirmed for each product",
+      "partner contract/underwriter where needed",
+      "customer wording/benefit funding approved"
+    ],
+    "owner": "Care + Legal + Finance",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-008",
+    "area": "TRADES",
+    "name": "Regulated trade and restricted-SKU credential matrix",
+    "affected": [
+      "TECH",
+      "SPARE",
+      "PROJECTS"
+    ],
+    "can_build_now": true,
+    "development_mode": "credential/rule framework and manual verification workflow",
+    "cannot_activate_until": [
+      "trade-by-trade legal credential checklist",
+      "restricted SKU buyer/technician checks",
+      "expiry/reverification owner"
+    ],
+    "owner": "Compliance + SHEQ + Tech/Spare",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-009",
+    "area": "WORKFORCE",
+    "name": "Provider/employee/contractor legal and tax operating model",
+    "affected": [
+      "TECH",
+      "DELIVERY",
+      "PROJECTS",
+      "CORPORATE"
+    ],
+    "can_build_now": true,
+    "development_mode": "Party/Employment/ProviderRelationship model supports explicit relationship type",
+    "cannot_activate_until": [
+      "contract templates/legal classification reviewed",
+      "tax/WHT/payout rules confirmed",
+      "insurance/injury responsibilities confirmed"
+    ],
+    "owner": "People + Legal + Finance",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-010",
+    "area": "WHATSAPP",
+    "name": "Production Meta WhatsApp Business assets/templates",
+    "affected": [
+      "ALL customer divisions"
+    ],
+    "can_build_now": true,
+    "development_mode": "test numbers/Flow definitions/mock gateway",
+    "cannot_activate_until": [
+      "production WABA/phone configured",
+      "webhook verified",
+      "required templates approved",
+      "privacy/consent/support routing signed off"
+    ],
+    "owner": "Customer Platform + Support",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  },
+  {
+    "blocker_id": "ACT-REG-011",
+    "area": "CATALOGUE_IP",
+    "name": "EPC/catalogue/image rights and provenance",
+    "affected": [
+      "SPARE",
+      "VHUB"
+    ],
+    "can_build_now": true,
+    "development_mode": "catalogue/asset pipeline with provenance and rights metadata",
+    "cannot_activate_until": [
+      "each production data/image source has approved licence/permission",
+      "EPC specialist contract passes frozen integration boundary",
+      "takedown/correction path exists"
+    ],
+    "owner": "Catalogue + Legal",
+    "state": "OPEN_ACTIVATION_BLOCKER"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "2.0.0",
+  "visualFamilyId": "VF-TOYOTA-HILUX-AN130-DC-FL",
+  "fitmentId": "FIT-DEMO-ZA-HILUX-AN130-2020-2GD-6MT",
+  "catalogReleaseId": "CAT-DEVELOPMENT-HILUX-V2",
+  "catalogFamilyId": "CF-TOYOTA-HILUX-AN120-AN130",
+  "variantId": "CV-TOYOTA-HILUX-AN130-DC-2GD-6MT",
+  "routeTemplate": "/epc/vehicles/{familySlug}/sections/{sectionSlug}?fitment={fitmentId}&group={groupSlug}&component={componentFamilyId}",
+  "categoryCount": 7,
+  "componentFamilyCount": 11,
+  "readinessPolicy": "Runtime must honor minimumReadiness and use the route target fallback when a richer capability is unavailable."
+}

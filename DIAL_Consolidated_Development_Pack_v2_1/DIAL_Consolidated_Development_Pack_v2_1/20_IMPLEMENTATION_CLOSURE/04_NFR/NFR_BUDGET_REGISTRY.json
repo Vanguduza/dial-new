@@ -1,0 +1,165 @@
+[
+  {
+    "system": "DIAL_HOME_WEB",
+    "class": "S1_PUBLIC",
+    "availability_target": "99.9% monthly",
+    "p95_latency": "API/BFF <= 500 ms excluding third-party deep links",
+    "frontend": "LCP <=2.5s p75, INP <=200ms p75, CLS <=0.1 p75",
+    "rpo": "24h for public content config; 0 for authenticated Activity data because it remains in source domains",
+    "rto": "2h",
+    "degraded": "static/service-router shell remains usable; auth/activity/support may show explicit degraded state",
+    "capacity": "10x expected launch peak synthetic-tested"
+  },
+  {
+    "system": "IDENTITY_AUTH",
+    "class": "S3",
+    "availability_target": "99.95% monthly",
+    "p95_latency": "ordinary auth/session validation <=400ms",
+    "rpo": "near-zero using provider/database durability",
+    "rto": "30m",
+    "degraded": "existing validated sessions may continue only within safe token/session rules; no insecure bypass",
+    "capacity": "login/OTP velocity and abuse tested"
+  },
+  {
+    "system": "PAYMENTS",
+    "class": "S3",
+    "availability_target": "99.95% DIAL orchestration excluding provider outage",
+    "p95_latency": "DIAL initiation overhead <=500ms before provider",
+    "rpo": "0 confirmed DIAL payment events",
+    "rto": "30m",
+    "degraded": "provider unavailable => offer other eligible rail or pending/unknown; never fake success",
+    "queue_age": "confirmed webhook/event <=60s processing target"
+  },
+  {
+    "system": "LEDGER",
+    "class": "S3",
+    "availability_target": "99.99% write path target",
+    "p95_latency": "posting command <=750ms under normal load",
+    "rpo": "0 posted journals",
+    "rto": "30m",
+    "degraded": "fail closed on posting; upstream workflow may remain pending",
+    "integrity": "balanced append-only property tests on every release"
+  },
+  {
+    "system": "ORDERS_JOBS",
+    "class": "S2",
+    "availability_target": "99.9% monthly",
+    "p95_latency": "read <=600ms; ordinary command <=800ms",
+    "rpo": "<=5m for non-money transient state, 0 for outboxed committed events",
+    "rto": "1h",
+    "degraded": "queued/delayed state explicit; no silent duplicate command"
+  },
+  {
+    "system": "DELIVERY",
+    "class": "S2",
+    "availability_target": "99.9%",
+    "p95_latency": "dispatch command <=1s; customer tracking read <=1s",
+    "location_freshness": "target <=30s while active where device/network permits",
+    "rpo": "<=5m telemetry; 0 custody/POD state events",
+    "rto": "1h",
+    "degraded": "last-known location + stale timestamp; manual dispatch queue"
+  },
+  {
+    "system": "WHATSAPP_GATEWAY",
+    "class": "S2",
+    "availability_target": "99.9% DIAL side",
+    "p95_latency": "webhook acknowledge <=2s; Flow data exchange target <=3s",
+    "rpo": "0 accepted inbound event after durable enqueue",
+    "rto": "1h",
+    "degraded": "app/web/support alternatives; queued outbound notification where policy/window still permits",
+    "queue_age": "normal outbound <=2m; transactional priority"
+  },
+  {
+    "system": "SUPPORT_RCE",
+    "class": "S2",
+    "availability_target": "99.9%",
+    "p95_latency": "case open <=1s",
+    "rpo": "0 material case/evidence state",
+    "rto": "2h",
+    "degraded": "branch queue + direct human contact fallback for critical cases"
+  },
+  {
+    "system": "CATALOGUE_SEARCH",
+    "class": "S2",
+    "availability_target": "99.5% search projection; canonical catalogue higher",
+    "p95_latency": "search <=750ms",
+    "index_lag": "target <=5m normal; freshness displayed where material",
+    "rpo": "canonical catalogue per DB; search rebuildable",
+    "rto": "4h search projection",
+    "degraded": "browse cached/category data or sourcing request; never invent stock/fitment"
+  },
+  {
+    "system": "OBJECT_EVIDENCE",
+    "class": "S3",
+    "availability_target": "99.9%",
+    "p95_latency": "signed intent <=500ms excluding upload bytes",
+    "rpo": "0 accepted immutable evidence metadata; object-store versioning/backups by class",
+    "rto": "2h",
+    "degraded": "queue evidence-required action; preserve local safe draft when policy allows"
+  },
+  {
+    "system": "TEMPORAL_WORKFLOWS",
+    "class": "S3",
+    "availability_target": "99.9% orchestration target",
+    "p95_latency": "workflow signal enqueue <=1s",
+    "rpo": "0 durable workflow history",
+    "rto": "1h",
+    "degraded": "durable workflows pause/recover rather than being recreated manually"
+  },
+  {
+    "system": "COMMAND_CENTRE",
+    "class": "S3_PRIVILEGED",
+    "availability_target": "99.9%",
+    "p95_latency": "read views <=1s normal; actions depend on domain",
+    "rpo": "0 authoritative domain state because CC is projection/control plane",
+    "rto": "2h",
+    "degraded": "domain operations continue; use runbooks/direct approved ops where necessary"
+  },
+  {
+    "system": "HEALTH",
+    "class": "S3_HEALTH",
+    "availability_target": "99.95% for safety-critical core",
+    "p95_latency": "ordinary patient/admin read <=800ms",
+    "rpo": "0 committed clinical/prescription/consent events",
+    "rto": "30m critical, 2h non-critical",
+    "degraded": "specialist safe fallback; emergency referral cannot depend solely on app"
+  },
+  {
+    "system": "CORPORATE_OS",
+    "class": "S3_MIXED",
+    "availability_target": "99.9%",
+    "p95_latency": "ordinary read <=1s",
+    "rpo": "0 posted payroll/finance/access authority; <=15m lower-risk drafts",
+    "rto": "2h",
+    "degraded": "approval queues pause safely; no manual DB bypass"
+  },
+  {
+    "system": "PDF_REPORTING",
+    "class": "S2",
+    "availability_target": "99.5% worker",
+    "p95_latency": "async job accepted <=1s",
+    "generation": "95% standard statements <=60s; large exports async",
+    "rpo": "report reproducible from source snapshot",
+    "rto": "4h",
+    "degraded": "queue/retry; never return partial statement as complete"
+  },
+  {
+    "system": "MOBILE_SYNC",
+    "class": "S2",
+    "availability_target": "server sync 99.9%",
+    "p95_latency": "sync request <=1s excluding media",
+    "offline": "safe drafts and execution state explicitly versioned; high-risk money/admin finalization requires server",
+    "rpo": "0 server-accepted events",
+    "rto": "2h"
+  },
+  {
+    "system": "AI_CAPABILITY_LAYER",
+    "class": "ADVISORY",
+    "availability_target": "99.0% acceptable because deterministic/manual fallback required",
+    "p95_latency": "interactive target <=8s; heavy tasks async",
+    "rpo": "invocation/eval records per policy",
+    "rto": "4h",
+    "degraded": "deterministic form/manual queue; AI outage must not stop money/safety core",
+    "budget": "per-capability cost and invocation ceilings enforced"
+  }
+]
