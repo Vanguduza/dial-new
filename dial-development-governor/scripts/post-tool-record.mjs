@@ -21,16 +21,22 @@ if (!filePath) process.exit(0);
 const repoRoot = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
 const relative = path.relative(repoRoot, filePath).replaceAll('\\', '/');
 
-// Resolve affected Feature IDs from the source-path map when one exists.
+// Resolve affected Feature IDs from the Feature Registry itself. RBC-007
+// populates code_paths/test_paths there, so the registry is the map and there
+// is no second copy to drift.
 let featureIds = [];
 try {
-  const map = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'agent-system/registries/SOURCE_PATH_MAP.json'), 'utf8'),
+  const registry = JSON.parse(
+    fs.readFileSync(path.join(repoRoot, 'agent-system/registries/FEATURE_REGISTRY.json'), 'utf8'),
   );
-  featureIds = map
-    .filter((entry) => (entry.source_paths ?? []).some((p) => relative.startsWith(p)))
+  featureIds = registry
+    .filter((entry) =>
+      [...(entry.code_paths ?? []), ...(entry.test_paths ?? [])].some(
+        (claimed) => relative === claimed || relative.startsWith(`${claimed}/`),
+      ),
+    )
     .map((entry) => entry.feature_id);
-} catch { /* map is optional until CT-6 task 10 lands */ }
+} catch { /* registry unreadable; the session-start hook already reports that */ }
 
 const logDir = path.join(repoRoot, 'agent-system/checkpoints');
 fs.mkdirSync(logDir, { recursive: true });

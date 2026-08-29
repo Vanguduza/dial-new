@@ -27,9 +27,10 @@
     "agent:feature-coverage": "node agent-system/bin/feature-coverage.mjs",
     "agent:realization-coverage": "node agent-system/bin/realization-coverage.mjs",
     "agent:security-coverage": "node agent-system/bin/security-coverage.mjs",
+    "agent:source-map": "node agent-system/bin/source-map.mjs",
     "agent:v2-closure-check": "node agent-system/bin/v2-closure-check.mjs",
     "agent:manifest-check": "node agent-system/bin/manifest-check.mjs",
-    "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:drift-check && npm run agent:v2-closure-check && npm run test"
+    "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:source-map && npm run agent:drift-check && npm run agent:v2-closure-check && npm run test"
   },
   "dependencies": {
     "sharp": "0.35.4",

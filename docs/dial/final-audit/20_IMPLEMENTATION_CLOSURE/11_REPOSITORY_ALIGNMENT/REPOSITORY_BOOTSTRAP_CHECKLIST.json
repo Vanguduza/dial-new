@@ -51,8 +51,9 @@
     "id": "RBC-007",
     "task": "Map existing source/test paths to Feature Registry",
     "blocking": true,
-    "status": "PENDING",
-    "note": "Feature Registry exists with 186 SPECIFIED records; source/test path mapping not yet authored. Blocks pilot evidence."
+    "status": "COMPLETE",
+    "note": "3 Feature IDs and 11 supporting capabilities carry code_paths/test_paths. agent:source-map verifies every claimed path exists, refuses a gate claim without its evidence, and reports unclaimed source (currently 0, with 9 shell/tooling files declared).",
+    "completed_at": "2026-08-29T21:55:37.435116+00:00"
   },
   {
     "id": "RBC-008",

@@ -5,11 +5,16 @@
     "outcome": "Vehicle selection & garage",
     "owner": "vehicles/vehicle-hub",
     "aggregate": "VehicleProfile",
-    "status": "SPECIFIED",
-    "current_gate": "PLANNED",
+    "status": "CODE_PRESENT",
+    "current_gate": "CODE_PRESENT",
     "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
-    "code_paths": [],
-    "test_paths": [],
+    "code_paths": [
+      "apps/preview-player/components/dvtg-preview.tsx",
+      "apps/preview-player/app/garage/page.tsx"
+    ],
+    "test_paths": [
+      "tests/transition-ui-contract.test.ts"
+    ],
     "evidence_refs": [],
     "donor_refs": [
       "DONOR-MERCUR-STOREFRONT",
@@ -25,7 +30,8 @@
       "DIAL_WEB",
       "WHATSAPP"
     ],
-    "support_profile": "SUPPORT-SPARE"
+    "support_profile": "SUPPORT-SPARE",
+    "implementation_note": "Progressive cascade and Garage entry points exist over a single fixture vehicle. Garage state is client-side only; Blueprint 7.1 requires it server-backed and customer-owned."
   },
   {
     "feature_id": "SPARE-F002",
@@ -33,10 +39,13 @@
     "outcome": "Part/category search & browse",
     "owner": "catalogue/search",
     "aggregate": "SearchQuery",
-    "status": "SPECIFIED",
-    "current_gate": "PLANNED",
+    "status": "CODE_PRESENT",
+    "current_gate": "CODE_PRESENT",
     "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
-    "code_paths": [],
+    "code_paths": [
+      "apps/preview-player/app/epc",
+      "apps/preview-player/lib/epc-catalog.ts"
+    ],
     "test_paths": [],
     "evidence_refs": [],
     "donor_refs": [
@@ -53,7 +62,8 @@
       "DIAL_WEB",
       "WHATSAPP"
     ],
-    "support_profile": "SUPPORT-SPARE"
+    "support_profile": "SUPPORT-SPARE",
+    "implementation_note": "Category and diagram browse over fixture data. No search, no fitment-aware filtering."
   },
   {
     "feature_id": "SPARE-F003",
@@ -90,11 +100,16 @@
     "outcome": "Catalogue ingest & normalization",
     "owner": "catalogue",
     "aggregate": "CatalogueIngestBatch",
-    "status": "SPECIFIED",
-    "current_gate": "PLANNED",
+    "status": "CODE_PRESENT",
+    "current_gate": "CODE_PRESENT",
     "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
-    "code_paths": [],
-    "test_paths": [],
+    "code_paths": [
+      "apps/catalog-coverage/src/index.ts",
+      "packages/catalog-coverage/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/catalog-coverage.test.ts"
+    ],
     "evidence_refs": [],
     "donor_refs": [
       "DONOR-MERCUR-STOREFRONT",
@@ -110,7 +125,8 @@
       "DIAL_WEB",
       "WHATSAPP"
     ],
-    "support_profile": "SUPPORT-SPARE"
+    "support_profile": "SUPPORT-SPARE",
+    "implementation_note": "Coverage ledger and eleven-stage readiness evaluation. Ingest normalisation itself is not built; the 44,532 cross-maker node_id collisions block DIAGRAM_READY and HOTSPOT_READY."
   },
   {
     "feature_id": "SPARE-F005",

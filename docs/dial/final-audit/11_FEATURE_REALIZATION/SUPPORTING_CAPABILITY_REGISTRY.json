@@ -10,7 +10,10 @@
     ],
     "purpose": "One customer account across non-health DIAL spaces, with lawful shared identity links to Health.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S002",
@@ -23,7 +26,10 @@
     ],
     "purpose": "Home/Explore/Activity/Support/Account shell hosting independent branch modules.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S003",
@@ -36,7 +42,10 @@
     ],
     "purpose": "Feature modules depend on shared interfaces/kits, not each other's implementations.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S004",
@@ -49,7 +58,10 @@
     ],
     "purpose": "Unified list of orders, jobs, deliveries, laundry, Assist, Care and projects with branch renderers.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S005",
@@ -62,7 +74,10 @@
     ],
     "purpose": "Server returns allowed actions from authoritative state/policy so every eventuality endpoint is reachable.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S006",
@@ -75,7 +90,10 @@
     ],
     "purpose": "Push/in-app/WhatsApp/email continuity with branch-specific message templates.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S007",
@@ -88,7 +106,10 @@
     ],
     "purpose": "Reusable delivery/service addresses and incident-scoped location with purpose controls.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S008",
@@ -101,7 +122,10 @@
     ],
     "purpose": "Reusable payment methods/receipts without creating a cross-domain cart or second ledger.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S009",
@@ -114,7 +138,10 @@
     ],
     "purpose": "Saved vehicles, stores, services and safe preferences scoped by branch.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S010",
@@ -127,7 +154,10 @@
     ],
     "purpose": "Photos/documents/videos with compression, upload retry and provenance.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S011",
@@ -140,7 +170,10 @@
     ],
     "purpose": "Progressive images, lazy video/3D, cached read models and safe retry behavior.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S012",
@@ -153,7 +186,10 @@
     ],
     "purpose": "Push/WhatsApp/web links resolve directly to correct branch state and preserve support context.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S013",
@@ -166,7 +202,10 @@
     ],
     "purpose": "WCAG-aligned semantics, dynamic type, keyboard/screen-reader and reduced motion.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S014",
@@ -179,7 +218,10 @@
     ],
     "purpose": "Terms, consents, communication preferences and data/health-specific delegation links.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CX-S015",
@@ -192,7 +234,10 @@
     ],
     "purpose": "Search routes intelligently into parts, services, grocery, help and vehicles without mixing authoritative result types.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S001",
@@ -207,7 +252,10 @@
     ],
     "purpose": "Link channel conversation to customer, branch and transaction without making helpdesk the business SoR.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S002",
@@ -222,7 +270,10 @@
     ],
     "purpose": "Grounded AI first-line support with branch skills and typed safe tools.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S003",
@@ -237,7 +288,10 @@
     ],
     "purpose": "Transfer transcript/summary/ref/evidence/actions/risk to human without making customer repeat information.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S004",
@@ -252,7 +306,10 @@
     ],
     "purpose": "Route to Spare/Tech/Grocery/Laundry/Fleet/Hub/Care/Assist/Projects/Health specialists.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S005",
@@ -267,7 +324,10 @@
     ],
     "purpose": "Track non-formal support issues; escalate to RCE for liability/dispute/compensation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S006",
@@ -282,7 +342,10 @@
     ],
     "purpose": "Persistent conversation tied to authenticated account/context.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S007",
@@ -297,7 +360,10 @@
     ],
     "purpose": "Official Cloud API support flow with same case/context.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S008",
@@ -312,7 +378,10 @@
     ],
     "purpose": "Email thread linked to case/account where identity confidence permits.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S009",
@@ -327,7 +396,10 @@
     ],
     "purpose": "Optional human callback for urgent/high-complexity cases without AI voice dependency.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S010",
@@ -342,7 +414,10 @@
     ],
     "purpose": "Separate help-center portal/content per division under centralized management.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S011",
@@ -357,7 +432,10 @@
     ],
     "purpose": "Versioned articles/policies/runbooks usable by bot and agents.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S012",
@@ -372,7 +450,10 @@
     ],
     "purpose": "Events such as delay/no-show/stock failure can open proactive customer support.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S013",
@@ -387,7 +468,10 @@
     ],
     "purpose": "Read tools and narrowly scoped deterministic self-service commands; no raw database access.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S014",
@@ -402,7 +486,10 @@
     ],
     "purpose": "Immediate human/specialist escalation for safety, health, fraud, liability or explicit human request.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S015",
@@ -417,7 +504,10 @@
     ],
     "purpose": "Urgent, high, normal and low queues with branch-specific deadlines.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S016",
@@ -432,7 +522,10 @@
     ],
     "purpose": "AI summarizes and proposes next actions for humans; humans retain consequential authority.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S017",
@@ -447,7 +540,10 @@
     ],
     "purpose": "Unresolved/repeated conversations generate reviewed KB or product improvement tasks.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S018",
@@ -462,7 +558,10 @@
     ],
     "purpose": "FCR, containment, handoff, reopen, CSAT, SLA, handling time, tool error and escalation accuracy.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S019",
@@ -477,7 +576,10 @@
     ],
     "purpose": "Relevant messages/attachments are frozen into Evidence when formal case starts.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "SUP-S020",
@@ -492,7 +594,10 @@
     ],
     "purpose": "Mask sensitive HR/health/payment data and enforce branch/scope permissions.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "CATVIS-S001",
@@ -507,7 +612,13 @@
     ],
     "purpose": "Versioned registry for source hero, generated transition, exploded, hotspot and fallback assets.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "packages/packaging/src/index.ts"
+    ],
+    "test_paths": [],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "Asset manifest with per-file SHA-256 written at 16_PACKAGE. Versioned registry across visual families is not yet built."
   },
   {
     "capability_id": "CATVIS-S002",
@@ -522,7 +633,15 @@
     ],
     "purpose": "Map multiple trims/variants to one visual body representation when body differences are immaterial.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "packages/contracts/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/contracts.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "visualFamilyId and fitmentId are separate identities; parseJob rejects a mapping whose visualFamilyId disagrees."
   },
   {
     "capability_id": "CATVIS-S003",
@@ -537,7 +656,16 @@
     ],
     "purpose": "License/source/hash/vehicle binding and approval for every source image.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "packages/image-processing/src/index.ts",
+      "apps/api/src/server.ts"
+    ],
+    "test_paths": [
+      "tests/pipeline.integration.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "Licence, SHA-256, magic-byte and decoded-pixel validation at 01_SOURCE_VALIDATE. Approval gates are hash-chained and bound to an authenticated principal. Test proves an unapproved source is blocked before processing."
   },
   {
     "capability_id": "CATVIS-S004",
@@ -552,12 +680,22 @@
     ],
     "purpose": "Accept output from specialist generator without making generator catalogue authority.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "packages/cgi/src/index.ts",
+      "packages/identity-lock/src/index.ts",
+      "packages/qa/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/qa.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "Generator output is accepted only against a lock derived from the normalized source, so the generator never becomes its own authority. Landmark metrics the deterministic provider cannot compute report NOT_MEASURED rather than 0. Development packs are WAIVED with measured drift recorded; live providers are held to the gate."
   },
   {
     "capability_id": "CATVIS-S005",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "Hero→exploded transition asset",
+    "name": "Hero\u2192exploded transition asset",
     "owner": "catalogue/visual-assets",
     "app_families": [
       "DIAL_CONSUMER",
@@ -567,7 +705,20 @@
     ],
     "purpose": "Versioned mobile/web animation or scene tied to visual vehicle group.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "packages/pipeline-core",
+      "packages/animation/src/index.ts",
+      "packages/explosion/src/index.ts",
+      "packages/line-art/src/index.ts",
+      "packages/technical-render",
+      "packages/depth/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/pipeline.integration.test.ts"
+    ],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "Frame profiles and explosion plan are generated. NOT met: Blueprint 4.3 requires per-group layers with layerAssetId, startProgress and endProgress; the pipeline emits flattened whole-scene frames and explosion-plan.json has no consumer."
   },
   {
     "capability_id": "CATVIS-S006",
@@ -580,9 +731,19 @@
       "SUPPLIER_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "Hotspot/region→DIAL category/assembly binding authored and reviewed, never guessed at runtime.",
+    "purpose": "Hotspot/region\u2192DIAL category/assembly binding authored and reviewed, never guessed at runtime.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "packages/hotspots/src/index.ts",
+      "packages/qa/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/qa.test.ts",
+      "tests/epc-navigation.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "Hit regions are authored, not guessed at runtime. QA blocks an enabled category with no region and flags equal-priority overlap as ambiguous routing."
   },
   {
     "capability_id": "CATVIS-S007",
@@ -597,7 +758,13 @@
     ],
     "purpose": "Static hero/category fallback for reduced motion, weak device/network or unavailable assets.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "apps/preview-player/components/dvtg-preview.tsx"
+    ],
+    "test_paths": [],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "prefers-reduced-motion cuts to the stable exploded result. Data-saver and weak-network fallbacks are not implemented."
   },
   {
     "capability_id": "EPC-S001",
@@ -610,9 +777,15 @@
       "SUPPLIER_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "VIN/chassis/model/generation/variant→EPC applicability context with confidence.",
+    "purpose": "VIN/chassis/model/generation/variant\u2192EPC applicability context with confidence.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "apps/preview-player/lib/epc-catalog.ts"
+    ],
+    "test_paths": [],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "Resolves one hardcoded fixture vehicle. No VIN/chassis resolution and no confidence model; this is a fixture, not a resolver."
   },
   {
     "capability_id": "EPC-S002",
@@ -627,7 +800,14 @@
     ],
     "purpose": "System/group/assembly hierarchy with breadcrumbs and browse/search.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "apps/preview-player/app/epc",
+      "apps/preview-player/components/epc/epc-shell.tsx"
+    ],
+    "test_paths": [],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "Section, group and diagram hierarchy with breadcrumbs over fixture data."
   },
   {
     "capability_id": "EPC-S003",
@@ -642,7 +822,13 @@
     ],
     "purpose": "Zoom/pan diagram, callouts/hotspots, selected-part panel and keyboard/accessibility equivalents.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "CODE_PRESENT",
+    "code_paths": [
+      "apps/preview-player/components/epc/epc-diagram-browser.tsx"
+    ],
+    "test_paths": [],
+    "current_gate": "CODE_PRESENT",
+    "implementation_note": "Diagram and parts panel. Hotspots are procedurally placed over a shared placeholder image; keyboard and accessibility equivalents are not yet built."
   },
   {
     "capability_id": "EPC-S004",
@@ -657,12 +843,15 @@
     ],
     "purpose": "Part number, description, quantity, notes, supersession and applicability facts.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "EPC-S005",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "EPC→DIAL catalogue binding",
+    "name": "EPC\u2192DIAL catalogue binding",
     "owner": "catalogue/epc",
     "app_families": [
       "DIAL_CONSUMER",
@@ -672,7 +861,10 @@
     ],
     "purpose": "EPC part reference maps to DIAL Product/PartFamily/FitmentClaim and supplier offers.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "EPC-S006",
@@ -687,7 +879,10 @@
     ],
     "purpose": "Provider/revision/cache/display rights tracked per asset/record.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "EPC-S007",
@@ -702,12 +897,15 @@
     ],
     "purpose": "No-offer or unmapped EPC part can create a non-catalogue sourcing request with context attached.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "EPC-S008",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "Visual→EPC deep link",
+    "name": "Visual\u2192EPC deep link",
     "owner": "catalogue/epc",
     "app_families": [
       "DIAL_CONSUMER",
@@ -717,7 +915,16 @@
     ],
     "purpose": "Exploded body/category navigation opens the correct EPC group/assembly where available.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "packages/contracts/src/index.ts",
+      "packages/pipeline-core/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/epc-navigation.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "VisualEpcMapping 2.0.0 binds every visual category to a structured section target. Test asserts no route uses a raw source node id."
   },
   {
     "capability_id": "EPC-S009",
@@ -732,7 +939,10 @@
     ],
     "purpose": "Detect provider/revision changes and invalidate/review affected bindings.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "EPC-S010",
@@ -747,7 +957,10 @@
     ],
     "purpose": "Support receives vehicle/EPC/part/hotspot/fitment context when customer asks for help.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S001",
@@ -761,7 +974,10 @@
     ],
     "purpose": "Customer can report damage from active/completed delivery with evidence.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S002",
@@ -775,7 +991,10 @@
     ],
     "purpose": "Customer can identify missing lines/quantities and track remedy.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S003",
@@ -789,7 +1008,10 @@
     ],
     "purpose": "Wrong-product flow preserves order/fitment/pick evidence.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S004",
@@ -803,7 +1025,10 @@
     ],
     "purpose": "Capture seal/package state and chain-of-custody issue.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S005",
@@ -817,7 +1042,10 @@
     ],
     "purpose": "Customer sees failure reason and valid reschedule/pickup/refund options.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S006",
@@ -831,7 +1059,10 @@
     ],
     "purpose": "Contact/reschedule/secure fallback according to branch policy.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S007",
@@ -845,7 +1076,10 @@
     ],
     "purpose": "Property/vehicle/garment/item damage can create claim/RCE case.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S008",
@@ -859,7 +1093,10 @@
     ],
     "purpose": "Customer can challenge POD and submit contrary evidence.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S009",
@@ -873,7 +1110,10 @@
     ],
     "purpose": "Lost item/package workflow coordinates supplier/courier/customer remedy.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FUL-S010",
@@ -887,7 +1127,10 @@
     ],
     "purpose": "Immediate safety escalation and evidence preservation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HOME-S001",
@@ -899,7 +1142,10 @@
     ],
     "purpose": "Root landing routes users to services without forced auth.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HOME-S002",
@@ -911,7 +1157,10 @@
     ],
     "purpose": "Routes intent to branch candidates with deterministic safety checks.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HOME-S003",
@@ -923,7 +1172,10 @@
     ],
     "purpose": "Compact cross-branch active Activity on home.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HOME-S004",
@@ -935,7 +1187,10 @@
     ],
     "purpose": "Checks branch/zone availability before transaction.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HOME-S005",
@@ -947,7 +1202,10 @@
     ],
     "purpose": "Preserves safe draft/search/vehicle context through auth.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "AUTH-S001",
@@ -959,7 +1217,10 @@
     ],
     "purpose": "One credential set across customer DIAL surfaces.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "AUTH-S002",
@@ -974,7 +1235,10 @@
     ],
     "purpose": "Sign in/create/recover/link/security UX.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "AUTH-S003",
@@ -988,7 +1252,10 @@
     ],
     "purpose": "One issuer with secure app-specific sessions.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "AUTH-S004",
@@ -1000,7 +1267,10 @@
     ],
     "purpose": "Securely link wa_id to DIAL identity.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "AUTH-S005",
@@ -1012,7 +1282,10 @@
     ],
     "purpose": "Controlled verified merge with lineage.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S001",
@@ -1024,7 +1297,10 @@
     ],
     "purpose": "DIAL owns Meta ingress/outbound.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S002",
@@ -1036,7 +1312,10 @@
     ],
     "purpose": "Encrypted data exchange and typed domain access.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S003",
@@ -1048,7 +1327,10 @@
     ],
     "purpose": "Versioned branch flows/environments.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S004",
@@ -1060,7 +1342,10 @@
     ],
     "purpose": "Approved templates/status/window compliance.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S005",
@@ -1072,7 +1357,10 @@
     ],
     "purpose": "Deterministic branch/transaction conversation state.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S006",
@@ -1084,7 +1372,10 @@
     ],
     "purpose": "Create/check canonical PaymentIntents.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S007",
@@ -1097,7 +1388,10 @@
     ],
     "purpose": "Human support with DIAL channel ownership.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S008",
@@ -1109,7 +1403,10 @@
     ],
     "purpose": "Attach media/location to authoritative context.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S009",
@@ -1123,12 +1420,15 @@
     ],
     "purpose": "Move to rich UI and return without context loss.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "WA-S010",
     "area": "WHATSAPP",
-    "name": "Automated→human escalation",
+    "name": "Automated\u2192human escalation",
     "owner": "support",
     "app_families": [
       "WHATSAPP",
@@ -1136,7 +1436,10 @@
     ],
     "purpose": "AI safe support then context-rich human handoff.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-WA-S001",
@@ -1148,7 +1451,10 @@
     ],
     "purpose": "Server-side Paynow initiation/status.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-WA-S002",
@@ -1160,7 +1466,10 @@
     ],
     "purpose": "ContiPay initiation/status via current provider docs.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-WA-S003",
@@ -1172,7 +1481,10 @@
     ],
     "purpose": "Prevent duplicate charges after redirect/network ambiguity.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S001",
@@ -1184,7 +1496,10 @@
     ],
     "purpose": "One payment state machine across all DIAL divisions/channels.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S002",
@@ -1196,7 +1511,10 @@
     ],
     "purpose": "Determines allowed channels by BU/currency/zone/source/amount/channel.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S003",
@@ -1211,7 +1529,10 @@
     ],
     "purpose": "Controlled physical cash collection/custody/count/handover.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S004",
@@ -1225,7 +1546,10 @@
     ],
     "purpose": "Merchant-initiated direct EcoCash push with provider confirmation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S005",
@@ -1239,7 +1563,10 @@
     ],
     "purpose": "Initiate, callback, poll, status normalization and settlement.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S006",
@@ -1253,7 +1580,10 @@
     ],
     "purpose": "Authenticated provider adapter with notification/query/reconciliation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S007",
@@ -1268,7 +1598,10 @@
     ],
     "purpose": "Orders v2 approval/capture, webhooks and refunds.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S008",
@@ -1280,7 +1613,10 @@
     ],
     "purpose": "Authenticates/dedupes provider events and advances PaymentIntent.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S009",
@@ -1292,7 +1628,10 @@
     ],
     "purpose": "Gross/fee/net settlement matching to channel clearing accounts.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S010",
@@ -1304,7 +1643,10 @@
     ],
     "purpose": "Tracks missing/duplicate/mismatched confirmation or settlement.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S011",
@@ -1316,7 +1658,10 @@
     ],
     "purpose": "Controlled refund workflow linked to original payment and RCE/return decision.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S012",
@@ -1329,7 +1674,10 @@
     ],
     "purpose": "Provider/customer dispute workflow without mutating original receipt.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S013",
@@ -1341,7 +1689,10 @@
     ],
     "purpose": "Human-readable receipt/PDF from canonical payment/accounting state.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "PAY-S014",
@@ -1353,7 +1704,10 @@
     ],
     "purpose": "Separates currency from rail and prevents invalid channel/currency combinations.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S001",
@@ -1365,7 +1719,10 @@
     ],
     "purpose": "Scoped finance workspace over one canonical DIAL Ledger.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S002",
@@ -1377,7 +1734,10 @@
     ],
     "purpose": "Non-posting roll-up of BU channel accounts.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S003",
@@ -1389,7 +1749,10 @@
     ],
     "purpose": "Dedicated Cash/EcoCash/Paynow/ContiPay/PayPal accounts and journals.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S004",
@@ -1401,7 +1764,10 @@
     ],
     "purpose": "Date/ref/description/debit/credit/running balance account view.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S005",
@@ -1413,7 +1779,10 @@
     ],
     "purpose": "Full posting/provider/source/approval/reconciliation/evidence details.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S006",
@@ -1425,7 +1794,10 @@
     ],
     "purpose": "Server-generated transaction detail PDF with hash/audit.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S007",
@@ -1437,7 +1809,10 @@
     ],
     "purpose": "Opening balance, line movements, totals and closing balance by currency.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S008",
@@ -1449,7 +1824,10 @@
     ],
     "purpose": "Dedicated source journal linked to original transaction/refund.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S009",
@@ -1461,7 +1839,10 @@
     ],
     "purpose": "Separate dispute register for provider/customer chargebacks.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S010",
@@ -1474,7 +1855,10 @@
     ],
     "purpose": "Per-BU controlled petty cash float and voucher history.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S011",
@@ -1485,9 +1869,12 @@
       "STAFF_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "Request→approval→release→custodian acknowledgement.",
+    "purpose": "Request\u2192approval\u2192release\u2192custodian acknowledgement.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S012",
@@ -1500,7 +1887,10 @@
     ],
     "purpose": "Expense/cash disbursement evidence and accounting.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S013",
@@ -1512,7 +1902,10 @@
     ],
     "purpose": "Count, witness, variance, approved adjustment and CAPA.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "FIN-S014",
@@ -1524,7 +1917,10 @@
     ],
     "purpose": "Position/employee-scoped requester, approver, release, custodian authorities.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S001",
@@ -1537,7 +1933,10 @@
     ],
     "purpose": "Versioned positions with BU/department/grade/reporting line.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S002",
@@ -1550,7 +1949,10 @@
     ],
     "purpose": "Purpose, responsibilities, KPIs, qualifications and work requirements.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S003",
@@ -1563,7 +1965,10 @@
     ],
     "purpose": "Versioned clause/variable/annexure template per position/grade/jurisdiction.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S004",
@@ -1576,7 +1981,10 @@
     ],
     "purpose": "Immutable employee contract generated from approved position/compensation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S005",
@@ -1588,7 +1996,10 @@
     ],
     "purpose": "Default application/data permissions derived from position.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S006",
@@ -1600,7 +2011,10 @@
     ],
     "purpose": "Request/approve/release/refund/journal thresholds and scopes.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S007",
@@ -1614,7 +2028,10 @@
     ],
     "purpose": "Photo picker/camera/crop/private upload during onboarding.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S008",
@@ -1627,7 +2044,10 @@
     ],
     "purpose": "Contract/identity/payroll/access/assets/training/SHEQ readiness before activation.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S009",
@@ -1639,7 +2059,10 @@
     ],
     "purpose": "Revokes old position permissions and grants new scoped bundle.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S010",
@@ -1651,7 +2074,10 @@
     ],
     "purpose": "Revokes sessions/financial authority and settles cash custody before exit.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S011",
@@ -1663,7 +2089,10 @@
     ],
     "purpose": "Effective-dated delegated authority with threshold/scope/SoD checks.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   },
   {
     "capability_id": "HR-S012",
@@ -1675,6 +2104,9 @@
     ],
     "purpose": "Controlled clause library, preview, approval, versioning and e-sign integration.",
     "eventualities": [],
-    "status": "SPECIFIED"
+    "status": "SPECIFIED",
+    "code_paths": [],
+    "test_paths": [],
+    "current_gate": "PLANNED"
   }
 ]
