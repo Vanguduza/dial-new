@@ -1,0 +1,110 @@
+[
+  {
+    "capability_id": "PEOPLE-POS-001",
+    "name": "Company Position Catalog",
+    "owner": "people/organisation",
+    "functions": [
+      "create",
+      "version",
+      "retire",
+      "assign"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-POS-002",
+    "name": "Role-based Contract Template",
+    "owner": "people/contracts",
+    "functions": [
+      "clause library",
+      "template",
+      "version",
+      "snapshot",
+      "approve",
+      "e-sign"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-POS-003",
+    "name": "Position Permission Bundle",
+    "owner": "corporate-iam",
+    "functions": [
+      "bundle",
+      "scope",
+      "effective date",
+      "provision",
+      "revoke"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-POS-004",
+    "name": "Financial Authority by Position",
+    "owner": "approvals/finance",
+    "functions": [
+      "request authority",
+      "approval authority",
+      "release authority",
+      "thresholds",
+      "SoD"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-ONB-001",
+    "name": "Employee Photo Capture",
+    "owner": "people/onboarding",
+    "functions": [
+      "image picker",
+      "camera",
+      "crop",
+      "quarantine",
+      "re-encode",
+      "private storage",
+      "avatar"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-ONB-002",
+    "name": "Onboarding Readiness Gate",
+    "owner": "people/onboarding",
+    "functions": [
+      "contract",
+      "identity",
+      "payroll",
+      "access",
+      "assets",
+      "training",
+      "SHEQ",
+      "manager"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-JML-001",
+    "name": "Mover Permission Diff",
+    "owner": "people/corporate-iam",
+    "functions": [
+      "recompute",
+      "revoke old",
+      "grant new",
+      "contract/pay update"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "capability_id": "PEOPLE-JML-002",
+    "name": "Leaver Authority Revocation",
+    "owner": "people/corporate-iam",
+    "functions": [
+      "session revoke",
+      "finance authority revoke",
+      "asset recovery",
+      "petty cash settlement",
+      "workflow reassignment"
+    ],
+    "status": "SPECIFIED"
+  }
+]

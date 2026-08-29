@@ -1,0 +1,4660 @@
+[
+  {
+    "feature_id": "SPARE-F001",
+    "module": "SPARE",
+    "outcome": "Vehicle selection & garage",
+    "owner": "vehicles/vehicle-hub",
+    "aggregate": "VehicleProfile",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST"
+    ],
+    "realization_ref": "FR-SPARE-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F002",
+    "module": "SPARE",
+    "outcome": "Part/category search & browse",
+    "owner": "catalogue/search",
+    "aggregate": "SearchQuery",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST"
+    ],
+    "realization_ref": "FR-SPARE-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F003",
+    "module": "SPARE",
+    "outcome": "Fitment claims & confidence",
+    "owner": "fitment",
+    "aggregate": "FitmentClaim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-SPARE-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F004",
+    "module": "SPARE",
+    "outcome": "Catalogue ingest & normalization",
+    "owner": "catalogue",
+    "aggregate": "CatalogueIngestBatch",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST"
+    ],
+    "realization_ref": "FR-SPARE-F004",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F005",
+    "module": "SPARE",
+    "outcome": "Supplier offers & stock freshness",
+    "owner": "suppliers",
+    "aggregate": "SupplierOffer",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-MERCUR-VENDOR"
+    ],
+    "realization_ref": "FR-SPARE-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F006",
+    "module": "SPARE",
+    "outcome": "Non-catalogue sourcing request",
+    "owner": "spare-sourcing",
+    "aggregate": "SpareRequest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST"
+    ],
+    "realization_ref": "FR-SPARE-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F007",
+    "module": "SPARE",
+    "outcome": "Offer comparison & selection",
+    "owner": "orders/pricing",
+    "aggregate": "OfferSelection",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS"
+    ],
+    "realization_ref": "FR-SPARE-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F008",
+    "module": "SPARE",
+    "outcome": "Cart, pricing & promotions",
+    "owner": "pricing/promotions",
+    "aggregate": "PriceQuote",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS"
+    ],
+    "realization_ref": "FR-SPARE-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F009",
+    "module": "SPARE",
+    "outcome": "Checkout / FX / payment / fiscal",
+    "owner": "orders/payments/tax",
+    "aggregate": "SpareOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS"
+    ],
+    "realization_ref": "FR-SPARE-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F010",
+    "module": "SPARE",
+    "outcome": "Supplier acceptance & fulfilment prep",
+    "owner": "orders/suppliers",
+    "aggregate": "SupplierFulfilment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-MERCUR-VENDOR"
+    ],
+    "realization_ref": "FR-SPARE-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F011",
+    "module": "SPARE",
+    "outcome": "Delivery / pickup / POD",
+    "owner": "delivery",
+    "aggregate": "DeliveryJob",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-SPARE-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F012",
+    "module": "SPARE",
+    "outcome": "Returns / warranty / refunds",
+    "owner": "orders/claims/rce",
+    "aggregate": "ReturnRequest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-SPARE-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F013",
+    "module": "SPARE",
+    "outcome": "Counterfeit/wrong-fitment quality",
+    "owner": "provider-quality/trust",
+    "aggregate": "QualityCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST"
+    ],
+    "realization_ref": "FR-SPARE-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F014",
+    "module": "SPARE",
+    "outcome": "Supplier portal",
+    "owner": "supplier-web",
+    "aggregate": "SupplierWorkspace",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-MERCUR-VENDOR"
+    ],
+    "realization_ref": "FR-SPARE-F014",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F015",
+    "module": "SPARE",
+    "outcome": "WhatsApp Spare journey",
+    "owner": "whatsapp",
+    "aggregate": "ChannelSession",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "SERVICE-WHATSAPP"
+    ],
+    "realization_ref": "FR-SPARE-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F016",
+    "module": "SPARE",
+    "outcome": "Vehicle purchase/service history",
+    "owner": "vehicle-hub",
+    "aggregate": "VehicleHistoryEntry",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST",
+      "DONOR-LUBELOGGER"
+    ],
+    "realization_ref": "FR-SPARE-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "SPARE-F017",
+    "module": "SPARE",
+    "outcome": "Spare AI assistance",
+    "owner": "ai/catalogue-intelligence",
+    "aggregate": "AIInsight",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-MERCUR-STOREFRONT",
+      "DONOR-NIMARA-YNS",
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING",
+      "DONOR-VISUAL-TRANSFORM-SPECIALIST",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-SPARE-F017",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-SPARE"
+  },
+  {
+    "feature_id": "TECH-F001",
+    "module": "TECH",
+    "outcome": "Trade & JobClass configuration",
+    "owner": "trades/job-classes",
+    "aggregate": "JobClass",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F002",
+    "module": "TECH",
+    "outcome": "Guided diagnostic intake",
+    "owner": "tech-intake",
+    "aggregate": "JobRequest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F003",
+    "module": "TECH",
+    "outcome": "Direct booking & slot selection",
+    "owner": "jobs/booking",
+    "aggregate": "BookingIntent",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY",
+      "SERVICE-CALCOM"
+    ],
+    "realization_ref": "FR-TECH-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F004",
+    "module": "TECH",
+    "outcome": "Opportunity Marketplace post",
+    "owner": "opportunity-marketplace",
+    "aggregate": "Opportunity",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F005",
+    "module": "TECH",
+    "outcome": "Eligibility & matching",
+    "owner": "matching/technicians",
+    "aggregate": "MatchSet",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F006",
+    "module": "TECH",
+    "outcome": "Interest/proposal workflow",
+    "owner": "opportunity-marketplace",
+    "aggregate": "Proposal",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F007",
+    "module": "TECH",
+    "outcome": "Award & job convergence",
+    "owner": "opportunity-marketplace/jobs",
+    "aggregate": "Award",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F008",
+    "module": "TECH",
+    "outcome": "Diagnosis, quote & approval",
+    "owner": "pricing/jobs",
+    "aggregate": "Quote",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F009",
+    "module": "TECH",
+    "outcome": "Job Reserve / protected funds",
+    "owner": "payments/ledger",
+    "aggregate": "JobReserve",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F010",
+    "module": "TECH",
+    "outcome": "Scheduling & dispatch",
+    "owner": "jobs/dispatch",
+    "aggregate": "JobDispatch",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY",
+      "SERVICE-CALCOM",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-TECH-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F011",
+    "module": "TECH",
+    "outcome": "Technician Android offline execution",
+    "owner": "technician-android",
+    "aggregate": "JobExecution",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F012",
+    "module": "TECH",
+    "outcome": "HIRA / PPE / LOTO / SOP",
+    "owner": "job-safety",
+    "aggregate": "JobSafetyPack",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F013",
+    "module": "TECH",
+    "outcome": "Check-in and evidence",
+    "owner": "jobs/evidence",
+    "aggregate": "JobEvidence",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-TECH-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F014",
+    "module": "TECH",
+    "outcome": "Scope variation",
+    "owner": "jobs/pricing",
+    "aggregate": "Variation",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F015",
+    "module": "TECH",
+    "outcome": "Team jobs/project handoff",
+    "owner": "projects/jobs",
+    "aggregate": "TeamAssignment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F016",
+    "module": "TECH",
+    "outcome": "Completion / customer confirmation",
+    "owner": "jobs",
+    "aggregate": "Job",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F017",
+    "module": "TECH",
+    "outcome": "Payout / WHT / settlement",
+    "owner": "ledger/tax/treasury",
+    "aggregate": "ProviderSettlement",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F017",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F018",
+    "module": "TECH",
+    "outcome": "Workmanship protection / disputes",
+    "owner": "claims/rce/guarantee",
+    "aggregate": "Claim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F018",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F019",
+    "module": "TECH",
+    "outcome": "Technician scoring & quality",
+    "owner": "technician-scoring/provider-quality",
+    "aggregate": "TechnicianScore",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F019",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "TECH-F020",
+    "module": "TECH",
+    "outcome": "Anti-circumvention / trust",
+    "owner": "trust",
+    "aggregate": "TrustSignal",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/TECH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "realization_ref": "FR-TECH-F020",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-TECH"
+  },
+  {
+    "feature_id": "GROC-F001",
+    "module": "GROCERIES",
+    "outcome": "Merchant/store catalogue projection",
+    "owner": "groceries/catalogue",
+    "aggregate": "StoreProduct",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F002",
+    "module": "GROCERIES",
+    "outcome": "Store/zone/slot selection",
+    "owner": "groceries/slots",
+    "aggregate": "FulfilmentSlot",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F003",
+    "module": "GROCERIES",
+    "outcome": "Variable-measure goods",
+    "owner": "groceries/orders",
+    "aggregate": "MeasuredLine",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F004",
+    "module": "GROCERIES",
+    "outcome": "Order group / merchant suborders",
+    "owner": "groceries/orders",
+    "aggregate": "GroceryOrderGroup",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F005",
+    "module": "GROCERIES",
+    "outcome": "Merchant-pick fulfilment",
+    "owner": "groceries/picking",
+    "aggregate": "PickTask",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F006",
+    "module": "GROCERIES",
+    "outcome": "DIAL shopper fulfilment",
+    "owner": "groceries/shopper",
+    "aggregate": "ShopperTask",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F007",
+    "module": "GROCERIES",
+    "outcome": "Substitutions",
+    "owner": "groceries/substitutions",
+    "aggregate": "SubstitutionDecision",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F008",
+    "module": "GROCERIES",
+    "outcome": "Produce preferences",
+    "owner": "groceries/preferences",
+    "aggregate": "ProducePreference",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F009",
+    "module": "GROCERIES",
+    "outcome": "Final total / approval ceiling",
+    "owner": "pricing/payments",
+    "aggregate": "GroceryPriceFinalization",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F010",
+    "module": "GROCERIES",
+    "outcome": "Click & collect",
+    "owner": "groceries/fulfilment",
+    "aggregate": "PickupHandoff",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F011",
+    "module": "GROCERIES",
+    "outcome": "Delivery / cold-chain evidence",
+    "owner": "delivery/groceries-safety",
+    "aggregate": "GroceryDelivery",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-GROC-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F012",
+    "module": "GROCERIES",
+    "outcome": "My Pantry stock model",
+    "owner": "pantry",
+    "aggregate": "PantryItem",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F013",
+    "module": "GROCERIES",
+    "outcome": "Scheduled basket / route delivery",
+    "owner": "pantry/groceries/delivery",
+    "aggregate": "ScheduledBasket",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-GROC-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F014",
+    "module": "GROCERIES",
+    "outcome": "Beneficiary/gift ordering",
+    "owner": "groceries/orders",
+    "aggregate": "BeneficiaryOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F015",
+    "module": "GROCERIES",
+    "outcome": "Restricted goods policy",
+    "owner": "compliance/groceries",
+    "aggregate": "RestrictionCheck",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F016",
+    "module": "GROCERIES",
+    "outcome": "Food safety / lot / recall",
+    "owner": "groceries-safety",
+    "aggregate": "FoodSafetyCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F017",
+    "module": "GROCERIES",
+    "outcome": "Grocery-specific resolution",
+    "owner": "rce/claims",
+    "aggregate": "GroceryIssue",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F017",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "GROC-F018",
+    "module": "GROCERIES",
+    "outcome": "Merchant operations/reconciliation",
+    "owner": "suppliers/groceries",
+    "aggregate": "MerchantSubOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/GROCERIES_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F018",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES"
+  },
+  {
+    "feature_id": "LAUN-F001",
+    "module": "LAUNDRY",
+    "outcome": "Service catalogue & exclusions",
+    "owner": "laundry/catalogue",
+    "aggregate": "LaundryService",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F002",
+    "module": "LAUNDRY",
+    "outcome": "Booking / estimate / max approval",
+    "owner": "laundry/orders/pricing",
+    "aggregate": "LaundryOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F003",
+    "module": "LAUNDRY",
+    "outcome": "Pickup custody",
+    "owner": "delivery/laundry-custody",
+    "aggregate": "CustodyHandoff",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-LAUN-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F004",
+    "module": "LAUNDRY",
+    "outcome": "Facility check-in",
+    "owner": "laundry/facility",
+    "aggregate": "FacilityIntake",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F005",
+    "module": "LAUNDRY",
+    "outcome": "Weigh/itemize/inspect",
+    "owner": "laundry/intake",
+    "aggregate": "ItemizedLoad",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F006",
+    "module": "LAUNDRY",
+    "outcome": "Care label/risk/reclassification",
+    "owner": "laundry/garments",
+    "aggregate": "GarmentAssessment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F007",
+    "module": "LAUNDRY",
+    "outcome": "Final price approval",
+    "owner": "laundry/pricing/payments",
+    "aggregate": "LaundryPriceFinal",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F008",
+    "module": "LAUNDRY",
+    "outcome": "Sort/load planning",
+    "owner": "laundry/production",
+    "aggregate": "ProductionLoad",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F009",
+    "module": "LAUNDRY",
+    "outcome": "Machine/process execution",
+    "owner": "laundry/production",
+    "aggregate": "ProductionRun",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F010",
+    "module": "LAUNDRY",
+    "outcome": "QC / rewash",
+    "owner": "laundry/quality",
+    "aggregate": "LaundryQC",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F011",
+    "module": "LAUNDRY",
+    "outcome": "Assembly/rack/ready",
+    "owner": "laundry/facility",
+    "aggregate": "RackAssembly",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F012",
+    "module": "LAUNDRY",
+    "outcome": "Return delivery custody",
+    "owner": "delivery/laundry-custody",
+    "aggregate": "ReturnHandoff",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-LAUN-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F013",
+    "module": "LAUNDRY",
+    "outcome": "Damage/missing/claim",
+    "owner": "claims/rce",
+    "aggregate": "LaundryClaim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F014",
+    "module": "LAUNDRY",
+    "outcome": "Subscriptions",
+    "owner": "laundry/commercial",
+    "aggregate": "LaundryPlan",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F015",
+    "module": "LAUNDRY",
+    "outcome": "Commercial manifests/contracts",
+    "owner": "laundry/b2b",
+    "aggregate": "CommercialManifest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F016",
+    "module": "LAUNDRY",
+    "outcome": "Healthcare segregation",
+    "owner": "laundry/healthcare",
+    "aggregate": "HealthcareLaundryBatch",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F017",
+    "module": "LAUNDRY",
+    "outcome": "Facility/machine capacity",
+    "owner": "laundry/capacity",
+    "aggregate": "FacilityCapacity",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F017",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "LAUN-F018",
+    "module": "LAUNDRY",
+    "outcome": "Environmental/compliance",
+    "owner": "compliance/laundry",
+    "aggregate": "LaundryCompliance",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/LAUNDRY_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-LAUNDRY-CONSUMER",
+      "REF-LAUNDRY-OPS"
+    ],
+    "realization_ref": "FR-LAUN-F018",
+    "client_exposure": "MIXED",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-LAUNDRY"
+  },
+  {
+    "feature_id": "FLEET-F001",
+    "module": "FLEET",
+    "outcome": "Organisation/fleet hierarchy",
+    "owner": "fleet",
+    "aggregate": "Fleet",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F001",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F002",
+    "module": "FLEET",
+    "outcome": "Vehicle registry linkage",
+    "owner": "fleet/vehicle-hub",
+    "aggregate": "FleetVehicle",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F002",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F003",
+    "module": "FLEET",
+    "outcome": "Driver/custodian assignments",
+    "owner": "fleet",
+    "aggregate": "VehicleAssignment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F003",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F004",
+    "module": "FLEET",
+    "outcome": "Odometer/usage capture",
+    "owner": "fleet/vehicle-hub",
+    "aggregate": "UsageReading",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F004",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F005",
+    "module": "FLEET",
+    "outcome": "Maintenance schedules",
+    "owner": "fleet/maintenance",
+    "aggregate": "MaintenancePlan",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F005",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F006",
+    "module": "FLEET",
+    "outcome": "Defect reporting",
+    "owner": "fleet/defects",
+    "aggregate": "Defect",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F006",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F007",
+    "module": "FLEET",
+    "outcome": "Service/job orchestration",
+    "owner": "fleet/jobs",
+    "aggregate": "FleetWorkOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F007",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F008",
+    "module": "FLEET",
+    "outcome": "Parts/order orchestration",
+    "owner": "fleet/spare",
+    "aggregate": "FleetPartDemand",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F008",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F009",
+    "module": "FLEET",
+    "outcome": "Inspections",
+    "owner": "fleet/compliance",
+    "aggregate": "VehicleInspection",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F009",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F010",
+    "module": "FLEET",
+    "outcome": "Licence/insurance/permit expiry",
+    "owner": "vehicle-hub/compliance",
+    "aggregate": "VehicleDocument",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F010",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F011",
+    "module": "FLEET",
+    "outcome": "Downtime & availability",
+    "owner": "fleet",
+    "aggregate": "VehicleAvailability",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F011",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F012",
+    "module": "FLEET",
+    "outcome": "Spend/TCO/cost centres",
+    "owner": "fleet/finance",
+    "aggregate": "FleetCost",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F012",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F013",
+    "module": "FLEET",
+    "outcome": "Supplier/tech performance",
+    "owner": "provider-quality/fleet",
+    "aggregate": "FleetProviderScore",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F013",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F014",
+    "module": "FLEET",
+    "outcome": "Optional telematics",
+    "owner": "fleet/telemetry",
+    "aggregate": "TelemetryObservation",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F014",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "FLEET-F015",
+    "module": "FLEET",
+    "outcome": "B2B reports/controls",
+    "owner": "fleet",
+    "aggregate": "FleetReport",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/FLEET_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "realization_ref": "FR-FLEET-F015",
+    "client_exposure": "B2B_CUSTOMER",
+    "app_families": [
+      "DIAL_BUSINESS",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-FLEET"
+  },
+  {
+    "feature_id": "VHUB-F001",
+    "module": "VHUB",
+    "outcome": "Vehicle canonical identity",
+    "owner": "vehicle-hub",
+    "aggregate": "Vehicle",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F002",
+    "module": "VHUB",
+    "outcome": "VIN/chassis/model facts",
+    "owner": "vehicle-hub",
+    "aggregate": "VehicleIdentityClaim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F003",
+    "module": "VHUB",
+    "outcome": "Ownership/organisation relationship",
+    "owner": "vehicle-hub/party",
+    "aggregate": "VehicleRelationship",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F004",
+    "module": "VHUB",
+    "outcome": "Registration/licence/insurance docs",
+    "owner": "vehicle-hub/records",
+    "aggregate": "VehicleDocument",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F005",
+    "module": "VHUB",
+    "outcome": "Mileage history",
+    "owner": "vehicle-hub",
+    "aggregate": "MileageReading",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F006",
+    "module": "VHUB",
+    "outcome": "Service history",
+    "owner": "vehicle-hub",
+    "aggregate": "ServiceHistoryEntry",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F007",
+    "module": "VHUB",
+    "outcome": "Spare/order history",
+    "owner": "vehicle-hub",
+    "aggregate": "PartHistoryEntry",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F008",
+    "module": "VHUB",
+    "outcome": "Assist/incident history",
+    "owner": "vehicle-hub",
+    "aggregate": "IncidentHistoryEntry",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F009",
+    "module": "VHUB",
+    "outcome": "Maintenance reminders",
+    "owner": "vehicle-hub/engagement",
+    "aggregate": "VehicleReminder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F010",
+    "module": "VHUB",
+    "outcome": "Document expiry reminders",
+    "owner": "vehicle-hub/engagement",
+    "aggregate": "ExpiryReminder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F011",
+    "module": "VHUB",
+    "outcome": "Care eligibility",
+    "owner": "care/vehicle-hub",
+    "aggregate": "EligibilityAssessment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F012",
+    "module": "VHUB",
+    "outcome": "Record conflict/merge",
+    "owner": "vehicle-hub/rce",
+    "aggregate": "VehicleConflict",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F013",
+    "module": "VHUB",
+    "outcome": "Vehicle sharing/delegation",
+    "owner": "vehicle-hub/identity",
+    "aggregate": "VehicleAccessGrant",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "VHUB-F014",
+    "module": "VHUB",
+    "outcome": "Export/history package",
+    "owner": "vehicle-hub/records",
+    "aggregate": "VehicleHistoryPackage",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/VHUB_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-LUBELOGGER",
+      "REF-SERVICEMYRIDE"
+    ],
+    "realization_ref": "FR-VHUB-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-VEHICLE-HUB"
+  },
+  {
+    "feature_id": "CARE-F001",
+    "module": "CARE",
+    "outcome": "Plan catalogue/versioning",
+    "owner": "care",
+    "aggregate": "CarePlan",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F002",
+    "module": "CARE",
+    "outcome": "Vehicle/customer eligibility",
+    "owner": "care",
+    "aggregate": "CareEligibility",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F003",
+    "module": "CARE",
+    "outcome": "Membership/subscription",
+    "owner": "care",
+    "aggregate": "CareMembership",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F004",
+    "module": "CARE",
+    "outcome": "Recurring payment mandate",
+    "owner": "payments/care",
+    "aggregate": "CareBillingAgreement",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F005",
+    "module": "CARE",
+    "outcome": "Entitlement ledger",
+    "owner": "care",
+    "aggregate": "Entitlement",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F006",
+    "module": "CARE",
+    "outcome": "Maintenance reminders",
+    "owner": "engagement/care",
+    "aggregate": "CareReminder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F007",
+    "module": "CARE",
+    "outcome": "Tech benefit invocation",
+    "owner": "care/jobs",
+    "aggregate": "BenefitUse",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F008",
+    "module": "CARE",
+    "outcome": "Assist benefit invocation",
+    "owner": "care/assist",
+    "aggregate": "AssistEntitlementUse",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F009",
+    "module": "CARE",
+    "outcome": "Spare discount/benefit",
+    "owner": "care/pricing",
+    "aggregate": "CarePricingBenefit",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F010",
+    "module": "CARE",
+    "outcome": "Grace/retry/suspension",
+    "owner": "care/payments",
+    "aggregate": "MembershipBillingState",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F011",
+    "module": "CARE",
+    "outcome": "Renewal/cancellation",
+    "owner": "care",
+    "aggregate": "CareMembership",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F012",
+    "module": "CARE",
+    "outcome": "Abuse/limit controls",
+    "owner": "trust/care",
+    "aggregate": "BenefitAbuseCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F013",
+    "module": "CARE",
+    "outcome": "Benefit economics/contribution",
+    "owner": "care/finance",
+    "aggregate": "CareEconomicsProjection",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "CARE-F014",
+    "module": "CARE",
+    "outcome": "Partner benefits",
+    "owner": "partners/care",
+    "aggregate": "PartnerBenefit",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CARE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-CARE-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-CARE"
+  },
+  {
+    "feature_id": "ASST-F001",
+    "module": "ASSIST",
+    "outcome": "Incident intake",
+    "owner": "assist",
+    "aggregate": "AssistIncident",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F002",
+    "module": "ASSIST",
+    "outcome": "Incident-scoped location",
+    "owner": "assist/location",
+    "aggregate": "IncidentLocation",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F003",
+    "module": "ASSIST",
+    "outcome": "Coverage/eligibility",
+    "owner": "assist/network",
+    "aggregate": "AssistCoverage",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F004",
+    "module": "ASSIST",
+    "outcome": "Safety triage",
+    "owner": "assist/safety",
+    "aggregate": "SafetyAssessment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F005",
+    "module": "ASSIST",
+    "outcome": "Roadside provider matching",
+    "owner": "matching/assist",
+    "aggregate": "AssistMatchSet",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F006",
+    "module": "ASSIST",
+    "outcome": "Tow partner dispatch",
+    "owner": "assist/delivery",
+    "aggregate": "AssistDispatch",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F007",
+    "module": "ASSIST",
+    "outcome": "ETA/routing",
+    "owner": "delivery/maps",
+    "aggregate": "AssistRoute",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F008",
+    "module": "ASSIST",
+    "outcome": "Emergency referral",
+    "owner": "assist/safety",
+    "aggregate": "EmergencyReferral",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F009",
+    "module": "ASSIST",
+    "outcome": "Provider arrival/check-in",
+    "owner": "assist/evidence",
+    "aggregate": "AssistCheckIn",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F010",
+    "module": "ASSIST",
+    "outcome": "Service/tow proof",
+    "owner": "assist/evidence",
+    "aggregate": "AssistServiceEvidence",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F011",
+    "module": "ASSIST",
+    "outcome": "Payment/entitlement",
+    "owner": "care/payments/assist",
+    "aggregate": "AssistCharge",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F012",
+    "module": "ASSIST",
+    "outcome": "Failed assistance fallback",
+    "owner": "assist/rce",
+    "aggregate": "AssistFailure",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F013",
+    "module": "ASSIST",
+    "outcome": "Damage/claim",
+    "owner": "claims/rce",
+    "aggregate": "AssistClaim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F014",
+    "module": "ASSIST",
+    "outcome": "Partner SLA/quality",
+    "owner": "provider-quality/assist",
+    "aggregate": "AssistPartnerQuality",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F015",
+    "module": "ASSIST",
+    "outcome": "Degraded communications",
+    "owner": "assist/notifications",
+    "aggregate": "AssistCommsState",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "ASST-F016",
+    "module": "ASSIST",
+    "outcome": "Vehicle Hub incident history",
+    "owner": "vehicle-hub",
+    "aggregate": "IncidentHistoryEntry",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/ASSIST_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "realization_ref": "FR-ASST-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-ASSIST"
+  },
+  {
+    "feature_id": "PROJ-F001",
+    "module": "PROJECTS",
+    "outcome": "Project request/intake",
+    "owner": "projects",
+    "aggregate": "ProjectRequest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F002",
+    "module": "PROJECTS",
+    "outcome": "Assessment/site visit",
+    "owner": "projects/jobs",
+    "aggregate": "ProjectAssessment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F003",
+    "module": "PROJECTS",
+    "outcome": "Scope/BoQ/quote",
+    "owner": "projects/pricing",
+    "aggregate": "ProjectQuote",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F004",
+    "module": "PROJECTS",
+    "outcome": "Project creation",
+    "owner": "projects",
+    "aggregate": "Project",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F005",
+    "module": "PROJECTS",
+    "outcome": "Team/project manager",
+    "owner": "projects/technicians",
+    "aggregate": "ProjectTeam",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F006",
+    "module": "PROJECTS",
+    "outcome": "Milestones",
+    "owner": "projects",
+    "aggregate": "Milestone",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F007",
+    "module": "PROJECTS",
+    "outcome": "Dependencies/critical path",
+    "owner": "projects",
+    "aggregate": "ProjectDependency",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F008",
+    "module": "PROJECTS",
+    "outcome": "Materials/Spare dependencies",
+    "owner": "projects/spare",
+    "aggregate": "MaterialRequirement",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F009",
+    "module": "PROJECTS",
+    "outcome": "Budget/commitment/EAC",
+    "owner": "projects/finance",
+    "aggregate": "ProjectBudget",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F010",
+    "module": "PROJECTS",
+    "outcome": "Progressive funding",
+    "owner": "payments/ledger/projects",
+    "aggregate": "ProjectFunding",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F011",
+    "module": "PROJECTS",
+    "outcome": "Variations",
+    "owner": "projects/pricing",
+    "aggregate": "ProjectVariation",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F012",
+    "module": "PROJECTS",
+    "outcome": "Safety/quality packs",
+    "owner": "projects/job-safety",
+    "aggregate": "ProjectSafetyQuality",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F013",
+    "module": "PROJECTS",
+    "outcome": "Evidence/progress reporting",
+    "owner": "projects/evidence",
+    "aggregate": "ProgressEvidence",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F014",
+    "module": "PROJECTS",
+    "outcome": "Client visibility",
+    "owner": "projects",
+    "aggregate": "ClientProjectView",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F015",
+    "module": "PROJECTS",
+    "outcome": "Completion/handover",
+    "owner": "projects",
+    "aggregate": "Project",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "PROJ-F016",
+    "module": "PROJECTS",
+    "outcome": "Claims/disputes",
+    "owner": "rce/claims/projects",
+    "aggregate": "ProjectCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/PROJECTS_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-PROJ-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_WEB",
+      "DIAL_BUSINESS_WEB"
+    ],
+    "support_profile": "SUPPORT-PROJECTS"
+  },
+  {
+    "feature_id": "CORP-F001",
+    "module": "CORPORATE",
+    "outcome": "Organisation/positions/cost centres",
+    "owner": "organisation",
+    "aggregate": "OrgStructure",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F001",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F002",
+    "module": "CORPORATE",
+    "outcome": "Recruitment",
+    "owner": "recruitment",
+    "aggregate": "RecruitmentRequisition",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F002",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F003",
+    "module": "CORPORATE",
+    "outcome": "Onboarding/JML",
+    "owner": "people/corporate-iam",
+    "aggregate": "Employment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR",
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-CORP-F003",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F004",
+    "module": "CORPORATE",
+    "outcome": "Attendance/shifts/timesheets",
+    "owner": "workforce",
+    "aggregate": "AttendanceRecord",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F004",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F005",
+    "module": "CORPORATE",
+    "outcome": "Leave",
+    "owner": "leave",
+    "aggregate": "LeaveRequest",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F005",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F006",
+    "module": "CORPORATE",
+    "outcome": "Performance/learning",
+    "owner": "performance/learning",
+    "aggregate": "PerformanceCycle",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F006",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F007",
+    "module": "CORPORATE",
+    "outcome": "Compensation/payroll",
+    "owner": "payroll",
+    "aggregate": "PayrollRun",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F007",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F008",
+    "module": "CORPORATE",
+    "outcome": "Zimbabwe statutory rules",
+    "owner": "statutory-rules",
+    "aggregate": "StatutoryRuleSet",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-FRAPPE-HR"
+    ],
+    "realization_ref": "FR-CORP-F008",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F009",
+    "module": "CORPORATE",
+    "outcome": "Corporate accounting/AP/AR",
+    "owner": "corporate-finance/ledger",
+    "aggregate": "AccountingEvent",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "realization_ref": "FR-CORP-F009",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F010",
+    "module": "CORPORATE",
+    "outcome": "FP&A/budget/forecast",
+    "owner": "fpa",
+    "aggregate": "BudgetVersion",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "realization_ref": "FR-CORP-F010",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F011",
+    "module": "CORPORATE",
+    "outcome": "Treasury/bank",
+    "owner": "treasury",
+    "aggregate": "PaymentBatch",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "realization_ref": "FR-CORP-F011",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F012",
+    "module": "CORPORATE",
+    "outcome": "Procurement/vendors",
+    "owner": "procurement",
+    "aggregate": "PurchaseOrder",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "realization_ref": "FR-CORP-F012",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F013",
+    "module": "CORPORATE",
+    "outcome": "Internal inventory/WMS",
+    "owner": "inventory",
+    "aggregate": "InventoryMovement",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT"
+    ],
+    "realization_ref": "FR-CORP-F013",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F014",
+    "module": "CORPORATE",
+    "outcome": "Assets/facilities",
+    "owner": "assets/facilities",
+    "aggregate": "Asset",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-SNIPEIT",
+      "DONOR-ERPNEXT"
+    ],
+    "realization_ref": "FR-CORP-F014",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F015",
+    "module": "CORPORATE",
+    "outcome": "Corporate IT/ITSM",
+    "owner": "corporate-it",
+    "aggregate": "ITCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-GLPI"
+    ],
+    "realization_ref": "FR-CORP-F015",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F016",
+    "module": "CORPORATE",
+    "outcome": "Contracts/e-sign/records",
+    "owner": "contracts/records",
+    "aggregate": "Contract",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "SERVICE-DOCUMENSO",
+      "SERVICE-RECORDS-PROCESSING"
+    ],
+    "realization_ref": "FR-CORP-F016",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F017",
+    "module": "CORPORATE",
+    "outcome": "GRC/internal audit",
+    "owner": "grc/internal-audit",
+    "aggregate": "CorporateRisk",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "realization_ref": "FR-CORP-F017",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F018",
+    "module": "CORPORATE",
+    "outcome": "Strategy/board/portfolio",
+    "owner": "strategy",
+    "aggregate": "InternalInitiative",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-OPENPROJECT"
+    ],
+    "realization_ref": "FR-CORP-F018",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F019",
+    "module": "CORPORATE",
+    "outcome": "SHEQ/continuity",
+    "owner": "corporate-sheq",
+    "aggregate": "CorporateIncident",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "realization_ref": "FR-CORP-F019",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "CORP-F020",
+    "module": "CORPORATE",
+    "outcome": "DoA/SoD/access review",
+    "owner": "corporate-iam/approvals",
+    "aggregate": "ApprovalPolicy",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/CORPORATE_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-COMMAND-DESIGN",
+      "SERVICE-OPA"
+    ],
+    "realization_ref": "FR-CORP-F020",
+    "client_exposure": "INTERNAL_OPERATOR",
+    "app_families": [
+      "COMMAND_CENTRE",
+      "STAFF_WEB",
+      "DIAL_BUSINESS_INTERNAL"
+    ],
+    "support_profile": "INTERNAL-SERVICE-DESK"
+  },
+  {
+    "feature_id": "HEALTH-F001",
+    "module": "HEALTH",
+    "outcome": "My Health patient/family consumer hub",
+    "owner": "health/my-health",
+    "aggregate": "PatientAccount",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F001",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F002",
+    "module": "HEALTH",
+    "outcome": "Practice OS",
+    "owner": "health/practice-os",
+    "aggregate": "Practice",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F002",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F003",
+    "module": "HEALTH",
+    "outcome": "Pharmacy OS",
+    "owner": "health/pharmacy-os",
+    "aggregate": "Pharmacy",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F003",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F004",
+    "module": "HEALTH",
+    "outcome": "Hospital OS",
+    "owner": "health/hospital-os",
+    "aggregate": "Facility",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F004",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F005",
+    "module": "HEALTH",
+    "outcome": "Healthcare Transaction Network",
+    "owner": "health/transaction-network",
+    "aggregate": "HealthTransaction",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F005",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F006",
+    "module": "HEALTH",
+    "outcome": "Pharma Cloud / supply network",
+    "owner": "health/pharma-cloud",
+    "aggregate": "PharmaSupplyRecord",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F006",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F007",
+    "module": "HEALTH",
+    "outcome": "Emergency Network",
+    "owner": "health/emergency-network",
+    "aggregate": "HealthEmergencyIncident",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F007",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F008",
+    "module": "HEALTH",
+    "outcome": "Communication Gateway",
+    "owner": "health/communications",
+    "aggregate": "HealthChannelSession",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F008",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F009",
+    "module": "HEALTH",
+    "outcome": "Developer Platform / integration APIs",
+    "owner": "health/developer-platform",
+    "aggregate": "HealthIntegration",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F009",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F010",
+    "module": "HEALTH",
+    "outcome": "Patient identity, consent & delegation",
+    "owner": "health/identity-consent",
+    "aggregate": "HealthIdentity",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F010",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F011",
+    "module": "HEALTH",
+    "outcome": "Clinical/interoperability record exchange",
+    "owner": "health/interoperability",
+    "aggregate": "ClinicalExchange",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F011",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F012",
+    "module": "HEALTH",
+    "outcome": "Prescription lifecycle",
+    "owner": "health/prescriptions",
+    "aggregate": "Prescription",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F012",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F013",
+    "module": "HEALTH",
+    "outcome": "Medicine catalogue/availability/dispensing",
+    "owner": "health/medicines",
+    "aggregate": "MedicineFulfilment",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F013",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F014",
+    "module": "HEALTH",
+    "outcome": "Medical-aid / claims transaction handling",
+    "owner": "health/claims-network",
+    "aggregate": "HealthClaim",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F014",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F015",
+    "module": "HEALTH",
+    "outcome": "Appointments/referrals/queueing",
+    "owner": "health/care-coordination",
+    "aggregate": "CareEncounter",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F015",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F016",
+    "module": "HEALTH",
+    "outcome": "Medicine delivery integration",
+    "owner": "health/delivery",
+    "aggregate": "MedicineDelivery",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F016",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F017",
+    "module": "HEALTH",
+    "outcome": "Clinical/pharmacy safety, compliance & audit",
+    "owner": "health/safety-compliance",
+    "aggregate": "HealthSafetyCase",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F017",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  },
+  {
+    "feature_id": "HEALTH-F018",
+    "module": "HEALTH",
+    "outcome": "Dial Health Command Centre & certification",
+    "owner": "health/command-centre",
+    "aggregate": "HealthDivisionState",
+    "status": "SPECIFIED",
+    "current_gate": "PLANNED",
+    "source_doc": "docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-ZHOTN-SPECIALIST-CANON"
+    ],
+    "realization_ref": "FR-HEALTH-F018",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_HEALTH",
+      "DIAL_HEALTH_WEB",
+      "WHATSAPP_HEALTH"
+    ],
+    "support_profile": "SUPPORT-HEALTH"
+  }
+]

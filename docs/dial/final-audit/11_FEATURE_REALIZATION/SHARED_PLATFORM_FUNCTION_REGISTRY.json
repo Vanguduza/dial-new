@@ -1,0 +1,3587 @@
+[
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-01",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "registration/login/recovery",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-02",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "party/person/org relationships",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-03",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "delegation/scopes",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-04",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "identity merge/conflict",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-05",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "JML/access revocation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY_PARTY-06",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/party",
+    "function": "audit/security",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-01",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "customer/household/org profile",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-02",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "cross-branch relationship graph",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-03",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "preferences/consent",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-04",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "duplicate/merge",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-05",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "activity projection",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER360-06",
+    "platform_id": "CUSTOMER360",
+    "platform_name": "Customer 360",
+    "owner": "customer360",
+    "function": "privacy/export",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-01",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "segments/audiences",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-02",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "journeys",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-03",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "channel policy",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-04",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "campaign approval",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-05",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "transactional vs marketing separation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ENGAGEMENT-06",
+    "platform_id": "ENGAGEMENT",
+    "platform_name": "Engagement / CRM",
+    "owner": "engagement",
+    "function": "attribution/unsubscribe",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-01",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "onboarding/KYC",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-02",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "offer/catalog relationship",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-03",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "stock freshness",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-04",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "order fulfilment",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-05",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "settlement projection",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SUPPLIER_OS-06",
+    "platform_id": "SUPPLIER_OS",
+    "platform_name": "Supplier OS",
+    "owner": "suppliers",
+    "function": "quality/suspension",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-01",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "vetting/credentials",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-02",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "availability",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-03",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "job profile",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-04",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "compliance/safety",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-05",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "score/quality",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TECHNICIAN_OS-06",
+    "platform_id": "TECHNICIAN_OS",
+    "platform_name": "Technician OS",
+    "owner": "technicians",
+    "function": "suspension/appeal",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-01",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "ingestion/provenance",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-02",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "normalization",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-03",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "vehicle applicability",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-04",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "fitment confidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-05",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "publication/revision",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CATALOGUE_FITMENT-06",
+    "platform_id": "CATALOGUE_FITMENT",
+    "platform_name": "Catalogue / Fitment",
+    "owner": "catalogue/fitment",
+    "function": "visual/EPC binding",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-01",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "deterministic quote",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-02",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "promotion eligibility",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-03",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "funding source",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-04",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "floor/guardrails",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-05",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "quote expiry/version",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PRICING_PROMOTIONS-06",
+    "platform_id": "PRICING_PROMOTIONS",
+    "platform_name": "Pricing / Promotions",
+    "owner": "pricing/promotions",
+    "function": "audit/explain",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-01",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "draft/place",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-02",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "line/suborder state",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-03",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "cancel/return",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-04",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "fulfilment links",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-05",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "receipt/history",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ORDERS-06",
+    "platform_id": "ORDERS",
+    "platform_name": "Orders",
+    "owner": "orders",
+    "function": "exception repair",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-01",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "job request/class",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-02",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "booking/award",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-03",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "quote/variation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-04",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "execution/evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-05",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "completion",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-JOBS-06",
+    "platform_id": "JOBS",
+    "platform_name": "Jobs / Trades / JobClass",
+    "owner": "jobs",
+    "function": "rework/claim",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-01",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "delivery job",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-02",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "dispatch/matching",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-03",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "pickup/custody",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-04",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "route/ETA",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-05",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "POD/COD",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DELIVERY-06",
+    "platform_id": "DELIVERY",
+    "platform_name": "Delivery",
+    "owner": "delivery",
+    "function": "failure/damage/retry",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-01",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "payment intent",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-02",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "authorization/capture",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-03",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "callbacks",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-04",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "refund/reversal",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-05",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "unknown state",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-06",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "reconciliation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-01",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "journal posting",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-02",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "balanced entries",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-03",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "subledger source refs",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-04",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "reversal/adjustment",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-05",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "period controls",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-06",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "ledger",
+    "function": "reconciliation/reporting",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-01",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "rule/rate versioning",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-02",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "calculation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-03",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "withholding",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-04",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "fiscal evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-05",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "provider freshness",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TAX_FX-06",
+    "platform_id": "TAX_FX",
+    "platform_name": "Tax / FX",
+    "owner": "tax/fx",
+    "function": "correction/revaluation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-01",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "cash position",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-02",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "payment batches",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-03",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "bank/PSP settlement",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-04",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "reserves",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-05",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "forecast",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TREASURY-06",
+    "platform_id": "TREASURY",
+    "platform_name": "Treasury",
+    "owner": "treasury",
+    "function": "reconciliation/exceptions",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-01",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "evidence objects",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-02",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "hash/provenance",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-03",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "timeline",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-04",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "access/audit",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-05",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "retention/legal hold",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EVIDENCE_AUDIT-06",
+    "platform_id": "EVIDENCE_AUDIT",
+    "platform_name": "Evidence / Audit",
+    "owner": "evidence/audit",
+    "function": "case/export",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-01",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "detect/triage",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-02",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "contain",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-03",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-04",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "policy evaluation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-05",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "decision/appeal",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-RCE-06",
+    "platform_id": "RCE",
+    "platform_name": "Resolution & Conflict Engine",
+    "owner": "resolution",
+    "function": "remedy/verify/CAPA",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-01",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "claim intake",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-02",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "coverage/eligibility",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-03",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "reserve/economics",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-04",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "evidence/liability input",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-05",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "remedy/recovery",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLAIMS-06",
+    "platform_id": "CLAIMS",
+    "platform_name": "Claims",
+    "owner": "claims",
+    "function": "appeal/close",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-01",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "quality metrics",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-02",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "audits",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-03",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "incidents",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-04",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "CAPA",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-05",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "eligibility state",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PROVIDER_QUALITY-06",
+    "platform_id": "PROVIDER_QUALITY",
+    "platform_name": "Provider Quality",
+    "owner": "provider-quality",
+    "function": "adverse-action/appeal",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-01",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "signals",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-02",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "policy/guarantee funding",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-03",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "case review",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-04",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "fraud/collusion",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-05",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "customer protection",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-TRUST_GUARANTEE-06",
+    "platform_id": "TRUST_GUARANTEE",
+    "platform_name": "Trust / Guarantee",
+    "owner": "trust/guarantee",
+    "function": "appeal",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-01",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "supply/demand cells",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-02",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "capacity",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-03",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "viability state",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-04",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "recruitment/activation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-05",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "overload",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-NETWORK_LIQUIDITY-06",
+    "platform_id": "NETWORK_LIQUIDITY",
+    "platform_name": "Network / Liquidity",
+    "owner": "network",
+    "function": "coverage alerts",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-01",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "obligation registry",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-02",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "credential/licence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-03",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "hard blocks",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-04",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "expiry/revalidation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-05",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "exception",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMPLIANCE-06",
+    "platform_id": "COMPLIANCE",
+    "platform_name": "Compliance",
+    "owner": "compliance",
+    "function": "regulatory evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-01",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "party role",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-02",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "contract",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-03",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "SLA",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-04",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "integration state",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-05",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "renewal/concentration",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PARTNERS-06",
+    "platform_id": "PARTNERS",
+    "platform_name": "Partners / Contracts",
+    "owner": "partners",
+    "function": "suspension",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-01",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "index projection",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-02",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "query/filter",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-03",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "ranking",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-04",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "synonyms",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-05",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "freshness/rebuild",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SEARCH-06",
+    "platform_id": "SEARCH",
+    "platform_name": "Search",
+    "owner": "search",
+    "function": "degraded fallback",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-01",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "official webhook",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-02",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "session/context",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-03",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "Flows",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-04",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "template messaging",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-05",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "support continuity",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-06",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "replay/failure",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-01",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "event taxonomy",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-02",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "funnels/cohorts",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-03",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "branch metrics",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-04",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "attribution",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-05",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "privacy",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-ANALYTICS-06",
+    "platform_id": "ANALYTICS",
+    "platform_name": "Analytics",
+    "owner": "analytics",
+    "function": "quality/freshness",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-01",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "traces",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-02",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "metrics",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-03",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "logs",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-04",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "SLO/alerts",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-05",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "dependency health",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-OBSERVABILITY-06",
+    "platform_id": "OBSERVABILITY",
+    "platform_name": "Observability",
+    "owner": "observability",
+    "function": "incident correlation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-01",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "gateway",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-02",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "grounding/tools",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-03",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "evals",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-04",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "tracing",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-05",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "fallback",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-AI_INTELLIGENCE-06",
+    "platform_id": "AI_INTELLIGENCE",
+    "platform_name": "AI / Intelligence",
+    "owner": "ai/intelligence",
+    "function": "authority/guardrails",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-01",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "scenario",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-02",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "assumptions",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-03",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "deterministic/stochastic engines",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-04",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "sensitivity",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-05",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "result/evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-SIMULATION-06",
+    "platform_id": "SIMULATION",
+    "platform_name": "Commercial Simulation",
+    "owner": "commercial-simulation",
+    "function": "production isolation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-01",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "hypothesis",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-02",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "approval",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-03",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "assignment",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-04",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "guardrails",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-05",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "analysis",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EXPERIMENTS-06",
+    "platform_id": "EXPERIMENTS",
+    "platform_name": "Experiments",
+    "owner": "experiments",
+    "function": "ramp/rollback",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-01",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "root cause",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-02",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "corrective action",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-03",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "owner/deadline",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-04",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "effectiveness test",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-05",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "regression linkage",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IMPROVEMENT_CAPA-06",
+    "platform_id": "IMPROVEMENT_CAPA",
+    "platform_name": "Improvement / CAPA",
+    "owner": "improvement",
+    "function": "close/reopen",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-01",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "feature mapping",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-02",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "repo/PR/build",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-03",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "gate/evidence",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-04",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "security/dependency",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-05",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "release/deploy",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-DEVELOPMENT-06",
+    "platform_id": "DEVELOPMENT",
+    "platform_name": "Development / Certification",
+    "owner": "development",
+    "function": "regression",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-01",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "room registry",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-02",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "metrics/alerts",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-03",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "queues/decisions",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-04",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "typed controls",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-05",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "AI insights",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-COMMAND_CENTRE-06",
+    "platform_id": "COMMAND_CENTRE",
+    "platform_name": "Command Centre",
+    "owner": "command-centre",
+    "function": "audit/verification",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-01",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "omnichannel conversation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-02",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "automated support",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-03",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "human handoff",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-04",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "support cases",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-05",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "knowledge",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CUSTOMER_SERVICE-06",
+    "platform_id": "CUSTOMER_SERVICE",
+    "platform_name": "Customer Service OS",
+    "owner": "support",
+    "function": "RCE escalation",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-01",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "consumer shell",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-02",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "business shell",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-03",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "health shell",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-04",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "activity/actions",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-05",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "deep links/notifications",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CLIENT_PLATFORM-06",
+    "platform_id": "CLIENT_PLATFORM",
+    "platform_name": "Client Platform",
+    "owner": "client-platform",
+    "function": "accessibility/data saver",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-01",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "visual asset registry",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-02",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "hero/CGI/exploded",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-03",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "EPC hierarchy/diagram",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-04",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "hotspots/part binding",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-05",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "fallback/provenance",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-EPC_VISUAL-06",
+    "platform_id": "EPC_VISUAL",
+    "platform_name": "EPC / Visual Catalogue",
+    "owner": "catalogue/epc-visual",
+    "function": "support/context",
+    "required_layers": [
+      "domain/API or service contract",
+      "operator/customer surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-HOME-01",
+    "platform_id": "HOME",
+    "platform_name": "DIAL Home",
+    "owner": "home-web",
+    "function": "public service router",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-HOME-02",
+    "platform_id": "HOME",
+    "platform_name": "DIAL Home",
+    "owner": "home-web",
+    "function": "intent/search routing",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-HOME-03",
+    "platform_id": "HOME",
+    "platform_name": "DIAL Home",
+    "owner": "customer360/activity",
+    "function": "signed-in Continue activity",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY-07",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity",
+    "function": "universal customer credential realm",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY-08",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity",
+    "function": "central auth and cross-app session exchange",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY-09",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "identity/whatsapp",
+    "function": "WhatsApp identity link/unlink",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-07",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp",
+    "function": "canonical Cloud API ingress/outbound",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-08",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp-flows",
+    "function": "Flow endpoint encryption/data exchange",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-09",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp-flows",
+    "function": "branch Flow registry/versioning",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-10",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp-templates",
+    "function": "template registry/window compliance",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-11",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "whatsapp-payments",
+    "function": "payment method/status orchestration",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-WHATSAPP-12",
+    "platform_id": "WHATSAPP",
+    "platform_name": "WhatsApp",
+    "owner": "support/whatsapp",
+    "function": "Chatwoot API-channel bridge",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-07",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments",
+    "function": "cash collection/custody confirmation",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-08",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/ecocash",
+    "function": "EcoCash direct USSD push/status/webhook",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-09",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/paynow",
+    "function": "Paynow initiate/result/poll",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-10",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/contipay",
+    "function": "ContiPay initiate/query/notification",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-11",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/paypal",
+    "function": "PayPal order/capture/webhook/refund",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-12",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/settlement",
+    "function": "provider settlement/reconciliation",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PAYMENTS-13",
+    "platform_id": "PAYMENTS",
+    "platform_name": "Payments",
+    "owner": "payments/refunds",
+    "function": "refund/reversal/dispute routing",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-07",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "finance",
+    "function": "business-unit channel account/journal projections",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-08",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "finance",
+    "function": "bank-statement running balance projection by currency",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-09",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "finance/reporting",
+    "function": "transaction and date-range PDF statement export",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-LEDGER-10",
+    "platform_id": "LEDGER",
+    "platform_name": "Ledger",
+    "owner": "finance/petty-cash",
+    "function": "petty cash funding/voucher/count/variance",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-IDENTITY-10",
+    "platform_id": "IDENTITY_PARTY",
+    "platform_name": "Identity / Party",
+    "owner": "people",
+    "function": "employee Position Assignment authorization source",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CORPIAM-01",
+    "platform_id": "CORPORATE_IAM",
+    "platform_name": "Corporate IAM",
+    "owner": "corporate-iam",
+    "function": "position permission bundle provisioning",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-CORPIAM-02",
+    "platform_id": "CORPORATE_IAM",
+    "platform_name": "Corporate IAM",
+    "owner": "approvals/finance",
+    "function": "financial authority threshold/SoD",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PEOPLE-01",
+    "platform_id": "PEOPLE",
+    "platform_name": "People / Organisation",
+    "owner": "people/organisation",
+    "function": "company position/version catalog",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PEOPLE-02",
+    "platform_id": "PEOPLE",
+    "platform_name": "People / Organisation",
+    "owner": "people/contracts",
+    "function": "role-based contract template/snapshot",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "platform_function_id": "PF-PEOPLE-03",
+    "platform_id": "PEOPLE",
+    "platform_name": "People / Organisation",
+    "owner": "people/onboarding",
+    "function": "employee photo and onboarding readiness",
+    "required_layers": [
+      "domain/API or service contract",
+      "customer/operator surface where applicable",
+      "eventuality/degraded handling",
+      "observability/audit",
+      "tests/evidence"
+    ],
+    "status": "SPECIFIED"
+  }
+]

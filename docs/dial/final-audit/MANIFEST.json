@@ -1,0 +1,729 @@
+{
+  "name": "DIAL Final 360 Ecosystem Audit and Development System",
+  "version": "1.6",
+  "generated_at": "2026-08-29T15:38:30.870885+00:00",
+  "top_level_feature_count": 186,
+  "feature_realization_count": 186,
+  "mandatory_realization_facet_count": 1674,
+  "shared_platform_function_count": 239,
+  "supporting_capability_count": 125,
+  "eventuality_playbook_count": 254,
+  "customer_endpoint_count": 166,
+  "whatsapp_flow_count": 59,
+  "security_control_count": 120,
+  "feature_security_profile_count": 186,
+  "payment_channel_count": 5,
+  "business_unit_finance_book_count": 11,
+  "finance_role_count": 12,
+  "payment_channels": [
+    "CASH",
+    "ECOCASH_DIRECT",
+    "PAYNOW",
+    "CONTIPAY",
+    "PAYPAL"
+  ],
+  "canonical_master_prompt": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
+  "canonical_finance_people_index": "18_FINANCE_PEOPLE/INDEX.md",
+  "files": [
+    {
+      "path": "00_MASTER/ANCHOR_INDEX.md",
+      "bytes": 591,
+      "sha256": "583b1f4d590ee5c3cb6d1912951d275df0401333e914a87f96e6711456ab166d"
+    },
+    {
+      "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
+      "bytes": 14183,
+      "sha256": "723f64bc85a5a815fde5cc93d92608607ae58a8a136b7c227bc659ebf64bbddf"
+    },
+    {
+      "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
+      "bytes": 975,
+      "sha256": "4c53c991a0d36e07e322f74a54ea377e5cfc997ee0f03866e0d4a91ecc1057f1"
+    },
+    {
+      "path": "01_AUDIT/COHERENCE_DEPENDENCY_MAP.md",
+      "bytes": 774,
+      "sha256": "8bf7098c760a5e4fd13e0ba301fdb6e753e34913fbfc42ee0681ce1438ae39c4"
+    },
+    {
+      "path": "01_AUDIT/DIAL_360_DIVISION_AUDIT_MATRIX.md",
+      "bytes": 1581,
+      "sha256": "32eacc4200e785574d9700a89b82516cd7d114e51bcbf974fd57979a08b70a56"
+    },
+    {
+      "path": "01_AUDIT/GAP_AND_CONFLICT_REGISTER.md",
+      "bytes": 1687,
+      "sha256": "d4cb197adcf99b3c25102576c0a72504cee9e0bb6764d24d1c3ac368aeb20430"
+    },
+    {
+      "path": "01_AUDIT/HEALTH_PORTFOLIO_SCOPE_FINDING.md",
+      "bytes": 1809,
+      "sha256": "61c709c9403f30c7a1a1ad9fa3ca2952aaacebb3b06b3bda3d76424b4e48f817"
+    },
+    {
+      "path": "02_FEATURE_REALIZATION/WORKFLOW_EVENTUALITY_STANDARD.md",
+      "bytes": 1635,
+      "sha256": "d375b0e9c62298579083f4e1e964f8faa6431a31dfe88fbb1168fd1299b20ff2"
+    },
+    {
+      "path": "03_DONORS/GLOBAL_DONOR_ASSIMILATION_REGISTRY.md",
+      "bytes": 5304,
+      "sha256": "90377801b3bb879b3d4b22dcb395dd603fedba428276e077f7beed1a2cc8514a"
+    },
+    {
+      "path": "03_DONORS/RESEARCH_FRESHNESS_AND_BUDGET_POLICY.md",
+      "bytes": 878,
+      "sha256": "27a88c64ea92b8f14ff7c3d56aacbdee8f18f8a7f4c7c5f52b54e4e87656b586"
+    },
+    {
+      "path": "04_DIVISIONS/ASSIST_AUDIT.md",
+      "bytes": 2860,
+      "sha256": "d1128fac56e8749f468b8ae9b71713510ee9ec4d7bef04dec565c098c30c3c8d"
+    },
+    {
+      "path": "04_DIVISIONS/CARE_AUDIT.md",
+      "bytes": 2639,
+      "sha256": "41a7abcd403e0174a6d7eb73b729fdc2e6d7bd1c6947426e56cfd15b6a4c89c3"
+    },
+    {
+      "path": "04_DIVISIONS/CORPORATE_AUDIT.md",
+      "bytes": 5337,
+      "sha256": "2c23126e0fd8c7a4815a90fe1b3280e21d99c6c4e042776009ca88c11b1fe14f"
+    },
+    {
+      "path": "04_DIVISIONS/FLEET_AUDIT.md",
+      "bytes": 2796,
+      "sha256": "1fb4e801639b2cda157bd9dcdc1cecb12473938d6d191d393bc19c8c2358edee"
+    },
+    {
+      "path": "04_DIVISIONS/GROCERIES_AUDIT.md",
+      "bytes": 3255,
+      "sha256": "7b4a73906371d7104c38a271d792f61261c3d8011730e7be7523996682d353b0"
+    },
+    {
+      "path": "04_DIVISIONS/HEALTH_AUDIT.md",
+      "bytes": 4443,
+      "sha256": "450d1541617c2b21404b815bbed778eae569ddd62da2f62229ea78b8967e63ad"
+    },
+    {
+      "path": "04_DIVISIONS/LAUNDRY_AUDIT.md",
+      "bytes": 3173,
+      "sha256": "24d3bba4e668408f464e5ff97a5bc6b2014de3e0053a7ba6ef284ac85e6524e2"
+    },
+    {
+      "path": "04_DIVISIONS/PROJECTS_AUDIT.md",
+      "bytes": 2829,
+      "sha256": "bc6b4018c9bd523970fef748e143a017c5880301c4baaa0bc8a548744c639477"
+    },
+    {
+      "path": "04_DIVISIONS/SPARE_AUDIT.md",
+      "bytes": 3192,
+      "sha256": "ed6f20003db9a9b80169c4709789ba5aed5c86a9c5504b443e2fcb2a43381c35"
+    },
+    {
+      "path": "04_DIVISIONS/TECH_AUDIT.md",
+      "bytes": 3619,
+      "sha256": "c2013d36ce429f16cb321987c785cbcdeefd1c10766a004f7be457fe61913ede"
+    },
+    {
+      "path": "04_DIVISIONS/VHUB_AUDIT.md",
+      "bytes": 2714,
+      "sha256": "586f365c5e82ed2d624f9cba7dcd73655bf563efcdc2f72c9b7b709ec1ed9138"
+    },
+    {
+      "path": "05_SHARED/SHARED_PLATFORM_AUDIT.md",
+      "bytes": 2329,
+      "sha256": "09fdc24fb3e38a3c87a0a85e4fba03f581f9c4df74c5c03297e94429b1c945ce"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/CLAUDE_CODE_NATIVE_SETUP.md",
+      "bytes": 4878,
+      "sha256": "c4809078f4d3b3b61d6ead85adc44690637276463854805d49b803ddbb760e7f"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/CONTEXT_DRIFT_CONTROLS.md",
+      "bytes": 860,
+      "sha256": "184596f6da4ee1204e65ebfd92257f171b2252d378de8475e4bdcd4d8dfc54ba"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",
+      "bytes": 675,
+      "sha256": "2e81dcebb6e41bc08c71b546f53e971cf986e35cd98b72c8229b0374428d9be6"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/PLUGIN_ALLOWLIST_PLAN.md",
+      "bytes": 730,
+      "sha256": "fea70230c16792e98995497bd72cceeb11c35d8620b1768dc65fa0e09b27c6df"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/PROMPTING_AND_CONTEXT_PROTOCOL.md",
+      "bytes": 1933,
+      "sha256": "0c9303827369d4f3f1808de96497ea86fd7c87aca93bc82e30e74521393c5b92"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/REPOSITORY_APPLY_PLAN.md",
+      "bytes": 2003,
+      "sha256": "3352821aea001369bad97dadf9dafff5852c9db41cdf769dd7288ed7e22e50cb"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/SESSION_HANDOFF_TEMPLATE.md",
+      "bytes": 277,
+      "sha256": "f4f3442f9b6c91c1bba16f8b2b4d280223e9bf4df31b5d7ef142117cd8963362"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-context-librarian.md",
+      "bytes": 392,
+      "sha256": "7b58716815854702763727be4bfbb7fbe1dc54429e94d745ff7e6e3ef66d3091"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-domain-auditor.md",
+      "bytes": 366,
+      "sha256": "161affcb2af31a52914d6388a007bfe0724f4dd15b78f41cea82791bb3c4a2c7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-money-reviewer.md",
+      "bytes": 374,
+      "sha256": "4d5a2153cd2d466fb34d9e03bb0533bbb09c54c07ce073de0d5c8db106889857"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-repo-cartographer.md",
+      "bytes": 340,
+      "sha256": "ef54409812b38b285cc1299d263dec3e80b71fb414437cc5ac7531a4317932f7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-security-reviewer.md",
+      "bytes": 327,
+      "sha256": "adcc37d6d44c92c9f36cd80e13e01a68fafe001d69312145313f7db69fdd1cf3"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-test-certifier.md",
+      "bytes": 363,
+      "sha256": "ff59eafd92d3c2b879b1f896f147590c2510a7ffa4a648e49234a7ac5bed9eb4"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-ui-evaluator.md",
+      "bytes": 398,
+      "sha256": "07cf669f1dd0afb0c6efdabe7b880d3b0454d297f2fb4308a8e6f405ddf7fb43"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/ai.md",
+      "bytes": 326,
+      "sha256": "eb65440e41ab4cb84f50e86e800da6d45ffbe50580c919735f5d8fdc98a21ff4"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/android.md",
+      "bytes": 249,
+      "sha256": "1003e5dfec2c1751ff459ace2e65a1648f902501e21f461d7160d6a024254cf6"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/corporate.md",
+      "bytes": 395,
+      "sha256": "01dd9c1bfeaf217f1887430120a9f7ad8c3a3e3d9c51c62289fa657f2533c54f"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/delivery-maps.md",
+      "bytes": 251,
+      "sha256": "7a54c1051818ed533c058d559a4dab666025d944ca43d9fab2d0b5d454073334"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/donors.md",
+      "bytes": 442,
+      "sha256": "2852041173091314ecae1ae9f704a1385629e0c6de6fb2ccb51724ab3436d82b"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/frontend.md",
+      "bytes": 289,
+      "sha256": "2b12ebce0b3bd130cde0c6c631c7b342aa55fd1e28dac8e38a4d4758fe137d81"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/money.md",
+      "bytes": 472,
+      "sha256": "625a9cdd17ffff862c9c7d1f155f1f85db04d3b20afabcf91a3dca3efa5876e8"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/security.md",
+      "bytes": 1019,
+      "sha256": "542ca8a313cedabf2a27692b8915e6b2008d7e4e5aade0bde95693a1383e4e0e"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/settings.json",
+      "bytes": 1255,
+      "sha256": "39ccbf1b511c01212354474621e1e77b68031b7810da4bcb77477cc72f66ffa7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/settings.local.example.json",
+      "bytes": 127,
+      "sha256": "fc92bf0845d6cff87ba65e0d350d5f8ff1fa1122dafbef44dcd622d2c836f0ff"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-command-room-register/SKILL.md",
+      "bytes": 393,
+      "sha256": "89254f4b5eb4e459f3a1d13e4915e441d2385c791f44675f35b9347062d5e72d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-context-checkpoint/SKILL.md",
+      "bytes": 296,
+      "sha256": "383e252ce8735d20560b0d321d3c1639a87cc7334f5223f5fb3703f78c834b47"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-donor-assimilate/SKILL.md",
+      "bytes": 378,
+      "sha256": "57bb284ce5e56c89a5673b100cc2cbc592244d77f001ada4a637f113639d6684"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-eventuality-audit/SKILL.md",
+      "bytes": 390,
+      "sha256": "3bac1bbc56e1ef4cea1fa2565468f284ae40109bbddb96a0f161736f8c763d7d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-feature-realize/SKILL.md",
+      "bytes": 548,
+      "sha256": "3da32e24d2beaf2e1451d7f5aa134ef1fb0993ea136c36bca801e1907b2cd2d7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-module-certify/SKILL.md",
+      "bytes": 367,
+      "sha256": "1c7a250ba43a38a398b4d35521bd97d16cdcb4e0e979c5b3dc8c3848671424a4"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.mcp.json.example",
+      "bytes": 173,
+      "sha256": "a9df1d9b7809afb31618fc492e3d16e5427c19f91026f8dcf0059ce14922281c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/CLAUDE.md",
+      "bytes": 2083,
+      "sha256": "cc188dc8f29ebff24cf0772ea6019105afaa560d2a7ecaef05bd456a297f1777"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/MASTER_DEVELOPMENT_ENTRY_PROMPT.md",
+      "bytes": 318,
+      "sha256": "bfd751c79726797f8300e9db9a5fbb1a9297f8a8d9e1a378c0824e97e598d1a7"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/context-get.mjs",
+      "bytes": 2271,
+      "sha256": "300fb007792bea939462acc4d5fcd829c01ff57e1c8316248e85f90610782b2b"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/drift-check.mjs",
+      "bytes": 1187,
+      "sha256": "f5dc85829b2471526b71ecb02d6c002d92827b494f0c94fb7fc4f5a7ef924255"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/feature-coverage.mjs",
+      "bytes": 320,
+      "sha256": "ff3a9327d1e4371bd826b4e9c387ccb58d1524afbc63934ebffd58ff1e68943c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/realization-coverage.mjs",
+      "bytes": 2272,
+      "sha256": "004fe693c7e3d8b981c8ae01af524f48b985c441006037aebb88bd1e91de9942"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/bin/security-coverage.mjs",
+      "bytes": 1602,
+      "sha256": "5da9bbd81f7c8dcc97067df9dbc8a225b91ec57f1b5995dd0ad20e7533407e33"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/canon/PROJECT_TRUTH.md",
+      "bytes": 5470,
+      "sha256": "4f121271ddfe4bf3d94dd04d369133d6a4c50c8e13f42c9acb3bee1af379fd32"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/evals/harness-evals.json",
+      "bytes": 1988,
+      "sha256": "f0b361094ba13c90a2bf5ff19543b15a25c58dbbc1d7759e16241a6f6dfc17e6"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/hooks/pre-compact.mjs",
+      "bytes": 608,
+      "sha256": "ad86df609c66c3b745a81a00858e6a6bf8b9a1db0b701aa02b71c7189ac8d360"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/hooks/pre-tool-guard.mjs",
+      "bytes": 1339,
+      "sha256": "c37843c3ef265487475c07609b1b4f1087bff16e77cae94a07db343d0a7f241b"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/hooks/session-start.mjs",
+      "bytes": 960,
+      "sha256": "0833a83ad07063edf4b60d20782a677111b47c1fb649de10169edf6b9b39a588"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/hooks/stop-gate.mjs",
+      "bytes": 794,
+      "sha256": "9b1712a470179e21e16d4543ec28d4616439e18afa79e942f8d4f3ae5f60ee4c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/mcp/dial-truth-server.README.md",
+      "bytes": 524,
+      "sha256": "648c6492b4f144a19ce23ba7c6e1cc441e116535546bf20f7a961021579878da"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/ACTIVE_WORK.json",
+      "bytes": 68,
+      "sha256": "62a2e0c3ec243802c1801db5ff80b9dfd904a070f8ff6c7fb4e5b5f472141545"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/DECISION_LOG.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/DONOR_REGISTRY.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/EVIDENCE_INDEX.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/FEATURE_REGISTRY.json",
+      "bytes": 124265,
+      "sha256": "ae6b98b594b1f99283724228e6fe6f35c2d5aba1a2908adcabba65ba7f3ff0a4"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/FEATURE_REGISTRY.schema.json",
+      "bytes": 1631,
+      "sha256": "d0982b37f33dac49b6df809ccddc806b2cbbf09fec91c57ebfc9dafa48a40de8"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/MODULE_INDEX.json",
+      "bytes": 136,
+      "sha256": "729de6beb70e9ce3e2095b9205fa2e265519ad3fec4991c9b9c38b2e48247d5a"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/agent-system/registries/RESEARCH_REGISTRY.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
+      "bytes": 55734,
+      "sha256": "8219a9e8d2c4b10022b1519532d9fed878fb8504f7075c20da7c8e23f8f4298f"
+    },
+    {
+      "path": "07_IMPLEMENTATION/FULL_TARGET_IMPLEMENTATION_PLAN.md",
+      "bytes": 1217,
+      "sha256": "063b27a70b7756b84ea6b5bbc601c4816fc7d425eb7676c4e272b7af2ac43940"
+    },
+    {
+      "path": "09_RESEARCH/CLIENT_SUPPORT_ARCHITECTURE_RESEARCH_NOTE_2026.md",
+      "bytes": 1356,
+      "sha256": "7efd23bc989e14831a4cfd7dc6fcb3e2f3745d85b67f23fcd739f9b6e5e7ce38"
+    },
+    {
+      "path": "09_RESEARCH/EXTERNAL_AGENTIC_DEVELOPMENT_BEST_PRACTICES_2026.md",
+      "bytes": 1799,
+      "sha256": "778d0adc732caf1e04b07bd61a7fd510e79502bd0208831083353a0b44d87e20"
+    },
+    {
+      "path": "09_RESEARCH/SOURCE_REGISTRY.md",
+      "bytes": 3138,
+      "sha256": "5fa954afac33960cf2c4f1e71492004cc2bc8489675a9cf4a7bde23951949c5e"
+    },
+    {
+      "path": "10_CODE_REFERENCE/final_audit_contracts.ts",
+      "bytes": 1186,
+      "sha256": "b13adde73abf42d99b5c9a7e02bc5d766611c5b798e33ecb61d38e59fe31c7c8"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/DIVISION_DONOR_CUSTOMIZATION_PLAYBOOKS.md",
+      "bytes": 4687,
+      "sha256": "0e3f51672a4d9b12301949c94980e91b86811363292fdf61e106b639d835080d"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/DONOR_REGISTRY.json",
+      "bytes": 25310,
+      "sha256": "d29fdf4de23c8eb7343ee17412a23f2465564195cac99c758fc8c4e8fa3c81d0"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md",
+      "bytes": 1693,
+      "sha256": "52cbe1b4107365271226061ce90fafc6216ed874323b8c8bb29acfd62814af98"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/EVENTUALITY_PLAYBOOK_REGISTRY.json",
+      "bytes": 466682,
+      "sha256": "9a062dfdb306f1786e07189873736da3244c3fbb375e5d00844d90bff72bd67b"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_AND_DONOR_ASSIMILATION_MASTER.md",
+      "bytes": 3582,
+      "sha256": "4c50aeb7b5f53f55bc7b9269d446afd4e4507f6cf1588320e2f37b32e243b44b"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_MATRIX.md",
+      "bytes": 61399,
+      "sha256": "a264866158858de4ede299de5197775630a99a7104a443ce710803605288dcc1"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json",
+      "bytes": 837708,
+      "sha256": "88afe5a34dae120b5edb28b41f07483560109552034c45fe3b8145885f37f883"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/REALIZATION_LAYER_INDEX.md",
+      "bytes": 1167,
+      "sha256": "45d7a13d18b7b098b60a891e57fb129488ac55a34cf8be91abdbe3ca026130f0"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/SHARED_PLATFORM_FUNCTION_REGISTRY.json",
+      "bytes": 104451,
+      "sha256": "e593ec3888512601f4a8a42c61522877580c54aeb1888578311fff27ee5105b5"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/SUBFEATURE_FUNCTION_REGISTRY.json",
+      "bytes": 1296840,
+      "sha256": "2f160de3b86eab7f75397997ae147055de17de26d7dbb8705dfae3ca9fa796ed"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
+      "bytes": 44946,
+      "sha256": "e7066d9e066311891ff99141dd1dcc65981653cd7e1a9c15e8a10238ac9a19e7"
+    },
+    {
+      "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
+      "bytes": 146889,
+      "sha256": "d47f36157155ec7af10dbb783cd7dea20f00ba94fb988ad68d38d02b070e0bc2"
+    },
+    {
+      "path": "12_CLIENT_EXPERIENCE/CUSTOMER_JOURNEY_ENDPOINT_MATRIX.md",
+      "bytes": 1338,
+      "sha256": "9aab8ec140d7df240b28b3152b566bd6c89e780cc2e9077d22cd720223ed1f4e"
+    },
+    {
+      "path": "12_CLIENT_EXPERIENCE/DIAL_CLIENT_APP_ARCHITECTURE.md",
+      "bytes": 6787,
+      "sha256": "dfb784258e208b5f272022136a6bb708bae862aa67d43083130eb815a07682f1"
+    },
+    {
+      "path": "12_CLIENT_EXPERIENCE/DIVISION_CUSTOMER_EXPERIENCE_BLUEPRINTS.md",
+      "bytes": 4328,
+      "sha256": "4707e4ec2ac64b18c40c9c3ec90695630e614bb0f9b120719f308ef3adc74e7c"
+    },
+    {
+      "path": "12_CLIENT_EXPERIENCE/OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN.md",
+      "bytes": 1302,
+      "sha256": "2442fcbaf66d96d40e79d48c542a0693cbc77573cce7afaec8c4fdd2d31ad3f3"
+    },
+    {
+      "path": "13_CUSTOMER_SERVICE/DIAL_CUSTOMER_SERVICE_OS.md",
+      "bytes": 5528,
+      "sha256": "2b585f8cae5b243be72af76f85782961c2a5f54dda035b4ec906962e387d5a35"
+    },
+    {
+      "path": "13_CUSTOMER_SERVICE/DIVISION_SUPPORT_PLAYBOOKS.md",
+      "bytes": 3998,
+      "sha256": "08b3d6b64c6d95f59baae3b4e5452ffdcfef7dabc101ba7a2f655226d1505c81"
+    },
+    {
+      "path": "14_CATALOG_VISUAL_EPC/EPC_AND_VISUAL_TRANSFORMATION_INTEGRATION_CONTRACT.md",
+      "bytes": 6544,
+      "sha256": "577fae4d5569e4f9bbcc8f239987a52f0aef83f000e1b8aeae304f595fe41755"
+    },
+    {
+      "path": "14_CATALOG_VISUAL_EPC/EPC_CUSTOMER_BROWSING_UX.md",
+      "bytes": 1438,
+      "sha256": "bbb1eccef35593ff00746282377ddf517366239e11674e70908ae4a9b549a04f"
+    },
+    {
+      "path": "15_CERTIFICATION/FULL_PLATFORM_FUNCTIONAL_COMPLETENESS_GATES.md",
+      "bytes": 1833,
+      "sha256": "0d64300093d6c7580f356f457b02b38928d6fdd5f9cbee5292b0375b5e65961a"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/CHATWOOT_WHATSAPP_SUPPORT_BRIDGE.md",
+      "bytes": 1910,
+      "sha256": "50fcc251b4834db18a182987739b181dc85979066ce7ba7083dfdb446aea3746"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/DIAL_HOME_PREMIUM_SOLUTIONS_ENVIRONMENT_LOCK.md",
+      "bytes": 5350,
+      "sha256": "4c0081b6224119eaadfa27fe54cbc57792028f7d956b2cb293c82a0a2fe7f7cb"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/DIAL_HOME_SERVICE_ROUTER_ARCHITECTURE.md",
+      "bytes": 3223,
+      "sha256": "befe57146192fd052c57cced57a8fa3aeae51f1bb616f21afb67248c8c6df44d"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/HOME_UI_DONOR_SELECTION.md",
+      "bytes": 1602,
+      "sha256": "076598a7e55d00841afed9d5aac4ad05e8f28481f0478cbcd2c0697d396d523b"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/INDEX.md",
+      "bytes": 481,
+      "sha256": "4830b68e87522725d2e31a0ef8d5422d3d22964704d5d33af210850ffdecf0b0"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/UNIVERSAL_DIAL_IDENTITY_AND_SSO.md",
+      "bytes": 2794,
+      "sha256": "67bd83088dcf5df53575a98971f962e3e65128edbcfe0552cbf86eb665f1836c"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/WHATSAPP_CERTIFICATION_MATRIX.md",
+      "bytes": 2488,
+      "sha256": "43aaa4b6a2209643c51bceb7821afa7f0227e249414c90190cc76558d8c79cdc"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/WHATSAPP_COMMERCE_SUPPORT_ARCHITECTURE.md",
+      "bytes": 4573,
+      "sha256": "7280a37891ca5073e6f751dfc33c216067199341078f0009c86ab7b2007e3e08"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/WHATSAPP_FLOW_ENGINEERING_STANDARD.md",
+      "bytes": 2344,
+      "sha256": "a7e2b84186cb677719e30cfcab9a8a5974fda116ae2bc8d2afba4e1292e80a1d"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/WHATSAPP_FLOW_REGISTRY.json",
+      "bytes": 29182,
+      "sha256": "572f38e2e7b90793f8a888be609b712d5b85689b1e0edcc630404c65ea47c2f6"
+    },
+    {
+      "path": "16_HOME_IDENTITY_WHATSAPP/WHATSAPP_PAYMENT_ARCHITECTURE.md",
+      "bytes": 2930,
+      "sha256": "6f9ecd3355448021fe84861b775ce003e8afeb5c21fee707e0d8b5a0c1e89913"
+    },
+    {
+      "path": "17_SECURITY/ATTACHED_20_POINT_SECURITY_MAPPING.md",
+      "bytes": 3887,
+      "sha256": "2e472395fccb1a9851b74aec040555e17d88a4ca02261ff9265ac3ef9456264f"
+    },
+    {
+      "path": "17_SECURITY/DATA_CLASSIFICATION_ENCRYPTION_RETENTION.md",
+      "bytes": 3224,
+      "sha256": "7e3454b44fd579158ea5c69b143a9dfa4ad31902d44da845fc24c23a299dd9a4"
+    },
+    {
+      "path": "17_SECURITY/DIAL_SECURITY_MASTER_ARCHITECTURE_v1.md",
+      "bytes": 15379,
+      "sha256": "bb98723885c1ef369f76bdc49f170a92b455b72f8325161452cc9820e1f2797d"
+    },
+    {
+      "path": "17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json",
+      "bytes": 144019,
+      "sha256": "7a4e9813e31dbfbab4c47ee07176e5214811f3cfb41ec11a1a92d1f15c956f70"
+    },
+    {
+      "path": "17_SECURITY/INCIDENT_RESPONSE_AND_VULNERABILITY_MANAGEMENT.md",
+      "bytes": 2276,
+      "sha256": "7e6882462b3824a8dcbce0458623679427fa5dc08891d87213e8a0cc19acdc75"
+    },
+    {
+      "path": "17_SECURITY/INDEX.md",
+      "bytes": 566,
+      "sha256": "e3cf936e27c7383798dd3bb4394fe5f3645980aa523acd39a6da237bfad2941e"
+    },
+    {
+      "path": "17_SECURITY/MOBILE_SECURITY_IMPLEMENTATION_STANDARD.md",
+      "bytes": 1720,
+      "sha256": "0ee30aef2c436371882fab4bf3fe5a39ebea8d92545f8046284dc85f08330d66"
+    },
+    {
+      "path": "17_SECURITY/SECURITY_CONTROL_REGISTRY.json",
+      "bytes": 44978,
+      "sha256": "a7bfb7e1a7622eb79b188064569edb386170190fe054ca0a6a0151ec32f26e4e"
+    },
+    {
+      "path": "17_SECURITY/SECURITY_RELEASE_GATES_AND_TEST_MATRIX.md",
+      "bytes": 2952,
+      "sha256": "67dc884ec4ba4bc4d0e060122e1937de6edcd99e30d7f343ea17256d2bf4bd2e"
+    },
+    {
+      "path": "17_SECURITY/SECURITY_RESEARCH_SOURCE_REGISTRY.md",
+      "bytes": 1215,
+      "sha256": "23328ac70999f5b8a4abfd9a3e5bf63c3732916e8c700af742eaf68eea629fd5"
+    },
+    {
+      "path": "17_SECURITY/SECURITY_TOOLCHAIN_AND_CI.md",
+      "bytes": 3100,
+      "sha256": "2864562ae7931bd971f347c2d93ab28ec14fb60b295f0401329019960114e0cb"
+    },
+    {
+      "path": "17_SECURITY/THREAT_MODEL_AND_ABUSE_CASE_STANDARD.md",
+      "bytes": 1503,
+      "sha256": "357983e216e93fb6e142ae8178d5bd3391efcd9c7b372236dde33b53d4f4e970"
+    },
+    {
+      "path": "17_SECURITY/WEB_AND_API_SECURITY_IMPLEMENTATION_STANDARD.md",
+      "bytes": 2143,
+      "sha256": "022954a94436a0c5f7f8fdbf71a89b850c4ba9a51bcd27ca54b535ac2d81276f"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/BUSINESS_UNIT_FINANCE_BOOK_REGISTRY.json",
+      "bytes": 68921,
+      "sha256": "708fd160130fed8c6766193d2a16a3b6ea83abc5918382569574a73a780b3ef0"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/BUSINESS_UNIT_FINANCE_JOURNAL_ARCHITECTURE.md",
+      "bytes": 7682,
+      "sha256": "6c0014431c3026f223fa2df4548b444aba23b16483f0c2ccad4a4c66803435f2"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/COMPANY_POSITION_SCHEMA_REFERENCE.json",
+      "bytes": 1303,
+      "sha256": "be4aa854443717d57c08cbb16d8315e8c0c59ab456d70e4344c1384afdee9dfb"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/DIAL_PAYMENT_ORCHESTRATION_AND_ENDPOINT_CONTRACT.md",
+      "bytes": 12476,
+      "sha256": "e1a72add5087fb5f5ded4463b314e0f7b319eafde1605adb756f6084d0e541d6"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/EMPLOYEE_ONBOARDING_SCHEMA_REFERENCE.json",
+      "bytes": 1011,
+      "sha256": "5a51ac701c5c853b80980f66ebd24d5458daee7ce1032c4ae4e084d46e6fdddd"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/FINANCE_ROLE_AND_AUTHORITY_REGISTRY.json",
+      "bytes": 4532,
+      "sha256": "30700c0fc557780cd56f395329f0269bd493b18ef3ea6f838d2db2381a4280c7"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/FINANCE_STATEMENT_UI_COMPONENT_SPEC.md",
+      "bytes": 2353,
+      "sha256": "4107d2deff7a0a3ea9343632fd1539d786285e9974f93ccc601d2118f502e681"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/INDEX.md",
+      "bytes": 698,
+      "sha256": "a0730ae3678b0d27e9fa4ffa2142e78b49d46f749824cd3428e67a0c03e1145c"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/PAYMENT_CHANNEL_REGISTRY.json",
+      "bytes": 16918,
+      "sha256": "4cdb3545937489da5457bf9d10ff0a3d0e64a298a1e23faa1b1aaef8ee80ab44"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/PAYMENT_PROVIDER_RESEARCH_2026.md",
+      "bytes": 2958,
+      "sha256": "70793dbb326867710e9eade16aac2158cfe14c1edb09f16686715fe130ca7db8"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/PEOPLE_POSITION_ONBOARDING_CAPABILITY_REGISTRY.json",
+      "bytes": 2279,
+      "sha256": "21ad22f2b511bd0007dcefef0c381780f9bb2960686cfe1b3d01d5d486b9fd2a"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/PETTY_CASH_REQUISITION_APPROVAL_AND_CONTROL.md",
+      "bytes": 5549,
+      "sha256": "f27f0f50681bf4a76ac7665add5bbe101d523bef54a6ca901df71d33c7971a06"
+    },
+    {
+      "path": "18_FINANCE_PEOPLE/POSITIONS_ROLE_CONTRACTS_PERMISSIONS_AND_ONBOARDING.md",
+      "bytes": 9867,
+      "sha256": "29828a3ca3502df846422c7b32d87518475aed2a33044f2d92ada5da3cd8cebb"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3959,
+      "sha256": "06951d090a651ca66a8fc9eeadcffb10c6e81bc5a72fd91b1342cab734941cff"
+    }
+  ]
+}

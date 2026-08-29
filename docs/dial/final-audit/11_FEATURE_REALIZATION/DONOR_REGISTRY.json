@@ -1,0 +1,877 @@
+[
+  {
+    "donor_id": "SOURCE-DIAL-NATIVE",
+    "name": "DIAL-native implementation",
+    "kind": "INTERNAL_CANON",
+    "adoption_mode": "DIAL_NATIVE",
+    "role": "Feature is designed primarily from DIAL canon/shared contracts rather than copied from an external product.",
+    "preserve": [],
+    "replace": [],
+    "add": [
+      "DIAL design system",
+      "DIAL domain contracts",
+      "eventuality handling",
+      "support hooks",
+      "Command Centre/evidence"
+    ],
+    "source_path_status": "N/A"
+  },
+  {
+    "donor_id": "DONOR-MERCUR-STOREFRONT",
+    "name": "Mercur B2C marketplace storefront",
+    "kind": "REPOSITORY",
+    "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
+    "role": "Primary Spare multi-vendor commerce information architecture and storefront interaction donor.",
+    "preserve": [
+      "marketplace browse/search/product/offer/checkout interaction patterns",
+      "multi-vendor mental model",
+      "proven ecommerce navigation where useful"
+    ],
+    "replace": [
+      "auth",
+      "database authority",
+      "payment authority",
+      "order authority",
+      "catalogue authority",
+      "analytics/notifications that duplicate DIAL"
+    ],
+    "add": [
+      "vehicle-first context",
+      "fitment confidence",
+      "EPC/visual navigation",
+      "DIAL pricing",
+      "DIAL Delivery",
+      "RCE/support",
+      "human refs",
+      "DIAL design tokens"
+    ],
+    "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "DONOR-MERCUR-VENDOR",
+    "name": "Mercur vendor panel",
+    "kind": "REPOSITORY",
+    "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
+    "role": "Supplier catalog/offers/orders/settlement operational UX donor.",
+    "preserve": [
+      "seller queue structure",
+      "catalog/order operational patterns"
+    ],
+    "replace": [
+      "seller auth",
+      "seller DB",
+      "payout truth",
+      "order/catalogue truth"
+    ],
+    "add": [
+      "DIAL supplier compliance",
+      "stock freshness",
+      "fitment evidence",
+      "settlement projection",
+      "support/RCE"
+    ],
+    "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "DONOR-NIMARA-YNS",
+    "name": "Nimara / Your Next Store",
+    "kind": "UX_REFERENCE",
+    "adoption_mode": "PORT-UX-UI_REFERENCE",
+    "role": "High-polish commerce visual and interaction benchmark.",
+    "preserve": [
+      "clean retail hierarchy",
+      "high-quality product presentation",
+      "responsive polish"
+    ],
+    "replace": [
+      "brand identity",
+      "navigation shell",
+      "data contracts"
+    ],
+    "add": [
+      "DIAL tokens",
+      "vehicle context",
+      "support/action states",
+      "accessibility/degraded states"
+    ],
+    "source_path_status": "REFERENCE_OR_SELECTED_COMPONENT_PROVENANCE"
+  },
+  {
+    "donor_id": "DONOR-SANDPIM",
+    "name": "SandPIM / ACES-PIES reference",
+    "kind": "SCHEMA_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Fitment/PIM schema and qualifier sanity check.",
+    "preserve": [
+      "fitment relationship concepts",
+      "attribute/qualifier patterns"
+    ],
+    "replace": [
+      "PHP/runtime",
+      "source database",
+      "catalogue authority"
+    ],
+    "add": [
+      "DIAL FitmentClaim evidence/confidence/provenance",
+      "vehicle/chassis mapping"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "DONOR-EPC-SPECIALIST-PENDING",
+    "name": "EPC browsing specialist specification (parallel agent)",
+    "kind": "SPECIALIST_SPEC",
+    "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
+    "role": "Authoritative detailed EPC browsing/catalog source strategy when parallel specialist document lands.",
+    "preserve": [
+      "specialist EPC hierarchy/provider decisions that satisfy the frozen integration contract"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL catalogue/fitment/offers/support/client-app bindings"
+    ],
+    "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+  },
+  {
+    "donor_id": "DONOR-VISUAL-TRANSFORM-SPECIALIST",
+    "name": "DIAL vehicle hero / CGI / exploded visual transformation generator specification",
+    "kind": "SPECIALIST_SPEC",
+    "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
+    "role": "Parallel specialist engine producing hero transitions, CGI transformation and exploded navigation assets.",
+    "preserve": [
+      "approved generation pipeline and cinematic output contract"
+    ],
+    "replace": [
+      "any independent catalogue authority"
+    ],
+    "add": [
+      "VisualAssetRegistry",
+      "vehicle-equivalence bindings",
+      "EPC/category navigation binding",
+      "mobile/web fallbacks",
+      "provenance"
+    ],
+    "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+  },
+  {
+    "donor_id": "DONOR-FIXITNOW",
+    "name": "Sachinrajawat/FixItNow",
+    "url": "https://github.com/Sachinrajawat/FixItNow",
+    "kind": "REPOSITORY",
+    "adoption_mode": "PORT-WHOLESALE",
+    "license": "MIT",
+    "role": "Primary Dial a Tech customer/service application donor.",
+    "preserve": [
+      "service discovery",
+      "booking UX",
+      "technician/service presentation",
+      "mature page/navigation structure where useful"
+    ],
+    "replace": [
+      "donor auth",
+      "donor persistence",
+      "donor payment authority",
+      "donor job authority",
+      "donor notifications/analytics where duplicate"
+    ],
+    "add": [
+      "Trade/JobClass",
+      "Opportunity Marketplace",
+      "Job Reserve",
+      "HIRA/PPE/LOTO",
+      "WHT",
+      "evidence",
+      "RCE/claims",
+      "provider quality",
+      "offline technician integration",
+      "DIAL support"
+    ],
+    "source_path_status": "PIN_EXACT_MIT_COMMIT_DURING_IMPORT"
+  },
+  {
+    "donor_id": "DONOR-NEARSERVE-HOMEZY",
+    "name": "NearServe / Homezy",
+    "kind": "UX_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Secondary home-services discovery/booking comparison donor.",
+    "preserve": [
+      "service-category clarity",
+      "local-trades discovery patterns"
+    ],
+    "replace": [
+      "runtime/business authority"
+    ],
+    "add": [
+      "DIAL service state/support/safety"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "SERVICE-CALCOM",
+    "name": "Cal.com",
+    "kind": "INTEGRATED_SERVICE",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "Non-emergency slot/availability adapter where suitable.",
+    "preserve": [
+      "slot mechanics"
+    ],
+    "replace": [
+      "booking business authority"
+    ],
+    "add": [
+      "DIAL BookingIntent and job confirmation"
+    ],
+    "source_path_status": "PIN_ADAPTER_VERSION"
+  },
+  {
+    "donor_id": "REF-INSTACART",
+    "name": "Instacart",
+    "kind": "BEHAVIOR_UX_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Primary grocery customer experience benchmark for substitution, picking and delivery transparency.",
+    "preserve": [
+      "customer mental models for substitutions/picking/weighted goods"
+    ],
+    "replace": [
+      "proprietary runtime"
+    ],
+    "add": [
+      "Zimbabwe merchant realities",
+      "DIAL Pantry",
+      "DIAL payments/delivery/support"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "REF-ZW-GROCERY",
+    "name": "SPAR / OK Zimbabwe operating references",
+    "kind": "LOCAL_MARKET_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Local grocery catalogue, store and fulfilment reality benchmark.",
+    "preserve": [
+      "local assortment/retail conventions"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL digital fulfilment"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "REF-LAUNDRY-CONSUMER",
+    "name": "Laundryheap / Rinse",
+    "kind": "BEHAVIOR_UX_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Consumer laundry booking/status/collection experience benchmark.",
+    "preserve": [
+      "pickup scheduling",
+      "service selection",
+      "status communication patterns"
+    ],
+    "replace": [
+      "proprietary runtime"
+    ],
+    "add": [
+      "DIAL custody/evidence/pricing/RCE"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "REF-LAUNDRY-OPS",
+    "name": "CleanCloud / Cents",
+    "kind": "OPERATOR_UX_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Facility/intake/production/QC/commercial laundry workflow benchmark.",
+    "preserve": [
+      "operator workflow concepts"
+    ],
+    "replace": [
+      "runtime/SoR"
+    ],
+    "add": [
+      "DIAL custody, ledger, compliance, Command Centre"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "DONOR-LUBELOGGER",
+    "name": "LubeLogger",
+    "kind": "REPOSITORY",
+    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+    "role": "Fleet/Vehicle Hub maintenance/history/cost/reminder donor.",
+    "preserve": [
+      "maintenance records",
+      "service history",
+      "cost/reminder mental model"
+    ],
+    "replace": [
+      "runtime identity/storage authority"
+    ],
+    "add": [
+      "DIAL vehicle canonical identity",
+      "Tech/Spare/Assist links",
+      "B2B scopes",
+      "support"
+    ],
+    "source_path_status": "PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "SERVICE-OPENREMOTE-FLEET",
+    "name": "OpenRemote Fleet",
+    "kind": "INTEGRATED_SERVICE_CANDIDATE",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "Optional telematics observation source.",
+    "preserve": [
+      "device/telemetry ingestion mechanics"
+    ],
+    "replace": [
+      "fleet business authority"
+    ],
+    "add": [
+      "DIAL TelemetryObservation normalization/provenance"
+    ],
+    "source_path_status": "QUALIFY_BEFORE_ACTIVATION"
+  },
+  {
+    "donor_id": "REF-SERVICEMYRIDE",
+    "name": "ServiceMyRide-style vehicle service UX reference",
+    "kind": "UX_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Vehicle service-history/reminder UX comparison.",
+    "preserve": [
+      "history presentation"
+    ],
+    "replace": [
+      "runtime"
+    ],
+    "add": [
+      "DIAL trusted provenance"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "DONOR-OPENPROJECT",
+    "name": "OpenProject",
+    "kind": "REPOSITORY_REFERENCE",
+    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+    "role": "Project/portfolio/work-package/dependency/Gantt/meeting workflow donor.",
+    "preserve": [
+      "work-package hierarchy",
+      "dependencies",
+      "progress/meeting UX patterns"
+    ],
+    "replace": [
+      "project SoR",
+      "auth",
+      "database"
+    ],
+    "add": [
+      "DIAL funding",
+      "Tech/Spare/Delivery links",
+      "evidence/safety",
+      "client support"
+    ],
+    "source_path_status": "PIN_IF_SOURCE_PORTED"
+  },
+  {
+    "donor_id": "DONOR-FRAPPE-HR",
+    "name": "Frappe HR",
+    "kind": "REPOSITORY",
+    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SCHEMA_WORKFLOW_ALGORITHM_UX",
+    "role": "Primary HR/workforce/payroll behavior donor.",
+    "preserve": [
+      "mature HR workflows",
+      "selected payroll/leave/attendance behavior",
+      "ESS patterns"
+    ],
+    "replace": [
+      "Frappe runtime",
+      "auth",
+      "DB",
+      "accounting"
+    ],
+    "add": [
+      "DIAL Identity/SoD",
+      "Zimbabwe effective-dated statutory rules",
+      "DIAL Ledger",
+      "Command Centre"
+    ],
+    "source_path_status": "PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "DONOR-ERPNEXT",
+    "name": "ERPNext",
+    "kind": "REPOSITORY",
+    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_PORTS",
+    "role": "Finance/procurement/AP/AR/assets/inventory-accounting behavior donor.",
+    "preserve": [
+      "document/accounting semantics",
+      "3-way procurement behavior",
+      "selected valuation/depreciation algorithms"
+    ],
+    "replace": [
+      "Frappe runtime",
+      "ERPNext GL",
+      "DB/auth"
+    ],
+    "add": [
+      "DIAL Ledger",
+      "DoA/SoD",
+      "DIAL corporate dimensions",
+      "Command Centre"
+    ],
+    "source_path_status": "PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "REF-ODOO",
+    "name": "Odoo",
+    "kind": "ERP_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Adversarial ERP process/UX comparison for finance, procurement, warehouse and assets.",
+    "preserve": [
+      "edge-case/process ideas"
+    ],
+    "replace": [
+      "runtime"
+    ],
+    "add": [
+      "DIAL-native implementation"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "DONOR-INVENTREE",
+    "name": "InvenTree",
+    "kind": "REPOSITORY",
+    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_MODULES",
+    "role": "Primary direct engineering donor for internal WMS stock/location/lot/serial/movement behaviors.",
+    "preserve": [
+      "stock location tree",
+      "lot/serial concepts",
+      "movement history",
+      "receiving/transfer/barcode patterns"
+    ],
+    "replace": [
+      "Django runtime",
+      "DB",
+      "part authority"
+    ],
+    "add": [
+      "ownership vs custody",
+      "DIAL Ledger",
+      "DoA/SoD",
+      "offline warehouse app"
+    ],
+    "source_path_status": "PIN_DURING_IMPORT"
+  },
+  {
+    "donor_id": "DONOR-SNIPEIT",
+    "name": "Snipe-IT",
+    "kind": "REPOSITORY_REFERENCE",
+    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+    "role": "Corporate asset custody/check-in/check-out donor.",
+    "preserve": [
+      "custody and audit UX"
+    ],
+    "replace": [
+      "runtime/DB/auth"
+    ],
+    "add": [
+      "DIAL asset accounting",
+      "JML integration"
+    ],
+    "source_path_status": "PIN_IF_SOURCE_PORTED"
+  },
+  {
+    "donor_id": "DONOR-GLPI",
+    "name": "GLPI / GLPI Agent",
+    "kind": "REPOSITORY_AND_AGENT",
+    "adoption_mode": "SCHEMA_WORKFLOW_UX_PLUS_AGENT_INTEGRATION",
+    "role": "ITSM/CMDB workflow donor and endpoint inventory collector.",
+    "preserve": [
+      "incident/problem/change/SLA patterns",
+      "endpoint observation agent"
+    ],
+    "replace": [
+      "GLPI server authority"
+    ],
+    "add": [
+      "DIAL IT case/asset authority",
+      "DIAL Identity"
+    ],
+    "source_path_status": "PIN_AGENT_AND_REFERENCE_REVISION"
+  },
+  {
+    "donor_id": "SERVICE-DOCUMENSO",
+    "name": "Documenso",
+    "kind": "INTEGRATED_SERVICE",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "E-sign ceremony/evidence mechanics.",
+    "preserve": [
+      "signing experience/evidence"
+    ],
+    "replace": [
+      "contract approval authority"
+    ],
+    "add": [
+      "DIAL Contract and Records state"
+    ],
+    "source_path_status": "PIN_DEPLOYMENT"
+  },
+  {
+    "donor_id": "SERVICE-RECORDS-PROCESSING",
+    "name": "OCRmyPDF / Tesseract / Apache Tika",
+    "kind": "INTEGRATED_SERVICES",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "Document OCR/normalization/text/metadata extraction.",
+    "preserve": [
+      "specialist processing"
+    ],
+    "replace": [
+      "records authority"
+    ],
+    "add": [
+      "DIAL retention/hash/legal hold"
+    ],
+    "source_path_status": "PIN_DEPENDENCIES"
+  },
+  {
+    "donor_id": "DONOR-ERAMBA",
+    "name": "Eramba",
+    "kind": "GRC_REFERENCE",
+    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+    "role": "Risk/control/policy/test/exception/CAPA relationship donor.",
+    "preserve": [
+      "GRC relationship/workflow concepts"
+    ],
+    "replace": [
+      "runtime/database"
+    ],
+    "add": [
+      "DIAL evidence/approval/Command Centre"
+    ],
+    "source_path_status": "PIN_IF_SOURCE_PORTED"
+  },
+  {
+    "donor_id": "SERVICE-OPA",
+    "name": "Open Policy Agent",
+    "kind": "INTEGRATED_SERVICE",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "Complex policy evaluation for DoA/SoD/action authorization.",
+    "preserve": [
+      "policy evaluation"
+    ],
+    "replace": [
+      "identity/policy fact authority"
+    ],
+    "add": [
+      "DIAL decision/audit records"
+    ],
+    "source_path_status": "PIN_DEPLOYMENT"
+  },
+  {
+    "donor_id": "SOURCE-ZHOTN-SPECIALIST-CANON",
+    "name": "Dial Health / ZHOTN specialist architecture and qualified donor corpus",
+    "kind": "SPECIALIST_CANON",
+    "adoption_mode": "SPECIALIST_QDRS_AND_CONFORMANCE",
+    "role": "Health-domain authority for clinical/pharmacy/funder/emergency/interoperability behavior and donor choices.",
+    "preserve": [
+      "health-specific bounded contexts",
+      "clinical/pharmacy safety rules",
+      "qualified health donor patterns"
+    ],
+    "replace": [
+      "any conflicting generic DIAL assumptions"
+    ],
+    "add": [
+      "explicit shared-DIAL anti-corruption contracts",
+      "Main DIAL client/support/Command Centre integration"
+    ],
+    "source_path_status": "USE_CURRENT_HEALTH_MASTER_AND_SPECIALIST_UPDATES"
+  },
+  {
+    "donor_id": "REF-GRAB-SUPERAPP",
+    "name": "Grab superapp modularisation architecture",
+    "url": "https://engineering.grab.com/app-modularisation-at-scale",
+    "kind": "ARCHITECTURE_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Reference for one consumer super-app with independent feature modules and bridge/kit interfaces.",
+    "preserve": [
+      "core/shared/feature/bridge module separation",
+      "feature independence",
+      "single unified passenger experience"
+    ],
+    "replace": [
+      "Grab-specific implementation"
+    ],
+    "add": [
+      "DIAL branch modules and DIAL-native Android/iOS architecture"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "SERVICE-CHATWOOT",
+    "name": "Chatwoot",
+    "url": "https://www.chatwoot.com/",
+    "kind": "INTEGRATED_SERVICE",
+    "adoption_mode": "INTEGRATE_SERVICE",
+    "role": "Human support inbox, channel operations and branch-specific help-center portal substrate.",
+    "preserve": [
+      "omnichannel inbox",
+      "help center",
+      "agent collaboration",
+      "API/webhooks"
+    ],
+    "replace": [
+      "business/RCE authority",
+      "DIAL customer truth",
+      "uncontrolled AI business actions"
+    ],
+    "add": [
+      "DIAL SupportCase link",
+      "branch routing",
+      "DIAL AI Support Agent",
+      "RCE escalation",
+      "evidence snapshots"
+    ],
+    "source_path_status": "PIN_SELF_HOSTED_DEPLOYMENT"
+  },
+  {
+    "donor_id": "REF-INTERCOM-HANDOFF",
+    "name": "Intercom/Fin AI-human handoff patterns",
+    "kind": "CUSTOMER_SERVICE_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "role": "Reference for automated resolution, specialized roles and context-rich human handoff.",
+    "preserve": [
+      "handoff design principles",
+      "role-specific automation",
+      "escalation rules"
+    ],
+    "replace": [
+      "proprietary support runtime"
+    ],
+    "add": [
+      "DIAL-owned Support Agent + Chatwoot + RCE"
+    ],
+    "source_path_status": "REFERENCE_ONLY"
+  },
+  {
+    "donor_id": "SERVICE-LITELLM-SUPPORT",
+    "name": "LiteLLM + Promptfoo + Langfuse",
+    "kind": "AI_RUNTIME",
+    "adoption_mode": "LIBRARY_AND_SERVICE",
+    "role": "DIAL Support Agent routing, evaluation and tracing.",
+    "preserve": [
+      "gateway/eval/trace mechanics"
+    ],
+    "replace": [
+      "none"
+    ],
+    "add": [
+      "branch support skills/tool policies",
+      "knowledge grounding",
+      "handoff summaries"
+    ],
+    "source_path_status": "PIN_DEPENDENCIES"
+  },
+  {
+    "donor_id": "SERVICE-WHATSAPP",
+    "name": "Official WhatsApp Cloud API / Flows",
+    "kind": "EXTERNAL_API",
+    "adoption_mode": "EXTERNAL_ADAPTER",
+    "role": "Official customer messaging/conversational transaction/support channel.",
+    "preserve": [
+      "official channel capabilities"
+    ],
+    "replace": [
+      "unofficial web-session gateways"
+    ],
+    "add": [
+      "DIAL identity/context links",
+      "branch flows",
+      "support handoff"
+    ],
+    "source_path_status": "VERSIONED_API_ADAPTER"
+  },
+  {
+    "donor_id": "SERVICE-DIAL-DELIVERY-STACK",
+    "name": "MapLibre + Nominatim + OSRM + VROOM + DIAL Delivery",
+    "kind": "SHARED_PLATFORM_STACK",
+    "adoption_mode": "LIBRARY_AND_SERVICES",
+    "role": "Shared delivery/map/route UX and execution foundation.",
+    "preserve": [
+      "geo/routing/optimisation mechanics"
+    ],
+    "replace": [
+      "any division-specific delivery SoR"
+    ],
+    "add": [
+      "DIAL Delivery jobs/evidence/issue flows"
+    ],
+    "source_path_status": "SHARED_PLATFORM"
+  },
+  {
+    "donor_id": "DONOR-COMMAND-DESIGN",
+    "name": "Studio Admin + shadcn/ui + Tremor Raw + Refine",
+    "kind": "UI_STACK",
+    "adoption_mode": "UX_PORT_COMPONENT_PORT_LIBRARY",
+    "role": "Command Centre/corporate operator visual and interaction substrate.",
+    "preserve": [
+      "high-quality shell",
+      "editable primitives",
+      "analytics components",
+      "headless resource plumbing"
+    ],
+    "replace": [
+      "donor branding",
+      "generic SaaS composition",
+      "direct CRUD authority"
+    ],
+    "add": [
+      "DIAL design system",
+      "typed actions",
+      "decision/evidence/alerts"
+    ],
+    "source_path_status": "PIN_COMPONENT_PROVENANCE"
+  },
+  {
+    "donor_id": "DONOR-DIAL-HOME-SHADCN",
+    "name": "nobruf/shadcn-landing-page",
+    "url": "https://github.com/nobruf/shadcn-landing-page",
+    "kind": "REPOSITORY",
+    "adoption_mode": "PORT_SELECTED_MODULE_AND_UX",
+    "license": "MIT",
+    "role": "Primary DIAL public home/landing service-router composition donor.",
+    "preserve": [
+      "responsive navbar/mobile nav",
+      "hero/services/benefits/FAQ/footer composition"
+    ],
+    "replace": [
+      "brand/copy",
+      "generic SaaS content",
+      "theme/tokens",
+      "auth-first hierarchy"
+    ],
+    "add": [
+      "DIAL Service Router",
+      "intent search",
+      "Activity strip",
+      "Business/Health/Support/WhatsApp",
+      "DIAL design system"
+    ],
+    "source_path_status": "PIN_EXACT_COMMIT_BEFORE_PORT"
+  },
+  {
+    "donor_id": "DONOR-WHATSAPP-FLOWS-TOOLS",
+    "name": "WhatsApp/WhatsApp-Flows-Tools",
+    "url": "https://github.com/WhatsApp/WhatsApp-Flows-Tools",
+    "kind": "OFFICIAL_REPOSITORY",
+    "adoption_mode": "PORT_ALGORITHM_ENGINE_AND_CONFORMANCE_REFERENCE",
+    "license": "MIT",
+    "role": "Official WhatsApp Flows endpoint crypto/tooling/examples donor.",
+    "preserve": [
+      "endpoint crypto mechanics",
+      "Flow/webhook example concepts"
+    ],
+    "replace": [
+      "prototype assumptions"
+    ],
+    "add": [
+      "DIAL auth/commands/idempotency/observability/security"
+    ],
+    "source_path_status": "PIN_EXACT_COMMIT"
+  },
+  {
+    "donor_id": "REF-META-WHATSAPP-API-SAMPLES",
+    "name": "fbsamples/whatsapp-api-examples",
+    "url": "https://github.com/fbsamples/whatsapp-api-examples",
+    "kind": "OFFICIAL_SAMPLE_REFERENCE",
+    "adoption_mode": "REFERENCE",
+    "license": "Meta Platform Policy",
+    "role": "Cloud API/webhook/template/media/ecommerce examples.",
+    "preserve": [
+      "API conformance patterns"
+    ],
+    "replace": [
+      "sample application architecture"
+    ],
+    "add": [
+      "DIAL Gateway/domain integration"
+    ],
+    "source_path_status": "REFERENCE_AND_POLICY_REVIEW"
+  },
+  {
+    "donor_id": "SERVICE-PAYNOW",
+    "name": "Paynow Zimbabwe",
+    "url": "https://developers.paynow.co.zw/",
+    "kind": "PAYMENT_PROVIDER",
+    "adoption_mode": "EXTERNAL_ADAPTER",
+    "role": "Server-side payment initiation/query/callback adapter.",
+    "preserve": [
+      "provider API/hosted payment behavior"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL idempotency/ledger/reconciliation/WhatsApp status"
+    ],
+    "source_path_status": "USE_CURRENT_DEVELOPER_DOCS"
+  },
+  {
+    "donor_id": "SERVICE-CONTIPAY",
+    "name": "ContiPay",
+    "url": "https://contipay.co.zw/",
+    "kind": "PAYMENT_PROVIDER",
+    "adoption_mode": "EXTERNAL_ADAPTER",
+    "role": "Payment provider with developer workspace, REST API, notifications and test environment.",
+    "preserve": [
+      "provider-supported collection/notification mechanics"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL PaymentIntent/ledger/reconciliation/WhatsApp bridge"
+    ],
+    "source_path_status": "AUTHENTICATED_DEVELOPER_DOCS_REQUIRED"
+  },
+  {
+    "donor_id": "SERVICE-ECOCASH-DIRECT",
+    "name": "EcoCash Developer Platform / Direct USSD Push",
+    "url": "https://developers.ecocash.co.zw/",
+    "kind": "PAYMENT_PROVIDER",
+    "adoption_mode": "EXTERNAL_ADAPTER",
+    "role": "Direct EcoCash merchant/mobile-money payment adapter using authenticated API, USSD push confirmation and webhooks.",
+    "preserve": [
+      "provider REST/OAuth2/webhook/USSD-push contract"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL PaymentIntent",
+      "HMAC verification",
+      "idempotency",
+      "BU clearing/journal",
+      "settlement/reconciliation",
+      "WhatsApp status"
+    ],
+    "source_path_status": "AUTHENTICATED_DEVELOPER_PORTAL_BINDING"
+  },
+  {
+    "donor_id": "SERVICE-PAYPAL",
+    "name": "PayPal Orders/Payments/Webhooks",
+    "url": "https://developer.paypal.com/",
+    "kind": "PAYMENT_PROVIDER",
+    "adoption_mode": "EXTERNAL_ADAPTER",
+    "role": "PayPal customer payment, capture, webhook, refund and dispute adapter.",
+    "preserve": [
+      "Orders v2",
+      "Payments v2",
+      "webhook verification"
+    ],
+    "replace": [],
+    "add": [
+      "DIAL PaymentIntent",
+      "BU PayPal clearing/journal",
+      "DIAL refund/RCE",
+      "settlement reconciliation"
+    ],
+    "source_path_status": "PIN_CURRENT_REST_API_CONTRACT"
+  }
+]

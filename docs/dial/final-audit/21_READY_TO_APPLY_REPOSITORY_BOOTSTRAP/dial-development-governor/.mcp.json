@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "dial-truth": {
+      "command": "node",
+      "args": [
+        "agent-system/mcp/dial-truth-server.mjs"
+      ],
+      "env": {
+        "DIAL_TRUTH_READ_ONLY": "true"
+      }
+    }
+  }
+}

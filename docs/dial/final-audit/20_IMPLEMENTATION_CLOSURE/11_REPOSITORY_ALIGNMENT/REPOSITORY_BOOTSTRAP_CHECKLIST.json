@@ -1,0 +1,62 @@
+[
+  {
+    "id": "RBC-001",
+    "task": "Create reviewed v2 bootstrap branch/worktree",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-002",
+    "task": "Install root CLAUDE.md v2",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-003",
+    "task": "Install agent-system v2 context/drift/coverage/closure scripts",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-004",
+    "task": "Install .claude rules/skills/agents/hooks settings",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-005",
+    "task": "Replace stale always-on v4 Cursor authority rule with v2 pointer",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-006",
+    "task": "Archive/supersede stale planning authority without deleting provenance",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-007",
+    "task": "Map existing source/test paths to Feature Registry",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-008",
+    "task": "Run v2 closure/drift/security/realization checks in repository",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-009",
+    "task": "Prove one pilot Feature reaches DOMAIN_TESTED using v2 bounded context loop",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  },
+  {
+    "id": "RBC-010",
+    "task": "Only then enable broad multi-worktree feature development",
+    "blocking": true,
+    "status": "PENDING_APPLY"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dial-truth": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "agent-system/mcp/dial-truth-server.mjs"
+      ]
+    }
+  }
+}

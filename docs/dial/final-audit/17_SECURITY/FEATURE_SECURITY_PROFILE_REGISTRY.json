@@ -1,0 +1,5321 @@
+[
+  {
+    "feature_id": "SPARE-F001",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F002",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F003",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F004",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F005",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F006",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F007",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F008",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F009",
+    "module": "SPARE",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F010",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F011",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F012",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F013",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F014",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F015",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F016",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "SPARE-F017",
+    "module": "SPARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F001",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F002",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F003",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F004",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F005",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F006",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F007",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F008",
+    "module": "TECH",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F009",
+    "module": "TECH",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F010",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F011",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F012",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F013",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F014",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F015",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F016",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F017",
+    "module": "TECH",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F018",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F019",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F020",
+    "module": "TECH",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F001",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F002",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F003",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F004",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F005",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F006",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F007",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F008",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F009",
+    "module": "GROCERIES",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F010",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F011",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "FILE_UPLOAD",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F012",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F013",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F014",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F015",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F016",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F017",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F018",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F001",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F002",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F003",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F004",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F005",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F006",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F007",
+    "module": "LAUNDRY",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F008",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F009",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F010",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F011",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F012",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F013",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F014",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F015",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F016",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F017",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "LAUN-F018",
+    "module": "LAUNDRY",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F001",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F002",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F003",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F004",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F005",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F006",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F007",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F008",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F009",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F010",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F011",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F012",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F013",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F014",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F015",
+    "module": "FLEET",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F001",
+    "module": "VHUB",
+    "security_tier": "S3",
+    "reasons": [
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F002",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F003",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F004",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F005",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F006",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F007",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F008",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F009",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F010",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F011",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F012",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F013",
+    "module": "VHUB",
+    "security_tier": "S3",
+    "reasons": [
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "VHUB-F014",
+    "module": "VHUB",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F001",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F002",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F003",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F004",
+    "module": "CARE",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F005",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F006",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F007",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F008",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F009",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F010",
+    "module": "CARE",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F011",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F012",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F013",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F014",
+    "module": "CARE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F001",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F002",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F003",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F004",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F005",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F006",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F007",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "INTEGRATIONS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F008",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F009",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F010",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F011",
+    "module": "ASSIST",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F012",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F013",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F014",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F015",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F016",
+    "module": "ASSIST",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F001",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F002",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F003",
+    "module": "PROJECTS",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F004",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F005",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F006",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F007",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F008",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F009",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F010",
+    "module": "PROJECTS",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F011",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F012",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F013",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "FILE_UPLOAD",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F014",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F015",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F016",
+    "module": "PROJECTS",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F001",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F002",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F003",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F004",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F005",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F006",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F007",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F008",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F009",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F010",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F011",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F012",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F013",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F014",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F015",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F016",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN",
+      "FILE_UPLOAD"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F017",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F018",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F019",
+    "module": "CORPORATE",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F020",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege",
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "ADMIN"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F001",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F002",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F003",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F004",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F005",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F006",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F007",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F008",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F009",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F010",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data",
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F011",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F012",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F013",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F014",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F015",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F016",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "INTEGRATIONS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F017",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F018",
+    "module": "HEALTH",
+    "security_tier": "S3",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation"
+    ],
+    "status": "SPECIFIED"
+  }
+]

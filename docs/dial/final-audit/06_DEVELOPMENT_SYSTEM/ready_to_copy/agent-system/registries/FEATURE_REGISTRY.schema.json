@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "feature_id",
+      "module",
+      "outcome",
+      "owner",
+      "status",
+      "current_gate",
+      "realization_ref",
+      "donor_refs",
+      "client_exposure",
+      "app_families",
+      "support_profile"
+    ],
+    "properties": {
+      "feature_id": {
+        "type": "string",
+        "pattern": "^[A-Z]+-F[0-9]{3}$"
+      },
+      "module": {
+        "type": "string"
+      },
+      "outcome": {
+        "type": "string"
+      },
+      "owner": {
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "SPECIFIED",
+          "MAPPED",
+          "CODE_PRESENT",
+          "DOMAIN_TESTED",
+          "INTEGRATION_GREEN",
+          "STAGING_GREEN",
+          "PRODUCTION_GREEN",
+          "CERTIFIED_DORMANT",
+          "ACTIVE"
+        ]
+      },
+      "current_gate": {
+        "type": "string"
+      },
+      "code_paths": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "test_paths": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "evidence_refs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "realization_ref": {
+        "type": "string"
+      },
+      "client_exposure": {
+        "type": "string"
+      },
+      "app_families": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "support_profile": {
+        "type": "string"
+      }
+    }
+  }
+}

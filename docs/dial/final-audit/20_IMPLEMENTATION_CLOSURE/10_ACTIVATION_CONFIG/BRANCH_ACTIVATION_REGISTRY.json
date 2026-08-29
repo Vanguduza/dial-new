@@ -1,0 +1,62 @@
+[
+  {
+    "branch": "SPARE",
+    "status_default": "CERTIFIED_DORMANT until commercial activation",
+    "public_navigation_flag": "branch.spare.public",
+    "transaction_flag": "branch.spare.transactional"
+  },
+  {
+    "branch": "TECH",
+    "status_default": "CERTIFIED_DORMANT until commercial activation",
+    "public_navigation_flag": "branch.tech.public",
+    "transaction_flag": "branch.tech.transactional"
+  },
+  {
+    "branch": "GROCERIES",
+    "status_default": "CERTIFIED_DORMANT until merchant/network activation",
+    "public_navigation_flag": "branch.groceries.public",
+    "transaction_flag": "branch.groceries.transactional"
+  },
+  {
+    "branch": "LAUNDRY",
+    "status_default": "CERTIFIED_DORMANT until facility/network activation",
+    "public_navigation_flag": "branch.laundry.public",
+    "transaction_flag": "branch.laundry.transactional"
+  },
+  {
+    "branch": "FLEET",
+    "status_default": "CERTIFIED_DORMANT / B2B activation",
+    "public_navigation_flag": "branch.fleet.public",
+    "transaction_flag": "branch.fleet.transactional"
+  },
+  {
+    "branch": "VHUB",
+    "status_default": "shared lifecycle capability; activate with dependent customer surfaces",
+    "public_navigation_flag": "branch.vhub.public",
+    "transaction_flag": "branch.vhub.transactional"
+  },
+  {
+    "branch": "CARE",
+    "status_default": "CERTIFIED_DORMANT pending regulatory/commercial products",
+    "public_navigation_flag": "branch.care.public",
+    "transaction_flag": "branch.care.transactional"
+  },
+  {
+    "branch": "ASSIST",
+    "status_default": "CERTIFIED_DORMANT pending roadside network",
+    "public_navigation_flag": "branch.assist.public",
+    "transaction_flag": "branch.assist.transactional"
+  },
+  {
+    "branch": "PROJECTS",
+    "status_default": "CERTIFIED_DORMANT pending project operations",
+    "public_navigation_flag": "branch.projects.public",
+    "transaction_flag": "branch.projects.transactional"
+  },
+  {
+    "branch": "HEALTH",
+    "status_default": "standalone CERTIFIED_DORMANT pending specialist activation gates",
+    "public_navigation_flag": "branch.health.public",
+    "transaction_flag": "branch.health.transactional"
+  }
+]
