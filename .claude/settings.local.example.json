@@ -1,0 +1,6 @@
+{
+  "env": {
+    "DIAL_HOOK_PROFILE": "standard"
+  },
+  "_comment": "Copy to settings.local.json. Never commit credentials."
+}
