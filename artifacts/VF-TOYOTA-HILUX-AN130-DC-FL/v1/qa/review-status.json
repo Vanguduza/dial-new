@@ -44,6 +44,13 @@
       "notes": "Development fixture cannot receive production approval."
     },
     {
+      "gate": "wheelMultiplicity",
+      "status": "PENDING_HUMAN_APPROVAL",
+      "reviewer": null,
+      "timestamp": null,
+      "notes": "Development fixture cannot receive production approval."
+    },
+    {
       "gate": "finalMotion",
       "status": "PENDING_HUMAN_APPROVAL",
       "reviewer": null,

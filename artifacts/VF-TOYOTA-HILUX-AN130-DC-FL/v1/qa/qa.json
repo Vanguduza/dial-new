@@ -1,30 +1,177 @@
 {
-  "passed": true,
+  "passed": false,
   "checks": {
-    "silhouette": true,
-    "wheels": true,
-    "roofline": true,
-    "lamps": true,
-    "glazing": true,
-    "boundingBox": true,
-    "hotspots": true
+    "identity": false,
+    "hotspots": true,
+    "hotspotCoverage": true,
+    "hotspotDisjoint": false,
+    "wheelMultiplicity": true
   },
-  "metrics": {
-    "silhouetteIoU": 0.99,
-    "wheelCentreDisplacement": 0,
-    "rooflineDisplacement": 0,
-    "lampDisplacement": 0,
-    "glazingDisplacement": 0,
-    "bodyBoundingBoxChange": 0
+  "identity": [
+    {
+      "stage": "STUDIO_CGI",
+      "asset": "cgi/cgi-master.avif",
+      "checks": {
+        "silhouette": "FAIL",
+        "boundingBox": "PASS",
+        "centroid": "PASS",
+        "aspectRatio": "FAIL",
+        "upperProfile": "FAIL",
+        "lowerProfile": "PASS",
+        "wheelCentres": "NOT_MEASURED",
+        "roofline": "NOT_MEASURED",
+        "lamps": "NOT_MEASURED",
+        "glazing": "NOT_MEASURED"
+      },
+      "metrics": {
+        "silhouetteIoU": 0.5633502267271272,
+        "boundingBoxChange": 0.03090277777777778,
+        "centroidDisplacement": 0.01836896845809233,
+        "aspectRatioChange": 0.1785714285714286,
+        "upperProfileDeviation": 0.08770833333333324,
+        "lowerProfileDeviation": 0.04388888888888877,
+        "wheelCentreDisplacement": "NOT_MEASURED",
+        "rooflineDisplacement": "NOT_MEASURED",
+        "lampDisplacement": "NOT_MEASURED",
+        "glazingDisplacement": "NOT_MEASURED",
+        "measuredBy": "deterministic-silhouette-v2"
+      }
+    },
+    {
+      "stage": "TECHNICAL",
+      "asset": "technical/technical-shaded.avif",
+      "checks": {
+        "silhouette": "FAIL",
+        "boundingBox": "PASS",
+        "centroid": "PASS",
+        "aspectRatio": "FAIL",
+        "upperProfile": "FAIL",
+        "lowerProfile": "PASS",
+        "wheelCentres": "NOT_MEASURED",
+        "roofline": "NOT_MEASURED",
+        "lamps": "NOT_MEASURED",
+        "glazing": "NOT_MEASURED"
+      },
+      "metrics": {
+        "silhouetteIoU": 0.5570897503983006,
+        "boundingBoxChange": 0.029340277777777785,
+        "centroidDisplacement": 0.01836324805580099,
+        "aspectRatioChange": 0.1696428571428572,
+        "upperProfileDeviation": 0.08437499999999991,
+        "lowerProfileDeviation": 0.04305555555555545,
+        "wheelCentreDisplacement": "NOT_MEASURED",
+        "rooflineDisplacement": "NOT_MEASURED",
+        "lampDisplacement": "NOT_MEASURED",
+        "glazingDisplacement": "NOT_MEASURED",
+        "measuredBy": "deterministic-silhouette-v2"
+      }
+    },
+    {
+      "stage": "ENGINEERING_LINE_ART",
+      "asset": "technical/line-art.avif",
+      "checks": {
+        "silhouette": "FAIL",
+        "boundingBox": "PASS",
+        "centroid": "PASS",
+        "aspectRatio": "FAIL",
+        "upperProfile": "FAIL",
+        "lowerProfile": "PASS",
+        "wheelCentres": "NOT_MEASURED",
+        "roofline": "NOT_MEASURED",
+        "lamps": "NOT_MEASURED",
+        "glazing": "NOT_MEASURED"
+      },
+      "metrics": {
+        "silhouetteIoU": 0.5919864559819413,
+        "boundingBoxChange": 0.03090277777777778,
+        "centroidDisplacement": 0.02537554546961841,
+        "aspectRatioChange": 0.1785714285714286,
+        "upperProfileDeviation": 0.0868749999999999,
+        "lowerProfileDeviation": 0.04298611111111101,
+        "wheelCentreDisplacement": "NOT_MEASURED",
+        "rooflineDisplacement": "NOT_MEASURED",
+        "lampDisplacement": "NOT_MEASURED",
+        "glazingDisplacement": "NOT_MEASURED",
+        "measuredBy": "deterministic-silhouette-v2"
+      }
+    },
+    {
+      "stage": "EXPLODED_SYSTEMS",
+      "asset": "exploded/pre-explosion.avif",
+      "checks": {
+        "silhouette": "FAIL",
+        "boundingBox": "PASS",
+        "centroid": "PASS",
+        "aspectRatio": "FAIL",
+        "upperProfile": "FAIL",
+        "lowerProfile": "FAIL",
+        "wheelCentres": "NOT_MEASURED",
+        "roofline": "NOT_MEASURED",
+        "lamps": "NOT_MEASURED",
+        "glazing": "NOT_MEASURED"
+      },
+      "metrics": {
+        "silhouetteIoU": 0.546745867768595,
+        "boundingBoxChange": 0.036458333333333315,
+        "centroidDisplacement": 0.013336686370771999,
+        "aspectRatioChange": 0.22131147540983598,
+        "upperProfileDeviation": 0.07166666666666661,
+        "lowerProfileDeviation": 0.05013888888888879,
+        "wheelCentreDisplacement": "NOT_MEASURED",
+        "rooflineDisplacement": "NOT_MEASURED",
+        "lampDisplacement": "NOT_MEASURED",
+        "glazingDisplacement": "NOT_MEASURED",
+        "measuredBy": "deterministic-silhouette-v2"
+      }
+    }
+  ],
+  "identityFailures": [
+    "STUDIO_CGI: silhouette",
+    "STUDIO_CGI: aspectRatio",
+    "STUDIO_CGI: upperProfile",
+    "TECHNICAL: silhouette",
+    "TECHNICAL: aspectRatio",
+    "TECHNICAL: upperProfile",
+    "ENGINEERING_LINE_ART: silhouette",
+    "ENGINEERING_LINE_ART: aspectRatio",
+    "ENGINEERING_LINE_ART: upperProfile",
+    "EXPLODED_SYSTEMS: silhouette",
+    "EXPLODED_SYSTEMS: aspectRatio",
+    "EXPLODED_SYSTEMS: upperProfile",
+    "EXPLODED_SYSTEMS: lowerProfile"
+  ],
+  "hotspotErrors": [],
+  "uncoveredCategories": [],
+  "overlappingHotspots": [
+    "VC-ENG overlaps VC-BODY",
+    "VC-FBRK overlaps VC-FSUS",
+    "VC-RBRK overlaps VC-RSUS"
+  ],
+  "explodedViewPolicy": {
+    "expectedWheelPositions": 2,
+    "tyresPerPosition": {
+      "visible-front": 1,
+      "visible-rear": 1
+    },
+    "looseSpareTyres": 0
   },
   "thresholds": {
-    "minSilhouetteIoU": 0.95,
+    "minSilhouetteIoU": 0.9,
+    "maxBoundingBoxChange": 0.04,
+    "maxCentroidDisplacement": 0.03,
+    "maxAspectRatioChange": 0.08,
+    "maxUpperProfileDeviation": 0.05,
+    "maxLowerProfileDeviation": 0.05,
     "maxWheelCentreDisplacement": 0.015,
     "maxRooflineDisplacement": 0.015,
     "maxLampDisplacement": 0.02,
-    "maxGlazingDisplacement": 0.02,
-    "maxBodyBoundingBoxChange": 0.02
+    "maxGlazingDisplacement": 0.02
   },
-  "hotspotErrors": [],
-  "note": "Development fixture metrics are exact because every state is derived from one locked vector geometry."
+  "notMeasured": [
+    "wheelCentres",
+    "roofline",
+    "lamps",
+    "glazing"
+  ],
+  "note": "Every road-wheel position must contain exactly one tyre. Identity drift is measured against the lock derived from the normalized source. wheelCentres, roofline, lamps, glazing require a feature-detection provider and are reported NOT_MEASURED rather than passed; production approval must not treat them as green."
 }

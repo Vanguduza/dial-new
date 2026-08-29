@@ -4,16 +4,51 @@
   "title": "Dial Hero-to-EPC Flow Pack",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "flowPackId", "status", "customerReady", "vehicle", "entryModes", "autoplay", "retainedSelection", "stages", "catalogHandoff", "readiness"],
+  "required": [
+    "schemaVersion",
+    "flowPackId",
+    "status",
+    "customerReady",
+    "vehicle",
+    "entryModes",
+    "autoplay",
+    "retainedSelection",
+    "transitionWindow",
+    "visualIntegrity",
+    "stages",
+    "catalogHandoff",
+    "readiness"
+  ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "schemaVersion": { "const": "1.1.0" },
     "flowPackId": { "type": "string", "pattern": "^H2E-[A-Z0-9-]+-V[0-9]+$" },
-    "status": { "enum": ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "DEVELOPMENT_COMPLETE", "PRODUCTION_REVIEW_REQUIRED", "PRODUCTION_READY"] },
+    "status": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "DEVELOPMENT_COMPLETE",
+        "PRODUCTION_REVIEW_REQUIRED",
+        "PRODUCTION_READY"
+      ]
+    },
     "customerReady": { "type": "boolean" },
     "vehicle": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["visualFamilyId", "fitmentId", "catalogReleaseId", "catalogFamilyId", "variantId", "familySlug", "make", "model", "generation", "bodyStyle", "visualPhase"],
+      "required": [
+        "visualFamilyId",
+        "fitmentId",
+        "catalogReleaseId",
+        "catalogFamilyId",
+        "variantId",
+        "familySlug",
+        "make",
+        "model",
+        "generation",
+        "bodyStyle",
+        "visualPhase"
+      ],
       "properties": {
         "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
         "fitmentId": { "type": "string", "minLength": 1 },
@@ -32,17 +67,28 @@
       "type": "array",
       "uniqueItems": true,
       "minItems": 4,
-      "items": { "enum": ["CASCADE_SEARCH", "GARAGE_VISUAL_FLOW", "GARAGE_EPC_DIRECT", "MENU_EPC_BROWSE"] }
+      "items": {
+        "enum": ["CASCADE_SEARCH", "GARAGE_VISUAL_FLOW", "GARAGE_EPC_DIRECT", "MENU_EPC_BROWSE"]
+      }
     },
     "autoplay": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["trigger", "userPlayControl", "reducedMotionBehavior", "replayAllowedFromVehicleSummary"],
+      "required": [
+        "trigger",
+        "userPlayControl",
+        "reducedMotionBehavior",
+        "replayAllowedFromVehicleSummary",
+        "automaticReplayWhenVehicleUnchanged",
+        "completedVehicleReturnState"
+      ],
       "properties": {
         "trigger": { "const": "VEHICLE_SEARCH_COMMITTED" },
         "userPlayControl": { "const": false },
         "reducedMotionBehavior": { "const": "CUT_TO_NAVIGATION_READY" },
-        "replayAllowedFromVehicleSummary": { "type": "boolean" }
+        "replayAllowedFromVehicleSummary": { "type": "boolean" },
+        "automaticReplayWhenVehicleUnchanged": { "const": false },
+        "completedVehicleReturnState": { "const": "RESTORE_SETTLED_EXPLODED" }
       }
     },
     "retainedSelection": {
@@ -52,7 +98,44 @@
       "properties": {
         "preserveUntilEdited": { "const": true },
         "committedTextAppearance": { "const": "FAINT_GREY" },
-        "contextPropagation": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+        "contextPropagation": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "transitionWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topInstruction", "headlinePattern", "headlinePlacement", "visibleProgressUi"],
+      "properties": {
+        "topInstruction": { "const": "click on the category image to browse parts" },
+        "headlinePattern": { "const": "Know your {exact chosen model}. Find the right part." },
+        "headlinePlacement": { "const": "BOTTOM_LEFT" },
+        "visibleProgressUi": { "const": false }
+      }
+    },
+    "visualIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["explodedViewPolicy", "wheelMultiplicityRule"],
+      "properties": {
+        "explodedViewPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["expectedWheelPositions", "tyresPerPosition", "looseSpareTyres"],
+          "properties": {
+            "expectedWheelPositions": { "type": "integer", "minimum": 2, "maximum": 12 },
+            "tyresPerPosition": {
+              "type": "object",
+              "minProperties": 2,
+              "additionalProperties": { "const": 1 }
+            },
+            "looseSpareTyres": { "const": 0 }
+          }
+        },
+        "wheelMultiplicityRule": { "const": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION" }
       }
     },
     "stages": {
@@ -63,7 +146,18 @@
         "additionalProperties": false,
         "required": ["id", "required"],
         "properties": {
-          "id": { "enum": ["HERO_PHOTOGRAPHY", "IDENTITY_LOCK", "STUDIO_CGI", "ENGINEERING_LINE_ART", "EXPLODED_SYSTEMS", "VISUAL_HIT_MAP", "EPC_SECTION_HANDOFF", "EPC_DIAGRAM_AND_PARTS"] },
+          "id": {
+            "enum": [
+              "HERO_PHOTOGRAPHY",
+              "IDENTITY_LOCK",
+              "STUDIO_CGI",
+              "ENGINEERING_LINE_ART",
+              "EXPLODED_SYSTEMS",
+              "VISUAL_HIT_MAP",
+              "EPC_SECTION_HANDOFF",
+              "EPC_DIAGRAM_AND_PARTS"
+            ]
+          },
           "asset": { "type": "string" },
           "fallback": { "type": "string" },
           "route": { "type": "string" },

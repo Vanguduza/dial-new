@@ -36,6 +36,10 @@ export interface CatalogModelMetrics {
   diagramCount: number;
   diagramImageCount: number;
   partRowCount: number;
+  /** Variants carrying a resolved fitment identity (chassis, engine, market). */
+  fitmentResolvedVariantCount?: number;
+  /** Diagrams carrying position hotspots joined through the internal diagram id. */
+  diagramsWithHotspotCount?: number;
 }
 
 export interface CatalogIntegrityGate {
@@ -111,7 +115,20 @@ export function buildObservedCoverageStages(
   const cascade = metrics.variantCount > 0
     ? pass('CASCADE_READY', [`${metrics.variantCount} catalog variant record(s)`])
     : missing('CASCADE_READY', 'No catalog variant record');
-  const fitment = missing('FITMENT_READY', 'Exact variant, market and engine fitment identity has not passed the v2 fitment gate');
+  // Derived from evidence rather than hardcoded. The previous implementation
+  // returned a fixed 'missing' regardless of input, so no vehicle could ever
+  // reach customerReady without editing this function — the gate reported an
+  // honest zero by accident rather than by measurement.
+  const fitmentResolved = metrics.fitmentResolvedVariantCount ?? 0;
+  const fitment = fitmentResolved === 0
+    ? missing('FITMENT_READY', 'No variant carries a resolved chassis, engine and market fitment identity')
+    : fitmentResolved < metrics.variantCount
+      ? blocked(
+          'FITMENT_READY',
+          `${metrics.variantCount - fitmentResolved} of ${metrics.variantCount} variant(s) have unresolved fitment identity`,
+          [`${fitmentResolved} variant(s) passed the fitment gate`],
+        )
+      : pass('FITMENT_READY', [`${fitmentResolved} variant(s) with resolved fitment identity`]);
   const hero = flowPack?.customerReady
     ? pass('HERO_READY', [flowPack.visualFamilyId])
     : missing('HERO_READY', 'No approved hero and identity-lock asset pack');
@@ -130,7 +147,25 @@ export function buildObservedCoverageStages(
     : metrics.diagramCount > 0 && metrics.diagramImageCount === metrics.diagramCount
       ? pass('DIAGRAM_READY', [`${metrics.diagramImageCount} verified diagram images`])
       : missing('DIAGRAM_READY', 'Every diagram requires a verified image and globally unique internal diagram ID');
-  const hotspots = blocked('HOTSPOT_READY', 'Hotspots cannot be trusted until diagram identity collisions are corrected');
+  // Hotspots depend on diagram identity being safe, because a position row is
+  // joined to its diagram through the internal id. Below that they are measured,
+  // not asserted.
+  const diagramsWithHotspots = metrics.diagramsWithHotspotCount ?? 0;
+  const hotspots = !integrity.globalDiagramIdentitySafe
+    ? blocked(
+        'HOTSPOT_READY',
+        'Hotspots cannot be trusted until source node_id collisions are migrated to stable DGM IDs',
+        [`${diagramsWithHotspots} diagram(s) currently carry position hotspots`],
+      )
+    : diagramsWithHotspots === 0
+      ? missing('HOTSPOT_READY', 'No diagram carries position hotspots')
+      : diagramsWithHotspots < metrics.diagramCount
+        ? blocked(
+            'HOTSPOT_READY',
+            `${metrics.diagramCount - diagramsWithHotspots} of ${metrics.diagramCount} diagram(s) have no position hotspots`,
+            [`${diagramsWithHotspots} diagram(s) with hotspots`],
+          )
+        : pass('HOTSPOT_READY', [`${diagramsWithHotspots} diagram(s) with verified position hotspots`]);
   const parts = metrics.partRowCount > 0
     ? pass('PART_DATA_READY', [`${metrics.partRowCount} diagram part rows`])
     : missing('PART_DATA_READY', 'No diagram part rows');

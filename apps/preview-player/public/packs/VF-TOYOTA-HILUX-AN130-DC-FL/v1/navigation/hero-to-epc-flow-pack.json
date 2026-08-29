@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "flowPackId": "H2E-TOYOTA-HILUX-AN130-DC-FL-V1",
   "status": "DEVELOPMENT_COMPLETE",
   "customerReady": false,
@@ -26,7 +26,9 @@
     "trigger": "VEHICLE_SEARCH_COMMITTED",
     "userPlayControl": false,
     "reducedMotionBehavior": "CUT_TO_NAVIGATION_READY",
-    "replayAllowedFromVehicleSummary": true
+    "replayAllowedFromVehicleSummary": true,
+    "automaticReplayWhenVehicleUnchanged": false,
+    "completedVehicleReturnState": "RESTORE_SETTLED_EXPLODED"
   },
   "retainedSelection": {
     "preserveUntilEdited": true,
@@ -39,6 +41,23 @@
       "cart",
       "garage"
     ]
+  },
+  "transitionWindow": {
+    "topInstruction": "click on the category image to browse parts",
+    "headlinePattern": "Know your {exact chosen model}. Find the right part.",
+    "headlinePlacement": "BOTTOM_LEFT",
+    "visibleProgressUi": false
+  },
+  "visualIntegrity": {
+    "explodedViewPolicy": {
+      "expectedWheelPositions": 2,
+      "tyresPerPosition": {
+        "visible-front": 1,
+        "visible-rear": 1
+      },
+      "looseSpareTyres": 0
+    },
+    "wheelMultiplicityRule": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION"
   },
   "stages": [
     {

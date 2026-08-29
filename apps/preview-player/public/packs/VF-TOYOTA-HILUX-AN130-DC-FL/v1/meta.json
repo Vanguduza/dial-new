@@ -6,10 +6,10 @@
   "yearTo": null,
   "developmentMode": true,
   "productionPublishable": false,
-  "pipelineVersion": "0.4.0",
+  "pipelineVersion": "0.5.0",
   "fitmentAuthority": "fitmentMapping.fitmentId + structured catalog route target",
   "catalogAuthority": "CAT-DEVELOPMENT-HILUX-V2 / CF-TOYOTA-HILUX-AN120-AN130",
   "visualFamilyAuthority": "visualFamilyId",
-  "generatedAt": "2026-08-29T17:19:38.580Z",
+  "generatedAt": "2026-08-29T21:18:15.602Z",
   "warning": "Synthetic development fixture. Not licensed production vehicle art."
 }

@@ -46,43 +46,41 @@ const categoryHitAreas: Array<{
   id: string;
   visualCategoryId: VisualCategoryId;
   clipPath: string;
+  priority: number;
 }> = [
   {
     id: 'body',
     visualCategoryId: 'VC-BODY',
     clipPath: 'polygon(6% 6%, 98% 6%, 98% 64%, 5% 64%)',
+    priority: 0,
   },
   {
-    id: 'engine',
-    visualCategoryId: 'VC-ENG',
-    clipPath: 'polygon(64% 30%, 84% 30%, 85% 61%, 63% 62%)',
+    id: 'rear-chassis-family',
+    visualCategoryId: 'VC-RSUS',
+    clipPath: 'polygon(3% 51%, 45% 49%, 48% 94%, 3% 95%)',
+    priority: 10,
+  },
+  {
+    id: 'front-chassis-family',
+    visualCategoryId: 'VC-FSUS',
+    clipPath: 'polygon(54% 54%, 98% 50%, 99% 95%, 52% 95%)',
+    priority: 10,
   },
   {
     id: 'transmission',
     visualCategoryId: 'VC-TRN',
-    clipPath: 'polygon(43% 51%, 70% 49%, 73% 86%, 41% 88%)',
+    clipPath: 'polygon(40% 50%, 65% 48%, 69% 84%, 39% 86%)',
+    priority: 20,
   },
   {
-    id: 'rear-brakes',
-    visualCategoryId: 'VC-RBRK',
-    clipPath: 'polygon(5% 58%, 31% 56%, 33% 88%, 4% 90%)',
-  },
-  {
-    id: 'front-brakes',
-    visualCategoryId: 'VC-FBRK',
-    clipPath: 'polygon(72% 57%, 97% 57%, 98% 91%, 71% 91%)',
-  },
-  {
-    id: 'rear-suspension',
-    visualCategoryId: 'VC-RSUS',
-    clipPath: 'polygon(14% 48%, 48% 47%, 51% 91%, 12% 92%)',
-  },
-  {
-    id: 'front-suspension',
-    visualCategoryId: 'VC-FSUS',
-    clipPath: 'polygon(57% 48%, 91% 50%, 94% 93%, 56% 93%)',
+    id: 'engine',
+    visualCategoryId: 'VC-ENG',
+    clipPath: 'polygon(62% 29%, 84% 29%, 85% 58%, 61% 59%)',
+    priority: 30,
   },
 ];
+
+const settledExplosionScale = 1.04;
 
 const explosionVisualLayers: Array<{
   id: string;
@@ -399,16 +397,19 @@ export function DvtgPreview() {
   useEffect(() => {
     if (autoStartHandled.current) return;
     autoStartHandled.current = true;
-    if (readCompletedVehicle() === vehicleFingerprint(selection)) {
-      setSelectionCommitted(true);
-      setEditingSelection(false);
-      setProgress(1);
-      setPlaying(false);
-      return;
-    }
     const params = new URLSearchParams(window.location.search);
-    if (params.get('autostart') !== '1') return;
-    const timer = window.setTimeout(startFlow, 0);
+    const completedVehicleMatches =
+      readCompletedVehicle() === vehicleFingerprint(selection);
+    const timer = window.setTimeout(() => {
+      if (completedVehicleMatches) {
+        setSelectionCommitted(true);
+        setEditingSelection(false);
+        setProgress(1);
+        setPlaying(false);
+      } else if (params.get('autostart') === '1') {
+        startFlow();
+      }
+    }, 0);
     return () => window.clearTimeout(timer);
   }, [selection, startFlow]);
 
@@ -679,7 +680,8 @@ export function DvtgPreview() {
             );
             const remainingDistance = 1 - partProgress;
             const scale =
-              layer.fromScale + (1 - layer.fromScale) * partProgress;
+              layer.fromScale +
+              (settledExplosionScale - layer.fromScale) * partProgress;
             return (
               <div
                 key={layer.id}
@@ -713,7 +715,11 @@ export function DvtgPreview() {
             sizes="100vw"
             unoptimized
             className="absolute inset-0 size-full object-cover object-center"
-            style={{ opacity: settledExplodedOpacity }}
+            style={{
+              opacity: settledExplodedOpacity,
+              transform: `scale(${settledExplosionScale})`,
+              transformOrigin: '50% 50%',
+            }}
           />
           <div
             className="hero-grade absolute inset-0 z-[2]"
@@ -741,15 +747,20 @@ export function DvtgPreview() {
             <div
               className="absolute inset-0 z-30"
               aria-label="Exploded vehicle category map"
+              style={{
+                transform: `scale(${settledExplosionScale})`,
+                transformOrigin: '50% 50%',
+              }}
             >
               <Link
                 href={getCategoryFamilyHref('VC-BODY')}
                 onClick={rememberFlowCompletion}
                 aria-label="Browse Body and exterior for the selected vehicle"
-                className="absolute inset-[6%] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
+                className="absolute inset-[4%] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
               />
               {categoryHitAreas
                 .filter((layer) => layer.visualCategoryId !== 'VC-BODY')
+                .sort((a, b) => a.priority - b.priority)
                 .map((layer) => (
                   <Link
                     key={`click-${layer.id}`}

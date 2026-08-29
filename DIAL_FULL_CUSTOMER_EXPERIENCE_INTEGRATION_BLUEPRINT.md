@@ -230,6 +230,8 @@ The required motion is:
 6. let the parts settle into the final exploded composition;
 7. replace or blend the moving layers into the stable final exploded master only after their positions match.
 
+The settled composition must leave enough negative space between major systems for a customer to distinguish and select them reliably. Apply the exact same final scale, translation, crop, and object-fit matrix to the artwork and its invisible hit map; visual separation must never create interaction drift.
+
 The motion engine must produce component or group layers, masks, depth order, origin, destination, vector, timing, and easing. A flattened start image and flattened end image alone are not sufficient for a production flow.
 
 For true 3D assets, keep body and component meshes separately named and interpolate each mesh from its assembled transform to its approved explosion transform. For raster delivery, render the same continuous motion as a frame sequence or video from that part-based scene. Cropping pieces from an already-exploded still and sliding those crops into view is not an acceptable production method.
@@ -297,6 +299,8 @@ Once the exploded result is ready, the exploded vehicle itself becomes the navig
 - No dot, circle, border, label, marker, tooltip, or hotspot overlay is visible by default.
 - Clicking any depicted part or system routes to its category family for the selected vehicle.
 - The click map uses broad, forgiving hit regions rather than tiny exact points.
+- Prefer non-overlapping family regions. Where forgiving edges must overlap, assign an explicit deterministic priority: precise Engine and Transmission regions sit above broad Chassis and Body coverage.
+- A broad Chassis or Body region must never capture a point visibly occupied by the engine or transmission.
 - An uncovered exploded-vehicle area uses a safe vehicle-scoped fallback, normally Body & Exterior.
 - The route opens a category-family/section page, not a raw source node URL.
 
@@ -341,6 +345,8 @@ Coordinates use a normalized 0–1 system and remain aligned with the final expl
 - Screen-reader labels identify category actions, not pixel coordinates.
 - Touch regions must remain forgiving on mobile.
 - If the image crop changes, transform the hit map with the same image matrix.
+- Use the same settled explosion scale and translation for both the rendered vehicle and hit-map coordinate system.
+- Maintain desktop and mobile coordinate-probe fixtures for representative Engine, Transmission, Chassis, and Body points; each probe must resolve its expected vehicle-scoped section URL.
 
 ---
 
@@ -613,6 +619,8 @@ Incomplete records remain internal.
 - Clicking transmission opens Transmission & drivetrain.
 - Clicking brakes or suspension opens Chassis systems.
 - Clicking a body part opens Body & exterior.
+- No broad Chassis or Body region captures a representative engine or transmission coordinate.
+- Major exploded systems have enough outward separation for reliable selection, and the invisible hit map remains aligned after the final transform.
 - Clicking an unmapped depicted part uses the safe category-family fallback.
 - No click target is visually drawn.
 - No route contains a raw source node ID.

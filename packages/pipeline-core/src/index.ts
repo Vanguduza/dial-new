@@ -17,8 +17,9 @@ import { generateDepthActivated, generateDepthMap } from "../../depth/src/index.
 import { planExplosion, renderExplosion } from "../../explosion/src/index.js";
 import { buildHotspots } from "../../hotspots/src/index.js";
 import {
-  HILUX_DEVELOPMENT_IDENTITY_LOCK,
-  DEVELOPMENT_IDENTITY_METRICS,
+  buildIdentityLock,
+  compareIdentity,
+  type IdentityLock,
 } from "../../identity-lock/src/index.js";
 import {
   makeContactSheet,
@@ -28,7 +29,7 @@ import {
 } from "../../image-processing/src/index.js";
 import { generateLineArt } from "../../line-art/src/index.js";
 import { buildAssetManifest, publishPreviewPack } from "../../packaging/src/index.js";
-import { runAutomatedQa } from "../../qa/src/index.js";
+import { runAutomatedQa, type StageIdentityResult } from "../../qa/src/index.js";
 import { DeterministicTechnicalRenderer } from "../../technical-render/src/index.js";
 import { vehicleSceneSvg } from "../../technical-render/src/scene.js";
 import { ensureDir, readJson, writeJsonAtomic } from "./fs.js";
@@ -190,9 +191,19 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         };
       }
       case "03_IDENTITY_LOCK": {
+        // Derived from the normalized hero that stage 02 produced, not from a
+        // hardcoded constant. A different source now yields a different lock,
+        // which is what makes the downstream identity gate able to fail.
+        const hero = join(packRoot, "hero", "hero-clean.avif");
+        const lock = await buildIdentityLock(hero);
         const path = join(packRoot, "analysis", "identity-lock.json");
-        await writeJsonAtomic(path, HILUX_DEVELOPMENT_IDENTITY_LOCK);
-        return { files: [path], logs: ["Immutable normalized landmarks written."] };
+        await writeJsonAtomic(path, lock);
+        return {
+          files: [path],
+          logs: [
+            `Identity lock derived from the normalized source: ${lock.occupiedCells} occupied cells on a ${lock.grid.width}x${lock.grid.height} grid.`,
+          ],
+        };
       }
       case "04_SEGMENT": {
         const names = [
@@ -380,7 +391,37 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             join(packRoot, "navigation", "hotspots.json"),
           )
         ).hotspots;
-        const qa = runAutomatedQa(DEVELOPMENT_IDENTITY_METRICS, hotspots, job.explodedViewPolicy);
+        const lock = await readJson<IdentityLock>(
+          join(packRoot, "analysis", "identity-lock.json"),
+        );
+        // Each rendered state is measured against the lock. The technical
+        // render is included because it shares the locked geometry even though
+        // it is never customer-visible.
+        const measuredStates = [
+          { stage: "STUDIO_CGI", asset: "cgi/cgi-master.avif" },
+          { stage: "TECHNICAL", asset: "technical/technical-shaded.avif" },
+          { stage: "ENGINEERING_LINE_ART", asset: "technical/line-art.avif" },
+          { stage: "EXPLODED_SYSTEMS", asset: "exploded/pre-explosion.avif" },
+        ];
+        const stages: StageIdentityResult[] = [];
+        for (const entry of measuredStates) {
+          stages.push({
+            stage: entry.stage,
+            asset: entry.asset,
+            metrics: await compareIdentity(lock, join(packRoot, entry.asset)),
+          });
+        }
+        const qa = runAutomatedQa({
+          stages,
+          hotspots,
+          enabledCategories: job.enabledCategories,
+          explodedViewPolicy: job.explodedViewPolicy,
+          // The deterministic development adapter does not derive its states
+          // from the source, so identity fidelity can only be required of a
+          // live provider.
+          identityFidelityRequired:
+            job.generationProvider === "live" || job.developmentMode === false,
+        });
         if (!qa.passed)
           throw new Error("Automated identity, wheel-multiplicity, or hotspot QA failed");
         const path = join(packRoot, "qa", "qa.json");
@@ -447,7 +488,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         });
         const flowPackPath = join(packRoot, "navigation", "hero-to-epc-flow-pack.json");
         await writeJsonAtomic(flowPackPath, {
-          schemaVersion: "1.0.0",
+          schemaVersion: "1.1.0",
           flowPackId: `H2E-${job.visualFamilyId.replace(/^VF-/, "")}-V1`,
           status: job.developmentMode ? "DEVELOPMENT_COMPLETE" : "PRODUCTION_REVIEW_REQUIRED",
           customerReady: false,

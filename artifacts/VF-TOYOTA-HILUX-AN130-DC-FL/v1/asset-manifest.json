@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-08-29T17:19:38.945Z",
+  "generatedAt": "2026-08-29T21:18:15.967Z",
   "immutableFilenamesRecommendedForPublish": true,
   "assets": [
     {
@@ -15,8 +15,8 @@
     },
     {
       "path": "analysis/identity-lock.json",
-      "sha256": "775412d749e275316765eac3a63b86f61cfcb302c24ce2a1e48966335af9f42f",
-      "bytes": 1336
+      "sha256": "8b7e10ebd5d15c5b3e12537027c789d8fb34f7491cb672be552a67f3e7c5b2ca",
+      "bytes": 8858
     },
     {
       "path": "analysis/segmentation/background.png",
@@ -810,8 +810,8 @@
     },
     {
       "path": "asset-manifest.json",
-      "sha256": "84fd98a6413eaf6027665956f754f9e9491306fe60cbfea7ac944437abbc7e2d",
-      "bytes": 32552
+      "sha256": "40cf7b9adaa437b800184fbd953f7637f34a940c2c56e82ebb9860afb771bb82",
+      "bytes": 454
     },
     {
       "path": "cgi/cgi-master.avif",
@@ -905,7 +905,7 @@
     },
     {
       "path": "meta.json",
-      "sha256": "1520f234b4cde0c11e2ebcd3f67ed0ac3e404d8b2a96735adce6875cfe39c193",
+      "sha256": "338257092b8d8e49c71a5245d4555f66fdcfb3bff5409ac26608748bc13a423d",
       "bytes": 611
     },
     {
@@ -920,8 +920,8 @@
     },
     {
       "path": "navigation/hero-to-epc-flow-pack.json",
-      "sha256": "ceeb3404fef0ba469463f112edaf7e3c4b5852f88ec610113ace7a850de93c22",
-      "bytes": 2515
+      "sha256": "1c5e4c7390288dd31bc906ff4bbc3edee3d4ecf1dab76414eb9d8dced50479e5",
+      "bytes": 3168
     },
     {
       "path": "navigation/hotspots.json",
@@ -940,13 +940,13 @@
     },
     {
       "path": "qa/qa.json",
-      "sha256": "0a7a9e9eb4b89ac4ac7dec176d1740a43ae6773bde96c45937e53ddc461b770f",
-      "bytes": 768
+      "sha256": "10459ab79e1de892a5216ae80fd411d9b44c79cf2b1a5d009ebd11741e177422",
+      "bytes": 5894
     },
     {
       "path": "qa/review-status.json",
-      "sha256": "9a56db406e2b72875a6398a18327fd07e39989e612f41d858f6e996da1b610a4",
-      "bytes": 1689
+      "sha256": "4e7adcc8eed2f311d15a24bc1458e97bbacff88c92dc50f695b6a85909fa6729",
+      "bytes": 1901
     },
     {
       "path": "source/synthetic-front-3q.svg",

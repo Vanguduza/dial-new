@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-08-29T17:19:40.431Z",
+  "generatedAt": "2026-08-29T21:18:18.506Z",
   "immutableFilenamesRecommendedForPublish": true,
   "assets": [
     {
@@ -820,7 +820,7 @@
     },
     {
       "path": "meta.json",
-      "sha256": "1520f234b4cde0c11e2ebcd3f67ed0ac3e404d8b2a96735adce6875cfe39c193",
+      "sha256": "338257092b8d8e49c71a5245d4555f66fdcfb3bff5409ac26608748bc13a423d",
       "bytes": 611
     },
     {
@@ -835,8 +835,8 @@
     },
     {
       "path": "navigation/hero-to-epc-flow-pack.json",
-      "sha256": "ceeb3404fef0ba469463f112edaf7e3c4b5852f88ec610113ace7a850de93c22",
-      "bytes": 2515
+      "sha256": "1c5e4c7390288dd31bc906ff4bbc3edee3d4ecf1dab76414eb9d8dced50479e5",
+      "bytes": 3168
     },
     {
       "path": "navigation/hotspots.json",

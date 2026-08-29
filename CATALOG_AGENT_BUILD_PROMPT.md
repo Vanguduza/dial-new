@@ -368,6 +368,8 @@ The catalog must provide the release and route evidence needed for:
 - exact Search commitment before autoplay;
 - the correct exact-model headline;
 - category-family resolution from every invisible exploded region;
+- deterministic visual-region priority so broad Body or Chassis fallbacks cannot override precise Engine or Transmission targets;
+- representative desktop and mobile click-probe fixtures for Engine, Transmission, Chassis, and Body, each asserting the expected vehicle-scoped category-family URL;
 - Body & Exterior fallback for an unclassified visible part;
 - direct EPC fallback when visual assets fail;
 - Garage visual and direct-EPC entry modes.
@@ -485,6 +487,8 @@ visual-route coverage
 
 - Every enabled visual category has a vehicle-scoped category-family route.
 - Engine, transmission, chassis, and body routes resolve correctly.
+- Representative Engine, Transmission, Chassis, and Body coordinates resolve to their expected category-family URLs on desktop and mobile crops.
+- Broad fallback regions never override a more precise family region at an overlapping edge.
 - Component preferred group remains inside its category family.
 - Unclassified part falls back to Body & Exterior.
 - Cross-maker or cross-release target is rejected.
