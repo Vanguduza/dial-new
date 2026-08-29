@@ -98,6 +98,8 @@ const SHELL_AND_TOOLING = new Set([
   'apps/preview-player/vite.config.ts',
   'apps/cli/src/index.ts',
   'workers/visual-generation-worker/src/index.ts',
+  'playwright.config.ts',
+  'vitest.config.ts',
 ]);
 
 function walk(dir, out = []) {

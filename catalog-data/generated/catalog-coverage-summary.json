@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "catalogSchemaVersion": "3",
   "catalogBuiltAt": "2026-08-29T11:45:58+00:00",
-  "generatedAt": "2026-08-29T17:20:52.801Z",
+  "generatedAt": "2026-08-29T22:39:55.100Z",
   "integrity": {
     "status": "FAIL",
     "globalDiagramIdentitySafe": false,
@@ -21,7 +21,8 @@
     "combinedMakers": 79,
     "combinedModels": 2583,
     "customerReadyModels": 0,
-    "developmentFlowPacks": 1
+    "developmentFlowPacks": 1,
+    "plannedVisualTransitions": 2583
   },
   "publicationPolicy": {
     "customerCascadeFilter": "customerVisible = true",

@@ -2,12 +2,12 @@
   "name": "dial-visual-transformation-generator",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*",
     "workers/*"
   ],
+  "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "oxlint .",
@@ -15,12 +15,15 @@
     "build": "npm run build:core && npm run build --workspace @dial/preview-player",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install --with-deps chromium",
     "dial-visual": "npm run build:core --silent && node dist/apps/cli/src/index.js",
     "api": "npm run build:core --silent && node dist/apps/api/src/server.js",
     "preview": "npm --prefix apps/preview-player run dev --workspaces=false",
     "generate:hilux": "npm run dial-visual -- generate examples/hilux-an130/job.json",
     "catalog:coverage": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js build",
     "catalog:coverage:check": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js check",
+    "catalog:visual-sources": "npm run build:core --silent && node dist/apps/catalog-coverage/src/visual-source-discovery.js",
     "schema:check": "node agent-system/bin/schema-check.mjs",
     "agent:context": "node agent-system/bin/context-get.mjs",
     "agent:drift-check": "node agent-system/bin/drift-check.mjs",
@@ -38,6 +41,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.1",
     "@types/node": "22.19.19",
     "oxlint": "1.76.0",
     "tsx": "4.20.6",

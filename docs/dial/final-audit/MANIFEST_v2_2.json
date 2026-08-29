@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-29T22:00:16.068Z",
+  "generated_at": "2026-08-29T22:34:53.691Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 207,
+  "file_count": 208,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -422,6 +422,11 @@
       "sha256": "f4f3442f9b6c91c1bba16f8b2b4d280223e9bf4df31b5d7ef142117cd8963362"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md",
+      "bytes": 5831,
+      "sha256": "5c6d01cd1da39f6215ca8e50a76db177bfca5476ba62140461c51d9a05c64c1b"
+    },
+    {
       "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
       "bytes": 55734,
       "sha256": "8219a9e8d2c4b10022b1519532d9fed878fb8504f7075c20da7c8e23f8f4298f"
@@ -503,8 +508,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 57783,
-      "sha256": "d4f29da22942850e125c83a8e23a4f72847d71e4462f4824a9b3e8a01cc1a97e"
+      "bytes": 58623,
+      "sha256": "37511005b0d897d26959f059c4f33a522bf9f02943cf20f3c30514b6d72b0f3d"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",

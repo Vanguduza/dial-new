@@ -727,7 +727,7 @@ export function DvtgPreview() {
           />
 
           <p
-            className="pointer-events-none absolute left-1/2 top-5 z-40 w-max max-w-[calc(100%-2.5rem)] -translate-x-1/2 text-center text-[11px] font-medium tracking-[.02em] text-white/72 sm:top-7 sm:text-sm"
+            className="pointer-events-none absolute left-1/2 top-2 z-40 w-max max-w-[calc(100%-2.5rem)] -translate-x-1/2 text-center text-[11px] font-medium tracking-[.02em] text-white/72 sm:top-3 sm:text-sm"
             style={{
               opacity: selectionCommitted ? phase(progress, 0.84, 0.95) : 0,
             }}

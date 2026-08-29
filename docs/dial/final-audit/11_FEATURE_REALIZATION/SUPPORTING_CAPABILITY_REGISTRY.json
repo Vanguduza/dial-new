@@ -659,13 +659,16 @@
     "status": "DOMAIN_TESTED",
     "code_paths": [
       "packages/image-processing/src/index.ts",
-      "apps/api/src/server.ts"
+      "apps/api/src/server.ts",
+      "packages/catalog-coverage/src/visual-source.ts",
+      "apps/catalog-coverage/src/visual-source-discovery.ts"
     ],
     "test_paths": [
-      "tests/pipeline.integration.test.ts"
+      "tests/pipeline.integration.test.ts",
+      "tests/visual-source.test.ts"
     ],
     "current_gate": "DOMAIN_TESTED",
-    "implementation_note": "Licence, SHA-256, magic-byte and decoded-pixel validation at 01_SOURCE_VALIDATE. Approval gates are hash-chained and bound to an authenticated principal. Test proves an unapproved source is blocked before processing."
+    "implementation_note": "Licence, SHA-256, magic-byte and decoded-pixel validation at 01_SOURCE_VALIDATE. Approval gates are hash-chained and bound to an authenticated principal. Test proves an unapproved source is blocked before processing. Open-licence acquisition policy (CC0/PDM/CC BY/CC BY-SA, NC and ND rejected) with required landing page, creator attribution and dual human identity/licence approval, and no cross-vehicle asset reuse. Directly serves ACT-REG-011."
   },
   {
     "capability_id": "CATVIS-S004",
@@ -736,14 +739,17 @@
     "status": "DOMAIN_TESTED",
     "code_paths": [
       "packages/hotspots/src/index.ts",
-      "packages/qa/src/index.ts"
+      "packages/qa/src/index.ts",
+      "packages/catalog-coverage/src/visual-source.ts"
     ],
     "test_paths": [
       "tests/qa.test.ts",
-      "tests/epc-navigation.test.ts"
+      "tests/epc-navigation.test.ts",
+      "tests/e2e/transition.spec.ts",
+      "tests/visual-source.test.ts"
     ],
     "current_gate": "DOMAIN_TESTED",
-    "implementation_note": "Hit regions are authored, not guessed at runtime. QA blocks an enabled category with no region and flags equal-priority overlap as ambiguous routing."
+    "implementation_note": "Hit regions are authored, not guessed at runtime. QA blocks an enabled category with no region and flags equal-priority overlap as ambiguous routing. Route templates carry an explicit hitPriority, which is what makes overlap resolvable rather than ambiguous: QA flags overlap only at equal priority, since Body & Exterior is the fallback layer beneath specific categories."
   },
   {
     "capability_id": "CATVIS-S007",
@@ -758,13 +764,15 @@
     ],
     "purpose": "Static hero/category fallback for reduced motion, weak device/network or unavailable assets.",
     "eventualities": [],
-    "status": "CODE_PRESENT",
+    "status": "DOMAIN_TESTED",
     "code_paths": [
       "apps/preview-player/components/dvtg-preview.tsx"
     ],
-    "test_paths": [],
-    "current_gate": "CODE_PRESENT",
-    "implementation_note": "prefers-reduced-motion cuts to the stable exploded result. Data-saver and weak-network fallbacks are not implemented."
+    "test_paths": [
+      "tests/e2e/transition.spec.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "prefers-reduced-motion cuts to the stable exploded result, asserted by the Playwright reduced-motion project. Data-saver and weak-network fallbacks are still not implemented."
   },
   {
     "capability_id": "EPC-S001",

@@ -23,8 +23,27 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 - start broad research when canon/current code already answers the question;
 - load the entire master pack when bounded context is sufficient.
 
+## Tooling
+
+Installed skills and connectors fire on the work they were installed for.
+Which, and when: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md`
+
+The load-bearing ones:
+- a Feature entering implementation needs its own acceptance contract first
+  (`product-management:write-spec`) — the generic one is not a contract;
+- a material eventuality without a runbook gets one (`operations:runbook`);
+- pinning or importing any dependency or donor uses Context7 for exact version
+  facts — recalled versions are not evidence;
+- changes to the transition or EPC surfaces run `npm run test:e2e`.
+
+No tool output is authority, and running a review skill does not satisfy the
+independent reviewer gate it resembles.
+
 Entry:
 `node agent-system/bin/context-get.mjs <FEATURE_ID>`
 
 Closure:
 `node agent-system/bin/v2-closure-check.mjs`
+
+Verify everything:
+`npm run verify`

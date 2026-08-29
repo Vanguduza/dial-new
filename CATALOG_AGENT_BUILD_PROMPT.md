@@ -26,13 +26,20 @@ config/supplemental-vehicle-targets.json
 catalog-data/generated/vehicle-universe.json
 catalog-data/generated/catalog-coverage-ledger.json
 catalog-data/generated/all-makes-and-models.csv
+catalog-data/generated/visual-transition-source-queue.json
+catalog-data/generated/visual-source-discovery.json
 schemas/catalog-coverage-ledger.schema.json
 schemas/hero-to-epc-flow-pack.schema.json
 schemas/visual-epc-mapping.schema.json
+schemas/visual-transition-source-queue.schema.json
 DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md
 ```
 
 The supplemental vehicle list is an acquisition queue. It must not become a public selector merely because the names exist.
+
+The Hilux visual pack is a development fixture, not a reusable generic transition. Never bind its hero, derived frames, explosion plan, or click map to a different vehicle. For every marked vehicle, preserve the planned unique visual family/flow-pack identity from the visual transition source queue. Inject exact catalog family and fitment IDs into that vehicle's category mappings only after those catalog identities are resolved.
+
+Treat Wikimedia Commons as the primary visual file and license-metadata authority and Openverse as a secondary discovery index. Automatically accept complete CC0/Public Domain/CC BY/CC BY-SA metadata and automatically reject NC and ND. Capture attribution and source links without a routine human license review; escalate only missing or conflicting metadata. A source candidate remains internal only until a human confirms exact vehicle identity, generation, and body style.
 
 Preserve the supplied v1 database read-only. Build migrations and a reviewable v2 artifact alongside it.
 

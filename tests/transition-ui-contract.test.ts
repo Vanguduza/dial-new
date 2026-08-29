@@ -91,6 +91,8 @@ describe("customer transition contract", () => {
 
     // The one permitted headline, §4.2.
     expect(source).toMatch(/Know your \{[^}]*make\}/);
+    expect(source).toContain("left-1/2 top-2");
+    expect(source).toContain("sm:top-3");
   });
 
   it("keeps precise powertrain regions above broad chassis coverage", async () => {

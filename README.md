@@ -45,6 +45,7 @@ npm run dial-visual -- qa examples/hilux-an130/job.json
 npm run dial-visual -- package examples/hilux-an130/job.json
 npm run catalog:coverage
 npm run catalog:coverage:check
+npm run catalog:visual-sources -- --limit 25
 npm run api
 npm test
 npm run build
@@ -53,5 +54,7 @@ npm run build
 ## Production inputs
 
 Replace the synthetic source with approved vehicle references and matching provenance hashes, disable development mode, configure a live CGI adapter, supply production video encoding, and complete all eight human approval gates. See `docs/IMPLEMENTATION_PLAN.md` and `docs/DEVELOPMENT_FIXTURE_POLICY.md`.
+
+`npm run catalog:coverage` also creates a unique visual-transition source and mapping contract for every vehicle marked for catalog inclusion. The queue is written to `catalog-data/generated/visual-transition-source-queue.json`; the resumable `catalog:visual-sources` command searches Wikimedia Commons first and Openverse second for open-license hero candidates. It automatically accepts allowlisted license metadata and records attribution. Download and transition generation wait only for exact vehicle identity confirmation; missing or conflicting license metadata is rejected or escalated.
 
 For the complete website, Garage and release design, use `DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md`. For the catalog pipeline handoff, use `CATALOG_AGENT_BUILD_PROMPT.md` together with the visual mapping, flow-pack and coverage-ledger schemas.

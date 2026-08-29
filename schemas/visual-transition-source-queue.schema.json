@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dialaspare.example/schemas/visual-transition-source-queue.schema.json",
+  "title": "DIAL catalog-wide visual transition source queue",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "scope", "sourceStrategy", "counts", "vehicles"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string" },
+    "scope": { "const": "EVERY_VEHICLE_MARKED_FOR_CATALOG" },
+    "sourceStrategy": {
+      "type": "object",
+      "required": ["primary", "secondary", "policy", "hiluxFixtureMayNotSeedOtherVehicles"],
+      "properties": {
+        "primary": { "const": "WIKIMEDIA_COMMONS" },
+        "secondary": { "const": "OPENVERSE" },
+        "policy": { "type": "object" },
+        "attributionMustShipWithAsset": { "const": true },
+        "sourceImageMustMatchExactVehicle": { "const": true },
+        "hiluxFixtureMayNotSeedOtherVehicles": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "required": ["vehicles", "sourceDiscoveryPending", "customerReady"],
+      "properties": {
+        "vehicles": { "type": "integer", "minimum": 1 },
+        "sourceDiscoveryPending": { "type": "integer", "minimum": 0 },
+        "customerReady": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "vehicles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "vehicleKey",
+          "makerSlug",
+          "makerName",
+          "modelSlug",
+          "modelName",
+          "visualFamilyId",
+          "plannedFlowPackId",
+          "sourceDiscovery",
+          "visualAssets",
+          "transition",
+          "catalogBinding",
+          "readiness"
+        ],
+        "properties": {
+          "vehicleKey": { "type": "string", "pattern": "^[^/]+/[^/]+$" },
+          "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
+          "plannedFlowPackId": { "type": "string", "pattern": "^H2E-[A-Z0-9-]+-V[0-9]+$" },
+          "sourceDiscovery": {
+            "type": "object",
+            "required": [
+              "status",
+              "queries",
+              "providers",
+              "identityApprovalRequired",
+              "licenseApprovalMode"
+            ],
+            "properties": {
+              "status": {
+                "enum": ["PENDING", "CANDIDATES_FOUND", "NO_CANDIDATE_FOUND", "APPROVED"]
+              },
+              "queries": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "providers": { "type": "array", "minItems": 2 },
+              "selectedHeroSource": { "type": ["object", "null"] },
+              "identityApprovalRequired": { "const": true },
+              "licenseApprovalMode": { "const": "AUTOMATED_ALLOWLIST" }
+            }
+          },
+          "transition": {
+            "type": "object",
+            "required": [
+              "status",
+              "requiredStages",
+              "technicalStageVisible",
+              "wheelMultiplicityRule"
+            ],
+            "properties": {
+              "status": { "enum": ["QUEUED", "GENERATING", "QA_BLOCKED", "READY"] },
+              "requiredStages": { "type": "array", "minItems": 8 },
+              "technicalStageVisible": { "const": false },
+              "wheelMultiplicityRule": { "const": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION" }
+            }
+          },
+          "catalogBinding": {
+            "type": "object",
+            "required": ["status", "categoryMappings"],
+            "properties": {
+              "status": {
+                "enum": ["AWAITING_EXACT_FITMENT_AND_FAMILY_IDS", "BOUND", "QA_BLOCKED"]
+              },
+              "categoryMappings": { "type": "array", "minItems": 7 }
+            }
+          },
+          "readiness": {
+            "type": "object",
+            "required": ["customerReady", "firstBlocker", "blockers"],
+            "properties": {
+              "customerReady": { "type": "boolean" },
+              "firstBlocker": { "type": ["string", "null"] },
+              "blockers": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -128,6 +128,16 @@ const governed = [
   { glob: 'navigation/hero-to-epc-flow-pack.json', schema: 'hero-to-epc-flow-pack.schema.json' },
   { glob: 'navigation/epc-mapping.json', schema: 'visual-epc-mapping.schema.json' },
 ];
+const directlyGoverned = [
+  {
+    path: 'catalog-data/generated/visual-transition-source-queue.json',
+    schema: 'visual-transition-source-queue.schema.json',
+  },
+  {
+    path: 'apps/preview-player/public/catalog/visual-transition-source-queue.json',
+    schema: 'visual-transition-source-queue.schema.json',
+  },
+];
 
 function findPacks(base) {
   const found = [];
@@ -165,6 +175,24 @@ for (const { glob, schema } of governed) {
     } else {
       checked.push(`${target} conforms to ${schema}`);
     }
+  }
+}
+
+for (const entry of directlyGoverned) {
+  const doc = schemas[entry.schema];
+  const target = path.join(root, entry.path);
+  if (!doc || !fs.existsSync(target)) continue;
+  try {
+    const instance = JSON.parse(fs.readFileSync(target, 'utf8'));
+    const errors = validate(instance, doc, doc);
+    if (errors.length) {
+      failures.push(`${entry.path} violates ${entry.schema}:`);
+      for (const error of errors.slice(0, 12)) failures.push(`    ${error}`);
+    } else {
+      checked.push(`${entry.path} conforms to ${entry.schema}`);
+    }
+  } catch (error) {
+    failures.push(`${entry.path}: not valid JSON — ${error.message}`);
   }
 }
 

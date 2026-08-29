@@ -2,8 +2,8 @@
 
 ## Focused specification for vehicle selection, visual transition, EPC browsing, and My Garage
 
-**Version:** 2.1  
-**Date:** 29 August 2026
+**Version:** 2.2  
+**Date:** 30 August 2026
 
 ---
 
@@ -75,6 +75,27 @@ AND QA_READY = PASS
 AND catalog release is published
 AND compatible flow pack is production-ready
 ```
+
+### 2.4 Vehicle-specific open-license visual sourcing
+
+The Hilux pack is a development fixture only. Its hero, CGI, line art, exploded artwork, masks, and hit regions must never be copied into another vehicle family.
+
+Every model marked for catalog inclusion receives its own visual-source and transition record before catalog fitment data is complete:
+
+```text
+marked vehicle identity
+→ Wikimedia Commons candidate search
+→ Openverse fallback discovery
+→ exact make/model/generation review
+→ automated license allowlist and attribution capture
+→ approved hero
+→ vehicle-specific CGI, line art, exploded systems and hit map
+→ catalog family and fitment IDs injected later
+```
+
+Accept only commercial-use licenses that permit derivatives, such as CC0, Public Domain Mark, CC BY, and CC BY-SA. Reject NC and ND material automatically. Persist creator, license, license URL, original file URL, source landing page, and attribution with every selected image. Do not add a routine human license-review step when complete allowlisted metadata is present. Escalate only missing or conflicting metadata. Human confirmation is reserved for exact vehicle identity, generation, and body style.
+
+The catalog-wide planning artifact is `catalog-data/generated/visual-transition-source-queue.json`. It must contain one unique planned flow pack per marked vehicle, canonical category-family route templates, generation blockers, and a strict rule that one vehicle's source or derived assets cannot seed another vehicle.
 
 ---
 
