@@ -3787,5 +3787,341 @@
     "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
     "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
     "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-plans-configuration",
+    "activity_link": "/activity/groc-f019/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-plans-configuration/issue",
+    "support_route": "/support/new?feature=GROC-F019&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-room",
+    "activity_link": "/activity/groc-f030/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-room/issue",
+    "support_route": "/support/new?feature=GROC-F030&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/protection-exposure-disclosure",
+    "activity_link": "/activity/groc-f031/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/protection-exposure-disclosure/issue",
+    "support_route": "/support/new?feature=GROC-F031&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-delivery-free-delivery-zones",
+    "activity_link": "/activity/groc-f032/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-delivery-free-delivery-zones/issue",
+    "support_route": "/support/new?feature=GROC-F032&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-disputes-remedies",
+    "activity_link": "/activity/groc-f033/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-disputes-remedies/issue",
+    "support_route": "/support/new?feature=GROC-F033&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-lifecycle",
+    "activity_link": "/activity/groc-f020/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-lifecycle/issue",
+    "support_route": "/support/new?feature=GROC-F020&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-agreement-consent-gateway",
+    "activity_link": "/activity/groc-f021/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-agreement-consent-gateway/issue",
+    "support_route": "/support/new?feature=GROC-F021&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-membership-join-control",
+    "activity_link": "/activity/groc-f022/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-membership-join-control/issue",
+    "support_route": "/support/new?feature=GROC-F022&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/prepaid-purchase-schedule",
+    "activity_link": "/activity/groc-f023/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/prepaid-purchase-schedule/issue",
+    "support_route": "/support/new?feature=GROC-F023&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/round-ledger-accounting",
+    "activity_link": "/activity/groc-f024/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/round-ledger-accounting/issue",
+    "support_route": "/support/new?feature=GROC-F024&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/basket-planning",
+    "activity_link": "/activity/groc-f025/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/basket-planning/issue",
+    "support_route": "/support/new?feature=GROC-F025&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/proposals-voting",
+    "activity_link": "/activity/groc-f026/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/proposals-voting/issue",
+    "support_route": "/support/new?feature=GROC-F026&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/entitlement-engine",
+    "activity_link": "/activity/groc-f027/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/entitlement-engine/issue",
+    "support_route": "/support/new?feature=GROC-F027&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
+  },
+  {
+    "feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "route": "/groceries/rounds/allocation-engine",
+    "activity_link": "/activity/groc-f028/{ref}",
+    "allowed_actions_source": "GET /customer-actions/{aggregateRef}",
+    "actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "issue_route": "/groceries/rounds/allocation-engine/issue",
+    "support_route": "/support/new?feature=GROC-F028&ref={aggregateRef}",
+    "human_escalation": "available from Support OS; urgent/safety routes may skip bot",
+    "whatsapp_mode": "native Flow/conversation when practical; otherwise secure deep link while retaining online journey/context",
+    "completion": "customer can digitally view outcome, evidence/receipt/history and any open case"
   }
 ]

@@ -48231,5 +48231,3493 @@
       "negative authorization/abuse/degraded cases included",
       "security evidence exists before production-green"
     ]
+  },
+  {
+    "subfeature_id": "GROC-F019.01",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.02",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.03",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.04",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.05",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.06",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.07",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.08",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F019.09",
+    "parent_feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.01",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.02",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.03",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.04",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.05",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.06",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.07",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.08",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F020.09",
+    "parent_feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.01",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.02",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.03",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.04",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.05",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.06",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.07",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.08",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F021.09",
+    "parent_feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "legal/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.01",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.02",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.03",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.04",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.05",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.06",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.07",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.08",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F022.09",
+    "parent_feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.01",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.02",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.03",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.04",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.05",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.06",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.07",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.08",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F023.09",
+    "parent_feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.01",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.02",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.03",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.04",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.05",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.06",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.07",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.08",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F024.09",
+    "parent_feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.01",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.02",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.03",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.04",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.05",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.06",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.07",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.08",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F025.09",
+    "parent_feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.01",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.02",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.03",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.04",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.05",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.06",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.07",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.08",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F026.09",
+    "parent_feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.01",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.02",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.03",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.04",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.05",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.06",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.07",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.08",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F027.09",
+    "parent_feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "payments/ledger",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.01",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.02",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.03",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.04",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.05",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.06",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.07",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.08",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F028.09",
+    "parent_feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.01",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.02",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.03",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.04",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.05",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.06",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.07",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.08",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F029.09",
+    "parent_feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "procurement",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.01",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.02",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.03",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.04",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.05",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.06",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.07",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.08",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F030.09",
+    "parent_feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.01",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.02",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.03",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.04",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.05",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.06",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.07",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.08",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F031.09",
+    "parent_feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "risk/compliance",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.01",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.02",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.03",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.04",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.05",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.06",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.07",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.08",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F032.09",
+    "parent_feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "logistics",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.01",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.02",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.03",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.04",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.05",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.06",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.07",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.08",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F033.09",
+    "parent_feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.01",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.02",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.03",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.04",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.05",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.06",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.07",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.08",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "GROC-F034.09",
+    "parent_feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "groceries",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
   }
 ]

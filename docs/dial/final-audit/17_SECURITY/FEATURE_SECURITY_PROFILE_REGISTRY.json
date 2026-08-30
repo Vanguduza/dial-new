@@ -6608,5 +6608,465 @@
       "dependency/integration failure does not bypass security"
     ],
     "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "binding versioned terms; acceptance is the record a dispute rests on"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "holds and accounts for customer money before delivery"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "decides what each member receives for money already paid"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "converts entitlement into goods; residual handling touches customer value"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "procurement lock commits pooled customer funds to a supplier"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "security_tier": "S4",
+    "reasons": [
+      "states an insurance position to a customer; must never overstate cover"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
   }
 ]

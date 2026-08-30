@@ -5691,5 +5691,442 @@
     "support_profile": "SUPPORT-PLATFORM",
     "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
     "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "outcome": "Round plans & configuration",
+    "owner": "groceries",
+    "aggregate": "RoundPlan",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F019",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "outcome": "Round lifecycle",
+    "owner": "groceries",
+    "aggregate": "GroceryRound",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F020",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "outcome": "Round agreement & consent gateway",
+    "owner": "legal/compliance",
+    "aggregate": "RoundAgreement",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F021",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [
+      "ACT-REG-001"
+    ],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-001. See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "outcome": "Round membership & join control",
+    "owner": "groceries",
+    "aggregate": "RoundMembership",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F022",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "outcome": "Prepaid purchase schedule",
+    "owner": "payments/ledger",
+    "aggregate": "RoundPurchaseSchedule",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F023",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [
+      "ACT-REG-004"
+    ],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-004. See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "outcome": "Round ledger & accounting",
+    "owner": "payments/ledger",
+    "aggregate": "RoundLedgerEntry",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F024",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [
+      "ACT-REG-001",
+      "ACT-REG-004"
+    ],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-001, ACT-REG-004. See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "outcome": "Basket planning",
+    "owner": "groceries",
+    "aggregate": "RoundBasket",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F025",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "outcome": "Proposals & voting",
+    "owner": "groceries",
+    "aggregate": "RoundProposal",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F026",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "outcome": "Entitlement engine",
+    "owner": "payments/ledger",
+    "aggregate": "RoundEntitlement",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F027",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "outcome": "Allocation engine",
+    "owner": "groceries",
+    "aggregate": "RoundAllocation",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F028",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "outcome": "Round procurement aggregation",
+    "owner": "procurement",
+    "aggregate": "RoundProcurementOrder",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F029",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "outcome": "Round Room",
+    "owner": "groceries",
+    "aggregate": "RoundRoom",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F030",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "outcome": "Protection exposure & disclosure",
+    "owner": "risk/compliance",
+    "aggregate": "RoundProtection",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F031",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [
+      "ACT-REG-007"
+    ],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-007. See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "outcome": "Round delivery & free-delivery zones",
+    "owner": "logistics",
+    "aggregate": "RoundDelivery",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F032",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "outcome": "Round disputes & remedies",
+    "owner": "customer-service",
+    "aggregate": "RoundDispute",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F033",
+    "client_exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
+  },
+  {
+    "feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "outcome": "Grocery Rounds Command Centre",
+    "owner": "groceries",
+    "aggregate": "RoundOpsView",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "realization_ref": "FR-GROC-F034",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-GROCERIES",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). See GROCERY_ROUNDS_REVIEW_v1.md B1: the money-holding model conflicts with TECH-F009 / ACT-REG-001 and is unresolved."
   }
 ]

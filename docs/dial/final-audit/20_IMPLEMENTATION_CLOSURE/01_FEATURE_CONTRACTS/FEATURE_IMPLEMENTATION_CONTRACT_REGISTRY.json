@@ -27579,5 +27579,1909 @@
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
+  },
+  {
+    "feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "outcome": "Round plans & configuration",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundPlan",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "outcome": "Round lifecycle",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "GroceryRound",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "outcome": "Round agreement & consent gateway",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "legal/compliance",
+    "aggregate": "RoundAgreement",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "outcome": "Round membership & join control",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundMembership",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "outcome": "Prepaid purchase schedule",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "payments/ledger",
+    "aggregate": "RoundPurchaseSchedule",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "outcome": "Round ledger & accounting",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "payments/ledger",
+    "aggregate": "RoundLedgerEntry",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "outcome": "Basket planning",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundBasket",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "outcome": "Proposals & voting",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundProposal",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "outcome": "Entitlement engine",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "payments/ledger",
+    "aggregate": "RoundEntitlement",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "outcome": "Allocation engine",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundAllocation",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "outcome": "Round procurement aggregation",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "procurement",
+    "aggregate": "RoundProcurementOrder",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "outcome": "Round Room",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundRoom",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "outcome": "Protection exposure & disclosure",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "risk/compliance",
+    "aggregate": "RoundProtection",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "outcome": "Round delivery & free-delivery zones",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "logistics",
+    "aggregate": "RoundDelivery",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "outcome": "Round disputes & remedies",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "customer-service",
+    "aggregate": "RoundDispute",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
+  },
+  {
+    "feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "outcome": "Grocery Rounds Command Centre",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "groceries",
+    "aggregate": "RoundOpsView",
+    "archetype": "WORKFLOW",
+    "states": [
+      "DRAFT",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "COMPLETED",
+      "CANCELLED",
+      "EXCEPTION"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/groceries/grocery-order-group",
+      "resource": "/api/v1/groceries/grocery-order-group/{ref}",
+      "command_pattern": "/api/v1/groceries/grocery-order-group/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "groceries.grocery-order-group.read",
+      "groceries.grocery-order-group.create",
+      "groceries.grocery-order-group.act"
+    ],
+    "data_entities": [
+      "GroceryOrderGroup",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "NONE",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
+    ]
   }
 ]

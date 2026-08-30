@@ -30410,5 +30410,2161 @@
     ],
     "supporting_capability_refs": [],
     "v2_frc_ref": "DKRF-F022"
+  },
+  {
+    "realization_id": "FR-GROC-F019",
+    "feature_id": "GROC-F019",
+    "module": "GROCERIES",
+    "outcome": "Round plans & configuration",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundPlan",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-plans-configuration",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F019"
+  },
+  {
+    "realization_id": "FR-GROC-F020",
+    "feature_id": "GROC-F020",
+    "module": "GROCERIES",
+    "outcome": "Round lifecycle",
+    "canonical_owner": "groceries",
+    "aggregate": "GroceryRound",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-lifecycle",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F020"
+  },
+  {
+    "realization_id": "FR-GROC-F021",
+    "feature_id": "GROC-F021",
+    "module": "GROCERIES",
+    "outcome": "Round agreement & consent gateway",
+    "canonical_owner": "legal/compliance",
+    "aggregate": "RoundAgreement",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-agreement-consent-gateway",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F021"
+  },
+  {
+    "realization_id": "FR-GROC-F022",
+    "feature_id": "GROC-F022",
+    "module": "GROCERIES",
+    "outcome": "Round membership & join control",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundMembership",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-membership-join-control",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F022"
+  },
+  {
+    "realization_id": "FR-GROC-F023",
+    "feature_id": "GROC-F023",
+    "module": "GROCERIES",
+    "outcome": "Prepaid purchase schedule",
+    "canonical_owner": "payments/ledger",
+    "aggregate": "RoundPurchaseSchedule",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/prepaid-purchase-schedule",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F023"
+  },
+  {
+    "realization_id": "FR-GROC-F024",
+    "feature_id": "GROC-F024",
+    "module": "GROCERIES",
+    "outcome": "Round ledger & accounting",
+    "canonical_owner": "payments/ledger",
+    "aggregate": "RoundLedgerEntry",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-ledger-accounting",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F024"
+  },
+  {
+    "realization_id": "FR-GROC-F025",
+    "feature_id": "GROC-F025",
+    "module": "GROCERIES",
+    "outcome": "Basket planning",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundBasket",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/basket-planning",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F025"
+  },
+  {
+    "realization_id": "FR-GROC-F026",
+    "feature_id": "GROC-F026",
+    "module": "GROCERIES",
+    "outcome": "Proposals & voting",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundProposal",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/proposals-voting",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F026"
+  },
+  {
+    "realization_id": "FR-GROC-F027",
+    "feature_id": "GROC-F027",
+    "module": "GROCERIES",
+    "outcome": "Entitlement engine",
+    "canonical_owner": "payments/ledger",
+    "aggregate": "RoundEntitlement",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/entitlement-engine",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F027"
+  },
+  {
+    "realization_id": "FR-GROC-F028",
+    "feature_id": "GROC-F028",
+    "module": "GROCERIES",
+    "outcome": "Allocation engine",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundAllocation",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/allocation-engine",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F028"
+  },
+  {
+    "realization_id": "FR-GROC-F029",
+    "feature_id": "GROC-F029",
+    "module": "GROCERIES",
+    "outcome": "Round procurement aggregation",
+    "canonical_owner": "procurement",
+    "aggregate": "RoundProcurementOrder",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-procurement-aggregation",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F029"
+  },
+  {
+    "realization_id": "FR-GROC-F030",
+    "feature_id": "GROC-F030",
+    "module": "GROCERIES",
+    "outcome": "Round Room",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundRoom",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-room",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F030"
+  },
+  {
+    "realization_id": "FR-GROC-F031",
+    "feature_id": "GROC-F031",
+    "module": "GROCERIES",
+    "outcome": "Protection exposure & disclosure",
+    "canonical_owner": "risk/compliance",
+    "aggregate": "RoundProtection",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/protection-exposure-disclosure",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F031"
+  },
+  {
+    "realization_id": "FR-GROC-F032",
+    "feature_id": "GROC-F032",
+    "module": "GROCERIES",
+    "outcome": "Round delivery & free-delivery zones",
+    "canonical_owner": "logistics",
+    "aggregate": "RoundDelivery",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-delivery-free-delivery-zones",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F032"
+  },
+  {
+    "realization_id": "FR-GROC-F033",
+    "feature_id": "GROC-F033",
+    "module": "GROCERIES",
+    "outcome": "Round disputes & remedies",
+    "canonical_owner": "customer-service",
+    "aggregate": "RoundDispute",
+    "exposure": "CUSTOMER",
+    "app_families": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/round-disputes-remedies",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F033"
+  },
+  {
+    "realization_id": "FR-GROC-F034",
+    "feature_id": "GROC-F034",
+    "module": "GROCERIES",
+    "outcome": "Grocery Rounds Command Centre",
+    "canonical_owner": "groceries",
+    "aggregate": "RoundOpsView",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Groceries",
+    "primary_route": "/groceries/rounds/grocery-rounds-command-centre",
+    "support_profile": "SUPPORT-GROCERIES",
+    "screens": [
+      "Groceries home/entry",
+      "Order group / merchant suborders detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline"
+    ],
+    "workflow": [
+      "DRAFT → READY",
+      "READY → IN_PROGRESS",
+      "IN_PROGRESS → BLOCKED",
+      "BLOCKED → COMPLETED",
+      "COMPLETED → CANCELLED",
+      "CANCELLED → EXCEPTION"
+    ],
+    "queries": [
+      "GetGroceryOrderGroup",
+      "ListGroceryOrderGroup",
+      "GetGroceryOrderGroupTimeline",
+      "GetGroceryOrderGroupAllowedActions"
+    ],
+    "commands": [
+      "CreateGroceryOrderGroup",
+      "StartGroceryOrderGroup",
+      "BlockGroceryOrderGroup",
+      "ResumeGroceryOrderGroup",
+      "CompleteGroceryOrderGroup",
+      "CancelGroceryOrderGroup"
+    ],
+    "events": [
+      "GroceryOrderGroupCreated",
+      "GroceryOrderGroupStarted",
+      "GroceryOrderGroupBlocked",
+      "GroceryOrderGroupResumed",
+      "GroceryOrderGroupCompleted",
+      "GroceryOrderGroupCancelled",
+      "GroceryOrderGroupAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help",
+      "report_issue",
+      "upload_evidence"
+    ],
+    "donor_refs": [
+      "REF-INSTACART",
+      "REF-ZW-GROCERY"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "fast recurring shopping with store/availability context, substitution control, picking transparency, Pantry and scheduled replenishment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-GROCERIES-001",
+      "EV-GROCERIES-002",
+      "EV-GROCERIES-003",
+      "EV-GROCERIES-004",
+      "EV-GROCERIES-005",
+      "EV-GROCERIES-006",
+      "EV-GROCERIES-007",
+      "EV-GROCERIES-008",
+      "EV-GROCERIES-009",
+      "EV-GROCERIES-010",
+      "EV-GROCERIES-011",
+      "EV-GROCERIES-012",
+      "EV-GROCERIES-013",
+      "EV-GROCERIES-014",
+      "EV-GROCERIES-015",
+      "EV-GROCERIES-016",
+      "EV-GROCERIES-017",
+      "EV-GROCERIES-018",
+      "EV-GROCERIES-019",
+      "EV-GROCERIES-020",
+      "EV-GROCERIES-021"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "GROC-F034"
   }
 ]

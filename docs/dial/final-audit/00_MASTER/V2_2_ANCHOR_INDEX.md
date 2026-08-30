@@ -47,6 +47,18 @@ The single map of where authority lives. Open this before anything else.
 - Source registry → `../22_COMMERCE_FRONTEND_AND_TRANSITION/05_SOURCES/UPDATED_SOURCE_REGISTRY.md`
 - Pack production guide (working notes, not canon) → `../22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md`
 
+## Grocery Rounds (v2.2 addition, proposed)
+
+- Master plan (marked LOCKED PRODUCT DIRECTION) →
+  `../25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md`
+- Review and blocking findings →
+  `../25_GROCERY_ROUNDS/GROCERY_ROUNDS_REVIEW_v1.md`
+- Features `GROC-F019`–`GROC-F034`, all `SPECIFIED`. **Unresolved:** the
+  money-holding model conflicts with `TECH-F009` (Job Reserve / protected funds)
+  and `ACT-REG-001` (licensed hold-and-release). Gated additionally on
+  `ACT-REG-004` (fiscalisation/VAT) and `ACT-REG-007` (insurance
+  characterisation).
+
 ## Injection standards (what arrives from outside)
 
 The catalogue and the transition flow packs are produced by separate pipelines
