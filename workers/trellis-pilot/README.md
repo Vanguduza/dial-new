@@ -73,3 +73,16 @@ Source references: [official Space](https://huggingface.co/spaces/microsoft/TREL
 
 Local unit tests check client guards and artifact handling, not the hosted GPU
 or real-vehicle visual quality. Live verification must be reported separately.
+
+## Verified pilot status — 30 August 2026
+
+The public Space was RUNNING on ZeroGPU at revision
+`ebf60b20fc5a4607f90a1c11c0aab0ceeda5429d`; all four expected API contracts matched.
+All **nine local guard tests passed**. The first real Acura request completed
+session creation and background preprocessing, then the anonymous
+`/image_to_3d` request returned a quota error. No mesh or transition was produced.
+The client preserved the normalized hero, prepared model input and receipt in
+`output/reconstruction-pilots/VF-ACURA-CL/f2017093b2854027b26fbf7d129aaa69/`.
+The receipt is `QUOTA_WAIT`, not success. No retry or paid fallback was made.
+Authenticating the local client uses the account's legitimate quota; it does not
+remove usage limits or guarantee that the next request will be accepted.

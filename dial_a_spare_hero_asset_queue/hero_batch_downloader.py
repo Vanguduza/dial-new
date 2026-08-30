@@ -195,7 +195,7 @@ def openverse_license_ok(code: str) -> bool:
     return (code or "").lower().strip() in ALLOWED_OPENVERSE_LICENSES
 
 
-def make_queries(row: dict[str, str]) -> list[str]:
+def make_queries(row: dict[str, str], ctx: "GenContext | None" = None) -> list[str]:
     make = row.get("Make", "").strip()
     model = row.get("Model Family", "").strip()
     generation = row.get("Generation / Platform", "").strip()
@@ -204,6 +204,14 @@ def make_queries(row: dict[str, str]) -> list[str]:
 
     body_simple = next((t for t in BODY_TOKENS if t in body.lower()), "")
     queries = []
+
+    # A family that shares its platform codes with a sibling can only be told
+    # apart by a model year in the title, so ask the index for those years first.
+    if ctx is not None and ctx.era_evidence_required and ctx.year_start is not None:
+        end = ctx.year_end if ctx.year_end is not None else ctx.year_start
+        era_years = sorted({ctx.year_start, (ctx.year_start + end) // 2, end})
+        for year in era_years[:2]:
+            queries.append(f"{year} {make} {model}")
 
     specific = " ".join(x for x in (make, model, generation, body_simple) if x)
     if specific:
@@ -222,7 +230,7 @@ def make_queries(row: dict[str, str]) -> list[str]:
         if q and key not in seen:
             seen.add(key)
             deduped.append(q)
-    return deduped[:3]
+    return deduped[:5]
 
 
 def title_tokens(value: str) -> set[str]:
@@ -239,6 +247,8 @@ YEAR_RE = re.compile(r"\b(19[89]\d|20[0-3]\d)\b")
 # Platform codes as they appear in the manifest: AN120, H300, XG10, P703, W205,
 # plus letters-only codes such as QY, HBN, TF, KE.
 CODE_ALNUM_RE = re.compile(r"\b([A-Z]{1,3}\d{1,4}[A-Z]?)\b")
+# Alpha-only codes are read from the ORIGINAL casing so prose words ("Current two
+# generations") cannot masquerade as a platform code once upper-cased.
 CODE_ALPHA_RE = re.compile(r"\b([A-Z]{2,3})\b")
 CODE_ALPHA_STOPWORDS = {
     "AND", "THE", "SUV", "MPV", "GEN", "ICE", "EV", "PRE", "CAB", "VAN", "GT",
@@ -254,8 +264,12 @@ class GenContext:
     year_end: int | None = None
     own_codes: tuple[str, ...] = ()
     sibling_codes: tuple[str, ...] = ()
+    # Codes/generations a sibling also claims: they prove nothing about which of
+    # the siblings a photo belongs to, so they are not era evidence.
+    shared_codes: tuple[str, ...] = ()
     own_gens: tuple[int, ...] = ()
     sibling_gens: tuple[int, ...] = ()
+    shared_gens: tuple[int, ...] = ()
     cab: str = ""
     sibling_cabs: tuple[str, ...] = ()
     group_key: str = ""
@@ -280,12 +294,12 @@ def parse_year_range(value: str) -> tuple[int | None, int | None]:
 
 
 def extract_platform_codes(value: str) -> list[str]:
-    text = (value or "").upper()
+    raw = value or ""
     codes: list[str] = []
-    for code in CODE_ALNUM_RE.findall(text):
+    for code in CODE_ALNUM_RE.findall(raw.upper()):
         if code not in codes:
             codes.append(code)
-    for code in CODE_ALPHA_RE.findall(text):
+    for code in CODE_ALPHA_RE.findall(raw):
         if code in CODE_ALPHA_STOPWORDS or code in codes:
             continue
         codes.append(code)
@@ -321,11 +335,21 @@ def ordinal_in_title(title: str, ordinal: int) -> bool:
 
 
 def detect_cab(value: str) -> str:
+    """The one cab style a family is limited to, or '' when it spans several.
+
+    Manifest bodies such as "Single/Double Cab" share a single trailing "cab"
+    word, so each style has to be looked for on its own as well as in the full
+    "<style> cab" phrase.
+    """
     text = (value or "").lower()
+    if "cab" not in text:
+        return ""
     hits = [
         cab
         for cab, phrases in CAB_TOKENS.items()
-        if any(p in text for p in phrases) or f"{cab} cab" in text
+        if any(p in text for p in phrases)
+        or f"{cab} cab" in text
+        or re.search(rf"\b{cab}\b", text)
     ]
     # "Single/Double Cab" families cover both, so no cab signal is usable.
     return hits[0] if len(hits) == 1 else ""
@@ -369,24 +393,31 @@ def build_family_contexts(rows: list[dict[str, str]]) -> dict[str, GenContext]:
                     "phase": _phase_kind(row.get("Facelift / Visual Phase", "")),
                 }
             )
+        # Pass 1: cap every pre-facelift-only family before any family looks at a
+        # sibling's window, otherwise era comparisons are asymmetric (the facelift
+        # sibling would still see the uncapped "–present" range and conclude the
+        # two families overlap).
+        for item in parsed:
+            start, own = item["start"], item["codes"]
+            if item["phase"] != "pre" or start is None:
+                continue
+            caps = [
+                p["start"] - 1
+                for p in parsed
+                if p is not item
+                and p["phase"] == "post"
+                and p["start"] is not None
+                and p["start"] > start
+                and (not own or not p["codes"] or set(own) & set(p["codes"]))
+            ]
+            if caps:
+                item["end"] = min([e for e in (item["end"], min(caps)) if e is not None])
+
         for item in parsed:
             row = item["row"]
             start, end = item["start"], item["end"]
             own = list(item["codes"])
             siblings = [p for p in parsed if p is not item]
-
-            # A pre-facelift-only family must not inherit its facelift sibling's years.
-            if item["phase"] == "pre" and start is not None:
-                caps = [
-                    p["start"] - 1
-                    for p in siblings
-                    if p["phase"] == "post"
-                    and p["start"] is not None
-                    and p["start"] > start
-                    and (not own or not p["codes"] or set(own) & set(p["codes"]))
-                ]
-                if caps:
-                    end = min([e for e in (end, min(caps)) if e is not None])
 
             sibling_codes = [
                 c
@@ -397,13 +428,17 @@ def build_family_contexts(rows: list[dict[str, str]]) -> dict[str, GenContext]:
             sibling_cabs = [p["cab"] for p in siblings if p["cab"] and p["cab"] != item["cab"]]
             own_gens = list(item["gens"])
             sibling_gens = [g for p in siblings for g in p["gens"] if g not in own_gens]
+            shared_codes = [c for c in own if any(c in p["codes"] for p in siblings)]
+            shared_gens = [g for g in own_gens if any(g in p["gens"] for p in siblings)]
             contexts[row["Proposed VISUAL_FAMILY_ID"]] = GenContext(
                 year_start=start,
                 year_end=end,
                 own_codes=tuple(own),
                 sibling_codes=tuple(dict.fromkeys(sibling_codes)),
+                shared_codes=tuple(dict.fromkeys(shared_codes)),
                 own_gens=tuple(own_gens),
                 sibling_gens=tuple(dict.fromkeys(sibling_gens)),
+                shared_gens=tuple(dict.fromkeys(shared_gens)),
                 cab=item["cab"],
                 sibling_cabs=tuple(dict.fromkeys(sibling_cabs)),
                 group_key=key,
@@ -432,6 +467,35 @@ def title_year(title: str) -> int | None:
     return min(years) if years else None
 
 
+YEAR_BARE = r"(19[89]\d|20[0-3]\d)"
+MODEL_YEAR_PATTERNS = (
+    # "2016 Toyota Hilux"
+    re.compile(rf"^(?:file:)?\s*{YEAR_BARE}\b", re.IGNORECASE),
+    # "Suzuki Swift (2024) hybrid", "Isuzu D-Max (MY12)" — a bracket holding only
+    # a year is a model year, unlike a full capture date "(2012-10-26)".
+    re.compile(rf"[(\[]\s*(?:MY\s*)?{YEAR_BARE}\s*[)\]]", re.IGNORECASE),
+    # "Hilux Rogue 2nd facelift 2020", "Swift 2020 facelift", "MY2021"
+    re.compile(rf"(?:facelift|generation|gen|model year|MY)\s*{YEAR_BARE}\b", re.IGNORECASE),
+    re.compile(rf"{YEAR_BARE}\s*(?:facelift|generation|gen|model)\b", re.IGNORECASE),
+)
+
+
+def title_year_kind(title: str) -> tuple[int | None, str]:
+    """(year, 'model' | 'photo' | '') — distinguish a model year from a photo date.
+
+    "2016 Toyota Hilux" names the vehicle's year. "Moscow, Toyota Hilux, Sept
+    2025" only dates the photograph, which bounds the vehicle from below and says
+    nothing about which generation is pictured.
+    """
+    text = (title or "").strip()
+    for pattern in MODEL_YEAR_PATTERNS:
+        hit = pattern.search(text)
+        if hit:
+            return (int(hit.group(1)), "model")
+    year = title_year(text)
+    return (year, "photo") if year is not None else (None, "")
+
+
 def generation_score(title: str, ctx: GenContext) -> float:
     """Reward same-generation evidence; punish clear wrong-generation evidence."""
     upper = (title or "").upper()
@@ -439,6 +503,13 @@ def generation_score(title: str, ctx: GenContext) -> float:
     score = 0.0
 
     own_hit = any(re.search(rf"\b{re.escape(c)}\b", upper) for c in ctx.own_codes)
+    # A code a sibling also uses (Hilux AN120 across all three cab/phase families)
+    # is not evidence of which sibling the photo belongs to.
+    own_hit_unique = any(
+        re.search(rf"\b{re.escape(c)}\b", upper)
+        for c in ctx.own_codes
+        if c not in ctx.shared_codes
+    )
     if own_hit:
         score += 15
     else:
@@ -456,8 +527,12 @@ def generation_score(title: str, ctx: GenContext) -> float:
     elif any(ordinal_in_title(title, g) for g in ctx.sibling_gens):
         score -= 45
 
-    year = title_year(title)
-    has_era_evidence = own_hit or own_gen_hit or year is not None
+    own_gen_hit_unique = any(
+        ordinal_in_title(title, g) for g in ctx.own_gens if g not in ctx.shared_gens
+    )
+
+    year, year_kind = title_year_kind(title)
+    has_era_evidence = own_hit_unique or own_gen_hit_unique or year_kind == "model"
     if ctx.era_evidence_required and not has_era_evidence:
         # A sibling family owns a separate era; an undated, uncoded photo could be
         # either one, and a wrong-generation hero is worse than no hero.
@@ -466,7 +541,12 @@ def generation_score(title: str, ctx: GenContext) -> float:
     if year is not None and (ctx.year_start or ctx.year_end):
         start = ctx.year_start if ctx.year_start is not None else year
         end = ctx.year_end if ctx.year_end is not None else year
-        if start <= year <= end:
+        if year_kind == "photo":
+            # A photograph cannot predate the vehicle it shows, but a recent photo
+            # can show any older generation, so only the lower bound is usable.
+            if year < start - 1:
+                score -= 60
+        elif start <= year <= end:
             score += 12
         elif start - 1 <= year <= end + 1:
             # One year of slack for model-year vs calendar-year labelling.
@@ -492,12 +572,18 @@ def is_relevant(title: str, row: dict[str, str]) -> bool:
     """
     tokens = title_tokens(title)
     make_tokens = {t for t in re.findall(r"[a-z0-9]+", row.get("Make", "").lower()) if len(t) > 1}
-    model_tokens = {
-        t for t in re.findall(r"[a-z0-9]+", row.get("Model Family", "").lower()) if len(t) > 1
-    }
     if make_tokens and not (tokens & make_tokens):
         return False
-    if model_tokens and not (tokens & model_tokens):
+
+    # "Grand i10" and "Corolla Cross" must not be satisfied by a plain i10 or
+    # Corolla, but "/"-separated names are aliases of one vehicle, so any single
+    # alias matching in full is enough.
+    alternatives = [
+        {t for t in re.findall(r"[a-z0-9]+", alt.lower()) if len(t) > 1}
+        for alt in re.split(r"\s*/\s*", row.get("Model Family", ""))
+    ]
+    alternatives = [a for a in alternatives if a]
+    if alternatives and not any(alt <= tokens for alt in alternatives):
         return False
     return True
 
@@ -571,7 +657,7 @@ def commons_search(
     results: list[Candidate] = []
     ctx = ctx if ctx is not None else context_for_row(row, None)
 
-    for query in make_queries(row):
+    for query in make_queries(row, ctx):
         params = {
             "action": "query",
             "format": "json",
@@ -676,7 +762,7 @@ def openverse_search(
     ctx = ctx if ctx is not None else context_for_row(row, None)
     headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-    for query in make_queries(row):
+    for query in make_queries(row, ctx):
         params = {
             "q": query,
             "page_size": min(limit, 20),
@@ -1041,7 +1127,7 @@ def main() -> int:
                 priority=row["Priority"],
                 make=row["Make"],
                 model_family=row["Model Family"],
-                query=" | ".join(make_queries(row)),
+                query=" | ".join(make_queries(row, contexts.get(vfid))),
                 source="none",
                 source_id="",
                 title="NO_ACCEPTABLE_CANDIDATE",

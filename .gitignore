@@ -21,6 +21,16 @@ catalog-data/generated/visual-transition-production.json
 # Redundant archive of the tracked dial_a_spare_hero_asset_queue/ directory.
 dial_a_spare_hero_asset_queue.zip
 
+# Compiled Python. A .pyc was tracked, so every run of the hero queue dirtied
+# the tree with a binary diff nobody reads.
+__pycache__/
+*.pyc
+
+# Per-run pipeline output, keyed by run hash. Regenerable, and 11MB per pilot
+# run — the curated assets under output/vehicle-transitions/ stay tracked.
+output/reconstruction-pilots/
+dial_a_spare_hero_asset_queue/hero_queue_p0_dryrun_v2/
+
 # Secrets. There was no rule here before the first push, which is exactly when
 # an .env created later would have become trackable without anyone noticing.
 .env
