@@ -42,6 +42,7 @@ The single map of where authority lives. Open this before anything else.
 - Frozen: Vehicle-to-EPC blueprint → `../22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md`
 - Implementation sequence → `../22_COMMERCE_FRONTEND_AND_TRANSITION/04_DEVELOPMENT_PLAN/UPDATED_DEVELOPMENT_PLAN_v2_1.md`
 - Source registry → `../22_COMMERCE_FRONTEND_AND_TRANSITION/05_SOURCES/UPDATED_SOURCE_REGISTRY.md`
+- Pack production guide (working notes, not canon) → `../22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md`
 
 ## Repository harness (applied, at repository root)
 

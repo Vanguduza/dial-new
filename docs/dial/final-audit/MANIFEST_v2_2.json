@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T03:56:23.791Z",
+  "generated_at": "2026-08-30T04:40:16.624Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 209,
+  "file_count": 210,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -53,8 +53,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 3107,
-      "sha256": "29ed7223bf9606f87b606d0d0d829778d628ddb977b54895ddc90e533d91dea4"
+      "bytes": 3267,
+      "sha256": "03e2ba613e960bb5936fd228271c06149e224a9a2e358537508b14f26c854d84"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -1060,6 +1060,11 @@
       "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/05_SOURCES/UPDATED_SOURCE_REGISTRY.md",
       "bytes": 1239,
       "sha256": "3d92a227149e9f6747ff97d6ff7d584f1f5c7e51077544bd81675d72ab2871ff"
+    },
+    {
+      "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md",
+      "bytes": 21970,
+      "sha256": "3778952d40c1e99f3db16dd02cbd82a53433e41e05477d40f7f7a5ae6a8585eb"
     },
     {
       "path": "README_v2_1.md",
