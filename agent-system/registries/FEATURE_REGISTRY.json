@@ -5731,11 +5731,15 @@
     "outcome": "Round lifecycle",
     "owner": "groceries",
     "aggregate": "GroceryRound",
-    "status": "SPECIFIED",
-    "current_gate": "SPECIFIED",
+    "status": "DOMAIN_TESTED",
+    "current_gate": "DOMAIN_TESTED",
     "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
-    "code_paths": [],
-    "test_paths": [],
+    "code_paths": [
+      "packages/round-lifecycle/src/lifecycle.ts"
+    ],
+    "test_paths": [
+      "tests/round-lifecycle.test.ts"
+    ],
     "evidence_refs": [],
     "donor_refs": [
       "REF-INSTACART",
@@ -5750,7 +5754,9 @@
     ],
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
-    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). The money model is LOCKED at DEC-001..007: credits are not money, so ACT-REG-001 is not engaged by Rounds. Review finding B1 is resolved. Enforced by packages/round-credit rules RCM-001..027."
+    "implementation_note": "Third feature of the Grocery Rounds slice. §7 draws the seventeen main-line states and lists nine exception states with no arrows; the feature is the arrows nobody drew. Transitions are auditable (a record is returned, the input is never mutated) and idempotent on re-entry, both per §7. Surfaced a finding: §7's REFUNDING state conflicts with DEC-001/DEC-005 in name but not in substance, so entering it requires a declared in-kind outcome and a cash outcome is refused (RLC-009). The name itself is left as an open question — renaming a state in a locked plan is a product decision. NOT included: what happens inside a state, persistence, events, time, authorisation. No independent specialist review; S4 triggers the security and money reviewers.",
+    "security_tier": "S4",
+    "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F021",

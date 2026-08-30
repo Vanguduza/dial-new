@@ -27754,9 +27754,10 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "groceries.grocery-order-group.read",
-      "groceries.grocery-order-group.create",
-      "groceries.grocery-order-group.act"
+      "groceries.round.read",
+      "groceries.round.transition",
+      "groceries.round.exception",
+      "groceries.round.resume"
     ],
     "data_entities": [
       "GroceryOrderGroup",
@@ -27814,16 +27815,24 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "the seventeen-state main line advances in order, each step legal",
+      "a transition skipping a main-line state is refused, naming what is reachable",
+      "a backward transition on the main line is refused",
+      "a successful transition returns an audit record carrying from, to, actor, reason and timestamp",
+      "re-entering the current state succeeds, is marked idempotent, and adds no second audit record",
+      "MINIMUM_REACHED is refused below the member minimum and allowed at it",
+      "ACTIVE is refused while any member has not accepted the agreement",
+      "PROCUREMENT_LOCKED is refused without recorded member approval",
+      "ALLOCATION is refused before goods are received",
+      "FAILED_TO_FORM is refused from any state but OPEN_FOR_MEMBERS",
+      "FAILED_TO_FORM is refused before the join cut-off has passed",
+      "PAUSED records where it came from, and resuming returns exactly there",
+      "resuming with no recorded prior state is refused rather than guessed",
+      "REFUNDING with a cash outcome is refused, citing DEC-005",
+      "REFUNDING with an in-kind outcome is allowed",
+      "every terminal state refuses every outbound transition"
+    ],
+    "acceptance_contract_doc": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F021",

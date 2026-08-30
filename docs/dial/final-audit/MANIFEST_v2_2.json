@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T21:16:13.803Z",
+  "generated_at": "2026-08-30T21:22:36.632Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 227,
+  "file_count": 228,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 10662,
-      "sha256": "5643a44cbc929403d51fb0deb2094190e53bb1d2a803cb92ddecad2d87da192f"
+      "sha256": "5cb98112b3c35b49ad1adda3516b4af2ee3e10697935a73a86c40d76884e8417"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -783,13 +783,18 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 925850,
-      "sha256": "74503531160da5b1af675bb8dc6932405050939314ba2e1f2d870563a53c5e66"
+      "bytes": 926579,
+      "sha256": "00e27d4f17b6e6e72e6ad5d0e11d82bff1e356fa1345f651d3cf3df6e0862616"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
       "bytes": 8649,
       "sha256": "ea010cbb4014379d747293b67cc73255e71f6be04f7c2af140fe4c01762b96d6"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md",
+      "bytes": 7945,
+      "sha256": "ed2850e8aa1cac3ec7dfbfdd25d4110641fe24a4223104e4c4144deec8bbfc25"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md",
