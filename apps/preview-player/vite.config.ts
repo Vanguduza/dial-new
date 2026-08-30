@@ -1,8 +1,18 @@
+import { fileURLToPath } from 'node:url';
 import { sites } from '@openai/sites-vite-plugin';
 import tailwindcss from '@tailwindcss/postcss';
 import vinext from 'vinext';
 import { defineConfig } from 'vite';
 import hostingConfig from './.openai/hosting.json' with { type: 'json' };
+
+// vinext's router falls back to `import('next/error')` when an app defines no
+// /404 and no /_error page. esbuild's dependency optimizer resolves that
+// specifier at bundle time whether or not the branch can execute, so the dev
+// server refused to start: `next` is not a dependency here and must not become
+// one, because vinext replaces the Next runtime rather than layering on it.
+const NEXT_ERROR_FALLBACK = fileURLToPath(
+  new URL('./lib/next-error-fallback.tsx', import.meta.url),
+);
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   '00000000-0000-4000-8000-000000000000';
@@ -46,6 +56,7 @@ export default defineConfig(async () => {
 
   return {
     css: { postcss: { plugins: [tailwindcss()] } },
+    resolve: { alias: { 'next/error': NEXT_ERROR_FALLBACK } },
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
