@@ -106,6 +106,12 @@ test.describe('invisible hit map (§5.1, §5.4)', () => {
   test('draws no visible click target', async ({ page }) => {
     await startFlow(page);
     const regions = transitionWindow(page).locator('[data-hit-region]');
+    // The hit map goes live when the transition settles, not when the page
+    // loads. `count()` does not auto-wait, so counting straight after
+    // startFlow() raced the animation and reported zero regions — a timing
+    // artefact reported as a §5.4 violation. Waiting for the first region
+    // changes nothing about what is asserted below.
+    await expect(regions.first()).toBeAttached();
     const count = await regions.count();
     expect(count, 'expected at least one hit region').toBeGreaterThan(0);
 
@@ -181,9 +187,17 @@ test.describe('invisible hit map (§5.1, §5.4)', () => {
 });
 
 test.describe('mobile (§5.1)', () => {
-  test.skip(({ browserName }, testInfo) => testInfo.project.name !== 'mobile', 'mobile only');
-
-  test('hit regions are forgiving enough to tap', async ({ page }) => {
+  /**
+   * The guard lives in the test body because a describe-level `test.skip`
+   * callback is passed fixtures only — no second testInfo argument. Reading
+   * `testInfo.project` there threw `Cannot read properties of undefined`, so
+   * the guard never skipped anything: this mobile-only test ran in all three
+   * projects and failed in two of them for reasons that had nothing to do with
+   * §5.1. A guard that throws is worse than no guard, because it reports as a
+   * contract failure.
+   */
+  test('hit regions are forgiving enough to tap', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile', 'mobile only');
     await startFlow(page);
     const regions = transitionWindow(page).locator('[data-hit-region]');
     const count = await regions.count();
@@ -196,12 +210,32 @@ test.describe('mobile (§5.1)', () => {
 });
 
 test.describe('reduced motion (§4.3)', () => {
-  test.skip(
-    ({ browserName }, testInfo) => testInfo.project.name !== 'reduced-motion',
-    'reduced-motion project only',
-  );
+  // Same defect as the mobile guard above: a describe-level skip callback gets
+  // no testInfo, so this threw instead of skipping and ran in all three
+  // projects — including the two where motion is not reduced, which is
+  // precisely the condition it exists to exclude.
+  test('cuts directly to the stable exploded result', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'reduced-motion', 'reduced-motion project only');
 
-  test('cuts directly to the stable exploded result', async ({ page }) => {
+    /**
+     * The project declares `reducedMotion: 'reduce'` in its `use` block, and
+     * Playwright 1.56.1 does not pass that option through to the page fixture.
+     * It is not a config typo: `colorScheme` set the same way in the same block
+     * does reach the page, and the resolved `testInfo.project.use` contains
+     * `reducedMotion: "reduce"` — it simply is not applied.
+     *
+     * So the media state is set here and then asserted. Without the assertion
+     * this test runs against ordinary animation while reporting on §4.3, which
+     * is the worst of both: a green result for a path never exercised.
+     */
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    expect(
+      await page.evaluate(
+        () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      ),
+      'reduced motion must be in effect before §4.3 can be tested',
+    ).toBe(true);
+
     await startFlow(page);
     const window = transitionWindow(page);
     await expect(window.locator('[data-hit-region]').first()).toBeAttached({ timeout: 3_000 });
@@ -266,24 +300,59 @@ test.describe('committed selection (§3.4)', () => {
     const committed = page.locator('[data-committed="true"]').first();
     await expect(committed).toBeAttached();
 
+    /**
+     * Measured by compositing through a canvas rather than by parsing the
+     * colour strings, which the previous version did and which could not work.
+     *
+     * It pulled every number out of the computed colour with a regex and fed
+     * the first three to an sRGB luminance formula. Two things break that.
+     * Tailwind emits `oklab(1 0 0 / 0.55)`, so the first three numbers were
+     * 1, 0, 0 — read as near-black, giving a nonsense ratio of 1.14 for white
+     * text on a dark panel. And it discarded the alpha channel, so faint text
+     * scored identically to opaque text: the one property this test exists to
+     * measure was the one it threw away. It could report neither a pass nor a
+     * failure honestly.
+     *
+     * Painting the colour over its own backdrop and reading the pixel back
+     * gives the composited sRGB the reader actually sees, whatever colour
+     * space the stylesheet was written in.
+     */
     const contrast = await committed.evaluate((node) => {
-      const parse = (value: string) => value.match(/\d+(\.\d+)?/g)!.map(Number);
-      const luminance = ([r, g, b]: number[]) => {
-        const channel = (c: number) => {
-          const s = c / 255;
+      const element = node as HTMLElement;
+
+      let ancestor: HTMLElement | null = element;
+      let background = 'rgba(0, 0, 0, 0)';
+      while (ancestor && /rgba\(0, 0, 0, 0\)|transparent/.test(background)) {
+        background = getComputedStyle(ancestor).backgroundColor;
+        ancestor = ancestor.parentElement;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1;
+      canvas.height = 1;
+      const context = canvas.getContext('2d')!;
+
+      const paint = (layers: string[]): [number, number, number] => {
+        context.clearRect(0, 0, 1, 1);
+        for (const layer of layers) {
+          context.fillStyle = layer;
+          context.fillRect(0, 0, 1, 1);
+        }
+        const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+        return [r, g, b];
+      };
+
+      const luminance = ([r, g, b]: [number, number, number]) => {
+        const channel = (value: number) => {
+          const s = value / 255;
           return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
         };
         return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
       };
-      let element: HTMLElement | null = node as HTMLElement;
-      let background = 'rgba(0, 0, 0, 0)';
-      while (element && /rgba\(0, 0, 0, 0\)|transparent/.test(background)) {
-        background = getComputedStyle(element).backgroundColor;
-        element = element.parentElement;
-      }
-      const a = luminance(parse(getComputedStyle(node as HTMLElement).color));
-      const b = luminance(parse(background));
-      const [light, dark] = a > b ? [a, b] : [b, a];
+
+      const text = luminance(paint([background, getComputedStyle(element).color]));
+      const backdrop = luminance(paint([background]));
+      const [light, dark] = text > backdrop ? [text, backdrop] : [backdrop, text];
       return (light + 0.05) / (dark + 0.05);
     });
 

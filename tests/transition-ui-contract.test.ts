@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import {
+  containsPoint,
+  deriveHitRegions,
+  toHitRegion,
+  type HotspotLike,
+} from "../apps/preview-player/lib/hit-map.js";
 
 /**
  * Blueprint §4.2 and §10 make QA_READY depend on the transition window showing
@@ -164,26 +171,118 @@ describe("customer transition contract", () => {
     expect(source).not.toMatch(/aria-valuenow/i);
 
     // The one permitted headline, §4.2.
-    expect(source).toMatch(/Know your \{[^}]*make\}/);
+    // Built as one interpolated string, not JSX fragments: §4.2 permits two
+    // text elements in the window, and a headline split across seven text
+    // nodes is neither one of them.
+    expect(source).toMatch(/Know your \$\{[^}]*make\}/);
     expect(source).toContain("left-1/2 top-2");
     expect(source).toContain("sm:top-3");
   });
 
   it("keeps precise powertrain regions above broad chassis coverage", async () => {
     const source = await readFile(resolve(COMPONENT), "utf8");
-    const categoryMap = source.slice(
-      source.indexOf("const categoryHitAreas"),
-      source.indexOf("const settledExplosionScale"),
-    );
-
-    expect(source).toContain(".sort((a, b) => a.priority - b.priority)");
-    expect(categoryMap.indexOf("id: 'engine'")).toBeGreaterThan(
-      categoryMap.indexOf("id: 'front-chassis-family'"),
-    );
-    expect(categoryMap.indexOf("id: 'transmission'")).toBeGreaterThan(
-      categoryMap.indexOf("id: 'front-chassis-family'"),
-    );
     expect(source).toContain("(settledExplosionScale - layer.fromScale) * partProgress");
     expect(source).toContain("transform: `scale(${settledExplosionScale})`");
+  });
+});
+
+/**
+ * §5.1 hit-map geometry, exercised rather than read.
+ *
+ * This replaces two assertions that searched the component's source text for a
+ * sort expression and for the order of hardcoded object literals. They could
+ * only ever describe one vehicle's hardcoded shapes, and they passed or failed
+ * on how the code was spelled rather than on what it computes — the same defect
+ * the e2e header calls out about screening rendered copy for forbidden words.
+ *
+ * The published pack is used as the fixture, so these also guard the pack: a
+ * generated hotspot set that breaks the precondition fails here, at the point
+ * it is produced, rather than in a browser probe much later.
+ */
+describe("hit map geometry (§5.1)", () => {
+  const hotspots = JSON.parse(
+    readFileSync(
+      resolve(
+        "apps/preview-player/public/packs/VF-TOYOTA-HILUX-AN130-DC-FL/v1/navigation/hotspots.json",
+      ),
+      "utf8",
+    ),
+  ).hotspots as HotspotLike[];
+
+  it("gives every category its own box rather than one shared full-bleed box", () => {
+    const regions = deriveHitRegions(hotspots);
+    expect(regions.length).toBeGreaterThan(1);
+
+    const boxes = regions.map((r) => `${r.left},${r.top},${r.width},${r.height}`);
+    expect(new Set(boxes).size, "regions must not share a bounding box").toBe(
+      boxes.length,
+    );
+
+    for (const region of regions) {
+      expect(region.width).toBeGreaterThan(0);
+      expect(region.height).toBeGreaterThan(0);
+      expect(region.left + region.width).toBeLessThanOrEqual(100.001);
+      expect(region.top + region.height).toBeLessThanOrEqual(100.001);
+    }
+  });
+
+  it("paints broad regions first so specific ones capture their own points", () => {
+    const regions = deriveHitRegions(hotspots);
+    const priorities = regions.map((r) => r.priority);
+    expect(priorities).toEqual([...priorities].sort((a, b) => b - a));
+
+    // Body is the broad region §5.1 names, and engine is what it must not
+    // swallow. Later in paint order means on top.
+    const body = regions.findIndex((r) => r.visualCategoryId === "VC-BODY");
+    const engine = regions.findIndex((r) => r.visualCategoryId === "VC-ENG");
+    expect(body).toBeGreaterThanOrEqual(0);
+    expect(engine).toBeGreaterThan(body);
+  });
+
+  it("places each region's clickable centre inside its own polygon", () => {
+    // §5.4's probes click the centre of a region's box. A polygon whose
+    // bounding-box centre falls outside the shape is clipped away at exactly
+    // the point the contract aims at, and the probe would silently land on
+    // whatever is underneath.
+    for (const hotspot of hotspots) {
+      const xs = hotspot.polygon.map((p) => p.x);
+      const ys = hotspot.polygon.map((p) => p.y);
+      const centre = {
+        x: (Math.min(...xs) + Math.max(...xs)) / 2,
+        y: (Math.min(...ys) + Math.max(...ys)) / 2,
+      };
+      expect(
+        containsPoint(hotspot.polygon, centre),
+        `${hotspot.visualCategoryId}: bounding-box centre falls outside its polygon`,
+      ).toBe(true);
+    }
+  });
+
+  it("refuses a degenerate polygon instead of drawing an unclickable region", () => {
+    expect(
+      toHitRegion({ visualCategoryId: "VC-X", label: "x", polygon: [] }),
+    ).toBeNull();
+    expect(
+      toHitRegion({
+        visualCategoryId: "VC-X",
+        label: "x",
+        polygon: [
+          { x: 0.1, y: 0.1 },
+          { x: 0.1, y: 0.4 },
+        ],
+      }),
+    ).toBeNull();
+    expect(
+      toHitRegion({
+        visualCategoryId: "VC-X",
+        label: "x",
+        polygon: [
+          { x: 0.2, y: 0.2 },
+          { x: 0.2, y: 0.2 },
+          { x: 0.2, y: 0.2 },
+        ],
+      }),
+      "a zero-area polygon has no clickable area",
+    ).toBeNull();
   });
 });

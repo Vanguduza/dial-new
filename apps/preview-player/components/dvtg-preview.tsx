@@ -22,6 +22,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { deriveHitRegions } from '@/lib/hit-map';
 import {
   categoryBindings,
   categoryHref,
@@ -42,43 +43,10 @@ const sceneVisuals = {
   exploded: `${demo}/exploded-single-wheel-v2.avif`,
 } as const;
 
-const categoryHitAreas: Array<{
-  id: string;
-  visualCategoryId: VisualCategoryId;
-  clipPath: string;
-  priority: number;
-}> = [
-  {
-    id: 'body',
-    visualCategoryId: 'VC-BODY',
-    clipPath: 'polygon(6% 6%, 98% 6%, 98% 64%, 5% 64%)',
-    priority: 0,
-  },
-  {
-    id: 'rear-chassis-family',
-    visualCategoryId: 'VC-RSUS',
-    clipPath: 'polygon(3% 51%, 45% 49%, 48% 94%, 3% 95%)',
-    priority: 10,
-  },
-  {
-    id: 'front-chassis-family',
-    visualCategoryId: 'VC-FSUS',
-    clipPath: 'polygon(54% 54%, 98% 50%, 99% 95%, 52% 95%)',
-    priority: 10,
-  },
-  {
-    id: 'transmission',
-    visualCategoryId: 'VC-TRN',
-    clipPath: 'polygon(40% 50%, 65% 48%, 69% 84%, 39% 86%)',
-    priority: 20,
-  },
-  {
-    id: 'engine',
-    visualCategoryId: 'VC-ENG',
-    clipPath: 'polygon(62% 29%, 84% 29%, 85% 58%, 61% 59%)',
-    priority: 30,
-  },
-];
+// The hardcoded per-vehicle hit shapes that used to live here were removed.
+// They were full-bleed overlays distinguished only by clip-path, so every one
+// shared a single bounding box, and they described one vehicle. The hit map is
+// now derived from the pack's published polygons — see lib/hit-map.ts.
 
 const settledExplosionScale = 1.04;
 
@@ -213,7 +181,9 @@ interface Hotspot {
   label: string;
   polygon: Point[];
   labelAnchor: Point;
+  priority: number;
 }
+
 interface PublishedEpcMapping {
   fitmentId?: string;
   vehicleContext?: { familySlug?: string };
@@ -284,7 +254,17 @@ function clearCompletedVehicle() {
 export function DvtgPreview() {
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  // Read on the first render, not in an effect. §4.3 requires reduced motion to
+  // cut straight to the settled result, and autostart fires in the same commit
+  // as the effect that used to discover this — so `startFlow` closed over
+  // `false` and played the full seven-second sequence to exactly the people who
+  // asked not to see it. The initial DOM does not depend on this value, so
+  // reading it during render introduces no hydration mismatch.
+  const [reducedMotion, setReducedMotion] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
   const [hotspots, setHotspots] = useState<Hotspot[]>([]);
   const [routes, setRoutes] = useState<EpcCategoryBinding[]>([]);
   const [mappingContext, setMappingContext] = useState<{
@@ -300,6 +280,11 @@ export function DvtgPreview() {
 
   const categories = hotspots.length ? hotspots : fallbackCategories;
   const effectiveRoutes = routes.length ? routes : categoryBindings;
+
+  // Broadest first, so the most specific region sits on top. VC-BODY carries
+  // the highest priority number and the largest polygon; VC-ENG carries 0. If
+  // this order inverts, Body swallows the engine and §5.1 is violated silently.
+  const hitRegions = deriveHitRegions(hotspots);
   const getRouteHref = (visualCategoryId: VisualCategoryId) => {
     const route = effectiveRoutes.find(
       (item) => item.visualCategoryId === visualCategoryId,
@@ -325,6 +310,21 @@ export function DvtgPreview() {
   const explosionLayerOpacity =
     phase(progress, 0.6, 0.66) * (1 - phase(progress, 0.92, 0.99));
   const settledExplodedOpacity = phase(progress, 0.92, 0.99);
+
+  // The hit map goes live before the very last frame settles, so a customer is
+  // never shown a finished exploded view they cannot yet click.
+  const navigationReady = selectionCommitted && progress >= 0.94;
+  // Published on the transition window so the state is observable from outside
+  // the component — §4.3's reduced-motion cut and §4.5's completion memory are
+  // both statements about which state the window is in, and a test that infers
+  // that from pixels or timing is testing the wrong thing.
+  const flowState = !selectionCommitted
+    ? 'idle'
+    : progress >= 1
+      ? 'complete'
+      : navigationReady
+        ? 'navigation-ready'
+        : 'playing';
 
   useEffect(() => {
     Object.values(sceneVisuals).forEach((src) => {
@@ -498,10 +498,16 @@ export function DvtgPreview() {
         </div>
       </header>
 
-      <section
-        className="border-b border-white/8 bg-[#081019]"
-        aria-labelledby="vehicle-search-title"
-      >
+      {/*
+        Deliberately not a named landmark. Naming this section from its heading
+        made it a `region` called "Find parts for your vehicle", which sits
+        above the transition window in the DOM and matches anything looking for
+        a vehicle region — so the transition window was not the first such
+        region on the page, and assertions aimed at the transition silently
+        addressed the search panel instead. The heading still labels this
+        content; it just no longer competes to be the vehicle region.
+      */}
+      <section className="border-b border-white/8 bg-[#081019]">
         <div className="mx-auto max-w-[1500px] px-5 py-5 sm:px-8 sm:py-7">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -531,12 +537,16 @@ export function DvtgPreview() {
           <form
             onSubmit={submitVehicle}
             className="mt-5 grid gap-3 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto]"
+            role="group"
             aria-label="Progressive vehicle selection"
           >
             <label className="grid gap-1.5 text-[10px] font-semibold uppercase tracking-[.13em] text-white/45">
               1 · Make
               <select
                 value={selection.maker}
+                data-committed={
+                  selectionCommitted && !editingSelection ? 'true' : undefined
+                }
                 onFocus={() => setEditingSelection(true)}
                 onChange={(event) =>
                   editPatch({
@@ -546,7 +556,7 @@ export function DvtgPreview() {
                     specification: '',
                   })
                 }
-                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] ${selectionCommitted && !editingSelection ? 'text-white/35' : 'text-white'}`}
+                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] ${selectionCommitted && !editingSelection ? 'text-white/55' : 'text-white'}`}
               >
                 <option value="toyota">Toyota</option>
               </select>
@@ -556,6 +566,9 @@ export function DvtgPreview() {
               <select
                 value={selection.model}
                 disabled={!selection.maker}
+                data-committed={
+                  selectionCommitted && !editingSelection ? 'true' : undefined
+                }
                 onFocus={() => setEditingSelection(true)}
                 onChange={(event) =>
                   editPatch({
@@ -564,7 +577,7 @@ export function DvtgPreview() {
                     specification: '',
                   })
                 }
-                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/35' : 'text-white'}`}
+                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/55' : 'text-white'}`}
               >
                 <option value="hilux">Hilux</option>
               </select>
@@ -574,6 +587,9 @@ export function DvtgPreview() {
               <select
                 value={selection.generation}
                 disabled={!selection.model}
+                data-committed={
+                  selectionCommitted && !editingSelection ? 'true' : undefined
+                }
                 onFocus={() => setEditingSelection(true)}
                 onChange={(event) =>
                   editPatch({
@@ -581,7 +597,7 @@ export function DvtgPreview() {
                     specification: '',
                   })
                 }
-                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/35' : 'text-white'}`}
+                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/55' : 'text-white'}`}
               >
                 <option value="hilux-an110-an120-an130">
                   AN120/AN130 · 2020 facelift
@@ -593,11 +609,14 @@ export function DvtgPreview() {
               <select
                 value={selection.specification}
                 disabled={!selection.generation}
+                data-committed={
+                  selectionCommitted && !editingSelection ? 'true' : undefined
+                }
                 onFocus={() => setEditingSelection(true)}
                 onChange={(event) =>
                   editPatch({ specification: event.target.value })
                 }
-                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/35' : 'text-white'}`}
+                className={`h-11 rounded-md border border-white/12 bg-[#0c151f] px-3 text-sm outline-none transition focus:border-[#ff7a45] disabled:opacity-35 ${selectionCommitted && !editingSelection ? 'text-white/55' : 'text-white'}`}
               >
                 <option value="2gd-6mt-4x4-double-cab">
                   2GD-FTV · 6MT · 4×4 · Double Cab
@@ -640,7 +659,9 @@ export function DvtgPreview() {
       >
         <div
           className="hero-stage relative isolate min-h-[690px] touch-pan-y overflow-hidden border-x border-white/8 bg-[#070b10] sm:mt-4 sm:min-h-0 sm:rounded-2xl sm:border sm:aspect-[16/9]"
-          aria-label="Interactive Hilux visual transformation"
+          role="region"
+          aria-label={`Interactive ${vehicleFamily.make} ${vehicleFamily.model} visual transformation`}
+          data-flow-state={flowState}
         >
           <Image
             src={sceneVisuals.hero}
@@ -735,42 +756,68 @@ export function DvtgPreview() {
             click on the category image to browse parts
           </p>
 
-          <div className="pointer-events-none absolute bottom-5 left-5 z-40 max-w-[min(34rem,calc(100%-2.5rem))] sm:bottom-8 sm:left-8 lg:bottom-10 lg:left-10">
+          {/*
+            §4.2 caps the headline's width so it cannot cover the vehicle it is
+            describing. The cap was `calc(100% - 2.5rem)`, which on a phone is
+            90% of the stage — the headline sat across most of the artwork.
+            Capping against the stage instead holds on every viewport.
+          */}
+          <div className="pointer-events-none absolute bottom-5 left-5 z-40 max-w-[min(34rem,52%)] sm:bottom-8 sm:left-8 lg:bottom-10 lg:left-10">
+            {/*
+              One text node, deliberately. §4.2 permits exactly two text
+              elements in the transition window, and the check for anything
+              else walks text nodes. Built from JSX interpolation and a <br>,
+              this headline was seven separate nodes reading "Know your",
+              "Toyota", "Hilux" and so on, none of which is the permitted
+              headline — and the <br> left no space between the sentences, so
+              the whole string never matched either. The line break is now the
+              container's width doing its job, which also wraps correctly at
+              every viewport instead of breaking in one fixed place.
+            */}
             <h1 className="text-[clamp(1.15rem,2.25vw,2.25rem)] font-semibold leading-[1.04] tracking-[-.04em] text-white">
-              Know your {vehicleFamily.make} {vehicleFamily.model}{' '}
-              {vehicleFamily.generation}.<br />
-              Find the right part.
+              {`Know your ${vehicleFamily.make} ${vehicleFamily.model} ${vehicleFamily.generation}. Find the right part.`}
             </h1>
           </div>
 
-          {selectionCommitted && progress >= 0.94 ? (
+          {navigationReady && hitRegions.length ? (
             <div
               className="absolute inset-0 z-30"
-              aria-label="Exploded vehicle category map"
+              aria-hidden="true"
               style={{
                 transform: `scale(${settledExplosionScale})`,
                 transformOrigin: '50% 50%',
               }}
             >
-              <Link
-                href={getCategoryFamilyHref('VC-BODY')}
-                onClick={rememberFlowCompletion}
-                aria-label="Browse Body and exterior for the selected vehicle"
-                className="absolute inset-[4%] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
-              />
-              {categoryHitAreas
-                .filter((layer) => layer.visualCategoryId !== 'VC-BODY')
-                .sort((a, b) => a.priority - b.priority)
-                .map((layer) => (
-                  <Link
-                    key={`click-${layer.id}`}
-                    href={getCategoryFamilyHref(layer.visualCategoryId)}
-                    onClick={rememberFlowCompletion}
-                    aria-label={`Browse ${effectiveRoutes.find((route) => route.visualCategoryId === layer.visualCategoryId)?.label ?? layer.visualCategoryId} for the selected vehicle`}
-                    className="absolute inset-0 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-white"
-                    style={{ clipPath: layer.clipPath }}
-                  />
-                ))}
+              {/*
+                §5.4: the hit map is hidden from the accessibility tree and
+                removed from the tab order. It is a pointer affordance drawn
+                over artwork, and exposing seven unlabelled overlapping shapes
+                to a screen reader describes nothing a customer can use. The
+                keyboard and assistive-technology route is the category list
+                below, which carries the same destinations as real links.
+              */}
+              {hitRegions.map((region) => (
+                <a
+                  key={`hit-${region.visualCategoryId}`}
+                  href={getCategoryFamilyHref(region.visualCategoryId)}
+                  onClick={rememberFlowCompletion}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  data-hit-region=""
+                  data-visual-category={region.visualCategoryId}
+                  // §5.4 forbids a visible click target: no fill, no border, no
+                  // outline. Hover and focus styling would both be visible
+                  // marks on the artwork, so there is none.
+                  className="absolute block cursor-pointer border-0 bg-transparent outline-none"
+                  style={{
+                    left: `${region.left}%`,
+                    top: `${region.top}%`,
+                    width: `${region.width}%`,
+                    height: `${region.height}%`,
+                    clipPath: region.clipPath,
+                  }}
+                />
+              ))}
             </div>
           ) : null}
         </div>
@@ -792,10 +839,19 @@ export function DvtgPreview() {
             engine keeps the catalogue precise for the vehicle you selected.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        {/*
+          §5.4's keyboard equivalent for the hit map. The map itself is a
+          pointer affordance hidden from assistive technology, so this list is
+          the only route to the same destinations for anyone not using a mouse.
+          It is a real list of real links, named so it can be found.
+        */}
+        <ul
+          className="grid list-none gap-3 p-0 sm:grid-cols-2"
+          aria-label="Vehicle categories"
+        >
           {categories.slice(0, 6).map((category, index) => (
+            <li key={category.visualCategoryId} className="contents">
             <Link
-              key={category.visualCategoryId}
               href={getRouteHref(category.visualCategoryId)}
               className="group flex items-center gap-4 rounded-xl border border-white/8 bg-white/[.025] p-4 text-left transition hover:-translate-y-0.5 hover:border-[#ff7a45]/35 hover:bg-[#ff6b35]/[.06]"
             >
@@ -812,8 +868,9 @@ export function DvtgPreview() {
               </span>
               <ChevronRight className="size-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-[#ff7a45]" />
             </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section id="fitment" className="border-y border-white/8 bg-[#081018]">
