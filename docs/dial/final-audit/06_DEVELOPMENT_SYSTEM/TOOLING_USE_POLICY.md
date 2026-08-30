@@ -66,6 +66,24 @@ The vitest suite keeps a structural fallback so CI does not lose the check when
 a browser is unavailable, but the Playwright assertions are the real gate: the
 vitest one reads source text and cannot see the screen.
 
+## Gated agent tooling
+
+Five donors passed the CT-3 gate with conditions. Dossier:
+`../20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_DOSSIER_AGENT_TOOLING.md`
+
+| Donor | When it fires | Condition that binds |
+|---|---|---|
+| `claude-plugins-official` | Installing any further plugin | Each plugin from it is its own donor and takes its own gate |
+| `awesome-design-md` | Authoring `DIAL_DESIGN.md` | Reference for structure only. Never drop in a brand-derived DESIGN.md |
+| `taste-skill` | Zone A/B surfaces — brand, homepage, discovery | Bound to the design zone. Barred from Zone C, Zone D and the transition window |
+| `impeccable` | Design and accessibility passes | Skills only until the SBOM/dependency scan is green; hooks stay disabled |
+| `ponytail` | Deciding whether code needs writing at all | **May not be applied to eventuality/recovery contracts, FRC completeness, evidence requirements or acceptance contracts** |
+
+The ponytail carve-out matters most. Its ladder excludes security, data loss and
+accessibility from being cut, but not recovery paths — and a recovery path is by
+definition the code that usually does not run, so "does this need to exist?"
+reliably answers no. That is already this project's weakest area.
+
 ---
 
 ## Guardrails

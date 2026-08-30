@@ -24,6 +24,7 @@
     "catalog:coverage": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js build",
     "catalog:coverage:check": "npm run build:core --silent && node dist/apps/catalog-coverage/src/index.js check",
     "catalog:visual-sources": "npm run build:core --silent && node dist/apps/catalog-coverage/src/visual-source-discovery.js",
+    "catalog:transition-status": "npm run build:core --silent && node dist/apps/catalog-coverage/src/transition-production.js",
     "schema:check": "node agent-system/bin/schema-check.mjs",
     "agent:context": "node agent-system/bin/context-get.mjs",
     "agent:drift-check": "node agent-system/bin/drift-check.mjs",

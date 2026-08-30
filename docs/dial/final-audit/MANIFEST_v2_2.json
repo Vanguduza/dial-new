@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-29T22:34:53.691Z",
+  "generated_at": "2026-08-30T02:39:54.834Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 208,
+  "file_count": 209,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -423,8 +423,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md",
-      "bytes": 5831,
-      "sha256": "5c6d01cd1da39f6215ca8e50a76db177bfca5476ba62140461c51d9a05c64c1b"
+      "bytes": 7075,
+      "sha256": "90cf706ff9bc717ae9a4fe5968a04773eceafe6b1d6d50514d52e1a31527c525"
     },
     {
       "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
@@ -782,14 +782,19 @@
       "sha256": "c1220e51fe6291c5070c71759cbf1633f99f19a8d5831903401e30902acf50da"
     },
     {
+      "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_DOSSIER_AGENT_TOOLING.md",
+      "bytes": 8765,
+      "sha256": "ad3f455a409bbc78bd62b3c2334c917f00f22a695f2a43c2118070fde51b7e1c"
+    },
+    {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
       "bytes": 2484,
       "sha256": "6553ebdea7573c67730ed4a2aa1177fd409eb435e620e51ac376958244e73dd1"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json",
-      "bytes": 45015,
-      "sha256": "096d4c7b9a88fd99ebf4ff6a23bea5d380ca7e20457876cd184efc2d69376b56"
+      "bytes": 52830,
+      "sha256": "f2e7b1f06846b69092ac7d02148799dbf30546e8cf1527eb4dfb4d0cfdc8da13"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/04_NFR/NFR_BUDGET_REGISTRY.json",
