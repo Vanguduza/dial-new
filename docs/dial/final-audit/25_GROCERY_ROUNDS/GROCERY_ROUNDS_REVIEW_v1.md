@@ -3,6 +3,16 @@
 **Reviews:** `GROCERY_ROUNDS_MASTER_PLAN_v1.md` (30 Aug 2026, marked LOCKED PRODUCT DIRECTION)
 **Verdict:** The product is coherent and the governance instincts are unusually good. Four findings block build, seven need closing before a pilot takes real money. One of the four is a conflict with DIAL canon that the plan does not appear to know about.
 
+> **Superseded in part, 30 Aug 2026.** The product owner has decided the money
+> structure: subscriptions buy grocery credits that are not money, are not
+> redeemable in money, are not transactional and are not transferable, making
+> their issue a taxable supply rather than a deposit. That decision answers **B1,
+> B3 and B4** and is recorded, with the six conditions it imposes on the build, in
+> `ROUND_CREDIT_MODEL_v1.md`. The findings below are left as written — they are
+> what the decision was taken against — with a resolution line on each. B2, the H
+> findings and the M findings stand unchanged; B2 is sharpened rather than
+> answered, and is dealt with as condition C7.
+
 The plan is marked locked. Three of the four blocking findings are inside the locked decisions in §2, so they are raised as conflicts to be ratified or reversed deliberately — not as suggestions to reopen settled product direction.
 
 ---
@@ -47,6 +57,16 @@ The plan never mentions `ACT-REG-001`, `TECH-F009`, the Job Reserve, or the `Esc
 
 Silence is the one option that is not available, because the contradiction is already in the repository.
 
+**Resolved — neither option, and better than both.** The credit model removes the
+money rather than choosing a way to hold it. A payment is extinguished on receipt
+into a non-monetary, non-repayable entitlement to goods, so Dial holds an
+obligation to deliver groceries and not a sum it will later pay out. That is
+fulfilment and custody semantics, which the coherence map expressly permits
+Groceries to extend. `ACT-REG-001` is not engaged — **for exactly as long as
+condition C1 holds**, and the day a grocery credit can settle a spare part or a
+provider job it is engaged again, on worse facts, with real customer value
+already inside it. `RCM-001`, `RCM-002` and `RCM-015` enforce that boundary.
+
 ### B2 — Insurance cannot cover the most likely way this fails
 
 §16 protects against non-delivery arising from insolvency, fraud, employee dishonesty, cyber, transit loss, supplier failure and business interruption. Those are real perils and the layering is sensible.
@@ -56,6 +76,18 @@ The most probable route to non-delivery is none of them: **Dial is solvent, trad
 Segregation is the only structural answer to that failure, which is why B1 is not a governance formality. The two findings are the same finding seen from opposite ends: §2 removes segregation and asks insurance to carry the load, and insurance cannot carry this part of it.
 
 **Required.** State plainly, in the plan and at the consent gateway, that protection covers insolvency and fraud-type non-delivery and not ordinary commercial shortfall — or restore segregation for the float.
+
+**Not answered by the credit decision — sharpened by it.** A taxable supply means
+the cash is Dial's, on Dial's balance sheet, spendable on operations. That is the
+point of the decision and it is the legally clean position; its corollary is that
+on insolvency the member is an unsecured creditor holding an instrument that is
+by construction not a money claim. Recovery is close to zero, and the credits are
+worthless in a liquidation precisely because they are not money. Condition C7
+carries this: the insurance layer must be bound against the credit construct
+specifically — an underwriter will ask what exactly is owed and to whom — and a
+voluntary procurement reserve percentage must be declared, zero included
+(`RCM-016`). A treasury policy is not a customer reserve account and creates no
+second money authority.
 
 ### B3 — The member is sold one product and given another
 
@@ -78,6 +110,15 @@ In Zimbabwe, over a 12-month horizon, that gap is the entire risk. If USD food p
 
 If that is unsellable, the alternative is a **priced floor** — a guaranteed minimum basket, with the price risk hedged or provisioned and costed into the tiers. What is not available is leaving the mechanics as (4) and the promise as (1). That gap is where mis-selling findings and consumer complaints live.
 
+**Answered, with the choice still open.** Condition C6 makes denomination an
+explicit per-product declaration rather than an unstated assumption. Goods
+denomination — a credit is a basket unit, not a dollar amount — is recommended
+and closes this finding outright: quantity is fixed at purchase, so the promise
+and the mechanics are the same thing, and Dial carries the price risk on forward
+supply agreements. Currency denomination stays available and requires the
+disclosure sentence above, recorded as a version. `RCM-013` refuses the third
+possibility, which is currency mechanics with goods-denominated marketing.
+
 ### B4 — VAT and fiscalisation are unsolved, and §24 does not list tax at all
 
 `ACT-REG-004` — Zimbabwe fiscalisation and current tax treatment — is an open activation blocker affecting all revenue-generating divisions.
@@ -91,6 +132,24 @@ A member pays US$100 in month 1. The basket is not determined until month 5 by v
 That answer changes the payment architecture, the receipt the customer gets, the refund position, and the revenue recognition in §9.3. §24's legal review list covers consumer contract, payments, electronic contracting, privacy, refunds, advertising, insurance, suppliers, food safety and delivery — and does not mention tax or fiscalisation anywhere.
 
 **Required.** Add tax to §24's gate list and resolve the deposit-versus-supply question before the payment flow is designed, not after.
+
+**Answered — taxable supply at issue, conditional on C3.** The credit sale is the
+supply, so there is one fiscal event per subscription payment and no open deposit
+liability to explain. The condition is the part that costs money if it is missed:
+a rate can only arise at the tax point if it is *knowable* at the tax point, and
+as designed the basket vote in month 5 decides the rate of a supply taxed in
+month 1. C3 fixes the basket tax class at Round creation and constrains the
+ballot inside it — `RCM-005`, `RCM-006`, `RCM-007` — which is what makes the
+credit single-purpose, and single-purpose is the category taxed on issue. Tax is
+still to be added to §24's gate list, and the treatment still requires
+confirmation from Zimbabwean tax counsel; the engineering is built to take either
+answer.
+
+Separately, and not raised in the original finding: **the tax point is not
+revenue recognition.** VAT arising at issue does not make the cash earned income,
+and booking it as revenue would tell Dial's own management that the float is
+spendable margin — which is B2's failure mode reached through the ledger.
+`RCM-008` and `RCM-010` hold the contract liability against unsettled credits.
 
 ---
 
@@ -134,9 +193,18 @@ That answer changes the payment architecture, the receipt the customer gets, the
 
 ## 5. Needing a decision before build
 
-1. **B1** — reuse the licensed hold-and-release pattern, or ratify two money-holding models. Owner: whoever owns `ACT-REG-001`.
-2. **B3** — which product the member is buying, in the words they read at the consent gateway.
-3. **B4** — deposit or taxable supply, and how an instalment is fiscalised.
-4. **H2** — an indicative broker quote before plan tiers are published.
+~~1. **B1** — reuse the licensed hold-and-release pattern, or ratify two money-holding models.~~ **Decided 30 Aug 2026:** neither. Credits are not money, so there is nothing to hold. See `ROUND_CREDIT_MODEL_v1.md` §2.
 
-Nothing in §26's vertical slice should take real customer money until 1, 2 and 3 are answered. The slice itself is well chosen and can be built against a sandbox `EscrowAdapter` in the meantime, which is exactly what `ACT-REG-001`'s development mode provides for.
+~~2. **B3** — which product the member is buying.~~ **Decided:** grocery credits, disclosed as such at the gateway. Goods-versus-currency denomination remains open as a commercial choice (C6, item 4 below).
+
+~~3. **B4** — deposit or taxable supply.~~ **Decided:** taxable supply at credit issue, conditional on C3 fixing the basket tax class at Round creation.
+
+Still needing a decision:
+
+1. **Tax counsel confirmation** that a single-purpose grocery credit is taxed on issue on Zimbabwean facts, and what evidence of basket tax class ZIMRA expects at fiscalisation. Owner: `ACT-REG-004`.
+2. **Regulatory confirmation** that a non-redeemable, non-transferable, single-purpose credit falls outside deposit-taking and payment-instrument regulation — and a written statement of what would take it back inside, so C1 has a stated boundary rather than an assumed one. Owner: `ACT-REG-001`.
+3. **Consumer-law confirmation** that permanent non-redeemability in money survives, given the in-kind exit in C5.
+4. **C6 — goods or currency denomination**, decided alongside **H2**'s broker quote, because both determine the same tier pricing.
+5. **C7 — the procurement reserve percentage**, or a recorded decision that it is zero and insurance carries the load alone.
+
+Nothing in §26's vertical slice should take real customer money until 1, 2 and 3 are answered. The slice is well chosen and can be built against the rules in `packages/round-credit` in the meantime, which is the same posture `ACT-REG-001`'s development mode provides for.

@@ -14,10 +14,12 @@
       "executed provider/bank/PSP arrangement",
       "legal/regulatory review",
       "live settlement/payout contract tests",
-      "AML/KYC responsibility matrix"
+      "AML/KYC responsibility matrix",
+      "written regulatory confirmation that a non-redeemable, non-transferable, single-purpose grocery credit falls outside deposit-taking and payment-instrument regulation, stating what would take it back inside"
     ],
     "owner": "Commercial + Legal + Finance",
-    "state": "OPEN_ACTIVATION_BLOCKER"
+    "state": "OPEN_ACTIVATION_BLOCKER",
+    "grocery_rounds_position": "NOT ENGAGED by Grocery Rounds under the Round credit model decided 30 Aug 2026 (25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md). A subscription buys credits that are not money, not redeemable in money and not transferable, so Dial holds an obligation to deliver groceries rather than a repayable sum. This holds only while credits settle grocery fulfilment and nothing else; a credit spendable across trades re-engages this blocker on worse facts. Boundary enforced by packages/round-credit rules RCM-001, RCM-002, RCM-015."
   },
   {
     "blocker_id": "ACT-REG-002",
@@ -67,10 +69,12 @@
     "cannot_activate_until": [
       "accountant/tax counsel review",
       "fiscalisation solution/provider/API confirmed",
-      "current VAT/IMTT/WHT rules loaded and independently checked"
+      "current VAT/IMTT/WHT rules loaded and independently checked",
+      "Zimbabwean tax counsel confirmation that a single-purpose grocery credit is taxed on issue, and what evidence of basket tax class ZIMRA expects at fiscalisation"
     ],
     "owner": "Finance + Tax/Legal",
-    "state": "OPEN_ACTIVATION_BLOCKER"
+    "state": "OPEN_ACTIVATION_BLOCKER",
+    "grocery_rounds_position": "Grocery Round credits are treated as a taxable supply at the point of credit issue, not a deposit (ROUND_CREDIT_MODEL_v1.md §1). This requires the basket tax class to be determinate at issue, so a Round declares its class at creation and the basket vote chooses within it — RCM-005, RCM-006, RCM-007. Tax point is not revenue recognition: consideration for an unsettled credit is a contract liability until settlement (RCM-008, RCM-010)."
   },
   {
     "blocker_id": "ACT-REG-005",

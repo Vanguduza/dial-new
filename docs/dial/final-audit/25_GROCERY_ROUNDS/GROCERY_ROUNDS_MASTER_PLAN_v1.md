@@ -21,6 +21,15 @@ The commercial promise is **grocery value and fulfilment** — not interest, inv
 
 # 2. Locked Product Decisions
 
+> **Amended by the product owner, 30 Aug 2026 — see `ROUND_CREDIT_MODEL_v1.md` §4.**
+> The purchase is effected by the issue of grocery credits that are not money,
+> not redeemable in money, not transactional and not transferable, making the
+> issue a taxable supply rather than a deposit. Three decisions below are
+> strengthened rather than replaced, and three are added: a Round declares its
+> basket tax class at creation; credits are owned individually and a group vote
+> cannot block a member's exit; credit denomination is declared per product as
+> goods or currency. The amendments are enforced by `packages/round-credit`.
+
 The following are baseline product requirements and must not be reinterpreted during implementation:
 
 - Grocery Rounds are true collective prepaid grocery purchasing pools inside Dial Groceries.

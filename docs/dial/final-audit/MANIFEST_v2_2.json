@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T16:03:01.765Z",
+  "generated_at": "2026-08-30T16:39:25.451Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 220,
+  "file_count": 221,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 8718,
-      "sha256": "9c7d654e7a5bcff9b259714cfd0fb52c6f5d3caba497382aa1edb3d62090a78c"
+      "sha256": "f805a8a7790840969455b304f9ecb0f66e751deb18439e35d73befeb93c1d873"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -833,8 +833,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/06_ACTIVATION/ACTIVATION_BLOCKER_REGISTRY.json",
-      "bytes": 6616,
-      "sha256": "82937392bc36d9d0823a30888355670cdd29c7ce97990adc10a8a4adf8b060cc"
+      "bytes": 8030,
+      "sha256": "251e450629826421085c25a9ebe875264c052578a14e76d144194c929499e6a0"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/06_ACTIVATION/BUILD_VS_ACTIVATION_GATE_MODEL.md",
@@ -1108,13 +1108,18 @@
     },
     {
       "path": "25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
-      "bytes": 40217,
-      "sha256": "8a1a7020730750bafb35c7197bd5e70a8f921706eb14c914d6d4fb73b0f11fe0"
+      "bytes": 40852,
+      "sha256": "703ffc4f14eb94e577d23b57273d6443f8a4ed8e990720fb06cbc0fd71e02b69"
     },
     {
       "path": "25_GROCERY_ROUNDS/GROCERY_ROUNDS_REVIEW_v1.md",
-      "bytes": 15078,
-      "sha256": "b6f097256137a6d95a9d2be03cf31f151bf3a558e8ea4e3736d725336cab2455"
+      "bytes": 20234,
+      "sha256": "e4026bc245ed16fab59a5b0ab171ca077954e9d9ed5e1f6ab0977d7ba31f76d7"
+    },
+    {
+      "path": "25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md",
+      "bytes": 17320,
+      "sha256": "0afc809dfecb5785fff93ce862ce6506b68fe3a5090ea783227e6250970f1e1e"
     },
     {
       "path": "README_v2_1.md",
