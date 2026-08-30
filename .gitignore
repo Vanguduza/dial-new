@@ -9,3 +9,12 @@ apps/preview-player/dist/
 # generated catalog artifacts (rebuild via npm run catalog:coverage)
 catalog-data/generated/catalog-coverage-ledger.json
 .archive/
+
+# Secrets. There was no rule here before the first push, which is exactly when
+# an .env created later would have become trackable without anyone noticing.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
