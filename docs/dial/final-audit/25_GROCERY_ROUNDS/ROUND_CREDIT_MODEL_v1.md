@@ -5,7 +5,7 @@ decisions of `GROCERY_ROUNDS_MASTER_PLAN_v1.md`.
 **Answers:** review findings B1 (second money authority), B3 (what the member is
 buying), B4 (deposit versus taxable supply).
 **Executable form:** `packages/round-credit/src/credit-model.ts`, rules
-`RCM-001..024`, proven by `tests/round-credit.test.ts`.
+`RCM-001..027`, proven by `tests/round-credit.test.ts`.
 **Revision:** Rev 3, 30 Aug 2026 — see §0. Rev 3 closes the tax question against
 Zimbabwean law as it now stands and supersedes Rev 2 on the tax point only; Rev
 2's other three decisions stand.
@@ -87,9 +87,9 @@ What the vote cannot do is cross a tax boundary, because that would change the
 rate of a supply already taxed.
 
 A member wanting both staples and household goods does not join two Rounds.
-**They subscribe once and the payment splits across pools at a ratio they
-choose** — one debit order, one Round Room, one group, two tax characters. On the
-worked example of US$52 at 70/30:
+**They subscribe once and the payment splits across pools** — one debit order, one
+Round Room, one group, two tax characters. On the worked example of US$52 at the
+Round's 70/30 default:
 
 | | Share | Gross | VAT to ZIMRA | Dial holds |
 |---|---|---|---|---|
@@ -113,6 +113,41 @@ Four rules hold this together:
 - **`allocatePayment()`** computes the split and the VAT on it, using
   largest-remainder so the pool amounts sum to the payment exactly. A dropped cent
   here puts the credit ledger and the bank a cent apart every month, per member.
+
+#### Who sets the split — three levels, and only one of them is Dial's to give away
+
+| Level | Decides | Why there |
+|---|---|---|
+| **Dial** | which pools exist, and every item on each catalogue | `RCM-026`. Tax classification is a compliance surface, not a product knob. |
+| **Round creator** | the default split, and the band members may move within | The creator already configures money, duration, membership and city under §5.4. This is the same kind of knob. |
+| **Member** | their own split, inside the Round's band, for future instalments | `RCM-025`. A household with a big family and a household with none want different things, and the Round should not have to choose for them. |
+
+**Creators must never author pools or catalogues.** A creator who puts a crate of
+soft drinks on a menu labelled "staples" has mis-stated a VAT return, and they
+will never know they did it — there is no feedback loop that would tell them. It
+is the same class of problem review finding H4 raises about creators making
+representations in-product, and the answer is the same: the creator surface simply
+does not offer it. `RCM-026` refuses a Round whose pools are creator-authored.
+
+**Voting weight follows the pool, not the Round** (`RCM-027`). A member who put
+nothing in the household pool has no say in what the household pool buys. Weighting
+by total Round credits would let members who bear none of a pool's cost decide how
+it is spent — which is review finding M4 (minorities configured into binding
+majorities) arriving in a new place. It also makes each pool's vote simpler: only
+the people with something at stake are in it.
+
+**The band is the safety rail.** A Round declares, per pool, a default and a
+minimum and maximum a member may choose. `RCM-025` refuses a default outside its
+own band, and refuses bands that admit no split adding to a whole payment. Two
+members in the same Round paying the same US$52 can therefore owe different VAT,
+correctly: at the 70/30 default the household share carries US$2.09, and a member
+who moved everything to staples carries nothing.
+
+**One framing caution.** The split changes what the member is buying, and the tax
+follows from that. It must be presented that way — *how much of your Round is
+staples, and how much is household goods* — and never as a way to pay less tax. A
+customer-facing "reduce your VAT" control is tax-driven structuring dressed as a
+product feature, and it is not what this is.
 
 The commercial consequence worth naming: **the exempt menu is short.** SI 248 of
 2023 names maize meal and maize flour, bread and plain buns, milk and cream, cane

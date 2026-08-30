@@ -80,11 +80,17 @@ export type FiscalisationModel = 'SINGLE_RECEIPT_AT_ISSUE' | 'PER_LINE_AT_COLLEC
 export interface CreditPool {
   poolId: string;
   taxClass: BasketTaxClass;
-  /** This pool's share of every payment, in basis points. Pools must sum to 10,000. */
+  /** The Round's default share of every payment, in basis points. Defaults must sum to 10,000. */
   allocationBasisPoints: number;
+  /** The band a member may move within, when the Round allows it. */
+  minAllocationBasisPoints: number;
+  maxAllocationBasisPoints: number;
   /** Everything the vote may choose from. Every item shares the pool's tax class. */
   catalogue: Array<{ itemId: string; taxClass: BasketTaxClass }>;
 }
+
+/** One member's chosen split, in basis points per pool. */
+export type MemberSplit = Record<string, number>;
 
 /** What a leaving member's credits buy. Standard retail, without Round benefits. */
 export type ExitPricing = 'STANDARD_RETAIL' | 'ROUND_PRICING';
@@ -158,6 +164,25 @@ export interface RoundCreditConfiguration {
    * restate the VAT on a return already filed.
    */
   allocationFixedAtPayment: boolean;
+  /**
+   * Who authored the pools and their catalogues. Must be DIAL.
+   *
+   * A Round creator configuring their own tax classes is the failure RCM-006
+   * exists to refuse, arriving through the product rather than the data — a
+   * creator who puts a crate of soft drinks on a "staples" menu has mis-stated a
+   * VAT return, and they will never know they did it. Creators configure money,
+   * duration, membership and city. They do not configure tax.
+   */
+  poolsAuthoredBy: 'DIAL' | 'ROUND_CREATOR';
+  /** Whether members may vary their own split, or all take the Round's default. */
+  memberSplitPolicy: 'ROUND_FIXED' | 'MEMBER_CHOSEN';
+  /**
+   * Must be POOL_CREDITS. A member votes on a pool's basket in proportion to what
+   * they hold in that pool — someone with nothing in the household pool has no
+   * say in what it buys. Weighting by total Round credits would let members who
+   * bear none of a pool's cost decide how it is spent.
+   */
+  votingWeightBasis: 'POOL_CREDITS' | 'ROUND_CREDITS';
   /** The standard rate in basis points, from the dated schedule. 1550 = 15.5%. */
   standardRateBasisPoints: number;
   taxPoint: 'CREDIT_ISSUE' | 'SETTLEMENT';
@@ -342,6 +367,66 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
       ),
     );
   }
+  for (const pool of config.pools) {
+    const { poolId, minAllocationBasisPoints: lo, maxAllocationBasisPoints: hi } = pool;
+    if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 0 || hi > 10_000 || lo > hi) {
+      findings.push(
+        refuse(
+          'RCM-025',
+          `Pool ${poolId} declares a coherent band a member may move within.`,
+          'Set minAllocationBasisPoints and maxAllocationBasisPoints between 0 and 10,000, with the minimum no greater than the maximum.',
+          `${lo}..${hi} bp`,
+        ),
+      );
+    } else if (pool.allocationBasisPoints < lo || pool.allocationBasisPoints > hi) {
+      findings.push(
+        refuse(
+          'RCM-025',
+          `Pool ${poolId}\u2019s default share sits inside the band members may choose from.`,
+          'Move the default inside the band, or widen the band. A default a member cannot themselves select is a rule nobody can satisfy.',
+          `default ${pool.allocationBasisPoints} bp, band ${lo}..${hi}`,
+        ),
+      );
+    }
+  }
+
+  if (config.pools.length > 0) {
+    const minSum = config.pools.reduce((n, p) => n + p.minAllocationBasisPoints, 0);
+    const maxSum = config.pools.reduce((n, p) => n + p.maxAllocationBasisPoints, 0);
+    if (minSum > 10_000 || maxSum < 10_000) {
+      findings.push(
+        refuse(
+          'RCM-025',
+          'The pool bands admit at least one split that accounts for a whole payment.',
+          'Widen the bands. As set, no combination a member may choose adds up to 100% of their payment.',
+          `minima sum to ${minSum} bp, maxima to ${maxSum} bp`,
+        ),
+      );
+    }
+  }
+
+  if (config.poolsAuthoredBy !== 'DIAL') {
+    findings.push(
+      refuse(
+        'RCM-026',
+        'Pools and their catalogues are authored by Dial. A Round creator configures money, duration, membership and city \u2014 never tax.',
+        'Set poolsAuthoredBy to DIAL and remove tax configuration from the creator surface. A creator who puts a crate of soft drinks on a "staples" menu has mis-stated a VAT return and will never know they did it.',
+        config.poolsAuthoredBy,
+      ),
+    );
+  }
+
+  if (config.votingWeightBasis !== 'POOL_CREDITS') {
+    findings.push(
+      refuse(
+        'RCM-027',
+        'A member votes on a pool\u2019s basket in proportion to what they hold in that pool.',
+        'Set votingWeightBasis to POOL_CREDITS. Weighting by total Round credits lets members who bear none of a pool\u2019s cost decide how it is spent, which is review finding M4 in a new place.',
+        config.votingWeightBasis,
+      ),
+    );
+  }
+
   if (!config.allocationFixedAtPayment) {
     findings.push(
       refuse(
@@ -579,10 +664,10 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
-  // Twenty-two of the twenty-four rules are decidable from configuration. RCM-009 and
+  // Twenty-five of the twenty-seven rules are decidable from configuration. RCM-009 and
   // RCM-010 are properties of a ledger in motion and are enforced by
   // projectCreditLedger and assertContractLiabilityInvariant below.
-  return { conformant: findings.length === 0, findings, checked: 22 };
+  return { conformant: findings.length === 0, findings, checked: 25 };
 }
 
 // ---------------------------------------------------------------------------
@@ -617,9 +702,40 @@ export interface PaymentAllocation {
  * exactly. Dropping a cent here would put the credit ledger and the bank a cent
  * apart every month, per member, which is how a reconciliation becomes a project.
  */
+export function assertMemberSplit(config: RoundCreditConfiguration, split: MemberSplit): void {
+  if (config.memberSplitPolicy === 'ROUND_FIXED') {
+    throw new Error(
+      `RCM-025: ${config.roundProductId} takes the Round default split; members may not set their own.`,
+    );
+  }
+  const declared = new Set(config.pools.map((p) => p.poolId));
+  for (const poolId of Object.keys(split)) {
+    if (!declared.has(poolId)) {
+      throw new Error(`RCM-025: split names pool ${poolId}, which this Round does not have.`);
+    }
+  }
+  let total = 0;
+  for (const pool of config.pools) {
+    const share = split[pool.poolId] ?? 0;
+    if (!Number.isInteger(share) || share < 0) {
+      throw new Error(`RCM-025: share for ${pool.poolId} is ${share}; shares are whole basis points.`);
+    }
+    if (share < pool.minAllocationBasisPoints || share > pool.maxAllocationBasisPoints) {
+      throw new Error(
+        `RCM-025: ${share} bp for ${pool.poolId} is outside the band ${pool.minAllocationBasisPoints}..${pool.maxAllocationBasisPoints}.`,
+      );
+    }
+    total += share;
+  }
+  if (total !== 10_000) {
+    throw new Error(`RCM-024: member split sums to ${total} bp, not 10,000.`);
+  }
+}
+
 export function allocatePayment(
   config: RoundCreditConfiguration,
   grossMinor: number,
+  memberSplit?: MemberSplit,
 ): PaymentAllocation {
   if (!Number.isInteger(grossMinor) || grossMinor < 0) {
     throw new Error(`Payment allocation: ${grossMinor} is not a whole number of minor units.`);
@@ -627,12 +743,15 @@ export function allocatePayment(
   if (config.pools.length === 0) {
     throw new Error('Payment allocation: the Round declares no pools, so the payment has no tax character.');
   }
-  const totalBp = config.pools.reduce((sum, p) => sum + p.allocationBasisPoints, 0);
+  if (memberSplit) assertMemberSplit(config, memberSplit);
+  const shareOf = (pool: CreditPool): number => memberSplit?.[pool.poolId] ?? pool.allocationBasisPoints;
+
+  const totalBp = config.pools.reduce((sum, p) => sum + shareOf(p), 0);
   if (totalBp !== 10_000) {
     throw new Error(`Payment allocation: pool shares sum to ${totalBp} bp, not 10,000 (RCM-024).`);
   }
 
-  const exact = config.pools.map((pool) => (grossMinor * pool.allocationBasisPoints) / 10_000);
+  const exact = config.pools.map((pool) => (grossMinor * shareOf(pool)) / 10_000);
   const floors = exact.map((v) => Math.floor(v));
   let remainder = grossMinor - floors.reduce((a, b) => a + b, 0);
   const order = exact

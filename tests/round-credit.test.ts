@@ -5,6 +5,7 @@ import {
   projectCreditLedger,
   resolveExit,
   allocatePayment,
+  assertMemberSplit,
   validateRoundCreditModel,
   type CreditLedgerEvent,
   type RoundCreditConfiguration,
@@ -30,6 +31,8 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
       poolId: 'staples',
       taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
       allocationBasisPoints: 7_000,
+      minAllocationBasisPoints: 5_000,
+      maxAllocationBasisPoints: 10_000,
       catalogue: [
         { itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
         { itemId: 'cooking-oil-2l', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
@@ -40,6 +43,8 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
       poolId: 'household',
       taxClass: 'STANDARD_RATED_MIXED',
       allocationBasisPoints: 3_000,
+      minAllocationBasisPoints: 0,
+      maxAllocationBasisPoints: 5_000,
       catalogue: [
         { itemId: 'washing-powder-1kg', taxClass: 'STANDARD_RATED_MIXED' },
         { itemId: 'bath-soap-6pk', taxClass: 'STANDARD_RATED_MIXED' },
@@ -47,6 +52,9 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
     },
   ],
   allocationFixedAtPayment: true,
+  poolsAuthoredBy: 'DIAL',
+  memberSplitPolicy: 'MEMBER_CHOSEN',
+  votingWeightBasis: 'POOL_CREDITS',
   standardRateBasisPoints: 1_550,
   taxPoint: 'CREDIT_ISSUE',
   deferralRulingRef: null,
@@ -90,6 +98,8 @@ const standardRated = (over: Partial<RoundCreditConfiguration> = {}): RoundCredi
         poolId: 'household',
         taxClass: 'STANDARD_RATED_MIXED',
         allocationBasisPoints: 10_000,
+        minAllocationBasisPoints: 0,
+        maxAllocationBasisPoints: 10_000,
         catalogue: [{ itemId: 'washing-powder-1kg', taxClass: 'STANDARD_RATED_MIXED' }],
       },
     ],
@@ -105,6 +115,8 @@ const staplesOnly = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditC
         poolId: 'staples',
         taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
         allocationBasisPoints: 10_000,
+        minAllocationBasisPoints: 0,
+        maxAllocationBasisPoints: 10_000,
         catalogue: [{ itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' }],
       },
     ],
@@ -223,6 +235,8 @@ describe('the tax point', () => {
             poolId: 'staples',
             taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
             allocationBasisPoints: 10_000,
+            minAllocationBasisPoints: 0,
+            maxAllocationBasisPoints: 10_000,
             catalogue: [
               { itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
               { itemId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' },
@@ -242,6 +256,8 @@ describe('the tax point', () => {
             poolId: 'staples',
             taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
             allocationBasisPoints: 10_000,
+            minAllocationBasisPoints: 0,
+            maxAllocationBasisPoints: 10_000,
             catalogue: [{ itemId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' }],
           },
         ],
@@ -259,6 +275,8 @@ describe('the tax point', () => {
               poolId: 'staples',
               taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
               allocationBasisPoints: 10_000,
+              minAllocationBasisPoints: 0,
+              maxAllocationBasisPoints: 10_000,
               catalogue: [],
             },
           ],
@@ -361,6 +379,92 @@ describe('splitting a payment when nobody knows the items yet', () => {
     expect(rulesFrom(conformant({ pools: [pool, { ...pool, allocationBasisPoints: 3_000 }] }))).toContain(
       'RCM-005',
     );
+  });
+});
+
+describe('who sets the split', () => {
+  it('refuses a Round whose creator authors the pools', () => {
+    // Creators configure money, duration, membership and city. Not tax. A
+    // creator who puts soft drinks on a staples menu mis-states a VAT return
+    // and never finds out.
+    const finding = validateRoundCreditModel(
+      conformant({ poolsAuthoredBy: 'ROUND_CREATOR' }),
+    ).findings.find((f) => f.rule === 'RCM-026');
+    expect(finding?.remedy).toMatch(/never configure tax|never tax|soft drinks/);
+  });
+
+  it('refuses voting weight drawn from the whole Round rather than the pool', () => {
+    // Otherwise members holding nothing in the household pool decide what it buys.
+    expect(rulesFrom(conformant({ votingWeightBasis: 'ROUND_CREDITS' }))).toContain('RCM-027');
+  });
+
+  it('refuses a default share the member could not themselves choose', () => {
+    const rules = rulesFrom(
+      conformant({
+        pools: conformant().pools.map((p) =>
+          p.poolId === 'staples' ? { ...p, minAllocationBasisPoints: 8_000 } : p,
+        ),
+      }),
+    );
+    expect(rules).toContain('RCM-025');
+  });
+
+  it('refuses bands that admit no whole payment', () => {
+    const rules = rulesFrom(
+      conformant({
+        pools: conformant().pools.map((p) => ({
+          ...p,
+          minAllocationBasisPoints: 0,
+          maxAllocationBasisPoints: 2_000,
+        })),
+      }),
+    );
+    expect(rules).toContain('RCM-025');
+  });
+
+  it('accepts a member split inside the bands', () => {
+    expect(() =>
+      assertMemberSplit(conformant(), { staples: 6_000, household: 4_000 }),
+    ).not.toThrow();
+  });
+
+  it('refuses a member split outside the bands', () => {
+    // The Round permits at most 50% household; this member wants 70%.
+    expect(() => assertMemberSplit(conformant(), { staples: 3_000, household: 7_000 })).toThrow(
+      /outside the band/,
+    );
+  });
+
+  it('refuses a member split that does not account for the whole payment', () => {
+    expect(() => assertMemberSplit(conformant(), { staples: 6_000, household: 3_000 })).toThrow(
+      /RCM-024/,
+    );
+  });
+
+  it('refuses a member split naming a pool the Round does not have', () => {
+    expect(() =>
+      assertMemberSplit(conformant(), { staples: 6_000, household: 3_000, luxuries: 1_000 }),
+    ).toThrow(/does not have/);
+  });
+
+  it('refuses a member split at all when the Round is fixed', () => {
+    expect(() =>
+      assertMemberSplit(conformant({ memberSplitPolicy: 'ROUND_FIXED' }), {
+        staples: 6_000,
+        household: 4_000,
+      }),
+    ).toThrow(/ROUND_FIXED|may not set their own/);
+  });
+
+  it('allocates a payment on the member’s split rather than the Round default', () => {
+    // Same Round, same US$52, two members: one at the 70/30 default, one who
+    // moved to the staples end. Their VAT differs, and correctly so.
+    const atDefault = allocatePayment(conformant(), 5_200);
+    const staplesHeavy = allocatePayment(conformant(), 5_200, { staples: 10_000, household: 0 });
+
+    expect(atDefault.totalVatMinor).toBe(209);
+    expect(staplesHeavy.totalVatMinor).toBe(0);
+    expect(staplesHeavy.pools.find((p) => p.poolId === 'staples')!.grossMinor).toBe(5_200);
   });
 });
 
