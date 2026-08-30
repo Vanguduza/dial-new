@@ -19,7 +19,7 @@
     ],
     "owner": "Commercial + Legal + Finance",
     "state": "OPEN_ACTIVATION_BLOCKER",
-    "grocery_rounds_position": "NOT ENGAGED by Grocery Rounds under the Round credit model decided 30 Aug 2026 (25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md). A subscription buys credits that are not money, not redeemable in money and not transferable, so Dial holds an obligation to deliver groceries rather than a repayable sum. This holds only while credits settle grocery fulfilment and nothing else; a credit spendable across trades re-engages this blocker on worse facts. Boundary enforced by packages/round-credit rules RCM-001, RCM-002, RCM-015."
+    "grocery_rounds_position": "NOT ENGAGED by Grocery Rounds under the Round credit model (25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md, Rev 2, 30 Aug 2026). A subscription buys credits that are not money, not redeemable in money and not transferable, so Dial holds an obligation to deliver groceries rather than a repayable sum. Rev 2 denominates credits in monetary value and defers the tax point to collection, which makes the credit multi-purpose and moves it closer to stored value: the closed loop is now the whole defence, not a discipline. Enforced by packages/round-credit rules RCM-001, RCM-002, RCM-015."
   },
   {
     "blocker_id": "ACT-REG-002",
@@ -74,7 +74,7 @@
     ],
     "owner": "Finance + Tax/Legal",
     "state": "OPEN_ACTIVATION_BLOCKER",
-    "grocery_rounds_position": "Grocery Round credits are treated as a taxable supply at the point of credit issue, not a deposit (ROUND_CREDIT_MODEL_v1.md §1). This requires the basket tax class to be determinate at issue, so a Round declares its class at creation and the basket vote chooses within it — RCM-005, RCM-006, RCM-007. Tax point is not revenue recognition: consideration for an unsettled credit is a contract liability until settlement (RCM-008, RCM-010)."
+    "grocery_rounds_position": "Rev 2: Grocery Round credits are accounted for when the goods are collected, not when the credit is bought (ROUND_CREDIT_MODEL_v1.md §0, C3). That treats the credit as a multi-purpose voucher taxed on redemption, which is an exception to the usual earlier-of-invoice-or-payment time of supply and is the open question for counsel. It also makes every delivery a fiscalised, itemised sale per member — RCM-020 refuses a Round whose fiscalisation model does not match its tax point. Tax point is not revenue recognition: consideration for an unsettled credit is a contract liability until collection (RCM-008, RCM-010)."
   },
   {
     "blocker_id": "ACT-REG-005",
@@ -126,10 +126,12 @@
     "cannot_activate_until": [
       "IPEC/legal route confirmed for each product",
       "partner contract/underwriter where needed",
-      "customer wording/benefit funding approved"
+      "customer wording/benefit funding approved",
+      "protection-charge wording cleared so that disclosing what the price funds does not constitute selling the member a policy, and confirmation that no insurance intermediary registration is triggered"
     ],
     "owner": "Care + Legal + Finance",
-    "state": "OPEN_ACTIVATION_BLOCKER"
+    "state": "OPEN_ACTIVATION_BLOCKER",
+    "grocery_rounds_position": "Rev 2 collects a protection charge on top of credit value (working figure 4%: 5,200 buys 5,000 of credit and 200 towards cover). Characterisation is the risk. Dial buys cover for Dial's own delivery obligation and discloses that a share of the price funds it; Dial must not collect an identified premium and arrange cover in which the member is the beneficiary, which would be insurance intermediation requiring IPEC registration Dial does not hold, and would contradict master plan §16.5. RCM-019 refuses a Round product that presents the charge as a member premium, and requires an indicative broker quote before tiers publish."
   },
   {
     "blocker_id": "ACT-REG-008",

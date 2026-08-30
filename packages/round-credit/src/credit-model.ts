@@ -39,6 +39,46 @@ export type BasketTaxClass = 'ZERO_RATED_STAPLES' | 'STANDARD_RATED_MIXED';
 /** Goods-denominated credits fix quantity at purchase; currency-denominated do not. */
 export type CreditDenomination = 'GOODS' | 'CURRENCY';
 
+/**
+ * How the supply is fiscalised, which follows from where the tax point is.
+ *
+ * Taxing at issue is one receipt per subscription payment. Taxing at collection
+ * makes every delivery a fiscalised sale, itemised per line, per member — a
+ * materially heavier obligation at 38,420 members, and the price of deferring
+ * the VAT.
+ */
+export type FiscalisationModel = 'SINGLE_RECEIPT_AT_ISSUE' | 'PER_LINE_AT_COLLECTION';
+
+/** What a leaving member's credits buy. Standard retail, without Round benefits. */
+export type ExitPricing = 'STANDARD_RETAIL' | 'ROUND_PRICING';
+
+/**
+ * The protection charge collected alongside a credit purchase.
+ *
+ * Held apart from credit value deliberately: a member paying 5,200 for 5,000 of
+ * credit has bought 5,000 of groceries and paid 200 towards the guarantee that
+ * backs the promise. Netting the charge out of the credit would sell 5,200 of
+ * groceries and deliver 5,000.
+ */
+export interface ProtectionLevy {
+  /** Basis points on credit value. 400 bp = 4%: 200 on 5,000 of credit. */
+  basisPoints: number;
+  /** Shown to the member as part of the price rather than buried in it. */
+  separatelyDeclared: boolean;
+  /** Must be false. The levy rides on top of credit value; it never reduces it. */
+  deductedFromCreditValue: boolean;
+  /**
+   * Must be false. Charging a member an identified premium and arranging cover in
+   * which they are the beneficiary is insurance intermediation, and Dial is not
+   * registered to do it — see ACT-REG-007 and §16.5's "never present itself as
+   * the insurer". Disclosing that a share of the price funds protection is not
+   * the same act as selling the member a policy.
+   */
+  presentedAsMemberPremium: boolean;
+  /** Indicative broker pricing. Until this exists the rate is an assumption (review finding H2). */
+  brokerQuoteRef: string | null;
+}
+
 /** Every exit a member may take. None of them is cash, by construction. */
 export type ExitOutcome =
   | 'IMMEDIATE_GROCERY_ORDER'
@@ -70,10 +110,18 @@ export interface RoundCreditConfiguration {
   roundProductId: string;
   /** Must be GROCERY_FULFILMENT. Typed loosely so a bad value is refused, not un-compilable. */
   creditScope: string;
-  /** Null means undeclared, which is itself the refusal. */
+  /**
+   * Null means undeclared. Required only when the tax point is at issue: a
+   * single-purpose credit needs a knowable rate on the day it is sold, and a
+   * multi-purpose one is rated when the goods are handed over.
+   */
   basketTaxClass: BasketTaxClass | null;
   taxPoint: 'CREDIT_ISSUE' | 'SETTLEMENT';
+  fiscalisationModel: FiscalisationModel;
   denomination: CreditDenomination;
+  exitPricing: ExitPricing;
+  exitIncludesRoundBenefits: boolean;
+  protectionLevy: ProtectionLevy | null;
   /** Required when denomination is CURRENCY: the member carries the price risk and must be told. */
   priceRiskDisclosureVersion: string | null;
   consentGatewayVersion: string | null;
@@ -165,35 +213,54 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
 
   // --- C3: the tax rate must be determinate at the tax point -----------------
 
-  if (config.basketTaxClass === null) {
+  // A credit is single-purpose when its rate is knowable on the day it is sold,
+  // and multi-purpose when it is not. That distinction, not the wording of the
+  // terms, is what decides where the tax point falls — so the two must agree, and
+  // RCM-005/006 are obligations only on the single-purpose route.
+  if (config.taxPoint === 'CREDIT_ISSUE') {
+    if (config.basketTaxClass === null) {
+      findings.push(
+        refuse(
+          'RCM-005',
+          'A Round taxed at issue declares its basket tax class when it is created.',
+          'Declare basketTaxClass, or move the tax point to SETTLEMENT. Without one of the two, the rate of the supply is decided by a vote held after the supply was taxed.',
+        ),
+      );
+    }
+
+    const offClass = config.ballotOptions.filter((o) => o.taxClass !== config.basketTaxClass);
+    if (offClass.length > 0) {
+      findings.push(
+        refuse(
+          'RCM-006',
+          'A Round taxed at issue confines its basket vote to the declared tax class.',
+          'Remove the options outside the declared class from the ballot, or run them as a separate Round product.',
+          offClass.map((o) => `${o.optionId}:${o.taxClass}`).join(', '),
+        ),
+      );
+    }
+  }
+
+  const expectedFiscalisation: FiscalisationModel =
+    config.taxPoint === 'CREDIT_ISSUE' ? 'SINGLE_RECEIPT_AT_ISSUE' : 'PER_LINE_AT_COLLECTION';
+  if (config.fiscalisationModel !== expectedFiscalisation) {
     findings.push(
       refuse(
-        'RCM-005',
-        'A Round declares its basket tax class when it is created.',
-        'Declare basketTaxClass. Without it the rate of the supply is decided by a vote that happens after the supply is taxed.',
+        'RCM-020',
+        'Fiscalisation follows the tax point: one receipt per payment when taxed at issue, an itemised sale per delivery when taxed at collection.',
+        `Set fiscalisationModel to ${expectedFiscalisation}. Deferring the VAT is not free — it moves fiscalisation to every delivery, per line, per member, and the payment still needs a non-VAT document at the time it is taken.`,
+        config.fiscalisationModel,
       ),
     );
   }
 
-  const offClass = config.ballotOptions.filter((o) => o.taxClass !== config.basketTaxClass);
-  if (offClass.length > 0) {
-    findings.push(
-      refuse(
-        'RCM-006',
-        'The basket vote chooses within the Round’s declared tax class and never across it.',
-        'Remove the options outside the declared class from the ballot, or run them as a separate Round product.',
-        offClass.map((o) => `${o.optionId}:${o.taxClass}`).join(', '),
-      ),
-    );
-  }
-
-  if (config.taxPoint !== 'CREDIT_ISSUE') {
+  if (config.taxPoint === 'SETTLEMENT' && config.basketTaxClass !== null) {
     findings.push(
       refuse(
         'RCM-007',
-        'The tax point is the issue of the credit, which is the decision recorded in ROUND_CREDIT_MODEL_v1 §1.',
-        'Set taxPoint to CREDIT_ISSUE, or reopen the decision deliberately with the ACT-REG-004 owner — settlement-point taxation is the deposit-shaped answer this model was chosen to avoid.',
-        config.taxPoint,
+        'A Round cannot be taxed at collection and also claim a rate fixed at issue. If the rate is knowable on day one the supply is taxable on day one.',
+        'Either clear basketTaxClass and accept the credit is multi-purpose, or move taxPoint to CREDIT_ISSUE. Holding both positions gives the tax authority the choice of which one to apply, and it will not pick ours.',
+        `taxPoint=${config.taxPoint}, basketTaxClass=${config.basketTaxClass}`,
       ),
     );
   }
@@ -234,6 +301,17 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
+  if (config.exitPricing !== 'STANDARD_RETAIL' || config.exitIncludesRoundBenefits) {
+    findings.push(
+      refuse(
+        'RCM-017',
+        'A leaving member receives groceries to the value of their credits at standard retail prices, without Round pricing, free delivery or any other Round benefit.',
+        'Set exitPricing to STANDARD_RETAIL and exitIncludesRoundBenefits to false. The member keeps their value; the benefits were earned by staying to procurement, and handing them to a leaver prices the Round for everyone who did stay.',
+        `exitPricing=${config.exitPricing}, includesBenefits=${String(config.exitIncludesRoundBenefits)}`,
+      ),
+    );
+  }
+
   // --- C6: denomination ------------------------------------------------------
 
   if (config.denomination === 'CURRENCY' && !config.priceRiskDisclosureVersion) {
@@ -259,6 +337,56 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
+  const levy = config.protectionLevy;
+  if (levy === null) {
+    findings.push(
+      refuse(
+        'RCM-018',
+        'The protection charge carried in the price is declared, so it can be checked against what protection actually costs.',
+        'Declare protectionLevy, including zero basis points if protection is funded from margin instead. §13.2 allocated 1.5% and review finding H2 put the real figure nearer 4–6%; an undeclared charge cannot be reconciled with either.',
+      ),
+    );
+  } else {
+    if (!Number.isInteger(levy.basisPoints) || levy.basisPoints < 0 || levy.basisPoints > 2_000) {
+      findings.push(
+        refuse(
+          'RCM-018',
+          'The protection charge is a whole number of basis points between 0 and 2,000.',
+          'Express the charge in basis points on credit value — 400 bp is 4%, or 200 on 5,000 of credit.',
+          String(levy.basisPoints),
+        ),
+      );
+    }
+    if (levy.deductedFromCreditValue || !levy.separatelyDeclared) {
+      findings.push(
+        refuse(
+          'RCM-018',
+          'The charge rides on top of credit value and is shown as part of the price. It never reduces the credits bought.',
+          'Set deductedFromCreditValue false and separatelyDeclared true. Netting it out sells 5,200 of groceries and delivers 5,000.',
+          `deducted=${String(levy.deductedFromCreditValue)}, declared=${String(levy.separatelyDeclared)}`,
+        ),
+      );
+    }
+    if (levy.presentedAsMemberPremium) {
+      findings.push(
+        refuse(
+          'RCM-019',
+          'The charge funds cover Dial holds. It is not a premium the member pays to an insurer, and must not be presented as one.',
+          'Set presentedAsMemberPremium false and clear the wording with the ACT-REG-007 owner. Collecting an identified premium and arranging cover in which the member is the beneficiary is insurance intermediation, which Dial is not registered for — and §16.5 already forbids presenting as the insurer. Disclosing that part of the price funds protection is a different act and stays available.',
+        ),
+      );
+    }
+    if (levy.basisPoints > 0 && !levy.brokerQuoteRef) {
+      findings.push(
+        refuse(
+          'RCM-019',
+          'A non-zero protection charge is priced against an indicative broker quote before tiers are published.',
+          'Record brokerQuoteRef. Advance-payment and performance guarantee cover for an unrated startup principal is where review finding H2 expects 4–6%; publishing a tier on an assumed rate anchors pricing that may not hold.',
+        ),
+      );
+    }
+  }
+
   const reserve = config.procurementReservePercent;
   if (reserve === null || !Number.isFinite(reserve) || reserve < 0 || reserve > 100) {
     findings.push(
@@ -271,10 +399,10 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
-  // Fourteen of the sixteen rules are decidable from configuration. RCM-009 and
+  // Eighteen of the twenty rules are decidable from configuration. RCM-009 and
   // RCM-010 are properties of a ledger in motion and are enforced by
   // projectCreditLedger and assertContractLiabilityInvariant below.
-  return { conformant: findings.length === 0, findings, checked: 14 };
+  return { conformant: findings.length === 0, findings, checked: 18 };
 }
 
 // ---------------------------------------------------------------------------

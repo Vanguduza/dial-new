@@ -19,12 +19,24 @@ import {
  */
 
 const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration => ({
-  roundProductId: 'staples-6m',
+  roundProductId: 'rounds-6m',
   creditScope: 'GROCERY_FULFILMENT',
-  basketTaxClass: 'ZERO_RATED_STAPLES',
-  taxPoint: 'CREDIT_ISSUE',
-  denomination: 'GOODS',
-  priceRiskDisclosureVersion: null,
+  // Rev 2: monetary-value credits taxed when the goods are collected, which makes
+  // the credit multi-purpose and leaves the basket class open.
+  basketTaxClass: null,
+  taxPoint: 'SETTLEMENT',
+  fiscalisationModel: 'PER_LINE_AT_COLLECTION',
+  denomination: 'CURRENCY',
+  exitPricing: 'STANDARD_RETAIL',
+  exitIncludesRoundBenefits: false,
+  protectionLevy: {
+    basisPoints: 400,
+    separatelyDeclared: true,
+    deductedFromCreditValue: false,
+    presentedAsMemberPremium: false,
+    brokerQuoteRef: 'rfq-2026-08-1',
+  },
+  priceRiskDisclosureVersion: 'pr-2026-08-1',
   consentGatewayVersion: 'gw-2026-08-1',
   consentCoversCreditConstruct: true,
   transferable: false,
@@ -38,10 +50,26 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
   procurementReservePercent: 0,
   ballotOptions: [
     { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
-    { optionId: 'cooking-oil-2l', taxClass: 'ZERO_RATED_STAPLES' },
+    { optionId: 'household-mixed', taxClass: 'STANDARD_RATED_MIXED' },
   ],
   ...over,
 });
+
+/** The alternative route: goods-denominated credits, rated and taxed at issue. */
+const singlePurpose = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration =>
+  conformant({
+    roundProductId: 'staples-6m',
+    basketTaxClass: 'ZERO_RATED_STAPLES',
+    taxPoint: 'CREDIT_ISSUE',
+    fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE',
+    denomination: 'GOODS',
+    priceRiskDisclosureVersion: null,
+    ballotOptions: [
+      { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
+      { optionId: 'cooking-oil-2l', taxClass: 'ZERO_RATED_STAPLES' },
+    ],
+    ...over,
+  });
 
 const rulesFrom = (config: RoundCreditConfiguration): string[] =>
   validateRoundCreditModel(config).findings.map((f) => f.rule);
@@ -112,17 +140,33 @@ describe('non-transferability', () => {
   });
 });
 
-describe('the tax rate is determinate at the tax point', () => {
-  it('refuses a Round with no declared basket tax class', () => {
-    expect(rulesFrom(conformant({ basketTaxClass: null }))).toContain('RCM-005');
+describe('the tax point and the credit’s character must agree', () => {
+  it('accepts taxation at collection when the basket class is left open', () => {
+    // Rev 2. A credit that can buy anything in the shop has no knowable rate on
+    // the day it is sold, which is what puts the tax point at the handover.
+    expect(validateRoundCreditModel(conformant()).conformant).toBe(true);
   });
 
-  it('refuses a ballot option outside the declared class', () => {
-    // This is the defect that costs money: the rate of the supply decided by a
-    // vote in month 5, after the supply was taxed in month 1.
+  it('accepts taxation at issue when the rate is fixed at issue', () => {
+    expect(validateRoundCreditModel(singlePurpose()).conformant).toBe(true);
+  });
+
+  it('refuses claiming a fixed rate and a deferred tax point at once', () => {
+    // Holding both positions lets the authority pick, and it will not pick ours.
+    const rules = rulesFrom(conformant({ basketTaxClass: 'ZERO_RATED_STAPLES' }));
+    expect(rules).toContain('RCM-007');
+  });
+
+  it('requires a basket class only on the tax-at-issue route', () => {
+    expect(rulesFrom(singlePurpose({ basketTaxClass: null }))).toContain('RCM-005');
+    expect(rulesFrom(conformant({ basketTaxClass: null }))).not.toContain('RCM-005');
+  });
+
+  it('confines the ballot to the declared class only when taxed at issue', () => {
+    // The defect that costs money on that route: the month-5 vote deciding the
+    // rate of a supply taxed in month 1.
     const rules = rulesFrom(
-      conformant({
-        basketTaxClass: 'ZERO_RATED_STAPLES',
+      singlePurpose({
         ballotOptions: [
           { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
           { optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' },
@@ -130,31 +174,117 @@ describe('the tax rate is determinate at the tax point', () => {
       }),
     );
     expect(rules).toContain('RCM-006');
+
+    // On the tax-at-collection route a mixed ballot is the point, not a defect.
+    expect(rulesFrom(conformant())).not.toContain('RCM-006');
   });
 
   it('names the offending option so the ballot can be fixed', () => {
     const finding = validateRoundCreditModel(
-      conformant({
+      singlePurpose({
         ballotOptions: [{ optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' }],
       }),
     ).findings.find((f) => f.rule === 'RCM-006');
     expect(finding?.observed).toContain('soft-drinks-crate');
   });
 
-  it('accepts a standard-rated Round whose ballot is standard-rated throughout', () => {
-    // Two Round products, not one ballot spanning both rates.
-    const result = validateRoundCreditModel(
-      conformant({
-        roundProductId: 'mixed-6m',
-        basketTaxClass: 'STANDARD_RATED_MIXED',
-        ballotOptions: [{ optionId: 'household-mixed', taxClass: 'STANDARD_RATED_MIXED' }],
-      }),
-    );
-    expect(result.conformant).toBe(true);
+  it('makes fiscalisation follow the tax point in both directions', () => {
+    // Deferring the VAT moves fiscalisation onto every delivery, itemised, per
+    // member. That is the price of the deferral and it should not be a surprise.
+    expect(rulesFrom(conformant({ fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE' }))).toContain('RCM-020');
+    expect(rulesFrom(singlePurpose({ fiscalisationModel: 'PER_LINE_AT_COLLECTION' }))).toContain('RCM-020');
+  });
+});
+
+describe('the protection charge', () => {
+  it('accepts a declared charge priced against a broker quote', () => {
+    expect(validateRoundCreditModel(conformant()).conformant).toBe(true);
   });
 
-  it('refuses a tax point at settlement, which is the deposit-shaped answer', () => {
-    expect(rulesFrom(conformant({ taxPoint: 'SETTLEMENT' }))).toContain('RCM-007');
+  it('refuses an undeclared charge', () => {
+    expect(rulesFrom(conformant({ protectionLevy: null }))).toContain('RCM-018');
+  });
+
+  it('accepts zero, for protection funded from margin instead', () => {
+    expect(
+      validateRoundCreditModel(
+        conformant({
+          protectionLevy: {
+            basisPoints: 0,
+            separatelyDeclared: true,
+            deductedFromCreditValue: false,
+            presentedAsMemberPremium: false,
+            brokerQuoteRef: null,
+          },
+        }),
+      ).conformant,
+    ).toBe(true);
+  });
+
+  it('refuses a charge netted out of credit value', () => {
+    // Paying 5,200 must buy 5,000 of credit plus 200 of protection, not 4,800
+    // of credit sold as 5,000.
+    const rules = rulesFrom(
+      conformant({
+        protectionLevy: {
+          basisPoints: 400,
+          separatelyDeclared: true,
+          deductedFromCreditValue: true,
+          presentedAsMemberPremium: false,
+          brokerQuoteRef: 'rfq-2026-08-1',
+        },
+      }),
+    );
+    expect(rules).toContain('RCM-018');
+  });
+
+  it('refuses presenting the charge as a premium the member pays an insurer', () => {
+    // ACT-REG-007. Collecting an identified premium and arranging cover for the
+    // member is intermediation, and §16.5 already forbids presenting as insurer.
+    const finding = validateRoundCreditModel(
+      conformant({
+        protectionLevy: {
+          basisPoints: 400,
+          separatelyDeclared: true,
+          deductedFromCreditValue: false,
+          presentedAsMemberPremium: true,
+          brokerQuoteRef: 'rfq-2026-08-1',
+        },
+      }),
+    ).findings.find((f) => f.rule === 'RCM-019');
+    expect(finding?.remedy).toMatch(/ACT-REG-007/);
+  });
+
+  it('refuses a non-zero charge with no broker quote behind it', () => {
+    const rules = rulesFrom(
+      conformant({
+        protectionLevy: {
+          basisPoints: 400,
+          separatelyDeclared: true,
+          deductedFromCreditValue: false,
+          presentedAsMemberPremium: false,
+          brokerQuoteRef: null,
+        },
+      }),
+    );
+    expect(rules).toContain('RCM-019');
+  });
+
+  it('refuses an implausible rate', () => {
+    for (const basisPoints of [-1, 2_500, 12.5]) {
+      const rules = rulesFrom(
+        conformant({
+          protectionLevy: {
+            basisPoints,
+            separatelyDeclared: true,
+            deductedFromCreditValue: false,
+            presentedAsMemberPremium: false,
+            brokerQuoteRef: 'rfq-2026-08-1',
+          },
+        }),
+      );
+      expect(rules, String(basisPoints)).toContain('RCM-018');
+    }
   });
 });
 
@@ -286,6 +416,13 @@ describe('exit', () => {
     expect(rulesFrom(conformant({ creditOwnership: 'ROUND' }))).toContain('RCM-012');
   });
 
+  it('prices the exit at standard retail, with no Round benefits carried out', () => {
+    // The member keeps their value; the wholesale pricing and free delivery were
+    // earned by staying to procurement.
+    expect(rulesFrom(conformant({ exitPricing: 'ROUND_PRICING' }))).toContain('RCM-017');
+    expect(rulesFrom(conformant({ exitIncludesRoundBenefits: true }))).toContain('RCM-017');
+  });
+
   it('returns what the member receives, never a bare permission', () => {
     expect(resolveExit(conformant(), { preferred: 'IMMEDIATE_GROCERY_ORDER' })).toBe(
       'IMMEDIATE_GROCERY_ORDER',
@@ -304,21 +441,17 @@ describe('exit', () => {
 describe('denomination and disclosure', () => {
   it('accepts goods denomination without a price-risk disclosure', () => {
     // Quantity is fixed at purchase, so there is no price risk to disclose.
-    expect(validateRoundCreditModel(conformant({ denomination: 'GOODS' })).conformant).toBe(true);
+    expect(validateRoundCreditModel(singlePurpose()).conformant).toBe(true);
   });
 
   it('refuses currency denomination with no price-risk disclosure', () => {
-    expect(
-      rulesFrom(conformant({ denomination: 'CURRENCY', priceRiskDisclosureVersion: null })),
-    ).toContain('RCM-013');
+    // Rev 2 chose monetary value, so the member carries food inflation and has
+    // to be told before they buy — review finding B3.
+    expect(rulesFrom(conformant({ priceRiskDisclosureVersion: null }))).toContain('RCM-013');
   });
 
   it('accepts currency denomination once the member is told', () => {
-    expect(
-      validateRoundCreditModel(
-        conformant({ denomination: 'CURRENCY', priceRiskDisclosureVersion: 'pr-2026-08-1' }),
-      ).conformant,
-    ).toBe(true);
+    expect(validateRoundCreditModel(conformant()).conformant).toBe(true);
   });
 
   it('requires a consent gateway that covers the credit construct', () => {

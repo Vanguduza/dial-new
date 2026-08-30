@@ -5,8 +5,11 @@
 
 > **Superseded in part, 30 Aug 2026.** The product owner has decided the money
 > structure: subscriptions buy grocery credits that are not money, are not
-> redeemable in money, are not transactional and are not transferable, making
-> their issue a taxable supply rather than a deposit. That decision answers **B1,
+> redeemable in money, are not transactional and are not transferable, making the
+> transaction a taxable supply rather than a deposit. Rev 2 of that decision
+> denominates credits in monetary value, moves the tax point to collection, prices
+> the exit at standard retail, and funds protection with a charge on top of credit
+> value. Together they answer **B1,
 > B3 and B4** and is recorded, with the seven conditions it imposes on the build, in
 > `ROUND_CREDIT_MODEL_v1.md`. The findings below are left as written — they are
 > what the decision was taken against — with a resolution line on each. B2, the H
@@ -110,14 +113,17 @@ In Zimbabwe, over a 12-month horizon, that gap is the entire risk. If USD food p
 
 If that is unsellable, the alternative is a **priced floor** — a guaranteed minimum basket, with the price risk hedged or provisioned and costed into the tiers. What is not available is leaving the mechanics as (4) and the promise as (1). That gap is where mis-selling findings and consumer complaints live.
 
-**Answered, with the choice still open.** Condition C6 makes denomination an
-explicit per-product declaration rather than an unstated assumption. Goods
-denomination — a credit is a basket unit, not a dollar amount — is recommended
-and closes this finding outright: quantity is fixed at purchase, so the promise
-and the mechanics are the same thing, and Dial carries the price risk on forward
-supply agreements. Currency denomination stays available and requires the
-disclosure sentence above, recorded as a version. `RCM-013` refuses the third
-possibility, which is currency mechanics with goods-denominated marketing.
+**Answered by disclosure, not by construction.** Rev 2 of the credit model
+decides denomination: **credits carry monetary value**, not a quantity of goods.
+The member therefore carries food inflation — US$50 of credit buys US$50 of
+groceries at the prices current when the Round collects. That is the mechanics
+described as (4) above, made explicit rather than left implicit, so this finding
+closes only if the promise is corrected to match. `RCM-013` refuses a
+currency-denominated Round with no recorded price-risk disclosure, and the
+gateway wording in `ROUND_CREDIT_MODEL_v1.md` §4 states it plainly: *your credits
+are a dollar amount, not a fixed shopping list.* Goods denomination remains
+available per product and would close the finding outright, at the cost of moving
+the price risk onto Dial.
 
 ### B4 — VAT and fiscalisation are unsolved, and §24 does not list tax at all
 
@@ -133,17 +139,19 @@ That answer changes the payment architecture, the receipt the customer gets, the
 
 **Required.** Add tax to §24's gate list and resolve the deposit-versus-supply question before the payment flow is designed, not after.
 
-**Answered — taxable supply at issue, conditional on C3.** The credit sale is the
-supply, so there is one fiscal event per subscription payment and no open deposit
-liability to explain. The condition is the part that costs money if it is missed:
-a rate can only arise at the tax point if it is *knowable* at the tax point, and
-as designed the basket vote in month 5 decides the rate of a supply taxed in
-month 1. C3 fixes the basket tax class at Round creation and constrains the
-ballot inside it — `RCM-005`, `RCM-006`, `RCM-007` — which is what makes the
-credit single-purpose, and single-purpose is the category taxed on issue. Tax is
-still to be added to §24's gate list, and the treatment still requires
-confirmation from Zimbabwean tax counsel; the engineering is built to take either
-answer.
+**Answered — supply, not deposit; and Rev 2 puts the tax point at collection.**
+The money is consideration for a sale rather than a sum held for the member,
+which is what B4 asked. Rev 2 then defers the tax point to when the groceries are
+handed over. That is coherent with monetary denomination — a credit whose rate is
+not knowable on the day it is sold is a multi-purpose voucher, and multi-purpose
+vouchers are taxed on redemption — and it carries three costs, set out in C3:
+the "not money" position rests entirely on the closed loop; the deferral is only
+available if Zimbabwean law recognises the voucher treatment, since time of
+supply otherwise falls on the earlier of invoice or payment; and every delivery
+becomes an itemised fiscalised sale per member rather than one receipt per
+payment. `RCM-007` refuses the incoherent middle — a fixed basket class *and* a
+deferred tax point — and `RCM-020` refuses a fiscalisation model that does not
+match the tax point. Tax is still to be added to §24's gate list.
 
 Separately, and not raised in the original finding: **the tax point is not
 revenue recognition.** VAT arising at issue does not make the cash earned income,
@@ -204,7 +212,8 @@ Still needing a decision:
 1. **Tax counsel confirmation** that a single-purpose grocery credit is taxed on issue on Zimbabwean facts, and what evidence of basket tax class ZIMRA expects at fiscalisation. Owner: `ACT-REG-004`.
 2. **Regulatory confirmation** that a non-redeemable, non-transferable, single-purpose credit falls outside deposit-taking and payment-instrument regulation — and a written statement of what would take it back inside, so C1 has a stated boundary rather than an assumed one. Owner: `ACT-REG-001`.
 3. **Consumer-law confirmation** that permanent non-redeemability in money survives, given the in-kind exit in C5.
-4. **C6 — goods or currency denomination**, decided alongside **H2**'s broker quote, because both determine the same tier pricing.
-5. **C7 — the procurement reserve percentage**, or a recorded decision that it is zero and insurance carries the load alone.
+4. **H2's broker quote**, before tiers are published. Rev 2 sets a protection charge of about 4% on top of credit value, which is better founded than §13.2's 1.5% and sits inside the band this review expected — but it is still an assumption until quoted, and `RCM-019` refuses a non-zero charge with no quote behind it.
+5. **The protection-charge wording**, cleared with the `ACT-REG-007` owner so that disclosing what the price funds does not become the sale of a policy. Collecting an identified premium and arranging cover for the member is intermediation.
+6. **C7 — the procurement reserve percentage**, or a recorded decision that it is zero. It is the only lever that reaches the uninsurable failure mode in B2.
 
 Nothing in §26's vertical slice should take real customer money until 1, 2 and 3 are answered. The slice is well chosen and can be built against the rules in `packages/round-credit` in the meantime, which is the same posture `ACT-REG-001`'s development mode provides for.
