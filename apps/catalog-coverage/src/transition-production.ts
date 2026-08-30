@@ -31,6 +31,7 @@ async function main() {
     vehiclesWithGeneratedAssets: vehicles.filter((vehicle) => vehicle.assetStagesPresent > 1).length,
     notStarted: vehicles.filter((vehicle) => vehicle.status === "QUEUED").length,
     draftPacks: vehicles.filter((vehicle) => vehicle.status === "DRAFT_ASSETS").length,
+    rejectedPacks: vehicles.filter((vehicle) => vehicle.status === "REJECTED").length,
     transitionReady: vehicles.filter((vehicle) => vehicle.transitionReady).length,
     customerReady: vehicles.filter((vehicle) => vehicle.customerReady).length,
   };

@@ -36,8 +36,8 @@ import { vehicleSceneSvg } from "../../technical-render/src/scene.js";
 import { ensureDir, readJson, writeJsonAtomic } from "./fs.js";
 import { hashFile, sha256, stableStringify } from "./hash.js";
 
-export const PIPELINE_VERSION = "0.5.1";
-const STAGE_VERSION = "5.0.0";
+export const PIPELINE_VERSION = "0.6.0";
+const STAGE_VERSION = "6.0.0";
 
 export interface PipelineState {
   jobId: string;

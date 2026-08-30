@@ -88,8 +88,9 @@ async function assetPath(workspace: string, visualFamilyId: string, path: string
   }
   const root = await realpath(resolve(workspace, prefix));
   const outputRoot = await realpath(resolve(workspace, "output/vehicle-transitions"));
+  const workspaceRoot = await realpath(workspace);
   const target = await realpath(resolve(workspace, path));
-  if (!within(outputRoot, root) || !within(root, target)) throw new Error("Asset escapes its vehicle directory");
+  if (!within(workspaceRoot, outputRoot) || !within(outputRoot, root) || !within(root, target)) throw new Error("Asset escapes its vehicle directory");
   return target;
 }
 
@@ -126,6 +127,9 @@ export async function inspectTransitionReceipt(workspace: string, expected: Queu
     exploded: receipt.assets.exploded ? await verifyTransitionAsset(workspace, receipt.visualFamilyId, receipt.assets.exploded) : null,
   };
   const blockers: string[] = [];
+  // Legacy independent-state receipts are inventories, not proof that these
+  // images derive from the same scene. Manual PASS flags cannot waive this.
+  blockers.push("SHARED_SCENE_ENGINE_EVIDENCE_REQUIRED");
   if (!isAcceptedOpenLicense(receipt.source.license)) blockers.push("SOURCE_LICENSE_NOT_ALLOWLISTED");
   if (!receipt.source.licenseUrl && !/^(public domain|pdm|cc0)/i.test(receipt.source.license)) blockers.push("ATTRIBUTION_LICENSE_URL_MISSING");
   for (const [name, asset] of Object.entries(assets)) {
@@ -153,7 +157,7 @@ export async function inspectTransitionReceipt(workspace: string, expected: Queu
   const customerReady = transitionReady && receipt.catalogBinding?.verified === true;
   return {
     ...expected,
-    status: customerReady ? "CUSTOMER_READY" : transitionReady ? "READY_FOR_CATALOG_INJECTION" : "DRAFT_ASSETS",
+    status: Object.values(receipt.reviews).some((review) => review.status === "FAIL") ? "REJECTED" : customerReady ? "CUSTOMER_READY" : transitionReady ? "READY_FOR_CATALOG_INJECTION" : "DRAFT_ASSETS",
     appearanceScope: receipt.appearanceScope,
     assets,
     assetStagesPresent: Object.values(assets).filter((asset) => asset?.valid).length,

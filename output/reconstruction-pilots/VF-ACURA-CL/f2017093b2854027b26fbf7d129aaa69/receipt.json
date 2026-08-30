@@ -1,0 +1,85 @@
+{
+  "pilotVersion": "1.0.0",
+  "clientVersion": "0.1.0",
+  "state": "QUOTA_WAIT",
+  "visualFamilyId": "VF-ACURA-CL",
+  "heroSha256": "96a79e9ab3a689bae402f0dbb4982ebd29d85f72543ff3a5aed234225f976b20",
+  "source": {
+    "creator": "IFCAR",
+    "license": "Public domain",
+    "landingPage": "https://commons.wikimedia.org/wiki/File:2nd_Acura_CL.jpg",
+    "appearanceScope": "Photographed second-generation Acura CL coupe only; not all CL years or variants"
+  },
+  "settings": {
+    "seed": 0,
+    "resolution": "512",
+    "samplingSteps": 12,
+    "decimationTarget": 100000,
+    "textureSize": 1024
+  },
+  "customerReady": false,
+  "registeredScene": null,
+  "productionPack": null,
+  "semanticParts": "NOT_MEASURED",
+  "wheelMultiplicity": "NOT_MEASURED",
+  "heroCameraRegistration": "NOT_MEASURED",
+  "epcMapping": "NOT_MEASURED",
+  "humanReview": "PENDING",
+  "events": [
+    {
+      "endpoint": "/start_session",
+      "state": "RETURNED",
+      "wallSeconds": 4.64
+    },
+    {
+      "endpoint": "/preprocess_image",
+      "state": "RETURNED",
+      "wallSeconds": 38.469
+    },
+    {
+      "endpoint": "/image_to_3d",
+      "state": "FAILED",
+      "wallSeconds": 9.813
+    }
+  ],
+  "assets": [
+    {
+      "file": "api-contract.json",
+      "sha256": "2bd55d60b4b206136672ed004cf3a194979f670e53e7c656acb0985c69b27af9",
+      "bytes": 27273
+    },
+    {
+      "file": "hero-upload.png",
+      "sha256": "535d4c2393ad56c55ff20f6331163c7ccd8ff7db363f019d0a2eb74238a33ccb",
+      "bytes": 1595149
+    },
+    {
+      "file": "model-input.png",
+      "sha256": "9eedf5b738edbc789d19732dca86339a7fd20f7d0d8463490762b6e4164107aa",
+      "bytes": 282415
+    }
+  ],
+  "externalProcessing": [
+    "microsoft/TRELLIS.2",
+    "briaai/BRIA-RMBG-2.0 (upstream background removal for opaque input)"
+  ],
+  "limits": {
+    "automaticRetries": 0,
+    "maxGpuCalls": 2,
+    "stageTimeoutSeconds": 600
+  },
+  "provider": {
+    "spaceId": "microsoft/TRELLIS.2",
+    "url": "https://microsoft-trellis-2.hf.space",
+    "revision": "ebf60b20fc5a4607f90a1c11c0aab0ceeda5429d",
+    "runtimeRevision": "ebf60b20fc5a4607f90a1c11c0aab0ceeda5429d",
+    "hardware": "zero-a10g",
+    "stage": "RUNNING"
+  },
+  "authenticated": false,
+  "failure": {
+    "type": "AppError",
+    "stage": "/image_to_3d",
+    "message": "Request did not complete; no automatic retry or paid fallback was attempted."
+  }
+}

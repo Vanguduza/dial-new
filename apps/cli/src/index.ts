@@ -5,12 +5,17 @@ import { resolve } from 'node:path';
 import { buildAssetManifest } from '../../../packages/packaging/src/index.js';
 import { getPackRoot, runPipeline, validateJobFile } from '../../../packages/pipeline-core/src/index.js';
 import { readJson } from '../../../packages/pipeline-core/src/fs.js';
+import { generateVehicle } from '../../../packages/pipeline-core/src/generate.js';
+import { validateSceneJob } from '../../../packages/scene-engine/src/index.js';
+import { produceBatch } from '../../../packages/scene-engine/src/factory.js';
+import { loadReconstructionWorkers } from '../../../packages/scene-engine/src/providers.js';
 
 const HELP = `Dial Visual Transformation Generator
 
 Usage:
   dial-visual validate <job.json>
   dial-visual generate <job.json> [--from <stage>] [--force]
+  dial-visual batch <production-plan.json> [--workers <trusted-workers.json>]
   dial-visual qa <job.json>
   dial-visual package <job.json>
   dial-visual preview [visual-family-id]
@@ -23,15 +28,30 @@ const [,, command, target] = process.argv;
 
 async function main() {
   if (!command || command === '--help' || command === '-h' || command === 'help') { console.log(HELP); return; }
+  if (command === 'batch') {
+    if (!target) throw new Error('A production plan JSON path is required');
+    const workerConfig = option('--workers');
+    const providers = workerConfig ? await loadReconstructionWorkers(workerConfig) : [];
+    const summary = await produceBatch(target, providers, (event) => console.log(JSON.stringify(event)));
+    console.log(JSON.stringify(summary, null, 2));
+    // Nonzero means some items remain unresolved; successfully built packs and checkpoints are retained.
+    if (summary.needsReconstruction || summary.repairExhausted) process.exitCode = 2;
+    return;
+  }
   if (command === 'validate') {
     if (!target) throw new Error('A job JSON path is required');
+    const input = JSON.parse(await readFile(target, 'utf8'));
+    if (input.sceneEngineVersion !== undefined) {
+      const result = await validateSceneJob(target);
+      console.log(JSON.stringify({ valid: result.qa.passed, visualFamilyId: result.job.visualFamilyId, productionPublishable: false, qa: result.qa }, null, 2)); return;
+    }
     const result = await validateJobFile(target); console.log(JSON.stringify({ valid: true, visualFamilyId: result.job.visualFamilyId, productionPublishable: result.productionPublishable, source: result.source }, null, 2)); return;
   }
   if (command === 'generate') {
     if (!target) throw new Error('A job JSON path is required');
     const events: Record<string, unknown>[] = [];
-    const result = await runPipeline(target, { from: option('--from'), force: process.argv.includes('--force'), onEvent: (event) => { events.push(event); console.log(`${event.type}: ${event.stage ?? event.visualFamilyId}`); } });
-    console.log(JSON.stringify({ ok: true, jobId: result.jobId, packRoot: result.packRoot, productionPublishable: result.state.productionPublishable, events: events.length }, null, 2)); return;
+    const result = await generateVehicle(target, { from: option('--from'), force: process.argv.includes('--force'), onEvent: (event) => { events.push(event); console.log(`${event.type}: ${event.stage ?? event.visualFamilyId ?? ''}`); } });
+    console.log(JSON.stringify({ ok: true, ...result, events: events.length }, null, 2)); return;
   }
   if (command === 'qa') {
     if (!target) throw new Error('A job JSON path is required');

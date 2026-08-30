@@ -365,6 +365,24 @@ export const MOTION_PROFILES = {
   },
 } as const;
 
+/** One choreography authority for fixture renderers, component scenes and packs. */
+export const CATEGORY_MOTION = {
+  "VC-BODY": { layerAssetId: "LAYER-BODY-SHELL", order: 0, easing: "shell-lift" },
+  "VC-ENG": { layerAssetId: "LAYER-ENGINE", order: 1, easing: "mechanical-out" },
+  "VC-TRN": { layerAssetId: "LAYER-TRANSMISSION", order: 2, easing: "mechanical-out" },
+  "VC-FBRK": { layerAssetId: "LAYER-BRAKE-FRONT", order: 3, easing: "radial-out" },
+  "VC-RBRK": { layerAssetId: "LAYER-BRAKE-REAR", order: 3, easing: "radial-out" },
+  "VC-FSUS": { layerAssetId: "LAYER-SUSPENSION-FRONT", order: 4, easing: "mechanical-out" },
+  "VC-RSUS": { layerAssetId: "LAYER-SUSPENSION-REAR", order: 4, easing: "mechanical-out" },
+} as const;
+
+export function categoryMotion(category: VisualCategoryId, profile: keyof typeof MOTION_PROFILES = "premium-v1") {
+  const motion = CATEGORY_MOTION[category];
+  const [start, end] = MOTION_PROFILES[profile].segments.EXPLOSION;
+  const step = (end - start) / 6;
+  return { ...motion, startProgress: start + step * motion.order, endProgress: Math.min(end, start + step * (motion.order + 2)) };
+}
+
 export function parseJob(input: unknown): VisualGenerationJob {
   const job = visualGenerationJobSchema.parse(input);
   if (job.fitmentMapping.visualFamilyId !== job.visualFamilyId) {

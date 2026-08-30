@@ -1,5 +1,5 @@
 import type { ExplosionGroup, VisualCategoryId } from '../../contracts/src/index.js';
-import { MOTION_PROFILES } from '../../contracts/src/index.js';
+import { MOTION_PROFILES, categoryMotion } from '../../contracts/src/index.js';
 import { renderSvg } from '../../image-processing/src/index.js';
 import { vehicleSceneSvg } from '../../technical-render/src/scene.js';
 
@@ -95,8 +95,6 @@ export function planExplosion(
 ): ExplosionGroup[] {
   const config = MOTION_PROFILES[motionProfile as keyof typeof MOTION_PROFILES];
   if (!config) throw new Error(`Unknown motion profile: ${motionProfile}`);
-  const [explodeStart, explodeEnd] = config.segments.EXPLOSION;
-
   const selected = categories
     .map((visualCategoryId) => ({ visualCategoryId, ...plans[visualCategoryId] }))
     .sort((a, b) => a.order - b.order);
@@ -104,17 +102,8 @@ export function planExplosion(
   // Stagger each group across the EXPLOSION segment by its order, with an
   // overlap so movement is continuous rather than a sequence of discrete steps
   // (4.3: "continuous interpolation with no frame jump").
-  const orders = [...new Set(selected.map((group) => group.order))].sort((a, b) => a - b);
-  const span = explodeEnd - explodeStart;
-  const step = orders.length > 1 ? span / (orders.length + 1) : 0;
-
   return selected.map((group) => {
-    const slot = orders.indexOf(group.order);
-    const startProgress = Number((explodeStart + step * slot).toFixed(4));
-    // Each group travels for two slots' worth of time, so adjacent groups
-    // overlap and the composition settles rather than snapping.
-    const endProgress = Number(Math.min(explodeEnd, startProgress + step * 2 || explodeEnd).toFixed(4));
-    return { ...group, startProgress, endProgress };
+    return { ...group, ...categoryMotion(group.visualCategoryId, motionProfile as keyof typeof MOTION_PROFILES) };
   });
 }
 

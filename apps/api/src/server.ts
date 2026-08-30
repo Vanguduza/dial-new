@@ -4,6 +4,7 @@ import { join, relative, resolve, isAbsolute } from 'node:path';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { ensureDir, readJson, writeJsonAtomic } from '../../../packages/pipeline-core/src/fs.js';
 import { getPackRoot, runPipeline } from '../../../packages/pipeline-core/src/index.js';
+import { generateVehicle } from '../../../packages/pipeline-core/src/generate.js';
 
 // ── configuration ──────────────────────────────────────────────────────────
 // Every one of these was previously implicit. jobPath was accepted from the
@@ -195,7 +196,7 @@ async function handle(
           };
           await writeJsonAtomic(recordPath(record.id), started);
           try {
-            const result = await runPipeline(record.jobPath, { force: parts[2] === 'retry' });
+            const result = await generateVehicle(record.jobPath, { force: parts[2] === 'retry' });
             const done: JobRecord = {
               ...started,
               status: 'PASS',

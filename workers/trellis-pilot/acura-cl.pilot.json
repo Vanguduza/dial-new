@@ -1,0 +1,16 @@
+{
+  "pilotVersion": "1.0.0",
+  "visualFamilyId": "VF-ACURA-CL",
+  "hero": {
+    "file": "output/vehicle-transitions/VF-ACURA-CL/source/hero-original.jpg",
+    "sha256": "96a79e9ab3a689bae402f0dbb4982ebd29d85f72543ff3a5aed234225f976b20"
+  },
+  "source": {
+    "creator": "IFCAR",
+    "license": "Public domain",
+    "landingPage": "https://commons.wikimedia.org/wiki/File:2nd_Acura_CL.jpg",
+    "appearanceScope": "Photographed second-generation Acura CL coupe only; not all CL years or variants"
+  },
+  "seed": 0,
+  "resolution": "512"
+}

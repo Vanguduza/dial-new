@@ -1,0 +1,51 @@
+{
+  "visual_family": {
+    "Priority": "P0",
+    "Selected?": "Review",
+    "Region": "Southern Africa",
+    "Make": "Toyota",
+    "Model Family": "Starlet Cross",
+    "Generation / Platform": "Regional current generation",
+    "Production Years": "2024–present",
+    "Body Style": "Crossover",
+    "Facelift / Visual Phase": "Current",
+    "Proposed VISUAL_FAMILY_ID": "VF-TOYOTA-STARLET-CROSS-REGIONAL-CURRENT-GENERATION-CROSSOVER-CURRENT",
+    "Variants that share this visual": "Powertrains share.",
+    "China catalog?": "No",
+    "Confidence": "Medium",
+    "Hero Source Status": "SOURCE_REQUIRED",
+    "Candidate Hero URL": "",
+    "Hero License": "UNVERIFIED",
+    "Attribution Status": "UNVERIFIED",
+    "Notes": ""
+  },
+  "candidates": [
+    {
+      "visual_family_id": "VF-TOYOTA-STARLET-CROSS-REGIONAL-CURRENT-GENERATION-CROSSOVER-CURRENT",
+      "priority": "P0",
+      "make": "Toyota",
+      "model_family": "Starlet Cross",
+      "query": "Toyota Starlet Cross car",
+      "source": "wikimedia_commons",
+      "source_id": "38911531",
+      "title": "File:Rough early Toyota Starlet 1978-80 60 series. (10714090603).jpg",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Rough_early_Toyota_Starlet_1978-80_60_series._%2810714090603%29.jpg/3840px-Rough_early_Toyota_Starlet_1978-80_60_series._%2810714090603%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "landing_url": "https://commons.wikimedia.org/wiki/File:Rough_early_Toyota_Starlet_1978-80_60_series._(10714090603).jpg",
+      "width": 2000,
+      "height": 1333,
+      "mime": "image/jpeg",
+      "creator": "Charlie from United Kingdom",
+      "creator_url": "",
+      "license": "CC BY 2.0",
+      "license_url": "https://creativecommons.org/licenses/by/2.0",
+      "attribution": "Charlie from United Kingdom; Rough early Toyota Starlet 1978-80 60 series.; CC BY 2.0",
+      "score": 27.0,
+      "rank": 1,
+      "downloaded_file": "",
+      "sha256": "",
+      "review_status": "PENDING",
+      "rejection_reason": ""
+    }
+  ],
+  "rule": "PENDING candidates are not production-approved. Confirm vehicle visual match, angle/background suitability, source page, creator, and license before CGI transformation."
+}

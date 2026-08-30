@@ -1,0 +1,51 @@
+{
+  "visual_family": {
+    "Priority": "P0",
+    "Selected?": "Review",
+    "Region": "Southern Africa",
+    "Make": "Mahindra",
+    "Model Family": "Scorpio Pik Up",
+    "Generation / Platform": "Current regional family",
+    "Production Years": "2007–present",
+    "Body Style": "Single/Double Cab",
+    "Facelift / Visual Phase": "Major facelift split",
+    "Proposed VISUAL_FAMILY_ID": "VF-MAHINDRA-SCORPIO-PIK-UP-CURRENT-REGIONAL-FAMILY-SINGLE-DOUBLE-CAB-MAJOR-",
+    "Variants that share this visual": "Powertrains/drivetrains share per visible body.",
+    "China catalog?": "No",
+    "Confidence": "Medium",
+    "Hero Source Status": "SOURCE_REQUIRED",
+    "Candidate Hero URL": "",
+    "Hero License": "UNVERIFIED",
+    "Attribution Status": "UNVERIFIED",
+    "Notes": ""
+  },
+  "candidates": [
+    {
+      "visual_family_id": "VF-MAHINDRA-SCORPIO-PIK-UP-CURRENT-REGIONAL-FAMILY-SINGLE-DOUBLE-CAB-MAJOR-",
+      "priority": "P0",
+      "make": "Mahindra",
+      "model_family": "Scorpio Pik Up",
+      "query": "Mahindra Scorpio Pik Up car",
+      "source": "wikimedia_commons",
+      "source_id": "127909241",
+      "title": "File:Mahindra Scorpio Pik-Up 001.jpg",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Mahindra_Scorpio_Pik-Up_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "landing_url": "https://commons.wikimedia.org/wiki/File:Mahindra_Scorpio_Pik-Up_001.jpg",
+      "width": 2000,
+      "height": 1500,
+      "mime": "image/jpeg",
+      "creator": "JustAnotherCarDesigner",
+      "creator_url": "",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+      "attribution": "JustAnotherCarDesigner; Own work; CC BY-SA 4.0",
+      "score": 43.0,
+      "rank": 1,
+      "downloaded_file": "",
+      "sha256": "",
+      "review_status": "PENDING",
+      "rejection_reason": ""
+    }
+  ],
+  "rule": "PENDING candidates are not production-approved. Confirm vehicle visual match, angle/background suitability, source page, creator, and license before CGI transformation."
+}

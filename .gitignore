@@ -14,6 +14,13 @@ test-results/
 catalog-data/generated/catalog-coverage-ledger.json
 .archive/
 
+# Regenerable: rebuild via the transition production run, same reasoning as the
+# coverage ledger above. 1.1MB of derived data does not belong in history.
+catalog-data/generated/visual-transition-production.json
+
+# Redundant archive of the tracked dial_a_spare_hero_asset_queue/ directory.
+dial_a_spare_hero_asset_queue.zip
+
 # Secrets. There was no rule here before the first push, which is exactly when
 # an .env created later would have become trackable without anyone noticing.
 .env

@@ -1,0 +1,24 @@
+{
+  "visual_family": {
+    "Priority": "P0",
+    "Selected?": "Review",
+    "Region": "Southern Africa",
+    "Make": "Kia",
+    "Model Family": "Sonet",
+    "Generation / Platform": "QY",
+    "Production Years": "2020–present",
+    "Body Style": "Crossover",
+    "Facelift / Visual Phase": "Pre-facelift / facelift",
+    "Proposed VISUAL_FAMILY_ID": "VF-KIA-SONET-QY-CROSSOVER-PRE-FACELIFT-FACELIFT",
+    "Variants that share this visual": "Powertrains share.",
+    "China catalog?": "No",
+    "Confidence": "High",
+    "Hero Source Status": "SOURCE_REQUIRED",
+    "Candidate Hero URL": "",
+    "Hero License": "UNVERIFIED",
+    "Attribution Status": "UNVERIFIED",
+    "Notes": ""
+  },
+  "candidates": [],
+  "rule": "PENDING candidates are not production-approved. Confirm vehicle visual match, angle/background suitability, source page, creator, and license before CGI transformation."
+}
