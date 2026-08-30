@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T08:38:19.923Z",
+  "generated_at": "2026-08-30T12:55:01.390Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -1078,8 +1078,8 @@
     },
     {
       "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md",
-      "bytes": 24842,
-      "sha256": "5f93a66ba10ad479849c8c58f7c1d87145ba6628a0b5488a728d7512f8308219"
+      "bytes": 32991,
+      "sha256": "6096a7c91fc63b367b80111b9d864692ce3185ef5e8d74e1fc32a8625367a040"
     },
     {
       "path": "README_v2_1.md",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
-import { readFileSync } from "node:fs";
+import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   containsPoint,
@@ -200,63 +200,129 @@ describe("customer transition contract", () => {
  * it is produced, rather than in a browser probe much later.
  */
 describe("hit map geometry (§5.1)", () => {
-  const hotspots = JSON.parse(
-    readFileSync(
-      resolve(
-        "apps/preview-player/public/packs/VF-TOYOTA-HILUX-AN130-DC-FL/v1/navigation/hotspots.json",
-      ),
-      "utf8",
-    ),
-  ).hotspots as HotspotLike[];
+  /**
+   * Every published pack, not just the pilot. The player derives its hit map
+   * from these polygons, so a pack that breaks the geometry preconditions
+   * produces an unclickable or mis-routing transition for that vehicle. Catching
+   * it here fails the build at the point the pack is produced, rather than in a
+   * browser probe against one model long afterwards.
+   */
+  const PACK_ROOT = "apps/preview-player/public/packs";
 
-  it("gives every category its own box rather than one shared full-bleed box", () => {
-    const regions = deriveHitRegions(hotspots);
-    expect(regions.length).toBeGreaterThan(1);
+  /**
+   * The reference mobile stage. §5.1 requires forgiving hit regions on mobile,
+   * and the e2e mobile project asserts a 44px minimum — but it can only assert
+   * it for packs that exist. Encoding the stage here lets every pack be held to
+   * the same floor. Width is the Pixel 7 viewport the mobile project uses;
+   * height is the stage's own min-height at that width; the settled map is
+   * drawn at settledExplosionScale.
+   */
+  const MOBILE_STAGE = { width: 412, height: 690, scale: 1.04 };
+  const MIN_TAP_PX = 44;
 
-    const boxes = regions.map((r) => `${r.left},${r.top},${r.width},${r.height}`);
-    expect(new Set(boxes).size, "regions must not share a bounding box").toBe(
-      boxes.length,
-    );
+  const packs = globSync(`${PACK_ROOT}/*/*/navigation/hotspots.json`)
+    .sort()
+    .map((file) => ({
+      file,
+      visualFamilyId: file.split("/")[3],
+      hotspots: JSON.parse(readFileSync(file, "utf8")).hotspots as HotspotLike[],
+    }));
 
-    for (const region of regions) {
-      expect(region.width).toBeGreaterThan(0);
-      expect(region.height).toBeGreaterThan(0);
-      expect(region.left + region.width).toBeLessThanOrEqual(100.001);
-      expect(region.top + region.height).toBeLessThanOrEqual(100.001);
-    }
+  it("finds at least one published pack to check", () => {
+    expect(packs.length).toBeGreaterThan(0);
   });
 
-  it("paints broad regions first so specific ones capture their own points", () => {
-    const regions = deriveHitRegions(hotspots);
-    const priorities = regions.map((r) => r.priority);
-    expect(priorities).toEqual([...priorities].sort((a, b) => b - a));
+  it.each(packs)(
+    "$visualFamilyId: gives every category its own box",
+    ({ hotspots }) => {
+      const regions = deriveHitRegions(hotspots);
+      expect(regions.length).toBeGreaterThan(1);
 
-    // Body is the broad region §5.1 names, and engine is what it must not
-    // swallow. Later in paint order means on top.
-    const body = regions.findIndex((r) => r.visualCategoryId === "VC-BODY");
-    const engine = regions.findIndex((r) => r.visualCategoryId === "VC-ENG");
-    expect(body).toBeGreaterThanOrEqual(0);
-    expect(engine).toBeGreaterThan(body);
-  });
+      const boxes = regions.map(
+        (r) => `${r.left},${r.top},${r.width},${r.height}`,
+      );
+      expect(new Set(boxes).size, "regions must not share a bounding box").toBe(
+        boxes.length,
+      );
 
-  it("places each region's clickable centre inside its own polygon", () => {
-    // §5.4's probes click the centre of a region's box. A polygon whose
-    // bounding-box centre falls outside the shape is clipped away at exactly
-    // the point the contract aims at, and the probe would silently land on
-    // whatever is underneath.
-    for (const hotspot of hotspots) {
-      const xs = hotspot.polygon.map((p) => p.x);
-      const ys = hotspot.polygon.map((p) => p.y);
-      const centre = {
-        x: (Math.min(...xs) + Math.max(...xs)) / 2,
-        y: (Math.min(...ys) + Math.max(...ys)) / 2,
-      };
-      expect(
-        containsPoint(hotspot.polygon, centre),
-        `${hotspot.visualCategoryId}: bounding-box centre falls outside its polygon`,
-      ).toBe(true);
-    }
-  });
+      for (const region of regions) {
+        expect(region.width).toBeGreaterThan(0);
+        expect(region.height).toBeGreaterThan(0);
+        expect(region.left).toBeGreaterThanOrEqual(0);
+        expect(region.top).toBeGreaterThanOrEqual(0);
+        expect(region.left + region.width).toBeLessThanOrEqual(100.001);
+        expect(region.top + region.height).toBeLessThanOrEqual(100.001);
+      }
+    },
+  );
+
+  it.each(packs)(
+    "$visualFamilyId: paints broad regions beneath specific ones",
+    ({ hotspots }) => {
+      const regions = deriveHitRegions(hotspots);
+      const priorities = regions.map((r) => r.priority);
+      expect(priorities).toEqual([...priorities].sort((a, b) => b - a));
+
+      // Shared priorities are legitimate: front and rear brakes are symmetric
+      // and never overlap. Routing is ambiguous only when two *overlapping*
+      // regions share one, because only then does the outcome depend on
+      // hit-test order. Condemning every shared priority is a defect this
+      // project has already made once, in the QA check.
+      const overlaps = (a: (typeof regions)[number], b: (typeof regions)[number]) =>
+        a.left < b.left + b.width &&
+        b.left < a.left + a.width &&
+        a.top < b.top + b.height &&
+        b.top < a.top + a.height;
+
+      for (let i = 0; i < regions.length; i++) {
+        for (let j = i + 1; j < regions.length; j++) {
+          if (regions[i].priority !== regions[j].priority) continue;
+          expect(
+            overlaps(regions[i], regions[j]),
+            `${regions[i].visualCategoryId} and ${regions[j].visualCategoryId} overlap at equal priority, so which one takes a click depends on hit-test order`,
+          ).toBe(false);
+        }
+      }
+    },
+  );
+
+  it.each(packs)(
+    "$visualFamilyId: places each clickable centre inside its own polygon",
+    ({ hotspots }) => {
+      // §5.4's probes click the centre of a region's box. A polygon whose
+      // bounding-box centre falls outside the shape is clipped away at exactly
+      // the point the contract aims at, and the probe lands on whatever is
+      // underneath — silently resolving to the wrong EPC section.
+      for (const hotspot of hotspots) {
+        const xs = hotspot.polygon.map((point) => point.x);
+        const ys = hotspot.polygon.map((point) => point.y);
+        const centre = {
+          x: (Math.min(...xs) + Math.max(...xs)) / 2,
+          y: (Math.min(...ys) + Math.max(...ys)) / 2,
+        };
+        expect(
+          containsPoint(hotspot.polygon, centre),
+          `${hotspot.visualCategoryId}: box centre falls outside its polygon`,
+        ).toBe(true);
+      }
+    },
+  );
+
+  it.each(packs)(
+    "$visualFamilyId: stays tappable at the reference mobile stage",
+    ({ hotspots }) => {
+      for (const region of deriveHitRegions(hotspots)) {
+        const widthPx =
+          (region.width / 100) * MOBILE_STAGE.width * MOBILE_STAGE.scale;
+        const heightPx =
+          (region.height / 100) * MOBILE_STAGE.height * MOBILE_STAGE.scale;
+        expect(
+          Math.min(widthPx, heightPx),
+          `${region.visualCategoryId}: smaller than a ${MIN_TAP_PX}px tap target on mobile`,
+        ).toBeGreaterThanOrEqual(MIN_TAP_PX);
+      }
+    },
+  );
 
   it("refuses a degenerate polygon instead of drawing an unclickable region", () => {
     expect(

@@ -276,6 +276,12 @@ hit-region geometry and motion layers; the catalog owns the category-family
 targets those regions resolve to. Targets are *injected* from the
 `VisualEpcMapping` — never authored twice, or the two copies will drift.
 
+**Positioning (§17.2, enforced):** a region sits on its own polygon's bounding
+box; clip-path shapes it, it does not place it. Full-bleed overlays that differ
+only by clip-path share one bounding box and one centre, which makes §5.1
+unsatisfiable and §5.4's probes meaningless. The bounding-box centre must also
+fall inside the polygon, because that is the point a probe clicks.
+
 **Presentation:** regions are invisible (no fill, no border, no outline) and
 `aria-hidden`. Because they are hidden from assistive technology, §5.4 requires
 a separate semantic category list as the keyboard equivalent. Mobile taps need
@@ -492,9 +498,147 @@ claim can disagree.
   per-layer assets, and no QA check that would notice.
 - `BLUEPRINT-4.3-MATRIX` — nothing emits or asserts the shared display matrix.
 - Two conflicting motion timelines (§6).
-- The Playwright suite is written and has never been executed. It is the
-  largest untested surface in the transition; everything above about rendered
-  DOM behaviour is currently asserted only in intent.
+- ~~The Playwright suite is written and has never been executed.~~ **Closed.**
+  It runs in CI and passes: 41 passed, 4 skipped. What it found on first
+  execution, and what the player now guarantees, is §17.
 - `packages/scene-engine/` is in flight and looks like the answer to METHOD and
   LAYERS — per-part sprites, per-part motion tracks, an owner-code buffer for
   hit testing. Read it before designing a replacement.
+
+---
+
+## 17. The rendered contract — now executed, not intended
+
+§16 said the Playwright suite had never been executed and that everything about
+rendered DOM behaviour was "asserted only in intent". That is no longer true,
+and what happened when it first ran is the most useful thing in this document.
+
+**First execution: 2 passed, 13 failed.** All 45 now pass or skip correctly.
+Nine failures were the player. Four were defects in the tests themselves —
+checks that could not have failed, or could not have passed, whatever the code
+did. Both halves matter to you: the first tells you what the player now
+guarantees, the second is a warning about how a green suite can mean nothing.
+
+### 17.1 What the player guarantees, so you do not re-solve it
+
+Build packs against these. They are asserted on every run.
+
+| Surface | Contract |
+|---|---|
+| Transition window | `role="region"`, named `Interactive {make} {model} visual transformation` |
+| Flow state | `data-flow-state` on that region: `idle` → `playing` → `navigation-ready` → `complete` |
+| Hit regions | `[data-hit-region][data-visual-category="VC-*"]`, `aria-hidden="true"`, `tabindex="-1"`, no fill, border or outline |
+| Keyboard route | `<ul aria-label="Vehicle categories">` of real links — §5.4's equivalent for a map hidden from assistive technology |
+| Committed cascade | `[data-committed="true"]`, composited contrast ≥ 4.5:1, cleared on focus |
+| Window copy | Exactly two text elements, each a **single text node** |
+
+The hit map is **derived from your polygons** by
+`apps/preview-player/lib/hit-map.ts`. There is no per-vehicle code left in the
+player: a new visual family needs a new pack, not a new clip-path literal. The
+hardcoded shapes that used to live in the component have been deleted.
+
+### 17.2 Pack geometry preconditions — machine-checked for every pack
+
+`tests/transition-ui-contract.test.ts` globs
+`apps/preview-player/public/packs/*/*/navigation/hotspots.json` and holds
+**every** pack to the rules below. A bad pack fails `npm run verify` at the
+point it is produced, not in a browser probe against one model much later.
+
+1. **At least two categories**, each polygon ≥ 3 points with non-zero area.
+   Degenerate polygons are refused rather than drawn as unclickable regions.
+2. **Distinct bounding boxes.** This is the one that bit hardest — see 17.3.
+3. **Inside the frame:** every point within 0–1.
+4. **Priority descends in paint order**, 0 being most specific. Shared
+   priorities are fine; *overlapping* regions sharing one are not, because only
+   then does routing depend on hit-test order. (§7 already said this; the test
+   now enforces exactly that rule and not the over-strict version of it.)
+5. **The bounding-box centre must lie inside the polygon.** §5.4's probes click
+   that point. A crescent or L-shape whose centre falls outside its own shape is
+   clipped away exactly where the contract aims, and the click lands on whatever
+   is underneath — resolving silently to the wrong EPC section.
+6. **Tappable on mobile.** Against the reference stage (412 × 690 at scale
+   1.04), every region's box must be ≥ 44px on both axes. In normalised terms
+   that is roughly **width ≥ 0.103, height ≥ 0.062**. Leave margin.
+
+### 17.3 The defects, and the rule each one leaves behind
+
+**Every region shared one bounding box.** The map was seven full-bleed overlays
+distinguished only by `clip-path`. They therefore had identical bounds and
+identical centres, so a broad Body region captured points visibly occupied by
+the engine — the precise thing §5.1 forbids — and no coordinate probe could
+distinguish any region from any other. *Rule: a hit region is positioned on its
+own polygon's bounding box. Clip-path shapes it; it does not place it.*
+
+**The window was not a region.** `aria-label` sat on a plain `div`, which names
+nothing, while the search panel above it was a named landmark matching
+"vehicle". Anything looking for the vehicle region found the search panel and
+asserted against it — passing while testing the wrong element. *Rule: name one
+landmark per role, and make sure the one you mean is the one that matches.*
+
+**Reduced motion never engaged.** `matchMedia` was read in an effect committing
+alongside autostart, so the start closure captured `false` and played the full
+seven-second sequence for people who had asked not to see motion. *Rule: a
+preference that changes what happens on first paint is read during render.*
+
+**"Faint grey" was below AA.** White at 35% over `#0c151f` composites to
+3.21:1. It is 55% now, measuring 6.15:1. *Rule: §3.4 faint is a contrast budget,
+not an opacity value — measure the composite.*
+
+**The headline could never match.** Assembled from JSX interpolation, `Know your
+{make} {model} {gen}.<br/>Find the right part.` is seven text nodes, none of
+them the permitted headline, and the `<br>` left no space between the sentences.
+And its width cap of `calc(100% - 2.5rem)` is 90% of a phone stage, so it
+covered the vehicle it describes. *Rule: §4.2's permitted text elements are
+single text nodes, and the width cap is against the stage.*
+
+### 17.4 Four tests that were lying
+
+Worth reading before you trust any suite, including this one.
+
+**Guards that threw instead of skipping.** The mobile and reduced-motion guards
+read `testInfo.project` from a second argument Playwright does not pass to a
+describe-level `test.skip`. They threw, so nothing skipped: project-specific
+tests ran in all three projects and failed in the two they existed to exclude.
+A guard that throws reports as a contract violation.
+
+**A contrast check that could not measure contrast.** It regex-scraped numbers
+from the computed colour. Tailwind emits `oklab(1 0 0 / 0.55)`, so it read
+`1, 0, 0` as near-black and returned 1.14 for white text on a dark panel — and
+it discarded alpha, the single property it existed to measure. It composites
+through a canvas now.
+
+**A count that raced the animation.** `.count()` does not auto-wait, so counting
+hit regions immediately after navigation returned zero and reported it as a
+§5.4 violation.
+
+**Assertions against source text.** The unit file asserted that the component's
+*source* contained a sort expression and hardcoded ids in a given order — the
+same defect its own header criticises about screening copy for forbidden words.
+It failed the moment the implementation stopped being hardcoded, while never
+having tested what the code computes. Replaced with tests of the extracted
+geometry, run against the published packs.
+
+**One finding is not ours.** Playwright 1.56.1 does not propagate
+`reducedMotion` from a project's `use` block to the page fixture. `colorScheme`
+set the same way does arrive, and the resolved `project.use` carries
+`reducedMotion: "reduce"` — it is simply not applied. The test sets it
+explicitly and asserts the media state before testing, so it cannot exercise the
+animated path while reporting on §4.3. If you write another media-dependent
+project, assert the media state first.
+
+### 17.5 Verifying a new flow
+
+```
+npm run verify        # gates, types, unit suites — includes pack geometry
+npm run test:e2e      # desktop, mobile, reduced-motion against the dev server
+```
+
+`npm run test:e2e` needs `apps/preview-player` installed from **its own**
+lockfile (`npm ci --workspaces=false` in that directory). The root tree resolves
+vite 7 via vitest and hoists `@cloudflare/vite-plugin` beside it; the app runs
+vite 8, and workerd dies with `Missing field 'moduleType'` before the server
+binds. CI does this in its own step.
+
+Expect **41 passed, 4 skipped**. The 4 are the mobile-only and
+reduced-motion-only tests in the projects they do not apply to. A run with 0
+skipped means the guards have broken again.
