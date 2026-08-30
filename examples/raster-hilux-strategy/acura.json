@@ -1,0 +1,528 @@
+{
+  "rasterSourceVersion": "1.0.0",
+  "outputRoot": "prepared",
+  "canvas": {
+    "width": 1024,
+    "height": 576
+  },
+  "frameCount": 96,
+  "visualFamilyId": "VF-ACURA-CL",
+  "hero": {
+    "file": "assets/acura-hero.jpg",
+    "sha256": "96a79e9ab3a689bae402f0dbb4982ebd29d85f72543ff3a5aed234225f976b20"
+  },
+  "annotation": {
+    "heroSha256": "96a79e9ab3a689bae402f0dbb4982ebd29d85f72543ff3a5aed234225f976b20",
+    "visualFamilyId": "VF-ACURA-CL",
+    "method": "VISION_ASSISTED",
+    "review": "PENDING"
+  },
+  "topology": {
+    "bodyStyle": "COUPE",
+    "doorCount": 2,
+    "cargoBed": false,
+    "wheelPositions": [
+      "front-left",
+      "front-right",
+      "rear-left",
+      "rear-right"
+    ]
+  },
+  "foreground": [
+    [
+      0.018,
+      0.384
+    ],
+    [
+      0.035,
+      0.291
+    ],
+    [
+      0.096,
+      0.259
+    ],
+    [
+      0.199,
+      0.102
+    ],
+    [
+      0.267,
+      0.082
+    ],
+    [
+      0.434,
+      0.1
+    ],
+    [
+      0.525,
+      0.137
+    ],
+    [
+      0.633,
+      0.302
+    ],
+    [
+      0.91,
+      0.475
+    ],
+    [
+      0.951,
+      0.539
+    ],
+    [
+      0.977,
+      0.646
+    ],
+    [
+      0.974,
+      0.807
+    ],
+    [
+      0.899,
+      0.897
+    ],
+    [
+      0.704,
+      0.92
+    ],
+    [
+      0.59,
+      0.868
+    ],
+    [
+      0.566,
+      0.925
+    ],
+    [
+      0.53,
+      0.965
+    ],
+    [
+      0.492,
+      0.958
+    ],
+    [
+      0.458,
+      0.918
+    ],
+    [
+      0.434,
+      0.855
+    ],
+    [
+      0.425,
+      0.778
+    ],
+    [
+      0.211,
+      0.615
+    ],
+    [
+      0.113,
+      0.598
+    ],
+    [
+      0.112,
+      0.652
+    ],
+    [
+      0.089,
+      0.69
+    ],
+    [
+      0.057,
+      0.668
+    ],
+    [
+      0.04,
+      0.604
+    ],
+    [
+      0.02,
+      0.48
+    ]
+  ],
+  "visibleParts": [
+    {
+      "id": "rear-near-wheel",
+      "role": "wheel",
+      "shape": {
+        "kind": "ellipse",
+        "box": {
+          "x": 0.028,
+          "y": 0.367,
+          "width": 0.089,
+          "height": 0.323
+        }
+      },
+      "wheelPosition": "rear-left"
+    },
+    {
+      "id": "front-near-wheel",
+      "role": "wheel",
+      "shape": {
+        "kind": "ellipse",
+        "box": {
+          "x": 0.417,
+          "y": 0.53,
+          "width": 0.157,
+          "height": 0.43
+        }
+      },
+      "wheelPosition": "front-left"
+    },
+    {
+      "id": "front-door",
+      "role": "body-part",
+      "shape": {
+        "kind": "polygon",
+        "points": [
+          [
+            0.213,
+            0.168
+          ],
+          [
+            0.316,
+            0.173
+          ],
+          [
+            0.399,
+            0.264
+          ],
+          [
+            0.404,
+            0.438
+          ],
+          [
+            0.415,
+            0.777
+          ],
+          [
+            0.181,
+            0.583
+          ]
+        ]
+      },
+      "wheelPosition": null
+    },
+    {
+      "id": "hood",
+      "role": "body-part",
+      "shape": {
+        "kind": "polygon",
+        "points": [
+          [
+            0.625,
+            0.316
+          ],
+          [
+            0.896,
+            0.476
+          ],
+          [
+            0.929,
+            0.521
+          ],
+          [
+            0.819,
+            0.605
+          ],
+          [
+            0.654,
+            0.49
+          ],
+          [
+            0.543,
+            0.413
+          ]
+        ]
+      },
+      "wheelPosition": null
+    },
+    {
+      "id": "front-bumper",
+      "role": "body-part",
+      "shape": {
+        "kind": "polygon",
+        "points": [
+          [
+            0.696,
+            0.727
+          ],
+          [
+            0.843,
+            0.729
+          ],
+          [
+            0.963,
+            0.656
+          ],
+          [
+            0.978,
+            0.792
+          ],
+          [
+            0.9,
+            0.892
+          ],
+          [
+            0.704,
+            0.91
+          ],
+          [
+            0.593,
+            0.858
+          ],
+          [
+            0.582,
+            0.758
+          ]
+        ]
+      },
+      "wheelPosition": null
+    },
+    {
+      "id": "rear-quarter",
+      "role": "body-part",
+      "shape": {
+        "kind": "polygon",
+        "points": [
+          [
+            0.028,
+            0.29
+          ],
+          [
+            0.13,
+            0.253
+          ],
+          [
+            0.181,
+            0.172
+          ],
+          [
+            0.178,
+            0.587
+          ],
+          [
+            0.023,
+            0.46
+          ]
+        ]
+      },
+      "wheelPosition": null
+    }
+  ],
+  "illustrations": [
+    {
+      "id": "engine",
+      "role": "engine",
+      "visualCategoryId": "VC-ENG",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/mechanical-illustrations-v1.png",
+          "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282"
+        },
+        "crop": {
+          "x": 0,
+          "y": 0,
+          "width": 0.3333333333333333,
+          "height": 0.5
+        }
+      },
+      "placement": {
+        "x": 0.57,
+        "y": 0.42,
+        "width": 0.16,
+        "height": 0.16
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "transmission",
+      "role": "transmission",
+      "visualCategoryId": "VC-TRN",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/mechanical-illustrations-v1.png",
+          "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282"
+        },
+        "crop": {
+          "x": 0.3333333333333333,
+          "y": 0,
+          "width": 0.3333333333333333,
+          "height": 0.5
+        }
+      },
+      "placement": {
+        "x": 0.38,
+        "y": 0.48,
+        "width": 0.18,
+        "height": 0.13
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "front-brakes",
+      "role": "brakes",
+      "visualCategoryId": "VC-FBRK",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/mechanical-illustrations-v1.png",
+          "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282"
+        },
+        "crop": {
+          "x": 0.6666666666666666,
+          "y": 0,
+          "width": 0.3333333333333333,
+          "height": 0.5
+        }
+      },
+      "placement": {
+        "x": 0.477,
+        "y": 0.67,
+        "width": 0.074,
+        "height": 0.145
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "rear-brakes",
+      "role": "brakes",
+      "visualCategoryId": "VC-RBRK",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/mechanical-illustrations-v1.png",
+          "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282"
+        },
+        "crop": {
+          "x": 0,
+          "y": 0.5,
+          "width": 0.3333333333333333,
+          "height": 0.5
+        }
+      },
+      "placement": {
+        "x": 0.045,
+        "y": 0.475,
+        "width": 0.066,
+        "height": 0.16
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "front-suspension",
+      "role": "suspension",
+      "visualCategoryId": "VC-FSUS",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/mechanical-illustrations-v1.png",
+          "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282"
+        },
+        "crop": {
+          "x": 0.3333333333333333,
+          "y": 0.5,
+          "width": 0.3333333333333333,
+          "height": 0.5
+        }
+      },
+      "placement": {
+        "x": 0.45,
+        "y": 0.42,
+        "width": 0.085,
+        "height": 0.18
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "rear-suspension",
+      "role": "suspension",
+      "visualCategoryId": "VC-RSUS",
+      "wheelPosition": null,
+      "source": {
+        "asset": {
+          "file": "assets/passenger-rear-suspension-v1.png",
+          "sha256": "c31cba1aefbc7e98cf23a5ce92e71a5b98c19a404cf278660dbdd020b9bfe540"
+        }
+      },
+      "placement": {
+        "x": 0.17,
+        "y": 0.37,
+        "width": 0.18,
+        "height": 0.13
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "front-far-wheel",
+      "role": "wheel",
+      "visualCategoryId": "VC-FBRK",
+      "wheelPosition": "front-right",
+      "source": {
+        "visiblePartId": "front-near-wheel"
+      },
+      "placement": {
+        "x": 0.67,
+        "y": 0.63,
+        "width": 0.082,
+        "height": 0.17
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    },
+    {
+      "id": "rear-far-wheel",
+      "role": "wheel",
+      "visualCategoryId": "VC-RBRK",
+      "wheelPosition": "rear-right",
+      "source": {
+        "visiblePartId": "rear-near-wheel"
+      },
+      "placement": {
+        "x": 0.23,
+        "y": 0.39,
+        "width": 0.09,
+        "height": 0.21
+      },
+      "disclosure": "CATEGORY_ILLUSTRATION_NOT_EXACT_FITMENT"
+    }
+  ],
+  "provenance": {
+    "hero": {
+      "assetId": "ACURA-CL-IFCAR",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2nd_Acura_CL.jpg",
+      "author": "IFCAR",
+      "licence": "Public domain",
+      "licenceUrl": "https://commons.wikimedia.org/wiki/File:2nd_Acura_CL.jpg",
+      "attribution": "Photographed second-generation Acura CL; no other generation implied",
+      "downloadedAt": "2026-08-30T00:00:00.000Z",
+      "sha256": "96a79e9ab3a689bae402f0dbb4982ebd29d85f72543ff3a5aed234225f976b20",
+      "commercialUseApproved": false
+    },
+    "mechanics": {
+      "assetId": "MECHANICAL-ILLUSTRATIONS-V1",
+      "sourceUrl": "repository://examples/raster-hilux-strategy/assets/mechanical-illustrations-v1.png",
+      "author": "Built-in image generation",
+      "licence": "AI-generated development illustration",
+      "licenceUrl": "repository://examples/raster-hilux-strategy/assets/mechanical-illustrations-v1.png",
+      "attribution": "Generic category artwork; not fitted assemblies or human-approved production media",
+      "downloadedAt": "2026-08-30T00:00:00.000Z",
+      "sha256": "29206a6995bfd23aa6a28613a1c299415261de868118f506150a145d63e21282",
+      "commercialUseApproved": false
+    },
+    "passengerRear": {
+      "assetId": "PASSENGER-REAR-ILLUSTRATION-V1",
+      "sourceUrl": "repository://examples/raster-hilux-strategy/assets/passenger-rear-suspension-v1.png",
+      "author": "Built-in image generation",
+      "licence": "AI-generated development illustration",
+      "licenceUrl": "repository://docs/HILUX_RASTER_ENGINE_ACCEPTANCE.md",
+      "attribution": "Independent rear suspension recognition illustration, not exact Acura fitment",
+      "downloadedAt": "2026-08-30T00:00:00.000Z",
+      "sha256": "c31cba1aefbc7e98cf23a5ce92e71a5b98c19a404cf278660dbdd020b9bfe540",
+      "commercialUseApproved": false
+    }
+  }
+}

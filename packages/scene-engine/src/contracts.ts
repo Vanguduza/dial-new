@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { sourceProvenanceSchema, VISUAL_CATEGORIES, type VisualCategoryId } from "../../contracts/src/index.js";
 
-export const SCENE_ENGINE_VERSION = "1.1.1";
+export const SCENE_ENGINE_VERSION = "1.2.1";
 export const SCENE_GATES = Object.freeze({
   minSourceSilhouetteIoU: 0.97,
   maxSourceColourError: 0.08,
@@ -79,7 +79,7 @@ export const catalogBindingSchema = z.object({
 }).strict();
 
 export const sceneJobSchema = z.object({
-  sceneEngineVersion: z.enum(["1.0.0", "1.1.0", "1.1.1"]),
+  sceneEngineVersion: z.enum(["1.0.0", "1.1.0", "1.1.1", "1.2.0", "1.2.1"]),
   visualFamilyId: z.string().regex(/^VF-[A-Z0-9-]+$/),
   hero: assetSchema,
   sceneFile: z.string().min(1).nullable(),

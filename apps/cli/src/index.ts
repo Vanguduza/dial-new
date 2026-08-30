@@ -9,12 +9,15 @@ import { generateVehicle } from '../../../packages/pipeline-core/src/generate.js
 import { validateSceneJob } from '../../../packages/scene-engine/src/index.js';
 import { produceBatch } from '../../../packages/scene-engine/src/factory.js';
 import { loadReconstructionWorkers } from '../../../packages/scene-engine/src/providers.js';
+import { prepareRasterSource } from '../../../packages/scene-engine/src/raster-source.js';
+import { runGuardedTransition } from '../../../packages/scene-engine/src/index.js';
 
 const HELP = `Dial Visual Transformation Generator
 
 Usage:
   dial-visual validate <job.json>
   dial-visual generate <job.json> [--from <stage>] [--force]
+  dial-visual raster <source.json> [--prepare-only]
   dial-visual batch <production-plan.json> [--workers <trusted-workers.json>]
   dial-visual qa <job.json>
   dial-visual package <job.json>
@@ -28,6 +31,12 @@ const [,, command, target] = process.argv;
 
 async function main() {
   if (!command || command === '--help' || command === '-h' || command === 'help') { console.log(HELP); return; }
+  if (command === 'raster') {
+    if (!target) throw new Error('A raster source manifest is required');
+    const prepared = await prepareRasterSource(target);
+    const result = process.argv.includes('--prepare-only') ? prepared : await runGuardedTransition(prepared.jobPath, (event) => console.log(JSON.stringify(event)));
+    console.log(JSON.stringify({ ...("packRoot" in result ? { packRoot: result.packRoot, status: result.status } : { jobPath: prepared.jobPath }), automatedChecksPassed: result.qa.passed, customerReady: false }, null, 2)); return;
+  }
   if (command === 'batch') {
     if (!target) throw new Error('A production plan JSON path is required');
     const workerConfig = option('--workers');

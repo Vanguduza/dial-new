@@ -106,7 +106,7 @@ export async function runGuardedTransition(jobPath: string, onEvent?: (event: Re
       states: { hero: "states/hero.webp", studio: "states/studio-surface.webp", lineArt: "states/line-art.webp", exploded: "states/exploded.webp" },
       navigation: "navigation/manifest.json", qa: "qa/qa.json", sourceScene: "component-scene.json", layers: "layers/manifest.json",
       provenance: job.provenance ?? {},
-      productionBlockers: ["INDEPENDENT_VISUAL_REVIEW_PENDING", ...(!job.provenance ? ["SOURCE_PROVENANCE_REQUIRED"] : []), ...(!job.catalog ? ["CATALOG_INJECTION_PENDING"] : []), "STUDIO_SURFACE_RENDER_IS_NOT_RECONSTRUCTED_3D_CGI"],
+      productionBlockers: ["INDEPENDENT_VISUAL_REVIEW_PENDING", ...(!job.provenance ? ["SOURCE_PROVENANCE_REQUIRED"] : []), ...(!job.catalog ? ["CATALOG_INJECTION_PENDING"] : []), "RASTER_COMPONENT_COMPLETENESS_REVIEW_PENDING"],
       customerBehavior: { trigger: "VEHICLE_SEARCH_COMMITTED", showProgress: false, showStageBar: false, replayUnchangedVehicle: false, returnState: "SETTLED_EXPLODED", reducedMotion: "SETTLED_EXPLODED" },
     });
     await json(join(packRoot, "qa", "visual-review.json"), {

@@ -43,14 +43,22 @@ export function createMotionPlan(scene: PreparedScene): MotionPlan {
     parts.forEach((part, index) => boxes.set(part.spec.id, slots[index]));
   };
   // Family bands reserve clear negative space and forbid engine/chassis overlap.
-  boxes.set(shell.spec.id, { x: 0.27, y: 0.30, width: 0.46, height: 0.32 });
-  set(scene.components.filter((part) => part.spec.role === "body-part"), { x: 0.12, y: 0.08, width: 0.76, height: 0.17 }, true);
-  set(scene.components.filter((part) => part.spec.role === "engine"), { x: 0.77, y: 0.29, width: 0.20, height: 0.34 });
-  set(scene.components.filter((part) => part.spec.role === "transmission"), { x: 0.03, y: 0.29, width: 0.20, height: 0.34 });
+  boxes.set(shell.spec.id, { x: 0.25, y: 0.31, width: 0.50, height: 0.38 });
+  const panels = scene.components.filter(part => part.spec.role === "body-part");
+  // Tall doors use side rails. Forcing every panel into a short top row made
+  // coupes shrink the entire scene and clipped doors during their lift.
+  const tall = panels.filter(part => part.bounds.height > part.bounds.width * 1.15)
+    .sort((a, b) => b.bounds.height - a.bounds.height || a.spec.id.localeCompare(b.spec.id));
+  const sidePanels = new Set(tall.slice(0, 2).map(part => part.spec.id));
+  const sideSorted = tall.slice(0, 2).sort((a, b) => a.bounds.x - b.bounds.x);
+  sideSorted.forEach((part, index) => boxes.set(part.spec.id, { x: index === 0 ? .025 : .775, y: .33, width: .20, height: .37 }));
+  set(panels.filter(part => !sidePanels.has(part.spec.id)), { x: .25, y: .045, width: .50, height: .23 }, true);
+  set(scene.components.filter((part) => part.spec.role === "engine"), { x: .775, y: .045, width: .20, height: .23 });
+  set(scene.components.filter((part) => part.spec.role === "transmission"), { x: .025, y: .045, width: .20, height: .23 });
   // Keep left-to-right source ordering for axle/wheel groups, independently of input array order.
   const chassis = scene.components.filter((part) => SECTION_BY_ROLE[part.spec.role] === "chassis-systems")
     .sort((a, b) => a.bounds.x - b.bounds.x || a.spec.id.localeCompare(b.spec.id));
-  set(chassis, { x: 0.09, y: 0.70, width: 0.82, height: 0.23 }, true);
+  set(chassis, { x: 0.06, y: 0.76, width: 0.88, height: 0.20 }, true);
   let scale = 1;
   for (const component of scene.components) {
     const box = boxes.get(component.spec.id)!;
@@ -75,7 +83,7 @@ export function transformAt(track: PartTrack, progress: number): Bounds {
   const t = phase(progress, track.startProgress, track.endProgress);
   // Stagger translation, not relative proportions: every part shares the same
   // scale at every instant, including groups whose outward movement starts later.
-  const scale = 1 + (track.scale - 1) * phase(progress, TIMELINE.explosionStart, TIMELINE.explosionEnd);
+  const scale = 1 + (track.scale - 1) * phase(progress, TIMELINE.explosionStart, categoryMotion("VC-BODY").endProgress);
   const startX = track.source.x + track.source.width / 2, startY = track.source.y + track.source.height / 2;
   const cx = startX + (track.destination.x - startX) * t, cy = startY + (track.destination.y - startY) * t;
   const width = track.source.width * scale, height = track.source.height * scale;

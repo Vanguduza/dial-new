@@ -31,6 +31,19 @@ __pycache__/
 output/reconstruction-pilots/
 dial_a_spare_hero_asset_queue/hero_queue_p0_dryrun_v2/
 
+# Prepared scene output, keyed by content hash. 78MB and regenerable from the
+# job config plus its source assets.
+examples/*/prepared/
+
+# Source imagery with no recorded rights. examples/hilux-an130/source/licensed/
+# names each licence in the filename (cc-by-2.0, public-domain) and carries a
+# provenance.json; these do not. ACT-REG-011 (EPC/catalogue/image rights and
+# provenance) is an open activation blocker, and unattributed vehicle imagery is
+# hard to remove from history once committed. Move them under
+# source/licensed/ with licence-bearing names and a provenance record, then
+# delete this rule.
+examples/raster-hilux-strategy/assets/
+
 # Secrets. There was no rule here before the first push, which is exactly when
 # an .env created later would have become trackable without anyone noticing.
 .env

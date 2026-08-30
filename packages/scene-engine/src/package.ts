@@ -95,7 +95,7 @@ export async function emitFlowPack(packRoot: string, job: SceneJob, scene: Prepa
       { id: "EPC_DIAGRAM_AND_PARTS", route: `/epc/vehicles/${vehicle.familySlug}`, required: true },
     ],
     catalogHandoff: { mapping: "navigation/epc-mapping.json", navigationManifest: "navigation/manifest.json", vehicleRoute: `/epc/vehicles/${vehicle.familySlug}` },
-    readiness: { automatedQa: "qa/qa.json", humanReview: "qa/visual-review.json", productionBlocker: "Source provenance must pass automated policy; visual review and catalog readiness remain pending. Raster surface treatment is not reconstructed 3D CGI." },
+    readiness: { automatedQa: "qa/qa.json", humanReview: "qa/visual-review.json", productionBlocker: "Source provenance must pass automated policy; complete raster-part artwork, visual review and catalog readiness remain pending." },
   };
   await writeEvidence(join(packRoot, "navigation", "epc-mapping.json"), { visualFamilyId: job.visualFamilyId, catalogReleaseId: vehicle.catalogReleaseId, catalogFamilyId: vehicle.catalogFamilyId, categories });
   await writeEvidence(join(packRoot, "navigation", "hero-to-epc-flow-pack.json"), flow);

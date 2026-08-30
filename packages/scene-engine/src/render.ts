@@ -15,7 +15,19 @@ export interface Frame {
 // It cannot alter a lamp, roof, wheel, camera or panel boundary.
 function lineStrength(sprite: Raster): Float32Array {
   const values = new Float32Array(sprite.width * sprite.height);
-  const luminance = (offset: number) => (sprite.pixels[offset] * 0.2126 + sprite.pixels[offset + 1] * 0.7152 + sprite.pixels[offset + 2] * 0.0722) / 255;
+  const luma = new Float32Array(values.length), blurred = new Float32Array(values.length);
+  for (let i = 0; i < luma.length; i++) luma[i] = (sprite.pixels[i * 4] * 0.2126 + sprite.pixels[i * 4 + 1] * 0.7152 + sprite.pixels[i * 4 + 2] * 0.0722) / 255;
+  // Suppress photographic grain before contour extraction. Transparent pixels
+  // do not darken the colour sample: alpha supplies their boundary separately.
+  for (let y = 0; y < sprite.height; y++) for (let x = 0; x < sprite.width; x++) {
+    let sum = 0, weight = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const nx = Math.max(0, Math.min(sprite.width - 1, x + dx)), ny = Math.max(0, Math.min(sprite.height - 1, y + dy));
+      const i = ny * sprite.width + nx, w = (dx === 0 ? 2 : 1) * (dy === 0 ? 2 : 1) * sprite.pixels[i * 4 + 3] / 255;
+      sum += luma[i] * w; weight += w;
+    }
+    blurred[y * sprite.width + x] = weight ? sum / weight : 0;
+  }
   for (let y = 0; y < sprite.height; y++) for (let x = 0; x < sprite.width; x++) {
     const offset = (y * sprite.width + x) * 4;
     if (sprite.pixels[offset + 3] < SCENE_GATES.alphaThreshold) continue;
@@ -24,7 +36,8 @@ function lineStrength(sprite: Raster): Float32Array {
       const nx = x + dx, ny = y + dy;
       if (nx < 0 || ny < 0 || nx >= sprite.width || ny >= sprite.height) { edge = 1; continue; }
       const neighbour = (ny * sprite.width + nx) * 4;
-      edge = Math.max(edge, Math.abs(sprite.pixels[offset + 3] - sprite.pixels[neighbour + 3]) / 255, Math.min(1, Math.abs(luminance(offset) - luminance(neighbour)) * 4));
+      const gradient = Math.max(0, Math.abs(blurred[offset / 4] - blurred[neighbour / 4]) - 0.018);
+      edge = Math.max(edge, Math.abs(sprite.pixels[offset + 3] - sprite.pixels[neighbour + 3]) / 255, Math.min(1, gradient * 5));
     }
     values[y * sprite.width + x] = edge;
   }
@@ -44,11 +57,13 @@ export class SceneRenderer {
     for (let p = 0; p < pixels.length; p += 4) {
       const grey = (pixels[p] + pixels[p + 1] + pixels[p + 2]) / 3;
       for (let c = 0; c < 3; c++) {
-        const graded = Math.max(0, Math.min(255, pixels[p + c] * (1 - 0.12 * studio) + grey * 0.12 * studio));
-        const contour = [225, 232, 236][c] * edges[p / 4] + 12 * (1 - edges[p / 4]);
+        const graded = Math.max(0, Math.min(255, (pixels[p + c] * (1 - 0.08 * studio) + grey * 0.08 * studio - 128) * (1 + 0.045 * studio) + 128));
+        const contour = [194, 215, 230][c] * edges[p / 4] + [9, 15, 22][c] * (1 - edges[p / 4]);
         pixels[p + c] = Math.round(graded * (1 - line) + contour * line);
       }
-      // Alpha/geometry is invariant under the material change.
+      // Geometry is invariant; an x-ray material reveals the SAME registered
+      // internals before they travel. No new artwork appears at explosion start.
+      if (part.spec.role === "body-shell" || part.spec.role === "body-part") pixels[p + 3] = Math.round(pixels[p + 3] * (1 - line * 0.72 * (1 - edges[p / 4])));
     }
     return { ...part.sprite, pixels };
   }
@@ -59,7 +74,10 @@ export class SceneRenderer {
     const pixels = Buffer.alloc(width * height * 4), owners = new Uint16Array(width * height);
     const studioBackground = phase(progress, TIMELINE.heroEnd, TIMELINE.studioEnd);
     for (let p = 0; p < pixels.length; p += 4) {
-      for (let c = 0; c < 3; c++) pixels[p + c] = [8, 11, 14][c];
+      const x = (p / 4 % width) / width, y = Math.floor(p / 4 / width) / height;
+      const glow = Math.exp(-((x - 0.07) ** 2 * 12 + (y - 0.75) ** 2 * 30));
+      const studioLight = Math.exp(-((x - 0.6) ** 2 * 4 + (y - 0.4) ** 2 * 5));
+      for (let c = 0; c < 3; c++) pixels[p + c] = Math.round([6, 10, 15][c] + studioLight * 7 + glow * [18, 9, 1][c]);
       pixels[p + 3] = 255;
     }
     const parts: Frame["parts"] = [];
