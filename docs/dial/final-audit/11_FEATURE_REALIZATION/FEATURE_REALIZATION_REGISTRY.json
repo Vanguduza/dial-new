@@ -26132,5 +26132,1577 @@
     ],
     "supporting_capability_refs": [],
     "v2_frc_ref": "HEALTH-F018"
+  },
+  {
+    "realization_id": "FR-PLAT-F001",
+    "feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "outcome": "Catalogue Factory & Fitment OS",
+    "canonical_owner": "catalogue/catalogue-factory",
+    "aggregate": "CatalogueIngestBatch",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/catalogue-factory-fitment-os",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Catalogue Factory & Fitment OS queue",
+      "Catalogue Factory & Fitment OS detail",
+      "Catalogue Factory & Fitment OS exception queue",
+      "Catalogue Factory & Fitment OS audit timeline"
+    ],
+    "workflow": [
+      "QUARANTINED → VALIDATED",
+      "VALIDATED → NORMALIZED",
+      "NORMALIZED → IDENTITY_RESOLVED",
+      "IDENTITY_RESOLVED → CANDIDATES_CREATED",
+      "CANDIDATES_CREATED → REVIEW_REQUIRED",
+      "REVIEW_REQUIRED → APPROVED",
+      "APPROVED → PUBLISHED",
+      "PUBLISHED → ROLLED_BACK",
+      "ROLLED_BACK → REJECTED"
+    ],
+    "queries": [
+      "GetPartMaster",
+      "GetFitmentByVehicle",
+      "GetVehicleApplicationsByPart",
+      "GetFitmentClaimTimeline",
+      "ListSupplierMappings",
+      "ListUnresolvedCatalogueConflicts",
+      "GetIngestQualityReport",
+      "ListSearchDemandGaps",
+      "GetRestrictedSkuStatus",
+      "GetPublicationHistory",
+      "GetAssetProvenance"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "ValidateCatalogueIngestBatch",
+      "NormalizeCatalogueIngestBatch",
+      "ResolveCatalogueCandidate",
+      "ApproveCatalogueCandidate",
+      "RejectCatalogueCandidate",
+      "CreateFitmentClaim",
+      "VerifyFitmentClaim",
+      "SupersedeFitmentClaim",
+      "CreatePartInterchange",
+      "ApprovePartInterchange",
+      "MapSupplierProduct",
+      "ApproveSupplierProductMapping",
+      "QuarantineProduct",
+      "PublishCatalogueVersion",
+      "RollbackCataloguePublication",
+      "ResolveCatalogueConflict",
+      "CreateRestrictedSkuRule"
+    ],
+    "events": [
+      "CatalogueCandidateApproved",
+      "FitmentClaimSuperseded",
+      "CataloguePublicationCompleted",
+      "SearchDemandGapRecorded",
+      "CatalogueConflictRaised",
+      "RestrictedSkuRuleApplied"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "donor_customization": "Donor material is reference-bounded; CatalogueIngestBatch authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No CatalogueIngestBatch may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F001"
+  },
+  {
+    "realization_id": "FR-PLAT-F002",
+    "feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "outcome": "Order & Fulfilment Orchestrator",
+    "canonical_owner": "orders/fulfilment",
+    "aggregate": "FulfilmentPlan",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/order-fulfilment-orchestrator",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Order & Fulfilment Orchestrator queue",
+      "Order & Fulfilment Orchestrator detail",
+      "Order & Fulfilment Orchestrator exception queue",
+      "Order & Fulfilment Orchestrator audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → RESERVED",
+      "RESERVED → SUPPLIER_CONFIRMED",
+      "SUPPLIER_CONFIRMED → PREPARING",
+      "PREPARING → PREPARED",
+      "PREPARED → DISPATCHED",
+      "DISPATCHED → PARTIALLY_FULFILLED",
+      "PARTIALLY_FULFILLED → FULFILLED",
+      "FULFILLED → FAILED",
+      "FAILED → CANCELLED"
+    ],
+    "queries": [
+      "GetFulfilmentPlan",
+      "ListFulfilmentLegs",
+      "GetSupplierConfirmationBacklog",
+      "GetPreparationQueue",
+      "ListFulfilmentExceptions",
+      "GetFulfilmentPromise"
+    ],
+    "commands": [
+      "CreateFulfilmentPlan",
+      "ReserveFulfilment",
+      "ConfirmSupplierFulfilment",
+      "RejectSupplierFulfilment",
+      "SubstituteFulfilmentSource",
+      "SplitFulfilment",
+      "ConsolidateFulfilment",
+      "GeneratePreparationTasks",
+      "MarkFulfilmentPrepared",
+      "CreateDeliveryLeg",
+      "CreatePickupLeg",
+      "CancelUnfulfilledLine",
+      "ApprovePartialFulfilment",
+      "FailFulfilment",
+      "CompleteFulfilment"
+    ],
+    "events": [
+      "OrderPlaced",
+      "OrderCommerciallyConfirmed",
+      "FulfilmentPlanCreated",
+      "SupplierFulfilmentConfirmed",
+      "FulfilmentReady",
+      "PreparationCompleted",
+      "OrderReadyForDispatch",
+      "FulfilmentFailed"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; FulfilmentPlan authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No FulfilmentPlan may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F002"
+  },
+  {
+    "realization_id": "FR-PLAT-F003",
+    "feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "outcome": "Customer 360, Relationship Graph & CRM",
+    "canonical_owner": "identity/customer-360",
+    "aggregate": "CustomerProfile",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/customer-360-relationship-graph-crm",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Customer 360, Relationship Graph & CRM queue",
+      "Customer 360, Relationship Graph & CRM detail",
+      "Customer 360, Relationship Graph & CRM exception queue",
+      "Customer 360, Relationship Graph & CRM audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → MERGED",
+      "MERGED → UNMERGED",
+      "UNMERGED → SUSPENDED",
+      "SUSPENDED → CLOSURE_REQUESTED",
+      "CLOSURE_REQUESTED → CLOSED"
+    ],
+    "queries": [
+      "GetCustomerProfile",
+      "GetCustomerTimeline",
+      "ListCustomerRelationships",
+      "ListActiveDelegations",
+      "GetConsentRecord",
+      "GetCommunicationPreferences",
+      "GetCustomerValueProjection"
+    ],
+    "commands": [
+      "CreateCustomerProfile",
+      "VerifyCustomerContact",
+      "AddCustomerAddress",
+      "CreateRelationship",
+      "EndRelationship",
+      "GrantDelegation",
+      "RevokeDelegation",
+      "MergeCustomerProfiles",
+      "UnmergeCustomerProfiles",
+      "UpdateCommunicationPreferences",
+      "RecordConsent",
+      "WithdrawConsent",
+      "RequestDataExport",
+      "RequestAccountClosure"
+    ],
+    "events": [
+      "CustomerRelationshipChanged",
+      "CustomerConsentChanged",
+      "CustomerProfileMerged",
+      "CustomerProfileUnmerged",
+      "CustomerDelegationRevoked"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "donor_customization": "Donor material is reference-bounded; CustomerProfile authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No CustomerProfile may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F003"
+  },
+  {
+    "realization_id": "FR-PLAT-F004",
+    "feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "outcome": "Supplier OS",
+    "canonical_owner": "suppliers/supplier-os",
+    "aggregate": "Supplier",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/supplier-os",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Supplier OS queue",
+      "Supplier OS detail",
+      "Supplier OS exception queue",
+      "Supplier OS audit timeline"
+    ],
+    "workflow": [
+      "APPLICANT → DUE_DILIGENCE",
+      "DUE_DILIGENCE → APPROVED",
+      "APPROVED → PROBATION",
+      "PROBATION → ACTIVE",
+      "ACTIVE → RESTRICTED",
+      "RESTRICTED → SUSPENDED",
+      "SUSPENDED → OFFBOARDED"
+    ],
+    "queries": [
+      "GetSupplier",
+      "ListPendingSupplierOrders",
+      "GetStockHeartbeat",
+      "ListSupplierCatalogueIssues",
+      "GetSupplierPerformance",
+      "ListSupplierCredentialExpiries",
+      "GetSupplierSettlementStatement"
+    ],
+    "commands": [
+      "SubmitSupplierApplication",
+      "ApproveSupplier",
+      "ActivateSupplier",
+      "RestrictSupplier",
+      "SuspendSupplier",
+      "ReinstateSupplier",
+      "RecordStockSignal",
+      "ConfirmSupplierOrder",
+      "RejectSupplierOrder",
+      "MarkReadyForPickup",
+      "SubmitSupplierReturnResponse",
+      "PublishSupplierOffer",
+      "WithdrawSupplierOffer",
+      "ApproveSupplierSettlement",
+      "OpenSupplierCorrectiveAction"
+    ],
+    "events": [
+      "SupplierActivated",
+      "SupplierRestricted",
+      "SupplierStockStale",
+      "SupplierConfirmationExpired",
+      "SupplierSettlementApproved"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "donor_customization": "Donor material is reference-bounded; Supplier authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No Supplier may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F004"
+  },
+  {
+    "realization_id": "FR-PLAT-F005",
+    "feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "outcome": "Resolution, Claims, Guarantee & Trust",
+    "canonical_owner": "resolution/rce",
+    "aggregate": "ResolutionCase",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/resolution-claims-guarantee-trust",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Resolution, Claims, Guarantee & Trust queue",
+      "Resolution, Claims, Guarantee & Trust detail",
+      "Resolution, Claims, Guarantee & Trust exception queue",
+      "Resolution, Claims, Guarantee & Trust audit timeline"
+    ],
+    "workflow": [
+      "OPEN → TRIAGED",
+      "TRIAGED → EVIDENCE_REQUIRED",
+      "EVIDENCE_REQUIRED → INVESTIGATING",
+      "INVESTIGATING → DECISION_PENDING",
+      "DECISION_PENDING → DECIDED",
+      "DECIDED → REMEDY_IN_PROGRESS",
+      "REMEDY_IN_PROGRESS → RESOLVED",
+      "RESOLVED → CLOSED",
+      "CLOSED → ESCALATED",
+      "ESCALATED → APPEALED",
+      "APPEALED → RECONSIDERATION"
+    ],
+    "queries": [
+      "GetResolutionCase",
+      "ListCasesByParty",
+      "GetCaseEvidenceBundle",
+      "ListOpenGuaranteeExposure",
+      "GetGuaranteeReserveAdequacy",
+      "ListCaseDeadlinesAtRisk"
+    ],
+    "commands": [
+      "OpenResolutionCase",
+      "TriageResolutionCase",
+      "RequestCaseEvidence",
+      "SubmitCaseEvidence",
+      "RecordCaseDecision",
+      "AuthoriseCaseRemedy",
+      "EscalateResolutionCase",
+      "AppealCaseDecision",
+      "ReconsiderCaseDecision",
+      "CloseResolutionCase",
+      "OpenGuaranteeClaim",
+      "ApproveGuaranteeClaim",
+      "RejectGuaranteeClaim",
+      "RecordClaimRecovery",
+      "OpenTrustCase"
+    ],
+    "events": [
+      "ResolutionCaseOpened",
+      "ResolutionDecisionRecorded",
+      "GuaranteeClaimOpened",
+      "GuaranteeClaimApproved",
+      "TrustCaseOpened",
+      "CaseRemedyAuthorised"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; ResolutionCase authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No ResolutionCase may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F005"
+  },
+  {
+    "realization_id": "FR-PLAT-F006",
+    "feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "outcome": "Treasury, FP&A & Business-Unit Economics",
+    "canonical_owner": "finance/treasury",
+    "aggregate": "TreasuryAccount",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/treasury-fp-a-business-unit-economics",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Treasury, FP&A & Business-Unit Economics queue",
+      "Treasury, FP&A & Business-Unit Economics detail",
+      "Treasury, FP&A & Business-Unit Economics exception queue",
+      "Treasury, FP&A & Business-Unit Economics audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → RESERVED",
+      "RESERVED → APPROVED",
+      "APPROVED → SUBMITTED",
+      "SUBMITTED → RECONCILED",
+      "RECONCILED → RELEASED",
+      "RELEASED → FAILED"
+    ],
+    "queries": [
+      "GetLiquidityPositionByBusinessUnit",
+      "GetGroupCashPosition",
+      "ListSettlementAgeing",
+      "GetPayrollFundingRisk",
+      "ListRefundsDue",
+      "GetGuaranteeReserveProjection",
+      "GetWorkingCapitalForecast"
+    ],
+    "commands": [
+      "CreateFundingReservation",
+      "ApproveFundingReservation",
+      "ReleaseFundingReservation",
+      "CreatePaymentBatch",
+      "ApprovePaymentBatch",
+      "SubmitPaymentBatch",
+      "ReconcilePaymentBatch",
+      "CreateInterUnitTransfer",
+      "ApproveInterUnitTransfer",
+      "PostBankStatementMatch",
+      "ApproveTreasuryForecast"
+    ],
+    "events": [
+      "TreasuryLiquidityStateChanged",
+      "PaymentBatchFailed",
+      "InterUnitTransferCompleted",
+      "FundingReservationApproved"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "donor_customization": "Donor material is reference-bounded; TreasuryAccount authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No TreasuryAccount may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F006"
+  },
+  {
+    "realization_id": "FR-PLAT-F007",
+    "feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "outcome": "Provider Quality OS and CAPA",
+    "canonical_owner": "quality/provider-quality",
+    "aggregate": "QualityFinding",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/provider-quality-os-and-capa",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Provider Quality OS and CAPA queue",
+      "Provider Quality OS and CAPA detail",
+      "Provider Quality OS and CAPA exception queue",
+      "Provider Quality OS and CAPA audit timeline"
+    ],
+    "workflow": [
+      "OPEN → CONTAINED",
+      "CONTAINED → ROOT_CAUSE_IDENTIFIED",
+      "ROOT_CAUSE_IDENTIFIED → CORRECTIVE_ACTION_ASSIGNED",
+      "CORRECTIVE_ACTION_ASSIGNED → PREVENTIVE_ACTION_ASSIGNED",
+      "PREVENTIVE_ACTION_ASSIGNED → VERIFICATION_PENDING",
+      "VERIFICATION_PENDING → VERIFIED",
+      "VERIFIED → CLOSED",
+      "CLOSED → APPEALED"
+    ],
+    "queries": [
+      "GetQualityFinding",
+      "GetProviderQualityProfile",
+      "ListOverdueCorrectiveActions",
+      "ListRepeatDefects",
+      "GetQualityContractForProviderClass",
+      "GetAdverseActionEvidenceBundle"
+    ],
+    "commands": [
+      "OpenQualityFinding",
+      "ApplyContainment",
+      "RecordRootCause",
+      "AssignCorrectiveAction",
+      "AssignPreventiveAction",
+      "VerifyCorrectiveAction",
+      "CloseQualityFinding",
+      "ApplyProviderRestriction",
+      "LiftProviderRestriction",
+      "AppealQualityDecision"
+    ],
+    "events": [
+      "QualityFindingOpened",
+      "ProviderCorrectiveActionOpened",
+      "CorrectiveActionVerified",
+      "ProviderRestrictionApplied"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "donor_customization": "Donor material is reference-bounded; QualityFinding authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No QualityFinding may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F007"
+  },
+  {
+    "realization_id": "FR-PLAT-F008",
+    "feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "outcome": "Network Capacity and Marketplace Liquidity",
+    "canonical_owner": "network/capacity",
+    "aggregate": "CapacityContract",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/network-capacity-and-marketplace-liquidity",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Network Capacity and Marketplace Liquidity queue",
+      "Network Capacity and Marketplace Liquidity detail",
+      "Network Capacity and Marketplace Liquidity exception queue",
+      "Network Capacity and Marketplace Liquidity audit timeline"
+    ],
+    "workflow": [
+      "EMPTY → THIN",
+      "THIN → VIABLE",
+      "VIABLE → HEALTHY",
+      "HEALTHY → SATURATED"
+    ],
+    "queries": [
+      "GetNetworkCellLiquidity",
+      "GetCapacityForecast",
+      "ListThinZones",
+      "GetQueueDepthByCell",
+      "GetCapacityRiskHorizon",
+      "ListOpenCapacityActions"
+    ],
+    "commands": [
+      "RecordCapacityContract",
+      "PublishCapacityForecast",
+      "SetCapacityException",
+      "AcknowledgeCapacityShortage",
+      "CreateCapacityAction",
+      "CloseCapacityAction"
+    ],
+    "events": [
+      "NetworkLiquidityStateChanged",
+      "CapacityShortageDetected",
+      "CapacityActionClosed"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "donor_customization": "Donor material is reference-bounded; CapacityContract authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No CapacityContract may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F008"
+  },
+  {
+    "realization_id": "FR-PLAT-F009",
+    "feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "outcome": "Branch, Zone and Capability Activation OS",
+    "canonical_owner": "activation/branch-activation",
+    "aggregate": "BranchActivation",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/branch-zone-and-capability-activation-os",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Branch, Zone and Capability Activation OS queue",
+      "Branch, Zone and Capability Activation OS detail",
+      "Branch, Zone and Capability Activation OS exception queue",
+      "Branch, Zone and Capability Activation OS audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → READINESS_REVIEW",
+      "READINESS_REVIEW → CERTIFIED_DORMANT",
+      "CERTIFIED_DORMANT → ACTIVE",
+      "ACTIVE → RESTRICTED",
+      "RESTRICTED → PAUSED",
+      "PAUSED → RETIRED"
+    ],
+    "queries": [
+      "GetBranchActivationState",
+      "ListBlockedActivationGates",
+      "GetCapabilityStatus",
+      "ListProviderEligibilityByCell",
+      "GetEmergencyControlHistory"
+    ],
+    "commands": [
+      "SubmitActivationReadiness",
+      "RecordActivationGateResult",
+      "CertifyBranchDormant",
+      "ActivateBranch",
+      "RestrictBranch",
+      "PauseBranch",
+      "RetireBranch",
+      "ActivateEmergencyControl",
+      "ClearEmergencyControl"
+    ],
+    "events": [
+      "BranchActivationChanged",
+      "CapabilityStatusChanged",
+      "EmergencyControlActivated"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "donor_customization": "Donor material is reference-bounded; BranchActivation authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No BranchActivation may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F009"
+  },
+  {
+    "realization_id": "FR-PLAT-F010",
+    "feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "outcome": "DIAL Business Core",
+    "canonical_owner": "business/b2b-core",
+    "aggregate": "BusinessAccount",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/dial-business-core",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "DIAL Business Core queue",
+      "DIAL Business Core detail",
+      "DIAL Business Core exception queue",
+      "DIAL Business Core audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → PENDING_APPROVAL",
+      "PENDING_APPROVAL → ACTIVE",
+      "ACTIVE → CREDIT_HOLD",
+      "CREDIT_HOLD → SUSPENDED",
+      "SUSPENDED → CLOSED"
+    ],
+    "queries": [
+      "GetBusinessAccount",
+      "ListApprovalBacklog",
+      "GetCostCentreBudgetPosition",
+      "GetCreditExposure",
+      "GetConsolidatedStatement",
+      "ListRecurringBusinessOrders"
+    ],
+    "commands": [
+      "CreateBusinessAccount",
+      "InviteBusinessBuyer",
+      "DefineApprovalPolicy",
+      "SetSpendLimit",
+      "SubmitPurchaseRequest",
+      "ApprovePurchaseRequest",
+      "RejectPurchaseRequest",
+      "IssuePurchaseOrder",
+      "RecordContractPrice",
+      "IssueBusinessInvoice",
+      "SuspendBusinessAccount",
+      "ReinstateBusinessAccount"
+    ],
+    "events": [
+      "BusinessApprovalRequested",
+      "BusinessApprovalCompleted",
+      "BusinessCreditHoldApplied"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "donor_customization": "Donor material is reference-bounded; BusinessAccount authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No BusinessAccount may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F010"
+  },
+  {
+    "realization_id": "FR-PLAT-F011",
+    "feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "outcome": "Engagement, Promotions, Loyalty and Referral",
+    "canonical_owner": "engagement/growth",
+    "aggregate": "Campaign",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/engagement-promotions-loyalty-and-referral",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Engagement, Promotions, Loyalty and Referral queue",
+      "Engagement, Promotions, Loyalty and Referral detail",
+      "Engagement, Promotions, Loyalty and Referral exception queue",
+      "Engagement, Promotions, Loyalty and Referral audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → REVIEW",
+      "REVIEW → APPROVED",
+      "APPROVED → SCHEDULED",
+      "SCHEDULED → RUNNING",
+      "RUNNING → PAUSED",
+      "PAUSED → COMPLETED",
+      "COMPLETED → CANCELLED"
+    ],
+    "queries": [
+      "GetCampaign",
+      "GetAudienceSize",
+      "GetPromotionBudgetPosition",
+      "GetAttributionReport",
+      "ListSuppressedRecipients",
+      "GetReferralFunnel"
+    ],
+    "commands": [
+      "DefineAudience",
+      "CreateCampaign",
+      "ApproveCampaign",
+      "LaunchCampaign",
+      "PauseCampaign",
+      "IssueCoupon",
+      "RedeemCoupon",
+      "RegisterReferral",
+      "ApproveReward",
+      "IssueReward",
+      "SuppressRecipient"
+    ],
+    "events": [
+      "CampaignStarted",
+      "RewardIssued",
+      "PromotionBudgetExhausted"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "donor_customization": "Donor material is reference-bounded; Campaign authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No Campaign may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F011"
+  },
+  {
+    "realization_id": "FR-PLAT-F012",
+    "feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "outcome": "Support OS",
+    "canonical_owner": "support/support-os",
+    "aggregate": "SupportCase",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/support-os",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Support OS queue",
+      "Support OS detail",
+      "Support OS exception queue",
+      "Support OS audit timeline"
+    ],
+    "workflow": [
+      "NEW → ASSIGNED",
+      "ASSIGNED → IN_PROGRESS",
+      "IN_PROGRESS → WAITING_CUSTOMER",
+      "WAITING_CUSTOMER → ESCALATED",
+      "ESCALATED → RESOLVED",
+      "RESOLVED → CLOSED"
+    ],
+    "queries": [
+      "GetSupportCase",
+      "GetAgentWorkspaceContext",
+      "ListCasesBreachingSla",
+      "GetCustomerSupportHistory",
+      "ListAllowedSupportActions",
+      "GetEscalationPath"
+    ],
+    "commands": [
+      "OpenSupportCase",
+      "AssignSupportCase",
+      "LinkSupportConversation",
+      "RequestCustomerInformation",
+      "EscalateSupportCase",
+      "InvokeSupportAction",
+      "ResolveSupportCase",
+      "CloseSupportCase",
+      "RecordKnowledgeArticleUse"
+    ],
+    "events": [
+      "SupportCaseEscalated",
+      "SupportCaseResolved",
+      "SupportActionInvoked"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; SupportCase authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No SupportCase may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F012"
+  },
+  {
+    "realization_id": "FR-PLAT-F013",
+    "feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "outcome": "Compliance, Partner and Continuity OS",
+    "canonical_owner": "grc/compliance",
+    "aggregate": "ComplianceObligation",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/compliance-partner-and-continuity-os",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Compliance, Partner and Continuity OS queue",
+      "Compliance, Partner and Continuity OS detail",
+      "Compliance, Partner and Continuity OS exception queue",
+      "Compliance, Partner and Continuity OS audit timeline"
+    ],
+    "workflow": [
+      "IDENTIFIED → EVIDENCE_REQUIRED",
+      "EVIDENCE_REQUIRED → SATISFIED",
+      "SATISFIED → BREACHED",
+      "BREACHED → WAIVED",
+      "WAIVED → EXPIRED"
+    ],
+    "queries": [
+      "GetComplianceObligation",
+      "ListObligationsDue",
+      "GetLicenceCredentialExpiries",
+      "GetPartnerRiskProfile",
+      "GetConcentrationRisk",
+      "ListContinuityExercises",
+      "GetBlockedComplianceGates"
+    ],
+    "commands": [
+      "RegisterComplianceObligation",
+      "SubmitComplianceEvidence",
+      "VerifyComplianceEvidence",
+      "RecordComplianceBreach",
+      "WaiveComplianceObligation",
+      "BlockOnComplianceGate",
+      "RegisterPartner",
+      "ApprovePartner",
+      "RecordPartnerRisk",
+      "ActivateContinuityPlan",
+      "RecordContinuityExercise",
+      "CloseRecoveryAction"
+    ],
+    "events": [
+      "ComplianceObligationDue",
+      "ComplianceGateBlocked",
+      "PartnerRiskStateChanged",
+      "ContinuityModeActivated"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "donor_customization": "Donor material is reference-bounded; ComplianceObligation authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No ComplianceObligation may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F013"
+  },
+  {
+    "realization_id": "FR-PLAT-F014",
+    "feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "outcome": "Pricing and Commercial Policy",
+    "canonical_owner": "commercial/pricing",
+    "aggregate": "PricePolicy",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PLATFORM",
+    "primary_route": "/command-centre/pricing-and-commercial-policy",
+    "support_profile": "SUPPORT-PLAT",
+    "screens": [
+      "Pricing and Commercial Policy queue",
+      "Pricing and Commercial Policy detail",
+      "Pricing and Commercial Policy exception queue",
+      "Pricing and Commercial Policy audit timeline"
+    ],
+    "workflow": [
+      "DRAFT → REVIEW",
+      "REVIEW → APPROVED",
+      "APPROVED → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetActivePricePolicy",
+      "GetQuoteSnapshot",
+      "ListRateCardsByBusinessUnit",
+      "GetDeliveryPriceRule",
+      "GetContractPriceForCustomer",
+      "GetPricePolicyHistory"
+    ],
+    "commands": [
+      "DraftPricePolicy",
+      "SubmitPricePolicyForReview",
+      "ApprovePricePolicy",
+      "ActivatePricePolicy",
+      "SupersedePricePolicy",
+      "RetirePricePolicy",
+      "DefineRateCard",
+      "DefineDeliveryPriceRule",
+      "IssueQuote",
+      "SnapshotQuote",
+      "ExpireQuote",
+      "RecordCommercialApproval"
+    ],
+    "events": [
+      "CommercialPolicyPromoted",
+      "QuoteExpired",
+      "PricePolicySuperseded"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; PricePolicy authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PLAT",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No PricePolicy may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PLAT-F014"
+  },
+  {
+    "realization_id": "FR-TECH-F021",
+    "feature_id": "TECH-F021",
+    "module": "TECH",
+    "outcome": "Technician OS and DIAL Academy",
+    "canonical_owner": "tech/technician-os",
+    "aggregate": "TechnicianProfile",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "TECH",
+    "primary_route": "/command-centre/technician-os-and-dial-academy",
+    "support_profile": "SUPPORT-TECH",
+    "screens": [
+      "Technician OS and DIAL Academy queue",
+      "Technician OS and DIAL Academy detail",
+      "Technician OS and DIAL Academy exception queue",
+      "Technician OS and DIAL Academy audit timeline"
+    ],
+    "workflow": [
+      "APPLICANT → DOCUMENT_REVIEW",
+      "DOCUMENT_REVIEW → PRACTICAL_REVIEW",
+      "PRACTICAL_REVIEW → PROBATION",
+      "PROBATION → VERIFIED",
+      "VERIFIED → PREFERRED",
+      "PREFERRED → RESTRICTED",
+      "RESTRICTED → SUSPENDED",
+      "SUSPENDED → REINSTATEMENT_REVIEW"
+    ],
+    "queries": [
+      "GetTechnicianProfile",
+      "GetTechnicianWorkload",
+      "ListExpiringTradeCredentials",
+      "GetTechnicianServiceArea",
+      "GetOfflineJobPack",
+      "GetTechnicianEarningsStatement",
+      "ListOutstandingTrainingRequirements"
+    ],
+    "commands": [
+      "SubmitTechnicianApplication",
+      "ReviewTechnicianDocuments",
+      "RecordPracticalReview",
+      "VerifyTechnician",
+      "PromoteTechnicianToPreferred",
+      "RestrictTechnician",
+      "SuspendTechnician",
+      "ReinstateTechnician",
+      "RecordTrainingCompletion",
+      "IssueAcademyCertification",
+      "SetTechnicianAvailability",
+      "AssignTechnicianToJob"
+    ],
+    "events": [
+      "TechnicianCredentialExpired",
+      "TechnicianQualityStateChanged",
+      "TechnicianRestrictionChanged",
+      "AcademyCertificationIssued"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "donor_customization": "Donor material is reference-bounded; TechnicianProfile authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-TECH",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No TechnicianProfile may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "TECH-F021"
+  },
+  {
+    "realization_id": "FR-CORP-F021",
+    "feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "outcome": "Procurement, Internal WMS, Assets and Facilities",
+    "canonical_owner": "corporate/procurement-wms",
+    "aggregate": "ProcurementRequisition",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "CORPORATE",
+    "primary_route": "/command-centre/procurement-internal-wms-assets-and-facilities",
+    "support_profile": "SUPPORT-CORP",
+    "screens": [
+      "Procurement, Internal WMS, Assets and Facilities queue",
+      "Procurement, Internal WMS, Assets and Facilities detail",
+      "Procurement, Internal WMS, Assets and Facilities exception queue",
+      "Procurement, Internal WMS, Assets and Facilities audit timeline"
+    ],
+    "workflow": [
+      "REQUISITIONED → APPROVED",
+      "APPROVED → RFQ_ISSUED",
+      "RFQ_ISSUED → PO_ISSUED",
+      "PO_ISSUED → RECEIVED",
+      "RECEIVED → INSPECTED",
+      "INSPECTED → GRV_POSTED",
+      "GRV_POSTED → INVOICE_MATCHED",
+      "INVOICE_MATCHED → PAID",
+      "PAID → REJECTED"
+    ],
+    "queries": [
+      "GetRequisition",
+      "GetPurchaseOrderStatus",
+      "GetBinStockLevel",
+      "ListQuarantinedStock",
+      "GetStockCountVariance",
+      "GetAssetCustodyChain",
+      "ListAssetsDueForService"
+    ],
+    "commands": [
+      "CreateRequisition",
+      "ApproveRequisition",
+      "IssueRfq",
+      "RecordSupplierQuote",
+      "IssuePurchaseOrder",
+      "RecordGoodsReceipt",
+      "RecordQualityInspection",
+      "PostGoodsReceivedVoucher",
+      "MatchSupplierInvoice",
+      "RecordStockMovement",
+      "RecordStockCount",
+      "AdjustStockWithReason",
+      "AssignAsset",
+      "RetireAsset"
+    ],
+    "events": [
+      "InventoryMovementRecorded",
+      "ProcurementReceiptCompleted",
+      "AssetCustodyChanged",
+      "StockAdjustmentPosted"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; ProcurementRequisition authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-CORP",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No ProcurementRequisition may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "CORP-F021"
+  },
+  {
+    "realization_id": "FR-CARE-F015",
+    "feature_id": "CARE-F015",
+    "module": "CARE",
+    "outcome": "Subscription, Billing and Entitlement OS",
+    "canonical_owner": "care/entitlements",
+    "aggregate": "Membership",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "CARE",
+    "primary_route": "/command-centre/subscription-billing-and-entitlement-os",
+    "support_profile": "SUPPORT-CARE",
+    "screens": [
+      "Subscription, Billing and Entitlement OS queue",
+      "Subscription, Billing and Entitlement OS detail",
+      "Subscription, Billing and Entitlement OS exception queue",
+      "Subscription, Billing and Entitlement OS audit timeline"
+    ],
+    "workflow": [
+      "PENDING → ACTIVE",
+      "ACTIVE → GRACE",
+      "GRACE → SUSPENDED",
+      "SUSPENDED → CANCELLED",
+      "CANCELLED → EXPIRED"
+    ],
+    "queries": [
+      "GetMembership",
+      "GetEntitlementAccountBalance",
+      "ListEntitlementConsumption",
+      "GetRenewalSchedule",
+      "GetGracePeriodStatus",
+      "ListPartnerBenefits"
+    ],
+    "commands": [
+      "SubscribePlan",
+      "RenewMembership",
+      "ReserveEntitlement",
+      "ConsumeEntitlement",
+      "ReleaseEntitlementReservation",
+      "UpgradePlan",
+      "DowngradePlan",
+      "SuspendMembership",
+      "CancelMembership"
+    ],
+    "events": [
+      "MembershipActivated",
+      "EntitlementReserved",
+      "EntitlementConsumed",
+      "MembershipEnteredGrace"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "donor_customization": "Donor material is reference-bounded; Membership authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-CARE",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No Membership may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "CARE-F015"
+  },
+  {
+    "realization_id": "FR-ASST-F017",
+    "feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "outcome": "Dial Assist Control Room",
+    "canonical_owner": "assist/control-room",
+    "aggregate": "AssistIncident",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "ASSIST",
+    "primary_route": "/command-centre/dial-assist-control-room",
+    "support_profile": "SUPPORT-ASST",
+    "screens": [
+      "Dial Assist Control Room queue",
+      "Dial Assist Control Room detail",
+      "Dial Assist Control Room exception queue",
+      "Dial Assist Control Room audit timeline"
+    ],
+    "workflow": [
+      "REPORTED → TRIAGED",
+      "TRIAGED → COVERAGE_ASSESSED",
+      "COVERAGE_ASSESSED → PROVIDER_OFFERED",
+      "PROVIDER_OFFERED → DISPATCHED",
+      "DISPATCHED → ON_SCENE",
+      "ON_SCENE → TOW_IN_PROGRESS",
+      "TOW_IN_PROGRESS → CUSTODY_TRANSFERRED",
+      "CUSTODY_TRANSFERRED → ESCALATED_EMERGENCY",
+      "ESCALATED_EMERGENCY → CLOSED"
+    ],
+    "queries": [
+      "GetAssistIncident",
+      "GetIncidentMap",
+      "GetLocationConfidence",
+      "ListProviderOffers",
+      "GetAssistSlaStatus",
+      "GetIncidentEvidenceBundle"
+    ],
+    "commands": [
+      "OpenAssistIncident",
+      "RecordSafetyTriage",
+      "AssessCoverage",
+      "RequestProviderOffers",
+      "AssignAssistProvider",
+      "RecordResponderArrival",
+      "IssueTowInstruction",
+      "RecordVehicleCustody",
+      "ReferToEmergencyServices",
+      "CloseAssistIncident"
+    ],
+    "events": [
+      "AssistIncidentOpened",
+      "AssistProviderAssigned",
+      "AssistIncidentClosed",
+      "EmergencyReferralRaised"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "donor_customization": "Donor material is reference-bounded; AssistIncident authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-ASST",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No AssistIncident may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "ASST-F017"
+  },
+  {
+    "realization_id": "FR-PROJ-F017",
+    "feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "outcome": "Projects OS",
+    "canonical_owner": "projects/projects-os",
+    "aggregate": "Project",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "PROJECTS",
+    "primary_route": "/command-centre/projects-os",
+    "support_profile": "SUPPORT-PROJ",
+    "screens": [
+      "Projects OS queue",
+      "Projects OS detail",
+      "Projects OS exception queue",
+      "Projects OS audit timeline"
+    ],
+    "workflow": [
+      "REQUESTED → ASSESSMENT",
+      "ASSESSMENT → PROPOSAL",
+      "PROPOSAL → APPROVED",
+      "APPROVED → MOBILISING",
+      "MOBILISING → ACTIVE",
+      "ACTIVE → HANDOVER",
+      "HANDOVER → DEFECTS_PERIOD",
+      "DEFECTS_PERIOD → CLOSED"
+    ],
+    "queries": [
+      "GetProject",
+      "GetWorkBreakdownStructure",
+      "GetProjectBudgetPosition",
+      "GetEstimateAtCompletion",
+      "ListOpenVariations",
+      "ListSnagItems",
+      "GetMilestoneEvidence"
+    ],
+    "commands": [
+      "SubmitProjectRequest",
+      "RecordAssessment",
+      "IssueProjectProposal",
+      "ApproveProject",
+      "MobiliseProject",
+      "RecordProgressValuation",
+      "RaiseVariationOrder",
+      "ApproveVariationOrder",
+      "RecordSiteDiaryEntry",
+      "RaiseSnagItem",
+      "AcceptMilestone",
+      "IssueHandoverPack",
+      "CloseDefectsLiabilityPeriod"
+    ],
+    "events": [
+      "ProjectVariationRequested",
+      "ProjectMilestoneAccepted",
+      "ProjectHandoverCompleted",
+      "ProgressValuationRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "donor_customization": "Donor material is reference-bounded; Project authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-PROJ",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No Project may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "PROJ-F017"
+  },
+  {
+    "realization_id": "FR-FLEET-F016",
+    "feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "outcome": "Fleet and Vehicle Operations",
+    "canonical_owner": "fleet/vehicle-operations",
+    "aggregate": "FleetVehicle",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "branch_space": "FLEET",
+    "primary_route": "/command-centre/fleet-and-vehicle-operations",
+    "support_profile": "SUPPORT-FLEET",
+    "screens": [
+      "Fleet and Vehicle Operations queue",
+      "Fleet and Vehicle Operations detail",
+      "Fleet and Vehicle Operations exception queue",
+      "Fleet and Vehicle Operations audit timeline"
+    ],
+    "workflow": [
+      "AVAILABLE → ASSIGNED",
+      "ASSIGNED → IN_SERVICE",
+      "IN_SERVICE → DEFECT_REPORTED",
+      "DEFECT_REPORTED → IN_MAINTENANCE",
+      "IN_MAINTENANCE → DOWN",
+      "DOWN → REPLACED",
+      "REPLACED → RETIRED"
+    ],
+    "queries": [
+      "GetFleetVehicle",
+      "GetVehicleAvailability",
+      "ListOpenDefectsBySeverity",
+      "GetVehicleTotalCostOfOwnership",
+      "ListExpiringVehicleDocuments",
+      "GetDispatchCompatibilityProfile",
+      "GetFleetDowntimeReport"
+    ],
+    "commands": [
+      "RegisterFleetVehicle",
+      "AssignVehicleCustody",
+      "RecordOdometerReading",
+      "RecordDailyInspection",
+      "RaiseVehicleDefect",
+      "ScheduleMaintenance",
+      "RecordFuelEnergyEntry",
+      "RecordAccident",
+      "RecordVehicleDowntime",
+      "AssignReplacementVehicle",
+      "RetireFleetVehicle"
+    ],
+    "events": [
+      "FleetVehicleUnavailable",
+      "FleetDefectRaised",
+      "VehicleCustodyAssigned"
+    ],
+    "customer_or_operator_actions": [
+      "view_queue",
+      "view_detail",
+      "view_timeline",
+      "invoke_allowed_command",
+      "escalate",
+      "export_evidence"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "donor_customization": "Donor material is reference-bounded; FleetVehicle authority stays in DIAL.",
+    "eventuality_requirement": "Instantiate the cross-cutting eventuality classes for this aggregate before DOMAIN_TESTED",
+    "support_requirement": "SUPPORT-FLEET",
+    "command_centre_requirement": "Registers metric contracts, exception queues and owned actions",
+    "completion_contract": "No FleetVehicle may advance without evidence frozen before the gate decides",
+    "applicable_eventuality_refs": [],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "FLEET-F016"
   }
 ]

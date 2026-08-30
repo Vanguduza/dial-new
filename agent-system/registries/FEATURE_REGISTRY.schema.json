@@ -33,18 +33,31 @@
       "status": {
         "enum": [
           "SPECIFIED",
-          "MAPPED",
+          "DESIGN_CLOSED",
+          "BUILDABLE",
           "CODE_PRESENT",
           "DOMAIN_TESTED",
           "INTEGRATION_GREEN",
           "STAGING_GREEN",
-          "PRODUCTION_GREEN",
           "CERTIFIED_DORMANT",
+          "ACTIVATION_BLOCKERS_GREEN",
           "ACTIVE"
         ]
       },
       "current_gate": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "SPECIFIED",
+          "DESIGN_CLOSED",
+          "BUILDABLE",
+          "CODE_PRESENT",
+          "DOMAIN_TESTED",
+          "INTEGRATION_GREEN",
+          "STAGING_GREEN",
+          "CERTIFIED_DORMANT",
+          "ACTIVATION_BLOCKERS_GREEN",
+          "ACTIVE"
+        ]
       },
       "code_paths": {
         "type": "array",

@@ -21,10 +21,44 @@ const branches=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/10_ACTIVATI
 const repo=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json");
 const capabilities=load("docs/dial/final-audit/11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json");
 
-if(features.length!==186) fail.push(`features=${features.length}, expected 186`);
-if(facets.length!==186*9) fail.push(`facets=${facets.length}, expected ${186*9}`);
-if(realization.length!==186) fail.push(`realization=${realization.length}, expected 186`);
-if(frcs.length!==186) fail.push(`FRCs=${frcs.length}, expected 186`);
+// ── registry consistency, not a magic number ───────────────────────────────
+// This asserted 186 four times. That number blocked every allocation of a new
+// Feature ID, and the tempting fix - bump it to the new total - just relocates
+// the magic number. What actually matters is that the registries describe the
+// same set of features, that every feature has its nine facets, and that the
+// set never shrinks silently. All three are checked here; the floor lives in
+// a committed baseline so raising it is a visible diff.
+const baseline=load("agent-system/registries/REGISTRY_BASELINE.json");
+const idsOf=(rows,key)=>new Set(rows.map(r=>r[key]));
+const featureIds=idsOf(features,"feature_id");
+
+if(featureIds.size!==features.length) fail.push("FEATURE_REGISTRY contains duplicate feature_ids");
+if(features.length<baseline.min_features){
+  fail.push(`features=${features.length} is below the recorded floor of ${baseline.min_features}; raise min_features deliberately if this removal is intended`);
+}
+
+for(const [name,rows,key] of [
+  ["FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY",frcs,"feature_id"],
+  ["FEATURE_REALIZATION_REGISTRY",realization,"feature_id"],
+]){
+  const other=idsOf(rows,key);
+  if(other.size!==rows.length) fail.push(`${name} contains duplicate ${key}s`);
+  const missing=[...featureIds].filter(id=>!other.has(id));
+  const extra=[...other].filter(id=>!featureIds.has(id));
+  if(missing.length) fail.push(`${name} is missing ${missing.length} feature(s): ${missing.slice(0,5).join(", ")}${missing.length>5?" …":""}`);
+  if(extra.length) fail.push(`${name} has ${extra.length} record(s) with no registered feature: ${extra.slice(0,5).join(", ")}${extra.length>5?" …":""}`);
+}
+
+const facetsByParent=new Map();
+for(const facet of facets){
+  facetsByParent.set(facet.parent_feature_id,(facetsByParent.get(facet.parent_feature_id)??0)+1);
+}
+const wrongFacetCount=[...featureIds].filter(id=>(facetsByParent.get(id)??0)!==baseline.facets_per_feature);
+if(wrongFacetCount.length){
+  fail.push(`${wrongFacetCount.length} feature(s) do not have exactly ${baseline.facets_per_feature} facets: ${wrongFacetCount.slice(0,5).map(id=>`${id}(${facetsByParent.get(id)??0})`).join(", ")}${wrongFacetCount.length>5?" …":""}`);
+}
+const orphanFacets=[...facetsByParent.keys()].filter(id=>!featureIds.has(id));
+if(orphanFacets.length) fail.push(`${orphanFacets.length} facet parent(s) are not registered features: ${orphanFacets.slice(0,5).join(", ")}`);
 
 const forbidden=/feature-specific typed commands|domain state change event|all eight realization facets/i;
 for(const f of frcs){

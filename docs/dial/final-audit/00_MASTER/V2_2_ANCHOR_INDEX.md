@@ -9,6 +9,9 @@ The single map of where authority lives. Open this before anything else.
 - Active development prompt → `../13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md`
 - Readiness → `BUILD_READINESS_SCORECARD.json`
 - Closure validation → `../20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md`
+- Module expansion (canon extension) → `DIAL_Module_Expansion_and_Operational_Realisation_Architecture_v1.md`
+- Gate ladder (single canonical progression) → `../20_IMPLEMENTATION_CLOSURE/13_GATE_LADDER/GATE_LADDER_CANON.md`
+- Security classes S1-S4 → `../17_SECURITY/SECURITY_CLASS_CANON.md`
 
 ## Implementation closure
 

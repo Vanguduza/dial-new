@@ -1,0 +1,6 @@
+{
+  "note": "Floor counts for the feature registries. The closure check asserts the registries agree with each other and never shrink below these numbers. Raising a floor is a deliberate, reviewable change; a silent drop is the v2.1 overlay defect, which removed 181 files while every count still looked plausible.",
+  "recorded_at": "2026-08-30",
+  "min_features": 186,
+  "facets_per_feature": 9
+}

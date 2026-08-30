@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T05:14:01.875Z",
+  "generated_at": "2026-08-30T07:37:15.061Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 210,
+  "file_count": 213,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -42,6 +42,11 @@
       "sha256": "cd79b9b2295698fdf6c25f0c5f598d2705f1e7f885e68b83bc4816896c66da18"
     },
     {
+      "path": "00_MASTER/DIAL_Module_Expansion_and_Operational_Realisation_Architecture_v1.md",
+      "bytes": 72253,
+      "sha256": "01dde070ae5ae428bcaaf9761e83503bb9dbf36a831735553f2c5e08893ce041"
+    },
+    {
       "path": "00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
       "bytes": 14193,
       "sha256": "b043501028c1991761d80395d82bbbfb2cb3da7849f71582d13f2ed80fbe9d09"
@@ -53,8 +58,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 3267,
-      "sha256": "03e2ba613e960bb5936fd228271c06149e224a9a2e358537508b14f26c854d84"
+      "bytes": 3565,
+      "sha256": "3337dd9743bcf69d907cd94b3f97dcbe5fa64d980c95f9557a16eae9edf07cff"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -488,8 +493,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json",
-      "bytes": 941615,
-      "sha256": "a6e8c1468ee085d8b8e4004bcd8fc205ee6891ccc5840b6b0fa7a694ffe4a682"
+      "bytes": 993058,
+      "sha256": "c650dc92f6c99780834f230b8a9e19f48c2271809e04c888ce95275ed67fb500"
     },
     {
       "path": "11_FEATURE_REALIZATION/REALIZATION_LAYER_INDEX.md",
@@ -503,13 +508,13 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUBFEATURE_FUNCTION_REGISTRY.json",
-      "bytes": 1296840,
-      "sha256": "2f160de3b86eab7f75397997ae147055de17de26d7dbb8705dfae3ca9fa796ed"
+      "bytes": 1414613,
+      "sha256": "327339fbb4e6c3800585d6a923dbc1f0126a197d13eb2649418eb68b194826de"
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 60773,
-      "sha256": "67268878e4c5cbdad551148546bb7bceb2d253d216888ea8ef51524177301a26"
+      "bytes": 60974,
+      "sha256": "aa2324154881b614e2798fa9698692845d3b99be3b612a388038d3efcb25837f"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
@@ -643,8 +648,8 @@
     },
     {
       "path": "17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json",
-      "bytes": 144019,
-      "sha256": "7a4e9813e31dbfbab4c47ee07176e5214811f3cfb41ec11a1a92d1f15c956f70"
+      "bytes": 163616,
+      "sha256": "cf0d8b2ef9ea3ee39216870197421e4e274d0a3e9a2d8102b680ae716a3bd938"
     },
     {
       "path": "17_SECURITY/INCIDENT_RESPONSE_AND_VULNERABILITY_MANAGEMENT.md",
@@ -660,6 +665,11 @@
       "path": "17_SECURITY/MOBILE_SECURITY_IMPLEMENTATION_STANDARD.md",
       "bytes": 1720,
       "sha256": "0ee30aef2c436371882fab4bf3fe5a39ebea8d92545f8046284dc85f08330d66"
+    },
+    {
+      "path": "17_SECURITY/SECURITY_CLASS_CANON.md",
+      "bytes": 2714,
+      "sha256": "983f4fc76e0a7a9ca4af453be6e481dafd591120f1ad1c88089378508b473d20"
     },
     {
       "path": "17_SECURITY/SECURITY_CONTROL_REGISTRY.json",
@@ -763,8 +773,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 722760,
-      "sha256": "09b376226773975d8e132d29c86183036fb5749d3d852721643c81411bea0086"
+      "bytes": 780493,
+      "sha256": "f29273c72e27302d8244497d4f038ebd8fd225c681b2bc5fd18fcbcfbe175759"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
@@ -793,8 +803,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json",
-      "bytes": 52830,
-      "sha256": "f2e7b1f06846b69092ac7d02148799dbf30546e8cf1527eb4dfb4d0cfdc8da13"
+      "bytes": 54601,
+      "sha256": "7ba1ffb9f2dd226f0c75967443f01efd23799795fe5f88ae947fbe9af052ae20"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/04_NFR/NFR_BUDGET_REGISTRY.json",
@@ -875,6 +885,11 @@
       "path": "20_IMPLEMENTATION_CLOSURE/12_DEVELOPMENT_SYSTEM/CLAUDE_CODE_V2_OPERATING_MODEL.md",
       "bytes": 4187,
       "sha256": "ac8e282a7216aa46a77b57865f3737c2fdb600ddba128af0d2e843d7151404f9"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/13_GATE_LADDER/GATE_LADDER_CANON.md",
+      "bytes": 3148,
+      "sha256": "1534593a8a9a00458df5e28939a6909aea1c6ca76b350c64e59d4c7d53513bb9"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md",

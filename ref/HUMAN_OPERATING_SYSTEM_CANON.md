@@ -1,52 +1,10 @@
-# DIAL Human Operating System
+# Moved
 
-Every material state that requires human intervention must resolve to:
+This file was an ungoverned duplicate. `ref/` sits outside
+`docs/dial/final-audit/`, so the manifest never declared it and
+`agent:manifest-check` could not detect it drifting — and it had drifted.
 
-`software state → queue → named role → SLA → procedure/runbook → evidence → escalation → terminal result`
+**Canonical copy:** `docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/07_OPERATING_MODEL/HUMAN_OPERATING_SYSTEM_CANON.md`
 
-"Ops handles it" is not an implementation.
-
-## Queue requirements
-
-A queue item contains:
-- human ref;
-- source Feature/aggregate;
-- reason/trigger;
-- severity;
-- business unit/site;
-- customer/provider refs where permitted;
-- age/SLA;
-- allowed actions;
-- evidence completeness;
-- assigned role/person;
-- escalation path.
-
-## Role resolution
-
-Use Position/PermissionBundle/FinancialAuthority rather than hard-coded individual emails.
-
-If the assigned person is absent:
-- delegation;
-- queue owner fallback;
-- escalation;
-must be deterministic.
-
-## Customer-visible cases
-
-Customer sees:
-- case ref;
-- current state;
-- requested evidence/action;
-- expected next step/SLA where meaningful;
-- human support entry.
-
-They must not need to repeat the original transaction context.
-
-## Operational certification
-
-Before a branch becomes ACTIVE:
-- each Material eventuality has a queue/owner;
-- runbooks exist for critical/high cases;
-- operators have permissions/training;
-- test case reaches and closes the queue;
-- Command Centre sees ageing/backlog/SLA breaches.
+That copy is declared in `MANIFEST_v2_2.json` and hash-checked on every
+sweep. Do not restore content here.

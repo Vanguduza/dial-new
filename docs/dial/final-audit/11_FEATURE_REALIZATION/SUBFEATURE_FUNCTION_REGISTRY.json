@@ -40618,5 +40618,3416 @@
       "negative authorization/abuse/degraded cases included",
       "security evidence exists before production-green"
     ]
+  },
+  {
+    "subfeature_id": "PLAT-F001.01",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.02",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.03",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.04",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.05",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.06",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.07",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.08",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F001.09",
+    "parent_feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Catalogue Factory & Fitment OS",
+    "owner": "catalogue/catalogue-factory",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-SANDPIM",
+      "DONOR-EPC-SPECIALIST-PENDING"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for CatalogueIngestBatch before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.01",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.02",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.03",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.04",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.05",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.06",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.07",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.08",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F002.09",
+    "parent_feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Order & Fulfilment Orchestrator",
+    "owner": "orders/fulfilment",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for FulfilmentPlan before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.01",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.02",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.03",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.04",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.05",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.06",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.07",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.08",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F003.09",
+    "parent_feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Customer 360, Relationship Graph & CRM",
+    "owner": "identity/customer-360",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for CustomerProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.01",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.02",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.03",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.04",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.05",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.06",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.07",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.08",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F004.09",
+    "parent_feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Supplier OS",
+    "owner": "suppliers/supplier-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-MERCUR-VENDOR",
+      "DONOR-SANDPIM"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for Supplier before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.01",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.02",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.03",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.04",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.05",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.06",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.07",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.08",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F005.09",
+    "parent_feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Resolution, Claims, Guarantee & Trust",
+    "owner": "resolution/rce",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-CHATWOOT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for ResolutionCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.01",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.02",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.03",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.04",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.05",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.06",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.07",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.08",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F006.09",
+    "parent_feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Treasury, FP&A & Business-Unit Economics",
+    "owner": "finance/treasury",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "REF-ODOO"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for TreasuryAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.01",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.02",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.03",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.04",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.05",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.06",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.07",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.08",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F007.09",
+    "parent_feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Provider Quality OS and CAPA",
+    "owner": "quality/provider-quality",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for QualityFinding before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.01",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.02",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.03",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.04",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.05",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.06",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.07",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.08",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F008.09",
+    "parent_feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Network Capacity and Marketplace Liquidity",
+    "owner": "network/capacity",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-DIAL-DELIVERY-STACK"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for CapacityContract before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.01",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.02",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.03",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.04",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.05",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.06",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.07",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.08",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F009.09",
+    "parent_feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Branch, Zone and Capability Activation OS",
+    "owner": "activation/branch-activation",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for BranchActivation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.01",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.02",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.03",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.04",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.05",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.06",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.07",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.08",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F010.09",
+    "parent_feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for DIAL Business Core",
+    "owner": "business/b2b-core",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERPNEXT",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for BusinessAccount before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.01",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.02",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.03",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.04",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.05",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.06",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.07",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.08",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F011.09",
+    "parent_feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Engagement, Promotions, Loyalty and Referral",
+    "owner": "engagement/growth",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-WHATSAPP",
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for Campaign before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.01",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.02",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.03",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.04",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.05",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.06",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.07",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.08",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F012.09",
+    "parent_feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Support OS",
+    "owner": "support/support-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-CHATWOOT",
+      "REF-INTERCOM-HANDOFF",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for SupportCase before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.01",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.02",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.03",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.04",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.05",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.06",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.07",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.08",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F013.09",
+    "parent_feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Compliance, Partner and Continuity OS",
+    "owner": "grc/compliance",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-ERAMBA",
+      "SERVICE-OPA"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for ComplianceObligation before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.01",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.02",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.03",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.04",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.05",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.06",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.07",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.08",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PLAT-F014.09",
+    "parent_feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Pricing and Commercial Policy",
+    "owner": "commercial/pricing",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "DONOR-MERCUR-STOREFRONT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for PricePolicy before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.01",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.02",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.03",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.04",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.05",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.06",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.07",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.08",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "TECH-F021.09",
+    "parent_feature_id": "TECH-F021",
+    "module": "TECH",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Technician OS and DIAL Academy",
+    "owner": "tech/technician-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-FIXITNOW",
+      "DONOR-NEARSERVE-HOMEZY"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for TechnicianProfile before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.01",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.02",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.03",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.04",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.05",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.06",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.07",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.08",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CORP-F021.09",
+    "parent_feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Procurement, Internal WMS, Assets and Facilities",
+    "owner": "corporate/procurement-wms",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-INVENTREE",
+      "DONOR-ERPNEXT",
+      "DONOR-SNIPEIT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for ProcurementRequisition before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.01",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.02",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.03",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.04",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.05",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.06",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.07",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.08",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "CARE-F015.09",
+    "parent_feature_id": "CARE-F015",
+    "module": "CARE",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Subscription, Billing and Entitlement OS",
+    "owner": "care/entitlements",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for Membership before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.01",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.02",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.03",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.04",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.05",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.06",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.07",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.08",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "ASST-F017.09",
+    "parent_feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Dial Assist Control Room",
+    "owner": "assist/control-room",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-DIAL-DELIVERY-STACK",
+      "SERVICE-OPENREMOTE-FLEET"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for AssistIncident before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.01",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.02",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.03",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.04",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.05",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.06",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.07",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.08",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "PROJ-F017.09",
+    "parent_feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Projects OS",
+    "owner": "projects/projects-os",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "DONOR-OPENPROJECT",
+      "DONOR-ERPNEXT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for Project before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.01",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Entry/discovery/queue surface for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Entry/discovery/queue surface is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.02",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Input, eligibility and validation for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Input, eligibility and validation is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.03",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Core workflow/state transitions for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Core workflow/state transitions is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.04",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Detail, timeline and history for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Detail, timeline and history is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.05",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "State-driven actions and approvals for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "State-driven actions and approvals is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.06",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Eventuality, recovery and compensation for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Eventuality, recovery and compensation is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.07",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Notifications, support and escalation for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Notifications, support and escalation is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.08",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Observability, audit and certification for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Observability, audit and certification is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "FLEET-F016.09",
+    "parent_feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Security, privacy and abuse resistance for Fleet and Vehicle Operations",
+    "owner": "fleet/vehicle-operations",
+    "app_families": [
+      "COMMAND_CENTRE"
+    ],
+    "donor_refs": [
+      "SERVICE-OPENREMOTE-FLEET",
+      "DONOR-LUBELOGGER"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
   }
 ]

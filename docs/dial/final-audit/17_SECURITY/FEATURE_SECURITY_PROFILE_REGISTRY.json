@@ -2496,7 +2496,7 @@
   {
     "feature_id": "VHUB-F001",
     "module": "VHUB",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "identity/authorization-sensitive"
     ],
@@ -2509,7 +2509,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "SUPPORT"
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -2517,7 +2518,8 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
@@ -2835,7 +2837,7 @@
   {
     "feature_id": "VHUB-F013",
     "module": "VHUB",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "identity/authorization-sensitive"
     ],
@@ -2848,7 +2850,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "SUPPORT"
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -2856,7 +2859,8 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
@@ -4367,7 +4371,7 @@
   {
     "feature_id": "CORP-F007",
     "module": "CORPORATE",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "sensitive corporate/money/privilege"
     ],
@@ -4380,7 +4384,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "ADMIN"
+      "ADMIN",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -4388,14 +4393,15 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
   {
     "feature_id": "CORP-F008",
     "module": "CORPORATE",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "sensitive corporate/money/privilege"
     ],
@@ -4408,7 +4414,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "ADMIN"
+      "ADMIN",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -4416,14 +4423,15 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
   {
     "feature_id": "CORP-F009",
     "module": "CORPORATE",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "sensitive corporate/money/privilege"
     ],
@@ -4436,7 +4444,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "ADMIN"
+      "ADMIN",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -4444,7 +4453,8 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
@@ -4479,7 +4489,7 @@
   {
     "feature_id": "CORP-F011",
     "module": "CORPORATE",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "sensitive corporate/money/privilege"
     ],
@@ -4492,7 +4502,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "ADMIN"
+      "ADMIN",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -4500,7 +4511,8 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
@@ -4732,7 +4744,7 @@
   {
     "feature_id": "CORP-F020",
     "module": "CORPORATE",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "sensitive corporate/money/privilege",
       "identity/authorization-sensitive"
@@ -4746,7 +4758,8 @@
       "DATA_PROTECTION",
       "OBSERVABILITY",
       "VULNERABILITY_MANAGEMENT",
-      "ADMIN"
+      "ADMIN",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -4754,480 +4767,15 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
   {
     "feature_id": "HEALTH-F001",
     "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F002",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F003",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F004",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F005",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F006",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F007",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F008",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F009",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F010",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data",
-      "identity/authorization-sensitive"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F011",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F012",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F013",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F014",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F015",
-    "module": "HEALTH",
-    "security_tier": "S3",
-    "reasons": [
-      "health/safety/sensitive data"
-    ],
-    "required_control_categories": [
-      "AUTH",
-      "DATABASE",
-      "INPUT_OUTPUT",
-      "ABUSE",
-      "WEB_TRANSPORT",
-      "DATA_PROTECTION",
-      "OBSERVABILITY",
-      "VULNERABILITY_MANAGEMENT",
-      "MOBILE",
-      "AI_MCP",
-      "SUPPORT"
-    ],
-    "mandatory_tests": [
-      "server-side actor/permission enforcement",
-      "object/tenant/relationship negative authorization",
-      "input schema and state validation",
-      "abuse/rate-limit behavior where exposed",
-      "sensitive response minimization",
-      "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
-    ],
-    "status": "SPECIFIED"
-  },
-  {
-    "feature_id": "HEALTH-F016",
-    "module": "HEALTH",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "health/safety/sensitive data"
     ],
@@ -5243,7 +4791,7 @@
       "MOBILE",
       "AI_MCP",
       "SUPPORT",
-      "INTEGRATIONS"
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -5252,14 +4800,512 @@
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
       "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F002",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F003",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F004",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F005",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F006",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F007",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F008",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F009",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F010",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data",
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F011",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F012",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F013",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F014",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F015",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "HEALTH-F016",
+    "module": "HEALTH",
+    "security_tier": "S4",
+    "reasons": [
+      "health/safety/sensitive data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "MOBILE",
+      "AI_MCP",
+      "SUPPORT",
+      "INTEGRATIONS",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
   {
     "feature_id": "HEALTH-F017",
     "module": "HEALTH",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "health/safety/sensitive data"
     ],
@@ -5274,7 +5320,8 @@
       "VULNERABILITY_MANAGEMENT",
       "MOBILE",
       "AI_MCP",
-      "SUPPORT"
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
     ],
     "mandatory_tests": [
       "server-side actor/permission enforcement",
@@ -5283,14 +5330,15 @@
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
       "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
     ],
     "status": "SPECIFIED"
   },
   {
     "feature_id": "HEALTH-F018",
     "module": "HEALTH",
-    "security_tier": "S3",
+    "security_tier": "S4",
     "reasons": [
       "health/safety/sensitive data"
     ],
@@ -5305,6 +5353,128 @@
       "VULNERABILITY_MANAGEMENT",
       "MOBILE",
       "AI_MCP",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "Health specialist privacy/safety/AI escalation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F001",
+    "module": "PLATFORM",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F002",
+    "module": "PLATFORM",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F003",
+    "module": "PLATFORM",
+    "security_tier": "S4",
+    "reasons": [
+      "identity/authorization-sensitive"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F004",
+    "module": "PLATFORM",
+    "security_tier": "S3",
+    "reasons": [
+      "private provider and banking data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
       "SUPPORT"
     ],
     "mandatory_tests": [
@@ -5314,7 +5484,500 @@
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
       "dependency/integration failure does not bypass security",
-      "Health specialist privacy/safety/AI escalation"
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F005",
+    "module": "PLATFORM",
+    "security_tier": "S3",
+    "reasons": [
+      "claim and evidence data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F006",
+    "module": "PLATFORM",
+    "security_tier": "S4",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F007",
+    "module": "PLATFORM",
+    "security_tier": "S3",
+    "reasons": [
+      "private provider data and adverse action evidence"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F008",
+    "module": "PLATFORM",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F009",
+    "module": "PLATFORM",
+    "security_tier": "S4",
+    "reasons": [
+      "high-impact commercial authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F010",
+    "module": "PLATFORM",
+    "security_tier": "S3",
+    "reasons": [
+      "business credit and financial authority data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F011",
+    "module": "PLATFORM",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F012",
+    "module": "PLATFORM",
+    "security_tier": "S2",
+    "reasons": [
+      "internet-facing transactional feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F013",
+    "module": "PLATFORM",
+    "security_tier": "S4",
+    "reasons": [
+      "legal and compliance authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PLAT-F014",
+    "module": "PLATFORM",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "TECH-F021",
+    "module": "TECH",
+    "security_tier": "S3",
+    "reasons": [
+      "private provider data and credential evidence"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CORP-F021",
+    "module": "CORPORATE",
+    "security_tier": "S3",
+    "reasons": [
+      "sensitive corporate/money/privilege"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "CARE-F015",
+    "module": "CARE",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "ASST-F017",
+    "module": "ASSIST",
+    "security_tier": "S3",
+    "reasons": [
+      "precise location and incident evidence"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "PROJ-F017",
+    "module": "PROJECTS",
+    "security_tier": "S3",
+    "reasons": [
+      "money-affecting"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "FLEET-F016",
+    "module": "FLEET",
+    "security_tier": "S3",
+    "reasons": [
+      "precise location and telematics data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "VULNERABILITY_MANAGEMENT",
+      "PAYMENTS",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "money idempotency/provider verification/reconciliation"
     ],
     "status": "SPECIFIED"
   }
