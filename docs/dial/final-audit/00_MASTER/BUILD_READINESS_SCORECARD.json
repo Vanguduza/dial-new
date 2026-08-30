@@ -156,6 +156,9 @@
     "No independent specialist review of the SPARE-F004 pilot; its contract was written and proven by the same agent",
     "Catalogue and transition flow packs are produced outside this repository and injected when complete; conformance is checked at injection, not audited here",
     "No catalogue has yet been injected, so no vehicle is customer-ready and the eleven-stage gate correctly reports zero",
-    "Grocery Rounds (GROC-F019..F034) holds customer money under a model that conflicts with TECH-F009 and ACT-REG-001; unresolved and blocking build"
-  ]
+    "Grocery Rounds money model is LOCKED (DEC-001..007): credits are not money, so ACT-REG-001 is not engaged and no second money authority exists. Enforced by packages/round-credit RCM-001..027. The GROC-F019..F034 features remain SPECIFIED on generic contracts and none has been implemented.",
+    "Grocery Rounds cannot take real customer money: AML/KYC is absent (review H5), the protection broker quote is not obtained (H2, RCM-019), the procurement reserve percentage is undeclared (RCM-016), and four counsel confirmations are outstanding under ACT-REG-004, ACT-REG-001 and ACT-REG-007.",
+    "The margin and pricing engine is specified and not built (26_MARGIN_AND_PRICING). Three of its five open questions are blocking, including its module and Feature ID, so it is not yet allocated in the registry."
+  ],
+  "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..007 are LOCKED; DEC-008 is PROPOSED and blocked on stakeholder answers."
 }
