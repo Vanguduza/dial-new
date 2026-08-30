@@ -5,7 +5,8 @@ decisions of `GROCERY_ROUNDS_MASTER_PLAN_v1.md`.
 **Answers:** review findings B1 (second money authority), B3 (what the member is
 buying), B4 (deposit versus taxable supply).
 **Executable form:** `packages/round-credit/src/credit-model.ts`, rules
-`RCM-001..027`, proven by `tests/round-credit.test.ts`.
+`RCM-001..027`, proven by `tests/round-credit.test.ts`. Pricing consequences feed
+`26_MARGIN_AND_PRICING/MARGIN_ENGINE_SPEC_v1.md`.
 **Revision:** Rev 3, 30 Aug 2026 — see §0. Rev 3 closes the tax question against
 Zimbabwean law as it now stands and supersedes Rev 2 on the tax point only; Rev
 2's other three decisions stand.
@@ -554,6 +555,18 @@ as the insurer. The safe construction is that Dial buys cover for **Dial's own
 obligation**, prices that cost into the tier, and *discloses* that roughly 4% of
 the price funds it. Disclosing what a price is made of is not selling a policy.
 The wording clears with the `ACT-REG-007` owner before it is published.
+
+**Disclosure is lawful, and it obliges accuracy** (`RCM-019`). Telling a member
+that part of the price funds protection is not itself regulated activity — and
+consumer law generally favours saying what a price is made of. Two conditions
+attach. The cover must actually be **bound** before anything is said about it,
+because describing protection that does not yet exist is a misrepresentation
+whether or not it was meant as one, and it surfaces at the moment of a claim. And
+having said it, §16.5's disclosure duty engages: insurer, scope, limits,
+exclusions and eligibility — **including that the cover does not reach ordinary
+commercial shortfall** (review finding B2). "Part of this funds protection", on
+its own, is true and misleading at the same time. `coverBoundRef` and
+`scopeDisclosureVersion` are required as soon as the charge is disclosed.
 
 **The rate is quoted, not assumed** (`RCM-019`). Advance-payment and performance
 guarantee pricing for an unrated startup principal is exactly where H2 expected

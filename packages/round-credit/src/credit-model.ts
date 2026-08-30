@@ -120,6 +120,23 @@ export interface ProtectionLevy {
   presentedAsMemberPremium: boolean;
   /** Indicative broker pricing. Until this exists the rate is an assumption (review finding H2). */
   brokerQuoteRef: string | null;
+  /**
+   * The policy actually bound, naming insurer and period.
+   *
+   * Required once the member is told any part of the price funds protection.
+   * Saying so while nothing is bound is a misrepresentation regardless of intent,
+   * and it is the kind that surfaces at the moment of a claim.
+   */
+  coverBoundRef: string | null;
+  /**
+   * The published statement of what the cover does and does not reach.
+   *
+   * §16.5 already requires accurate disclosure of insurer, scope, limits,
+   * exclusions and eligibility. Telling a member that part of their money buys
+   * protection, without telling them protection does not reach ordinary
+   * commercial shortfall (review finding B2), is true and misleading at once.
+   */
+  scopeDisclosureVersion: string | null;
 }
 
 /** Every exit a member may take. None of them is cash, by construction. */
@@ -641,6 +658,27 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
         ),
       );
     }
+    if (levy.basisPoints > 0 && levy.separatelyDeclared) {
+      if (!levy.coverBoundRef) {
+        findings.push(
+          refuse(
+            'RCM-019',
+            'A member may be told part of the price funds protection only once that protection is actually bound.',
+            'Record coverBoundRef, or stop disclosing the protection element until cover is in force. Disclosure is lawful and generally encouraged; disclosure of cover that does not yet exist is a misrepresentation, and it surfaces at the moment of a claim.',
+          ),
+        );
+      }
+      if (!levy.scopeDisclosureVersion) {
+        findings.push(
+          refuse(
+            'RCM-019',
+            'Disclosing the protection element obliges Dial to state what it covers and what it does not.',
+            'Record scopeDisclosureVersion, stating insurer, scope, limits, exclusions and eligibility per \u00a716.5 \u2014 including that cover does not reach ordinary commercial shortfall (review finding B2). "Part of this funds protection" without that is true and misleading at the same time.',
+          ),
+        );
+      }
+    }
+
     if (levy.basisPoints > 0 && !levy.brokerQuoteRef) {
       findings.push(
         refuse(

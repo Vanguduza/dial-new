@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T19:18:31.099Z",
+  "generated_at": "2026-08-30T19:41:21.492Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 221,
+  "file_count": 222,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 8718,
-      "sha256": "f805a8a7790840969455b304f9ecb0f66e751deb18439e35d73befeb93c1d873"
+      "sha256": "043692680cb4efd3a789849860b45a7c5fa18e9a7fd0c6e28679c281097ee239"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -1118,8 +1118,13 @@
     },
     {
       "path": "25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md",
-      "bytes": 38173,
-      "sha256": "c114a4977167c171dcfa3a51963c3a2fd8cab441f5a040c334569e14fa7d6ec4"
+      "bytes": 39107,
+      "sha256": "70d8018bb61f49799f4b6ca6866cad330b75064e9de6c609d56c8d55c785808a"
+    },
+    {
+      "path": "26_MARGIN_AND_PRICING/MARGIN_ENGINE_SPEC_v1.md",
+      "bytes": 12224,
+      "sha256": "f6c3b17e936ab75ddf5f51bc7ce19f8881ba2838ca4a4d73b6feaf5d974781a5"
     },
     {
       "path": "README_v2_1.md",

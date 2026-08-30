@@ -73,6 +73,8 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
     deductedFromCreditValue: false,
     presentedAsMemberPremium: false,
     brokerQuoteRef: 'rfq-2026-08-1',
+    coverBoundRef: 'pol-2026-nd-0117',
+    scopeDisclosureVersion: 'cover-scope-2026-08-1',
   },
   priceRiskDisclosureVersion: 'pr-2026-08-1',
   consentGatewayVersion: 'gw-2026-08-1',
@@ -619,6 +621,8 @@ describe('the protection charge', () => {
             deductedFromCreditValue: false,
             presentedAsMemberPremium: false,
             brokerQuoteRef: null,
+            coverBoundRef: 'pol-2026-nd-0117',
+            scopeDisclosureVersion: 'cover-scope-2026-08-1',
           },
         }),
       ).conformant,
@@ -636,6 +640,8 @@ describe('the protection charge', () => {
           deductedFromCreditValue: true,
           presentedAsMemberPremium: false,
           brokerQuoteRef: 'rfq-2026-08-1',
+          coverBoundRef: 'pol-2026-nd-0117',
+          scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
       }),
     );
@@ -653,10 +659,51 @@ describe('the protection charge', () => {
           deductedFromCreditValue: false,
           presentedAsMemberPremium: true,
           brokerQuoteRef: 'rfq-2026-08-1',
+          coverBoundRef: 'pol-2026-nd-0117',
+          scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
       }),
     ).findings.find((f) => f.rule === 'RCM-019');
     expect(finding?.remedy).toMatch(/ACT-REG-007/);
+  });
+
+  it('refuses telling the member about cover that is not bound', () => {
+    // Disclosure is lawful. Disclosing cover that does not exist is not.
+    const rules = rulesFrom(
+      conformant({
+        protectionLevy: { ...conformant().protectionLevy!, coverBoundRef: null },
+      }),
+    );
+    expect(rules).toContain('RCM-019');
+  });
+
+  it('refuses disclosing the charge without stating what the cover reaches', () => {
+    const finding = validateRoundCreditModel(
+      conformant({
+        protectionLevy: { ...conformant().protectionLevy!, scopeDisclosureVersion: null },
+      }),
+    ).findings.find((f) => f.rule === 'RCM-019');
+    expect(finding?.remedy).toMatch(/ordinary commercial shortfall/);
+  });
+
+  it('does not demand a scope disclosure when nothing is disclosed', () => {
+    // Protection funded silently from margin carries no disclosure obligation,
+    // because no statement was made to the member.
+    expect(
+      rulesFrom(
+        conformant({
+          protectionLevy: {
+            basisPoints: 0,
+            separatelyDeclared: true,
+            deductedFromCreditValue: false,
+            presentedAsMemberPremium: false,
+            brokerQuoteRef: null,
+            coverBoundRef: null,
+            scopeDisclosureVersion: null,
+          },
+        }),
+      ),
+    ).not.toContain('RCM-019');
   });
 
   it('refuses a non-zero charge with no broker quote behind it', () => {
@@ -668,6 +715,8 @@ describe('the protection charge', () => {
           deductedFromCreditValue: false,
           presentedAsMemberPremium: false,
           brokerQuoteRef: null,
+          coverBoundRef: 'pol-2026-nd-0117',
+          scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
       }),
     );
@@ -684,6 +733,8 @@ describe('the protection charge', () => {
             deductedFromCreditValue: false,
             presentedAsMemberPremium: false,
             brokerQuoteRef: 'rfq-2026-08-1',
+            coverBoundRef: 'pol-2026-nd-0117',
+            scopeDisclosureVersion: 'cover-scope-2026-08-1',
           },
         }),
       );
