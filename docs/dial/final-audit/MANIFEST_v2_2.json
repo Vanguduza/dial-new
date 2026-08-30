@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T20:13:26.180Z",
+  "generated_at": "2026-08-30T20:29:31.232Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 224,
+  "file_count": 225,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 10151,
-      "sha256": "ac1ebe6c7f8bab1b6350b71037a682bc427ab28c699be4fc344f0faabe2f36d6"
+      "sha256": "064d6301620709aa842e22167829dc4839d819b4e8374e0aa2df34daf221b44d"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
-      "bytes": 10488,
-      "sha256": "019f0e619c2493541a6e2ec383e9715fdf124a629a262cb7fa9c664d8e7bb5ab"
+      "bytes": 12913,
+      "sha256": "a2d018ea10ae79e278c6bcad50e31159a5648c57938bd553e9fef086d5ea7c55"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -1135,6 +1135,11 @@
       "path": "26_MARGIN_AND_PRICING/MARGIN_ENGINE_SPEC_v1.md",
       "bytes": 12224,
       "sha256": "f6c3b17e936ab75ddf5f51bc7ce19f8881ba2838ca4a4d73b6feaf5d974781a5"
+    },
+    {
+      "path": "26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md",
+      "bytes": 9027,
+      "sha256": "2a1c163c8a3dc120341924c8f7f3caeeadf82426f756b43b9e7dc704d0d5373f"
     },
     {
       "path": "README_v2_1.md",

@@ -23,7 +23,8 @@ ledger / reconciliation** — is gated by `ACT-REG-001`, `ACT-REG-002` and
 unfinished through thirteen further steps. **Steps 7 and 8 — Spare vehicle
 foundation and transition/EPC migration** — assume the catalogue and flow packs
 are built in this repository. They are not: they are produced elsewhere and
-injected against `24_INJECTION_STANDARDS`, on a clock this team does not control.
+injected against `24_INJECTION_STANDARDS`, so those steps are re-read as *receive,
+validate, integrate*.
 
 And v2.1 predates 38 of the current 244 features: Grocery Rounds
 (`GROC-F019..F034`) and DKRF (`DKRF-F001..F022`). Neither appears in its sequence.
@@ -81,9 +82,9 @@ Two consequences worth planning around:
 ## 4. Execution: three tracks, not sixteen steps
 
 v2.1's numbered sequence remains the dependency map — nothing below reverses its
-ordering. What changes is that the work runs in three concurrent tracks, because
-two of the three are waiting on parties outside this team and starting them late
-is the single most expensive available mistake.
+ordering. What changes is that the work runs in three concurrent tracks. Track B
+runs on other people's calendars, so it starts today — but it gates *activation*,
+not development, and nothing in Tracks A or C waits on it.
 
 ### Track A — Kernel (unblocked, engineering, starts immediately)
 
@@ -98,21 +99,41 @@ fan out.
 acceptance contract, and at least one carrying an independent specialist review so
 the review path itself is proven and not merely described.
 
-### Track B — External clock (starts today, no engineering)
+### Track B — External clock (runs alongside; gates activation, not development)
 
-None of these need a developer, all of them gate something, and each runs on
-someone else's calendar:
+None of these need a developer, and — the correction that matters — **none of them
+blocks building.** They gate taking a real customer's money and publishing a
+public price. Confusing the two is how a project waits on other people for work it
+could already be doing.
 
-| Item | Gates | Owner |
+| Item | Gates | Status |
 |---|---|---|
-| Catalogue delivery schedule from the producing pipeline | every Spare customer-ready gate; the whole Spare slice | Catalogue / `ACT-REG-011` |
-| AML/KYC responsibility matrix | Grocery Rounds taking real money (review H5) | `ACT-REG-001` |
-| Protection broker quote | Round tier pricing (`RCM-019`, review H2) | `ACT-REG-007` |
-| Counsel meeting — four questions in one sitting | exempt schedule, voucher provision, in-kind exit, protection wording | `ACT-REG-004`, `ACT-REG-001`, `ACT-REG-007` |
-| ZIMRA ruling, only if deferral is wanted | `RCM-007` | `ACT-REG-004` |
+| Catalogue and flow pack delivery | Spare customer-ready gates | **In flight.** Produced externally, injected against `24_INJECTION_STANDARDS` and validated by `packages/catalog-coverage/src/injection.ts`. A scheduled dependency, not an open blocker. |
+| Broker conversation | publishing a Round tier (`RCM-019` at `TIERS_PUBLISHED`) | Rate resolved as a working figure — see below. The open question is availability and collateral for an unrated principal, not price. |
+| Counsel, half an hour | the two questions research could not close | Narrowed from four questions to two: the National Payment Systems Act stored-value position, and the Consumer Protection Act reading of non-redeemability. |
+| AML/KYC responsibility matrix | Grocery Rounds taking real money | Genuinely required by `ACT-REG-001`. Unchanged. |
 
-**Exit:** each item either delivered or returned with a date. A date is a result;
-silence is not.
+**Three of the original four questions are now closed by research**, recorded with
+their primary sources in
+`26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md`:
+
+- **Deposit-taking — no.** The Banking Act's "banking business" is cumulative:
+  accepting repayable deposits **and** employing them by lending. Round credits
+  fail both limbs independently — nothing is repayable, and the money buys stock
+  rather than being lent.
+- **Insurance intermediation — no.** An agent acts on behalf of an insurer, a
+  broker on behalf of another person, and insurance business means assuming an
+  insurer's obligations. Dial insuring its own delivery obligation and pricing the
+  cost into the product is none of the three. The line is exactly where `RCM-019`
+  already drew it: registration risk starts only if the member becomes the insured.
+- **Protection rate — 4% stands.** Published surety pricing runs 1–3% for contract
+  bonds and up to 10% at the licence-bond end, so 4% for an unrated principal is
+  defensible planning. Trade credit insurance rates were the wrong comparator; they
+  cover a seller against a buyer, which is the opposite exposure.
+
+**Exit:** the AML/KYC matrix delivered, the broker question answered on
+availability, and the two counsel questions closed. Each has a date or it is not a
+plan.
 
 ### Track C — Margin and pricing engine (near-unblocked, high leverage)
 
@@ -126,23 +147,31 @@ refusal path proven on a missing input.
 
 ## 5. The milestone that matters
 
-**One vertical slice at `STAGING_GREEN`** — a single customer journey from action
-to fulfilled outcome, exercising kernel, money, catalogue and frontend contracts
-together at small scale.
+**The Grocery Rounds vertical slice at `STAGING_GREEN`** — the master plan's §26,
+sixteen steps from *create Round* to *reconcile and complete*, exercising kernel,
+money, entitlement and frontend contracts together at small scale.
 
-Do not choose the slice now. Both candidates are blocked on Track B, and which
-unblocks first is not yet known:
+It is chosen, not deferred. The two candidates are not equally blocked:
 
-- **Spare slice** — vehicle resolution → transition → hit region → part → cart →
-  order. The differentiated product, and the one with the most existing code. It
-  cannot be proven without an injected catalogue.
-- **Grocery Rounds slice** — the master plan's §26, against the locked credit
-  model in `packages/round-credit`. It has no catalogue dependency and can run
-  against the sandbox `EscrowAdapter`, but it cannot take real customer money
-  until the AML/KYC matrix, the broker quote and counsel are done.
+- **Grocery Rounds is buildable now.** Its money model is locked (`DEC-001..007`)
+  and enforced by `packages/round-credit`; the deposit-taking and intermediation
+  questions are closed by research; the protection rate has a defensible figure;
+  and the sandbox `EscrowAdapter` exists for exactly this. Every remaining Track B
+  item gates taking real money, not writing code. All sixteen §26 steps can reach
+  `STAGING_GREEN` without another party answering anything.
+- **Spare reaches a demo sooner than a proof.** It can run against
+  `examples/hilux-an130/`, but that pack's hand-authored DGM ids are rejected by
+  `isProductionDgmId`, so the eleven-stage gate correctly reports zero
+  customer-ready vehicles throughout. The slice would prove the plumbing and not
+  the product. It becomes the stronger slice the moment a real catalogue lands, and
+  that work is scheduled rather than blocked.
 
-Choose when Track B reports. Until then, build the slice's contracts — that work
-is useful under either answer.
+**The real cost of the slice, stated up front.** §26 touches roughly six of
+`GROC-F019..F034` — agreement and consent, the Round ledger, entitlement,
+allocation, procurement lock, delivery — and none of them has an acceptance
+contract. Six contracts is the first fortnight, before any implementation. That is
+not a reason to choose differently; it is the price of the first slice under §3's
+throttle, and it is the same price whichever slice is chosen.
 
 ## 6. Where the 38 late features sit
 

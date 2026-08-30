@@ -72,7 +72,7 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
     separatelyDeclared: true,
     deductedFromCreditValue: false,
     presentedAsMemberPremium: false,
-    brokerQuoteRef: 'rfq-2026-08-1',
+    rateBasis: { kind: 'RESEARCHED_POSITION', ref: 'protection-legal-research-v1' },
     coverBoundRef: 'pol-2026-nd-0117',
     scopeDisclosureVersion: 'cover-scope-2026-08-1',
   },
@@ -88,6 +88,7 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
   creditOwnership: 'MEMBER',
   revenueRecognisedAt: 'SETTLEMENT',
   procurementReservePercent: 0,
+  commercialStage: 'DEVELOPMENT',
   ...over,
 });
 
@@ -620,7 +621,7 @@ describe('the protection charge', () => {
             separatelyDeclared: true,
             deductedFromCreditValue: false,
             presentedAsMemberPremium: false,
-            brokerQuoteRef: null,
+            rateBasis: null,
             coverBoundRef: 'pol-2026-nd-0117',
             scopeDisclosureVersion: 'cover-scope-2026-08-1',
           },
@@ -639,7 +640,7 @@ describe('the protection charge', () => {
           separatelyDeclared: true,
           deductedFromCreditValue: true,
           presentedAsMemberPremium: false,
-          brokerQuoteRef: 'rfq-2026-08-1',
+          rateBasis: { kind: 'RESEARCHED_POSITION', ref: 'protection-legal-research-v1' },
           coverBoundRef: 'pol-2026-nd-0117',
           scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
@@ -658,7 +659,7 @@ describe('the protection charge', () => {
           separatelyDeclared: true,
           deductedFromCreditValue: false,
           presentedAsMemberPremium: true,
-          brokerQuoteRef: 'rfq-2026-08-1',
+          rateBasis: { kind: 'RESEARCHED_POSITION', ref: 'protection-legal-research-v1' },
           coverBoundRef: 'pol-2026-nd-0117',
           scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
@@ -697,7 +698,7 @@ describe('the protection charge', () => {
             separatelyDeclared: true,
             deductedFromCreditValue: false,
             presentedAsMemberPremium: false,
-            brokerQuoteRef: null,
+            rateBasis: null,
             coverBoundRef: null,
             scopeDisclosureVersion: null,
           },
@@ -706,7 +707,29 @@ describe('the protection charge', () => {
     ).not.toContain('RCM-019');
   });
 
-  it('refuses a non-zero charge with no broker quote behind it', () => {
+  it('accepts a researched position while the product is in development', () => {
+    // Waiting for a quote to start building confuses what gates launch with
+    // what gates work.
+    expect(validateRoundCreditModel(conformant()).conformant).toBe(true);
+  });
+
+  it('requires a real quote once tiers go in front of customers', () => {
+    const rules = rulesFrom(conformant({ commercialStage: 'TIERS_PUBLISHED' }));
+    expect(rules).toContain('RCM-019');
+    expect(
+      validateRoundCreditModel(
+        conformant({
+          commercialStage: 'TIERS_PUBLISHED',
+          protectionLevy: {
+            ...conformant().protectionLevy!,
+            rateBasis: { kind: 'BROKER_QUOTE', ref: 'rfq-2026-08-1' },
+          },
+        }),
+      ).conformant,
+    ).toBe(true);
+  });
+
+  it('refuses a non-zero charge resting on nothing at all', () => {
     const rules = rulesFrom(
       conformant({
         protectionLevy: {
@@ -714,7 +737,7 @@ describe('the protection charge', () => {
           separatelyDeclared: true,
           deductedFromCreditValue: false,
           presentedAsMemberPremium: false,
-          brokerQuoteRef: null,
+          rateBasis: null,
           coverBoundRef: 'pol-2026-nd-0117',
           scopeDisclosureVersion: 'cover-scope-2026-08-1',
         },
@@ -732,7 +755,7 @@ describe('the protection charge', () => {
             separatelyDeclared: true,
             deductedFromCreditValue: false,
             presentedAsMemberPremium: false,
-            brokerQuoteRef: 'rfq-2026-08-1',
+            rateBasis: { kind: 'RESEARCHED_POSITION', ref: 'protection-legal-research-v1' },
             coverBoundRef: 'pol-2026-nd-0117',
             scopeDisclosureVersion: 'cover-scope-2026-08-1',
           },

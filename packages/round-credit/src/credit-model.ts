@@ -118,8 +118,15 @@ export interface ProtectionLevy {
    * the same act as selling the member a policy.
    */
   presentedAsMemberPremium: boolean;
-  /** Indicative broker pricing. Until this exists the rate is an assumption (review finding H2). */
-  brokerQuoteRef: string | null;
+  /**
+   * What the rate rests on.
+   *
+   * A researched position is sufficient to build and to price a pilot; a broker
+   * quote is required before tiers are published to customers. The distinction
+   * matters because waiting for a quote to start building confuses what gates
+   * launch with what gates work.
+   */
+  rateBasis: { kind: 'BROKER_QUOTE' | 'RESEARCHED_POSITION'; ref: string } | null;
   /**
    * The policy actually bound, naming insurer and period.
    *
@@ -238,6 +245,13 @@ export interface RoundCreditConfiguration {
   revenueRecognisedAt: 'CREDIT_ISSUE' | 'SETTLEMENT';
   /** Percentage of unsettled credit value held in committed stock or forward contracts. May be 0; may not be undeclared. */
   procurementReservePercent: number | null;
+  /**
+   * Where the product is in its commercial life.
+   *
+   * DEVELOPMENT builds and pilots against researched positions. TIERS_PUBLISHED
+   * puts a price in front of customers and raises the evidence bar accordingly.
+   */
+  commercialStage: 'DEVELOPMENT' | 'TIERS_PUBLISHED';
 }
 
 const refuse = (
@@ -679,12 +693,26 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
       }
     }
 
-    if (levy.basisPoints > 0 && !levy.brokerQuoteRef) {
+    if (levy.basisPoints > 0 && !levy.rateBasis) {
       findings.push(
         refuse(
           'RCM-019',
-          'A non-zero protection charge is priced against an indicative broker quote before tiers are published.',
-          'Record brokerQuoteRef. Advance-payment and performance guarantee cover for an unrated startup principal is where review finding H2 expects 4–6%; publishing a tier on an assumed rate anchors pricing that may not hold.',
+          'A non-zero protection charge rests on something — a broker quote, or a documented researched position.',
+          'Record rateBasis. The researched position at 26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md puts surety-class cover at 1–3% for ordinary contract risks and up to 10% at the licence-bond end, which makes 4% defensible planning for an unrated principal.',
+        ),
+      );
+    }
+    if (
+      levy.basisPoints > 0 &&
+      config.commercialStage === 'TIERS_PUBLISHED' &&
+      levy.rateBasis?.kind !== 'BROKER_QUOTE'
+    ) {
+      findings.push(
+        refuse(
+          'RCM-019',
+          'A tier published to customers is priced on a real quote, not on research.',
+          'Obtain the broker quote before publishing tiers and record it as rateBasis. Research is enough to build and to price a pilot; it is not enough to anchor a public price, and for an unrated startup principal the open question is availability and collateral rather than rate.',
+          levy.rateBasis?.kind ?? '(none)',
         ),
       );
     }
