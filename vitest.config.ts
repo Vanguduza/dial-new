@@ -1,11 +1,18 @@
 import { defineConfig } from 'vitest/config';
 
+/**
+ * Vitest owns the unit, contract and integration suites. It must not collect
+ * `tests/e2e`, which is Playwright's — those specs call `test.describe()` from
+ * `@playwright/test` and throw "Playwright Test did not expect test.describe()
+ * to be called here" the moment vitest imports them.
+ *
+ * This never surfaced while Playwright was uninstalled: the spec existed but
+ * nothing could resolve its import, so it was skipped rather than run. Adding
+ * the dependency turned a silently absent suite into a failing one.
+ */
 export default defineConfig({
   test: {
-    // tests/e2e is Playwright's. Without this exclusion vitest collects the
-    // spec files, fails to resolve @playwright/test's runner and reports a
-    // suite failure that has nothing to do with the code under test.
     include: ['tests/**/*.test.ts'],
-    exclude: ['tests/e2e/**', 'node_modules/**', 'dist/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });
