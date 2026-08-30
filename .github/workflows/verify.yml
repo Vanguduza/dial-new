@@ -57,6 +57,11 @@ jobs:
       - name: manifest is current
         run: node agent-system/bin/manifest-write.mjs --check
 
+      # The scorecard is the project's own answer to "is this ready". It carried
+      # hand-written counts and still said 186 features after twenty were added.
+      - name: readiness scorecard is current
+        run: node agent-system/bin/scorecard-refresh.mjs --check
+
   pack:
     name: pipeline produces a conforming pack
     runs-on: ubuntu-latest

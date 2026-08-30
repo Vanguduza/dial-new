@@ -13,61 +13,20 @@
 // the distance to target so progress is visible.
 import fs from 'node:fs';
 import path from 'node:path';
+import { readRegistries, computeCt1, computeCt2 } from '../lib/registry-metrics.mjs';
 
 const root = process.cwd();
 const pack = 'docs/dial/final-audit';
 const load = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 
-const frcs = load(`${pack}/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json`);
-const eventualities = load(`${pack}/20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EXECUTABLE_EVENTUALITY_CONTRACT_REGISTRY.json`);
-
-const countDistinct = (items) => new Set(items.map((v) => JSON.stringify(v))).size;
-
-// ── CT-1 metrics ───────────────────────────────────────────────────────────
-// Strip the aggregate name so two commands that differ only by which aggregate
-// they act on collapse to the same skeleton.
-const skeleton = (frc) =>
-  [...(frc.commands ?? [])].sort().map((command) => command.split(frc.aggregate).join('<A>'));
-
-const LIFECYCLE = new Set([
-  'Create<A>', 'Start<A>', 'Block<A>', 'Resume<A>', 'Complete<A>', 'Cancel<A>',
-]);
-
-let commandTotal = 0;
-let commandLifecycle = 0;
-for (const frc of frcs) {
-  for (const command of skeleton(frc)) {
-    commandTotal += 1;
-    if (LIFECYCLE.has(command)) commandLifecycle += 1;
-  }
-}
-
-const ct1 = {
-  features: frcs.length,
-  distinct_command_skeletons: countDistinct(frcs.map(skeleton)),
-  lifecycle_boilerplate_commands: commandLifecycle,
-  total_commands: commandTotal,
-  feature_specific_command_ratio: Number(
-    ((commandTotal - commandLifecycle) / commandTotal).toFixed(3),
-  ),
-  distinct_state_models: countDistinct(frcs.map((f) => f.states)),
-  distinct_acceptance_contracts: countDistinct(frcs.map((f) => f.acceptance_contract)),
-  distinct_permission_skeletons: countDistinct(
-    frcs.map((f) => [...(f.permissions ?? [])].map((p) => p.split('.').pop()).sort()),
-  ),
-  distinct_eventuality_ref_sets: countDistinct(frcs.map((f) => f.eventuality_refs)),
-};
-
-// ── CT-2 metrics ───────────────────────────────────────────────────────────
-const material = eventualities.filter((e) => e.materiality === 'MATERIAL');
-const ct2 = {
-  eventualities: eventualities.length,
-  material: material.length,
-  distinct_test_definitions: countDistinct(eventualities.map((e) => e.tests)),
-  distinct_procedures: countDistinct(eventualities.map((e) => e.procedure_steps)),
-  distinct_compensation_rules: countDistinct(eventualities.map((e) => e.compensation_rule)),
-  distinct_evidence_sets: countDistinct(eventualities.map((e) => e.evidence_to_freeze)),
-};
+// The metrics live in agent-system/lib/registry-metrics.mjs so this check and
+// the build readiness scorecard report the same numbers. They were computed
+// separately once, and the scorecard drifted.
+const registries = readRegistries(root);
+const frcs = registries.frcs;
+const eventualities = registries.eventualities;
+const ct1 = computeCt1(frcs);
+const ct2 = computeCt2(eventualities);
 
 const metrics = { ct1, ct2 };
 
@@ -90,7 +49,7 @@ if (process.argv.includes('--write-baseline') || !fs.existsSync(absoluteBaseline
           'ct1.distinct_acceptance_contracts': frcs.length,
           'ct1.distinct_permission_skeletons': 'one per aggregate archetype at minimum',
           'ct1.feature_specific_command_ratio': 0.75,
-          'ct2.distinct_test_definitions': material.length,
+          'ct2.distinct_test_definitions': ct2.material,
         },
       },
       null,
@@ -125,7 +84,7 @@ if (regressions.length) {
 
 const atTarget =
   ct1.distinct_acceptance_contracts === frcs.length &&
-  ct2.distinct_test_definitions >= material.length;
+  ct2.distinct_test_definitions >= ct2.material;
 
 console.log(
   `\nCT-7 contract specificity: ${atTarget ? 'GREEN' : 'AMBER — no regression, below target'}`,
@@ -133,6 +92,6 @@ console.log(
 if (!atTarget) {
   console.log(
     `  acceptance contracts  ${ct1.distinct_acceptance_contracts} / ${frcs.length}\n` +
-    `  eventuality test sets ${ct2.distinct_test_definitions} / ${material.length}`,
+    `  eventuality test sets ${ct2.distinct_test_definitions} / ${ct2.material}`,
   );
 }

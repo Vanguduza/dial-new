@@ -5,25 +5,24 @@
   "repository_status": "BOOTSTRAP_APPLIED",
   "broad_feature_fanout_authorized": false,
   "controlled_foundation_engineering_authorized": true,
-  "authorization_condition": "Raise CT-1/CT-2 contract specificity for the pilot feature and its bounded context, complete the remaining repository bootstrap tasks (RBC-007, RBC-009, RBC-010), and prove one pilot Feature end-to-end.",
-  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened.",
+  "authorization_condition": "Complete RBC-009 (prove one pilot Feature to DOMAIN_TESTED through the v2 bounded-context loop) and then RBC-010. The Playwright suite has never executed anywhere, so no feature can honestly claim DOMAIN_TESTED until CI runs it; .github/workflows/verify.yml exists for that and requires a git remote, which is not yet configured.",
+  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight.",
   "closure_tests": [
     {
       "test": "CT-1 Concrete Feature Contracts",
       "status": "AMBER",
       "previous_status": "GREEN",
       "evidence": {
-        "features": 186,
-        "frcs": 186,
-        "distinct_command_names": 183,
-        "distinct_command_skeletons_after_aggregate_substitution": 39,
-        "lifecycle_boilerplate_commands": 678,
-        "total_commands": 1450,
-        "feature_specific_command_ratio": 0.532,
-        "distinct_state_models": 12,
-        "distinct_acceptance_contracts": 1,
-        "distinct_permission_skeletons": 2,
-        "distinct_eventuality_ref_sets": 11
+        "features": 206,
+        "frcs": 206,
+        "distinct_command_skeletons_after_aggregate_substitution": 59,
+        "lifecycle_boilerplate_commands": 684,
+        "total_commands": 1688,
+        "feature_specific_command_ratio": 0.595,
+        "distinct_state_models": 32,
+        "distinct_acceptance_contracts": 22,
+        "distinct_permission_skeletons": 23,
+        "distinct_eventuality_ref_sets": 12
       },
       "why_amber": "CT-1 requires a per-feature acceptance contract and per-feature permissions. One acceptance contract and two permission skeletons cover all 186 features, and 67 features share a single Create/Start/Block/Resume/Complete/Cancel skeleton. The structural elements are present; the feature-specific content is not yet.",
       "remedy": "Author per-feature acceptance contracts and permission sets ahead of each feature entering implementation, starting with the pilot's bounded context. Tracked by CT-7 against a committed baseline."
@@ -76,7 +75,11 @@
         "repo_bootstrap_tasks": 10,
         "complete": 7,
         "pending": 3,
-        "pending_ids": ["RBC-007", "RBC-009", "RBC-010"],
+        "pending_ids": [
+          "RBC-007",
+          "RBC-009",
+          "RBC-010"
+        ],
         "harness_executable": true,
         "checks_running": [
           "agent:v2-closure-check",
@@ -95,44 +98,63 @@
       "status": "AMBER",
       "introduced_in": "2.2",
       "evidence": {
-        "baseline": "agent-system/registries/CONTRACT_SPECIFICITY_BASELINE.json",
-        "gate": "regression-blocking; specificity may not decrease",
-        "acceptance_contracts": "1 of 186",
-        "eventuality_test_definitions": "8 of 233 material"
+        "features": 206,
+        "frcs": 206,
+        "distinct_command_skeletons_after_aggregate_substitution": 59,
+        "lifecycle_boilerplate_commands": 684,
+        "total_commands": 1688,
+        "feature_specific_command_ratio": 0.595,
+        "distinct_state_models": 32,
+        "distinct_acceptance_contracts": 22,
+        "distinct_permission_skeletons": 23,
+        "distinct_eventuality_ref_sets": 12,
+        "material_eventualities": 233,
+        "distinct_eventuality_test_definitions": 8
       },
       "why_it_exists": "CT-1 and CT-2 were reported green by counting interpolated names. CT-7 measures the property those tests were meant to assert, and blocks regression so the registries can only become more specific."
     }
   ],
   "counts": {
-    "top_level_features": 186,
-    "mandatory_realization_facets": 1674,
-    "feature_implementation_contracts": 186,
+    "top_level_features": 206,
+    "mandatory_realization_facets": 1854,
+    "feature_implementation_contracts": 206,
     "executable_eventuality_contracts": 254,
     "material_eventualities": 233,
-    "qualified_donor_records": 43,
+    "qualified_donor_records": 48,
     "nfr_system_profiles": 17,
     "deployment_environments": 7,
     "activation_blockers": 11,
     "operational_responsibility_records": 12,
     "master_data_families": 13,
     "branch_activation_records": 10,
-    "feature_security_profiles": 186,
+    "feature_security_profiles": 206,
     "security_controls": 120,
     "customer_endpoint_records": 166,
     "supporting_capabilities": 125,
     "whatsapp_flows": 59,
-    "pack_files": 211
+    "pack_files": 213
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",
   "commerce_frontend_decision": {
     "primary_frontend_donor": "jatolentino/Shop-Ecommerce",
-    "applies_to": ["SPARE", "GROCERIES"],
+    "applies_to": [
+      "SPARE",
+      "GROCERIES"
+    ],
     "mode": "PORT-SELECTED-FRONTEND-UX-UI",
     "backend_authority": "DIAL_NATIVE_ONLY"
   },
   "spare_transition_contracts": [
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
+  ],
+  "evidence_generation": "counts and the CT-1/CT-2/CT-7 evidence blocks are generated by agent-system/bin/scorecard-refresh.mjs from the live registries. Status, why_amber and remedy are hand-written judgement and are never machine-set.",
+  "known_not_done": [
+    "Playwright E2E suite has never been executed in any environment",
+    "No feature has reached DOMAIN_TESTED (206 features: 3 CODE_PRESENT, 203 SPECIFIED)",
+    "Identity fidelity is WAIVED_DEVELOPMENT_ADAPTER, not proven - measured silhouette IoU 0.545-0.589 against a 0.90 threshold",
+    "CATVIS-S005 carries three open Blueprint 4.3 blockers",
+    "No git remote configured, so no CI has ever run"
   ]
 }
