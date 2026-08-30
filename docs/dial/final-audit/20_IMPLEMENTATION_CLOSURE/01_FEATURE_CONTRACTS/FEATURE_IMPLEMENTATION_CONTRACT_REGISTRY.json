@@ -27866,9 +27866,10 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "groceries.grocery-order-group.read",
-      "groceries.grocery-order-group.create",
-      "groceries.grocery-order-group.act"
+      "groceries.round-agreement.read",
+      "groceries.round-agreement.publish",
+      "groceries.round-agreement.accept",
+      "groceries.round-acceptance.read"
     ],
     "data_entities": [
       "GroceryOrderGroup",
@@ -27926,16 +27927,22 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "creating a Round without a recorded acceptance is refused",
+      "joining a Round without a recorded acceptance is refused",
+      "a first purchase without a recorded acceptance is refused",
+      "each of the three proceeds when a valid acceptance for that member and Round exists",
+      "the agreement hash derives from content, and changes when the body or any component disclosure version changes",
+      "a version whose stored hash does not match its content is refused as tampered, and acceptances bound to it are void",
+      "an acceptance record missing any master plan §6.2 field is refused, with the missing field named",
+      "an agreement version lacking the price-risk disclosure is refused (DEC-002)",
+      "an agreement version lacking the exit-terms disclosure is refused (DEC-005)",
+      "an agreement version lacking the protection disclosure is refused (DEC-006)",
+      "a material change produces a new version with a different hash, leaving the prior version's content unchanged",
+      "an acceptance of a superseded version does not open a gated action",
+      "an acceptance of a superseded version still verifies against the version it was made against",
+      "an acceptance whose agreementHash does not match the version it names is void, however complete it otherwise is"
+    ],
+    "acceptance_contract_doc": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F022",

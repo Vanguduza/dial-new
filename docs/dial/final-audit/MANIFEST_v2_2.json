@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T20:29:31.232Z",
+  "generated_at": "2026-08-30T20:43:48.906Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 225,
+  "file_count": 226,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 10151,
-      "sha256": "064d6301620709aa842e22167829dc4839d819b4e8374e0aa2df34daf221b44d"
+      "sha256": "2740207f94f32cb959c66af3bcb84ceba9bf63e11063d40b8261ebea72e7f5eb"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -783,8 +783,13 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 924293,
-      "sha256": "67f973249e466acd85efde43ad331786e769f33fe9fd5a26eb62d080bb5a67b6"
+      "bytes": 925182,
+      "sha256": "b1f21265295a0ef58f42d1182a2eb6a508bc7c28768b58d29045fed14e72d52a"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md",
+      "bytes": 10147,
+      "sha256": "e4caaea36ffad6e004ae1837ab1dae44c11d8118d1491a6b993b66f27dd1851d"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
