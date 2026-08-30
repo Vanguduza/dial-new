@@ -60,6 +60,32 @@ export type CreditDenomination = 'GOODS' | 'CURRENCY';
  */
 export type FiscalisationModel = 'SINGLE_RECEIPT_AT_ISSUE' | 'PER_LINE_AT_COLLECTION';
 
+/**
+ * A credit pool — one tax character, one catalogue, one share of every payment.
+ *
+ * This exists because of a real objection: at the moment a member pays, nobody
+ * knows which items will settle the credit. The basket is chosen by vote months
+ * later, and the member picks brands and quantities after that.
+ *
+ * The answer is that we do not need to know the items. We need to know the
+ * **class**. A pool fixes the menu the vote may choose from, and every item on
+ * that menu carries the same VAT treatment, so the rate is determined at payment
+ * even though the shopping list is not. The vote stays entirely real — 10kg or
+ * 20kg, this brand or that — it simply cannot cross a tax boundary.
+ *
+ * A member wanting both staples and household goods subscribes once and the
+ * payment splits across two pools at a ratio they choose. One subscription, one
+ * debit order, one Round Room, two tax characters.
+ */
+export interface CreditPool {
+  poolId: string;
+  taxClass: BasketTaxClass;
+  /** This pool's share of every payment, in basis points. Pools must sum to 10,000. */
+  allocationBasisPoints: number;
+  /** Everything the vote may choose from. Every item shares the pool's tax class. */
+  catalogue: Array<{ itemId: string; taxClass: BasketTaxClass }>;
+}
+
 /** What a leaving member's credits buy. Standard retail, without Round benefits. */
 export type ExitPricing = 'STANDARD_RETAIL' | 'ROUND_PRICING';
 
@@ -121,8 +147,19 @@ export interface RoundCreditConfiguration {
   roundProductId: string;
   /** Must be GROCERY_FULFILMENT. Typed loosely so a bad value is refused, not un-compilable. */
   creditScope: string;
-  /** Null means undeclared, which is itself the refusal — the rate must be knowable when the money arrives. */
-  basketTaxClass: BasketTaxClass | null;
+  /**
+   * One pool per tax character. Empty is the refusal: without a pool there is no
+   * menu, and without a menu the rate is unknown when the money arrives.
+   */
+  pools: CreditPool[];
+  /**
+   * Must be true. A member may change the split for future payments, never for
+   * money already taken — moving value between pools after the fact would
+   * restate the VAT on a return already filed.
+   */
+  allocationFixedAtPayment: boolean;
+  /** The standard rate in basis points, from the dated schedule. 1550 = 15.5%. */
+  standardRateBasisPoints: number;
   taxPoint: 'CREDIT_ISSUE' | 'SETTLEMENT';
   /**
    * A written ZIMRA ruling permitting the tax point to fall at collection.
@@ -159,7 +196,6 @@ export interface RoundCreditConfiguration {
   revenueRecognisedAt: 'CREDIT_ISSUE' | 'SETTLEMENT';
   /** Percentage of unsettled credit value held in committed stock or forward contracts. May be 0; may not be undeclared. */
   procurementReservePercent: number | null;
-  ballotOptions: Array<{ optionId: string; taxClass: BasketTaxClass }>;
 }
 
 const refuse = (
@@ -236,28 +272,82 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
   // --- C3: the tax rate must be determinate at the tax point -----------------
 
   // Rev 3. Section 8 of the VAT Act fixes the time of supply at the earlier of
-  // invoice or payment, and no monetary-voucher exception has been confirmed for
-  // Zimbabwe, so the tax point falls when the member pays unless ZIMRA has said
-  // otherwise in writing. Each Round is therefore confined to one tax character,
-  // which is what lets the rate be applied on the day the money arrives.
-  if (config.basketTaxClass === null) {
+  // invoice or payment, so a rate has to be applied on the day the money arrives.
+  // Nobody knows the items then — the vote is months away — so the Round fixes
+  // the menu instead. Each pool is one tax character, and a payment splits across
+  // pools at a ratio fixed when it is taken.
+  if (config.pools.length === 0) {
     findings.push(
       refuse(
         'RCM-005',
-        'A Round declares its basket tax class when it is created.',
-        'Declare basketTaxClass. With the tax point at payment, a Round whose rate is settled by a later vote is taxed before anyone knows the rate.',
+        'A Round declares at least one credit pool, each with a single tax class.',
+        'Declare pools. Without a menu there is no way to know the rate when the money arrives, and the vote would be setting the rate of a supply already taxed.',
       ),
     );
   }
 
-  const offClass = config.ballotOptions.filter((o) => o.taxClass !== config.basketTaxClass);
-  if (offClass.length > 0) {
+  const seenPools = new Set<string>();
+  for (const pool of config.pools) {
+    if (seenPools.has(pool.poolId)) {
+      findings.push(
+        refuse(
+          'RCM-005',
+          'Each credit pool has a distinct id.',
+          'Rename the duplicate pool.',
+          pool.poolId,
+        ),
+      );
+    }
+    seenPools.add(pool.poolId);
+
+    const offClass = pool.catalogue.filter((item) => item.taxClass !== pool.taxClass);
+    if (offClass.length > 0) {
+      findings.push(
+        refuse(
+          'RCM-006',
+          `Every item the vote may choose in pool ${pool.poolId} carries that pool\u2019s tax class.`,
+          'Move the offending items to a pool of their own class. The vote may choose quantity, brand and mix freely; what it may not do is cross a tax boundary, because that would change the rate of a supply already taxed.',
+          offClass.map((i) => `${i.itemId}:${i.taxClass}`).join(', '),
+        ),
+      );
+    }
+    if (pool.catalogue.length === 0) {
+      findings.push(
+        refuse(
+          'RCM-006',
+          `Pool ${pool.poolId} has an empty catalogue, so there is nothing its credits can settle.`,
+          'Populate the pool catalogue, or remove the pool.',
+        ),
+      );
+    }
+  }
+
+  const allocation = config.pools.reduce((sum, p) => sum + p.allocationBasisPoints, 0);
+  if (config.pools.length > 0 && allocation !== 10_000) {
     findings.push(
       refuse(
-        'RCM-006',
-        'The basket vote chooses within the Round\u2019s declared tax class and never across it.',
-        'Remove the options outside the declared class from the ballot, or run them as a separate Round product. A basket spanning exempt staples and standard-rated goods has no single rate to charge at payment.',
-        offClass.map((o) => `${o.optionId}:${o.taxClass}`).join(', '),
+        'RCM-024',
+        'Pool allocations account for the whole payment, to the basis point.',
+        'Adjust allocationBasisPoints so the pools sum to 10,000. An unallocated remainder is money taken with no tax character.',
+        `${allocation} bp`,
+      ),
+    );
+  }
+  if (config.pools.some((p) => !Number.isInteger(p.allocationBasisPoints) || p.allocationBasisPoints < 1)) {
+    findings.push(
+      refuse(
+        'RCM-024',
+        'Each pool takes a positive whole-basis-point share of every payment.',
+        'Give every pool at least 1 basis point, or remove it.',
+      ),
+    );
+  }
+  if (!config.allocationFixedAtPayment) {
+    findings.push(
+      refuse(
+        'RCM-024',
+        'The split between pools is fixed when a payment is taken. A member may change it for future payments, never for money already collected.',
+        'Set allocationFixedAtPayment to true. Moving value between pools after the fact restates the VAT on a return already filed.',
       ),
     );
   }
@@ -267,7 +357,7 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
       refuse(
         'RCM-007',
         'Deferring the tax point to collection requires a written ZIMRA ruling. It is not a treatment Dial may elect.',
-        'Set taxPoint to CREDIT_ISSUE, or record deferralRulingRef once a ruling is held. Building the payment architecture on an unconfirmed deferral risks retrospective output VAT and penalties across the whole float \u2014 and on an exempt staples Round there is no output VAT to defer in the first place.',
+        'Set taxPoint to CREDIT_ISSUE, or record deferralRulingRef once a ruling is held. Building the payment architecture on an unconfirmed deferral risks retrospective output VAT and penalties across the whole float \u2014 and on an exempt staples pool there is no output VAT to defer in the first place.',
       ),
     );
   }
@@ -285,12 +375,12 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
-  const suppliesExempt = config.basketTaxClass === 'EXEMPT_BASIC_FOODSTUFFS';
+  const suppliesExempt = config.pools.some((p) => p.taxClass === 'EXEMPT_BASIC_FOODSTUFFS');
   if (suppliesExempt && config.inputTaxApportionmentMethod === 'NOT_APPLICABLE') {
     findings.push(
       refuse(
         'RCM-021',
-        'A Round supplying exempt goods cannot recover the input VAT attributable to them, so it declares how input tax is apportioned.',
+        'A Round with an exempt pool cannot recover the input VAT attributable to it, so it declares how input tax is apportioned.',
         'Set inputTaxApportionmentMethod to DIRECT_ATTRIBUTION or TURNOVER. Exempt is not zero-rated: SI 248 of 2023 moved maize meal, bread, milk, sugar, cooking oil and salt to exempt from 1 January 2024, and the VAT on logistics, packaging, warehousing and platform costs attributable to them becomes a permanent cost. This is larger than any tax-point choice and no tax-point choice touches it.',
       ),
     );
@@ -324,6 +414,23 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
         'The transfer-tax rate is between 0 and 1,000 basis points.',
         'Correct transferTaxBasisPoints.',
         String(config.transferTaxBasisPoints),
+      ),
+    );
+  }
+
+  const usesStandardRate = config.pools.some((p) => p.taxClass === 'STANDARD_RATED_MIXED');
+  if (
+    usesStandardRate &&
+    (!Number.isInteger(config.standardRateBasisPoints) ||
+      config.standardRateBasisPoints < 0 ||
+      config.standardRateBasisPoints > 5_000)
+  ) {
+    findings.push(
+      refuse(
+        'RCM-023',
+        'A Round with a standard-rated pool carries the rate it will charge, in basis points.',
+        'Set standardRateBasisPoints from the dated schedule \u2014 1550 for 15.5% from 1 January 2026.',
+        String(config.standardRateBasisPoints),
       ),
     );
   }
@@ -472,10 +579,85 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
-  // Twenty-one of the twenty-three rules are decidable from configuration. RCM-009 and
+  // Twenty-two of the twenty-four rules are decidable from configuration. RCM-009 and
   // RCM-010 are properties of a ledger in motion and are enforced by
   // projectCreditLedger and assertContractLiabilityInvariant below.
-  return { conformant: findings.length === 0, findings, checked: 21 };
+  return { conformant: findings.length === 0, findings, checked: 22 };
+}
+
+// ---------------------------------------------------------------------------
+// Payment allocation
+// ---------------------------------------------------------------------------
+
+export interface PoolAllocation {
+  poolId: string;
+  taxClass: BasketTaxClass;
+  /** What the member paid into this pool, VAT inclusive. */
+  grossMinor: number;
+  /** The part of it that belongs to ZIMRA. Zero for exempt and zero-rated pools. */
+  vatMinor: number;
+  /** What Dial keeps against its obligation to deliver. */
+  netMinor: number;
+}
+
+export interface PaymentAllocation {
+  grossMinor: number;
+  totalVatMinor: number;
+  pools: PoolAllocation[];
+}
+
+/**
+ * Split one payment across a Round's pools and work out the VAT on it.
+ *
+ * Shop prices in Zimbabwe are VAT inclusive, so the tax is extracted from the
+ * payment rather than added to it: on a standard-rated pool at 15.5%, the VAT in
+ * a gross amount is `gross x 1550 / 11550`.
+ *
+ * Allocation uses largest-remainder so the pool amounts sum to the payment
+ * exactly. Dropping a cent here would put the credit ledger and the bank a cent
+ * apart every month, per member, which is how a reconciliation becomes a project.
+ */
+export function allocatePayment(
+  config: RoundCreditConfiguration,
+  grossMinor: number,
+): PaymentAllocation {
+  if (!Number.isInteger(grossMinor) || grossMinor < 0) {
+    throw new Error(`Payment allocation: ${grossMinor} is not a whole number of minor units.`);
+  }
+  if (config.pools.length === 0) {
+    throw new Error('Payment allocation: the Round declares no pools, so the payment has no tax character.');
+  }
+  const totalBp = config.pools.reduce((sum, p) => sum + p.allocationBasisPoints, 0);
+  if (totalBp !== 10_000) {
+    throw new Error(`Payment allocation: pool shares sum to ${totalBp} bp, not 10,000 (RCM-024).`);
+  }
+
+  const exact = config.pools.map((pool) => (grossMinor * pool.allocationBasisPoints) / 10_000);
+  const floors = exact.map((v) => Math.floor(v));
+  let remainder = grossMinor - floors.reduce((a, b) => a + b, 0);
+  const order = exact
+    .map((value, index) => ({ index, fraction: value - floors[index]! }))
+    .sort((a, b) => b.fraction - a.fraction || a.index - b.index);
+  for (const { index } of order) {
+    if (remainder <= 0) break;
+    floors[index] = floors[index]! + 1;
+    remainder -= 1;
+  }
+
+  const pools: PoolAllocation[] = config.pools.map((pool, index) => {
+    const gross = floors[index]!;
+    const rate = pool.taxClass === 'STANDARD_RATED_MIXED' ? config.standardRateBasisPoints : 0;
+    // Exempt and zero-rated both charge nothing. They differ in what Dial can
+    // reclaim on its own costs, which is an input-tax question, not this one.
+    const vat = rate === 0 ? 0 : Math.round((gross * rate) / (10_000 + rate));
+    return { poolId: pool.poolId, taxClass: pool.taxClass, grossMinor: gross, vatMinor: vat, netMinor: gross - vat };
+  });
+
+  return {
+    grossMinor,
+    totalVatMinor: pools.reduce((sum, p) => sum + p.vatMinor, 0),
+    pools,
+  };
 }
 
 // ---------------------------------------------------------------------------

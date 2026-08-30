@@ -4,6 +4,7 @@ import {
   assertCreditSpend,
   projectCreditLedger,
   resolveExit,
+  allocatePayment,
   validateRoundCreditModel,
   type CreditLedgerEvent,
   type RoundCreditConfiguration,
@@ -21,9 +22,32 @@ import {
 const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration => ({
   roundProductId: 'staples-6m',
   creditScope: 'GROCERY_FULFILMENT',
-  // Rev 3: the flagship Round. Monetary-value credits (Rev 2) confined to the
-  // exempt staples basket, taxed at payment per VAT Act s8.
-  basketTaxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+  // Rev 3: monetary-value credits (Rev 2) taxed at payment per VAT Act s8. The
+  // items are unknown at that moment, so the menu carries the tax character
+  // instead: two pools, 70% exempt staples and 30% standard-rated household.
+  pools: [
+    {
+      poolId: 'staples',
+      taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+      allocationBasisPoints: 7_000,
+      catalogue: [
+        { itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
+        { itemId: 'cooking-oil-2l', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
+        { itemId: 'sugar-2kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
+      ],
+    },
+    {
+      poolId: 'household',
+      taxClass: 'STANDARD_RATED_MIXED',
+      allocationBasisPoints: 3_000,
+      catalogue: [
+        { itemId: 'washing-powder-1kg', taxClass: 'STANDARD_RATED_MIXED' },
+        { itemId: 'bath-soap-6pk', taxClass: 'STANDARD_RATED_MIXED' },
+      ],
+    },
+  ],
+  allocationFixedAtPayment: true,
+  standardRateBasisPoints: 1_550,
   taxPoint: 'CREDIT_ISSUE',
   deferralRulingRef: null,
   fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE',
@@ -53,20 +77,37 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
   creditOwnership: 'MEMBER',
   revenueRecognisedAt: 'SETTLEMENT',
   procurementReservePercent: 0,
-  ballotOptions: [
-    { optionId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
-    { optionId: 'cooking-oil-2l', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
-  ],
   ...over,
 });
 
-/** The second product: standard-rated throughout, which is what recovers input tax. */
+/** A Round with one pool only, wholly standard-rated: input tax is fully recoverable. */
 const standardRated = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration =>
   conformant({
     roundProductId: 'household-6m',
-    basketTaxClass: 'STANDARD_RATED_MIXED',
     inputTaxApportionmentMethod: 'NOT_APPLICABLE',
-    ballotOptions: [{ optionId: 'household-mixed', taxClass: 'STANDARD_RATED_MIXED' }],
+    pools: [
+      {
+        poolId: 'household',
+        taxClass: 'STANDARD_RATED_MIXED',
+        allocationBasisPoints: 10_000,
+        catalogue: [{ itemId: 'washing-powder-1kg', taxClass: 'STANDARD_RATED_MIXED' }],
+      },
+    ],
+    ...over,
+  });
+
+/** A Round with one pool only, wholly exempt: the staples product. */
+const staplesOnly = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration =>
+  conformant({
+    roundProductId: 'staples-6m',
+    pools: [
+      {
+        poolId: 'staples',
+        taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+        allocationBasisPoints: 10_000,
+        catalogue: [{ itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' }],
+      },
+    ],
     ...over,
   });
 
@@ -87,7 +128,7 @@ describe('a conformant Round product', () => {
         creditScope: 'ANY',
         redeemableForMoney: true,
         transferable: true,
-        basketTaxClass: null,
+        pools: [],
         procurementReservePercent: null,
       }),
     );
@@ -168,31 +209,62 @@ describe('the tax point', () => {
     ).toBe(true);
   });
 
-  it('requires a declared basket class on every route', () => {
-    expect(rulesFrom(conformant({ basketTaxClass: null }))).toContain('RCM-005');
+  it('requires at least one pool, because the menu is what carries the rate', () => {
+    expect(rulesFrom(conformant({ pools: [] }))).toContain('RCM-005');
   });
 
-  it('confines the ballot to the declared class', () => {
-    // A basket spanning exempt staples and standard-rated goods has no single
-    // rate to charge on the day the money arrives.
+  it('refuses a catalogue item outside its pool’s tax class', () => {
+    // This is the real objection answered: we never know which items settle the
+    // credit, so the pool fixes the menu and every item on it shares a rate.
     const rules = rulesFrom(
-      conformant({
-        ballotOptions: [
-          { optionId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
-          { optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' },
+      staplesOnly({
+        pools: [
+          {
+            poolId: 'staples',
+            taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+            allocationBasisPoints: 10_000,
+            catalogue: [
+              { itemId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
+              { itemId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' },
+            ],
+          },
         ],
       }),
     );
     expect(rules).toContain('RCM-006');
   });
 
-  it('names the offending option so the ballot can be fixed', () => {
+  it('names the offending item so the catalogue can be fixed', () => {
     const finding = validateRoundCreditModel(
-      conformant({
-        ballotOptions: [{ optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' }],
+      staplesOnly({
+        pools: [
+          {
+            poolId: 'staples',
+            taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+            allocationBasisPoints: 10_000,
+            catalogue: [{ itemId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' }],
+          },
+        ],
       }),
     ).findings.find((f) => f.rule === 'RCM-006');
     expect(finding?.observed).toContain('soft-drinks-crate');
+  });
+
+  it('refuses an empty catalogue, which is a pool that can settle nothing', () => {
+    expect(
+      rulesFrom(
+        staplesOnly({
+          pools: [
+            {
+              poolId: 'staples',
+              taxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+              allocationBasisPoints: 10_000,
+              catalogue: [],
+            },
+          ],
+        }),
+      ),
+    ).toContain('RCM-006');
   });
 
   it('makes fiscalisation follow the tax point in both directions', () => {
@@ -209,6 +281,89 @@ describe('the tax point', () => {
   });
 });
 
+describe('splitting a payment when nobody knows the items yet', () => {
+  it('sums the pool shares to the payment, exactly', () => {
+    // A dropped cent here puts the credit ledger and the bank a cent apart every
+    // month, per member.
+    for (const gross of [5_000, 5_200, 3_333, 1, 99_999]) {
+      const allocation = allocatePayment(conformant(), gross);
+      expect(allocation.pools.reduce((s, p) => s + p.grossMinor, 0), String(gross)).toBe(gross);
+    }
+  });
+
+  it('charges no VAT on the exempt pool and 15.5% on the standard-rated one', () => {
+    // US$52.00, split 70/30. The staples share carries nothing; the household
+    // share is VAT inclusive, so the tax comes out of it rather than on top.
+    const allocation = allocatePayment(conformant(), 5_200);
+    const staples = allocation.pools.find((p) => p.poolId === 'staples')!;
+    const household = allocation.pools.find((p) => p.poolId === 'household')!;
+
+    expect(staples.grossMinor).toBe(3_640);
+    expect(staples.vatMinor).toBe(0);
+
+    expect(household.grossMinor).toBe(1_560);
+    expect(household.vatMinor).toBe(209); // 1560 x 1550 / 11550
+    expect(household.netMinor).toBe(1_351);
+
+    expect(allocation.totalVatMinor).toBe(209);
+  });
+
+  it('charges nothing at all on a wholly exempt Round', () => {
+    const allocation = allocatePayment(staplesOnly(), 5_200);
+    expect(allocation.totalVatMinor).toBe(0);
+    expect(allocation.pools).toHaveLength(1);
+    expect(allocation.pools[0]!.netMinor).toBe(5_200);
+  });
+
+  it('extracts the tax from the price on a wholly standard-rated Round', () => {
+    const allocation = allocatePayment(standardRated(), 5_200);
+    expect(allocation.totalVatMinor).toBe(698); // 5200 x 1550 / 11550
+    expect(allocation.pools[0]!.netMinor).toBe(4_502);
+  });
+
+  it('follows the rate in the schedule, not a constant', () => {
+    const at15 = allocatePayment(standardRated({ standardRateBasisPoints: 1_500 }), 5_200);
+    const at155 = allocatePayment(standardRated(), 5_200);
+    expect(at15.totalVatMinor).toBe(678);
+    expect(at155.totalVatMinor).toBe(698);
+  });
+
+  it('refuses to allocate a payment the pools do not fully account for', () => {
+    const broken = conformant({
+      pools: conformant().pools.map((p) =>
+        p.poolId === 'household' ? { ...p, allocationBasisPoints: 2_000 } : p,
+      ),
+    });
+    expect(() => allocatePayment(broken, 5_200)).toThrow(/RCM-024/);
+    expect(rulesFrom(broken)).toContain('RCM-024');
+  });
+
+  it('refuses a Round whose split can be changed after the money is taken', () => {
+    // Moving value between pools after the fact restates VAT on a filed return.
+    expect(rulesFrom(conformant({ allocationFixedAtPayment: false }))).toContain('RCM-024');
+  });
+
+  it('refuses a pool with no share of the payment', () => {
+    expect(
+      rulesFrom(
+        conformant({
+          pools: [
+            { ...conformant().pools[0]!, allocationBasisPoints: 10_000 },
+            { ...conformant().pools[1]!, allocationBasisPoints: 0 },
+          ],
+        }),
+      ),
+    ).toContain('RCM-024');
+  });
+
+  it('refuses duplicate pool ids', () => {
+    const pool = conformant().pools[0]!;
+    expect(rulesFrom(conformant({ pools: [pool, { ...pool, allocationBasisPoints: 3_000 }] }))).toContain(
+      'RCM-005',
+    );
+  });
+});
+
 describe('exempt supplies and the costs the plan does not model', () => {
   it('requires an apportionment method when the basket is exempt', () => {
     // Exempt is not zero-rated. SI 248 of 2023 moved the staples basket to exempt
@@ -221,6 +376,20 @@ describe('exempt supplies and the costs the plan does not model', () => {
 
   it('does not require apportionment on a wholly standard-rated Round', () => {
     expect(rulesFrom(standardRated())).not.toContain('RCM-021');
+  });
+
+  it('requires apportionment as soon as any pool is exempt, even a small one', () => {
+    // A 5% staples pool still taints the input tax on shared costs.
+    const rules = rulesFrom(
+      conformant({
+        inputTaxApportionmentMethod: 'NOT_APPLICABLE',
+        pools: [
+          { ...conformant().pools[0]!, allocationBasisPoints: 500 },
+          { ...conformant().pools[1]!, allocationBasisPoints: 9_500 },
+        ],
+      }),
+    );
+    expect(rules).toContain('RCM-021');
   });
 
   it('requires the transfer tax on each instalment to be modelled', () => {

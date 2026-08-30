@@ -5,7 +5,7 @@ decisions of `GROCERY_ROUNDS_MASTER_PLAN_v1.md`.
 **Answers:** review findings B1 (second money authority), B3 (what the member is
 buying), B4 (deposit versus taxable supply).
 **Executable form:** `packages/round-credit/src/credit-model.ts`, rules
-`RCM-001..023`, proven by `tests/round-credit.test.ts`.
+`RCM-001..024`, proven by `tests/round-credit.test.ts`.
 **Revision:** Rev 3, 30 Aug 2026 — see §0. Rev 3 closes the tax question against
 Zimbabwean law as it now stands and supersedes Rev 2 on the tax point only; Rev
 2's other three decisions stand.
@@ -18,10 +18,10 @@ does not.
 
 ## 0. Revision 3 — the tax question, closed
 
-**Recommendation adopted: the tax point is when the member pays, each Round is
-confined to one tax character, and the flagship product is built on the exempt
-staples basket.** Rev 2's monetary denomination, retail-priced exit and
-protection charge all stand. Only the tax point moves back.
+**Recommendation adopted: the tax point is when the member pays, and a Round
+carries one credit pool per tax character rather than one basket.** Rev 2's
+monetary denomination, retail-priced exit and protection charge all stand. Only
+the tax point moves back.
 
 Three findings drove it, and the third is worth more than the first two.
 
@@ -71,6 +71,54 @@ Two consequences, both now rules:
   tax against shared costs. The two-product split is therefore not only tax
   hygiene — it is an input-recovery lever, and the mix between the two products
   is a real commercial decision rather than a marketing one.
+
+### But we do not know which items will settle the payment
+
+That objection is correct and it is the one this design has to answer, because
+the basket is chosen by vote months after the money arrives, and the member picks
+brands and quantities after that.
+
+**We do not need to know the items. We need to know the class.** A Round declares
+**credit pools**, and a pool is a menu with one tax character. The vote chooses
+freely inside a pool — 10kg or 20kg, this brand or that, more oil and less sugar
+— and every one of those choices carries the same VAT treatment, so the rate is
+determined on the day the money arrives even though the shopping list is not.
+What the vote cannot do is cross a tax boundary, because that would change the
+rate of a supply already taxed.
+
+A member wanting both staples and household goods does not join two Rounds.
+**They subscribe once and the payment splits across pools at a ratio they
+choose** — one debit order, one Round Room, one group, two tax characters. On the
+worked example of US$52 at 70/30:
+
+| | Share | Gross | VAT to ZIMRA | Dial holds |
+|---|---|---|---|---|
+| Staples pool (exempt) | 70% | US$36.40 | — | US$36.40 |
+| Household pool (15.5%) | 30% | US$15.60 | US$2.09 | US$13.51 |
+| **Total** | | **US$52.00** | **US$2.09** | **US$49.91** |
+
+Shop prices include VAT, so the tax comes out of the household share rather than
+on top of it: `15.60 × 1550 ÷ 11550`.
+
+Four rules hold this together:
+
+- **`RCM-005`** — a Round declares at least one pool, each with one tax class, and
+  pool ids are distinct.
+- **`RCM-006`** — every item on a pool's catalogue carries that pool's tax class,
+  and an empty catalogue is refused because its credits could settle nothing.
+- **`RCM-024`** — pool shares sum to the whole payment to the basis point, and the
+  split is **fixed when a payment is taken**. A member may change it for future
+  instalments, never for money already collected: moving value between pools after
+  the fact would restate VAT on a return already filed.
+- **`allocatePayment()`** computes the split and the VAT on it, using
+  largest-remainder so the pool amounts sum to the payment exactly. A dropped cent
+  here puts the credit ledger and the bank a cent apart every month, per member.
+
+The commercial consequence worth naming: **the exempt menu is short.** SI 248 of
+2023 names maize meal and maize flour, bread and plain buns, milk and cream, cane
+sugar, cooking oils and salt. Rice, meat, vegetables and everything else needs its
+status confirmed before it goes on a staples catalogue rather than assumed onto
+it. The staples pool is a specific list, not "food".
 
 ### The cost nobody has modelled: transfer tax on every instalment
 
@@ -269,11 +317,11 @@ than a transfer would.
 
 **Rev 3 settles this condition.** The reasoning is in §0; the obligations are:
 
-- **A Round declares its basket tax class at creation, and the ballot stays inside
-  it** (`RCM-005`, `RCM-006`). With the tax point at payment, a Round whose rate is
-  settled by a later vote is taxed before anyone knows the rate. In practice this
-  means at least two products: a **Staples Round** on the exempt basket, and a
-  **Household Round** standard-rated throughout.
+- **A Round declares credit pools, one per tax character, each with its own
+  catalogue** (`RCM-005`, `RCM-006`, `RCM-024`). The vote chooses inside a pool;
+  it never crosses one. A payment splits across pools at a ratio fixed when it is
+  taken. This is what makes the rate knowable at payment while leaving the basket
+  genuinely open — see §0.
 - **The tax point is payment** (`RCM-007`). Deferral to collection is available
   only against a recorded written ZIMRA ruling — never as an election.
 - **Fiscalisation follows the tax point** (`RCM-020`): one receipt per instalment
@@ -286,10 +334,11 @@ than a transfer would.
 - **Rates resolve against a dated schedule** (`RCM-023`), never a constant.
 
 The through-line: the Rev 1 discipline of fixing the tax class at Round creation
-was right, but for the wrong reason. It is not needed to make a single-purpose
-voucher work. It is needed because **the rate has to be applied on the day the
-money arrives**, and a basket spanning exempt staples and standard-rated goods
-has no single rate to apply.
+was right, but for the wrong reason, and at the wrong level. It is not needed to
+make a single-purpose voucher work, and it does not need to fix the *basket*. It
+is needed because **the rate has to be applied on the day the money arrives** —
+so it fixes the *menu*, which is a far lighter constraint and leaves the vote
+entirely intact.
 
 ### C4 — The tax point is not revenue recognition  `RCM-008, 009, 010`
 
