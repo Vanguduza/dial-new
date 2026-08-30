@@ -25136,5 +25136,2513 @@
     ],
     "permission_model": "POSITION_DERIVED_PERMISSION_BUNDLE",
     "acceptance_contract_doc": null
+  },
+  {
+    "feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "outcome": "Knowledge Source Registry",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeSource",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "outcome": "Document Ingestion & Quarantine",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocument",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "outcome": "Parsing & Structural Normalisation",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeParseJob",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "outcome": "Knowledge Lifecycle & Approval",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocumentVersion",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "outcome": "Chunking & Metadata",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeChunk",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "outcome": "ACL & Permission-Aware Retrieval",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "security",
+    "aggregate": "KnowledgeAclPolicy",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "outcome": "Embedding & Vector Indexing",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "EmbeddingProfile",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "outcome": "Lexical & Exact Retrieval",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "LexicalIndex",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "outcome": "Hybrid Fusion & Reranking",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "RetrievalRun",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "outcome": "Context Planner",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "ai-platform",
+    "aggregate": "ContextPlan",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "outcome": "Context Egress & Privacy",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "security",
+    "aggregate": "ContextEgressPolicy",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "outcome": "Answer Contract & Citations",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "ai-platform",
+    "aggregate": "AnswerContract",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "outcome": "Retrieval Evaluation",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "ai-platform",
+    "aggregate": "RagEvalRun",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "outcome": "RAG Security & Red Team",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "security",
+    "aggregate": "RagSecurityFinding",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "outcome": "Knowledge Candidate & Promotion",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeCandidate",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "outcome": "Knowledge Operations Console",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "knowledge-platform",
+    "aggregate": "KnowledgeConsoleView",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "outcome": "Technician Diagnostic Retrieval",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "tech",
+    "aggregate": "TechnicianAssistSession",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "outcome": "Support & RCE Retrieval",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "customer-service",
+    "aggregate": "SupportAssistSession",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "outcome": "Spare Semantic Discovery",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "catalogue",
+    "aggregate": "DiscoverySession",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "outcome": "Academy & Corporate Knowledge",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "corporate",
+    "aggregate": "KnowledgeAskSession",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "outcome": "Project & Supplier Knowledge",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "projects",
+    "aggregate": "ScopedKnowledgeSession",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "outcome": "Command Centre Explainability",
+    "planning_status": "FRC_CLOSED",
+    "implementation_status": "SPECIFIED",
+    "domain_owner": "command-centre",
+    "aggregate": "MetricExplanation",
+    "archetype": "MASTER",
+    "states": [
+      "DRAFT",
+      "ACTIVE",
+      "SUPERSEDED",
+      "RETIRED"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "api_contract": {
+      "collection": "/api/v1/spare/catalogue-ingest-batch",
+      "resource": "/api/v1/spare/catalogue-ingest-batch/{ref}",
+      "command_pattern": "/api/v1/spare/catalogue-ingest-batch/{ref}/commands/{command}",
+      "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
+    },
+    "permissions": [
+      "spare.catalogue-ingest-batch.read",
+      "spare.catalogue-ingest-batch.create",
+      "spare.catalogue-ingest-batch.act",
+      "spare.catalogue-ingest-batch.approve"
+    ],
+    "data_entities": [
+      "CatalogueIngestBatch",
+      "HumanReference",
+      "AuditEvent",
+      "EvidenceRef"
+    ],
+    "relationships": {
+      "party_identity": "Party/Identity reference where actor/customer/provider exists",
+      "evidence": "EvidenceRef for material assertions/files/approvals",
+      "audit": "append-only AuditEvent",
+      "human_refs": "all externally visible objects use DIAL human references"
+    },
+    "money_effect": "NONE unless an approved downstream feature emits AccountingEvent",
+    "inventory_effect": "resolve through InventoryMovement / catalogue truth; no balance edits",
+    "delivery_effect": "NONE",
+    "security_profile": "S2",
+    "eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "surfaces": [
+      "DIAL_CONSUMER",
+      "DIAL_WEB",
+      "WHATSAPP"
+    ],
+    "acceptance_contract": [
+      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
+      "customerReady is true only when all eleven stages pass",
+      "the first blocking stage reported is the earliest failing stage in ladder order",
+      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
+      "a stage with no evidence is never a pass",
+      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
+      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
+      "an acquisition-backlog model is never customer-visible and never counted as observed",
+      "no ledger entry is customerVisible while its evaluation is not customerReady",
+      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
+      "a failing integrity gate names node_id or DGM in its notes",
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+    ]
   }
 ]

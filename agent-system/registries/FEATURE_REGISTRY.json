@@ -5155,5 +5155,541 @@
     ],
     "support_profile": "SUPPORT-FLEET",
     "implementation_note": "Allocated from module-expansion work package EXP-FLEET. Operator-facing operating system; the customer surfaces it serves remain on the existing division features."
+  },
+  {
+    "feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "outcome": "Knowledge Source Registry",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeSource",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F001",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "outcome": "Document Ingestion & Quarantine",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocument",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F002",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-011.",
+    "activation_blocker_refs": [
+      "ACT-REG-011"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "outcome": "Parsing & Structural Normalisation",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeParseJob",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F003",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "outcome": "Knowledge Lifecycle & Approval",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocumentVersion",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F004",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "outcome": "Chunking & Metadata",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeChunk",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F005",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "outcome": "ACL & Permission-Aware Retrieval",
+    "owner": "security",
+    "aggregate": "KnowledgeAclPolicy",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F006",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "outcome": "Embedding & Vector Indexing",
+    "owner": "knowledge-platform",
+    "aggregate": "EmbeddingProfile",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F007",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "outcome": "Lexical & Exact Retrieval",
+    "owner": "knowledge-platform",
+    "aggregate": "LexicalIndex",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F008",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "outcome": "Hybrid Fusion & Reranking",
+    "owner": "knowledge-platform",
+    "aggregate": "RetrievalRun",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F009",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "outcome": "Context Planner",
+    "owner": "ai-platform",
+    "aggregate": "ContextPlan",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F010",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "outcome": "Context Egress & Privacy",
+    "owner": "security",
+    "aggregate": "ContextEgressPolicy",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F011",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-005.",
+    "activation_blocker_refs": [
+      "ACT-REG-005"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "outcome": "Answer Contract & Citations",
+    "owner": "ai-platform",
+    "aggregate": "AnswerContract",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F012",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "outcome": "Retrieval Evaluation",
+    "owner": "ai-platform",
+    "aggregate": "RagEvalRun",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F013",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "outcome": "RAG Security & Red Team",
+    "owner": "security",
+    "aggregate": "RagSecurityFinding",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F014",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "outcome": "Knowledge Candidate & Promotion",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeCandidate",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F015",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-005.",
+    "activation_blocker_refs": [
+      "ACT-REG-005"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "outcome": "Knowledge Operations Console",
+    "owner": "knowledge-platform",
+    "aggregate": "KnowledgeConsoleView",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F016",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "outcome": "Technician Diagnostic Retrieval",
+    "owner": "tech",
+    "aggregate": "TechnicianAssistSession",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F017",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-011.",
+    "activation_blocker_refs": [
+      "ACT-REG-011"
+    ]
+  },
+  {
+    "feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "outcome": "Support & RCE Retrieval",
+    "owner": "customer-service",
+    "aggregate": "SupportAssistSession",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F018",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "outcome": "Spare Semantic Discovery",
+    "owner": "catalogue",
+    "aggregate": "DiscoverySession",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F019",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "outcome": "Academy & Corporate Knowledge",
+    "owner": "corporate",
+    "aggregate": "KnowledgeAskSession",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F020",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "outcome": "Project & Supplier Knowledge",
+    "owner": "projects",
+    "aggregate": "ScopedKnowledgeSession",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F021",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
+  },
+  {
+    "feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "outcome": "Command Centre Explainability",
+    "owner": "command-centre",
+    "aggregate": "MetricExplanation",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-DKRF-F022",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "implementation_note": "Allocated from DKRF_ARCHITECTURE_v1.md. SPECIFIED only: no code, no contract of its own yet. Per-feature acceptance contract required before implementation (CT-7).",
+    "activation_blocker_refs": []
   }
 ]

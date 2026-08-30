@@ -5980,5 +5980,633 @@
       "money idempotency/provider verification/reconciliation"
     ],
     "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "trusted-source registration decides what may ever become knowledge"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "approval publishes knowledge into production retrieval"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "authorization authority for every retrieval"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "decides what personal data leaves DIAL to a model provider"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "security findings and red-team surface"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "security_tier": "S4",
+    "reasons": [
+      "promotion changes production knowledge without a code deploy"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "security_tier": "S2",
+    "reasons": [
+      "internal knowledge retrieval surface; permission-aware but not privileged authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
   }
 ]

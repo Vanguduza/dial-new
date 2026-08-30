@@ -27704,5 +27704,2711 @@
     "applicable_eventuality_refs": [],
     "supporting_capability_refs": [],
     "v2_frc_ref": "FLEET-F016"
+  },
+  {
+    "realization_id": "FR-DKRF-F001",
+    "feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "outcome": "Knowledge Source Registry",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeSource",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/knowledge-source-registry",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F001"
+  },
+  {
+    "realization_id": "FR-DKRF-F002",
+    "feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "outcome": "Document Ingestion & Quarantine",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocument",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/document-ingestion-quarantine",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F002"
+  },
+  {
+    "realization_id": "FR-DKRF-F003",
+    "feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "outcome": "Parsing & Structural Normalisation",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeParseJob",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/parsing-structural-normalisation",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F003"
+  },
+  {
+    "realization_id": "FR-DKRF-F004",
+    "feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "outcome": "Knowledge Lifecycle & Approval",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeDocumentVersion",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/knowledge-lifecycle-approval",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F004"
+  },
+  {
+    "realization_id": "FR-DKRF-F005",
+    "feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "outcome": "Chunking & Metadata",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeChunk",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/chunking-metadata",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F005"
+  },
+  {
+    "realization_id": "FR-DKRF-F006",
+    "feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "outcome": "ACL & Permission-Aware Retrieval",
+    "canonical_owner": "security",
+    "aggregate": "KnowledgeAclPolicy",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/acl-permission-aware-retrieval",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F006"
+  },
+  {
+    "realization_id": "FR-DKRF-F007",
+    "feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "outcome": "Embedding & Vector Indexing",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "EmbeddingProfile",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/embedding-vector-indexing",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F007"
+  },
+  {
+    "realization_id": "FR-DKRF-F008",
+    "feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "outcome": "Lexical & Exact Retrieval",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "LexicalIndex",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/lexical-exact-retrieval",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F008"
+  },
+  {
+    "realization_id": "FR-DKRF-F009",
+    "feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "outcome": "Hybrid Fusion & Reranking",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "RetrievalRun",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/hybrid-fusion-reranking",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F009"
+  },
+  {
+    "realization_id": "FR-DKRF-F010",
+    "feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "outcome": "Context Planner",
+    "canonical_owner": "ai-platform",
+    "aggregate": "ContextPlan",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/context-planner",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F010"
+  },
+  {
+    "realization_id": "FR-DKRF-F011",
+    "feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "outcome": "Context Egress & Privacy",
+    "canonical_owner": "security",
+    "aggregate": "ContextEgressPolicy",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/context-egress-privacy",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F011"
+  },
+  {
+    "realization_id": "FR-DKRF-F012",
+    "feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "outcome": "Answer Contract & Citations",
+    "canonical_owner": "ai-platform",
+    "aggregate": "AnswerContract",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/answer-contract-citations",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F012"
+  },
+  {
+    "realization_id": "FR-DKRF-F013",
+    "feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "outcome": "Retrieval Evaluation",
+    "canonical_owner": "ai-platform",
+    "aggregate": "RagEvalRun",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/retrieval-evaluation",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F013"
+  },
+  {
+    "realization_id": "FR-DKRF-F014",
+    "feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "outcome": "RAG Security & Red Team",
+    "canonical_owner": "security",
+    "aggregate": "RagSecurityFinding",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/rag-security-red-team",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F014"
+  },
+  {
+    "realization_id": "FR-DKRF-F015",
+    "feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "outcome": "Knowledge Candidate & Promotion",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeCandidate",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/knowledge-candidate-promotion",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F015"
+  },
+  {
+    "realization_id": "FR-DKRF-F016",
+    "feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "outcome": "Knowledge Operations Console",
+    "canonical_owner": "knowledge-platform",
+    "aggregate": "KnowledgeConsoleView",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/knowledge-operations-console",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F016"
+  },
+  {
+    "realization_id": "FR-DKRF-F017",
+    "feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "outcome": "Technician Diagnostic Retrieval",
+    "canonical_owner": "tech",
+    "aggregate": "TechnicianAssistSession",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/technician-diagnostic-retrieval",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F017"
+  },
+  {
+    "realization_id": "FR-DKRF-F018",
+    "feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "outcome": "Support & RCE Retrieval",
+    "canonical_owner": "customer-service",
+    "aggregate": "SupportAssistSession",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/support-rce-retrieval",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F018"
+  },
+  {
+    "realization_id": "FR-DKRF-F019",
+    "feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "outcome": "Spare Semantic Discovery",
+    "canonical_owner": "catalogue",
+    "aggregate": "DiscoverySession",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/spare-semantic-discovery",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F019"
+  },
+  {
+    "realization_id": "FR-DKRF-F020",
+    "feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "outcome": "Academy & Corporate Knowledge",
+    "canonical_owner": "corporate",
+    "aggregate": "KnowledgeAskSession",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/academy-corporate-knowledge",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F020"
+  },
+  {
+    "realization_id": "FR-DKRF-F021",
+    "feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "outcome": "Project & Supplier Knowledge",
+    "canonical_owner": "projects",
+    "aggregate": "ScopedKnowledgeSession",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/project-supplier-knowledge",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F021"
+  },
+  {
+    "realization_id": "FR-DKRF-F022",
+    "feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "outcome": "Command Centre Explainability",
+    "canonical_owner": "command-centre",
+    "aggregate": "MetricExplanation",
+    "exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "branch_space": "Platform",
+    "primary_route": "/platform/knowledge/command-centre-explainability",
+    "support_profile": "SUPPORT-PLATFORM",
+    "screens": [
+      "Spare home/entry",
+      "Catalogue ingest & normalization detail/state",
+      "Context actions sheet",
+      "Issue/support entry",
+      "History/timeline",
+      "Search/filter/browse results"
+    ],
+    "workflow": [
+      "DRAFT → ACTIVE",
+      "ACTIVE → SUPERSEDED",
+      "SUPERSEDED → RETIRED"
+    ],
+    "queries": [
+      "GetCatalogueIngestBatch",
+      "ListCatalogueIngestBatch",
+      "GetCatalogueIngestBatchTimeline",
+      "GetCatalogueIngestBatchAllowedActions"
+    ],
+    "commands": [
+      "CreateCatalogueIngestBatch",
+      "UpdateDraftCatalogueIngestBatch",
+      "ActivateCatalogueIngestBatch",
+      "SupersedeCatalogueIngestBatch",
+      "RetireCatalogueIngestBatch"
+    ],
+    "events": [
+      "CatalogueIngestBatchCreated",
+      "DraftCatalogueIngestBatchUpdated",
+      "CatalogueIngestBatchActivated",
+      "CatalogueIngestBatchSuperseded",
+      "CatalogueIngestBatchRetired",
+      "CatalogueIngestBatchAuditRecorded"
+    ],
+    "customer_or_operator_actions": [
+      "view_status",
+      "view_timeline",
+      "get_help"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "donor_customization": {
+      "preserve_from_donors": [
+        "proven task sequence and information hierarchy relevant to this feature",
+        "high-value interaction patterns specifically identified in donor dossiers",
+        "mature empty/loading/error concepts where compatible"
+      ],
+      "replace_with_dial": [
+        "identity/auth authority",
+        "canonical persistence/domain state",
+        "money/payment/ledger authority where applicable",
+        "delivery/job/order authority where applicable",
+        "branding, design tokens, navigation shell",
+        "support, evidence, audit, analytics and permission model"
+      ],
+      "add_for_dial": [
+        "vehicle-first parts shopping with search and visual/EPC navigation, fitment confidence, offer comparison and transparent fulfilment",
+        "state-driven customer/operator actions rather than hard-coded status buttons",
+        "full eventuality/recovery paths",
+        "DIAL Support OS entry and context-rich escalation",
+        "Command Centre/evidence/observability registration",
+        "accessibility, data-saver and degraded-mode behavior"
+      ],
+      "visual_transformation_rule": "Retokenize and recompose donor UX into the DIAL design system; preserve workflow value, not donor visual identity. No page may look like an isolated foreign product."
+    },
+    "eventuality_requirement": "Apply global + module + shared eventuality playbooks; no happy-path-only implementation.",
+    "support_requirement": "Every customer-visible state has Help; material disputes escalate SupportCase→RCE without forcing the customer to restart context.",
+    "command_centre_requirement": "Register metric/queue/alert/control/development evidence appropriate to feature authority.",
+    "completion_contract": [
+      "all nine realization facets implemented or explicitly N/A with rationale",
+      "concrete FRC states/commands/queries/events implemented against named domain owner",
+      "donor/source provenance resolved where source is ported",
+      "state and allowed actions derive from domain truth",
+      "eventuality/recovery tests pass",
+      "customer/operator surface has loading/empty/error/permission/degraded states",
+      "support and case escalation are reachable",
+      "security profile and applicable controls are green",
+      "evidence and gate status updated"
+    ],
+    "applicable_eventuality_refs": [
+      "EV-DELIVERY-DAMAGE-001",
+      "EV-DELIVERY-MISSING-002",
+      "EV-DELIVERY-WRONG-003",
+      "EV-PAYMENT-UNKNOWN-001",
+      "EV-SUPPORT-HANDOFF-001",
+      "EV-CONNECTIVITY-001",
+      "EV-SPARE-001",
+      "EV-SPARE-002",
+      "EV-SPARE-003",
+      "EV-SPARE-004",
+      "EV-SPARE-005",
+      "EV-SPARE-006",
+      "EV-SPARE-007",
+      "EV-SPARE-008",
+      "EV-SPARE-009",
+      "EV-SPARE-010",
+      "EV-SPARE-011",
+      "EV-SPARE-012",
+      "EV-SPARE-013",
+      "EV-SPARE-014",
+      "EV-SPARE-015",
+      "EV-SPARE-016",
+      "EV-SPARE-017",
+      "EV-SPARE-018"
+    ],
+    "supporting_capability_refs": [],
+    "v2_frc_ref": "DKRF-F022"
   }
 ]

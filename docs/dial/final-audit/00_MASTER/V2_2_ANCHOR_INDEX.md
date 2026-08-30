@@ -47,6 +47,14 @@ The single map of where authority lives. Open this before anything else.
 - Source registry → `../22_COMMERCE_FRONTEND_AND_TRANSITION/05_SOURCES/UPDATED_SOURCE_REGISTRY.md`
 - Pack production guide (working notes, not canon) → `../22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md`
 
+## Knowledge & retrieval (v2.2 addition)
+
+- Architecture (proposed, not built) → `../23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md`
+- Review and required changes → `../23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_REVIEW_v1.md`
+- Features `DKRF-F001`–`DKRF-F022`, all `SPECIFIED`. No code, no per-feature
+  acceptance contracts yet, and two packages gated on open activation blockers
+  (ACT-REG-011 content rights, ACT-REG-005 cross-border/DPO).
+
 ## Repository harness (applied, at repository root)
 
 - Entry authority → `/CLAUDE.md`

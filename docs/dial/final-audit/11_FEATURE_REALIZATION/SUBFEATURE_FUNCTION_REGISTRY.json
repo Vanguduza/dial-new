@@ -44029,5 +44029,4207 @@
     "status": "SPECIFIED",
     "required": true,
     "acceptance": "Security, privacy and abuse resistance is implemented and evidenced for FleetVehicle before the parent feature advances beyond DOMAIN_TESTED"
+  },
+  {
+    "subfeature_id": "DKRF-F001.01",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.02",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.03",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.04",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.05",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.06",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.07",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.08",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F001.09",
+    "parent_feature_id": "DKRF-F001",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.01",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.02",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.03",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.04",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.05",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.06",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.07",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.08",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F002.09",
+    "parent_feature_id": "DKRF-F002",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.01",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.02",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.03",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.04",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.05",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.06",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.07",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.08",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F003.09",
+    "parent_feature_id": "DKRF-F003",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.01",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.02",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.03",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.04",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.05",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.06",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.07",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.08",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F004.09",
+    "parent_feature_id": "DKRF-F004",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.01",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.02",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.03",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.04",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.05",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.06",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.07",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.08",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F005.09",
+    "parent_feature_id": "DKRF-F005",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.01",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.02",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.03",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.04",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.05",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.06",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.07",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.08",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F006.09",
+    "parent_feature_id": "DKRF-F006",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.01",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.02",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.03",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.04",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.05",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.06",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.07",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.08",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F007.09",
+    "parent_feature_id": "DKRF-F007",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.01",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.02",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.03",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.04",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.05",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.06",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.07",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.08",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F008.09",
+    "parent_feature_id": "DKRF-F008",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.01",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.02",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.03",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.04",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.05",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.06",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.07",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.08",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F009.09",
+    "parent_feature_id": "DKRF-F009",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.01",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.02",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.03",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.04",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.05",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.06",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.07",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.08",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F010.09",
+    "parent_feature_id": "DKRF-F010",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.01",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.02",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.03",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.04",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.05",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.06",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.07",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.08",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F011.09",
+    "parent_feature_id": "DKRF-F011",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.01",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.02",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.03",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.04",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.05",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.06",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.07",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.08",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F012.09",
+    "parent_feature_id": "DKRF-F012",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.01",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.02",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.03",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.04",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.05",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.06",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.07",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.08",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F013.09",
+    "parent_feature_id": "DKRF-F013",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "ai-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.01",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.02",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.03",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.04",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.05",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.06",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.07",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.08",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F014.09",
+    "parent_feature_id": "DKRF-F014",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "security",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.01",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.02",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.03",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.04",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.05",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.06",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.07",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.08",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F015.09",
+    "parent_feature_id": "DKRF-F015",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.01",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.02",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.03",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.04",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.05",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.06",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.07",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.08",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F016.09",
+    "parent_feature_id": "DKRF-F016",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "knowledge-platform",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.01",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.02",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.03",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.04",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.05",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.06",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.07",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.08",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F017.09",
+    "parent_feature_id": "DKRF-F017",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "tech",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.01",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.02",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.03",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.04",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.05",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.06",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.07",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.08",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F018.09",
+    "parent_feature_id": "DKRF-F018",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "customer-service",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.01",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.02",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.03",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.04",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.05",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.06",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.07",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.08",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F019.09",
+    "parent_feature_id": "DKRF-F019",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "catalogue",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.01",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.02",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.03",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.04",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.05",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.06",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.07",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.08",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F020.09",
+    "parent_feature_id": "DKRF-F020",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "corporate",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.01",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.02",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.03",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.04",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.05",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.06",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.07",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.08",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F021.09",
+    "parent_feature_id": "DKRF-F021",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "projects",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.01",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "ENTRY_DISCOVERY",
+    "name": "Entry/discovery/queue surface",
+    "goal": "Make the feature discoverable in the correct branch/operator context and preserve customer context/deep links.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.02",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "INPUT_VALIDATION",
+    "name": "Input, eligibility and validation",
+    "goal": "Capture only required data; validate identity, eligibility, permissions, freshness and contradictory inputs.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.03",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "CORE_WORKFLOW",
+    "name": "Core workflow/state transitions",
+    "goal": "Implement typed commands, state machine, idempotency/concurrency and authoritative persistence.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.04",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "DETAIL_HISTORY",
+    "name": "Detail, timeline and history",
+    "goal": "Expose current state, meaningful history, evidence/receipts and human-readable references.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.05",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "ALLOWED_ACTIONS",
+    "name": "State-driven actions and approvals",
+    "goal": "Render only actions currently allowed by state/policy/permission; include customer approvals where required.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.06",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "EVENTUALITY_RECOVERY",
+    "name": "Eventuality, recovery and compensation",
+    "goal": "Implement module/shared exception playbooks, operator repair and RCE/claims routing.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.07",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "NOTIFICATION_SUPPORT",
+    "name": "Notifications, support and escalation",
+    "goal": "Proactive notifications plus one-tap in-context automated support and human escalation.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.08",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "OBSERVABILITY_AUDIT",
+    "name": "Observability, audit and certification",
+    "goal": "Events, metrics, alerts, audit, Command Centre projection, tests and evidence.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "implemented in code or marked N/A only with explicit architecture rationale",
+      "linked test/evidence before parent feature advances beyond DOMAIN_TESTED"
+    ]
+  },
+  {
+    "subfeature_id": "DKRF-F022.09",
+    "parent_feature_id": "DKRF-F022",
+    "module": "DKRF",
+    "kind": "SECURITY_PRIVACY",
+    "name": "Security, privacy and abuse resistance",
+    "goal": "Apply the feature security profile: threat model, server authorization/RLS, input/output controls, abuse/rate limits, sensitive-data handling, dependency/integration security and required security evidence.",
+    "owner": "command-centre",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "donor_refs": [
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "status": "SPECIFIED",
+    "required": true,
+    "acceptance": [
+      "security profile resolved for parent feature",
+      "applicable SECURITY_CONTROL_REGISTRY controls mapped and tested",
+      "negative authorization/abuse/degraded cases included",
+      "security evidence exists before production-green"
+    ]
   }
 ]
