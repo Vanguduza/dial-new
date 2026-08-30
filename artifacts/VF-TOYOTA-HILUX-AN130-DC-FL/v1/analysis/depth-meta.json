@@ -1,5 +1,5 @@
 {
-  "depthMap": "C:\\Users\\Admin\\Documents\\dial new\\artifacts\\VF-TOYOTA-HILUX-AN130-DC-FL\\v1\\analysis\\depth-map.png",
+  "depthMap": "analysis/depth-map.png",
   "foregroundMask": "analysis/segmentation/body.png",
   "backgroundMask": "analysis/segmentation/background.png",
   "provider": "deterministic-development"

@@ -721,7 +721,30 @@
       "tests/pipeline.integration.test.ts"
     ],
     "current_gate": "CODE_PRESENT",
-    "implementation_note": "Frame profiles and explosion plan are generated. NOT met: Blueprint 4.3 requires per-group layers with layerAssetId, startProgress and endProgress; the pipeline emits flattened whole-scene frames and explosion-plan.json has no consumer."
+    "implementation_note": "Explosion planning now meets Blueprint 4.3's minimum record: packages/explosion emits per-group layerAssetId, origin, destination, vector, depth, startProgress, endProgress and easing, staggered so groups overlap. Delivery does not. The pipeline still renders flattened whole-scene frames rather than compositing the named layers, and apps/preview-player/components/dvtg-preview.tsx animates 23 hardcoded CSS clip-path polygons over a single already-exploded still - the exact production method 4.3 prohibits. Nothing emits or asserts the shared display matrix 4.3 requires between artwork and hit map. This capability cannot advance past CODE_PRESENT until the blockers below clear.",
+    "blockers": [
+      {
+        "blocker_id": "BLUEPRINT-4.3-METHOD",
+        "source_clause": "Blueprint v2.2 4.3",
+        "statement": "Cropping pieces from an already-exploded still and sliding those crops into view is not an acceptable production method.",
+        "violated_by": "apps/preview-player/components/dvtg-preview.tsx",
+        "clears_when": "The player interpolates separately rendered layer assets (or named meshes) from assembled to exploded transform; no clip-path crop of an exploded still remains."
+      },
+      {
+        "blocker_id": "BLUEPRINT-4.3-LAYERS",
+        "source_clause": "Blueprint v2.2 4.3",
+        "statement": "The motion engine must produce component or group layers, masks, depth order, origin, destination, vector, timing, and easing. A flattened start image and flattened end image alone are not sufficient for a production flow.",
+        "violated_by": "packages/pipeline-core/src/index.ts",
+        "clears_when": "The pipeline renders and packages one asset per layerAssetId in the explosion plan, and QA fails a pack whose plan names a layer with no corresponding asset."
+      },
+      {
+        "blocker_id": "BLUEPRINT-4.3-MATRIX",
+        "source_clause": "Blueprint v2.2 4.3",
+        "statement": "Apply the exact same final scale, translation, crop, and object-fit matrix to the artwork and its invisible hit map; visual separation must never create interaction drift.",
+        "violated_by": "no emitter",
+        "clears_when": "The flow pack declares one display matrix consumed by both the artwork and the hit map, and a coordinate-probe test asserts a click resolves to the same category at desktop and mobile profiles."
+      }
+    ]
   },
   {
     "capability_id": "CATVIS-S006",

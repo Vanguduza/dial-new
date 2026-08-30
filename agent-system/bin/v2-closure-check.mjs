@@ -19,6 +19,7 @@ const ops=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/07_OPERATING_MOD
 const md=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/08_MASTER_DATA/MASTER_DATA_REGISTRY.json");
 const branches=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/10_ACTIVATION_CONFIG/BRANCH_ACTIVATION_REGISTRY.json");
 const repo=load("docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json");
+const capabilities=load("docs/dial/final-audit/11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json");
 
 if(features.length!==186) fail.push(`features=${features.length}, expected 186`);
 if(facets.length!==186*9) fail.push(`facets=${facets.length}, expected ${186*9}`);
@@ -59,6 +60,33 @@ if(ops.length<10) fail.push(`operations responsibility unexpectedly thin: ${ops.
 if(md.length<10) fail.push(`master data registry unexpectedly thin: ${md.length}`);
 if(branches.length<10) fail.push(`branch activation registry unexpectedly thin: ${branches.length}`);
 
+// ── supporting-capability blockers ─────────────────────────────────────────
+// A blocker is not a lifecycle gate. The gate records how far a capability got;
+// a blocker records that it may go no further, and the two live on separate
+// axes — writing "BLOCKED" into status would break every ordinal comparison
+// over the ladder. So blockers get their own field, and this is what makes the
+// field mean something: a capability carrying an open blocker may not be
+// reported at or above DOMAIN_TESTED, and every blocker must name the clause it
+// comes from and the condition that clears it, so none can be left vague.
+const GATE_ORDER=["SPECIFIED","DESIGN_CLOSED","BUILDABLE","CODE_PRESENT","DOMAIN_TESTED","INTEGRATION_GREEN","STAGING_GREEN","CERTIFIED_DORMANT","ACTIVATION_BLOCKERS_GREEN","ACTIVE"];
+const BLOCKED_GATE_CEILING=GATE_ORDER.indexOf("DOMAIN_TESTED");
+const blockedCapabilities=[];
+for(const c of capabilities){
+  const open=Array.isArray(c.blockers)?c.blockers:[];
+  if(!open.length) continue;
+  for(const b of open){
+    for(const k of ["blocker_id","source_clause","statement","clears_when"]){
+      if(!b?.[k]) fail.push(`${c.capability_id}: blocker ${b?.blocker_id??"<unnamed>"} is missing ${k}`);
+    }
+  }
+  const gate=GATE_ORDER.indexOf(c.current_gate);
+  if(gate===-1) fail.push(`${c.capability_id}: unknown gate ${c.current_gate}`);
+  else if(gate>=BLOCKED_GATE_CEILING){
+    fail.push(`${c.capability_id}: claims ${c.current_gate} with ${open.length} open blocker(s) (${open.map(b=>b.blocker_id).join(", ")}); a blocked capability may not be reported at or above DOMAIN_TESTED`);
+  }
+  blockedCapabilities.push({capability_id:c.capability_id,current_gate:c.current_gate,blockers:open.map(b=>b.blocker_id)});
+}
+
 const textFiles=[
  "docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
  "docs/dial/final-audit/00_MASTER/V2_2_ANCHOR_INDEX.md",
@@ -95,5 +123,6 @@ console.log(JSON.stringify({
   activation_blockers:blockers.length,
   repo_bootstrap_tasks_pending:pendingBootstrap.length,
   repo_bootstrap_pending_ids:pendingBootstrap.map(x=>x.id),
+  blocked_capabilities:blockedCapabilities,
   contract_specificity:"see: node agent-system/bin/contract-specificity.mjs (CT-7)"
 },null,2));

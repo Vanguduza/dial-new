@@ -50,7 +50,9 @@ drift silently from the mapping that actually governs routing.
 - **VIN resolution.** Depends on the Quomation donor passing the import gate;
   the context shape already carries `source: vin` so nothing blocks later.
 - **The transition itself.** Owned by CATVIS-S005/S007. This feature commits the
-  vehicle and hands off.
+  vehicle and hands off. The split at §4.5 is that this feature owns the
+  completion fingerprint and when it is invalidated (R8); CATVIS-S005 owns what
+  the visual does on a match.
 - **EPC browse.** SPARE-F002 and EPC-S002/S003.
 - **Fleet semantics.** Multi-vehicle organisational custody is FLEET-F003; a
   Garage is a consumer's own vehicles.
@@ -106,6 +108,21 @@ The customer selector reads `customerVisible = true AND QA_READY = PASS`.
 grey, keep their accessible names, restore normal contrast on focus or edit, and
 clear on upstream change (§3.4). Contrast must meet WCAG AA.
 
+**R8 — Completion memory and its invalidation.** Blueprint §4.5 stores a
+completed-flow fingerprint against the active vehicle context —
+`catalogReleaseId + fitmentId + visualFamilyId + flowPackId + variantId`, those
+five values and no others, which is what keeps it non-sensitive enough to cache
+in the browser. This feature owns writing it, comparing it and invalidating it;
+what the transition *does* on a match is CATVIS-S005's. On return to the
+homepage the active vehicle's fingerprint is compared with the stored one; on a
+match the settled exploded view is restored with the category map live and no
+replay, and the committed cascade values stay faint per R7. Any change to an
+identity-bearing value invalidates the match, so the new vehicle's flow runs
+after Search. The preview may hold this in session storage; production keeps the
+authoritative active-vehicle identity server-backed and may cache only the
+fingerprint client-side. Labels never participate: two vehicles that read the
+same on screen but differ in any of the five values must not match.
+
 ### P1 — fast follow
 
 - Nickname and per-vehicle notes.
@@ -154,6 +171,14 @@ testable and maps to a mandatory security test where applicable.
     single-record read by the owner.
 18. Support access to a customer's vehicle context is permitted only with an open
     case reference and is audited.
+19. Returning to the homepage with an unchanged vehicle restores the settled
+    exploded view with the category map active and no replay; the stored
+    fingerprint is exactly the five identity-bearing values and carries nothing
+    else.
+20. Changing any one of `catalogReleaseId`, `fitmentId`, `visualFamilyId`,
+    `flowPackId` or `variantId` invalidates the completion match, and two
+    vehicles whose labels read identically but whose identity values differ
+    never match.
 
 ## Permissions
 
@@ -186,6 +211,9 @@ same position as a customer-facing operator.
    emitted through the shared type in `packages/contracts`.
 5. Tests: one per acceptance criterion above, plus the six S2 mandatory security
    tests, plus the material eventualities on the feature's `eventuality_refs`.
+   Criteria 19 and 20 are exercised end-to-end in `tests/e2e/transition.spec.ts`
+   ("completion memory (§4.5)"), against the `completionMemory` block the flow
+   pack publishes — schema version 1.2.0 and above.
 6. The preview player switched from `lib/epc-catalog.ts` fixtures to the real
    endpoints.
 

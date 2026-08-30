@@ -26,13 +26,20 @@ config/supplemental-vehicle-targets.json
 catalog-data/generated/vehicle-universe.json
 catalog-data/generated/catalog-coverage-ledger.json
 catalog-data/generated/all-makes-and-models.csv
+catalog-data/generated/visual-transition-source-queue.json
+catalog-data/generated/visual-source-discovery.json
 schemas/catalog-coverage-ledger.schema.json
 schemas/hero-to-epc-flow-pack.schema.json
 schemas/visual-epc-mapping.schema.json
+schemas/visual-transition-source-queue.schema.json
 DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md
 ```
 
 The supplemental vehicle list is an acquisition queue. It must not become a public selector merely because the names exist.
+
+The Hilux visual pack is a development fixture, not a reusable generic transition. Never bind its hero, derived frames, explosion plan, or click map to a different vehicle. For every marked vehicle, preserve the planned unique visual family/flow-pack identity from the visual transition source queue. Inject exact catalog family and fitment IDs into that vehicle's category mappings only after those catalog identities are resolved.
+
+Treat Wikimedia Commons as the primary visual file and license-metadata authority and Openverse as a secondary discovery index. Automatically accept complete CC0/Public Domain/CC BY/CC BY-SA metadata and automatically reject NC and ND. Capture attribution and source links without a routine human license review; escalate only missing or conflicting metadata. A source candidate remains internal only until a human confirms exact vehicle identity, generation, and body style.
 
 Preserve the supplied v1 database read-only. Build migrations and a reviewable v2 artifact alongside it.
 
@@ -46,7 +53,9 @@ The catalog must support this exact flow:
 customer selects or restores vehicle
 → catalog resolves exact active vehicle context
 → website commits Search
-→ approved transition starts automatically
+→ website compares the resolved vehicle fingerprint with completed-flow state
+→ approved transition starts automatically only for a new or changed vehicle
+→ unchanged completed vehicle restores the settled exploded view
 → exploded vehicle exposes an invisible category hit map
 → click opens selected vehicle’s category family
 → customer browses assembly groups, diagrams, positions, and parts
@@ -96,6 +105,7 @@ Rules:
 - A Garage record must restore stable IDs, not only labels.
 - No public route or API may use an unscoped source node as identity.
 - Unknown values are `NULL`, never empty strings.
+- Return enough stable IDs to compute `catalogReleaseId + fitmentId + visualFamilyId + flowPackId + variantId` as the completed-flow fingerprint. Labels are not sufficient.
 
 ---
 
@@ -365,11 +375,16 @@ The catalog must provide the release and route evidence needed for:
 - exact Search commitment before autoplay;
 - the correct exact-model headline;
 - category-family resolution from every invisible exploded region;
+- deterministic visual-region priority so broad Body or Chassis fallbacks cannot override precise Engine or Transmission targets;
+- representative desktop and mobile click-probe fixtures for Engine, Transmission, Chassis, and Body, each asserting the expected vehicle-scoped category-family URL;
 - Body & Exterior fallback for an unclassified visible part;
 - direct EPC fallback when visual assets fail;
 - Garage visual and direct-EPC entry modes.
+- unchanged-vehicle restoration to the settled exploded view without automatic replay;
+- invalidation of completion memory when an identity-bearing vehicle choice changes;
+- the DVTG requirement that each rendered physical wheel position contains one tyre, with no attached/separated duplicate.
 
-Do not build animation frames in the catalog repository. Publish compatibility and mapping evidence for the DVTG flow pack.
+Do not build animation frames or alter visual assets in the catalog repository. Publish compatibility, identity, route, and QA-policy evidence for the DVTG flow pack. The DVTG pack must declare its wheel-position audit and production human-review status before the catalog marks the combined flow customer-ready.
 
 ---
 
@@ -479,6 +494,8 @@ visual-route coverage
 
 - Every enabled visual category has a vehicle-scoped category-family route.
 - Engine, transmission, chassis, and body routes resolve correctly.
+- Representative Engine, Transmission, Chassis, and Body coordinates resolve to their expected category-family URLs on desktop and mobile crops.
+- Broad fallback regions never override a more precise family region at an overlapping edge.
 - Component preferred group remains inside its category family.
 - Unclassified part falls back to Body & Exterior.
 - Cross-maker or cross-release target is rejected.
@@ -526,11 +543,13 @@ The catalog integration is complete only when:
 - homepage Search can resolve an exact active vehicle before autoplay;
 - My Garage can restore that vehicle and offer visual or direct-EPC routes;
 - Browse EPC can open the active vehicle’s category homepage;
+- the active context exposes a stable completed-flow fingerprint so returning from EPC with the same vehicle does not autoplay again;
 - every invisible exploded-vehicle region resolves to the correct category family;
 - an unclassified depicted part has a safe vehicle-scoped fallback;
 - Technical is absent from the customer-visible transition contract;
 - public diagram URLs use internal `DGM-...` IDs;
 - category, group, diagram, part, and fitment data remain release- and vehicle-scoped;
 - incomplete vehicles do not appear in the public selector;
+- compatibility rejects a flow pack whose exploded-view wheel audit shows more than one tyre for any rendered wheel position;
 - all tests and blocking release gates pass;
 - the agent returns migrations, code, tests, exports, reports, and a reproducible build command—not only an architecture explanation.

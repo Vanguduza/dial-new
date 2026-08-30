@@ -189,23 +189,116 @@ export interface Point {
   x: number;
   y: number;
 }
+/**
+ * Blueprint 5.1 fixes the precedence of overlapping hit regions: precise Engine
+ * and Transmission regions sit above broad Chassis and Body coverage, and a
+ * broad region must never capture a point visibly occupied by the engine or
+ * transmission. Higher number wins.
+ */
+export const HIT_REGION_PRIORITY: Record<VisualCategoryId, number> = {
+  "VC-ENG": 90,
+  "VC-TRN": 80,
+  "VC-FBRK": 60,
+  "VC-RBRK": 60,
+  "VC-FSUS": 50,
+  "VC-RSUS": 50,
+  // Body & Exterior is the fallback layer beneath everything else (5.2).
+  "VC-BODY": 10,
+};
+
+/** Categories that must never be overridden by a broad fallback region. */
+export const PRECISE_CATEGORIES: readonly VisualCategoryId[] = ["VC-ENG", "VC-TRN"];
+/** Broad coverage regions that may sit beneath a precise one. */
+export const BROAD_CATEGORIES: readonly VisualCategoryId[] = ["VC-BODY", "VC-FBRK", "VC-RBRK"];
+
 export interface Hotspot {
+  /** Stable identity for the region, per Blueprint 5.3. */
+  hitRegionId: string;
   visualCategoryId: VisualCategoryId;
+  /** Optional finer component target; the category family is the guaranteed landing. */
+  componentFamilyId: string | null;
   label: string;
+  geometryType: "POLYGON";
   polygon: Point[];
   labelAnchor: Point;
+  /** From HIT_REGION_PRIORITY. Higher wins where forgiving edges overlap. */
   priority: number;
+  target: {
+    catalogFamilyId: string;
+    sectionSlug: string;
+  };
+  /** Safe vehicle-scoped fallback, normally body-exterior. */
+  fallbackSectionSlug: string;
 }
 
+/**
+ * Blueprint 4.3 minimum explosion-plan record.
+ *
+ * layerAssetId, startProgress and endProgress are required: the motion engine
+ * must produce component or group LAYERS interpolated from their assembled
+ * transform to their explosion transform. v2.2 states outright that "cropping
+ * pieces from an already-exploded still and sliding those crops into view is
+ * not an acceptable production method", so a plan without a layer asset per
+ * group cannot describe a compliant transition.
+ */
 export interface ExplosionGroup {
   visualCategoryId: VisualCategoryId;
+  /** The separately rendered layer or named mesh this group moves. */
+  layerAssetId: string;
   origin: Point;
   destination: Point;
   explosionVector: Point;
   depth: number;
   labelAnchor: Point;
   order: number;
-  easingProfile: string;
+  /** Normalized transition progress at which this group starts moving. */
+  startProgress: number;
+  /** Normalized transition progress at which it settles. */
+  endProgress: number;
+  /**
+   * Named easing curve. The key is `easing`, not `easingProfile`, because the
+   * Blueprint's minimum explosion-plan record spells it that way and that
+   * record is frozen — a consumer reading the Blueprint would find the key
+   * absent if we renamed it here.
+   */
+  easing: string;
+}
+
+/**
+ * Blueprint 4.3 and 9: at most one tyre per physical wheel position, and no
+ * attached tyre shown alongside a separated duplicate for the same position.
+ * The flow pack must declare this audit and its human-review state before the
+ * catalog may mark the combined flow customer-ready.
+ */
+export interface WheelPositionAudit {
+  expectedWheelPositions: number;
+  tyresPerPosition: Record<string, number>;
+  looseSpareTyres: number;
+  /** Automated metadata validation result. */
+  automatedPass: boolean;
+  /** Blueprint 10: QA_READY also requires human visual review of multiplicity. */
+  humanVisualReview: "PENDING" | "PASS" | "FAIL";
+}
+
+/**
+ * Blueprint 4.5 completion memory. Returning to the homepage with an unchanged
+ * vehicle restores the settled exploded view instead of replaying.
+ */
+export function completedFlowFingerprint(input: {
+  catalogReleaseId: string;
+  fitmentId: string;
+  visualFamilyId: string;
+  flowPackId: string;
+  variantId: string | null;
+}): string {
+  // Identity-bearing values only. Labels are explicitly not sufficient.
+  return [
+    input.catalogReleaseId,
+    input.fitmentId,
+    input.visualFamilyId,
+    input.flowPackId,
+    input.variantId ?? "NULL",
+  ].join("|");
 }
 
 export const MOTION_PROFILES = {

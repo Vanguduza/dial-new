@@ -3,6 +3,7 @@
   "groups": [
     {
       "visualCategoryId": "VC-BODY",
+      "layerAssetId": "LAYER-BODY-SHELL",
       "origin": {
         "x": 0.5,
         "y": 0.5
@@ -21,10 +22,13 @@
         "y": 0.21
       },
       "order": 2,
-      "easingProfile": "shell-lift"
+      "easing": "shell-lift",
+      "startProgress": 0.6,
+      "endProgress": 0.6867
     },
     {
       "visualCategoryId": "VC-ENG",
+      "layerAssetId": "LAYER-ENGINE",
       "origin": {
         "x": 0.62,
         "y": 0.55
@@ -43,10 +47,13 @@
         "y": 0.29
       },
       "order": 3,
-      "easingProfile": "mechanical-out"
+      "easing": "mechanical-out",
+      "startProgress": 0.6433,
+      "endProgress": 0.73
     },
     {
       "visualCategoryId": "VC-TRN",
+      "layerAssetId": "LAYER-TRANSMISSION",
       "origin": {
         "x": 0.5,
         "y": 0.62
@@ -65,10 +72,13 @@
         "y": 0.84
       },
       "order": 4,
-      "easingProfile": "mechanical-out"
+      "easing": "mechanical-out",
+      "startProgress": 0.6867,
+      "endProgress": 0.7734
     },
     {
       "visualCategoryId": "VC-FBRK",
+      "layerAssetId": "LAYER-BRAKE-FRONT",
       "origin": {
         "x": 0.72,
         "y": 0.67
@@ -87,10 +97,13 @@
         "y": 0.64
       },
       "order": 5,
-      "easingProfile": "radial-out"
+      "easing": "radial-out",
+      "startProgress": 0.73,
+      "endProgress": 0.8167
     },
     {
       "visualCategoryId": "VC-RBRK",
+      "layerAssetId": "LAYER-BRAKE-REAR",
       "origin": {
         "x": 0.27,
         "y": 0.67
@@ -109,10 +122,13 @@
         "y": 0.64
       },
       "order": 5,
-      "easingProfile": "radial-out"
+      "easing": "radial-out",
+      "startProgress": 0.73,
+      "endProgress": 0.8167
     },
     {
       "visualCategoryId": "VC-FSUS",
+      "layerAssetId": "LAYER-SUSPENSION-FRONT",
       "origin": {
         "x": 0.72,
         "y": 0.61
@@ -131,10 +147,13 @@
         "y": 0.84
       },
       "order": 6,
-      "easingProfile": "mechanical-out"
+      "easing": "mechanical-out",
+      "startProgress": 0.7733,
+      "endProgress": 0.86
     },
     {
       "visualCategoryId": "VC-RSUS",
+      "layerAssetId": "LAYER-SUSPENSION-REAR",
       "origin": {
         "x": 0.27,
         "y": 0.61
@@ -153,7 +172,9 @@
         "y": 0.84
       },
       "order": 6,
-      "easingProfile": "mechanical-out"
+      "easing": "mechanical-out",
+      "startProgress": 0.7733,
+      "endProgress": 0.86
     }
   ]
 }

@@ -12,6 +12,7 @@
     "vehicle",
     "entryModes",
     "autoplay",
+    "completionMemory",
     "retainedSelection",
     "transitionWindow",
     "visualIntegrity",
@@ -20,8 +21,13 @@
     "readiness"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.1.0" },
-    "flowPackId": { "type": "string", "pattern": "^H2E-[A-Z0-9-]+-V[0-9]+$" },
+    "schemaVersion": {
+      "const": "1.2.0"
+    },
+    "flowPackId": {
+      "type": "string",
+      "pattern": "^H2E-[A-Z0-9-]+-V[0-9]+$"
+    },
     "status": {
       "enum": [
         "NOT_STARTED",
@@ -32,7 +38,9 @@
         "PRODUCTION_READY"
       ]
     },
-    "customerReady": { "type": "boolean" },
+    "customerReady": {
+      "type": "boolean"
+    },
     "vehicle": {
       "type": "object",
       "additionalProperties": false,
@@ -50,17 +58,52 @@
         "visualPhase"
       ],
       "properties": {
-        "visualFamilyId": { "type": "string", "pattern": "^VF-[A-Z0-9-]+$" },
-        "fitmentId": { "type": "string", "minLength": 1 },
-        "catalogReleaseId": { "type": "string", "pattern": "^CAT-[A-Z0-9-]+$" },
-        "catalogFamilyId": { "type": "string", "pattern": "^CF-[A-Z0-9-]+$" },
-        "variantId": { "type": ["string", "null"] },
-        "familySlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
-        "make": { "type": "string", "minLength": 1 },
-        "model": { "type": "string", "minLength": 1 },
-        "generation": { "type": "string", "minLength": 1 },
-        "bodyStyle": { "type": "string", "minLength": 1 },
-        "visualPhase": { "type": "string", "minLength": 1 }
+        "visualFamilyId": {
+          "type": "string",
+          "pattern": "^VF-[A-Z0-9-]+$"
+        },
+        "fitmentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogReleaseId": {
+          "type": "string",
+          "pattern": "^CAT-[A-Z0-9-]+$"
+        },
+        "catalogFamilyId": {
+          "type": "string",
+          "pattern": "^CF-[A-Z0-9-]+$"
+        },
+        "variantId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "familySlug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "make": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bodyStyle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "visualPhase": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "entryModes": {
@@ -68,7 +111,12 @@
       "uniqueItems": true,
       "minItems": 4,
       "items": {
-        "enum": ["CASCADE_SEARCH", "GARAGE_VISUAL_FLOW", "GARAGE_EPC_DIRECT", "MENU_EPC_BROWSE"]
+        "enum": [
+          "CASCADE_SEARCH",
+          "GARAGE_VISUAL_FLOW",
+          "GARAGE_EPC_DIRECT",
+          "MENU_EPC_BROWSE"
+        ]
       }
     },
     "autoplay": {
@@ -83,59 +131,177 @@
         "completedVehicleReturnState"
       ],
       "properties": {
-        "trigger": { "const": "VEHICLE_SEARCH_COMMITTED" },
-        "userPlayControl": { "const": false },
-        "reducedMotionBehavior": { "const": "CUT_TO_NAVIGATION_READY" },
-        "replayAllowedFromVehicleSummary": { "type": "boolean" },
-        "automaticReplayWhenVehicleUnchanged": { "const": false },
-        "completedVehicleReturnState": { "const": "RESTORE_SETTLED_EXPLODED" }
+        "trigger": {
+          "const": "VEHICLE_SEARCH_COMMITTED"
+        },
+        "userPlayControl": {
+          "const": false
+        },
+        "reducedMotionBehavior": {
+          "const": "CUT_TO_NAVIGATION_READY"
+        },
+        "replayAllowedFromVehicleSummary": {
+          "type": "boolean"
+        },
+        "automaticReplayWhenVehicleUnchanged": {
+          "const": false
+        },
+        "completedVehicleReturnState": {
+          "const": "RESTORE_SETTLED_EXPLODED"
+        }
+      }
+    },
+    "completionMemory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fingerprintComponents",
+        "fingerprint",
+        "storage",
+        "onMatch",
+        "keepsHitMapActive",
+        "invalidatesOn"
+      ],
+      "properties": {
+        "fingerprintComponents": {
+          "type": "array",
+          "const": [
+            "catalogReleaseId",
+            "fitmentId",
+            "visualFamilyId",
+            "flowPackId",
+            "variantId"
+          ]
+        },
+        "fingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storage": {
+          "enum": [
+            "SESSION_STORAGE",
+            "SERVER_BACKED"
+          ]
+        },
+        "onMatch": {
+          "const": "RESTORE_SETTLED_EXPLODED_WITHOUT_REPLAY"
+        },
+        "keepsHitMapActive": {
+          "const": true
+        },
+        "invalidatesOn": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 5,
+          "items": {
+            "enum": [
+              "catalogReleaseId",
+              "fitmentId",
+              "visualFamilyId",
+              "flowPackId",
+              "variantId"
+            ]
+          }
+        }
       }
     },
     "retainedSelection": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["preserveUntilEdited", "committedTextAppearance", "contextPropagation"],
+      "required": [
+        "preserveUntilEdited",
+        "committedTextAppearance",
+        "contextPropagation"
+      ],
       "properties": {
-        "preserveUntilEdited": { "const": true },
-        "committedTextAppearance": { "const": "FAINT_GREY" },
+        "preserveUntilEdited": {
+          "const": true
+        },
+        "committedTextAppearance": {
+          "const": "FAINT_GREY"
+        },
         "contextPropagation": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
     "transitionWindow": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["topInstruction", "headlinePattern", "headlinePlacement", "visibleProgressUi"],
+      "required": [
+        "topInstruction",
+        "headlinePattern",
+        "headlinePlacement",
+        "visibleProgressUi"
+      ],
       "properties": {
-        "topInstruction": { "const": "click on the category image to browse parts" },
-        "headlinePattern": { "const": "Know your {exact chosen model}. Find the right part." },
-        "headlinePlacement": { "const": "BOTTOM_LEFT" },
-        "visibleProgressUi": { "const": false }
+        "topInstruction": {
+          "const": "click on the category image to browse parts"
+        },
+        "headlinePattern": {
+          "const": "Know your {exact chosen model}. Find the right part."
+        },
+        "headlinePlacement": {
+          "const": "BOTTOM_LEFT"
+        },
+        "visibleProgressUi": {
+          "const": false
+        }
       }
     },
     "visualIntegrity": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["explodedViewPolicy", "wheelMultiplicityRule"],
+      "required": [
+        "explodedViewPolicy",
+        "wheelMultiplicityRule"
+      ],
       "properties": {
         "explodedViewPolicy": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["expectedWheelPositions", "tyresPerPosition", "looseSpareTyres"],
+          "required": [
+            "expectedWheelPositions",
+            "tyresPerPosition",
+            "looseSpareTyres",
+            "automatedPass",
+            "humanVisualReview"
+          ],
           "properties": {
-            "expectedWheelPositions": { "type": "integer", "minimum": 2, "maximum": 12 },
+            "expectedWheelPositions": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 12
+            },
             "tyresPerPosition": {
               "type": "object",
               "minProperties": 2,
-              "additionalProperties": { "const": 1 }
+              "additionalProperties": {
+                "const": 1
+              }
             },
-            "looseSpareTyres": { "const": 0 }
+            "looseSpareTyres": {
+              "const": 0
+            },
+            "automatedPass": {
+              "type": "boolean"
+            },
+            "humanVisualReview": {
+              "enum": [
+                "PENDING",
+                "PASS",
+                "FAIL"
+              ]
+            }
           }
         },
-        "wheelMultiplicityRule": { "const": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION" }
+        "wheelMultiplicityRule": {
+          "const": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION"
+        }
       }
     },
     "stages": {
@@ -144,7 +310,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "required"],
+        "required": [
+          "id",
+          "required"
+        ],
         "properties": {
           "id": {
             "enum": [
@@ -158,45 +327,119 @@
               "EPC_DIAGRAM_AND_PARTS"
             ]
           },
-          "asset": { "type": "string" },
-          "fallback": { "type": "string" },
-          "route": { "type": "string" },
-          "required": { "const": true }
+          "asset": {
+            "type": "string"
+          },
+          "fallback": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "required": {
+            "const": true
+          }
         }
       }
     },
     "catalogHandoff": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mapping", "navigationManifest", "vehicleRoute"],
+      "required": [
+        "mapping",
+        "navigationManifest",
+        "vehicleRoute"
+      ],
       "properties": {
-        "mapping": { "type": "string" },
-        "navigationManifest": { "type": "string" },
-        "vehicleRoute": { "type": "string", "pattern": "^/epc/vehicles/" }
+        "mapping": {
+          "type": "string"
+        },
+        "navigationManifest": {
+          "type": "string"
+        },
+        "vehicleRoute": {
+          "type": "string",
+          "pattern": "^/epc/vehicles/"
+        }
       }
     },
     "readiness": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["automatedQa", "humanReview", "productionBlocker"],
+      "required": [
+        "automatedQa",
+        "humanReview",
+        "productionBlocker"
+      ],
       "properties": {
-        "automatedQa": { "type": "string" },
-        "humanReview": { "type": "string" },
-        "productionBlocker": { "type": ["string", "null"] }
+        "automatedQa": {
+          "type": "string"
+        },
+        "humanReview": {
+          "type": "string"
+        },
+        "productionBlocker": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     }
   },
   "allOf": [
     {
       "if": {
-        "properties": { "customerReady": { "const": true } },
-        "required": ["customerReady"]
+        "properties": {
+          "customerReady": {
+            "const": true
+          }
+        },
+        "required": [
+          "customerReady"
+        ]
       },
       "then": {
         "properties": {
-          "status": { "const": "PRODUCTION_READY" },
+          "status": {
+            "const": "PRODUCTION_READY"
+          },
           "readiness": {
-            "properties": { "productionBlocker": { "type": "null" } }
+            "properties": {
+              "productionBlocker": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "customerReady": {
+            "const": true
+          }
+        },
+        "required": [
+          "customerReady"
+        ]
+      },
+      "then": {
+        "properties": {
+          "visualIntegrity": {
+            "properties": {
+              "explodedViewPolicy": {
+                "properties": {
+                  "automatedPass": {
+                    "const": true
+                  },
+                  "humanVisualReview": {
+                    "const": "PASS"
+                  }
+                }
+              }
+            }
           }
         }
       }

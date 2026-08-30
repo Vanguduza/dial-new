@@ -17,6 +17,17 @@ const failures = [];
 const checked = [];
 
 // ── minimal JSON Schema validator (draft 2020-12 subset) ───────────────────
+/** Structural equality, for `const` and `enum` over arrays and objects. */
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== "object" || typeof b !== "object") return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every((key) => Object.hasOwn(b, key) && deepEqual(a[key], b[key]));
+}
+
 function validate(value, schema, doc, at = '') {
   const errors = [];
   const fail = (message) => errors.push(`${at || '<root>'}: ${message}`);
@@ -32,10 +43,14 @@ function validate(value, schema, doc, at = '') {
     return validate(value, target, doc, at);
   }
 
-  if (schema.const !== undefined && value !== schema.const) {
+  // `const` and `enum` compare by value, not by reference. Using !== and
+  // Array.includes meant a const array or object could never match anything,
+  // so a schema pinning an exact list reported RED against a document that
+  // was in fact identical.
+  if (schema.const !== undefined && !deepEqual(value, schema.const)) {
     fail(`expected const ${JSON.stringify(schema.const)}, got ${JSON.stringify(value)}`);
   }
-  if (schema.enum && !schema.enum.includes(value)) {
+  if (schema.enum && !schema.enum.some((candidate) => deepEqual(value, candidate))) {
     fail(`${JSON.stringify(value)} is not one of ${JSON.stringify(schema.enum)}`);
   }
 

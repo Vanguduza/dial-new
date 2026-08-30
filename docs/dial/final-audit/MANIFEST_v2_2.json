@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T02:39:54.834Z",
+  "generated_at": "2026-08-30T03:56:23.791Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -508,8 +508,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 58623,
-      "sha256": "37511005b0d897d26959f059c4f33a522bf9f02943cf20f3c30514b6d72b0f3d"
+      "bytes": 60773,
+      "sha256": "67268878e4c5cbdad551148546bb7bceb2d253d216888ea8ef51524177301a26"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
@@ -768,8 +768,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
-      "bytes": 10773,
-      "sha256": "a7d45702c3a886360aad6e69dcb1420eaf55e93c6b31bcad175b6ba210f0e4d5"
+      "bytes": 12699,
+      "sha256": "6e787fab6338a54c8cd3bca455d151eefd03ef4f1adcfdaf8a74eaef652d466e"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EVENTUALITY_CLOSURE_STANDARD.md",
@@ -1043,13 +1043,13 @@
     },
     {
       "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
-      "bytes": 15257,
-      "sha256": "d68264e40b04bb4eceae9d60fc3085122bef0b457bdcd909f1d607bbdf75a609"
+      "bytes": 17962,
+      "sha256": "4efe9a3acacbbd29ed52013c2d584d4071271c6cb8fd3ae34c6768aa32e34036"
     },
     {
       "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md",
-      "bytes": 18367,
-      "sha256": "928d3fa1a02b2afac95767c4f8c0aa2f5cfc148d5ac99edc9ec536edc0dd6151"
+      "bytes": 24187,
+      "sha256": "c49f772085bfeb4c08dc5e6fe96a93be1f91dc7077578030842bf8eb5ca6b515"
     },
     {
       "path": "22_COMMERCE_FRONTEND_AND_TRANSITION/04_DEVELOPMENT_PLAN/UPDATED_DEVELOPMENT_PLAN_v2_1.md",

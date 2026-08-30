@@ -2,6 +2,7 @@ import { access, copyFile, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
 import sharp from "sharp";
 import {
+  completedFlowFingerprint,
   parseJob,
   PIPELINE_STAGES,
   type PipelineStage,
@@ -10,6 +11,7 @@ import {
 } from "../../contracts/src/index.js";
 import { generateFrameProfile } from "../../animation/src/index.js";
 import {
+  assertDevelopmentFixture,
   CredentialGatedCgiGenerator,
   DeterministicDevelopmentCgiGenerator,
 } from "../../cgi/src/index.js";
@@ -29,13 +31,13 @@ import {
 } from "../../image-processing/src/index.js";
 import { generateLineArt } from "../../line-art/src/index.js";
 import { buildAssetManifest, publishPreviewPack } from "../../packaging/src/index.js";
-import { runAutomatedQa, type StageIdentityResult } from "../../qa/src/index.js";
+import { runAutomatedQa, type QaReport, type StageIdentityResult } from "../../qa/src/index.js";
 import { DeterministicTechnicalRenderer } from "../../technical-render/src/index.js";
 import { vehicleSceneSvg } from "../../technical-render/src/scene.js";
 import { ensureDir, readJson, writeJsonAtomic } from "./fs.js";
 import { hashFile, sha256, stableStringify } from "./hash.js";
 
-export const PIPELINE_VERSION = "0.5.0";
+export const PIPELINE_VERSION = "0.5.1";
 const STAGE_VERSION = "5.0.0";
 
 export interface PipelineState {
@@ -96,6 +98,7 @@ async function loadJob(jobPath: string) {
 
 export async function validateJobFile(jobPath: string) {
   const { job, jobDir } = await loadJob(jobPath);
+  if (job.generationProvider === "deterministic-development") assertDevelopmentFixture(job);
   const source = resolve(jobDir, job.references.frontThreeQuarter);
   await validateImage(source, job.developmentMode);
   const provenance = job.provenance.frontThreeQuarter;
@@ -287,7 +290,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         const path = join(packRoot, "exploded", "explosion-plan.json");
         await writeJsonAtomic(path, {
           grammarVersion: "1.0.0",
-          groups: planExplosion(job.enabledCategories),
+          groups: planExplosion(job.enabledCategories, job.motionProfile),
         });
         return {
           files: [path],
@@ -354,7 +357,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         };
       }
       case "14_HOTSPOTS": {
-        const hotspots = buildHotspots(job.enabledCategories);
+        const hotspots = buildHotspots(job.enabledCategories, job.fitmentMapping);
         const path = join(packRoot, "navigation", "hotspots.json");
         await writeJsonAtomic(path, { coordinateSystem: "normalized-0-1", hotspots });
         await writeJsonAtomic(
@@ -422,10 +425,27 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
           identityFidelityRequired:
             job.generationProvider === "live" || job.developmentMode === false,
         });
-        if (!qa.passed)
-          throw new Error("Automated identity, wheel-multiplicity, or hotspot QA failed");
+        // Evidence is frozen before the gate decides. Writing qa.json only on
+        // success discarded the record of every failure, which is the opposite
+        // of what an evidence gate is for.
         const path = join(packRoot, "qa", "qa.json");
         await writeJsonAtomic(path, qa);
+        if (!qa.passed) {
+          const reasons = [
+            // Identity drift is always recorded as evidence, but it is only a
+            // *reason for failure* when the gate required fidelity.
+            ...(qa.checks.identity ? [] : qa.identityFailures),
+            ...qa.hotspotErrors,
+            ...(qa.ambiguousHotspots ?? []),
+            ...qa.uncoveredCategories.map((category) => `${category} has no hit region`),
+            ...(qa.checks.wheelMultiplicity
+              ? []
+              : ["exploded view has invalid wheel multiplicity"]),
+          ];
+          throw new Error(
+            `Automated QA failed: ${reasons.join("; ")} (evidence written to ${path})`,
+          );
+        }
         const sheet = join(packRoot, "qa", "comparison-contact-sheet.jpg");
         await makeContactSheet(
           [
@@ -468,6 +488,12 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         };
       }
       case "16_PACKAGE": {
+        // Stage 15 froze the QA evidence. Packaging reads its verdicts back
+        // rather than re-deriving them, so the pack can never claim a result
+        // the gate did not produce.
+        const qaEvidence = JSON.parse(
+          await readFile(join(packRoot, "qa", "qa.json"), "utf8"),
+        ) as QaReport;
         const metaPath = join(packRoot, "meta.json");
         await writeJsonAtomic(metaPath, {
           visualFamilyId: job.visualFamilyId,
@@ -488,7 +514,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         });
         const flowPackPath = join(packRoot, "navigation", "hero-to-epc-flow-pack.json");
         await writeJsonAtomic(flowPackPath, {
-          schemaVersion: "1.1.0",
+          schemaVersion: "1.2.0",
           flowPackId: `H2E-${job.visualFamilyId.replace(/^VF-/, "")}-V1`,
           status: job.developmentMode ? "DEVELOPMENT_COMPLETE" : "PRODUCTION_REVIEW_REQUIRED",
           customerReady: false,
@@ -519,6 +545,39 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             automaticReplayWhenVehicleUnchanged: false,
             completedVehicleReturnState: "RESTORE_SETTLED_EXPLODED",
           },
+          // Blueprint 4.5. `autoplay.completedVehicleReturnState` says what to do
+          // on a match; without this the pack never said what it matches
+          // against. Identity-bearing values only, which is what keeps the
+          // stored fingerprint non-sensitive.
+          completionMemory: {
+            fingerprintComponents: [
+              "catalogReleaseId",
+              "fitmentId",
+              "visualFamilyId",
+              "flowPackId",
+              "variantId",
+            ],
+            fingerprint: completedFlowFingerprint({
+              catalogReleaseId: job.fitmentMapping.catalogReleaseId,
+              fitmentId: job.fitmentMapping.fitmentId,
+              visualFamilyId: job.visualFamilyId,
+              flowPackId: `H2E-${job.visualFamilyId.replace(/^VF-/, "")}-V1`,
+              variantId: job.fitmentMapping.vehicleContext.variantId,
+            }),
+            // 4.5: the preview may use session storage; production keeps the
+            // authoritative active-vehicle identity server-backed.
+            storage: "SESSION_STORAGE",
+            onMatch: "RESTORE_SETTLED_EXPLODED_WITHOUT_REPLAY",
+            keepsHitMapActive: true,
+            // 4.5(5): any identity-bearing change invalidates the match.
+            invalidatesOn: [
+              "catalogReleaseId",
+              "fitmentId",
+              "visualFamilyId",
+              "flowPackId",
+              "variantId",
+            ],
+          },
           retainedSelection: {
             preserveUntilEdited: true,
             committedTextAppearance: "FAINT_GREY",
@@ -531,7 +590,16 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             visibleProgressUi: false,
           },
           visualIntegrity: {
-            explodedViewPolicy: job.explodedViewPolicy,
+            explodedViewPolicy: {
+              ...job.explodedViewPolicy,
+              // 10, QA_READY: wheel multiplicity needs both an automated pass
+              // and a human visual review. The verdict is read back from the
+              // QA evidence rather than restated from the job, so the pack
+              // cannot assert a pass the gate never measured; human review
+              // stays PENDING until a reviewer records it.
+              automatedPass: qaEvidence.checks.wheelMultiplicity,
+              humanVisualReview: "PENDING" as const,
+            },
             wheelMultiplicityRule: "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION",
           },
           stages: [

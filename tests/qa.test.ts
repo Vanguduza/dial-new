@@ -3,6 +3,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import sharp from "sharp";
+import type { VisualCategoryId, VisualEpcMapping } from "../packages/contracts/src/index.js";
 import { buildHotspots } from "../packages/hotspots/src/index.js";
 import { runAutomatedQa, type StageIdentityResult } from "../packages/qa/src/index.js";
 import {
@@ -10,6 +11,58 @@ import {
   compareIdentity,
   type IdentityMetrics,
 } from "../packages/identity-lock/src/index.js";
+
+// Minimal mapping fixture. buildHotspots now takes the catalog targets from the
+// VisualEpcMapping rather than inventing them, per Catalog Agent section 8.
+function mappingFor(categories: VisualCategoryId[]): VisualEpcMapping {
+  return {
+    schemaVersion: "2.0.0",
+    mappingId: "VEM-TEST",
+    catalogReleaseId: "CAT-TEST",
+    fitmentId: "FIT-TEST",
+    visualFamilyId: "VF-TEST",
+    vehicleContext: {
+      makerSlug: "test",
+      catalogFamilyId: "CF-TEST",
+      familySlug: "test",
+      variantId: null,
+      variantSlug: null,
+      chassisCodes: [],
+      engineCodes: [],
+      market: null,
+      attributes: {},
+    },
+    categories: categories.map((visualCategoryId) => ({
+      visualCategoryId,
+      componentFamilyId: `VCF-${visualCategoryId.replace("VC-", "")}`,
+      label: visualCategoryId,
+      target: {
+        sectionSlug:
+          visualCategoryId === "VC-ENG"
+            ? "engine"
+            : visualCategoryId === "VC-TRN"
+              ? "transmission-drivetrain"
+              : visualCategoryId === "VC-BODY"
+                ? "body-exterior"
+                : "chassis-systems",
+        groupId: null,
+        groupSlug: null,
+        defaultDiagramId: null,
+        fallbackQuery: null,
+        selectionMode: "SECTION" as const,
+        minimumReadiness: "BROWSE_READY" as const,
+      },
+    })),
+    componentFamilies: [],
+    provenance: {
+      authority: "CATALOG" as const,
+      source: "test",
+      sourceVersion: "1",
+      confidence: 1,
+      reviewedAt: null,
+    },
+  };
+}
 
 const roots: string[] = [];
 
@@ -52,19 +105,22 @@ describe("identity QA", () => {
     expect(lockA.source).toBe("derived-from-normalized-source");
   }, 30_000);
 
-  it("passes a state that matches its own locked geometry", async () => {
+  it("passes measured silhouette checks but does not prove unmeasured landmarks", async () => {
     const source = await render(vehicle(900, 340), "source.png");
     const lock = await buildIdentityLock(source);
     const metrics = await compareIdentity(lock, source);
     expect(metrics.silhouetteIoU).toBeGreaterThan(0.99);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
       identityFidelityRequired: true,
     });
-    expect(result.passed).toBe(true);
+    expect(result.identity[0].checks.silhouette).toBe("PASS");
+    expect(result.passed).toBe(false);
+    expect(result.identityFidelityProven).toBe(false);
+    expect(result.identityVerdict).toBe("NOT_PROVEN");
   }, 30_000);
 
   it("blocks visible silhouette drift measured against the lock", async () => {
@@ -77,7 +133,7 @@ describe("identity QA", () => {
     expect(metrics.silhouetteIoU).toBeLessThan(0.9);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
       identityFidelityRequired: true,
@@ -92,7 +148,7 @@ describe("identity QA", () => {
     const metrics = await compareIdentity(lock, source);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
       identityFidelityRequired: true,
@@ -100,6 +156,8 @@ describe("identity QA", () => {
     expect(metrics.wheelCentreDisplacement).toBe("NOT_MEASURED");
     expect(result.notMeasured).toContain("wheelCentres");
     expect(result.notMeasured).toContain("lamps");
+    expect(result.passed).toBe(false);
+    expect(result.identityFidelityProven).toBe(false);
   }, 30_000);
 
   it("waives identity fidelity for the development adapter but records the drift", async () => {
@@ -109,7 +167,7 @@ describe("identity QA", () => {
     const metrics = await compareIdentity(lock, drifted);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
       identityFidelityRequired: false,
@@ -127,7 +185,7 @@ describe("identity QA", () => {
     const metrics = await compareIdentity(lock, source);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: {
         expectedWheelPositions: 4,
@@ -146,7 +204,7 @@ describe("identity QA", () => {
     const metrics = await compareIdentity(lock, source);
     const result = runAutomatedQa({
       stages: stage(metrics),
-      hotspots: buildHotspots(["VC-ENG"]),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG", "VC-TRN"],
       explodedViewPolicy: policy,
       identityFidelityRequired: true,

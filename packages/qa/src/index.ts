@@ -130,7 +130,6 @@ export function runAutomatedQa(input: QaInput) {
       }
     }
   }
-  const duplicatePriorities = hotspots.length !== new Set(hotspots.map((h) => h.priority)).size;
 
   const wheelMultiplicity = validateWheelMultiplicity(explodedViewPolicy);
 
@@ -150,13 +149,13 @@ export function runAutomatedQa(input: QaInput) {
     ),
   ];
 
-  const identityFidelityProven = identityFailures.length === 0;
+  const identityFidelityProven = identityFailures.length === 0 && notMeasured.length === 0;
 
   const checks = {
     identity: identityFidelityRequired ? identityFidelityProven : true,
     hotspots: hotspotErrors.length === 0,
     hotspotCoverage: uncoveredCategories.length === 0,
-    hotspotRoutingDeterministic: ambiguousHotspots.length === 0 && !duplicatePriorities,
+    hotspotRoutingDeterministic: ambiguousHotspots.length === 0,
     wheelMultiplicity,
   };
 
@@ -169,13 +168,12 @@ export function runAutomatedQa(input: QaInput) {
     identityVerdict: identityFidelityRequired
       ? identityFidelityProven
         ? "PROVEN"
-        : "FAILED"
+        : identityFailures.length > 0 ? "FAILED" : "NOT_PROVEN"
       : "WAIVED_DEVELOPMENT_ADAPTER",
     identityFailures,
     hotspotErrors,
     uncoveredCategories,
     ambiguousHotspots,
-    duplicatePriorities,
     explodedViewPolicy,
     thresholds: QA_THRESHOLDS,
     notMeasured,
@@ -214,3 +212,10 @@ function boundsOverlap(a: Hotspot, b: Hotspot): boolean {
   // Tolerate a hairline shared edge; flag genuine area overlap.
   return overlapX * overlapY > 0.0005;
 }
+
+/**
+ * The QA evidence record, derived from the producer so it cannot drift from
+ * what `runAutomatedQa` actually writes. Stage 16 reads qa.json back as this
+ * to fill the flow pack's automated verdicts.
+ */
+export type QaReport = ReturnType<typeof runAutomatedQa>;

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "flowPackId": "H2E-TOYOTA-HILUX-AN130-DC-FL-V1",
   "status": "DEVELOPMENT_COMPLETE",
   "customerReady": false,
@@ -30,6 +30,26 @@
     "automaticReplayWhenVehicleUnchanged": false,
     "completedVehicleReturnState": "RESTORE_SETTLED_EXPLODED"
   },
+  "completionMemory": {
+    "fingerprintComponents": [
+      "catalogReleaseId",
+      "fitmentId",
+      "visualFamilyId",
+      "flowPackId",
+      "variantId"
+    ],
+    "fingerprint": "CAT-DEVELOPMENT-HILUX-V2|FIT-DEMO-ZA-HILUX-AN130-2020-2GD-6MT|VF-TOYOTA-HILUX-AN130-DC-FL|H2E-TOYOTA-HILUX-AN130-DC-FL-V1|CV-TOYOTA-HILUX-AN130-DC-2GD-6MT",
+    "storage": "SESSION_STORAGE",
+    "onMatch": "RESTORE_SETTLED_EXPLODED_WITHOUT_REPLAY",
+    "keepsHitMapActive": true,
+    "invalidatesOn": [
+      "catalogReleaseId",
+      "fitmentId",
+      "visualFamilyId",
+      "flowPackId",
+      "variantId"
+    ]
+  },
   "retainedSelection": {
     "preserveUntilEdited": true,
     "committedTextAppearance": "FAINT_GREY",
@@ -55,7 +75,9 @@
         "visible-front": 1,
         "visible-rear": 1
       },
-      "looseSpareTyres": 0
+      "looseSpareTyres": 0,
+      "automatedPass": true,
+      "humanVisualReview": "PENDING"
     },
     "wheelMultiplicityRule": "EXACTLY_ONE_TYRE_PER_PHYSICAL_WHEEL_POSITION"
   },

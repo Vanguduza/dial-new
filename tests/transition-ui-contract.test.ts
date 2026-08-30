@@ -69,6 +69,57 @@ describe("customer transition contract", () => {
     }
   });
 
+  it("declares what completion memory compares, not just what it does on a match", async () => {
+    const flow = JSON.parse(await readFile(resolve(PACK), "utf8"));
+
+    // §4.5. `autoplay.completedVehicleReturnState` said what to do on a match;
+    // until the pack also carried the fingerprint it never said what it
+    // matched against, so the return behaviour was unfalsifiable.
+    const identityBearing = [
+      "catalogReleaseId",
+      "fitmentId",
+      "visualFamilyId",
+      "flowPackId",
+      "variantId",
+    ];
+    expect(flow.completionMemory.fingerprintComponents).toEqual(identityBearing);
+    // Every identity-bearing value invalidates the match (§4.5(5)).
+    expect([...flow.completionMemory.invalidatesOn].sort()).toEqual([...identityBearing].sort());
+    expect(flow.completionMemory.onMatch).toBe("RESTORE_SETTLED_EXPLODED_WITHOUT_REPLAY");
+    // §4.5(3): the invisible category map stays live on restore.
+    expect(flow.completionMemory.keepsHitMapActive).toBe(true);
+
+    // The fingerprint is the five identity values and nothing else — that is
+    // what keeps it non-sensitive enough to cache in the browser.
+    expect(flow.completionMemory.fingerprint.split("|")).toHaveLength(identityBearing.length);
+    expect(flow.completionMemory.fingerprint).toContain(flow.vehicle.fitmentId);
+    expect(flow.completionMemory.fingerprint).toContain(flow.flowPackId);
+    // §2.2: visual identity and fitment identity are separate, and both travel.
+    expect(flow.completionMemory.fingerprint).toContain(flow.vehicle.visualFamilyId);
+  });
+
+  it("carries both wheel-multiplicity verdicts and cannot claim human review it has not had", async () => {
+    const flow = JSON.parse(await readFile(resolve(PACK), "utf8"));
+    const policy = flow.visualIntegrity.explodedViewPolicy;
+
+    // §10, QA_READY: automated metadata validation *and* human visual review.
+    expect(typeof policy.automatedPass).toBe("boolean");
+    expect(["PENDING", "PASS", "FAIL"]).toContain(policy.humanVisualReview);
+
+    // §4.3: at most one tyre per physical wheel position, no loose spares
+    // unless the configuration genuinely includes them.
+    expect(Object.values(policy.tyresPerPosition)).toEqual(
+      Object.values(policy.tyresPerPosition).map(() => 1),
+    );
+    expect(policy.looseSpareTyres).toBe(0);
+
+    // A pack may not be customer-ready on an automated pass alone.
+    if (flow.customerReady === true) {
+      expect(policy.automatedPass).toBe(true);
+      expect(policy.humanVisualReview).toBe("PASS");
+    }
+  });
+
   it("renders the hit map without visible markers or playback chrome", async () => {
     const source = await readFile(resolve(COMPONENT), "utf8");
 

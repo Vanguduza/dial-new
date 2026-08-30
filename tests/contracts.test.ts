@@ -1,8 +1,61 @@
 import { describe, expect, it } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { parseJob, polygonArea, validateHotspots, MOTION_PROFILES } from '../packages/contracts/src/index.js';
+import type { VisualCategoryId, VisualEpcMapping } from "../packages/contracts/src/index.js";
 import { buildHotspots } from '../packages/hotspots/src/index.js';
 import { sha256, stableStringify } from '../packages/pipeline-core/src/hash.js';
+
+// Minimal mapping fixture. buildHotspots now takes the catalog targets from the
+// VisualEpcMapping rather than inventing them, per Catalog Agent section 8.
+function mappingFor(categories: VisualCategoryId[]): VisualEpcMapping {
+  return {
+    schemaVersion: "2.0.0",
+    mappingId: "VEM-TEST",
+    catalogReleaseId: "CAT-TEST",
+    fitmentId: "FIT-TEST",
+    visualFamilyId: "VF-TEST",
+    vehicleContext: {
+      makerSlug: "test",
+      catalogFamilyId: "CF-TEST",
+      familySlug: "test",
+      variantId: null,
+      variantSlug: null,
+      chassisCodes: [],
+      engineCodes: [],
+      market: null,
+      attributes: {},
+    },
+    categories: categories.map((visualCategoryId) => ({
+      visualCategoryId,
+      componentFamilyId: `VCF-${visualCategoryId.replace("VC-", "")}`,
+      label: visualCategoryId,
+      target: {
+        sectionSlug:
+          visualCategoryId === "VC-ENG"
+            ? "engine"
+            : visualCategoryId === "VC-TRN"
+              ? "transmission-drivetrain"
+              : visualCategoryId === "VC-BODY"
+                ? "body-exterior"
+                : "chassis-systems",
+        groupId: null,
+        groupSlug: null,
+        defaultDiagramId: null,
+        fallbackQuery: null,
+        selectionMode: "SECTION" as const,
+        minimumReadiness: "BROWSE_READY" as const,
+      },
+    })),
+    componentFamilies: [],
+    provenance: {
+      authority: "CATALOG" as const,
+      source: "test",
+      sourceVersion: "1",
+      confidence: 1,
+      reviewedAt: null,
+    },
+  };
+}
 
 describe('DVTG contracts', () => {
   it('accepts the development vertical-slice job and keeps identities separate', async () => {
@@ -21,7 +74,7 @@ describe('DVTG contracts', () => {
   });
 
   it('validates normalized hotspot geometry', () => {
-    const hotspots = buildHotspots(['VC-ENG', 'VC-TRN', 'VC-BODY']);
+    const hotspots = buildHotspots(['VC-ENG', 'VC-TRN', 'VC-BODY'], mappingFor(['VC-ENG', 'VC-TRN', 'VC-BODY']));
     expect(validateHotspots(hotspots)).toEqual([]);
     expect(hotspots.every((hotspot) => polygonArea(hotspot.polygon) > 0)).toBe(true);
   });
