@@ -27628,9 +27628,10 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "groceries.grocery-order-group.read",
-      "groceries.grocery-order-group.create",
-      "groceries.grocery-order-group.act"
+      "groceries.round-plan.read",
+      "groceries.round-plan.publish",
+      "groceries.round-configuration.create",
+      "groceries.round-configuration.read"
     ],
     "data_entities": [
       "GroceryOrderGroup",
@@ -27688,16 +27689,22 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "a contribution below the plan's minimum is refused, naming the bound",
+      "a contribution above the plan's maximum is refused",
+      "a duration outside the plan's allowed product range is refused",
+      "a maturity date inconsistent with start plus duration at cadence is refused",
+      "a join cut-off at or after maturity is refused",
+      "a join cut-off before the start date is refused",
+      "a minimum member count above the maximum is refused",
+      "member bounds outside the plan's floor and ceiling are refused",
+      "a configuration declaring its own credit pools, tax class or catalogue is refused (RCM-026)",
+      "a voting threshold outside the plan's governance band is refused (review finding M4)",
+      "a private Round with an open membership mode is refused as incoherent",
+      "a configuration with no delivery zone is refused",
+      "a configuration whose composed credit product is non-conformant is refused, surfacing the credit model's own findings",
+      "a configuration inside every bound opens and composes to a conformant Round credit product"
+    ],
+    "acceptance_contract_doc": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F020",

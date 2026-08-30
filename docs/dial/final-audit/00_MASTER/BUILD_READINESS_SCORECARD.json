@@ -20,8 +20,8 @@
         "total_commands": 1894,
         "feature_specific_command_ratio": 0.639,
         "distinct_state_models": 32,
-        "distinct_acceptance_contracts": 24,
-        "distinct_permission_skeletons": 24,
+        "distinct_acceptance_contracts": 25,
+        "distinct_permission_skeletons": 25,
         "distinct_eventuality_ref_sets": 12
       },
       "why_amber": "CT-1 requires a per-feature acceptance contract and per-feature permissions. One acceptance contract and two permission skeletons cover all 186 features, and 67 features share a single Create/Start/Block/Resume/Complete/Cancel skeleton. The structural elements are present; the feature-specific content is not yet.",
@@ -105,8 +105,8 @@
         "total_commands": 1894,
         "feature_specific_command_ratio": 0.639,
         "distinct_state_models": 32,
-        "distinct_acceptance_contracts": 24,
-        "distinct_permission_skeletons": 24,
+        "distinct_acceptance_contracts": 25,
+        "distinct_permission_skeletons": 25,
         "distinct_eventuality_ref_sets": 12,
         "material_eventualities": 233,
         "distinct_eventuality_test_definitions": 8
@@ -132,7 +132,7 @@
     "customer_endpoint_records": 180,
     "supporting_capabilities": 125,
     "whatsapp_flows": 59,
-    "pack_files": 226
+    "pack_files": 227
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",

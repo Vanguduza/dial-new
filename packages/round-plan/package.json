@@ -1,0 +1,10 @@
+{
+  "name": "@dial/round-plan",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "src/plan.ts",
+  "dependencies": {
+    "@dial/round-credit": "*"
+  }
+}
