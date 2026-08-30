@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T21:22:36.632Z",
+  "generated_at": "2026-08-30T21:27:45.046Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 228,
+  "file_count": 229,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 10662,
-      "sha256": "5cb98112b3c35b49ad1adda3516b4af2ee3e10697935a73a86c40d76884e8417"
+      "sha256": "c0e18513aba0f1cde93e80fd4b1ef6d5020209866da57222d15855a9b9b2f187"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -783,8 +783,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 926579,
-      "sha256": "00e27d4f17b6e6e72e6ad5d0e11d82bff1e356fa1345f651d3cf3df6e0862616"
+      "bytes": 927309,
+      "sha256": "9915856d95794b12e3515c9072ce72c077c9e89323c55fbee359674fcd4a77d3"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
@@ -800,6 +800,11 @@
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md",
       "bytes": 10147,
       "sha256": "e4caaea36ffad6e004ae1837ab1dae44c11d8118d1491a6b993b66f27dd1851d"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md",
+      "bytes": 7952,
+      "sha256": "2fc4de940f0b5ac705ba4d2a95147153077ad40b1cdd42d1581d1d6e93260e54"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",

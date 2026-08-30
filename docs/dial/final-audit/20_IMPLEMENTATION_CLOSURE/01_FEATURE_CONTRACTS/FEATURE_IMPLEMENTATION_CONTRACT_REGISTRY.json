@@ -28008,9 +28008,11 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "groceries.grocery-order-group.read",
-      "groceries.grocery-order-group.create",
-      "groceries.grocery-order-group.act"
+      "groceries.round-membership.read",
+      "groceries.round-membership.join",
+      "groceries.round-membership.approve",
+      "groceries.round-membership.remove",
+      "groceries.round-membership.exit"
     ],
     "data_entities": [
       "GroceryOrderGroup",
@@ -28068,16 +28070,24 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "a join into a Round not open for members is refused",
+      "a join after the cut-off is refused",
+      "a join exceeding capacity is refused; the join that exactly reaches capacity succeeds",
+      "a join by an existing active member is refused",
+      "a join with no recorded agreement acceptance is refused (GROC-F021)",
+      "a join by an ineligible applicant is refused",
+      "a join from outside the Round's delivery zone is refused",
+      "REQUEST_TO_JOIN without recorded approval is refused; with it, succeeds",
+      "INVITATION without a valid invitation is refused; with it, succeeds",
+      "a creator attempting to remove a member is refused, citing §4",
+      "platform governance may remove a member",
+      "removing the creator leaves every other membership unchanged",
+      "a member who stops contributing retains their recorded valid purchases",
+      "recording one member's default changes no other membership",
+      "an exit with a cash outcome is refused; an in-kind exit succeeds",
+      "every refusal names the failed condition rather than reporting a generic failure"
+    ],
+    "acceptance_contract_doc": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F023",

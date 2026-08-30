@@ -5805,11 +5805,15 @@
     "outcome": "Round membership & join control",
     "owner": "groceries",
     "aggregate": "RoundMembership",
-    "status": "SPECIFIED",
-    "current_gate": "SPECIFIED",
+    "status": "DOMAIN_TESTED",
+    "current_gate": "DOMAIN_TESTED",
     "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
-    "code_paths": [],
-    "test_paths": [],
+    "code_paths": [
+      "packages/round-membership/src/membership.ts"
+    ],
+    "test_paths": [
+      "tests/round-membership.test.ts"
+    ],
     "evidence_refs": [],
     "donor_refs": [
       "REF-INSTACART",
@@ -5824,7 +5828,9 @@
     ],
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
-    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). The money model is LOCKED at DEC-001..007: credits are not money, so ACT-REG-001 is not engaged by Rounds. Review finding B1 is resolved. Enforced by packages/round-credit rules RCM-001..027."
+    "implementation_note": "Fourth feature of the Grocery Rounds slice. Joining is eight conditions holding at once, each naming itself on failure. The load-bearing reading: §4's ban on a creator redirecting pooled value is also about membership, so a creator may moderate and may never end a membership — removing a member holding credits redirects pooled value by another route (RMB-009). §10's guarantee that one member's default never reduces another's is made structural: recordLapse cannot reach validPurchasesMinor. NOT included: entitlement arithmetic, invitations as artefacts, identity, eligibility assessment, AML/KYC (review H5, still required by ACT-REG-001), notifications. No independent specialist review.",
+    "security_tier": "S4",
+    "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F023",
