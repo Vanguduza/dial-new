@@ -1,4 +1,8 @@
-import type { Hotspot, VisualCategoryId } from "../../contracts/src/index.js";
+import type {
+  Hotspot,
+  PackCoverageEntry,
+  VisualCategoryId,
+} from "../../contracts/src/index.js";
 import { validateHotspots } from "../../contracts/src/index.js";
 import type { IdentityMetrics, MetricValue } from "../../identity-lock/src/index.js";
 
@@ -80,6 +84,12 @@ export interface QaInput {
   enabledCategories: VisualCategoryId[];
   explodedViewPolicy: ExplodedViewPolicy;
   /**
+   * Every fitment this pack claims to serve. Coverage is a claim about other
+   * vehicles than the one that built the pack, so it is the one part of the
+   * pack nothing else can verify by looking at the artwork.
+   */
+  coverage: PackCoverageEntry[];
+  /**
    * True when the generated states are expected to derive from the approved
    * source — that is, for any live provider or non-development job.
    *
@@ -93,8 +103,14 @@ export interface QaInput {
 }
 
 export function runAutomatedQa(input: QaInput) {
-  const { stages, hotspots, enabledCategories, explodedViewPolicy, identityFidelityRequired } =
-    input;
+  const {
+    stages,
+    hotspots,
+    enabledCategories,
+    explodedViewPolicy,
+    coverage,
+    identityFidelityRequired,
+  } = input;
 
   if (stages.length === 0) {
     throw new Error("Automated QA requires at least one measured stage");
@@ -133,6 +149,22 @@ export function runAutomatedQa(input: QaInput) {
 
   const wheelMultiplicity = validateWheelMultiplicity(explodedViewPolicy);
 
+  // One pack serves every fitment it covers, so every covered fitment must be
+  // able to live with the exploded view this pack actually renders. Wheel
+  // positions are where that breaks: a cab-chassis with dual rear wheels is the
+  // same body and the same picture right up until the wheels come off.
+  const coverageConflicts = coverage
+    .filter((entry) => entry.expectedWheelPositions !== explodedViewPolicy.expectedWheelPositions)
+    .map(
+      (entry) =>
+        `${entry.fitmentId} expects ${entry.expectedWheelPositions} wheel positions but the pack renders ${explodedViewPolicy.expectedWheelPositions}`,
+    );
+  const duplicateFitments = coverage
+    .map((entry) => entry.fitmentId)
+    .filter((id, index, all) => all.indexOf(id) !== index)
+    .map((id) => `${id} is listed twice in coverage`);
+  const coverageErrors = [...coverageConflicts, ...duplicateFitments];
+
   const identityFailures = identity.flatMap((entry) =>
     Object.entries(entry.checks)
       .filter(([, outcome]) => outcome === "FAIL")
@@ -157,11 +189,13 @@ export function runAutomatedQa(input: QaInput) {
     hotspotCoverage: uncoveredCategories.length === 0,
     hotspotRoutingDeterministic: ambiguousHotspots.length === 0,
     wheelMultiplicity,
+    coverage: coverageErrors.length === 0,
   };
 
   return {
     passed: Object.values(checks).every(Boolean),
     checks,
+    coverageErrors,
     identity,
     identityFidelityRequired,
     identityFidelityProven,

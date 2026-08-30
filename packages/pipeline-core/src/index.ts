@@ -2,7 +2,6 @@ import { access, copyFile, readFile, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
 import sharp from "sharp";
 import {
-  completedFlowFingerprint,
   parseJob,
   PIPELINE_STAGES,
   type PipelineStage,
@@ -419,6 +418,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
           hotspots,
           enabledCategories: job.enabledCategories,
           explodedViewPolicy: job.explodedViewPolicy,
+          coverage: job.coverage,
           // The deterministic development adapter does not derive its states
           // from the source, so identity fidelity can only be required of a
           // live provider.
@@ -441,6 +441,7 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             ...(qa.checks.wheelMultiplicity
               ? []
               : ["exploded view has invalid wheel multiplicity"]),
+            ...qa.coverageErrors,
           ];
           throw new Error(
             `Automated QA failed: ${reasons.join("; ")} (evidence written to ${path})`,
@@ -514,16 +515,18 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
         });
         const flowPackPath = join(packRoot, "navigation", "hero-to-epc-flow-pack.json");
         await writeJsonAtomic(flowPackPath, {
-          schemaVersion: "1.2.0",
+          schemaVersion: "1.3.0",
           flowPackId: `H2E-${job.visualFamilyId.replace(/^VF-/, "")}-V1`,
           status: job.developmentMode ? "DEVELOPMENT_COMPLETE" : "PRODUCTION_REVIEW_REQUIRED",
           customerReady: false,
+          // Family identity only. Which exact vehicle a customer has is their
+          // selection, not this pack's property — the pack's job is to make
+          // them recognize the car, and the EPC resolves their exact catalog
+          // from the fitment that travels with the click.
           vehicle: {
             visualFamilyId: job.visualFamilyId,
-            fitmentId: job.fitmentMapping.fitmentId,
             catalogReleaseId: job.fitmentMapping.catalogReleaseId,
             catalogFamilyId: job.fitmentMapping.vehicleContext.catalogFamilyId,
-            variantId: job.fitmentMapping.vehicleContext.variantId,
             familySlug: job.fitmentMapping.vehicleContext.familySlug,
             make: job.make,
             model: job.model,
@@ -531,6 +534,10 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             bodyStyle: job.bodyStyle,
             visualPhase: job.visualPhase,
           },
+          // Every fitment this one pack serves. Declared rather than implied,
+          // so a variant that cannot actually share this exploded view is a
+          // QA failure instead of a silent visual lie.
+          coverage: job.coverage,
           entryModes: [
             "CASCADE_SEARCH",
             "GARAGE_VISUAL_FLOW",
@@ -545,10 +552,11 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
             automaticReplayWhenVehicleUnchanged: false,
             completedVehicleReturnState: "RESTORE_SETTLED_EXPLODED",
           },
-          // Blueprint 4.5. `autoplay.completedVehicleReturnState` says what to do
-          // on a match; without this the pack never said what it matches
-          // against. Identity-bearing values only, which is what keeps the
-          // stored fingerprint non-sensitive.
+          // Blueprint 4.5. The recipe, not a resolved value: the pack says which
+          // components make a fingerprint and what invalidates a match, and the
+          // player computes it from the customer's active vehicle. A shared pack
+          // cannot carry one — two fitments in `coverage` produce two different
+          // fingerprints from the same artwork.
           completionMemory: {
             fingerprintComponents: [
               "catalogReleaseId",
@@ -557,13 +565,6 @@ export async function runPipeline(jobPath: string, options: RunOptions = {}) {
               "flowPackId",
               "variantId",
             ],
-            fingerprint: completedFlowFingerprint({
-              catalogReleaseId: job.fitmentMapping.catalogReleaseId,
-              fitmentId: job.fitmentMapping.fitmentId,
-              visualFamilyId: job.visualFamilyId,
-              flowPackId: `H2E-${job.visualFamilyId.replace(/^VF-/, "")}-V1`,
-              variantId: job.fitmentMapping.vehicleContext.variantId,
-            }),
             // 4.5: the preview may use session storage; production keeps the
             // authoritative active-vehicle identity server-backed.
             storage: "SESSION_STORAGE",

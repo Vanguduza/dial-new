@@ -7,7 +7,7 @@ packs it emits.
 `DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md` or
 `CATALOG_AGENT_BUILD_PROMPT.md`, those are frozen and this is wrong. What this
 adds is the *why* behind the rules and the specific ways the current
-implementation has already got them wrong — every item in §9 is a defect that
+implementation has already got them wrong — every item in §10 is a defect that
 was really in this repository, not a hypothetical.
 
 **Scope.** One pack per `visualFamilyId`. The catalog will hold thousands. The
@@ -43,7 +43,46 @@ consequence of one of them.
 
 ---
 
-## 2. Two identities, and never confuse them
+## 2. What the pack is for, and what it is not for
+
+**The pack's job is recognition.** It exists to give the customer the first
+impression that the right car is selected — that is my Hilux, in my body style,
+in my facelift. It is not a technical depiction of their exact drivetrain, and
+it does not need to be.
+
+Variant precision happens *after* the click. The hit region contributes a
+section (`engine`, `chassis-systems`); the customer's own selection contributes
+the fitment; the EPC resolves the exact parts catalog from the two together.
+That split is what lets one pack serve every variant that shares a body — and
+avoiding a pack per variant is the whole economics of the catalog. A model with
+six drivetrains and two markets is one pack, not twelve.
+
+So the discipline is: **anything variant-specific in the pack is a bug**, not a
+detail. It either forces a pack per variant, or it makes the pack lie about the
+variants sharing it. The expensive parts — artwork, motion, hit-region geometry
+— are naturally variant-invariant. What leaks is metadata, and it leaks
+quietly: a `fitmentId` in a header block, a resolved fingerprint, a variant slug
+in a filename.
+
+**Coverage is declared, not implied.** The pack lists every fitment it serves,
+and that list is checked. Wheel positions are where the claim usually breaks: a
+cab-chassis with dual rear wheels is the same body and the same picture right up
+until the wheels come off, and it cannot ride along on a two-position exploded
+view. Same for a variant whose body style differs — that is a different visual
+family, however similar the marketing name.
+
+Two things follow that are easy to get wrong:
+
+- **The completed-flow fingerprint is a runtime value, never a pack constant.**
+  Two fitments in one coverage list produce two different fingerprints from the
+  same artwork. The pack declares the recipe — which components, in which order,
+  what invalidates a match — and the player resolves it per visit.
+- **The hotspot target is family-level.** `catalogFamilyId` +
+  `sectionSlug`, with no fitment and no variant anywhere in the hit map. If you
+  find yourself wanting to bake a variant into a hit region, the region is
+  wrong; the fitment belongs on the click.
+
+## 3. Two identities, and never confuse them
 
 | | `visualFamilyId` | `fitmentId` |
 |---|---|---|
@@ -69,7 +108,7 @@ completion memory, cache keys, resume keys, dedupe — uses IDs.
 
 ---
 
-## 3. What is authored once vs. per vehicle
+## 4. What is authored once vs. per vehicle
 
 The single biggest lever on consistency across the catalog is keeping this
 boundary sharp. Anything in the left column that leaks into per-vehicle
@@ -92,14 +131,18 @@ authoring becomes 3,000 opportunities to diverge.
 
 **Per visual family:**
 
-- Hero source asset, with licence and provenance (§8).
+- Hero source asset, with licence and provenance (§9).
 - The identity lock derived from the normalized hero.
 - Per-group layer assets, one per `layerAssetId` in the plan.
 - Hit-region polygons, in normalized 0–1 coordinates.
 - The EPC mapping's category→family bindings.
 - Wheel policy: how many physical wheel positions this configuration has.
 
-**Per fitment:** `fitmentId`, `catalogReleaseId`, `variantId`.
+**Per fitment — and not inside the pack:** `fitmentId` and `variantId` arrive
+with the customer's selection at runtime. The pack's `coverage` list names them
+only to declare, and let QA verify, which fitments this one pack serves.
+`catalogReleaseId` is pack-level: the pack's targets were validated against that
+release.
 
 If you find yourself wanting a per-vehicle timeline, a per-vehicle priority, or
 a per-vehicle string, the answer is no. That impulse is how a catalog of packs
@@ -107,7 +150,7 @@ stops being one product.
 
 ---
 
-## 4. The production method rule
+## 5. The production method rule
 
 This is the rule most likely to be violated by something that looks right.
 
@@ -156,7 +199,7 @@ recently, which meant a consumer following the document found the key absent:
 
 ---
 
-## 5. Motion: one authority, overlapping windows
+## 6. Motion: one authority, overlapping windows
 
 `MOTION_PROFILES["premium-v1"]` — 96 desktop frames, 48 mobile:
 
@@ -204,7 +247,7 @@ Acceptance conditions worth restating because they are easy to lose:
 
 ---
 
-## 6. The hit map
+## 7. The hit map
 
 Geometry is **normalized 0–1**, never pixels. That is what lets one hit map
 serve desktop and mobile, and it is why the categories and priorities can be
@@ -248,7 +291,7 @@ and no gate notices.
 
 ---
 
-## 7. Determinism, or why pack 3,000 differs from pack 1
+## 8. Determinism, or why pack 3,000 differs from pack 1
 
 Consistency across the catalog is mostly a reproducibility problem. Four ways
 this repository has already lost it:
@@ -282,7 +325,7 @@ A silently stale artifact is worse than a slow rebuild.
 
 ---
 
-## 8. Rights: the constraint that outranks quality
+## 9. Rights: the constraint that outranks quality
 
 **Network tools may not acquire catalogue, EPC or vehicle image data.** Rights
 are an open activation blocker (`ACT-REG-011`). An agent optimizing for pack
@@ -303,7 +346,7 @@ recorded.
 
 ---
 
-## 9. Defects already made here — check yours for these
+## 10. Defects already made here — check yours for these
 
 Every one of these was real, shipped, and invisible to the gates at the time.
 
@@ -323,7 +366,7 @@ Every one of these was real, shipped, and invisible to the gates at the time.
 
 ---
 
-## 10. Blockers are not gates
+## 11. Blockers are not gates
 
 A gate records **how far** something got. A blocker records that it **may go no
 further**. Two axes. Writing `BLOCKED` into a status field that also holds
@@ -343,9 +386,9 @@ teaches people to delete blockers to get green.
 
 ---
 
-## 11. Flow pack: what must be in it
+## 12. Flow pack: what must be in it
 
-Schema `1.2.0`, `additionalProperties: false` throughout.
+Schema `1.3.0`, `additionalProperties: false` throughout. `vehicle` carries family identity only; `coverage` lists the fitments served.
 
 Eight customer-visible stages, exactly: `HERO_PHOTOGRAPHY`, `IDENTITY_LOCK`,
 `STUDIO_CGI`, `ENGINEERING_LINE_ART`, `EXPLODED_SYSTEMS`, `VISUAL_HIT_MAP`,
@@ -357,7 +400,8 @@ flowPackId + variantId`, those five and no others. The list is `const` in the
 schema because it is what keeps the fingerprint non-sensitive enough to cache
 in a browser — adding a field is a privacy decision, not a convenience. All
 five appear in `invalidatesOn`. `onMatch` restores the settled exploded view
-with the category map live and no replay.
+with the category map live and no replay. The pack carries the recipe and no
+resolved value (§2).
 
 Wheel policy: at most one tyre per physical wheel position; never an attached
 tyre *and* a separated duplicate for the same position; loose spares only when
@@ -376,7 +420,7 @@ Eleven release gates apply per customer-visible vehicle: `IDENTITY_READY`,
 
 ---
 
-## 12. The transition window itself
+## 13. The transition window itself
 
 Two text elements. Exactly two.
 
@@ -397,7 +441,7 @@ made part of the *required* top instruction.
 
 ---
 
-## 13. Pipeline shape
+## 14. Pipeline shape
 
 Sixteen stages: `01_SOURCE_VALIDATE`, `02_NORMALIZE`, `03_IDENTITY_LOCK`,
 `04_SEGMENT`, `05_DEPTH_ESTIMATE`, `06_DEPTH_ACTIVATE`, `07_CGI_GENERATE`,
@@ -415,7 +459,7 @@ claim can disagree.
 
 ---
 
-## 14. Before you call a pack good
+## 15. Before you call a pack good
 
 - [ ] Every `layerAssetId` in the plan has a rendered asset.
 - [ ] No frame introduces the exploded state abruptly; groups overlap.
@@ -428,6 +472,9 @@ claim can disagree.
 - [ ] Coordinate probes resolve to the expected section on desktop *and* mobile.
 - [ ] Hit regions invisible, `aria-hidden`, keyboard list present, ≥44px on mobile.
 - [ ] One tyre per wheel position; spares only if real.
+- [ ] `coverage` lists every fitment this pack serves, with no duplicates.
+- [ ] Every covered fitment agrees with the wheel positions the pack renders.
+- [ ] No `fitmentId` or `variantId` outside `coverage`; no resolved fingerprint.
 - [ ] Exactly two text elements; no progress or playback affordance.
 - [ ] Technical render absent from the flow pack.
 - [ ] Identity metrics recorded — including any `NOT_MEASURED`.
@@ -438,13 +485,13 @@ claim can disagree.
 
 ---
 
-## 15. Open, as of this writing
+## 16. Open, as of this writing
 
 - `BLUEPRINT-4.3-METHOD` — the player crops an exploded still.
 - `BLUEPRINT-4.3-LAYERS` — pipeline renders flattened whole-scene frames; no
   per-layer assets, and no QA check that would notice.
 - `BLUEPRINT-4.3-MATRIX` — nothing emits or asserts the shared display matrix.
-- Two conflicting motion timelines (§5).
+- Two conflicting motion timelines (§6).
 - The Playwright suite is written and has never been executed. It is the
   largest untested surface in the transition; everything above about rendered
   DOM behaviour is currently asserted only in intent.

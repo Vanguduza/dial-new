@@ -89,13 +89,36 @@ describe("customer transition contract", () => {
     // §4.5(3): the invisible category map stays live on restore.
     expect(flow.completionMemory.keepsHitMapActive).toBe(true);
 
-    // The fingerprint is the five identity values and nothing else — that is
-    // what keeps it non-sensitive enough to cache in the browser.
-    expect(flow.completionMemory.fingerprint.split("|")).toHaveLength(identityBearing.length);
-    expect(flow.completionMemory.fingerprint).toContain(flow.vehicle.fitmentId);
-    expect(flow.completionMemory.fingerprint).toContain(flow.flowPackId);
-    // §2.2: visual identity and fitment identity are separate, and both travel.
-    expect(flow.completionMemory.fingerprint).toContain(flow.vehicle.visualFamilyId);
+    // No resolved fingerprint. One pack serves every fitment in `coverage`, so
+    // a value baked at build time would assert one customer's context inside an
+    // asset shared by all of them; the player computes it per visit.
+    expect(flow.completionMemory.fingerprint).toBeUndefined();
+  });
+
+  it("is scoped to a visual family and declares every fitment it serves", async () => {
+    const flow = JSON.parse(await readFile(resolve(PACK), "utf8"));
+
+    // The pack exists to make a customer recognize their car. Which exact
+    // drivetrain they have is their selection, resolved by the EPC from the
+    // fitment that travels with the click — so naming one fitment up here
+    // would bind a shared asset to one of the vehicles it serves.
+    expect(flow.vehicle.fitmentId).toBeUndefined();
+    expect(flow.vehicle.variantId).toBeUndefined();
+    expect(flow.flowPackId).toContain(flow.vehicle.visualFamilyId.replace(/^VF-/, ""));
+
+    // Coverage is declared, not implied.
+    expect(Array.isArray(flow.coverage)).toBe(true);
+    expect(flow.coverage.length).toBeGreaterThan(0);
+    const ids = flow.coverage.map((entry: { fitmentId: string }) => entry.fitmentId);
+    expect(new Set(ids).size).toBe(ids.length);
+
+    // And it is a claim the exploded view can actually honour: a variant whose
+    // wheel positions differ cannot share this picture.
+    for (const entry of flow.coverage) {
+      expect(entry.expectedWheelPositions).toBe(
+        flow.visualIntegrity.explodedViewPolicy.expectedWheelPositions,
+      );
+    }
   });
 
   it("carries both wheel-multiplicity verdicts and cannot claim human review it has not had", async () => {

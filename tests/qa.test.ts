@@ -88,6 +88,22 @@ const policy = {
   looseSpareTyres: 0,
 };
 
+// Two fitments sharing one body: the pack's whole reason for existing.
+const coverage = [
+  {
+    fitmentId: "FIT-TEST-A",
+    variantId: "CV-TEST-A",
+    variantSlug: "test-a",
+    expectedWheelPositions: 4,
+  },
+  {
+    fitmentId: "FIT-TEST-B",
+    variantId: "CV-TEST-B",
+    variantSlug: "test-b",
+    expectedWheelPositions: 4,
+  },
+];
+
 function stage(metrics: IdentityMetrics): StageIdentityResult[] {
   return [{ stage: "STUDIO_CGI", asset: "cgi/cgi-master.avif", metrics }];
 }
@@ -115,6 +131,7 @@ describe("identity QA", () => {
       hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
+      coverage,
       identityFidelityRequired: true,
     });
     expect(result.identity[0].checks.silhouette).toBe("PASS");
@@ -136,6 +153,7 @@ describe("identity QA", () => {
       hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
+      coverage,
       identityFidelityRequired: true,
     });
     expect(result.passed).toBe(false);
@@ -151,6 +169,7 @@ describe("identity QA", () => {
       hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
+      coverage,
       identityFidelityRequired: true,
     });
     expect(metrics.wheelCentreDisplacement).toBe("NOT_MEASURED");
@@ -170,6 +189,7 @@ describe("identity QA", () => {
       hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG"],
       explodedViewPolicy: policy,
+      coverage,
       identityFidelityRequired: false,
     });
     // The pack may proceed, but it must never claim identity was proven.
@@ -177,6 +197,50 @@ describe("identity QA", () => {
     expect(result.identityFidelityProven).toBe(false);
     expect(result.identityVerdict).toBe("WAIVED_DEVELOPMENT_ADAPTER");
     expect(result.identityFailures.length).toBeGreaterThan(0);
+  }, 30_000);
+
+  it("blocks a covered fitment that cannot share this pack's exploded view", async () => {
+    const source = await render(vehicle(900, 340), "source.png");
+    const lock = await buildIdentityLock(source);
+    const metrics = await compareIdentity(lock, source);
+    const result = runAutomatedQa({
+      stages: stage(metrics),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
+      enabledCategories: ["VC-ENG"],
+      explodedViewPolicy: policy,
+      // A cab-chassis with dual rear wheels: same body, same picture, right up
+      // until the wheels come off. It may not ride along on this pack.
+      coverage: [
+        ...coverage,
+        {
+          fitmentId: "FIT-TEST-DUALLY",
+          variantId: "CV-TEST-DUALLY",
+          variantSlug: "test-dually",
+          expectedWheelPositions: 6,
+        },
+      ],
+      identityFidelityRequired: true,
+    });
+    expect(result.checks.coverage).toBe(false);
+    expect(result.passed).toBe(false);
+    expect(result.coverageErrors.join(" ")).toContain("FIT-TEST-DUALLY");
+  }, 30_000);
+
+  it("accepts several fitments that genuinely share one body", async () => {
+    const source = await render(vehicle(900, 340), "source.png");
+    const lock = await buildIdentityLock(source);
+    const metrics = await compareIdentity(lock, source);
+    const result = runAutomatedQa({
+      stages: stage(metrics),
+      hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
+      enabledCategories: ["VC-ENG"],
+      explodedViewPolicy: policy,
+      coverage,
+      identityFidelityRequired: false,
+    });
+    // Different drivetrains, one picture — this is the point of the pack.
+    expect(result.checks.coverage).toBe(true);
+    expect(result.coverageErrors).toEqual([]);
   }, 30_000);
 
   it("blocks duplicate tyres at any exploded-view wheel position", async () => {
@@ -192,6 +256,7 @@ describe("identity QA", () => {
         tyresPerPosition: { frontLeft: 2, frontRight: 1, rearLeft: 1, rearRight: 2 },
         looseSpareTyres: 0,
       },
+      coverage,
       identityFidelityRequired: true,
     });
     expect(result.passed).toBe(false);
@@ -207,6 +272,7 @@ describe("identity QA", () => {
       hotspots: buildHotspots(["VC-ENG"], mappingFor(["VC-ENG"])),
       enabledCategories: ["VC-ENG", "VC-TRN"],
       explodedViewPolicy: policy,
+      coverage,
       identityFidelityRequired: true,
     });
     expect(result.passed).toBe(false);

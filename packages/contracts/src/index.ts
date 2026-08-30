@@ -155,6 +155,30 @@ export const visualGenerationJobSchema = z.object({
     .array(z.enum(Object.keys(VISUAL_CATEGORIES) as [VisualCategoryId, ...VisualCategoryId[]]))
     .min(1),
   fitmentMapping: visualEpcMappingSchema,
+  /**
+   * Every fitment this one pack serves.
+   *
+   * A pack exists to make a customer recognize their car, not to depict their
+   * exact drivetrain. A 2.4 manual and a 2.8 automatic in the same body are the
+   * same picture, so they share a pack and the EPC resolves the exact catalog
+   * from the customer's own selection. Without this list the pack is silently
+   * bound to whichever fitment happened to be in the build job, and the honest
+   * way to cover the others is one pack each - which is the outcome this list
+   * exists to prevent.
+   *
+   * Coverage is a claim, so it is checked: a variant whose wheel positions
+   * differ cannot share this pack's exploded view, however similar the body.
+   */
+  coverage: z
+    .array(
+      z.object({
+        fitmentId: z.string().min(1),
+        variantId: z.string().min(1).nullable(),
+        variantSlug: z.string().min(1),
+        expectedWheelPositions: z.number().int().min(2).max(12),
+      }),
+    )
+    .min(1),
   explodedViewPolicy: z.object({
     expectedWheelPositions: z.number().int().min(2).max(12),
     tyresPerPosition: z.record(z.string().min(1), z.number().int().min(0).max(2)),
@@ -170,6 +194,7 @@ export const visualGenerationJobSchema = z.object({
 });
 
 export type VisualGenerationJob = z.infer<typeof visualGenerationJobSchema>;
+export type PackCoverageEntry = VisualGenerationJob["coverage"][number];
 export type SourceProvenance = z.infer<typeof sourceProvenanceSchema>;
 
 export interface StageRecord {
@@ -283,6 +308,16 @@ export interface WheelPositionAudit {
 /**
  * Blueprint 4.5 completion memory. Returning to the homepage with an unchanged
  * vehicle restores the settled exploded view instead of replaying.
+ */
+/**
+ * Blueprint 4.5's completed-flow fingerprint, for the ACTIVE vehicle context.
+ *
+ * This is computed at runtime, from the customer's own selection. It is never
+ * a value a pack carries: one pack serves every fitment in its coverage list,
+ * so a fingerprint baked at build time would assert one customer's context
+ * inside an asset shared by all of them. The pack declares the recipe -
+ * which components, in which order, and what invalidates a match - and the
+ * player resolves it per visit.
  */
 export function completedFlowFingerprint(input: {
   catalogReleaseId: string;

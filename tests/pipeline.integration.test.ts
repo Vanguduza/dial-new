@@ -108,6 +108,20 @@ async function fixture(commercialUseApproved = true) {
         reviewedAt: null,
       },
     },
+    coverage: [
+      {
+        fitmentId: "FIT-TEST-HILUX-2GD-6MT",
+        variantId: "CV-TEST-HILUX-2GD-6MT",
+        variantSlug: "test-hilux-2gd-6mt",
+        expectedWheelPositions: 2,
+      },
+      {
+        fitmentId: "FIT-TEST-HILUX-1GD-6AT",
+        variantId: "CV-TEST-HILUX-1GD-6AT",
+        variantSlug: "test-hilux-1gd-6at",
+        expectedWheelPositions: 2,
+      },
+    ],
     explodedViewPolicy: {
       expectedWheelPositions: 2,
       tyresPerPosition: { visibleFront: 1, visibleRear: 1 },
