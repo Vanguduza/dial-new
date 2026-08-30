@@ -21,6 +21,13 @@ catalog-data/generated/visual-transition-production.json
 # Redundant archive of the tracked dial_a_spare_hero_asset_queue/ directory.
 dial_a_spare_hero_asset_queue.zip
 
+# The Grocery Rounds plan as uploaded to the repository root. It is byte-identical
+# to the governed copy at
+# docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md,
+# which the manifest declares by hash. Tracking both re-creates the ungoverned
+# second-copy problem that the ref/ directory already cost this project once.
+Dial_Grocery_Rounds_Integration_Master_Plan.md
+
 # Compiled Python. A .pyc was tracked, so every run of the hero queue dirtied
 # the tree with a binary diff nobody reads.
 __pycache__/
