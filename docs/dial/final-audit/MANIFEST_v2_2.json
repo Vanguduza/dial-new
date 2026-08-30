@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T12:55:01.390Z",
+  "generated_at": "2026-08-30T13:09:23.672Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 213,
+  "file_count": 214,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 8167,
-      "sha256": "950c71665f66e1c808c36fa14a512579907d80470d413a21c459fec7b741bb28"
+      "sha256": "021b15a7451c1b2d61095886ce100c7666608a043dd5e7df59b83fe9ae17f261"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -773,13 +773,18 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 780493,
-      "sha256": "f29273c72e27302d8244497d4f038ebd8fd225c681b2bc5fd18fcbcfbe175759"
+      "bytes": 781582,
+      "sha256": "6f86eee0d1516128fff2b47a6b3a9565080b8aab06712eda9dbbd3953a0e979a"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
       "bytes": 12699,
       "sha256": "6e787fab6338a54c8cd3bca455d151eefd03ef4f1adcfdaf8a74eaef652d466e"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
+      "bytes": 9060,
+      "sha256": "03d1d672a1636bbe4c29db8ff8ec82ca259766ddb78724acbadbac2acd8c2543"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EVENTUALITY_CLOSURE_STANDARD.md",

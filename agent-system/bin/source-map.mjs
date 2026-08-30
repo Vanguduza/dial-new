@@ -19,20 +19,11 @@ const exists = (p) => fs.existsSync(path.join(root, p));
 const FEATURES = 'agent-system/registries/FEATURE_REGISTRY.json';
 const CAPABILITIES = `${pack}/11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json`;
 
-// The lifecycle from the closure canon §5. A record may not claim a gate it has
-// no evidence for: CODE_PRESENT needs code_paths, DOMAIN_TESTED needs tests too.
-const GATES = [
-  'PLANNED',
-  'DESIGN_CLOSED',
-  'BUILDABLE',
-  'CODE_PRESENT',
-  'DOMAIN_TESTED',
-  'INTEGRATION_GREEN',
-  'STAGING_GREEN',
-  'CERTIFIED_DORMANT',
-  'ACTIVATION_BLOCKERS_GREEN',
-  'ACTIVE',
-];
+// The lifecycle, imported rather than restated. A record may not claim a gate
+// it has no evidence for: CODE_PRESENT needs code_paths, DOMAIN_TESTED needs
+// tests too. This file used to keep its own copy of the ladder, which drifted
+// out of step with the canon and made the guard reject canonical states.
+import { GATE_LADDER as GATES, GATE_ALIASES } from '../lib/gate-ladder.mjs';
 
 const failures = [];
 const warnings = [];
@@ -52,9 +43,14 @@ function check(records, label, idKey, gateKey) {
     }
     if (codePaths.length || testPaths.length) mapped += 1;
 
-    const gate = record[gateKey] ?? 'PLANNED';
+    const gate = record[gateKey] ?? 'SPECIFIED';
     if (!GATES.includes(gate)) {
-      failures.push(`${label} ${id}: unknown gate "${gate}"`);
+      const canonical = GATE_ALIASES[gate];
+      failures.push(
+        canonical
+          ? `${label} ${id}: superseded gate "${gate}" — write "${canonical}"`
+          : `${label} ${id}: unknown gate "${gate}"`,
+      );
       continue;
     }
     const index = GATES.indexOf(gate);
@@ -130,7 +126,7 @@ if (orphans.length) {
 // ── report ─────────────────────────────────────────────────────────────────
 const byGate = {};
 for (const record of [...features, ...capabilities]) {
-  const gate = record.current_gate ?? 'PLANNED';
+  const gate = record.current_gate ?? 'SPECIFIED';
   byGate[gate] = (byGate[gate] ?? 0) + 1;
 }
 

@@ -7,35 +7,14 @@
 // that; this can. Source of truth:
 // docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/13_GATE_LADDER/GATE_LADDER_CANON.md
 import fs from 'node:fs';
+import { GATE_LADDER, GATE_ALIASES } from '../lib/gate-ladder.mjs';
 import path from 'node:path';
 
 const root = process.cwd();
 const pack = 'docs/dial/final-audit';
 const load = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 
-export const GATE_LADDER = [
-  'SPECIFIED',
-  'DESIGN_CLOSED',
-  'BUILDABLE',
-  'CODE_PRESENT',
-  'DOMAIN_TESTED',
-  'INTEGRATION_GREEN',
-  'STAGING_GREEN',
-  'CERTIFIED_DORMANT',
-  'ACTIVATION_BLOCKERS_GREEN',
-  'ACTIVE',
-];
-
-// Superseded names. Present so the failure can say what to write instead,
-// rather than only that the value is unknown.
-export const GATE_ALIASES = {
-  PLANNED: 'SPECIFIED',
-  MAPPED: 'BUILDABLE',
-  THIN_SLICE_REQUIRED: 'BUILDABLE',
-  THIN_SLICE_GREEN: 'CODE_PRESENT',
-  DOMAIN_GREEN: 'DOMAIN_TESTED',
-  PRODUCTION_GREEN: 'ACTIVATION_BLOCKERS_GREEN',
-};
+export { GATE_LADDER, GATE_ALIASES } from '../lib/gate-ladder.mjs';
 
 const sources = [
   { file: 'agent-system/registries/FEATURE_REGISTRY.json', id: 'feature_id', fields: ['status', 'current_gate'], inPack: false },
