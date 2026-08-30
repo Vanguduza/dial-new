@@ -100,8 +100,8 @@
     "outcome": "Catalogue ingest & normalization",
     "owner": "catalogue",
     "aggregate": "CatalogueIngestBatch",
-    "status": "CODE_PRESENT",
-    "current_gate": "CODE_PRESENT",
+    "status": "DOMAIN_TESTED",
+    "current_gate": "DOMAIN_TESTED",
     "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
     "code_paths": [
       "apps/catalog-coverage/src/index.ts",
@@ -110,7 +110,11 @@
     "test_paths": [
       "tests/catalog-coverage.test.ts"
     ],
-    "evidence_refs": [],
+    "evidence_refs": [
+      "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
+      "tests/catalog-coverage.test.ts",
+      "https://github.com/Vanguduza/dial-new/actions/runs/33314202480"
+    ],
     "donor_refs": [
       "DONOR-MERCUR-STOREFRONT",
       "DONOR-NIMARA-YNS",
@@ -126,7 +130,7 @@
       "WHATSAPP"
     ],
     "support_profile": "SUPPORT-SPARE",
-    "implementation_note": "Coverage ledger and eleven-stage readiness evaluation. Ingest normalisation itself is not built; the 44,532 cross-maker node_id collisions block DIAGRAM_READY and HOTSPOT_READY."
+    "implementation_note": "Eleven-stage readiness evaluation, coverage ledger and catalogue integrity gate, proven to DOMAIN_TESTED against CI run 33314202480 (all three jobs green on Linux). Twelve acceptance criteria, each with a test that runs; none skipped. Scope excludes ingest normalisation itself, which is not built, and the CatalogueIngestBatch lifecycle commands, which remain SPECIFIED. No independent specialist review has been performed."
   },
   {
     "feature_id": "SPARE-F005",

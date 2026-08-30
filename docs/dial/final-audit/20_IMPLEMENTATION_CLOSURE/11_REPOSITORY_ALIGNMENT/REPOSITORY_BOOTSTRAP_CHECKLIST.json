@@ -67,14 +67,15 @@
     "id": "RBC-009",
     "task": "Prove one pilot Feature reaches DOMAIN_TESTED using v2 bounded context loop",
     "blocking": true,
-    "status": "PENDING",
-    "note": "No pilot Feature has reached DOMAIN_TESTED. Requires RBC-007 and per-feature contract specificity (CT-7)."
+    "status": "COMPLETE",
+    "note": "SPARE-F004 (catalogue readiness and coverage ledger) proven to DOMAIN_TESTED. Twelve per-feature acceptance criteria, each with a test that runs; CI run 33314202480 green on all three jobs, which is also the first fully green run in the repository — the Playwright suite went 2/13 to 41 passed, 4 skipped. Independent specialist review has NOT been performed: the contract was written and proven by the same agent, so this is re-derivable evidence, not a second opinion.",
+    "completed_at": "2026-08-30T13:35:40.754Z"
   },
   {
     "id": "RBC-010",
     "task": "Only then enable broad multi-worktree feature development",
     "blocking": true,
-    "status": "BLOCKED",
-    "note": "Blocked on RBC-007 and RBC-009."
+    "status": "PENDING",
+    "note": "Unblocked: RBC-007 and RBC-009 are both COMPLETE. Before fan-out, note source-map reports 21 unclaimed source files from the scene-engine and trellis-pilot work, and CT-7 stands at 23 of 206 acceptance contracts — broad development against generic contracts is what CT-1 exists to prevent."
   }
 ]

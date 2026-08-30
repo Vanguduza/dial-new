@@ -418,7 +418,7 @@
     "module": "SPARE",
     "outcome": "Catalogue ingest & normalization",
     "planning_status": "FRC_CLOSED",
-    "implementation_status": "SPECIFIED",
+    "implementation_status": "DOMAIN_TESTED",
     "domain_owner": "catalogue",
     "aggregate": "CatalogueIngestBatch",
     "archetype": "MASTER",

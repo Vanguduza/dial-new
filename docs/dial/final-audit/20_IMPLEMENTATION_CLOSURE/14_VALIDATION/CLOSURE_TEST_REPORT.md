@@ -143,8 +143,8 @@ RBC-005  replace stale Cursor v4 authority rule        COMPLETE
 RBC-006  archive/supersede stale planning authority    COMPLETE
 RBC-007  map source/test paths to Feature Registry     PENDING
 RBC-008  run closure/drift/security/realization checks COMPLETE
-RBC-009  prove one pilot Feature to DOMAIN_TESTED      PENDING
-RBC-010  enable broad multi-worktree development       BLOCKED
+RBC-009  prove one pilot Feature to DOMAIN_TESTED      COMPLETE
+RBC-010  enable broad multi-worktree development       PENDING
 ```
 
 Verified executing green:
@@ -183,13 +183,18 @@ command ratio ≥ 0.75.
 
 DIAL v2.2 is ready for:
 
-1. source/test path mapping to Feature IDs (RBC-007);
-2. per-feature contract specificity on the pilot's bounded context;
+1. ~~source/test path mapping to Feature IDs (RBC-007)~~ — COMPLETE;
+2. per-feature contract specificity, now 23 of 206 acceptance contracts (CT-7, AMBER);
 3. shared foundation implementation;
-4. one pilot Feature end-to-end (RBC-009).
+4. ~~one pilot Feature end-to-end (RBC-009)~~ — COMPLETE. SPARE-F004 reached
+   DOMAIN_TESTED against CI run 33314202480, green on all three jobs. The
+   Playwright suite, which had never executed anywhere, went from 2 passed /
+   13 failed to 41 passed / 4 skipped.
 
-Broad multi-worktree development remains blocked until the pilot is proven and CT-7 shows
-the pilot's bounded context at target.
+Broad multi-worktree development (RBC-010) is no longer blocked, but is not
+therefore advisable yet: CT-7 remains AMBER at 23 of 206, source-map reports 21
+unclaimed source files, and no independent specialist review has been performed
+on the pilot — its contract was written and proven by the same agent.
 
 Do not reopen broad product architecture. The AMBER results are contract-authoring work
 inside the existing architecture, not an architectural question.

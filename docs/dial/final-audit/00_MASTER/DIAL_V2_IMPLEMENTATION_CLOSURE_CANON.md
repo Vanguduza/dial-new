@@ -349,8 +349,8 @@ Seven of ten tasks are complete. Three remain, and they gate broad fan-out:
 
 ```text
 RBC-007  map source/test paths to the Feature Registry     PENDING
-RBC-009  prove one pilot Feature to DOMAIN_TESTED          PENDING
-RBC-010  enable broad multi-worktree development           BLOCKED
+RBC-009  prove one pilot Feature to DOMAIN_TESTED          COMPLETE
+RBC-010  enable broad multi-worktree development           PENDING
 ```
 
 The harness executes. From the repository root:
