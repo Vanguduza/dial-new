@@ -26,6 +26,11 @@ dial_a_spare_hero_asset_queue.zip
 __pycache__/
 *.pyc
 
+# TypeScript incremental build cache. Same class as the .pyc above: written by
+# tsc on every typecheck, read by nobody, and it dirties the tree after any
+# verify run.
+*.tsbuildinfo
+
 # Per-run pipeline output, keyed by run hash. Regenerable, and 11MB per pilot
 # run — the curated assets under output/vehicle-transitions/ stay tracked.
 output/reconstruction-pilots/
