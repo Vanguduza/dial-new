@@ -155,6 +155,73 @@ sugar, cooking oils and salt. Rice, meat, vegetables and everything else needs i
 status confirmed before it goes on a staples catalogue rather than assumed onto
 it. The staples pool is a specific list, not "food".
 
+### Does the protection charge vary with the split? No — and the intuition is inverted
+
+The natural reading is that a household-heavy split costs Dial more, because it
+"attracts more VAT", and that the handling charge should rise to cover it. It
+does not, and the correction matters because it would otherwise set pricing.
+
+**Output VAT is not a cost.** It is collected from the member — who pays the same
+tax on the same goods in any formal shop — and remitted, while Dial reclaims the
+input VAT on what it bought to fulfil the order. It arrives and leaves. The margin
+is untouched. This is why margin must be measured on **net revenue**, never on the
+payment: compare on gross and every standard-rated pool looks unprofitable for a
+reason that is pure arithmetic illusion.
+
+**The tax Dial actually bears runs the other way.** On the exempt staples pool the
+VAT on fuel, packaging, warehousing and platform costs cannot be reclaimed at all.
+That is a permanent cost, and it lands on staples — not on household goods.
+`poolEconomics()` computes it. On US$52 at the 70/30 default, taking 80% cost of
+goods and 8% attributable overhead:
+
+| | Staples (exempt) | Household (15.5%) |
+|---|---|---|
+| Member pays | US$36.40 | US$15.60 |
+| Output VAT remitted | — | US$2.09 |
+| Net revenue to Dial | US$36.40 | US$13.51 |
+| Cost of goods | US$29.12 | US$10.81 |
+| Overhead | US$2.91 | US$1.08 |
+| **Irrecoverable input VAT** | **US$0.45** | **—** |
+| Contribution | US$3.92 | US$1.62 |
+| **Margin on net revenue** | **10.8%** | **12.0%** |
+
+The household pool is the *better* one, by almost exactly the irrecoverable
+overhead VAT on the staples side. So:
+
+- **The protection charge does not move with the split** (`RCM-018` keeps it a flat
+  rate on credit value). It prices the promise to deliver, and a dollar of staples
+  credit is the same dollar of obligation as a dollar of household credit. An
+  insurer is pricing non-delivery, not tax.
+- **If any charge varied by split it would have to be higher on staples**, which is
+  a terrible thing to say to a customer and a worse thing to build. Absorb it in
+  the blended price instead, and use the **default split** as the lever.
+- **One price to the member.** They see the Round's monthly figure. They never see
+  the pool arithmetic, and the signup screen never explains a tax difference.
+
+### Competing with the tuckshop, honestly
+
+The concern behind this is right even though the mechanism was not: nothing may be
+added to prices, or members will keep their cash and buy informally. Two separate
+fights, and they need separate answers.
+
+**On staples we are on level ground and should win.** Nobody charges VAT on maize
+meal, bread, cooking oil, sugar or salt — not us, not the supermarket, not the
+tuckshop. The only thing that separates prices is buying power, which is exactly
+what a Round manufactures. This is the competitive ground the product should be
+led on.
+
+**On standard-rated household goods, an informal trader below the US$60,000
+registration threshold has a structural ~15.5% price advantage that no pricing
+structure of ours can close.** It is a compliance gap, not a pricing gap, and
+pretending otherwise leads to trying to compete on the one axis where we cannot.
+Against a formal supermarket we are on level ground there too, because their shelf
+price carries the same tax. So the honest comparison to make in marketing is
+against OK and TM on household goods, and against everyone on staples.
+
+**Consequence for the default split.** Weight it towards staples — for competitive
+reasons, not tax ones. That is where the Round's buying power converts directly
+into a price a tuckshop cannot match, and where the member can see it.
+
 ### The cost nobody has modelled: transfer tax on every instalment
 
 IMTT is charged per transfer — 2% on USD, and 1.5% on ZiG from 2026. **A Round

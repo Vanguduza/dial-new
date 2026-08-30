@@ -6,6 +6,7 @@ import {
   resolveExit,
   allocatePayment,
   assertMemberSplit,
+  poolEconomics,
   validateRoundCreditModel,
   type CreditLedgerEvent,
   type RoundCreditConfiguration,
@@ -379,6 +380,88 @@ describe('splitting a payment when nobody knows the items yet', () => {
     expect(rulesFrom(conformant({ pools: [pool, { ...pool, allocationBasisPoints: 3_000 }] }))).toContain(
       'RCM-005',
     );
+  });
+});
+
+describe('what a split is actually worth', () => {
+  // 80% cost of goods, 8% attributable overhead, both on net revenue.
+  const assumptions = { cogsBasisPoints: 8_000, overheadBasisPoints: 800 };
+
+  it('treats output VAT as a pass-through, not a cost', () => {
+    // The member would pay the same tax on the same goods in any formal shop.
+    // It reaches Dial and leaves again, and never touches the margin.
+    const { pools } = poolEconomics(conformant(), 5_200, assumptions);
+    const household = pools.find((p) => p.poolId === 'household')!;
+
+    expect(household.grossMinor).toBe(1_560);
+    expect(household.outputVatMinor).toBe(209);
+    expect(household.netRevenueMinor).toBe(1_351);
+    // Contribution is computed on the 1,351 that was ever Dial's, not the 1,560.
+    expect(household.contributionMinor).toBe(1_351 - 1_081 - 108);
+  });
+
+  it('puts the unrecoverable tax on the exempt pool, not the standard-rated one', () => {
+    // The intuition to correct: household does not cost more because of VAT.
+    // Staples costs more, because its overhead VAT cannot be reclaimed.
+    const { pools } = poolEconomics(conformant(), 5_200, assumptions);
+    const staples = pools.find((p) => p.poolId === 'staples')!;
+    const household = pools.find((p) => p.poolId === 'household')!;
+
+    expect(staples.irrecoverableInputVatMinor).toBeGreaterThan(0);
+    expect(household.irrecoverableInputVatMinor).toBe(0);
+  });
+
+  it('shows the household pool with the better margin on net revenue', () => {
+    // Which is the opposite of what comparing on the gross payment suggests.
+    const { pools } = poolEconomics(conformant(), 5_200, assumptions);
+    const staples = pools.find((p) => p.poolId === 'staples')!;
+    const household = pools.find((p) => p.poolId === 'household')!;
+
+    expect(household.contributionOnNetBasisPoints).toBeGreaterThan(
+      staples.contributionOnNetBasisPoints,
+    );
+    // And the whole of the gap is the irrecoverable overhead VAT.
+    const gapMinor = Math.round(
+      (staples.netRevenueMinor *
+        (household.contributionOnNetBasisPoints - staples.contributionOnNetBasisPoints)) /
+        10_000,
+    );
+    expect(Math.abs(gapMinor - staples.irrecoverableInputVatMinor)).toBeLessThanOrEqual(2);
+  });
+
+  it('does not make a staples-heavy member unprofitable', () => {
+    // If it did, the protection charge would have to vary by split. It does not:
+    // both splits land within a point of each other on net margin.
+    const allStaples = poolEconomics(conformant(), 5_200, assumptions, {
+      staples: 10_000,
+      household: 0,
+    });
+    const maxHousehold = poolEconomics(conformant(), 5_200, assumptions, {
+      staples: 5_000,
+      household: 5_000,
+    });
+    const marginOf = (r: ReturnType<typeof poolEconomics>): number => {
+      const net = r.pools.reduce((s, p) => s + p.netRevenueMinor, 0);
+      return Math.round((r.contributionMinor * 10_000) / net);
+    };
+    expect(Math.abs(marginOf(allStaples) - marginOf(maxHousehold))).toBeLessThan(200);
+  });
+
+  it('is the same obligation to insure either way', () => {
+    // The protection charge prices the promise to deliver, which is the credit
+    // value. A dollar of staples credit and a dollar of household credit are the
+    // same dollar of obligation, so the charge does not move with the split.
+    const levy = conformant().protectionLevy!;
+    const chargeOn = (creditMinor: number): number =>
+      Math.round((creditMinor * levy.basisPoints) / 10_000);
+    expect(chargeOn(5_000)).toBe(200);
+    expect(levy.basisPoints).toBe(400);
+  });
+
+  it('refuses assumptions that are not whole basis points in range', () => {
+    for (const bad of [{ cogsBasisPoints: -1, overheadBasisPoints: 800 }, { cogsBasisPoints: 8_000, overheadBasisPoints: 12_000 }]) {
+      expect(() => poolEconomics(conformant(), 5_200, bad)).toThrow(/basis points/);
+    }
   });
 });
 

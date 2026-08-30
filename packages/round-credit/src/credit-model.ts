@@ -780,6 +780,104 @@ export function allocatePayment(
 }
 
 // ---------------------------------------------------------------------------
+// Pool economics
+// ---------------------------------------------------------------------------
+
+export interface EconomicAssumptions {
+  /** Cost of goods as a share of the pool's net revenue, in basis points. */
+  cogsBasisPoints: number;
+  /** Attributable overhead — fuel, packaging, warehousing, platform — as a share of net revenue, in basis points. */
+  overheadBasisPoints: number;
+}
+
+export interface PoolEconomics {
+  poolId: string;
+  taxClass: BasketTaxClass;
+  /** What the member paid into this pool. */
+  grossMinor: number;
+  /** Collected from the member and remitted. Never Dial's money, and never Dial's cost. */
+  outputVatMinor: number;
+  /** Gross less the tax that was only ever passing through. Margin is measured against this. */
+  netRevenueMinor: number;
+  cogsMinor: number;
+  overheadMinor: number;
+  /**
+   * The VAT on this pool's overhead that Dial cannot reclaim.
+   *
+   * Zero on a standard-rated pool, where it is recoverable. On an exempt pool it
+   * is a real, permanent cost — and it is the only part of the tax that Dial
+   * actually bears.
+   */
+  irrecoverableInputVatMinor: number;
+  contributionMinor: number;
+  /** Contribution as a share of net revenue, in basis points. The comparable number. */
+  contributionOnNetBasisPoints: number;
+}
+
+/**
+ * What a payment is worth to Dial, pool by pool.
+ *
+ * This exists to settle an intuition that is natural and wrong: that a
+ * household-heavy split costs Dial more because it "attracts more VAT".
+ *
+ * Output VAT is not a cost. It is collected from the member, who would pay the
+ * same tax buying the same goods in any formal shop, and remitted; Dial reclaims
+ * the input VAT on what it bought to fulfil it, and the margin is untouched. That
+ * is why margin has to be measured on **net revenue**, not on the payment —
+ * compare on gross and every standard-rated pool looks unprofitable for a reason
+ * that is pure arithmetic illusion.
+ *
+ * The tax Dial does bear runs the other way. On an exempt pool the VAT on fuel,
+ * packaging, warehousing and platform costs cannot be reclaimed at all, so the
+ * **staples** pool is the one carrying an unrecoverable tax cost, not the
+ * household pool.
+ */
+export function poolEconomics(
+  config: RoundCreditConfiguration,
+  grossMinor: number,
+  assumptions: EconomicAssumptions,
+  memberSplit?: MemberSplit,
+): { pools: PoolEconomics[]; contributionMinor: number; irrecoverableInputVatMinor: number } {
+  for (const [name, bp] of Object.entries(assumptions)) {
+    if (!Number.isInteger(bp) || bp < 0 || bp > 10_000) {
+      throw new Error(`Pool economics: ${name} is ${bp}; expected whole basis points between 0 and 10,000.`);
+    }
+  }
+  const allocation = allocatePayment(config, grossMinor, memberSplit);
+  const rate = config.standardRateBasisPoints;
+
+  const pools = allocation.pools.map((share): PoolEconomics => {
+    const netRevenueMinor = share.netMinor;
+    const cogsMinor = Math.round((netRevenueMinor * assumptions.cogsBasisPoints) / 10_000);
+    const overheadMinor = Math.round((netRevenueMinor * assumptions.overheadBasisPoints) / 10_000);
+    // Recoverable on a taxable supply, lost on an exempt one. This is the whole
+    // difference between "exempt" and "zero-rated", in one line.
+    const irrecoverableInputVatMinor =
+      share.taxClass === 'EXEMPT_BASIC_FOODSTUFFS' ? Math.round((overheadMinor * rate) / 10_000) : 0;
+    const contributionMinor = netRevenueMinor - cogsMinor - overheadMinor - irrecoverableInputVatMinor;
+    return {
+      poolId: share.poolId,
+      taxClass: share.taxClass,
+      grossMinor: share.grossMinor,
+      outputVatMinor: share.vatMinor,
+      netRevenueMinor,
+      cogsMinor,
+      overheadMinor,
+      irrecoverableInputVatMinor,
+      contributionMinor,
+      contributionOnNetBasisPoints:
+        netRevenueMinor === 0 ? 0 : Math.round((contributionMinor * 10_000) / netRevenueMinor),
+    };
+  });
+
+  return {
+    pools,
+    contributionMinor: pools.reduce((sum, p) => sum + p.contributionMinor, 0),
+    irrecoverableInputVatMinor: pools.reduce((sum, p) => sum + p.irrecoverableInputVatMinor, 0),
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Ledger
 // ---------------------------------------------------------------------------
 
