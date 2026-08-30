@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T19:50:19.513Z",
+  "generated_at": "2026-08-30T20:13:26.180Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,17 +24,22 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 222,
+  "file_count": 224,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
-      "bytes": 9571,
-      "sha256": "0d96e36d5028be10ce20f21bb6fbc7fd04acb1ea589f2826af581bb16c143dd2"
+      "bytes": 10151,
+      "sha256": "ac1ebe6c7f8bab1b6350b71037a682bc427ab28c699be4fc344f0faabe2f36d6"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
-      "bytes": 4040,
-      "sha256": "542c80b038fe8877b46ad86fbaab968794e100aa5331d4d7f01adc7973f67636"
+      "bytes": 4424,
+      "sha256": "e2ed7bd7d20d8dfe74c990a2804398d3f06e6408bbda7841f8936fcbbc0d7e94"
+    },
+    {
+      "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+      "bytes": 10488,
+      "sha256": "019f0e619c2493541a6e2ec383e9715fdf124a629a262cb7fa9c664d8e7bb5ab"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -170,6 +175,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/CONTEXT_DRIFT_CONTROLS.md",
       "bytes": 860,
       "sha256": "184596f6da4ee1204e65ebfd92257f171b2252d378de8475e4bdcd4d8dfc54ba"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md",
+      "bytes": 8297,
+      "sha256": "5e441d50bc96b986d3ce6c6222931626988ba66e084b3f806b69b02d5218ea79"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",

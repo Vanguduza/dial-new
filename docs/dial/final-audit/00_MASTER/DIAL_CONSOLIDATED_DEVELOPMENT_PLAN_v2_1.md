@@ -1,6 +1,12 @@
 # DIAL Consolidated Development Plan v2.1
 
-**Status:** active development authority after repository bootstrap  
+> **Superseded on execution sequence by `DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md`,
+> 30 Aug 2026.** v2.2 keeps this document's four-layer architecture, frontend
+> decisions, no-go rules and both customer-ready definitions unchanged, and
+> replaces §"Development sequence" with three concurrent tracks. Read v2.2 for
+> what to do next; read this for what was decided and why.
+
+**Status:** superseded on sequence; retained as architectural authority  
 **Supersedes:** v2.0 implementation prompt for frontend/donor/Spare-transition implementation only  
 **Retains:** all v2.0 closure, security, money, NFR, eventuality, operational and activation rules
 

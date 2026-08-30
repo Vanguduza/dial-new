@@ -132,7 +132,7 @@
     "customer_endpoint_records": 180,
     "supporting_capabilities": 125,
     "whatsapp_flows": 59,
-    "pack_files": 222
+    "pack_files": 224
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",
@@ -160,5 +160,7 @@
     "Grocery Rounds cannot take real customer money: AML/KYC is absent (review H5), the protection broker quote is not obtained (H2, RCM-019), the procurement reserve percentage is undeclared (RCM-016), and four counsel confirmations are outstanding under ACT-REG-004, ACT-REG-001 and ACT-REG-007.",
     "The margin and pricing engine is specified and not built (26_MARGIN_AND_PRICING). Three of its five open questions are blocking, including its module and Feature ID, so it is not yet allocated in the registry."
   ],
-  "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..007 are LOCKED; DEC-008 is PROPOSED and blocked on stakeholder answers."
+  "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..007 are LOCKED; DEC-008 is PROPOSED and blocked on stakeholder answers.",
+  "active_development_plan": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md — supersedes v2.1 on execution sequence only. Work runs as three concurrent tracks (kernel, external clock, margin engine) rather than sixteen sequential steps, because two of the three wait on parties outside the team.",
+  "development_start_prompt": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md — self-contained prompt for a fresh agent session, one Feature ID per session. Its honest-state block must be updated when it stops being true."
 }
