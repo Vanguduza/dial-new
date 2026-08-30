@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T20:43:48.906Z",
+  "generated_at": "2026-08-30T21:02:11.328Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -28,8 +28,8 @@
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
-      "bytes": 10151,
-      "sha256": "2740207f94f32cb959c66af3bcb84ceba9bf63e11063d40b8261ebea72e7f5eb"
+      "bytes": 10662,
+      "sha256": "518e72f140874866edc447f135107d9e5825b7ffcfb8c73cb4d4964a96584dd6"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
