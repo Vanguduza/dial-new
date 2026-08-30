@@ -1,0 +1,10 @@
+{
+  "name": "@dial/round-ledger",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "src/ledger.ts",
+  "dependencies": {
+    "@dial/round-credit": "*"
+  }
+}

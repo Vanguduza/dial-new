@@ -5867,11 +5867,15 @@
     "outcome": "Round ledger & accounting",
     "owner": "payments/ledger",
     "aggregate": "RoundLedgerEntry",
-    "status": "SPECIFIED",
-    "current_gate": "SPECIFIED",
+    "status": "DOMAIN_TESTED",
+    "current_gate": "DOMAIN_TESTED",
     "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
-    "code_paths": [],
-    "test_paths": [],
+    "code_paths": [
+      "packages/round-ledger/src/ledger.ts"
+    ],
+    "test_paths": [
+      "tests/round-ledger.test.ts"
+    ],
     "evidence_refs": [],
     "donor_refs": [
       "REF-INSTACART",
@@ -5889,7 +5893,9 @@
       "ACT-REG-001",
       "ACT-REG-004"
     ],
-    "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). Gated on ACT-REG-001, ACT-REG-004. The money model is LOCKED at DEC-001..007: credits are not money, so ACT-REG-001 is not engaged by Rounds. Review finding B1 is resolved. Enforced by packages/round-credit rules RCM-001..027."
+    "implementation_note": "Fifth feature of the Grocery Rounds slice, and the one DEC-003/DEC-004 land in. A projection over §9's fourteen events, not a second ledger — §9 requires reuse of the canonical kernel and CLAUDE.md forbids a second money authority, so this computes postings and owns none of them. purchase_paid moves nothing into revenue; goods_delivered is the only event that earns. Payments split per pool with VAT extracted from the price rather than added to it. RCM-010's invariant is checked from two independent derivations. Surfaced a finding: §9.2 lists a `refund` event that DEC-005 forbids, so it is refused with a remedy pointing at in-kind settlement — the same contradiction as the lifecycle's REFUNDING state. NOT included: the canonical ledger interface (unbuilt), payments, entitlement, allocation, the VAT return, persistence, and residual treatment (review H3 has no owner yet). No independent specialist review — this is the clearest money-reviewer trigger in the slice.",
+    "security_tier": "S4",
+    "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F025",

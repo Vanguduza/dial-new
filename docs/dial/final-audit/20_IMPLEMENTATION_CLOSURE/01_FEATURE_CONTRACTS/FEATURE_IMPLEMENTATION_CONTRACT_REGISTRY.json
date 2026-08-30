@@ -28256,9 +28256,10 @@
       "note": "Command endpoints may be internal/BFF-only where the client should not call the domain directly."
     },
     "permissions": [
-      "groceries.grocery-order-group.read",
-      "groceries.grocery-order-group.create",
-      "groceries.grocery-order-group.act"
+      "groceries.round-ledger.read",
+      "groceries.round-ledger.read-all",
+      "groceries.round-ledger.append",
+      "groceries.round-ledger.reverse"
     ],
     "data_entities": [
       "GroceryOrderGroup",
@@ -28316,16 +28317,24 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "all 9 realization facets resolved",
-      "states and allowed actions derive from domain truth",
-      "commands are idempotent where retry/replay is possible",
-      "named events are persisted/outboxed before projections depend on them",
-      "negative authorization and security-profile tests pass",
-      "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
-      "observability, audit, support and Command Centre hooks are registered",
-      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
-    ]
+      "appending an event returns a new log; the input log is unchanged",
+      "no exported function removes or edits an event",
+      "a reversal of an unknown event is refused",
+      "a reversal of an already-reversed event is refused",
+      "a reversal negates the original's movements exactly",
+      "an event kind with no posting rule is refused, naming the kind",
+      "purchase_paid moves nothing into revenue",
+      "goods_delivered is the only event that recognises revenue",
+      "every event's movements sum to zero across balances",
+      "balances are independently derivable from the event log",
+      "the contract-liability invariant holds across contributions, settlement, default and reversal",
+      "a forced divergence between the two derivations is detected and refused",
+      "a payment splits across pools at the fixed ratio and the parts sum to the payment exactly",
+      "VAT is extracted from the standard-rated pool's share, not added, and the exempt pool carries none",
+      "a member's position is computed from events with no stored balance consulted",
+      "non-integer or negative money is refused"
+    ],
+    "acceptance_contract_doc": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md"
   },
   {
     "feature_id": "GROC-F025",
