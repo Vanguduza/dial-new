@@ -37,7 +37,8 @@
     "agent:manifest-write": "node agent-system/bin/manifest-write.mjs",
     "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:drift-check && npm run agent:gate-ladder && npm run agent:v2-closure-check && npm run agent:realization-coverage && npm run agent:security-coverage && npm run agent:contract-specificity && npm run test",
     "agent:gate-ladder": "node agent-system/bin/gate-ladder-check.mjs",
-    "agent:contract-specificity": "node agent-system/bin/contract-specificity.mjs"
+    "agent:contract-specificity": "node agent-system/bin/contract-specificity.mjs",
+    "agent:manifest-current": "node agent-system/bin/manifest-write.mjs --check"
   },
   "dependencies": {
     "sharp": "0.35.4",

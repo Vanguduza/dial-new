@@ -64,5 +64,43 @@ const manifest = {
 };
 
 const target = path.join(root, pack, `MANIFEST_v${VERSION.replace('.', '_')}.json`);
+
+// --check regenerates in memory and reports whether the declared content has
+// drifted, without rewriting the file.
+//
+// A plain `git diff` after regenerating can never be clean: `generated_at` is
+// a wall-clock stamp, so the file differs on every run for a reason that has
+// nothing to do with pack content. That is the same trap as a timestamp inside
+// hashed evidence — real provenance, useless for comparison. So the comparison
+// is over the content-bearing fields only, and provenance is excluded by name.
+const PROVENANCE_ONLY = new Set(['generated_at']);
+const contentOf = (m) =>
+  JSON.stringify(
+    Object.fromEntries(Object.entries(m).filter(([key]) => !PROVENANCE_ONLY.has(key))),
+  );
+
+if (process.argv.includes('--check')) {
+  if (!fs.existsSync(target)) {
+    console.error(`${path.relative(root, target)} does not exist — run manifest-write`);
+    process.exit(1);
+  }
+  const onDisk = JSON.parse(fs.readFileSync(target, 'utf8'));
+  if (contentOf(onDisk) === contentOf(manifest)) {
+    console.log(`Manifest is current — ${files.length} files declared`);
+    process.exit(0);
+  }
+  const declared = new Map(onDisk.files.map((entry) => [entry.path, entry.sha256]));
+  const actual = new Map(files.map((entry) => [entry.path, entry.sha256]));
+  const missing = [...declared.keys()].filter((p) => !actual.has(p));
+  const undeclared = [...actual.keys()].filter((p) => !declared.has(p));
+  const altered = [...actual].filter(([p, hash]) => declared.has(p) && declared.get(p) !== hash).map(([p]) => p);
+  console.error(`Manifest is stale — ${missing.length} missing, ${undeclared.length} undeclared, ${altered.length} altered`);
+  for (const p of [...missing.map((p) => `missing    ${p}`), ...undeclared.map((p) => `undeclared ${p}`), ...altered.map((p) => `altered    ${p}`)].slice(0, 20)) {
+    console.error(`  ${p}`);
+  }
+  console.error(`Run: node agent-system/bin/manifest-write.mjs`);
+  process.exit(1);
+}
+
 fs.writeFileSync(target, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 console.log(`Wrote ${path.relative(root, target)} — ${files.length} files declared`);
