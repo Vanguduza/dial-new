@@ -70,11 +70,13 @@
       "accountant/tax counsel review",
       "fiscalisation solution/provider/API confirmed",
       "current VAT/IMTT/WHT rules loaded and independently checked",
-      "Zimbabwean tax counsel confirmation that a single-purpose grocery credit is taxed on issue, and what evidence of basket tax class ZIMRA expects at fiscalisation"
+      "confirmation of the current exempt schedule (SI 248 of 2023 as amended) and that the intended Round basket sits inside it",
+      "input-tax apportionment method agreed with auditors before the first Round opens",
+      "IMTT incidence confirmed on the intended collection rails"
     ],
     "owner": "Finance + Tax/Legal",
     "state": "OPEN_ACTIVATION_BLOCKER",
-    "grocery_rounds_position": "Rev 2: Grocery Round credits are accounted for when the goods are collected, not when the credit is bought (ROUND_CREDIT_MODEL_v1.md §0, C3). That treats the credit as a multi-purpose voucher taxed on redemption, which is an exception to the usual earlier-of-invoice-or-payment time of supply and is the open question for counsel. It also makes every delivery a fiscalised, itemised sale per member — RCM-020 refuses a Round whose fiscalisation model does not match its tax point. Tax point is not revenue recognition: consideration for an unsettled credit is a contract liability until collection (RCM-008, RCM-010)."
+    "grocery_rounds_position": "Rev 3 (30 Aug 2026): the tax point is when the member pays, per VAT Act [Chapter 23:12] s8 (earlier of invoice or payment). Deferral to collection is available only against a written ZIMRA ruling recorded as deferralRulingRef (RCM-007), never on election. Each Round is confined to one tax character so a rate can be applied on the day the money arrives (RCM-005, RCM-006). SI 248 of 2023 moved maize meal, bread, milk, sugar, cooking oil and salt to EXEMPT from 1 Jan 2024, so the flagship Staples Round bears no output VAT and its input VAT is irrecoverable — input-tax apportionment is the largest tax number in the product and must be declared (RCM-021). IMTT is charged per instalment and must be modelled (RCM-022). Standard rate moved 15% to 15.5% on 1 Jan 2026, so rates resolve from a dated schedule (RCM-023)."
   },
   {
     "blocker_id": "ACT-REG-005",

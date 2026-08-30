@@ -19,13 +19,18 @@ import {
  */
 
 const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration => ({
-  roundProductId: 'rounds-6m',
+  roundProductId: 'staples-6m',
   creditScope: 'GROCERY_FULFILMENT',
-  // Rev 2: monetary-value credits taxed when the goods are collected, which makes
-  // the credit multi-purpose and leaves the basket class open.
-  basketTaxClass: null,
-  taxPoint: 'SETTLEMENT',
-  fiscalisationModel: 'PER_LINE_AT_COLLECTION',
+  // Rev 3: the flagship Round. Monetary-value credits (Rev 2) confined to the
+  // exempt staples basket, taxed at payment per VAT Act s8.
+  basketTaxClass: 'EXEMPT_BASIC_FOODSTUFFS',
+  taxPoint: 'CREDIT_ISSUE',
+  deferralRulingRef: null,
+  fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE',
+  inputTaxApportionmentMethod: 'DIRECT_ATTRIBUTION',
+  instalmentCount: 6,
+  transferTaxBasisPoints: 200,
+  taxScheduleRef: 'zw-vat-2026-01',
   denomination: 'CURRENCY',
   exitPricing: 'STANDARD_RETAIL',
   exitIncludesRoundBenefits: false,
@@ -49,25 +54,19 @@ const conformant = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditCo
   revenueRecognisedAt: 'SETTLEMENT',
   procurementReservePercent: 0,
   ballotOptions: [
-    { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
-    { optionId: 'household-mixed', taxClass: 'STANDARD_RATED_MIXED' },
+    { optionId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
+    { optionId: 'cooking-oil-2l', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
   ],
   ...over,
 });
 
-/** The alternative route: goods-denominated credits, rated and taxed at issue. */
-const singlePurpose = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration =>
+/** The second product: standard-rated throughout, which is what recovers input tax. */
+const standardRated = (over: Partial<RoundCreditConfiguration> = {}): RoundCreditConfiguration =>
   conformant({
-    roundProductId: 'staples-6m',
-    basketTaxClass: 'ZERO_RATED_STAPLES',
-    taxPoint: 'CREDIT_ISSUE',
-    fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE',
-    denomination: 'GOODS',
-    priceRiskDisclosureVersion: null,
-    ballotOptions: [
-      { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
-      { optionId: 'cooking-oil-2l', taxClass: 'ZERO_RATED_STAPLES' },
-    ],
+    roundProductId: 'household-6m',
+    basketTaxClass: 'STANDARD_RATED_MIXED',
+    inputTaxApportionmentMethod: 'NOT_APPLICABLE',
+    ballotOptions: [{ optionId: 'household-mixed', taxClass: 'STANDARD_RATED_MIXED' }],
     ...over,
   });
 
@@ -140,48 +139,56 @@ describe('non-transferability', () => {
   });
 });
 
-describe('the tax point and the credit’s character must agree', () => {
-  it('accepts taxation at collection when the basket class is left open', () => {
-    // Rev 2. A credit that can buy anything in the shop has no knowable rate on
-    // the day it is sold, which is what puts the tax point at the handover.
+describe('the tax point', () => {
+  it('accepts taxation at payment, which is the s8 default', () => {
+    // Rev 3. Section 8 puts the time of supply at the earlier of invoice or
+    // payment, so this is the treatment that needs no permission.
     expect(validateRoundCreditModel(conformant()).conformant).toBe(true);
+    expect(validateRoundCreditModel(standardRated()).conformant).toBe(true);
   });
 
-  it('accepts taxation at issue when the rate is fixed at issue', () => {
-    expect(validateRoundCreditModel(singlePurpose()).conformant).toBe(true);
-  });
-
-  it('refuses claiming a fixed rate and a deferred tax point at once', () => {
-    // Holding both positions lets the authority pick, and it will not pick ours.
-    const rules = rulesFrom(conformant({ basketTaxClass: 'ZERO_RATED_STAPLES' }));
+  it('refuses deferral to collection without a written ruling', () => {
+    // Building the payment architecture on an unconfirmed deferral risks
+    // retrospective output VAT across the whole float.
+    const rules = rulesFrom(
+      conformant({ taxPoint: 'SETTLEMENT', fiscalisationModel: 'PER_LINE_AT_COLLECTION' }),
+    );
     expect(rules).toContain('RCM-007');
   });
 
-  it('requires a basket class only on the tax-at-issue route', () => {
-    expect(rulesFrom(singlePurpose({ basketTaxClass: null }))).toContain('RCM-005');
-    expect(rulesFrom(conformant({ basketTaxClass: null }))).not.toContain('RCM-005');
+  it('permits deferral once a ruling is held', () => {
+    expect(
+      validateRoundCreditModel(
+        conformant({
+          taxPoint: 'SETTLEMENT',
+          fiscalisationModel: 'PER_LINE_AT_COLLECTION',
+          deferralRulingRef: 'zimra-ruling-2026-0042',
+        }),
+      ).conformant,
+    ).toBe(true);
   });
 
-  it('confines the ballot to the declared class only when taxed at issue', () => {
-    // The defect that costs money on that route: the month-5 vote deciding the
-    // rate of a supply taxed in month 1.
+  it('requires a declared basket class on every route', () => {
+    expect(rulesFrom(conformant({ basketTaxClass: null }))).toContain('RCM-005');
+  });
+
+  it('confines the ballot to the declared class', () => {
+    // A basket spanning exempt staples and standard-rated goods has no single
+    // rate to charge on the day the money arrives.
     const rules = rulesFrom(
-      singlePurpose({
+      conformant({
         ballotOptions: [
-          { optionId: 'mealie-meal-10kg', taxClass: 'ZERO_RATED_STAPLES' },
+          { optionId: 'mealie-meal-10kg', taxClass: 'EXEMPT_BASIC_FOODSTUFFS' },
           { optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' },
         ],
       }),
     );
     expect(rules).toContain('RCM-006');
-
-    // On the tax-at-collection route a mixed ballot is the point, not a defect.
-    expect(rulesFrom(conformant())).not.toContain('RCM-006');
   });
 
   it('names the offending option so the ballot can be fixed', () => {
     const finding = validateRoundCreditModel(
-      singlePurpose({
+      conformant({
         ballotOptions: [{ optionId: 'soft-drinks-crate', taxClass: 'STANDARD_RATED_MIXED' }],
       }),
     ).findings.find((f) => f.rule === 'RCM-006');
@@ -189,10 +196,51 @@ describe('the tax point and the credit’s character must agree', () => {
   });
 
   it('makes fiscalisation follow the tax point in both directions', () => {
-    // Deferring the VAT moves fiscalisation onto every delivery, itemised, per
-    // member. That is the price of the deferral and it should not be a surprise.
-    expect(rulesFrom(conformant({ fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE' }))).toContain('RCM-020');
-    expect(rulesFrom(singlePurpose({ fiscalisationModel: 'PER_LINE_AT_COLLECTION' }))).toContain('RCM-020');
+    expect(rulesFrom(conformant({ fiscalisationModel: 'PER_LINE_AT_COLLECTION' }))).toContain('RCM-020');
+    expect(
+      rulesFrom(
+        conformant({
+          taxPoint: 'SETTLEMENT',
+          deferralRulingRef: 'zimra-ruling-2026-0042',
+          fiscalisationModel: 'SINGLE_RECEIPT_AT_ISSUE',
+        }),
+      ),
+    ).toContain('RCM-020');
+  });
+});
+
+describe('exempt supplies and the costs the plan does not model', () => {
+  it('requires an apportionment method when the basket is exempt', () => {
+    // Exempt is not zero-rated. SI 248 of 2023 moved the staples basket to exempt
+    // from 1 January 2024, and the input VAT behind it stops being recoverable.
+    const finding = validateRoundCreditModel(
+      conformant({ inputTaxApportionmentMethod: 'NOT_APPLICABLE' }),
+    ).findings.find((f) => f.rule === 'RCM-021');
+    expect(finding?.remedy).toMatch(/SI 248 of 2023/);
+  });
+
+  it('does not require apportionment on a wholly standard-rated Round', () => {
+    expect(rulesFrom(standardRated())).not.toContain('RCM-021');
+  });
+
+  it('requires the transfer tax on each instalment to be modelled', () => {
+    // Six instalments cost six times what one does, and §13.2 does not mention it.
+    expect(rulesFrom(conformant({ transferTaxBasisPoints: null }))).toContain('RCM-022');
+    expect(rulesFrom(conformant({ instalmentCount: 0 }))).toContain('RCM-022');
+    expect(rulesFrom(conformant({ transferTaxBasisPoints: 1_200 }))).toContain('RCM-022');
+  });
+
+  it('accepts a rail that attracts no transfer tax', () => {
+    expect(validateRoundCreditModel(conformant({ transferTaxBasisPoints: 0 })).conformant).toBe(true);
+  });
+
+  it('requires rates to resolve against a dated schedule', () => {
+    // The standard rate moved 15% -> 15.5% on 1 January 2026, and the exempt
+    // schedule has been amended twice since 2023.
+    const finding = validateRoundCreditModel(conformant({ taxScheduleRef: null })).findings.find(
+      (f) => f.rule === 'RCM-023',
+    );
+    expect(finding?.remedy).toMatch(/15\.5%/);
   });
 });
 
@@ -441,7 +489,11 @@ describe('exit', () => {
 describe('denomination and disclosure', () => {
   it('accepts goods denomination without a price-risk disclosure', () => {
     // Quantity is fixed at purchase, so there is no price risk to disclose.
-    expect(validateRoundCreditModel(singlePurpose()).conformant).toBe(true);
+    expect(
+      validateRoundCreditModel(
+        conformant({ denomination: 'GOODS', priceRiskDisclosureVersion: null }),
+      ).conformant,
+    ).toBe(true);
   });
 
   it('refuses currency denomination with no price-risk disclosure', () => {

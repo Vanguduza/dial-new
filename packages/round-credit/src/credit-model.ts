@@ -3,10 +3,13 @@
  * in executable form.
  *
  * A subscription payment buys credits. Credits are not money: not redeemable in
- * money, not a means of paying anyone, not transferable. The issue of a credit is
- * therefore a supply of goods rather than the taking of a repayable sum, which is
- * what keeps Grocery Rounds out of `ACT-REG-001`'s money-holding apparatus
- * altogether rather than adding a second way of holding money to it.
+ * money, not a means of paying anyone, not transferable. The payment is therefore
+ * consideration for a supply of goods rather than the taking of a repayable sum,
+ * which is what keeps Grocery Rounds out of `ACT-REG-001`'s money-holding
+ * apparatus altogether rather than adding a second way of holding money to it.
+ *
+ * Rev 3 settles the tax point at payment, per section 8 of the VAT Act, unless a
+ * written ZIMRA ruling says otherwise. The rules that follow are shaped by that.
  *
  * That position is only as true as the code makes it. A term in a contract that
  * the code does not enforce is a term the code will eventually contradict — one
@@ -29,12 +32,21 @@ export type CreditScope = 'GROCERY_FULFILMENT';
 /**
  * The tax character of a Round's basket, fixed when the Round is created.
  *
- * The vote chooses within a class and never across it. If the class could still
- * change at the maturity vote, the tax rate of the supply would be decided after
- * its tax point — see ROUND_CREDIT_MODEL_v1 §C3, which is the condition the whole
- * taxable-supply answer rests on.
+ * The vote chooses within a class and never across it. Section 8 of the VAT Act
+ * puts the time of supply at the earlier of invoice or payment, so a Round whose
+ * rate is settled by a later vote is taxed before anyone knows the rate — see
+ * ROUND_CREDIT_MODEL_v1 condition C3.
  */
-export type BasketTaxClass = 'ZERO_RATED_STAPLES' | 'STANDARD_RATED_MIXED';
+export type BasketTaxClass =
+  /**
+   * Maize meal, bread, milk, sugar, cooking oil and salt are **exempt**, not
+   * zero-rated — SI 248 of 2023, effective 1 January 2024. No output VAT arises
+   * on either side of the tax point, and input VAT attributable to these supplies
+   * is irrecoverable, which is a permanent margin cost rather than a timing one.
+   */
+  | 'EXEMPT_BASIC_FOODSTUFFS'
+  | 'ZERO_RATED_STAPLES'
+  | 'STANDARD_RATED_MIXED';
 
 /** Goods-denominated credits fix quantity at purchase; currency-denominated do not. */
 export type CreditDenomination = 'GOODS' | 'CURRENCY';
@@ -42,10 +54,9 @@ export type CreditDenomination = 'GOODS' | 'CURRENCY';
 /**
  * How the supply is fiscalised, which follows from where the tax point is.
  *
- * Taxing at issue is one receipt per subscription payment. Taxing at collection
- * makes every delivery a fiscalised sale, itemised per line, per member — a
- * materially heavier obligation at 38,420 members, and the price of deferring
- * the VAT.
+ * Taxing at payment is one receipt per instalment. Taxing at collection makes
+ * every delivery a fiscalised, itemised sale per member — fewer documents per
+ * Round, but all of them landing in the settlement window.
  */
 export type FiscalisationModel = 'SINGLE_RECEIPT_AT_ISSUE' | 'PER_LINE_AT_COLLECTION';
 
@@ -110,14 +121,25 @@ export interface RoundCreditConfiguration {
   roundProductId: string;
   /** Must be GROCERY_FULFILMENT. Typed loosely so a bad value is refused, not un-compilable. */
   creditScope: string;
-  /**
-   * Null means undeclared. Required only when the tax point is at issue: a
-   * single-purpose credit needs a knowable rate on the day it is sold, and a
-   * multi-purpose one is rated when the goods are handed over.
-   */
+  /** Null means undeclared, which is itself the refusal — the rate must be knowable when the money arrives. */
   basketTaxClass: BasketTaxClass | null;
   taxPoint: 'CREDIT_ISSUE' | 'SETTLEMENT';
+  /**
+   * A written ZIMRA ruling permitting the tax point to fall at collection.
+   * Section 8 of the VAT Act fixes time of supply at the earlier of invoice or
+   * payment, and no monetary-voucher exception has been confirmed, so deferral is
+   * available only on a ruling — never on an assumption.
+   */
+  deferralRulingRef: string | null;
   fiscalisationModel: FiscalisationModel;
+  /** Required where the Round supplies exempt goods: input VAT is then irrecoverable and must be apportioned. */
+  inputTaxApportionmentMethod: 'DIRECT_ATTRIBUTION' | 'TURNOVER' | 'NOT_APPLICABLE';
+  /** How many times the member pays. Every collection is a separate transfer-tax event. */
+  instalmentCount: number;
+  /** IMTT on each collection, in basis points. 200 = 2% (USD); 150 = 1.5% (ZiG, from 2026). */
+  transferTaxBasisPoints: number | null;
+  /** The dated rate schedule rates resolve against. VAT moved 15% → 15.5% on 1 Jan 2026. */
+  taxScheduleRef: string | null;
   denomination: CreditDenomination;
   exitPricing: ExitPricing;
   exitIncludesRoundBenefits: boolean;
@@ -213,32 +235,41 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
 
   // --- C3: the tax rate must be determinate at the tax point -----------------
 
-  // A credit is single-purpose when its rate is knowable on the day it is sold,
-  // and multi-purpose when it is not. That distinction, not the wording of the
-  // terms, is what decides where the tax point falls — so the two must agree, and
-  // RCM-005/006 are obligations only on the single-purpose route.
-  if (config.taxPoint === 'CREDIT_ISSUE') {
-    if (config.basketTaxClass === null) {
-      findings.push(
-        refuse(
-          'RCM-005',
-          'A Round taxed at issue declares its basket tax class when it is created.',
-          'Declare basketTaxClass, or move the tax point to SETTLEMENT. Without one of the two, the rate of the supply is decided by a vote held after the supply was taxed.',
-        ),
-      );
-    }
+  // Rev 3. Section 8 of the VAT Act fixes the time of supply at the earlier of
+  // invoice or payment, and no monetary-voucher exception has been confirmed for
+  // Zimbabwe, so the tax point falls when the member pays unless ZIMRA has said
+  // otherwise in writing. Each Round is therefore confined to one tax character,
+  // which is what lets the rate be applied on the day the money arrives.
+  if (config.basketTaxClass === null) {
+    findings.push(
+      refuse(
+        'RCM-005',
+        'A Round declares its basket tax class when it is created.',
+        'Declare basketTaxClass. With the tax point at payment, a Round whose rate is settled by a later vote is taxed before anyone knows the rate.',
+      ),
+    );
+  }
 
-    const offClass = config.ballotOptions.filter((o) => o.taxClass !== config.basketTaxClass);
-    if (offClass.length > 0) {
-      findings.push(
-        refuse(
-          'RCM-006',
-          'A Round taxed at issue confines its basket vote to the declared tax class.',
-          'Remove the options outside the declared class from the ballot, or run them as a separate Round product.',
-          offClass.map((o) => `${o.optionId}:${o.taxClass}`).join(', '),
-        ),
-      );
-    }
+  const offClass = config.ballotOptions.filter((o) => o.taxClass !== config.basketTaxClass);
+  if (offClass.length > 0) {
+    findings.push(
+      refuse(
+        'RCM-006',
+        'The basket vote chooses within the Round\u2019s declared tax class and never across it.',
+        'Remove the options outside the declared class from the ballot, or run them as a separate Round product. A basket spanning exempt staples and standard-rated goods has no single rate to charge at payment.',
+        offClass.map((o) => `${o.optionId}:${o.taxClass}`).join(', '),
+      ),
+    );
+  }
+
+  if (config.taxPoint === 'SETTLEMENT' && !config.deferralRulingRef) {
+    findings.push(
+      refuse(
+        'RCM-007',
+        'Deferring the tax point to collection requires a written ZIMRA ruling. It is not a treatment Dial may elect.',
+        'Set taxPoint to CREDIT_ISSUE, or record deferralRulingRef once a ruling is held. Building the payment architecture on an unconfirmed deferral risks retrospective output VAT and penalties across the whole float \u2014 and on an exempt staples Round there is no output VAT to defer in the first place.',
+      ),
+    );
   }
 
   const expectedFiscalisation: FiscalisationModel =
@@ -247,20 +278,62 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     findings.push(
       refuse(
         'RCM-020',
-        'Fiscalisation follows the tax point: one receipt per payment when taxed at issue, an itemised sale per delivery when taxed at collection.',
-        `Set fiscalisationModel to ${expectedFiscalisation}. Deferring the VAT is not free — it moves fiscalisation to every delivery, per line, per member, and the payment still needs a non-VAT document at the time it is taken.`,
+        'Fiscalisation follows the tax point: one receipt per payment when taxed at payment, an itemised sale per delivery when taxed at collection.',
+        `Set fiscalisationModel to ${expectedFiscalisation}.`,
         config.fiscalisationModel,
       ),
     );
   }
 
-  if (config.taxPoint === 'SETTLEMENT' && config.basketTaxClass !== null) {
+  const suppliesExempt = config.basketTaxClass === 'EXEMPT_BASIC_FOODSTUFFS';
+  if (suppliesExempt && config.inputTaxApportionmentMethod === 'NOT_APPLICABLE') {
     findings.push(
       refuse(
-        'RCM-007',
-        'A Round cannot be taxed at collection and also claim a rate fixed at issue. If the rate is knowable on day one the supply is taxable on day one.',
-        'Either clear basketTaxClass and accept the credit is multi-purpose, or move taxPoint to CREDIT_ISSUE. Holding both positions gives the tax authority the choice of which one to apply, and it will not pick ours.',
-        `taxPoint=${config.taxPoint}, basketTaxClass=${config.basketTaxClass}`,
+        'RCM-021',
+        'A Round supplying exempt goods cannot recover the input VAT attributable to them, so it declares how input tax is apportioned.',
+        'Set inputTaxApportionmentMethod to DIRECT_ATTRIBUTION or TURNOVER. Exempt is not zero-rated: SI 248 of 2023 moved maize meal, bread, milk, sugar, cooking oil and salt to exempt from 1 January 2024, and the VAT on logistics, packaging, warehousing and platform costs attributable to them becomes a permanent cost. This is larger than any tax-point choice and no tax-point choice touches it.',
+      ),
+    );
+  }
+
+  if (!Number.isInteger(config.instalmentCount) || config.instalmentCount < 1) {
+    findings.push(
+      refuse(
+        'RCM-022',
+        'A Round declares how many times the member pays.',
+        'Set instalmentCount to a positive whole number.',
+        String(config.instalmentCount),
+      ),
+    );
+  } else if (config.transferTaxBasisPoints === null) {
+    findings.push(
+      refuse(
+        'RCM-022',
+        'Every collection is a separate transfer-tax event, so the charge is modelled rather than discovered.',
+        'Declare transferTaxBasisPoints \u2014 200 for IMTT on USD, 150 for ZiG from 2026, or 0 where the rail does not attract it. Six instalments cost six times what one does, and \u00a713.2\u2019s unit economics do not mention it.',
+      ),
+    );
+  } else if (
+    !Number.isFinite(config.transferTaxBasisPoints) ||
+    config.transferTaxBasisPoints < 0 ||
+    config.transferTaxBasisPoints > 1_000
+  ) {
+    findings.push(
+      refuse(
+        'RCM-022',
+        'The transfer-tax rate is between 0 and 1,000 basis points.',
+        'Correct transferTaxBasisPoints.',
+        String(config.transferTaxBasisPoints),
+      ),
+    );
+  }
+
+  if (!config.taxScheduleRef) {
+    findings.push(
+      refuse(
+        'RCM-023',
+        'Rates resolve against a dated schedule, never a constant in the code.',
+        'Record taxScheduleRef. The standard rate moved from 15% to 15.5% on 1 January 2026 and the exempt schedule has been amended twice since 2023; a Round sold before a change and collected after it must resolve the rate in force on the day it applies.',
       ),
     );
   }
@@ -399,10 +472,10 @@ export function validateRoundCreditModel(config: RoundCreditConfiguration): Cred
     );
   }
 
-  // Eighteen of the twenty rules are decidable from configuration. RCM-009 and
+  // Twenty-one of the twenty-three rules are decidable from configuration. RCM-009 and
   // RCM-010 are properties of a ledger in motion and are enforced by
   // projectCreditLedger and assertContractLiabilityInvariant below.
-  return { conformant: findings.length === 0, findings, checked: 18 };
+  return { conformant: findings.length === 0, findings, checked: 21 };
 }
 
 // ---------------------------------------------------------------------------

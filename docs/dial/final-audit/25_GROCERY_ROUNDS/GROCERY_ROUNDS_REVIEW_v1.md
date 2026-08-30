@@ -7,11 +7,11 @@
 > structure: subscriptions buy grocery credits that are not money, are not
 > redeemable in money, are not transactional and are not transferable, making the
 > transaction a taxable supply rather than a deposit. Rev 2 of that decision
-> denominates credits in monetary value, moves the tax point to collection, prices
-> the exit at standard retail, and funds protection with a charge on top of credit
-> value. Together they answer **B1,
-> B3 and B4** and is recorded, with the seven conditions it imposes on the build, in
-> `ROUND_CREDIT_MODEL_v1.md`. The findings below are left as written — they are
+> denominates credits in monetary value, prices the exit at standard retail, and
+> funds protection with a charge on top of credit value; Rev 3 closes the tax
+> point at payment and surfaces the exempt-supply input-tax cost. Together they
+> answer **B1, B3 and B4**, and are recorded with the seven conditions they impose
+> on the build in `ROUND_CREDIT_MODEL_v1.md`. The findings below are left as written — they are
 > what the decision was taken against — with a resolution line on each. B2, the H
 > findings and the M findings stand unchanged; B2 is sharpened rather than
 > answered, and is dealt with as condition C7.
@@ -139,19 +139,26 @@ That answer changes the payment architecture, the receipt the customer gets, the
 
 **Required.** Add tax to §24's gate list and resolve the deposit-versus-supply question before the payment flow is designed, not after.
 
-**Answered — supply, not deposit; and Rev 2 puts the tax point at collection.**
-The money is consideration for a sale rather than a sum held for the member,
-which is what B4 asked. Rev 2 then defers the tax point to when the groceries are
-handed over. That is coherent with monetary denomination — a credit whose rate is
-not knowable on the day it is sold is a multi-purpose voucher, and multi-purpose
-vouchers are taxed on redemption — and it carries three costs, set out in C3:
-the "not money" position rests entirely on the closed loop; the deferral is only
-available if Zimbabwean law recognises the voucher treatment, since time of
-supply otherwise falls on the earlier of invoice or payment; and every delivery
-becomes an itemised fiscalised sale per member rather than one receipt per
-payment. `RCM-007` refuses the incoherent middle — a fixed basket class *and* a
-deferred tax point — and `RCM-020` refuses a fiscalisation model that does not
-match the tax point. Tax is still to be added to §24's gate list.
+**Closed at Rev 3.** The money is consideration for a sale rather than a sum held
+for the member, which is what B4 asked. On the tax point, the answer is **when the
+member pays** — VAT Act s8 fixes time of supply at the earlier of invoice or
+payment, and no monetary-voucher exception has been confirmed for Zimbabwe, so
+deferral is available only against a written ZIMRA ruling (`RCM-007`). Each Round
+is confined to one tax character so a rate can be applied on the day the money
+arrives (`RCM-005`, `RCM-006`).
+
+This finding asked the wrong question, and answering it surfaced a larger one.
+**SI 248 of 2023 moved the staples basket from zero-rated to *exempt* on 1 January
+2024.** Exempt carries no output VAT at either end of the tax point — so on the
+flagship product the timing question is moot — but it also makes the input VAT
+behind those supplies permanently irrecoverable, estimated at 2–3% of cost. That
+is a bigger number than any timing benefit and no tax-point choice touches it:
+`RCM-021` requires an apportionment method, and the standard-rated Household Round
+earns its place partly because it recovers input tax on shared costs. Two further
+costs the plan does not model are now rules — IMTT charged per instalment
+(`RCM-022`, roughly US$1,200 on the plan's own 100-member illustration against a
+US$7,000 contribution) and rate movement (`RCM-023`, 15% to 15.5% on 1 January
+2026).
 
 Separately, and not raised in the original finding: **the tax point is not
 revenue recognition.** VAT arising at issue does not make the cash earned income,

@@ -5,10 +5,10 @@ decisions of `GROCERY_ROUNDS_MASTER_PLAN_v1.md`.
 **Answers:** review findings B1 (second money authority), B3 (what the member is
 buying), B4 (deposit versus taxable supply).
 **Executable form:** `packages/round-credit/src/credit-model.ts`, rules
-`RCM-001..020`, proven by `tests/round-credit.test.ts`.
-**Revision:** Rev 2, 30 Aug 2026 — see §0. Where §1 and §2 describe taxation at
-issue, Rev 2 supersedes them; the text is kept because the reasoning is what the
-later decision was taken against.
+`RCM-001..023`, proven by `tests/round-credit.test.ts`.
+**Revision:** Rev 3, 30 Aug 2026 — see §0. Rev 3 closes the tax question against
+Zimbabwean law as it now stands and supersedes Rev 2 on the tax point only; Rev
+2's other three decisions stand.
 **Still requires counsel:** the tax and consumer-law positions below are stated
 as the design's assumptions and the engineering that survives either answer.
 Zimbabwean tax counsel and the `ACT-REG-004` owner confirm them; this document
@@ -16,31 +16,128 @@ does not.
 
 ---
 
+## 0. Revision 3 — the tax question, closed
+
+**Recommendation adopted: the tax point is when the member pays, each Round is
+confined to one tax character, and the flagship product is built on the exempt
+staples basket.** Rev 2's monetary denomination, retail-priced exit and
+protection charge all stand. Only the tax point moves back.
+
+Three findings drove it, and the third is worth more than the first two.
+
+### 1. Deferral is not ours to elect
+
+Section 8 of the VAT Act [Chapter 23:12] fixes the time of supply at the
+**earlier of invoice issued or payment received**. For an instalment, that is the
+day the money arrives. The exception that would let a monetary voucher be taxed
+on redemption is the kind of provision South Africa's VAT Act carries for tokens
+and vouchers; **no equivalent has been confirmed for Zimbabwe**, and a treatment
+that cannot be pointed to is not a treatment.
+
+The asymmetry decides it. If we tax at payment and deferral was in fact
+available, we have paid VAT early — a cash-flow cost, recoverable in argument. If
+we defer and it was not available, we owe retrospective output VAT plus penalties
+across the entire float, and we find out during an audit rather than during
+design. `RCM-007` therefore refuses deferral unless a **written ZIMRA ruling** is
+recorded against the Round product. Obtaining one is cheap next to the exposure
+and is the right way to reopen this permanently.
+
+### 2. On the flagship product there is nothing to defer
+
+**SI 248 of 2023, effective 1 January 2024, moved maize meal, bread, milk, sugar,
+cooking oil and salt from zero-rated to *exempt*.** An exempt supply carries no
+output VAT at either end of the tax point. For a staples Round the entire timing
+argument is moot — the cash-flow prize Rev 2 reached for does not exist on the
+basket most members will buy.
+
+### 3. The money is in input tax, and no tax-point choice touches it
+
+Exempt is not zero-rated, and the difference is the whole point. Under
+zero-rating a supplier charges 0% **and recovers** the VAT on its costs. Under
+exemption it charges nothing **and recovers nothing** — the VAT on fuel,
+packaging, warehousing, logistics and platform costs attributable to those
+supplies becomes a permanent cost, estimated in the market at 2–3% of cost. On a
+grocery margin that is not a rounding error, and it dwarfs any timing benefit
+that was ever on the table.
+
+Two consequences, both now rules:
+
+- **Apportionment is machinery, not an afterthought** (`RCM-021`). A Round
+  supplying exempt goods declares how input tax is split between taxable and
+  exempt activity. Get this wrong and the claim is either overstated, which is an
+  assessment, or understated, which is money left behind every month.
+- **The standard-rated Round earns its place** (`RCM-006`, `RCM-021`). A
+  Household Round that is standard-rated throughout generates recoverable input
+  tax against shared costs. The two-product split is therefore not only tax
+  hygiene — it is an input-recovery lever, and the mix between the two products
+  is a real commercial decision rather than a marketing one.
+
+### The cost nobody has modelled: transfer tax on every instalment
+
+IMTT is charged per transfer — 2% on USD, and 1.5% on ZiG from 2026. **A Round
+collected monthly incurs it once per instalment.** Six payments of US$100 cost
+about US$12 per member; the same US$600 taken once costs about US$4. On the
+plan's own illustrative 100-member Round that is roughly US$1,200 against a
+US$7,000 contribution — around 17% of it — and §13.2 does not mention transfer
+tax at all.
+
+`RCM-022` refuses a Round product that does not declare its instalment count and
+transfer-tax rate, so the charge appears in the model rather than in the
+reconciliation. Two levers follow directly: fewer, larger instalments, and ZiG
+collection where the member is willing, at 1.5% against 2%.
+
+### Rates move, so they resolve from a schedule
+
+The standard rate went from **15% to 15.5% on 1 January 2026**, and the exempt
+schedule has been amended twice since 2023. A Round sold before a change and
+collected after it must resolve the rate in force on the day it applies.
+`RCM-023` refuses a Round product with no dated schedule reference; no rate is a
+constant in the code.
+
+### What this leaves for counsel
+
+Narrower than before, and each item is now a yes/no rather than a design
+question:
+
+1. Confirm the exempt schedule as it currently stands, and that the intended
+   basket sits inside it. The schedule has moved twice; this document's reading is
+   `SI 248 of 2023` as amended.
+2. Confirm there is no monetary-voucher provision permitting a deferred tax
+   point — and if there is, name it, and `deferralRulingRef` becomes unnecessary.
+3. Settle the apportionment method with the auditors before the first Round
+   opens, not at the first return.
+4. Confirm IMTT incidence on the intended collection rails, so the modelled rate
+   is the charged rate.
+
+**Everything else about the tax question is now closed.**
+
+---
+
 ## 0. Revision 2 — 30 Aug 2026
 
 Four further owner decisions, taken after Rev 1 was recorded:
 
-1. **The tax point moves to collection.** VAT is accounted for when the groceries
-   are handed over, not when the credit is bought.
+1. ~~**The tax point moves to collection.**~~ **Superseded by Rev 3** — deferral
+   is not available on election, and on the exempt staples basket there is no VAT
+   to defer. See §0.
 2. **Credits are denominated in monetary value**, not in goods.
 3. **A member leaving receives groceries to the value of their credits at standard
    retail prices**, with no Round pricing, free delivery or other Round benefit.
 4. **A protection charge is collected on top of credit value** — the working
    figure is 4%, so 5,200 buys 5,000 of credit and 200 towards cover.
 
-Decisions 1 and 2 hang together and change the model's legal shape, which condition C3
-below now explains. Decisions 3 and 4 close C5 and part of C7. The rules move
-from sixteen to twenty; `RCM-005` and `RCM-006` become obligations on one route
-rather than both, and `RCM-017`–`RCM-020` are new.
+Decisions 2, 3 and 4 stand. Decision 1 was reversed by Rev 3 once the statutory
+position was checked; the reasoning below is kept because it is what Rev 3 was
+tested against. The rules now run to twenty-three.
 
 ### What decision 1 buys, and what it costs
 
 **It is not what makes the float usable.** Whether Dial may spend the money was
 settled by the credit being a sale rather than a deposit; the tax point only
-decides *when Dial hands VAT to ZIMRA*. Deferring it is a genuine cash-flow gain
-— on 100 members at US$100 a month, roughly US$1,500 a month not paid out early
-on a standard-rated basket — and that gain is worth having. It is not a change in
-who owns the float.
+decides *when Dial hands VAT to ZIMRA*. This remains true and is the reason the
+reversal in Rev 3 costs the business nothing structural. *(Rev 3: the cash-flow
+gain that motivated the deferral turned out to be largely absent — the staples
+basket is exempt, so there is no output VAT to defer.)*
 
 **Two readings of "profit from the credit payments", and only one is available.**
 
@@ -57,8 +154,8 @@ who owns the float.
 The first is what the design should be built to maximise. The second must not
 appear in the model, the dashboard or the pitch.
 
-**The cost is that the credit becomes multi-purpose, and that is the weaker
-position.** See condition C3.
+**The cost was that the credit would become multi-purpose, which is the weaker
+position — and Rev 3 found it also unavailable.** See §0 and condition C3.
 
 ---
 
@@ -168,65 +265,31 @@ credit: the credit stays with the member, and a named collector may receive the
 goods. Same practical outcome, rule intact, and it produces a better audit trail
 than a transfer would.
 
-### C3 — Tax point and credit character must agree  `RCM-005, 006, 007, 020`
+### C3 — One tax character per Round, taxed when the member pays  `RCM-005, 006, 007, 020, 021, 022, 023`
 
-**Rev 2 replaces this condition.** Rev 1 taxed the credit at issue and therefore
-required the basket's tax class to be fixed when the Round was created. Rev 2
-taxes at collection, which removes that requirement and adds three others.
+**Rev 3 settles this condition.** The reasoning is in §0; the obligations are:
 
-#### Why the two decisions are one decision
+- **A Round declares its basket tax class at creation, and the ballot stays inside
+  it** (`RCM-005`, `RCM-006`). With the tax point at payment, a Round whose rate is
+  settled by a later vote is taxed before anyone knows the rate. In practice this
+  means at least two products: a **Staples Round** on the exempt basket, and a
+  **Household Round** standard-rated throughout.
+- **The tax point is payment** (`RCM-007`). Deferral to collection is available
+  only against a recorded written ZIMRA ruling — never as an election.
+- **Fiscalisation follows the tax point** (`RCM-020`): one receipt per instalment
+  while taxed at payment; an itemised sale per delivery if a ruling later moves it.
+- **An exempt Round declares its input-tax apportionment method** (`RCM-021`),
+  because exemption makes the input VAT behind those supplies permanently
+  irrecoverable.
+- **Instalment count and transfer-tax rate are declared** (`RCM-022`), so IMTT is
+  priced rather than discovered.
+- **Rates resolve against a dated schedule** (`RCM-023`), never a constant.
 
-A credit is **single-purpose** when what it will buy — and so the VAT rate — is
-knowable on the day it is sold, and **multi-purpose** when it is not. That
-distinction, not the wording of the terms, is what decides where the tax point
-falls. Single-purpose is taxed on issue. Multi-purpose is taxed on redemption.
-
-Rev 2's two decisions therefore hang together and are internally consistent: a
-credit denominated in money, spendable across a basket the group has not yet
-chosen, cannot be rated at issue, so it is multi-purpose, so it is taxed at
-collection. Choosing monetary denomination and deferred tax is one coherent
-model, not two preferences.
-
-`RCM-007` refuses the incoherent middle: a Round may not both fix its basket
-class at creation and defer the tax point. Holding both positions hands the
-authority a choice of treatments, and it will not choose ours.
-
-#### What it costs
-
-**1. The "not money" position gets weaker, not stronger.** A multi-purpose
-voucher for a stated monetary amount, spendable later on goods not yet chosen, is
-the closest thing in the model to stored value. Non-redeemability and
-non-transferability are what keep it on the right side of the line — and those
-are now carrying the whole weight. **C1 moves from important to load-bearing.**
-On the Rev 1 model, a credit that leaked into another trade would have been a
-serious defect; on Rev 2, it is the difference between a grocery voucher and an
-unlicensed payment instrument. The closed loop is no longer a discipline, it is
-the licence condition.
-
-**2. It may not be available.** VAT time-of-supply rules generally fix the tax
-point at the *earlier* of invoice or payment, which for a prepayment means the
-day the money arrives. The voucher regimes are the exception that allows
-deferral, and they allow it precisely for multi-purpose instruments. So the
-deferral is only available if the credit qualifies as a multi-purpose voucher
-under Zimbabwean law — which is now the sharpest question for tax counsel, and it
-is a question about a category, not about our preference. `RCM-007` and `RCM-020`
-are written so that a "no" from counsel is a configuration change and not a
-rebuild.
-
-**3. Fiscalisation gets much heavier.** Taxing at issue is one receipt per
-subscription payment. Taxing at collection makes **every delivery a fiscalised
-sale, itemised per line, per member** — at the plan's own 38,420 members, a
-materially larger fiscal-device integration than Rev 1 needed. The payment itself
-still requires a document at the time it is taken; it is simply not a VAT
-invoice. `RCM-020` refuses a Round whose fiscalisation model does not match its
-tax point, so this cost cannot be discovered after the payment flow is built.
-
-**4. The cash-flow gain is real and should be quantified honestly.** Not paying
-output VAT until collection keeps roughly fifteen cents of every standard-rated
-dollar in the business for the length of the Round. On the plan's illustrative
-100 members at US$100 a month that is on the order of US$1,500 a month deferred.
-It is a working-capital benefit, not earnings, and it reverses in full at
-settlement — so it must appear in the cash-flow model and never in the margin.
+The through-line: the Rev 1 discipline of fixing the tax class at Round creation
+was right, but for the wrong reason. It is not needed to make a single-purpose
+voucher work. It is needed because **the rate has to be applied on the day the
+money arrives**, and a basket spanning exempt staples and standard-rated goods
+has no single rate to apply.
 
 ### C4 — The tax point is not revenue recognition  `RCM-008, 009, 010`
 
@@ -412,33 +475,55 @@ disclosure credible.
 
 ---
 
-## 5. Open — for the `ACT-REG-004`, `ACT-REG-001` and `ACT-REG-007` owners
+## 5. Open — for the `ACT-REG-001`, `ACT-REG-004` and `ACT-REG-007` owners
 
-1. **Does a multi-purpose grocery credit qualify for taxation on redemption under
-   Zimbabwean law?** This is now the sharpest question. Time-of-supply rules
-   generally fix the tax point at the earlier of invoice or payment, and voucher
-   treatment is the exception that permits deferral. If the answer is no, the tax
-   point returns to issue and the basket class must be fixed at Round creation —
-   a configuration change under `RCM-005`, `RCM-006`, `RCM-007` and `RCM-020`,
-   not a rebuild. Owner: `ACT-REG-004`.
-2. **What does a per-delivery, per-line fiscalisation obligation cost to build and
-   run** at the plan's own membership scale, and which fiscal-device provider
-   supports it? Owner: `ACT-REG-004`.
-3. **Confirm that a non-redeemable, non-transferable, closed-loop credit falls
-   outside deposit-taking and payment-instrument regulation** on Zimbabwean facts
-   — and record what would take it back inside. This matters more under Rev 2
-   than it did under Rev 1, because a multi-purpose monetary credit sits closer to
-   stored value and C1 is now the whole defence. Owner: `ACT-REG-001`.
-4. **Confirm the consumer-law standing of permanent non-redeemability in money**
-   given the retail-priced exit in C5, and whether that exit is sufficient.
-5. **Clear the protection-charge wording** so that disclosing what the price funds
-   does not become the sale of a policy, and confirm no intermediary registration
-   is triggered. Owner: `ACT-REG-007`.
-6. **Obtain the indicative broker quote** before tiers are published, and confirm
-   whether 4% holds (`RCM-019`, review finding H2).
-7. **Set the C7 procurement reserve percentage**, or record a decision that it is
-   zero. This is the only lever that reaches the uninsurable failure mode.
+The tax question is closed at Rev 3. What remains is confirmation and commercial
+choice, not design.
 
-Until 1, 3 and 4 are answered, the vertical slice in §26 builds against the rules
-in `packages/round-credit` and takes no real customer money, which is what
+1. **Confirm the exempt schedule as it currently stands** and that the intended
+   staples basket sits inside it. This document reads `SI 248 of 2023` as amended.
+   Owner: `ACT-REG-004`.
+2. **Confirm there is no monetary-voucher provision** permitting a deferred tax
+   point; if there is one, name it and `RCM-007`'s ruling requirement falls away.
+   Owner: `ACT-REG-004`.
+3. **Settle the input-tax apportionment method with the auditors** before the
+   first Round opens rather than at the first return. This is the largest tax
+   number in the product. Owner: `ACT-REG-004`.
+4. **Confirm IMTT incidence on the intended collection rails**, so the modelled
+   rate is the charged rate — and decide the instalment cadence with that number
+   visible. Owner: Finance.
+5. **Confirm that a non-redeemable, non-transferable, closed-loop credit falls
+   outside deposit-taking and payment-instrument regulation** on Zimbabwean facts,
+   and record what would take it back inside. C1 is the whole defence. Owner:
+   `ACT-REG-001`.
+6. **Confirm the consumer-law standing of permanent non-redeemability in money**
+   given the retail-priced exit in C5.
+7. **Clear the protection-charge wording** so that disclosing what the price funds
+   does not become the sale of a policy, and obtain the indicative broker quote
+   before tiers publish (`RCM-019`, review finding H2). Owner: `ACT-REG-007`.
+8. **Set the C7 procurement reserve percentage**, or record that it is zero. It is
+   the only lever that reaches the uninsurable failure mode.
+
+Until 5 and 6 are answered, the vertical slice in §26 builds against the rules in
+`packages/round-credit` and takes no real customer money, which is what
 `ACT-REG-001`'s development mode already provides for.
+
+---
+
+## 6. Sources for the Rev 3 tax position
+
+- Value Added Tax Act [Chapter 23:12], section 8 — time of supply, earlier of
+  invoice or payment. [ZIMRA](https://www.zimra.co.zw/downloads/category/17-acts?download=3984:value-added-tax-act-chapter-2312),
+  and [DLA Piper Africa / Manokore on the time-of-supply rules](https://www.dlapiperafrica.com/en/zimbabwe/insights/2019/proposed-changes-to-the-time-of-supply-rules.html).
+- [SI 248 of 2023 — Value Added Tax (General) (Amendment) Regulations (No. 64)](https://www.veritaszim.net/sites/veritas_d/files/SI%202023-248%20Value%20Added%20Tax%20(General)%20(Amendment)%20Regulations,%202023%20(No.64).pdf),
+  effective 1 January 2024: maize meal, bread, milk, sugar, cooking oils and salt
+  moved to **exempt**.
+- [Lucent Consultancy — essential goods moved from zero-rated to exempt](https://lucent.co.zw/tax/value-added-tax-list-of-essential-goods-moved-from-zero-rated-status-to-exempt-status/),
+  on the loss of input-tax recovery and the 2–3% cost estimate.
+- [SI 15 of 2024 — further VAT exemptions](https://www.dlapiperafrica.com/en/zimbabwe/insights/2024/Understanding-the-Value-Added-Tax-General-Amendment-Regulations-2024-Statutory-15-of-2024),
+  effective 9 February 2024.
+- [Zimbabwe raises VAT to 15.5% from 1 January 2026](https://www.vatcalc.com/zimbabwe/zimbabwe-raises-vat-to-15-5-2026/),
+  with IMTT on ZiG transactions cut from 2% to 1.5%.
+
+These establish the design constraints; they are not a tax opinion, and the
+confirmations listed in §5 are still required.

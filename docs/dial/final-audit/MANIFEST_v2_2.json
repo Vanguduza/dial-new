@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T18:03:28.479Z",
+  "generated_at": "2026-08-30T18:24:30.152Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -833,8 +833,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/06_ACTIVATION/ACTIVATION_BLOCKER_REGISTRY.json",
-      "bytes": 9143,
-      "sha256": "4e7a535940ce36f62946ccc79fcd9da730213098c73a5e78d3731395fc28b6ef"
+      "bytes": 9462,
+      "sha256": "ce30864b07bf7092c08228b99449665e535546b096a4120b855dff35372e2dee"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/06_ACTIVATION/BUILD_VS_ACTIVATION_GATE_MODEL.md",
@@ -1113,13 +1113,13 @@
     },
     {
       "path": "25_GROCERY_ROUNDS/GROCERY_ROUNDS_REVIEW_v1.md",
-      "bytes": 21305,
-      "sha256": "c9f050ea1356db7b8cb3fde315852c1eba1c1ee70c8be9d3e6a50bb5d63db041"
+      "bytes": 21740,
+      "sha256": "bd9734a987af4e9747261345779ce482d351d59b2c569f28e5472f64e955e3f2"
     },
     {
       "path": "25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md",
-      "bytes": 24851,
-      "sha256": "d16b6fb3d04c11752dc2cd03a8f674a4061b0606683e547f86a6267c1d6cc027"
+      "bytes": 29345,
+      "sha256": "35635078901ce8846556181a0928dbef712608d1f0f855dba95d07fec7b02a61"
     },
     {
       "path": "README_v2_1.md",
