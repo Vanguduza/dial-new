@@ -107,6 +107,17 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # The preview player must be installed from its OWN lockfile.
+      # apps/preview-player pins vite 8.2.2, but the root tree resolves vite
+      # 7.3.6 (vitest depends on it) and hoists @cloudflare/vite-plugin beside
+      # it. The plugin then binds to Vite 7 while vinext runs the dev server on
+      # Vite 8, and workerd dies with `Missing field 'moduleType'` before the
+      # server binds - which is why config.webServer could not start. Installing
+      # here gives the app a self-consistent tree.
+      - name: install preview player
+        working-directory: apps/preview-player
+        run: npm ci --workspaces=false
+
       - name: install browsers
         run: npx playwright install --with-deps chromium
 

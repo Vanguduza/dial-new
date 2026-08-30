@@ -6,6 +6,10 @@ apps/preview-player/.wrangler/
 apps/preview-player/dist/
 *.log
 
+# Playwright output. The suite now actually runs, so these appear locally.
+playwright-report/
+test-results/
+
 # generated catalog artifacts (rebuild via npm run catalog:coverage)
 catalog-data/generated/catalog-coverage-ledger.json
 .archive/
