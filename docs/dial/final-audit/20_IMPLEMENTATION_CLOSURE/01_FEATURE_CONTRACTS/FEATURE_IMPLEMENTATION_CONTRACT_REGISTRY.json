@@ -528,7 +528,8 @@
       "no ledger entry is customerVisible while its evaluation is not customerReady",
       "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
       "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models",
+      "DIAGRAM_READY requires positive evidence that stable DGM IDs were minted, not merely the absence of cross-maker node_id collisions, and HOTSPOT_READY is held behind it"
     ],
     "acceptance_contract_doc": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
     "permission_model": {
@@ -25237,18 +25238,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25351,18 +25349,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25465,18 +25460,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25579,18 +25571,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25693,18 +25682,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25807,18 +25793,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -25921,18 +25904,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26035,18 +26015,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26149,18 +26126,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26263,18 +26237,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26377,18 +26348,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26491,18 +26459,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26605,18 +26570,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26719,18 +26681,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26833,18 +26792,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -26947,18 +26903,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27061,18 +27014,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27175,18 +27125,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27289,18 +27236,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27403,18 +27347,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27517,18 +27458,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   },
   {
@@ -27631,18 +27569,15 @@
       "WHATSAPP"
     ],
     "acceptance_contract": [
-      "a model with any one of the eleven stages not passing is not customer-ready, for every stage taken individually",
-      "customerReady is true only when all eleven stages pass",
-      "the first blocking stage reported is the earliest failing stage in ladder order",
-      "every blocker on a failing stage appears in the evaluation blocker list; a failing stage that states nothing still reports one",
-      "a stage with no evidence is never a pass",
-      "FITMENT_READY passes only when every variant carries a resolved fitment identity, and blocks when any does not",
-      "HOTSPOT_READY passes only when every diagram carries position hotspots, and blocks while diagram identity collisions remain",
-      "an acquisition-backlog model is never customer-visible and never counted as observed",
-      "no ledger entry is customerVisible while its evaluation is not customerReady",
-      "globalDiagramIdentitySafe is true exactly when the cross-maker collision count is zero, in both directions",
-      "a failing integrity gate names node_id or DGM in its notes",
-      "combined maker and model counts lie between the larger input and the sum, and customer-ready models never exceed observed models"
+      "all 9 realization facets resolved",
+      "states and allowed actions derive from domain truth",
+      "commands are idempotent where retry/replay is possible",
+      "named events are persisted/outboxed before projections depend on them",
+      "negative authorization and security-profile tests pass",
+      "applicable eventualities have recovery tests",
+      "donor provenance/parity is green where code is assimilated",
+      "observability, audit, support and Command Centre hooks are registered",
+      "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
   }
 ]

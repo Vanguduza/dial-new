@@ -144,7 +144,7 @@ RBC-006  archive/supersede stale planning authority    COMPLETE
 RBC-007  map source/test paths to Feature Registry     PENDING
 RBC-008  run closure/drift/security/realization checks COMPLETE
 RBC-009  prove one pilot Feature to DOMAIN_TESTED      COMPLETE
-RBC-010  enable broad multi-worktree development       PENDING
+RBC-010  enable broad multi-worktree development       COMPLETE
 ```
 
 Verified executing green:

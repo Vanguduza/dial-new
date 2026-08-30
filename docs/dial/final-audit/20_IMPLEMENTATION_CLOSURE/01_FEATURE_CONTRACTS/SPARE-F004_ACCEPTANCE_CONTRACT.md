@@ -137,6 +137,11 @@ runs in the `gates, types and unit suites` CI job.
 12. Combined maker and model counts lie between the larger of the two inputs and
     their sum, and customer-ready models never exceed observed models.
 
+13. `DIAGRAM_READY` requires positive evidence that stable DGM IDs were minted,
+    not merely the absence of cross-maker `node_id` collisions — a single-maker
+    catalogue collides with nothing — and `HOTSPOT_READY` is held behind it,
+    because a hotspot joins its diagram through that ID.
+
 **Not claimed.** No criterion here asserts that catalogue ingest works, that the
 `CatalogueIngestBatch` aggregate exists, or that any real vehicle is currently
 customer-ready. At the time of writing the eleven-stage gate reports **zero**
@@ -185,3 +190,8 @@ re-derives", not as "a second party agreed".
 - The DGM migration, for any model to reach `customerReady`. Not required for
   this evaluation to be correct — a correct evaluation of an unready catalogue
   returns zero ready models, which is what it does.
+- A catalogue. None has been injected. The catalogue is produced outside this
+  repository and accepted against
+  `24_INJECTION_STANDARDS/CATALOG_DATA_INJECTION_STANDARD_v1.md`, whose rules
+  are this feature's inputs stated as obligations on the producer. This feature
+  evaluates what arrives; it does not audit a catalogue in flight.

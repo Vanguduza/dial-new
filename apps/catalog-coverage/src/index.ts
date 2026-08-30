@@ -172,12 +172,39 @@ async function build(): Promise<void> {
     )
   `)
     .get() as unknown as { count: number };
+
+  // Positive evidence of the DGM migration. `dgm_id` does not exist until the
+  // catalogue pipeline applies planDiagramIdentityMigration, so its absence is
+  // reported as zero migrated rather than assumed to be irrelevant — the gate
+  // then withholds DIAGRAM_READY instead of passing on the absence of
+  // collisions alone.
+  let diagramIdentity: { totalDiagrams: number; withProductionDgmId: number } | undefined;
+  try {
+    const identity = db
+      .prepare(
+        `SELECT COUNT(*) AS total,
+                SUM(CASE WHEN dgm_id IS NOT NULL AND dgm_id GLOB 'DGM-[0-9A-Z]*' THEN 1 ELSE 0 END) AS migrated
+         FROM diagrams`,
+      )
+      .get() as unknown as { total: number; migrated: number | null };
+    diagramIdentity = {
+      totalDiagrams: Number(identity.total),
+      withProductionDgmId: Number(identity.migrated ?? 0),
+    };
+  } catch {
+    // No dgm_id column: the migration has not been applied to this catalogue.
+    const total = db.prepare("SELECT COUNT(*) AS total FROM diagrams").get() as unknown as {
+      total: number;
+    };
+    diagramIdentity = { totalDiagrams: Number(total.total), withProductionDgmId: 0 };
+  }
   db.close();
 
   const integrity: CatalogIntegrityGate = {
     status: Number(collision.count) === 0 ? "PASS" : "FAIL",
     globalDiagramIdentitySafe: Number(collision.count) === 0,
     crossMakerNodeCollisionCount: Number(collision.count),
+    diagramIdentity,
     notes:
       Number(collision.count) === 0
         ? ["No cross-maker source node collisions detected"]

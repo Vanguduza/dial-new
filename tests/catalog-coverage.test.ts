@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import {
   REQUIRED_CUSTOMER_FLOW_STAGES,
   assertCustomerReady,
@@ -56,6 +54,9 @@ describe('catalog customer-flow coverage', () => {
       globalDiagramIdentitySafe: true,
       crossMakerNodeCollisionCount: 0,
       notes: [],
+      // Every diagram migrated. Required now: the absence of collisions is not
+      // proof that stable ids were ever minted.
+      diagramIdentity: { totalDiagrams: 12, withProductionDgmId: 12 },
     };
     const collidingIntegrity: CatalogIntegrityGate = {
       status: 'FAIL',
@@ -123,38 +124,13 @@ describe('catalog customer-flow coverage', () => {
     });
   });
 
-  // The published snapshot is asserted on its invariants rather than on today's
-  // census figures. The previous version pinned observedMakers to 43,
-  // observedModels to 2228 and integrity.status to 'FAIL', which meant that
-  // fixing the 44,532 diagram-identity collisions — the catalog's first job —
-  // would break the test suite.
-  it('publishes a snapshot whose invariants hold regardless of catalog size', async ({ skip }) => {
-    // These are build outputs of `npm run catalog:coverage`, not committed
-    // source. Skip cleanly on a fresh clone rather than failing.
-    const read = async (name: string) => {
-      try {
-        return JSON.parse(await readFile(resolve(`catalog-data/generated/${name}`), 'utf8'));
-      } catch {
-        return null;
-      }
-    };
-    const summary = await read('catalog-coverage-summary.json');
-    const universe = await read('vehicle-universe.json');
-    const ledger = await read('catalog-coverage-ledger.json');
-    if (!summary || !universe || !ledger) {
-      skip('catalog-data/generated is absent; run `npm run catalog:coverage` first');
-      return;
-    }
-
-    // Held to exactly the rules the fixture tests prove, so the published
-    // snapshot and the contract cannot drift apart. Criteria 9, 10, 11 and 12.
-    assertCountInvariants(summary.counts);
-    assertIntegrityInvariants(summary.integrity);
-    expect(universe.makers.length).toBeGreaterThanOrEqual(
-      summary.counts.observedMakers,
-    );
-    expect(findLeaks(ledger.observedMakers)).toHaveLength(0);
-  });
+  // The published-snapshot test that lived here has been removed. It read
+  // catalog-data/generated, which no clone and no CI run has ever had, so it
+  // skipped every time it was invoked — a criterion whose only test skips is
+  // not evidence. The catalogue is produced elsewhere and injected, so its
+  // conformance is checked at injection by tests/injection-conformance.test.ts,
+  // and the invariants it asserted are proven above against fixtures that
+  // always run.
 });
 
 /**
@@ -397,5 +373,110 @@ describe('SPARE-F004 acceptance contract', () => {
         customerReadyModels: 2229,
       }),
     ).toThrow();
+  });
+});
+
+/**
+ * Criterion 13 — DIAGRAM_READY requires positive proof of the DGM migration.
+ *
+ * `globalDiagramIdentitySafe` only says no source node_id appears under two
+ * makers. A catalogue containing one maker satisfies that. So does one whose
+ * colliding rows were deleted rather than migrated. Neither has a single stable
+ * id, and the integration lock requires stable `DGM-*` ids — so the negative
+ * check alone could pass while the actual requirement was unmet.
+ */
+describe('SPARE-F004 criterion 13: stable diagram identity is proven, not inferred', () => {
+  const metrics: CatalogModelMetrics = {
+    variantCount: 3,
+    sectionCount: 8,
+    diagramCount: 12,
+    diagramImageCount: 12,
+    partRowCount: 240,
+    fitmentResolvedVariantCount: 3,
+    diagramsWithHotspotCount: 12,
+  };
+  const flowPack = {
+    flowPackId: 'H2E-TEST-V1',
+    visualFamilyId: 'VF-TEST',
+    makerSlug: 'test',
+    modelSlug: 'test',
+    familySlug: 'test',
+    fitmentId: 'FIT-TEST',
+    customerReady: true,
+    entryRoute: '/',
+    epcRoute: '/epc/vehicles/test',
+    scopeNote: 'test',
+  };
+  const stageFor = (stages: CoverageStageEvidence[], name: string) =>
+    stages.find((stage) => stage.stage === name)!;
+
+  it('withholds DIAGRAM_READY when no identity evidence is supplied at all', () => {
+    // The hole: a single-maker catalogue collides with nothing, so the old gate
+    // passed it while no DGM id existed anywhere.
+    const stages = buildObservedCoverageStages(
+      metrics,
+      {
+        status: 'PASS',
+        globalDiagramIdentitySafe: true,
+        crossMakerNodeCollisionCount: 0,
+        notes: ['No cross-maker source node collisions detected'],
+      },
+      flowPack,
+    );
+    const diagram = stageFor(stages, 'DIAGRAM_READY');
+    expect(diagram.status).not.toBe('PASS');
+    expect(diagram.blockers.join(' ')).toMatch(/not proof that DGM IDs were minted/);
+    expect(evaluateCoverage(stages).customerReady).toBe(false);
+  });
+
+  it('blocks while any diagram is unmigrated, and names how many', () => {
+    const stages = buildObservedCoverageStages(
+      metrics,
+      {
+        status: 'PASS',
+        globalDiagramIdentitySafe: true,
+        crossMakerNodeCollisionCount: 0,
+        notes: [],
+        diagramIdentity: { totalDiagrams: 12, withProductionDgmId: 9 },
+      },
+      flowPack,
+    );
+    const diagram = stageFor(stages, 'DIAGRAM_READY');
+    expect(diagram.status).toBe('BLOCKED');
+    expect(diagram.blockers.join(' ')).toContain('3 of 12');
+  });
+
+  it('holds hotspots behind diagram identity, because the join goes through it', () => {
+    const stages = buildObservedCoverageStages(
+      metrics,
+      {
+        status: 'PASS',
+        globalDiagramIdentitySafe: true,
+        crossMakerNodeCollisionCount: 0,
+        notes: [],
+        diagramIdentity: { totalDiagrams: 12, withProductionDgmId: 9 },
+      },
+      flowPack,
+    );
+    const hotspots = stageFor(stages, 'HOTSPOT_READY');
+    expect(hotspots.status).toBe('BLOCKED');
+    expect(hotspots.blockers.join(' ')).toMatch(/joins its diagram through the internal id/);
+  });
+
+  it('passes once every diagram carries a stable id', () => {
+    const stages = buildObservedCoverageStages(
+      metrics,
+      {
+        status: 'PASS',
+        globalDiagramIdentitySafe: true,
+        crossMakerNodeCollisionCount: 0,
+        notes: [],
+        diagramIdentity: { totalDiagrams: 12, withProductionDgmId: 12 },
+      },
+      flowPack,
+    );
+    expect(stageFor(stages, 'DIAGRAM_READY').status).toBe('PASS');
+    expect(stageFor(stages, 'HOTSPOT_READY').status).toBe('PASS');
+    expect(evaluateCoverage(stages).customerReady).toBe(true);
   });
 });

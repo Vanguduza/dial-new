@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T14:14:11.564Z",
+  "generated_at": "2026-08-30T15:13:19.744Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 216,
+  "file_count": 218,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
-      "bytes": 8409,
-      "sha256": "400949896e52d329f3c7db88e6103ec1d5ec8c9f9901f187b472188bcb3dc8cc"
+      "bytes": 8564,
+      "sha256": "87569be76d8a0e373521d09c688785138abc037b77315e0f1bad157762bed744"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -48,8 +48,8 @@
     },
     {
       "path": "00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
-      "bytes": 14194,
-      "sha256": "a0a4d4fc1f2b70c5567466358d586d44a9a9cfbbd2bd3f0b72e5aef2c8ae2bb0"
+      "bytes": 14195,
+      "sha256": "d078159b6b38d9b763cf22a83c170419da8bdd5ca5094122f80b0168b67ec807"
     },
     {
       "path": "00_MASTER/V2_1_ANCHOR_INDEX.md",
@@ -58,8 +58,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 4028,
-      "sha256": "b09789ba18f26dc94f36d95ef625f53df79be7989399211da292617ab207f492"
+      "bytes": 4562,
+      "sha256": "e208c91e6139c55da53504f77eac35385c6329ae32e8da5421c88d7568e12475"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -513,8 +513,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 60974,
-      "sha256": "aa2324154881b614e2798fa9698692845d3b99be3b612a388038d3efcb25837f"
+      "bytes": 61480,
+      "sha256": "2d7284129bf6b4566d61c194ffb30abecd37d94627ee6efa5c5756ff5047914e"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
@@ -773,8 +773,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 876577,
-      "sha256": "45468aed72280ebf8b76e9c6a11bf7e54ed21cb824226db47633dbfd7f275013"
+      "bytes": 863180,
+      "sha256": "7f3c5c47895952703c9277871368c8a8dbc2720b6d8911a3ac88273c4f1b6ef2"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F001_ACCEPTANCE_CONTRACT.md",
@@ -783,8 +783,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
-      "bytes": 9060,
-      "sha256": "03d1d672a1636bbe4c29db8ff8ec82ca259766ddb78724acbadbac2acd8c2543"
+      "bytes": 9696,
+      "sha256": "4433ae91947c3afb3fa1d071542ef0925178b4c8d48a84d713d2cb3f13d19b69"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EVENTUALITY_CLOSURE_STANDARD.md",
@@ -883,8 +883,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
-      "bytes": 4024,
-      "sha256": "4e8b91281a238464e953b87562340e904abc87deb166238286ed3bda08a3ba72"
+      "bytes": 4492,
+      "sha256": "207381c51f244f8d0229b8a76d15ce021703a5ef125ab95cdcb2a2072144238e"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/12_DEVELOPMENT_SYSTEM/CLAUDE_CODE_V2_OPERATING_MODEL.md",
@@ -898,8 +898,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md",
-      "bytes": 7946,
-      "sha256": "405a6724671f525dfa92ea86c6f230d5433d99b4b769d787c256938f4a5c327b"
+      "bytes": 7947,
+      "sha256": "b5677b5eab8639d978e23b4cc1d10a6460a7051a8c9ebe116f007093d9cdd8cb"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/14_VALIDATION/v2-closure-check.mjs",
@@ -1095,6 +1095,16 @@
       "path": "23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
       "bytes": 50587,
       "sha256": "3a7f79b04176bd0db1ec04414c4a1802bbd017cbd08fdcfa9a242d01ecd8163a"
+    },
+    {
+      "path": "24_INJECTION_STANDARDS/CATALOG_DATA_INJECTION_STANDARD_v1.md",
+      "bytes": 8995,
+      "sha256": "f2ea5e00a1974348bdfacfc3880b7d7996223bd4ea057b0171c0b0195946e9a9"
+    },
+    {
+      "path": "24_INJECTION_STANDARDS/TRANSITION_FLOW_PACK_STANDARD_v1.md",
+      "bytes": 8995,
+      "sha256": "f4e9eed6a05ecb4459b3ebca47aa3e0e200b4b2a18b4627740c6f7ae66ecf9ab"
     },
     {
       "path": "README_v2_1.md",

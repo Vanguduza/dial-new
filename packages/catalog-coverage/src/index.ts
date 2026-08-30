@@ -1,3 +1,22 @@
+export {
+  validateCatalogueInjection,
+  type CatalogueInjectionManifest,
+  type ConformanceFinding,
+  type ConformanceResult,
+} from './injection.js';
+
+export {
+  canonicalScopeKey,
+  dgmIdFor,
+  isProductionDgmId,
+  planDiagramIdentityMigration,
+  assertMigrationApplicable,
+  PRODUCTION_DGM_ID,
+  type SourceDiagramScope,
+  type DiagramIdentityAssignment,
+  type DiagramIdentityMigrationPlan,
+} from './diagram-identity.js';
+
 export const REQUIRED_CUSTOMER_FLOW_STAGES = [
   'IDENTITY_READY',
   'CASCADE_READY',
@@ -47,6 +66,24 @@ export interface CatalogIntegrityGate {
   globalDiagramIdentitySafe: boolean;
   crossMakerNodeCollisionCount: number;
   notes: string[];
+  /**
+   * Positive evidence that the DGM migration has actually been applied.
+   *
+   * `globalDiagramIdentitySafe` is a negative check: it says no source node_id
+   * appears under two makers. That can be satisfied without minting a single
+   * stable id — by importing one maker, or by dropping the colliding rows — so
+   * on its own it cannot distinguish "migrated" from "not yet collided". The
+   * integration lock requires stable `DGM-*` ids, and this is the evidence that
+   * they exist.
+   *
+   * Optional so a caller that cannot yet measure it is not forced to assert it;
+   * when absent, DIAGRAM_READY reports the absence rather than assuming a pass.
+   */
+  diagramIdentity?: {
+    totalDiagrams: number;
+    /** Diagrams carrying an id that satisfies isProductionDgmId. */
+    withProductionDgmId: number;
+  };
 }
 
 export interface FlowPackReference {
@@ -138,15 +175,36 @@ export function buildObservedCoverageStages(
   const hierarchy = metrics.sectionCount > 0 && metrics.diagramCount > 0
     ? pass('EPC_HIERARCHY_READY', [`${metrics.sectionCount} sections`, `${metrics.diagramCount} diagrams`])
     : missing('EPC_HIERARCHY_READY', 'No complete section, group and diagram hierarchy');
+  // Identity is two conditions, not one. The absence of collisions says nothing
+  // about whether stable ids exist, so a catalogue that never collided — or one
+  // whose colliding rows were deleted rather than migrated — must not read as
+  // migrated.
+  const identityEvidence = integrity.diagramIdentity;
+  const dgmAssigned = identityEvidence?.withProductionDgmId ?? 0;
+  const dgmTotal = identityEvidence?.totalDiagrams ?? 0;
   const diagram = !integrity.globalDiagramIdentitySafe
     ? blocked(
         'DIAGRAM_READY',
         'Global diagram identity gate failed; source node_id collisions must be migrated to stable DGM IDs',
         [`${metrics.diagramImageCount} image-linked diagram row(s) observed`],
       )
-    : metrics.diagramCount > 0 && metrics.diagramImageCount === metrics.diagramCount
-      ? pass('DIAGRAM_READY', [`${metrics.diagramImageCount} verified diagram images`])
-      : missing('DIAGRAM_READY', 'Every diagram requires a verified image and globally unique internal diagram ID');
+    : !identityEvidence
+      ? missing(
+          'DIAGRAM_READY',
+          'No stable diagram identity evidence; absence of node_id collisions is not proof that DGM IDs were minted',
+        )
+      : dgmAssigned < dgmTotal
+        ? blocked(
+            'DIAGRAM_READY',
+            `${dgmTotal - dgmAssigned} of ${dgmTotal} diagram(s) carry no stable DGM ID`,
+            [`${dgmAssigned} diagram(s) migrated to stable DGM IDs`],
+          )
+        : metrics.diagramCount > 0 && metrics.diagramImageCount === metrics.diagramCount
+          ? pass('DIAGRAM_READY', [
+              `${metrics.diagramImageCount} verified diagram images`,
+              `${dgmAssigned} stable DGM ID(s)`,
+            ])
+          : missing('DIAGRAM_READY', 'Every diagram requires a verified image and globally unique internal diagram ID');
   // Hotspots depend on diagram identity being safe, because a position row is
   // joined to its diagram through the internal id. Below that they are measured,
   // not asserted.
@@ -157,6 +215,12 @@ export function buildObservedCoverageStages(
         'Hotspots cannot be trusted until source node_id collisions are migrated to stable DGM IDs',
         [`${diagramsWithHotspots} diagram(s) currently carry position hotspots`],
       )
+    : !identityEvidence || dgmAssigned < dgmTotal
+      ? blocked(
+          'HOTSPOT_READY',
+          'A hotspot joins its diagram through the internal id, so hotspots cannot be trusted before every diagram carries a stable DGM ID',
+          [`${diagramsWithHotspots} diagram(s) currently carry position hotspots`],
+        )
     : diagramsWithHotspots === 0
       ? missing('HOTSPOT_READY', 'No diagram carries position hotspots')
       : diagramsWithHotspots < metrics.diagramCount

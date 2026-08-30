@@ -5,7 +5,7 @@
   "repository_status": "BOOTSTRAP_APPLIED",
   "broad_feature_fanout_authorized": false,
   "controlled_foundation_engineering_authorized": true,
-  "authorization_condition": "RBC-009 is COMPLETE: SPARE-F004 is proven to DOMAIN_TESTED against CI run 33314202480, green on all three jobs. RBC-010 (broad fan-out) is the remaining bootstrap task and is now unblocked. Two cautions before authorising it: source-map reports 21 unclaimed source files, and CT-7 stands at 23 of 206 acceptance contracts, so fan-out would largely build against the generic contracts CT-1 exists to prevent. No independent specialist review has been performed on the pilot.",
+  "authorization_condition": "Repository bootstrap is COMPLETE: RBC-001 through RBC-010 all closed. RBC-010 was closed on evidence, not waiver — source-map reports 0 unclaimed source files and now runs as step 12 of npm run verify. Broad multi-worktree development is authorised. The standing constraint is CT-7, AMBER at 23 of 228: every feature except SPARE-F001 and SPARE-F004 still sits on a generic contract, so a feature entering implementation gets its own acceptance contract first. No independent specialist review has been performed on the SPARE-F004 pilot.",
   "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight.",
   "closure_tests": [
     {
@@ -132,7 +132,7 @@
     "customer_endpoint_records": 166,
     "supporting_capabilities": 125,
     "whatsapp_flows": 59,
-    "pack_files": 216
+    "pack_files": 218
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",
@@ -154,7 +154,7 @@
     "Identity fidelity is WAIVED_DEVELOPMENT_ADAPTER, not proven - measured silhouette IoU 0.545-0.589 against a 0.90 threshold",
     "CATVIS-S005 carries three open Blueprint 4.3 blockers",
     "No independent specialist review of the SPARE-F004 pilot; its contract was written and proven by the same agent",
-    "source-map reports 21 unclaimed source files from the scene-engine and trellis-pilot work",
-    "Ingest normalisation itself is not built; SPARE-F004 covers readiness evaluation, not ingest"
+    "Catalogue and transition flow packs are produced outside this repository and injected when complete; conformance is checked at injection, not audited here",
+    "No catalogue has yet been injected, so no vehicle is customer-ready and the eleven-stage gate correctly reports zero"
   ]
 }

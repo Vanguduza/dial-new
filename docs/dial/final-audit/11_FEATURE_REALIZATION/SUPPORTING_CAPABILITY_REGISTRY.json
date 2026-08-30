@@ -715,10 +715,19 @@
       "packages/explosion/src/index.ts",
       "packages/line-art/src/index.ts",
       "packages/technical-render",
-      "packages/depth/src/index.ts"
+      "packages/depth/src/index.ts",
+      "packages/scene-engine",
+      "packages/catalog-coverage/src/transition-production.ts",
+      "apps/catalog-coverage/src/transition-production.ts",
+      "apps/preview-player/app/raster-lab",
+      "apps/preview-player/components/raster-journey.tsx"
     ],
     "test_paths": [
-      "tests/pipeline.integration.test.ts"
+      "tests/pipeline.integration.test.ts",
+      "tests/scene-engine.test.ts",
+      "tests/scene-production.test.ts",
+      "tests/transition-production.test.ts",
+      "tests/raster-source.test.ts"
     ],
     "current_gate": "CODE_PRESENT",
     "implementation_note": "Explosion planning now meets Blueprint 4.3's minimum record: packages/explosion emits per-group layerAssetId, origin, destination, vector, depth, startProgress, endProgress and easing, staggered so groups overlap. Delivery does not. The pipeline still renders flattened whole-scene frames rather than compositing the named layers, and apps/preview-player/components/dvtg-preview.tsx animates 23 hardcoded CSS clip-path polygons over a single already-exploded still - the exact production method 4.3 prohibits. Nothing emits or asserts the shared display matrix 4.3 requires between artwork and hit map. This capability cannot advance past CODE_PRESENT until the blockers below clear.",
@@ -763,13 +772,15 @@
     "code_paths": [
       "packages/hotspots/src/index.ts",
       "packages/qa/src/index.ts",
-      "packages/catalog-coverage/src/visual-source.ts"
+      "packages/catalog-coverage/src/visual-source.ts",
+      "apps/preview-player/lib/hit-map.ts"
     ],
     "test_paths": [
       "tests/qa.test.ts",
       "tests/epc-navigation.test.ts",
       "tests/e2e/transition.spec.ts",
-      "tests/visual-source.test.ts"
+      "tests/visual-source.test.ts",
+      "tests/transition-ui-contract.test.ts"
     ],
     "current_gate": "DOMAIN_TESTED",
     "implementation_note": "Hit regions are authored, not guessed at runtime. QA blocks an enabled category with no region and flags equal-priority overlap as ambiguous routing. Route templates carry an explicit hitPriority, which is what makes overlap resolvable rather than ambiguous: QA flags overlap only at equal priority, since Body & Exterior is the fallback layer beneath specific categories."

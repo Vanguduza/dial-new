@@ -92,6 +92,12 @@ const SHELL_AND_TOOLING = new Set([
   'apps/preview-player/next-env.d.ts',
   'apps/preview-player/next.config.ts',
   'apps/preview-player/vite.config.ts',
+  // Build-time fallback error page, aliased from vite.config.ts because vinext
+  // resolves `next/error` at bundle time and `next` is not a dependency. It is
+  // infrastructure, not a customer capability.
+  'apps/preview-player/lib/next-error-fallback.tsx',
+  // Shared test fixture, not production source.
+  'tests/helpers/scene-fixture.ts',
   'apps/cli/src/index.ts',
   'workers/visual-generation-worker/src/index.ts',
   'playwright.config.ts',

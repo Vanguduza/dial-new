@@ -47,6 +47,17 @@ The single map of where authority lives. Open this before anything else.
 - Source registry → `../22_COMMERCE_FRONTEND_AND_TRANSITION/05_SOURCES/UPDATED_SOURCE_REGISTRY.md`
 - Pack production guide (working notes, not canon) → `../22_COMMERCE_FRONTEND_AND_TRANSITION/06_TRANSITION_ENGINE/TRANSITION_ENGINE_PACK_PRODUCTION_GUIDE.md`
 
+## Injection standards (what arrives from outside)
+
+The catalogue and the transition flow packs are produced by separate pipelines
+and injected when complete. This repository does not audit them; it states what
+it accepts and checks a bundle at injection.
+
+- Catalogue → `../24_INJECTION_STANDARDS/CATALOG_DATA_INJECTION_STANDARD_v1.md`
+- Flow packs → `../24_INJECTION_STANDARDS/TRANSITION_FLOW_PACK_STANDARD_v1.md`
+- Executable: `validateCatalogueInjection` (catalogue) and `npm run verify` +
+  `npm run test:e2e` (flow packs).
+
 ## Knowledge & retrieval (v2.2 addition)
 
 - Architecture (proposed, not built) → `../23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md`
