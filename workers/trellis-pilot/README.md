@@ -39,7 +39,10 @@ does not automatically authenticate this local client.
 ## Limits and artifacts
 
 - Fixed public provider and ZeroGPU hardware check; no provisioning or paid fallback.
-- One vehicle per invocation; two GPU calls at most; no automatic retries.
+- One vehicle per invocation; two main reconstruction/export calls at most; no
+  automatic retries. The provider's background-preprocessing service runs
+  separately and may also consume GPU quota. The receipt's `maxGpuCalls` field
+  refers only to the two main TRELLIS stages, not total upstream GPU usage.
 - Fixed seed, explicit sampler settings, 512 default / 1024 optional resolution.
 - 10-minute client wait bound per stage, including queue time. Timeout cancellation
   is best-effort and does not prove that a remote GPU task stopped immediately.
@@ -86,3 +89,35 @@ The client preserved the normalized hero, prepared model input and receipt in
 The receipt is `QUOTA_WAIT`, not success. No retry or paid fallback was made.
 Authenticating the local client uses the account's legitimate quota; it does not
 remove usage limits or guarantee that the next request will be accepted.
+
+After the user completed the official CLI device authorization, a **single
+authenticated retry succeeded** against the same provider revision. Session
+creation, preprocessing, reconstruction and GLB extraction all returned. Results
+are saved in
+`output/reconstruction-pilots/VF-ACURA-CL/89b97392a240455a9f82c4548b7460f1/`:
+
+- `reconstruction.glb`: 3,489,544 bytes; 65,937 vertices; 98,936 triangles;
+  one geometry, one material and two embedded images. Self-contained GLB and
+  finite, nonempty triangle-mesh checks passed.
+- `previews/`: 48 renders from the same reconstructed asset, not 48 independently
+  generated vehicle images.
+- `receipt.json`: authenticated request, source/provider/settings and artifact
+  hashes retained; `MESH_CANDIDATE_REVIEW_PENDING`, `customerReady: false`.
+- Recorded client wall times: session 2.063s, preprocessing 26.062s, reconstruction
+  39.406s and extraction 46.187s. These are not measured GPU-billing times or a
+  catalog throughput benchmark.
+
+Agent visual inspection compared the original hero with normal-render views
+`m0-s0`, `m0-s2`, `m0-s4`, `m0-s6`, clay view `m1-s5`, and textured views `m5-s5`
+and `m5-s1`. The overall coupe silhouette is coherent across those views, but
+grille, lamp and wheel detail is softened, with uneven surfaces and blurred
+textures. The rear and opposite side are inferred, not independently verified
+against reference photographs. Visible wheel forms are not a validated wheel
+ownership/count gate. This is an agent observation, not human approval or a
+calibrated vehicle-identity score.
+
+The result is suitable for further reconstruction/segmentation experiments, not
+customer release. It has no separately labeled engine, transmission, brake,
+suspension or body assemblies, no registered hero camera and no verified EPC
+click ownership. The existing website was not switched to this model. No new
+Space, paid hardware, subscription or credit purchase was created.
