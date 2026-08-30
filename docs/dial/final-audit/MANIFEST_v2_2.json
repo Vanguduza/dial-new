@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-08-30T16:39:25.451Z",
+  "generated_at": "2026-08-30T17:37:37.115Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -1113,8 +1113,8 @@
     },
     {
       "path": "25_GROCERY_ROUNDS/GROCERY_ROUNDS_REVIEW_v1.md",
-      "bytes": 20234,
-      "sha256": "e4026bc245ed16fab59a5b0ab171ca077954e9d9ed5e1f6ab0977d7ba31f76d7"
+      "bytes": 20236,
+      "sha256": "2014a757cd2f47b2d7eae6a47a15271b445abb8880654423f3d6b644820628e9"
     },
     {
       "path": "25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md",

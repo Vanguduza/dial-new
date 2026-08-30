@@ -7,7 +7,7 @@
 > structure: subscriptions buy grocery credits that are not money, are not
 > redeemable in money, are not transactional and are not transferable, making
 > their issue a taxable supply rather than a deposit. That decision answers **B1,
-> B3 and B4** and is recorded, with the six conditions it imposes on the build, in
+> B3 and B4** and is recorded, with the seven conditions it imposes on the build, in
 > `ROUND_CREDIT_MODEL_v1.md`. The findings below are left as written — they are
 > what the decision was taken against — with a resolution line on each. B2, the H
 > findings and the M findings stand unchanged; B2 is sharpened rather than
