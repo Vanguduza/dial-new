@@ -5707,7 +5707,13 @@
     "test_paths": [
       "tests/round-plan.test.ts"
     ],
-    "evidence_refs": [],
+    "evidence_refs": [
+      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
+      "29 tests covering all 14 acceptance criteria: tests/round-plan.test.ts",
+      "npm run verify green — 13 gates, 329 tests, none skipped",
+      "source-map accepts the gate claim; code_paths and test_paths resolve",
+      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+    ],
     "donor_refs": [
       "REF-INSTACART",
       "REF-ZW-GROCERY"
@@ -5740,7 +5746,13 @@
     "test_paths": [
       "tests/round-lifecycle.test.ts"
     ],
-    "evidence_refs": [],
+    "evidence_refs": [
+      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md",
+      "27 tests covering all 16 acceptance criteria: tests/round-lifecycle.test.ts",
+      "npm run verify green — 13 gates, 329 tests, none skipped",
+      "source-map accepts the gate claim; code_paths and test_paths resolve",
+      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+    ],
     "donor_refs": [
       "REF-INSTACART",
       "REF-ZW-GROCERY"
@@ -5814,7 +5826,13 @@
     "test_paths": [
       "tests/round-membership.test.ts"
     ],
-    "evidence_refs": [],
+    "evidence_refs": [
+      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md",
+      "25 tests covering all 16 acceptance criteria: tests/round-membership.test.ts",
+      "npm run verify green — 13 gates, 329 tests, none skipped",
+      "source-map accepts the gate claim; code_paths and test_paths resolve",
+      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+    ],
     "donor_refs": [
       "REF-INSTACART",
       "REF-ZW-GROCERY"
@@ -5876,7 +5894,13 @@
     "test_paths": [
       "tests/round-ledger.test.ts"
     ],
-    "evidence_refs": [],
+    "evidence_refs": [
+      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md",
+      "21 tests covering all 16 acceptance criteria: tests/round-ledger.test.ts",
+      "npm run verify green — 13 gates, 329 tests, none skipped",
+      "source-map accepts the gate claim; code_paths and test_paths resolve",
+      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+    ],
     "donor_refs": [
       "REF-INSTACART",
       "REF-ZW-GROCERY"
