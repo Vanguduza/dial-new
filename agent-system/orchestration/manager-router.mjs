@@ -47,6 +47,13 @@ export function selectManager(availability, policy = DEFAULT_MANAGER_POLICY) {
 
 export function issueManagerLease({ candidate, feature_id = null, worktree = null, atomic_unit = null, previous_lease_id = null }, root) {
   if (!candidate) throw new Error('manager candidate is required');
+  if (!managerEligible(candidate.health, { hardPin: candidate.hard_pin ?? true })) {
+    throw new Error('manager candidate does not have fresh identity-proven HEALTHY runtime evidence');
+  }
+  if (candidate.health?.requested_model !== candidate.requested_model) {
+    throw new Error('manager candidate policy/model does not match runtime health evidence');
+  }
+
   const now = new Date().toISOString();
   const lease = {
     schema_version: 1,
@@ -55,6 +62,8 @@ export function issueManagerLease({ candidate, feature_id = null, worktree = nul
     runtime: candidate.runtime,
     requested_model: candidate.requested_model,
     resolved_model: candidate.health?.resolved_model ?? null,
+    health_state: candidate.health?.state ?? null,
+    health_observed_at: candidate.health?.observed_at ?? null,
     feature_id,
     worktree,
     atomic_unit,
