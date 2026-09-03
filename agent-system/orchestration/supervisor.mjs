@@ -11,7 +11,10 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-const DEFAULT_PROBE_INTERVAL_MS = 15 * 60 * 1000;
+// Direct model probes consume subscription capacity. The operational runtime
+// executor records real-turn health and performs immediate failover, so the
+// idle supervisor only needs a low-frequency liveness/provenance refresh.
+const DEFAULT_PROBE_INTERVAL_MS = 12 * 60 * 60 * 1000;
 
 function now() { return new Date().toISOString(); }
 function commandVersion(command, args = ['--version']) {
