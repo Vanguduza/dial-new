@@ -2,28 +2,20 @@
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { buildManagerContext } from './context-broker.mjs';
+import { routeHermesInstruction } from './instruction-router.mjs';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const MODEL = 'claude-sonnet-5';
 
-const ALLOWED_TOOLS = [
+const HERMES_SUPPORT_TOOLS = [
   'Read',
   'Glob',
   'Grep',
-  'Edit',
-  'Write',
   'Bash(git status*)',
-  'Bash(git diff*)',
   'Bash(git log*)',
   'Bash(git show*)',
-  'Bash(npm run typecheck*)',
-  'Bash(npm run test*)',
-  'Bash(npm run verify*)',
-  'Bash(npm run agent:*)',
-  'Bash(npx vitest*)',
 ];
 
 function now() { return new Date().toISOString(); }
@@ -46,38 +38,66 @@ function resultObject(stdout) {
   }
 }
 
-export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = '', root, timeoutMs = 30 * 60 * 1000 } = {}) {
-  const lease = readJson('state/manager-lease.json', null, root);
+export async function runClaudeHermesFallback({
+  repoDir = DEFAULT_REPO,
+  instruction = '',
+  task = {},
+  selected_model_id = null,
+  root,
+  timeoutMs = 30 * 60 * 1000,
+} = {}) {
+  const selection = readJson('state/hermes-runtime.json', null, root);
   if (
-    !lease
-    || lease.status !== 'ACTIVE'
-    || lease.runtime !== 'claude_code'
-    || lease.requested_model !== MODEL
-    || lease.resolved_model !== MODEL
-    || lease.health_state !== 'HEALTHY'
-    || !lease.health_observed_at
+    !selection
+    || selection.status !== 'ACTIVE'
+    || selection.authority !== 'HERMES_RUNTIME_ONLY'
+    || selection.runtime !== 'claude_code'
+    || selection.requested_model !== MODEL
+    || selection.resolved_model !== MODEL
+    || selection.health_state !== 'HEALTHY'
+    || !selection.health_observed_at
   ) {
-    throw new Error(`active, identity-proven healthy Claude manager lease for ${MODEL} is required before invoking fallback runtime`);
+    throw new Error(`active, identity-proven Hermes fallback runtime selection for ${MODEL} is required`);
   }
 
-  const managerContext = await buildManagerContext({ repoDir, userMessage: instruction, root });
+  const routing = routeHermesInstruction({
+    instruction,
+    task,
+    selected_model_id,
+    worktree: repoDir,
+    root,
+  });
+
+  // Critical separation invariant: Sonnet powering Hermes may capture/route a
+  // complex instruction, but this runtime runner never executes that complex
+  // development work merely because it is the active Hermes fallback.
+  if (routing.classification === 'COMPLEX') {
+    return {
+      routed_only: true,
+      hermes_runtime: MODEL,
+      hermes_selection_id: selection.selection_id,
+      routing,
+    };
+  }
+
   const prompt = [
-    managerContext.context,
+    'DIAL HERMES FALLBACK RUNTIME',
+    'You are providing external shell/session continuity only.',
+    'You do NOT hold DIAL Development Manager Chair authority.',
+    'Do not make architecture, source-of-truth, financial, security, data-architecture, orchestration, or other complex development decisions.',
+    'Use only the allowed read/support tools.',
     '',
-    'TAKEOVER INSTRUCTION',
-    instruction || 'Validate the current DIAL state and continue the next safe atomic unit according to canon and the active manager lease.',
-    '',
-    'You are a replaceable manager lease-holder, not the control-plane authority. Do not claim a gate passed without fresh evidence.',
+    `Instruction: ${instruction || 'Report current repository status without modifying files.'}`,
   ].join('\n');
 
   const args = [
     '-p', prompt,
     '--model', MODEL,
-    '--effort', 'high',
+    '--effort', 'low',
     '--output-format', 'json',
-    '--permission-mode', 'acceptEdits',
-    '--allowedTools', ...ALLOWED_TOOLS,
-    '--name', `DIAL-${managerContext.feature_id || 'RECOVERY'}`,
+    '--permission-mode', 'plan',
+    '--allowedTools', ...HERMES_SUPPORT_TOOLS,
+    '--name', 'DIAL-HERMES-SONNET-FALLBACK',
   ];
 
   const startedAt = now();
@@ -101,12 +121,12 @@ export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = 
   const identityProven = resolvedModel === MODEL;
 
   const event = {
-    event: result.status === 0 && identityProven ? 'CLAUDE_FALLBACK_TURN_COMPLETED' : 'CLAUDE_FALLBACK_TURN_FAILED',
+    event: result.status === 0 && identityProven ? 'HERMES_SONNET_SUPPORT_TURN_COMPLETED' : 'HERMES_SONNET_SUPPORT_TURN_FAILED',
+    authority: 'HERMES_RUNTIME_ONLY',
     requested_model: MODEL,
     resolved_model: resolvedModel,
     identity_proven: identityProven,
-    feature_id: managerContext.feature_id,
-    lease_id: lease.lease_id,
+    hermes_selection_id: selection.selection_id,
     session_id: structured?.session_id ?? null,
     used_models: usedModels,
     started_at: startedAt,
@@ -116,24 +136,27 @@ export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = 
     error_class: result.status === 0 && identityProven ? null : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout)),
   };
 
-  appendJsonl('events/claude-fallback.jsonl', event, root);
-  writeJsonAtomic('state/claude-fallback-last.json', event, root);
+  appendJsonl('events/hermes-sonnet-fallback.jsonl', event, root);
+  writeJsonAtomic('state/hermes-sonnet-fallback-last.json', event, root);
 
   if (result.error) throw result.error;
   if (result.status !== 0 || !identityProven) {
-    const error = new Error(`Claude fallback failed: ${event.error_class}`);
+    const error = new Error(`Hermes Sonnet fallback failed: ${event.error_class}`);
     error.cause = { stderr: result.stderr?.slice(-4000), stdout: result.stdout?.slice(-4000), event };
     throw error;
   }
 
-  return { event, output: structured ?? { result: result.stdout } };
+  return { routed_only: false, routing, event, output: structured ?? { result: result.stdout } };
 }
+
+export const runClaudeFallback = runClaudeHermesFallback;
 
 async function main() {
   const instruction = process.argv.slice(2).join(' ').trim();
-  const result = await runClaudeFallback({
+  const result = await runClaudeHermesFallback({
     repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO,
     instruction,
+    task: { kind: process.env.DIAL_TASK_KIND || 'orchestration_decision' },
   });
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
