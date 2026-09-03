@@ -56,6 +56,63 @@ export function initializeSupervisor(root) {
   return readJson('state/orchestrator-state.json', null, root);
 }
 
+export function invalidateRuntimeEvidenceAfterSupervisorRestart(root) {
+  const availability = loadAvailability(root);
+  for (const [runtime, health] of Object.entries(availability.runtimes ?? {})) {
+    recordRuntimeHealth(runtime, {
+      state: 'UNKNOWN',
+      requested_model: health?.requested_model ?? null,
+      resolved_model: health?.resolved_model ?? null,
+      reason: 'supervisor restart requires fresh runtime/model provenance before a new lease',
+      details: { previous_state: health?.state ?? null, previous_observed_at: health?.observed_at ?? null },
+    }, root);
+  }
+  const previous = readJson('state/manager-lease.json', null, root);
+  if (previous?.status === 'ACTIVE') {
+    expireManagerLease('SUPERVISOR_RESTART_REQUIRES_REVALIDATION', root);
+  }
+  appendJsonl('events/supervisor.jsonl', {
+    event: 'RUNTIME_EVIDENCE_INVALIDATED_AFTER_RESTART',
+    previous_lease_id: previous?.lease_id ?? null,
+    at: now(),
+  }, root);
+}
+
+export async function refreshRuntimeHealth({ repoDir = DEFAULT_REPO, root } = {}) {
+  const results = {};
+  try {
+    const { probeCodexAppServer } = await import('./codex-app-server-probe.mjs');
+    results.codex_app_server = await probeCodexAppServer({ repoDir, root });
+  } catch (error) {
+    results.codex_app_server = recordRuntimeHealth('codex_app_server', {
+      state: 'PROCESS_FAILED',
+      requested_model: 'gpt-5.6-sol',
+      resolved_model: null,
+      reason: `supervisor refresh failed: ${String(error?.message || error).slice(0, 1000)}`,
+    }, root);
+  }
+
+  try {
+    const { probeClaudeCode } = await import('./claude-code-probe.mjs');
+    results.claude_code = probeClaudeCode({ repoDir, root });
+  } catch (error) {
+    results.claude_code = recordRuntimeHealth('claude_code', {
+      state: 'PROCESS_FAILED',
+      requested_model: 'claude-sonnet-5',
+      resolved_model: null,
+      reason: `supervisor refresh failed: ${String(error?.message || error).slice(0, 1000)}`,
+    }, root);
+  }
+
+  appendJsonl('events/supervisor.jsonl', {
+    event: 'RUNTIME_HEALTH_REFRESHED',
+    codex_state: results.codex_app_server?.state ?? null,
+    claude_state: results.claude_code?.state ?? null,
+    at: now(),
+  }, root);
+  return results;
+}
+
 export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
   ensureControlLayout(root);
   const codexVersion = commandVersion('codex');
@@ -102,9 +159,25 @@ export function capture({ repoDir = DEFAULT_REPO, root, overrides = {} } = {}) {
 
 export function elect({ repoDir = DEFAULT_REPO, root } = {}) {
   const availability = loadAvailability(root);
-  const candidate = selectManager(availability);
-  if (!candidate) return { elected: false, reason: 'NO_ELIGIBLE_MANAGER', availability };
   const previous = readJson('state/manager-lease.json', null, root);
+  const candidate = selectManager(availability);
+  if (!candidate) {
+    const previousHealth = previous?.runtime ? availability?.runtimes?.[previous.runtime] : null;
+    if (previous?.status === 'ACTIVE' && previousHealth?.state === 'HEALTHY') {
+      return {
+        elected: true,
+        changed: false,
+        lease: previous,
+        reason: 'ACTIVE_LEASE_RETAINED_NO_FRESH_REELECTION_CANDIDATE',
+        availability,
+      };
+    }
+    if (previous?.status === 'ACTIVE') {
+      expireManagerLease('CURRENT_MANAGER_NOT_HEALTHY', root);
+    }
+    return { elected: false, reason: 'NO_ELIGIBLE_MANAGER', availability };
+  }
+
   const checkpoint = readJson('state/active-checkpoint.json', null, root);
   const checkpointValue = checkpoint?.path ? readJson(checkpoint.path, null, root) : null;
   if (previous?.status === 'ACTIVE' && previous.runtime === candidate.runtime && previous.requested_model === candidate.requested_model) {
@@ -143,6 +216,9 @@ export function status(root) {
 
 export async function daemon({ repoDir = DEFAULT_REPO, root, intervalMs = 60000 } = {}) {
   initializeSupervisor(root);
+  invalidateRuntimeEvidenceAfterSupervisorRestart(root);
+  await refreshRuntimeHealth({ repoDir, root });
+
   const tick = () => {
     const health = doctor({ repoDir, root });
     writeJsonAtomic('state/heartbeat.json', { pid: process.pid, at: now(), health }, root);
@@ -178,6 +254,7 @@ async function main() {
   if (command === 'status') return console.log(JSON.stringify(status(), null, 2));
   if (command === 'capture') return console.log(JSON.stringify(capture({ repoDir }), null, 2));
   if (command === 'elect') return console.log(JSON.stringify(elect({ repoDir }), null, 2));
+  if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir }), null, 2));
   if (command === 'daemon') return daemon({ repoDir });
   if (command === 'health') {
     const runtime = argValue('--runtime');
