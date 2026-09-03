@@ -8,6 +8,7 @@ import { appendFeatureMemory, readFeatureMemory } from '../agent-system/orchestr
 import { buildHandoffCapsule, saveHandoffCapsule } from '../agent-system/orchestration/handoff-builder.mjs';
 import { healthFresh, runtimeEligible, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
+import { classifyPrimaryFailure, executeHermesInstruction } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
 
@@ -81,6 +82,70 @@ describe('Hermes runtime evidence and routing', () => {
     expect(reconcileHermesRuntime({ root: mismatch }).reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
     const auth = temp('dial-control'); recordPair(auth, { sol: 'AUTH_FAILED', sonnet: 'AUTH_FAILED' });
     expect(reconcileHermesRuntime({ root: auth }).reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
+  });
+});
+
+describe('Hermes operational runtime executor', () => {
+  it('classifies primary capacity and process failures without confusing them with model provenance', () => {
+    expect(classifyPrimaryFailure({ status: 1, stderr: 'usage limit exceeded for this account' })).toBe('ACCOUNT_LIMITED');
+    expect(classifyPrimaryFailure({ status: 1, stderr: '429 too many requests' })).toBe('RATE_LIMITED');
+    expect(classifyPrimaryFailure({ status: 1, stderr: 'Codex app-server turn failed: connection closed' })).toBe('PROCESS_FAILED');
+    expect(classifyPrimaryFailure({ status: 0, stderr: 'resolved model identity mismatch' })).toBe('TOOLCHAIN_DEGRADED');
+  });
+
+  it('automatically continues the same instruction through Sonnet from observable repository state', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json');
+    const before = readFileSync(active, 'utf8');
+    let fallbackCall = null;
+
+    const result = await executeHermesInstruction({
+      repoDir: repo,
+      root,
+      instruction: 'Continue TEST-F001 and verify the current implementation.',
+      primaryRunner: async () => ({
+        ok: false,
+        runtime: 'codex_app_server',
+        requested_model: 'gpt-5.6-sol',
+        resolved_model: 'gpt-5.6-sol',
+        state: 'ACCOUNT_LIMITED',
+      }),
+      ensureFallback: async () => ({ eligible: true }),
+      contextBuilder: async () => ({ context: 'CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED' }),
+      fallbackRunner: async (input) => {
+        fallbackCall = input;
+        return {
+          event: { resolved_model: 'claude-sonnet-5' },
+          output: { result: 'continued safely' },
+        };
+      },
+    });
+
+    expect(result.runtime).toBe('claude_code');
+    expect(result.fallback_used).toBe(true);
+    expect(result.primary_failure_state).toBe('ACCOUNT_LIMITED');
+    expect(result.response).toBe('continued safely');
+    expect(fallbackCall.mode).toBe('operational');
+    expect(fallbackCall.instruction).toContain('ORIGINAL INSTRUCTION');
+    expect(fallbackCall.instruction).toContain('Continue TEST-F001 and verify the current implementation.');
+    expect(fallbackCall.instruction).toContain('Do not blindly replay the failed attempt');
+    expect(fallbackCall.context).toContain('CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED');
+    expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
+    expect(readFileSync(active, 'utf8')).toBe(before);
+  });
+
+  it('fails closed when the fallback runtime is not eligible', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const result = await executeHermesInstruction({
+      repoDir: repo,
+      root,
+      instruction: 'Continue TEST-F001.',
+      primaryRunner: async () => ({ ok: false, state: 'PROCESS_FAILED', resolved_model: 'gpt-5.6-sol' }),
+      ensureFallback: async () => ({ eligible: false, reason: 'CLAUDE_FALLBACK_NOT_HEALTHY' }),
+    });
+    expect(result.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
+    expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
+    expect(result.fallback_used).toBe(false);
   });
 });
 
