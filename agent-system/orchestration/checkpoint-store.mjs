@@ -56,11 +56,11 @@ export function buildCheckpoint(repoDir, overrides = {}) {
 
   const gitState = captureGitState(overrides.worktree || repoActive.worktree || repoDir);
   return {
-    schema_version: 1,
+    schema_version: 2,
     feature_id: featureId,
     worktree: overrides.worktree ?? repoActive.worktree ?? gitState.repo_dir,
     target_gate: overrides.target_gate ?? repoActive.target_gate ?? null,
-    manager: overrides.manager ?? null,
+    development_manager: overrides.development_manager ?? null,
     execution: {
       phase: overrides.phase ?? null,
       atomic_unit: overrides.atomic_unit ?? null,
@@ -86,8 +86,6 @@ export function saveCheckpoint(checkpoint, root) {
   const activeRel = `checkpoints/active/${name}`;
   archiveJson(activeRel, `checkpoints/archive/${checkpoint.feature_id || 'unscoped'}`, root);
   writeJsonAtomic(activeRel, checkpoint, root);
-  // HOT memory is a disposable acceleration copy of the latest checkpoint. It
-  // never becomes authoritative over the checkpoint/repository itself.
   writeJsonAtomic(`memory/hot/${name}`, {
     ...checkpoint,
     authority: 'NON_AUTHORITATIVE_CONTEXT',
