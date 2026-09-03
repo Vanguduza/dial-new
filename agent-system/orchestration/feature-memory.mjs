@@ -8,8 +8,10 @@ const MAX_TEXT = 2000;
 const SECRET_PATTERNS = [
   /\bsk-[A-Za-z0-9_-]{16,}\b/,
   /\bBearer\s+[A-Za-z0-9._~+\/-]{12,}/i,
-  /\b(?:OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_API_KEY|SUPABASE_SERVICE_ROLE_KEY)\s*[=:]\s*\S+/i,
+  /\b(?:OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_API_KEY|SUPABASE_SERVICE_ROLE_KEY|access[_-]?token|refresh[_-]?token|oauth[_-]?token)\s*[=:]\s*\S+/i,
   /\bpassword\s*[=:]\s*\S+/i,
+  /-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----/i,
+  /\b(?:session[_-]?cookie|cookie)\s*[=:]\s*\S+/i,
 ];
 
 function assertFeatureId(featureId) {
@@ -17,13 +19,26 @@ function assertFeatureId(featureId) {
   return featureId;
 }
 
+export function assertNoSecretMaterial(value, label = 'persistent orchestration memory') {
+  const text = typeof value === 'string' ? value : JSON.stringify(value ?? '');
+  for (const pattern of SECRET_PATTERNS) {
+    if (pattern.test(text)) throw new Error(`${label} rejected: possible secret material`);
+  }
+  return value;
+}
+
 function bounded(value) {
   const text = String(value ?? '').replace(/\u0000/g, '').trim();
   if (!text) throw new Error('feature memory text is required');
-  for (const pattern of SECRET_PATTERNS) {
-    if (pattern.test(text)) throw new Error('feature memory rejected: possible secret material');
-  }
+  assertNoSecretMaterial(text, 'feature memory');
   return text.length > MAX_TEXT ? `${text.slice(0, MAX_TEXT)}…` : text;
+}
+
+function boundedField(value, limit, label) {
+  const text = String(value ?? '').replace(/\u0000/g, '').trim();
+  if (!text) return null;
+  assertNoSecretMaterial(text, label);
+  return text.slice(0, limit);
 }
 
 function featureDir(featureId) {
@@ -32,13 +47,16 @@ function featureDir(featureId) {
 
 export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [], source = null, manager = null } = {}, root = DEFAULT_CONTROL_HOME) {
   if (!TYPES.has(type)) throw new Error(`unsupported feature memory type: ${type}`);
+  assertNoSecretMaterial(manager, 'feature memory manager metadata');
   const record = {
     schema_version: 1,
     feature_id: assertFeatureId(featureId),
     type,
     text: bounded(text),
-    refs: Array.isArray(refs) ? refs.slice(0, 20).map((r) => String(r).slice(0, 500)) : [],
-    source: source ? String(source).slice(0, 500) : null,
+    refs: Array.isArray(refs)
+      ? refs.slice(0, 20).map((r) => boundedField(r, 500, 'feature memory reference')).filter(Boolean)
+      : [],
+    source: source ? boundedField(source, 500, 'feature memory source') : null,
     manager,
     recorded_at: new Date().toISOString(),
     authority: 'NON_AUTHORITATIVE_CONTEXT',
