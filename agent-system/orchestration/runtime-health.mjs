@@ -13,7 +13,11 @@ export const RUNTIME_STATES = Object.freeze([
   'UNKNOWN',
 ]);
 
-export const DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS = 20 * 60 * 1000;
+// Runtime model probes consume subscription capacity. Operational turns also
+// refresh health, so idle health evidence may remain eligible long enough for a
+// twice-daily background probe cadence without weakening same-turn failure
+// handling in hermes-runtime-executor.mjs.
+export const DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS = 13 * 60 * 60 * 1000;
 
 const RETRYABLE = new Set(['RATE_LIMITED', 'MODEL_LIMITED', 'PROCESS_FAILED', 'STALLED', 'TOOLCHAIN_DEGRADED', 'UNKNOWN']);
 const TERMINAL_UNTIL_EXTERNAL_CHANGE = new Set(['ACCOUNT_LIMITED', 'AUTH_FAILED']);
@@ -61,18 +65,12 @@ export function healthFresh(health, { maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_
 
 export function runtimeEligible(
   health,
-  {
-    hardPin = true,
-    requireFresh = true,
-    requireToolchain = true,
-    maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS,
-    nowMs = Date.now(),
-  } = {},
+  { hardPin = true, requireFresh = true, maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS, nowMs = Date.now() } = {},
 ) {
   const h = normalizeRuntimeHealth(health);
   if (h.state !== 'HEALTHY') return false;
+  if (h.details?.toolchain_usable !== true) return false;
   if (hardPin && !modelIdentityMatches(h)) return false;
-  if (requireToolchain && h.details?.toolchain_usable !== true) return false;
   if (requireFresh && !healthFresh(health, { maxAgeMs, nowMs })) return false;
   return true;
 }
