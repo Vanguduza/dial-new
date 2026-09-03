@@ -10,9 +10,11 @@ Provide DIAL Main with a persistent external Hermes runtime on Oracle that can r
 
 The runtime order is fixed:
 
-1. Hermes → Codex App Server / GPT-5.6 Sol — preferred.
-2. Official Claude Code CLI / Claude Sonnet 5 — fallback.
-3. No eligible runtime — `NO_HERMES_RUNTIME_AVAILABLE`, preserve state and wait.
+1. Hermes → Codex App Server / GPT-5.6 Sol — preferred when HEALTHY and identity-proven.
+2. Next eligible available model on the same Codex App Server runtime, taken only from ChatGPT/Codex plan/list evidence.
+3. Official Claude Code CLI / Claude Sonnet 5 — fallback when no eligible Codex plan model remains.
+4. Next eligible Sonnet-class Claude Code plan model, if listed. Fable/Opus/Haiku are not Hermes-eligible. Fable 5 vs Fable 5.1 is not a Hermes pin.
+5. No eligible runtime — `NO_HERMES_RUNTIME_AVAILABLE`, preserve state and wait.
 
 ## Process topology
 
@@ -91,9 +93,14 @@ Direct probes consume subscription capacity. The idle supervisor therefore uses 
 
 ## Runtime router
 
-`hermes-runtime-router.mjs` evaluates only the two configured runtime candidates. It does not discover arbitrary provider/model catalogs.
+`hermes-runtime-router.mjs` evaluates only the two configured Hermes runtimes. It does not discover arbitrary provider catalogs or implement DDE model management.
 
-The selection record carries runtime, requested/resolved model, runtime session where available, health state/observation time, `HERMES_RUNTIME_ONLY` authority marker, active/expired lifecycle and previous selection link.
+Inside those runtimes it may walk an injected or CLI-discovered subscription plan list:
+
+- Codex: App Server `model/list` after initialize (no thread/turn probe). There is no first-class `codex models` CLI command.
+- Claude Code: no supported non-interactive plan list (`/model` is interactive only). Tests and operators inject a plan list. The Anthropic API catalog is not used.
+
+The selection record carries runtime, preferred model, requested/selected/resolved model, `in_plan_fallback`, plan source, runtime session where available, health state/observation time, `HERMES_RUNTIME_ONLY` authority marker, active/expired lifecycle and previous selection link.
 
 When neither runtime is eligible, an active selection is expired and the router returns `NO_HERMES_RUNTIME_AVAILABLE`. Checkpoints and memory remain intact.
 
@@ -114,7 +121,7 @@ instruction
 
 If the primary turn completes with exact Sol provenance, the result is returned and runtime health is refreshed from the actual operational turn.
 
-If the primary fails with a classified availability, authentication, process or toolchain failure, the executor does not blindly replay the instruction. It first captures a checkpoint containing the observable repository state and primary runtime failure. It then proves Claude Code/Sonnet eligibility, rebuilds bounded DIAL context from the current repository and continues the original instruction through official Claude Code.
+If the primary fails with a classified availability, authentication, process or toolchain failure, the executor does not blindly replay the instruction. It first captures a checkpoint containing the observable repository state and primary runtime failure. It then tries the next eligible Codex plan model on the same App Server runtime. Only when no eligible Codex plan model remains does it prove Claude Code/Sonnet eligibility, rebuild bounded DIAL context from the current repository and continue the original instruction through official Claude Code.
 
 The fallback prompt explicitly warns that the primary turn may already have completed some tool actions and requires inspection of current repository/worktree state before editing. This reduces duplicate side effects but is not a transaction/rollback mechanism. DIAL's repository state, tests, gates and evidence remain authoritative.
 

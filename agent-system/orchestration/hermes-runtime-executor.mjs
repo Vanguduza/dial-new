@@ -8,13 +8,20 @@ import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
 import { buildDialHermesContext } from './context-broker.mjs';
 import { runClaudeHermesFallback } from './claude-fallback-runner.mjs';
 import { reconcileHermesRuntime } from './hermes-runtime-router.mjs';
+import {
+  HERMES_PREFERRED_CLAUDE_MODEL,
+  HERMES_PREFERRED_CODEX_MODEL,
+  classifyClaudeHermesModel,
+  loadHermesPlanModels,
+  nextEligibleCodexPlanModels,
+} from './hermes-plan-models.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
 import { appendJsonl } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-const PRIMARY_MODEL = 'gpt-5.6-sol';
-const FALLBACK_MODEL = 'claude-sonnet-5';
+const PRIMARY_MODEL = HERMES_PREFERRED_CODEX_MODEL;
+const FALLBACK_MODEL = HERMES_PREFERRED_CLAUDE_MODEL;
 const FAILOVER_STATES = new Set([
   'ACCOUNT_LIMITED',
   'RATE_LIMITED',
@@ -67,7 +74,9 @@ export function runPrimaryHermes({
   instruction = '',
   root,
   timeoutMs = 30 * 60 * 1000,
+  model = PRIMARY_MODEL,
 } = {}) {
+  const requestedModel = model || PRIMARY_MODEL;
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dial-hermes-primary-'));
   const usageFile = path.join(tempDir, 'usage.json');
   const startedAt = now();
@@ -76,7 +85,7 @@ export function runPrimaryHermes({
       '-z',
       instruction,
       '--provider', 'openai-codex',
-      '--model', PRIMARY_MODEL,
+      '--model', requestedModel,
       '--usage-file', usageFile,
     ], {
       cwd: repoDir,
@@ -93,7 +102,7 @@ export function runPrimaryHermes({
     const usage = readJsonFile(usageFile);
     const resolvedModel = usage?.model ?? null;
     const provider = usage?.provider ?? null;
-    const identityProven = resolvedModel === PRIMARY_MODEL && provider === 'openai-codex';
+    const identityProven = resolvedModel === requestedModel && provider === 'openai-codex';
     const completed = result.status === 0 && usage?.failed !== true && usage?.completed !== false;
     const ok = completed && identityProven;
     const state = ok
@@ -114,7 +123,7 @@ export function runPrimaryHermes({
       requested_model: PRIMARY_MODEL,
       resolved_model: resolvedModel,
       reason: ok
-        ? 'operational Hermes turn completed through Codex App Server with exact Sol provenance'
+        ? `operational Hermes turn completed through Codex App Server with exact ${requestedModel} provenance`
         : `operational Hermes turn failed or lost hard-pin proof: ${state}`,
       details: {
         identity_proven: identityProven,
@@ -124,13 +133,15 @@ export function runPrimaryHermes({
         exit_status: result.status,
         signal: result.signal ?? null,
         source: 'operational_turn',
+        preferred_model: PRIMARY_MODEL,
       },
     }, root);
 
     return {
       ok,
       runtime: 'codex_app_server',
-      requested_model: PRIMARY_MODEL,
+      preferred_model: PRIMARY_MODEL,
+      requested_model: requestedModel,
       resolved_model: resolvedModel,
       state,
       response: result.stdout ?? '',
@@ -153,16 +164,30 @@ export async function ensureClaudeFallbackEligible({ repoDir = DEFAULT_REPO, roo
     health = loadRuntimeHealth(root)?.runtimes?.claude_code ?? null;
   }
   if (!runtimeEligible(health, { hardPin: true, requireFresh: true })) {
+    const plan = loadHermesPlanModels(root);
+    const selectionPreview = reconcileHermesRuntime({
+      root,
+      planModels: plan,
+      includeRuntimes: ['claude_code'],
+    });
+    if (selectionPreview.selected && selectionPreview.selection?.runtime === 'claude_code') {
+      const classification = classifyClaudeHermesModel(selectionPreview.selection.requested_model);
+      if (classification.hermes_eligible) {
+        return { eligible: true, health: selectionPreview.selection, selection: selectionPreview.selection };
+      }
+    }
     return { eligible: false, reason: 'CLAUDE_FALLBACK_NOT_HEALTHY', health };
   }
-  const selection = reconcileHermesRuntime({ root });
-  if (
-    !selection.selected
-    || selection.selection?.runtime !== 'claude_code'
-    || selection.selection?.requested_model !== FALLBACK_MODEL
-    || selection.selection?.resolved_model !== FALLBACK_MODEL
-  ) {
+  const selection = reconcileHermesRuntime({ root, includeRuntimes: ['claude_code'] });
+  if (!selection.selected || selection.selection?.runtime !== 'claude_code') {
     return { eligible: false, reason: 'CLAUDE_FALLBACK_NOT_SELECTED', health, selection };
+  }
+  const classification = classifyClaudeHermesModel(selection.selection.requested_model);
+  if (!classification.hermes_eligible) {
+    return { eligible: false, reason: 'CLAUDE_MODEL_NOT_HERMES_ELIGIBLE', health, selection };
+  }
+  if (selection.selection.resolved_model !== selection.selection.requested_model) {
+    return { eligible: false, reason: 'CLAUDE_FALLBACK_IDENTITY_MISMATCH', health, selection };
   }
   return { eligible: true, health, selection: selection.selection };
 }
@@ -176,19 +201,24 @@ export async function executeHermesInstruction({
   ensureFallback = ensureClaudeFallbackEligible,
   fallbackRunner = runClaudeHermesFallback,
   contextBuilder = buildDialHermesContext,
+  planModels,
+  planModelDiscoverer,
 } = {}) {
   if (!String(instruction || '').trim()) throw new Error('instruction is required');
 
   const startedAt = now();
-  const primary = await primaryRunner({ repoDir, instruction, root, timeoutMs });
+  const primary = await primaryRunner({ repoDir, instruction, root, timeoutMs, model: PRIMARY_MODEL });
   if (primary?.ok) {
     reconcileHermesRuntime({ root });
     const event = {
       event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
       authority: 'HERMES_RUNTIME_ONLY',
       runtime: 'codex_app_server',
+      preferred_model: PRIMARY_MODEL,
       requested_model: PRIMARY_MODEL,
+      selected_model: PRIMARY_MODEL,
       resolved_model: PRIMARY_MODEL,
+      in_plan_fallback: false,
       fallback_used: false,
       started_at: startedAt,
       finished_at: now(),
@@ -203,6 +233,9 @@ export async function executeHermesInstruction({
       event: 'HERMES_OPERATIONAL_TURN_FAILED',
       authority: 'HERMES_RUNTIME_ONLY',
       runtime: 'codex_app_server',
+      preferred_model: PRIMARY_MODEL,
+      requested_model: PRIMARY_MODEL,
+      selected_model: null,
       fallback_used: false,
       failure_state: failureState,
       reason: 'PRIMARY_FAILURE_NOT_ELIGIBLE_FOR_RUNTIME_FAILOVER',
@@ -219,13 +252,56 @@ export async function executeHermesInstruction({
     next_unit: 'CONTINUE_FROM_OBSERVED_REPOSITORY_STATE',
     runtime_provenance: {
       runtime: 'codex_app_server',
+      preferred_model: PRIMARY_MODEL,
       requested_model: PRIMARY_MODEL,
+      selected_model: null,
       resolved_model: primary?.resolved_model ?? null,
       runtime_health: failureState,
       authority: 'HERMES_RUNTIME_ONLY',
     },
   });
   saveCheckpoint(checkpoint, root);
+
+  let plan = planModels ?? loadHermesPlanModels(root);
+  if (typeof planModelDiscoverer === 'function' && !(plan.runtimes?.codex_app_server?.models?.length)) {
+    try {
+      await planModelDiscoverer({ repoDir, root });
+      plan = loadHermesPlanModels(root);
+    } catch { /* listing is best-effort; do not invent models */ }
+  }
+
+  const attemptedCodex = [];
+  for (const model of nextEligibleCodexPlanModels(plan, loadRuntimeHealth(root))) {
+    if (failureState === 'AUTH_FAILED') break;
+    const attempt = await primaryRunner({
+      repoDir,
+      instruction,
+      root,
+      timeoutMs,
+      model: model.id,
+    });
+    attemptedCodex.push({ model: model.id, state: attempt?.state ?? null, ok: Boolean(attempt?.ok) });
+    if (attempt?.ok) {
+      reconcileHermesRuntime({ root, planModels: plan });
+      const event = {
+        event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
+        authority: 'HERMES_RUNTIME_ONLY',
+        runtime: 'codex_app_server',
+        preferred_model: PRIMARY_MODEL,
+        requested_model: PRIMARY_MODEL,
+        selected_model: model.id,
+        resolved_model: attempt.resolved_model ?? model.id,
+        in_plan_fallback: true,
+        fallback_used: false,
+        primary_failure_state: failureState,
+        started_at: startedAt,
+        finished_at: now(),
+      };
+      appendJsonl('events/hermes-operational-turns.jsonl', event, root);
+      return { ...event, response: attempt.response, primary, in_plan_attempt: attempt, attempted_codex_models: attemptedCodex };
+    }
+    if (attempt?.state === 'ACCOUNT_LIMITED' || attempt?.state === 'AUTH_FAILED') break;
+  }
 
   const fallbackEligibility = await ensureFallback({ repoDir, root });
   if (!fallbackEligibility?.eligible) {
@@ -240,7 +316,7 @@ export async function executeHermesInstruction({
       finished_at: now(),
     };
     appendJsonl('events/hermes-operational-turns.jsonl', event, root);
-    return { ...event, primary, fallback_eligibility: fallbackEligibility };
+    return { ...event, primary, fallback_eligibility: fallbackEligibility, attempted_codex_models: attemptedCodex };
   }
 
   const packet = await contextBuilder({
@@ -270,12 +346,18 @@ export async function executeHermesInstruction({
     timeoutMs,
   });
 
+  const selectedClaude = fallback?.event?.requested_model
+    ?? fallbackEligibility.selection?.requested_model
+    ?? FALLBACK_MODEL;
   const event = {
     event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
     authority: 'HERMES_RUNTIME_ONLY',
     runtime: 'claude_code',
+    preferred_model: FALLBACK_MODEL,
     requested_model: FALLBACK_MODEL,
+    selected_model: selectedClaude,
     resolved_model: fallback?.event?.resolved_model ?? null,
+    in_plan_fallback: selectedClaude !== FALLBACK_MODEL,
     fallback_used: true,
     primary_failure_state: failureState,
     primary_requested_model: PRIMARY_MODEL,
@@ -288,6 +370,7 @@ export async function executeHermesInstruction({
     response: fallback?.output?.result ?? fallback?.output ?? null,
     primary,
     fallback,
+    attempted_codex_models: attemptedCodex,
   };
 }
 
@@ -301,9 +384,11 @@ async function readInstruction() {
 
 async function main() {
   const instruction = await readInstruction();
+  const { listCodexPlanModels } = await import('./codex-app-server-probe.mjs');
   const result = await executeHermesInstruction({
     repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO,
     instruction,
+    planModelDiscoverer: listCodexPlanModels,
   });
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
   if (result.event !== 'HERMES_OPERATIONAL_TURN_COMPLETED') process.exitCode = 1;

@@ -5,9 +5,11 @@ This directory contains deterministic infrastructure for DIAL's Oracle-hosted He
 ## Locked runtime policy
 
 - **Primary Hermes runtime:** GPT-5.6 Sol through Hermes → Codex App Server.
+- **Codex in-plan fallback:** if Sol is unavailable, the next eligible model from the ChatGPT/Codex plan list on the same App Server runtime.
 - **Fallback Hermes runtime:** Claude Sonnet 5 through the official Claude Code CLI / supported subscription authentication.
+- **Claude in-plan fallback:** Sonnet-class Claude Code plan models only. Fable 5 / Fable 5.1 are not Hermes pins and are excluded from Hermes powering.
 - Runtime selection is an **availability mechanism only**.
-- If neither hard-pinned runtime is healthy, authenticated, identity-proven and usable, execution returns `NO_HERMES_RUNTIME_AVAILABLE` and existing checkpoints remain available for recovery.
+- If no eligible Codex plan model and no eligible Claude Hermes model remain, execution returns `NO_HERMES_RUNTIME_AVAILABLE` and existing checkpoints remain available for recovery.
 - Hermes runtime provenance never changes DIAL Feature IDs, FRCs, gate state, canonical source hierarchy, security policy or evidence requirements.
 
 The DIAL repository and its existing deterministic governance remain authoritative. HOT/WARM/COLD memory, checkpoints, handoff capsules and Hermes history exist only to reconstruct bounded context efficiently.
@@ -30,10 +32,11 @@ npm run agent:orchestration:run -- "<instruction>"
 
 1. records the primary failure;
 2. captures observable repository/checkpoint state;
-3. verifies the official Claude Code / Sonnet 5 route;
-4. rebuilds bounded DIAL context from the current repository state;
-5. continues the original instruction through Claude Code;
-6. tells the fallback runtime to inspect current state before editing because the failed primary turn may already have completed some tool actions.
+3. tries the next eligible Codex App Server plan model (same runtime; no invented names);
+4. verifies the official Claude Code / Sonnet 5 route only after no eligible Codex plan model remains;
+5. rebuilds bounded DIAL context from the current repository state;
+6. continues the original instruction through Claude Code;
+7. tells the fallback runtime to inspect current state before editing because the failed primary turn may already have completed some tool actions.
 
 This avoids blind replay of partially completed work. It is not a transaction rollback system; DIAL's existing tests, Git state, gates and evidence remain the arbiter of what actually completed.
 
@@ -43,10 +46,11 @@ Hermes' built-in Anthropic provider fallback is intentionally disabled for this 
 
 - `state-store.mjs` — private atomic persistence under `/var/lib/dial-control`.
 - `runtime-health.mjs` — runtime health, freshness, toolchain proof and requested/resolved model identity.
-- `hermes-runtime-router.mjs` — Sol-first, Sonnet-fallback runtime selection.
-- `hermes-runtime-executor.mjs` — operational Sol-first execution and automatic Claude Code continuation.
-- `codex-app-server-probe.mjs` — direct Codex App Server / Sol provenance probe.
-- `claude-code-probe.mjs` — official Claude Code / Sonnet provenance probe.
+- `hermes-plan-models.mjs` — in-plan model evidence, Claude Hermes eligibility (Sonnet-class only; Fable excluded) and deterministic injected lists.
+- `hermes-runtime-router.mjs` — Sol-first, Codex in-plan, then Sonnet-fallback runtime selection.
+- `hermes-runtime-executor.mjs` — operational Sol-first execution, Codex in-plan continuation, then official Claude Code continuation.
+- `codex-app-server-probe.mjs` — direct Codex App Server / Sol provenance probe plus `model/list` plan discovery (no turn).
+- `claude-code-probe.mjs` — official Claude Code / Sonnet provenance probe plus best-effort non-interactive list detection.
 - `claude-fallback-runner.mjs` — read-only qualification and operational Sonnet fallback execution.
 - `checkpoint-store.mjs` — repository-observable checkpoints and HOT mirror.
 - `handoff-builder.mjs` — bounded handoff capsules without hidden reasoning.

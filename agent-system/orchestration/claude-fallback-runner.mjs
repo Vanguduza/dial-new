@@ -3,11 +3,12 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
+import { classifyClaudeHermesModel, HERMES_PREFERRED_CLAUDE_MODEL } from './hermes-plan-models.mjs';
 import { recordRuntimeHealth } from './runtime-health.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-const MODEL = 'claude-sonnet-5';
+const MODEL = HERMES_PREFERRED_CLAUDE_MODEL;
 
 const QUALIFICATION_TOOLS = [
   'Read',
@@ -67,17 +68,19 @@ export async function runClaudeHermesFallback({
   }
 
   const selection = readJson('state/hermes-runtime.json', null, root);
+  const selectedModel = selection?.selected_model ?? selection?.requested_model ?? null;
+  const classification = classifyClaudeHermesModel(selectedModel);
   if (
     !selection
     || selection.status !== 'ACTIVE'
     || selection.authority !== 'HERMES_RUNTIME_ONLY'
     || selection.runtime !== 'claude_code'
-    || selection.requested_model !== MODEL
-    || selection.resolved_model !== MODEL
+    || !classification.hermes_eligible
+    || selection.resolved_model !== selectedModel
     || selection.runtime_health !== 'HEALTHY'
     || !selection.runtime_health_observed_at
   ) {
-    throw new Error(`active, identity-proven Hermes fallback runtime selection for ${MODEL} is required`);
+    throw new Error(`active, identity-proven Hermes-eligible Claude Code selection is required (preferred ${MODEL}; Fable is not a Hermes pin)`);
   }
 
   const operational = mode === 'operational';
@@ -97,7 +100,7 @@ export async function runClaudeHermesFallback({
 
   const args = [
     '-p', prompt,
-    '--model', MODEL,
+    '--model', selectedModel,
     '--effort', operational ? 'high' : 'low',
     '--output-format', 'json',
     '--permission-mode', operational ? 'acceptEdits' : 'plan',
@@ -124,7 +127,7 @@ export async function runClaudeHermesFallback({
   const modelUsage = structured?.modelUsage ?? structured?.model_usage ?? {};
   const usedModels = Object.keys(modelUsage);
   const resolvedModel = usedModels.length === 1 ? usedModels[0] : null;
-  const identityProven = resolvedModel === MODEL;
+  const identityProven = resolvedModel === selectedModel;
   const completed = result.status === 0 && identityProven;
   const errorClass = completed
     ? null
@@ -137,7 +140,9 @@ export async function runClaudeHermesFallback({
     authority: 'HERMES_RUNTIME_ONLY',
     mode,
     runtime: 'claude_code',
-    requested_model: MODEL,
+    preferred_model: MODEL,
+    requested_model: selectedModel,
+    selected_model: selectedModel,
     resolved_model: resolvedModel,
     identity_proven: identityProven,
     hermes_selection_id: selection.selection_id,
@@ -152,10 +157,10 @@ export async function runClaudeHermesFallback({
 
   recordRuntimeHealth('claude_code', {
     state: completed ? 'HEALTHY' : errorClass,
-    requested_model: MODEL,
+    requested_model: selectedModel,
     resolved_model: resolvedModel,
     reason: completed
-      ? `Claude Code ${mode} turn completed with exact Sonnet 5 provenance`
+      ? `Claude Code ${mode} turn completed with exact ${selectedModel} provenance`
       : `Claude Code ${mode} turn failed: ${errorClass}`,
     details: {
       identity_proven: identityProven,

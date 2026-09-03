@@ -1,6 +1,6 @@
 # DIAL Hermes External Runtime Implementation State
 
-Last updated: 2026-09-03
+Last updated: 2026-09-03 (in-plan Hermes availability fallback)
 
 This record tracks the Hermes/Oracle qualification branch only. It does not advance DIAL product Feature gates.
 
@@ -59,8 +59,11 @@ The qualification branch contains:
 - Codex App Server / GPT-5.6 Sol primary-runtime probe;
 - official Claude Code / Sonnet 5 fallback-runtime probe;
 - exact requested/resolved model provenance and explicit toolchain-usability evidence;
+- in-plan availability fallback: Sol first, then the next listed Codex App Server plan model, then Claude Sonnet 5;
+- Claude Hermes eligibility limited to Sonnet-class plan models; Fable 5 / Fable 5.1 excluded (not a Hermes hard pin);
+- injected plan-model lists for deterministic qualification while live subscriptions are quota-limited;
 - subscription-auth safeguards;
-- explicit Sol → Sonnet Hermes runtime router;
+- explicit Sol → Codex in-plan → Sonnet Hermes runtime router;
 - operational `hermes-runtime-executor.mjs` / `dial-hermes` entrypoint;
 - automatic continuation through Claude Code when the primary runtime fails with an eligible runtime failure;
 - checkpoint-before-fallback protection against blind replay after a partially completed primary turn;
@@ -88,7 +91,9 @@ Hermes runtime selection is availability/provenance only. DIAL repository canon,
 
 The locked fallback is the official Claude Code CLI with `claude-sonnet-5`. Hermes' own Anthropic-provider fallback is intentionally empty in the Oracle configuration so a future Hermes change cannot silently convert this route into API billing.
 
-The operational executor attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a classified runtime failure it records the failure, checkpoints observable repository state, rehydrates bounded DIAL context, proves Claude Code/Sonnet health and continues the original instruction through Claude Code. The fallback is instructed to inspect current state before editing because the failed primary runtime may already have completed tool actions.
+The operational executor attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a classified runtime failure it records the failure, checkpoints observable repository state, then tries the next eligible Codex plan model on the same App Server runtime. Only when no eligible Codex plan model remains does it rehydrate bounded DIAL context, prove Claude Code/Sonnet health and continue the original instruction through Claude Code. The fallback is instructed to inspect current state before editing because the failed primary runtime may already have completed tool actions.
+
+Plan models are never invented. Codex discovery uses App Server `model/list` (no turn). Official Claude Code has no non-interactive plan list; injected lists are the deterministic path while subscriptions are quota-limited. Fable is excluded from Hermes powering.
 
 This is a continuity mechanism, not a rollback/transaction layer. Repository state, tests and evidence determine what actually completed.
 

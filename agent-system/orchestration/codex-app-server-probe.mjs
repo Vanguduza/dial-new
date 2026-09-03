@@ -5,6 +5,11 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, writeJsonAtomic } from './state-store.mjs';
 import { recordRuntimeHealth } from './runtime-health.mjs';
+import {
+  loadHermesPlanModels,
+  parseCodexModelListEvidence,
+  saveHermesPlanModels,
+} from './hermes-plan-models.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -168,7 +173,153 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
   return probe;
 }
 
+async function withCodexAppServerRpc({ repoDir = DEFAULT_REPO, timeoutMs = 30000, run } = {}) {
+  const child = spawn('codex', ['app-server', '--listen', 'stdio://'], {
+    cwd: repoDir,
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: { ...process.env },
+  });
+
+  let stderr = '';
+  child.stderr.setEncoding('utf8');
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk;
+    if (stderr.length > 12000) stderr = stderr.slice(-12000);
+  });
+
+  const rl = readline.createInterface({ input: child.stdout, crlfDelay: Infinity });
+  let nextId = 1;
+  const pending = new Map();
+
+  function send(message) {
+    child.stdin.write(`${JSON.stringify(message)}\n`);
+  }
+
+  function request(method, params = {}) {
+    const id = nextId++;
+    return new Promise((resolve, reject) => {
+      pending.set(id, { resolve, reject });
+      send({ id, method, params });
+    });
+  }
+
+  const timeout = setTimeout(() => {
+    child.kill('SIGTERM');
+  }, timeoutMs);
+
+  rl.on('line', (line) => {
+    let msg;
+    try { msg = JSON.parse(line); } catch { return; }
+    if (msg.id != null && pending.has(msg.id)) {
+      const waiter = pending.get(msg.id);
+      pending.delete(msg.id);
+      if (msg.error) waiter.reject(Object.assign(new Error(msg.error.message || 'Codex RPC error'), { rpc: msg.error }));
+      else waiter.resolve(msg.result);
+    }
+  });
+
+  try {
+    return await run({ request, send, child });
+  } finally {
+    clearTimeout(timeout);
+    if (!child.killed) child.kill('SIGTERM');
+    rl.close();
+    void stderr;
+  }
+}
+
+export async function listCodexPlanModelsFromAppServer({ repoDir = DEFAULT_REPO, timeoutMs = 30000 } = {}) {
+  return withCodexAppServerRpc({
+    repoDir,
+    timeoutMs,
+    run: async ({ request, send }) => {
+      await request('initialize', {
+        clientInfo: { name: 'dial_hermes_plan_list', title: 'DIAL Hermes Plan Model List', version: '1.0.0' },
+        capabilities: { experimentalApi: true },
+      });
+      send({ method: 'initialized' });
+
+      const pages = [];
+      let cursor = null;
+      for (let i = 0; i < 20; i += 1) {
+        const params = { limit: 100, includeHidden: false };
+        if (cursor) params.cursor = cursor;
+        const result = await request('model/list', params);
+        pages.push({ result });
+        cursor = result?.nextCursor ?? result?.next_cursor ?? null;
+        if (!cursor) break;
+      }
+      return pages;
+    },
+  });
+}
+
+export async function listCodexPlanModels({
+  repoDir = DEFAULT_REPO,
+  root,
+  timeoutMs = 30000,
+  listRunner,
+} = {}) {
+  let source = 'unavailable';
+  let sourceDetail = null;
+  let raw = null;
+  let error = null;
+
+  try {
+    if (typeof listRunner === 'function') {
+      raw = await listRunner();
+      source = 'injected';
+      sourceDetail = 'caller-provided Codex plan/list evidence; no model names invented';
+    } else {
+      raw = await listCodexPlanModelsFromAppServer({ repoDir, timeoutMs });
+      source = 'codex_app_server_model_list';
+      sourceDetail = 'Codex App Server model/list after initialize; no thread/turn probe';
+    }
+  } catch (caught) {
+    error = String(caught?.message || caught);
+    source = 'unavailable';
+    sourceDetail = `Codex CLI has no first-class models command; App Server model/list failed: ${error}`.slice(0, 1000);
+  }
+
+  const listed = parseCodexModelListEvidence(raw);
+  const current = loadHermesPlanModels(root);
+  const recorded = saveHermesPlanModels({
+    ...current,
+    runtimes: {
+      ...current.runtimes,
+      codex_app_server: {
+        source,
+        source_detail: sourceDetail,
+        models: listed,
+      },
+    },
+  }, root);
+
+  writeJsonAtomic('runtime-health/codex-plan-models.json', {
+    event: 'CODEX_PLAN_MODELS_LISTED',
+    authority: 'HERMES_RUNTIME_ONLY',
+    source,
+    source_detail: sourceDetail,
+    models: listed.map((model) => model.id),
+    error,
+    listed_at: now(),
+  }, root);
+
+  return {
+    source,
+    source_detail: sourceDetail,
+    models: recorded.runtimes.codex_app_server.models,
+    error,
+  };
+}
+
 async function main() {
+  if (process.argv.includes('--list-models')) {
+    const listed = await listCodexPlanModels({ repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO });
+    process.stdout.write(`${JSON.stringify(listed, null, 2)}\n`);
+    if (listed.source === 'unavailable') process.exitCode = 1;
+    return;
+  }
   const probe = await probeCodexAppServer({ repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO });
   process.stdout.write(`${JSON.stringify(probe, null, 2)}\n`);
   if (probe.state !== 'HEALTHY') process.exitCode = 1;
