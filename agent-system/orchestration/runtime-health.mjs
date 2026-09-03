@@ -11,6 +11,8 @@ export const RUNTIME_STATES = Object.freeze([
   "UNKNOWN"
 ]);
 
+export const DEFAULT_MANAGER_HEALTH_MAX_AGE_MS = 5 * 60 * 1000;
+
 const RETRYABLE = new Set(["RATE_LIMITED", "MODEL_LIMITED", "PROCESS_FAILED", "STALLED", "TOOLCHAIN_DEGRADED", "UNKNOWN"]);
 const TERMINAL_UNTIL_EXTERNAL_CHANGE = new Set(["ACCOUNT_LIMITED", "AUTH_FAILED"]);
 
@@ -46,9 +48,19 @@ export function modelIdentityMatches(health) {
   return h.requested_model === h.resolved_model;
 }
 
-export function managerEligible(health, {hardPin = true} = {}) {
+export function healthFresh(health, { maxAgeMs = DEFAULT_MANAGER_HEALTH_MAX_AGE_MS, nowMs = Date.now() } = {}) {
+  const observedAt = health?.observed_at;
+  if (!observedAt) return false;
+  const observedMs = Date.parse(observedAt);
+  if (!Number.isFinite(observedMs)) return false;
+  const ageMs = nowMs - observedMs;
+  return ageMs >= 0 && ageMs <= maxAgeMs;
+}
+
+export function managerEligible(health, { hardPin = true, requireFresh = true, maxAgeMs = DEFAULT_MANAGER_HEALTH_MAX_AGE_MS, nowMs = Date.now() } = {}) {
   const h = normalizeRuntimeHealth(health);
   if (h.state !== "HEALTHY") return false;
   if (hardPin && !modelIdentityMatches(h)) return false;
+  if (requireFresh && !healthFresh(health, { maxAgeMs, nowMs })) return false;
   return true;
 }
