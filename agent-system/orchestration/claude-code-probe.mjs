@@ -3,7 +3,8 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, writeJsonAtomic } from './state-store.mjs';
-import { recordRuntimeHealth } from './manager-router.mjs';
+import { recordRuntimeHealth } from './runtime-health.mjs';
+import { registerConnection, registerRuntime, syncModelBindingFromRuntimeHealth } from './model-registry.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -76,12 +77,38 @@ export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 9000
 
   writeJsonAtomic('runtime-health/claude-code-probe.json', probe, root);
   appendJsonl('events/runtime-probes.jsonl', probe, root);
-  recordRuntimeHealth('claude_code', {
+  const health = recordRuntimeHealth('claude_code', {
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
     reason: state === 'HEALTHY' ? 'official Claude Code probe passed with modelUsage provenance' : classify(result.stderr, result.stdout),
     details: { response_ok: responseOk, session_id: probe.session_id, used_models: usedModels },
+  }, root);
+
+  registerConnection({
+    connection_id: 'claude-code-subscription',
+    type: 'CLAUDE_CODE_SUBSCRIPTION',
+    name: 'Claude Code subscription',
+    auth_state: state === 'AUTH_FAILED' ? 'AUTH_REQUIRED' : 'AUTHENTICATED_OR_NOT_REQUIRED',
+    discovery_supported: false,
+  }, root);
+  registerRuntime({
+    runtime_id: 'claude_code',
+    display_name: 'Claude Code',
+    harness: 'Claude Code',
+    connection_id: 'claude-code-subscription',
+    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
+    health: state,
+    last_probe: health.observed_at,
+  }, root);
+  syncModelBindingFromRuntimeHealth({
+    model_id: resolvedModel ?? REQUESTED_MODEL,
+    display_name: resolvedModel ?? REQUESTED_MODEL,
+    provider: 'Anthropic',
+    runtime_id: 'claude_code',
+    connection_id: 'claude-code-subscription',
+    health,
+    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
   }, root);
   return probe;
 }
