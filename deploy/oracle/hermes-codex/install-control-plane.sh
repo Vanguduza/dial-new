@@ -34,8 +34,11 @@ PY
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then
   fail "OPENAI_API_KEY/CODEX_API_KEY is present in this shell. Unset it before installing the ChatGPT-subscription runtime."
 fi
-if [[ -f "$HERMES_HOME/.env" ]] && grep -Eq '^[[:space:]]*(OPENAI_API_KEY|CODEX_API_KEY)[[:space:]]*=[[:space:]]*[^[:space:]#]+' "$HERMES_HOME/.env"; then
-  fail "$HERMES_HOME/.env contains OPENAI_API_KEY/CODEX_API_KEY. Remove those from the Hermes gateway environment for this subscription-only control plane."
+if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
+  fail "ANTHROPIC_API_KEY is present in this shell. Unset it before installing the Claude subscription failover runtime."
+fi
+if [[ -f "$HERMES_HOME/.env" ]] && grep -Eq '^[[:space:]]*(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)[[:space:]]*=[[:space:]]*[^[:space:]#]+' "$HERMES_HOME/.env"; then
+  fail "$HERMES_HOME/.env contains an API-key assignment for a subscription-only control-plane provider. Remove that assignment from the Hermes gateway environment before installation."
 fi
 
 codex_status="$(codex login status 2>&1 || true)"
