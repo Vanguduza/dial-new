@@ -46,12 +46,15 @@ describe('orchestration state store', () => {
 });
 
 describe('Hermes runtime evidence and routing', () => {
-  it('requires fresh exact requested/resolved identity', () => {
+  it('requires fresh exact identity and explicitly proven toolchain usability', () => {
     const observed_at = new Date().toISOString();
-    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at })).toBe(true);
-    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna', observed_at })).toBe(false);
-    expect(runtimeEligible({ state: 'AUTH_FAILED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at })).toBe(false);
-    const stale = { state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: new Date(Date.now() - 30 * 60 * 1000).toISOString() };
+    const usable = { details: { toolchain_usable: true } };
+    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, ...usable })).toBe(true);
+    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna', observed_at, ...usable })).toBe(false);
+    expect(runtimeEligible({ state: 'AUTH_FAILED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, ...usable })).toBe(false);
+    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, details: { toolchain_usable: false } })).toBe(false);
+    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at })).toBe(false);
+    const stale = { state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(), ...usable };
     expect(healthFresh(stale)).toBe(false); expect(runtimeEligible(stale)).toBe(false);
   });
   it('prefers Sol when both runtimes are healthy', () => {
