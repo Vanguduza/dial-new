@@ -116,7 +116,11 @@ describe('DIAL context and runtime boundary', () => {
     const packet = await buildDialHermesContext({ repoDir: repo, userMessage: 'continue TEST-F001', root });
     expect(packet.context).toContain('CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED');
     expect(packet.context).toContain('Memory claims gate PRODUCTION_GREEN');
-    expect(packet.context.indexOf('Bounded DIAL Feature context')).toBeLessThan(packet.context.indexOf('Feature-scoped Oracle memory'));
+    const canonicalSection = packet.context.indexOf('\nBounded DIAL Feature context:\n');
+    const memorySection = packet.context.indexOf('\nFeature-scoped Oracle memory (non-authoritative):\n');
+    expect(canonicalSection).toBeGreaterThanOrEqual(0);
+    expect(memorySection).toBeGreaterThanOrEqual(0);
+    expect(canonicalSection).toBeLessThan(memorySection);
     expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
     delete process.env.DIAL_DISABLE_HERMES_HISTORY;
   });
