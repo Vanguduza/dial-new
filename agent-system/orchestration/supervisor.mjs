@@ -5,7 +5,12 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
 import { buildHandoffCapsule, saveHandoffCapsule } from './handoff-builder.mjs';
-import { DEFAULT_MANAGER_POLICY, expireManagerLease, issueManagerLease, loadAvailability, recordRuntimeHealth, selectManager } from './manager-router.mjs';
+import { developmentManagerStatus, electDevelopmentManager, expireDevelopmentManagerAssignment, loadDevelopmentManager } from './manager-router.mjs';
+import { classifyDevelopmentTask, loadDevelopmentPolicy, saveDevelopmentPolicy } from './development-policy.mjs';
+import { ensureFirstClassHarnesses } from './execution-harnesses.mjs';
+import { chatSelectableModels, loadModelRegistry } from './model-registry.mjs';
+import { expireHermesRuntimeSelection, reconcileHermesRuntime } from './hermes-runtime-router.mjs';
+import { loadRuntimeHealth, recordRuntimeHealth } from './runtime-health.mjs';
 import { ensureControlLayout, readJson, writeJsonAtomic, appendJsonl } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -39,41 +44,61 @@ function semverAtLeast(value, minimum) {
 
 export function initializeSupervisor(root) {
   ensureControlLayout(root);
-  if (!readJson('state/orchestrator-state.json', null, root)) {
-    writeJsonAtomic('state/orchestrator-state.json', {
-      schema_version: 1,
+  ensureFirstClassHarnesses(root);
+  if (!readJson('state/development-policy.json', null, root)) saveDevelopmentPolicy({}, root);
+  if (!readJson('state/control-plane.json', null, root)) {
+    writeJsonAtomic('state/control-plane.json', {
+      schema_version: 2,
       mode: 'QUALIFICATION',
-      preferred_manager: DEFAULT_MANAGER_POLICY[0],
-      failover_manager: DEFAULT_MANAGER_POLICY[1],
+      architecture: {
+        external_persistent_control: 'HERMES',
+        development_orchestration: 'DIAL_QUALITY_FIRST',
+        execution_harnesses: ['codex_app_server', 'claude_code', 'deepseek_harness', 'local_runtime', 'custom_api'],
+      },
+      invariant: 'HERMES_RUNTIME_SELECTION_DOES_NOT_GRANT_DEVELOPMENT_MANAGER_AUTHORITY',
       created_at: now(),
       updated_at: now(),
     }, root);
   }
-  if (!readJson('state/model-availability.json', null, root)) {
-    writeJsonAtomic('state/model-availability.json', { schema_version: 1, runtimes: {}, updated_at: now() }, root);
+  // Do not reinterpret a legacy manager lease as a development assignment.
+  const legacy = readJson('state/manager-lease.json', null, root);
+  if (legacy?.status === 'ACTIVE') {
+    writeJsonAtomic('state/manager-lease.json', {
+      ...legacy,
+      status: 'EXPIRED',
+      expired_at: now(),
+      expiration_reason: 'SEMANTIC_MIGRATION_RUNTIME_SELECTION_IS_NOT_DEVELOPMENT_MANAGER_AUTHORITY',
+    }, root);
+    appendJsonl('events/migrations.jsonl', {
+      event: 'LEGACY_MANAGER_LEASE_EXPIRED',
+      lease_id: legacy.lease_id ?? null,
+      at: now(),
+    }, root);
   }
-  appendJsonl('events/supervisor.jsonl', { event: 'SUPERVISOR_INITIALIZED', at: now() }, root);
-  return readJson('state/orchestrator-state.json', null, root);
+  loadRuntimeHealth(root); // performs one-way legacy model-availability migration if needed.
+  appendJsonl('events/supervisor.jsonl', { event: 'SUPERVISOR_INITIALIZED', architecture_version: 2, at: now() }, root);
+  return readJson('state/control-plane.json', null, root);
 }
 
 export function invalidateRuntimeEvidenceAfterSupervisorRestart(root) {
-  const availability = loadAvailability(root);
-  for (const [runtime, health] of Object.entries(availability.runtimes ?? {})) {
+  const runtimeHealth = loadRuntimeHealth(root);
+  for (const [runtime, health] of Object.entries(runtimeHealth.runtimes ?? {})) {
     recordRuntimeHealth(runtime, {
       state: 'UNKNOWN',
       requested_model: health?.requested_model ?? null,
       resolved_model: health?.resolved_model ?? null,
-      reason: 'supervisor restart requires fresh runtime/model provenance before a new lease',
+      reason: 'supervisor restart requires fresh runtime/model provenance',
       details: { previous_state: health?.state ?? null, previous_observed_at: health?.observed_at ?? null },
     }, root);
   }
-  const previous = readJson('state/manager-lease.json', null, root);
-  if (previous?.status === 'ACTIVE') {
-    expireManagerLease('SUPERVISOR_RESTART_REQUIRES_REVALIDATION', root);
-  }
+  const hermes = readJson('state/hermes-runtime.json', null, root);
+  if (hermes?.status === 'ACTIVE') expireHermesRuntimeSelection('SUPERVISOR_RESTART_REQUIRES_REVALIDATION', root);
+  const developmentManager = loadDevelopmentManager(root);
+  if (developmentManager?.status === 'ACTIVE') expireDevelopmentManagerAssignment('SUPERVISOR_RESTART_REQUIRES_REVALIDATION', root);
   appendJsonl('events/supervisor.jsonl', {
     event: 'RUNTIME_EVIDENCE_INVALIDATED_AFTER_RESTART',
-    previous_lease_id: previous?.lease_id ?? null,
+    previous_hermes_selection_id: hermes?.selection_id ?? null,
+    previous_development_assignment_id: developmentManager?.assignment_id ?? null,
     at: now(),
   }, root);
 }
@@ -138,11 +163,11 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
     hermes_present: Boolean(hermesVersion),
     codex_present: Boolean(codexVersion),
     codex_sol_capable_version: semverAtLeast(codexVersion, '0.144.0'),
-    claude_present_for_failover: Boolean(claudeVersion),
+    claude_present_for_hermes_fallback: Boolean(claudeVersion),
   };
   return {
-    ok_for_codex_qualification: Object.entries(checks).filter(([key]) => key !== 'claude_present_for_failover').every(([, value]) => value),
-    ok_for_full_cross_provider_qualification: Object.values(checks).every(Boolean),
+    ok_for_hermes_runtime_qualification: Object.values(checks).every(Boolean),
+    development_manager_policy_qualification: 'REPOSITORY_TESTED_SEPARATELY',
     versions: { node: nodeVersion, git: gitVersion, hermes: hermesVersion, codex: codexVersion, claude: claudeVersion },
     checks,
     observed_at: now(),
@@ -150,48 +175,27 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
 }
 
 export function capture({ repoDir = DEFAULT_REPO, root, overrides = {} } = {}) {
-  const lease = readJson('state/manager-lease.json', null, root);
-  const checkpoint = buildCheckpoint(repoDir, { ...overrides, manager: lease });
+  const developmentManager = loadDevelopmentManager(root);
+  const checkpoint = buildCheckpoint(repoDir, { ...overrides, development_manager: developmentManager });
   saveCheckpoint(checkpoint, root);
   appendJsonl('events/supervisor.jsonl', { event: 'CHECKPOINT_CAPTURED', feature_id: checkpoint.feature_id, commit: checkpoint.repository.commit, dirty: checkpoint.repository.dirty, at: now() }, root);
   return checkpoint;
 }
 
-export function elect({ repoDir = DEFAULT_REPO, root } = {}) {
-  const availability = loadAvailability(root);
-  const previous = readJson('state/manager-lease.json', null, root);
-  const candidate = selectManager(availability);
-  if (!candidate) {
-    const previousHealth = previous?.runtime ? availability?.runtimes?.[previous.runtime] : null;
-    if (previous?.status === 'ACTIVE' && previousHealth?.state === 'HEALTHY') {
-      return {
-        elected: true,
-        changed: false,
-        lease: previous,
-        reason: 'ACTIVE_LEASE_RETAINED_NO_FRESH_REELECTION_CANDIDATE',
-        availability,
-      };
-    }
-    if (previous?.status === 'ACTIVE') {
-      expireManagerLease('CURRENT_MANAGER_NOT_HEALTHY', root);
-    }
-    return { elected: false, reason: 'NO_ELIGIBLE_MANAGER', availability };
-  }
+export function electHermesRuntime({ root } = {}) {
+  return reconcileHermesRuntime({ root, runtimeHealth: loadRuntimeHealth(root) });
+}
 
-  const checkpoint = readJson('state/active-checkpoint.json', null, root);
-  const checkpointValue = checkpoint?.path ? readJson(checkpoint.path, null, root) : null;
-  if (previous?.status === 'ACTIVE' && previous.runtime === candidate.runtime && previous.requested_model === candidate.requested_model) {
-    return { elected: true, changed: false, lease: previous };
-  }
-  if (previous?.status === 'ACTIVE') expireManagerLease('MANAGER_REELECTION', root);
-  const lease = issueManagerLease({
-    candidate,
-    feature_id: checkpointValue?.feature_id ?? null,
-    worktree: checkpointValue?.worktree ?? repoDir,
-    atomic_unit: checkpointValue?.execution?.atomic_unit ?? null,
-    previous_lease_id: previous?.lease_id ?? null,
-  }, root);
-  return { elected: true, changed: true, lease };
+export function electDevelopment({ repoDir = DEFAULT_REPO, root, task = { kind: 'orchestration_decision' } } = {}) {
+  const checkpointPointer = readJson('state/active-checkpoint.json', null, root);
+  const checkpoint = checkpointPointer?.path ? readJson(checkpointPointer.path, null, root) : null;
+  return electDevelopmentManager({
+    root,
+    feature_id: checkpoint?.feature_id ?? null,
+    worktree: checkpoint?.worktree ?? repoDir,
+    atomic_unit: checkpoint?.execution?.atomic_unit ?? null,
+    task,
+  });
 }
 
 export function handoff({ repoDir = DEFAULT_REPO, root, input = {} } = {}) {
@@ -205,9 +209,13 @@ export function handoff({ repoDir = DEFAULT_REPO, root, input = {} } = {}) {
 
 export function status(root) {
   return {
-    orchestrator: readJson('state/orchestrator-state.json', null, root),
-    availability: readJson('state/model-availability.json', null, root),
-    lease: readJson('state/manager-lease.json', null, root),
+    control_plane: readJson('state/control-plane.json', null, root),
+    hermes_runtime: readJson('state/hermes-runtime.json', null, root),
+    development_manager: loadDevelopmentManager(root),
+    development_manager_status: developmentManagerStatus(root),
+    development_policy: loadDevelopmentPolicy(root),
+    runtime_health: loadRuntimeHealth(root),
+    model_registry: loadModelRegistry(root),
     checkpoint: readJson('state/active-checkpoint.json', null, root),
     capsule: readJson('state/active-capsule.json', null, root),
     heartbeat: readJson('state/heartbeat.json', null, root),
@@ -218,6 +226,7 @@ export async function daemon({ repoDir = DEFAULT_REPO, root, intervalMs = 60000 
   initializeSupervisor(root);
   invalidateRuntimeEvidenceAfterSupervisorRestart(root);
   await refreshRuntimeHealth({ repoDir, root });
+  reconcileHermesRuntime({ root });
 
   const tick = () => {
     const health = doctor({ repoDir, root });
@@ -225,8 +234,10 @@ export async function daemon({ repoDir = DEFAULT_REPO, root, intervalMs = 60000 
     try { capture({ repoDir, root }); } catch (error) {
       appendJsonl('events/supervisor.jsonl', { event: 'CHECKPOINT_CAPTURE_FAILED', error: String(error), at: now() }, root);
     }
-    try { elect({ repoDir, root }); } catch (error) {
-      appendJsonl('events/supervisor.jsonl', { event: 'MANAGER_ELECTION_FAILED', error: String(error), at: now() }, root);
+    // Availability-first runtime continuity is automatic. Complex development
+    // authority is intentionally not auto-downgraded or auto-created here.
+    try { reconcileHermesRuntime({ root }); } catch (error) {
+      appendJsonl('events/supervisor.jsonl', { event: 'HERMES_RUNTIME_RECONCILIATION_FAILED', error: String(error), at: now() }, root);
     }
   };
   tick();
@@ -253,8 +264,17 @@ async function main() {
   if (command === 'doctor') return console.log(JSON.stringify(doctor({ repoDir }), null, 2));
   if (command === 'status') return console.log(JSON.stringify(status(), null, 2));
   if (command === 'capture') return console.log(JSON.stringify(capture({ repoDir }), null, 2));
-  if (command === 'elect') return console.log(JSON.stringify(elect({ repoDir }), null, 2));
+  if (command === 'elect-hermes') return console.log(JSON.stringify(electHermesRuntime(), null, 2));
+  if (command === 'elect-development') {
+    const kind = argValue('--task-kind') || 'orchestration_decision';
+    return console.log(JSON.stringify(electDevelopment({ repoDir, task: { kind } }), null, 2));
+  }
   if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir }), null, 2));
+  if (command === 'models') return console.log(JSON.stringify(chatSelectableModels(), null, 2));
+  if (command === 'classify') {
+    const kind = argValue('--task-kind');
+    return console.log(JSON.stringify({ kind, classification: classifyDevelopmentTask({ kind }) }, null, 2));
+  }
   if (command === 'daemon') return daemon({ repoDir });
   if (command === 'health') {
     const runtime = argValue('--runtime');
