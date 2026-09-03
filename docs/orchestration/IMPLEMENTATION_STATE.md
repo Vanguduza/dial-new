@@ -8,13 +8,20 @@ This record tracks the Hermes/Oracle qualification branch only. It does not adva
 
 ```text
 REPOSITORY_IMPLEMENTED
-CURRENT_HEAD_CI_GREEN
-ORACLE_NOT_DEPLOYED
+CURRENT_HEAD_CI_REQUIRED
+ORACLE_HOST_PROVISIONED
+ORACLE_BOOTSTRAP_COMPLETE
+REPO_DEPLOYED
+SUBSCRIPTION_AUTH_PRESENT
+HERMES_CODEX_RUNTIME_ACTIVATED
+REAL_QUOTA_SOAK_OBSERVED
 RUNTIME_NOT_QUALIFIED
 SOAK_NOT_COMPLETE
 ```
 
 `PRODUCTION_GREEN` has not been reached.
+
+Installed-runtime Sol/Sonnet probes and live soak cannot be marked HEALTHY while both subscriptions are at a naturally observed weekly limit. Do not manufacture additional quota events.
 
 ## Current-head CI evidence
 
@@ -103,17 +110,50 @@ git diff --check against the PR base
 
 GitHub Actions is the authoritative Linux CI evidence when local command execution is unavailable.
 
+## Oracle host evidence
+
+Recorded 2026-09-03 on the live Always Free host (not a simulation):
+
+- Name: `dial-hermes-control`
+- Region: South Africa Central (Johannesburg) / AD-1
+- Shape: `VM.Standard.A1.Flex` 4 OCPU / 24 GB
+- Image: Canonical Ubuntu 24.04 aarch64
+- Public IPv4: `84.12.94.18`
+- VCN/subnet: `dial-hermes-vcn` / `dial-hermes-public-subnet` (`10.0.0.0/24`)
+- Ingress: TCP 22 only; egress all
+- Bootstrap: `deploy/oracle/hermes-codex/bootstrap-host.sh` completed
+- Repository: `/srv/dial/repo` on `chore/hermes-codex-control-plane`
+- Codex CLI: ChatGPT OAuth (`Logged in using ChatGPT`), `codex-cli 0.153.1`
+- Claude Code: `claude.ai` Max subscription (`guduzatapiwa@gmail.com`)
+- Hermes: `openai-codex` OAuth stored; `model.provider=openai-codex`, `model.default=gpt-5.6-sol`, `model.openai_runtime=codex_app_server`; leftover OpenRouter `base_url` removed
+- Services active: `dial-hermes-runtime.service`, `hermes-gateway.service`, `hermes-dial-dashboard.service`
+- `bubblewrap` installed (`0.9.0`); `kernel.unprivileged_userns_clone=1`
+
+Installer repairs applied after first host activation:
+
+- strip leftover third-party `model.base_url` when locking the Codex App Server route
+- dedupe `~/.codex/config.toml` `model` / `default_permissions` keys so Hermes migrate cannot leave a duplicate-key config that Codex App Server rejects
+
+## Real provider capacity gate
+
+```text
+REAL_QUOTA_SOAK = OBSERVED_WEEKLY_LIMIT
+RESET_NOT_BEFORE = 2026-09-07T02:42:00Z
+```
+
+Naturally observed on this host, not manufactured:
+
+- Codex App Server / GPT-5.6 Sol: ChatGPT usage limit, retry after 2026-09-07 02:42 UTC
+- official Claude Code / Claude Sonnet 5: weekly limit, resets 2026-09-07 03:00 UTC
+
+After the Codex `config.toml` duplicate-key repair, the Sol probe must be re-run only after the reset. A second Claude probe must not be issued just to re-observe the same weekly limit.
+
 ## Oracle/runtime evidence still required
 
 No item below may be marked complete from simulation or documentation alone:
 
-- Oracle host provisioned and confirmed on the intended free allocation;
-- repository deployed to the host;
-- ChatGPT subscription OAuth for Codex;
-- Hermes supported Codex App Server activation;
-- Claude subscription authentication;
-- installed-runtime Sol probe;
-- installed-runtime Sonnet probe;
+- installed-runtime Sol probe HEALTHY with exact `gpt-5.6-sol` identity (blocked until quota reset);
+- installed-runtime Sonnet probe HEALTHY with exact `claude-sonnet-5` identity (blocked until quota reset);
 - installed `dial-hermes` primary path through exact Sol;
 - `soak-control-plane.sh process` green evidence:
   - actual Codex App Server SIGKILL;
@@ -132,12 +172,6 @@ No item below may be marked complete from simulation or documentation alone:
 - final installed-host secret/security audit;
 - final independent architecture-contamination review.
 
-## Real provider capacity gate
-
-```text
-REAL_QUOTA_SOAK = PENDING
-```
-
-Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states and actual process-kill tests are routing/recovery evidence only. Subscription usage must not be deliberately exhausted to manufacture a provider quota event.
+Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states and actual process-kill tests remain routing/recovery evidence only. Subscription usage must not be deliberately exhausted to manufacture a provider quota event. The 2026-09-03 weekly-limit observation is the first real provider-capacity evidence for this branch.
 
 PR #1 remains draft until the required Oracle/runtime gates are genuinely complete.

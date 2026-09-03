@@ -64,6 +64,10 @@ python3 - "$CONFIG" "$PRE_HOOK" "$POST_HOOK" <<'PY'
 import sys,yaml
 p,pre,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; model=cfg.setdefault('model',{})
 model['provider']='openai-codex'; model['default']='gpt-5.6-sol'; model['openai_runtime']='codex_app_server'; cfg['hooks_auto_accept']=False
+# Codex App Server is a local Codex subprocess, not an HTTP inference URL.
+# Hermes' installer may leave a third-party base_url (for example OpenRouter);
+# that must not survive into the subscription-only control plane.
+model.pop('base_url', None)
 # DIAL intentionally does not use Hermes' built-in Anthropic fallback. The locked
 # fallback route invokes the official Claude Code CLI so Claude subscription auth
 # remains the execution path instead of silently becoming API billing.
@@ -89,13 +93,20 @@ PY
 chmod 600 "$ALLOW"
 
 CODEX_CONFIG="$CODEX_HOME/config.toml"; touch "$CODEX_CONFIG"; chmod 600 "$CODEX_CONFIG"
-python3 - "$CODEX_CONFIG" <<'PY'
+normalize_codex_config(){
+  python3 - "$CODEX_CONFIG" <<'PY'
 import re,sys
 p=sys.argv[1]; text=open(p,encoding='utf-8').read()
+# Hermes /codex-runtime migrate may rewrite a second default_permissions
+# assignment. Codex App Server rejects duplicate TOML keys, so strip every
+# existing assignment and write each locked key once.
 for key,value in [('model','gpt-5.6-sol'),('default_permissions',':workspace')]:
-    pat=re.compile(rf'(?m)^(?!\s*#){re.escape(key)}\s*=.*$'); line=f'{key} = "{value}"'; text=pat.sub(line,text,count=1) if pat.search(text) else line+'\n'+text
+    text=re.sub(rf'(?m)^(?!\s*#){re.escape(key)}\s*=.*\n?', '', text)
+    text=f'{key} = "{value}"\n'+text
 open(p,'w',encoding='utf-8').write(text)
 PY
+}
+normalize_codex_config
 
 cat >"$HOME/.local/bin/dial-hermes" <<EOF
 #!/usr/bin/env bash
@@ -169,6 +180,7 @@ else
   warn "Hermes gateway systemd unit was not discovered; process-recovery soak will remain blocked until it exists."
   hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
 fi
+normalize_codex_config
 
 cat <<'EOF'
 
