@@ -11,12 +11,19 @@ warn(){ echo "! $*" >&2; }
 
 cd "$DIAL_REPO_DIR"
 
+ARCH="$(uname -m)"
+[[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Oracle qualification host must be ARM64; detected $ARCH"
+pass "Oracle host architecture is ARM64 ($ARCH)"
+
 [[ -f package-lock.json ]] || fail "package-lock.json missing"
 [[ -x "$HOME/.hermes/agent-hooks/dial-pre-turn-context.sh" ]] || fail "pre-turn hook not installed"
 [[ -x "$HOME/.hermes/agent-hooks/dial-post-turn-checkpoint.sh" ]] || fail "post-turn hook not installed"
 
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then
   fail "OPENAI_API_KEY/CODEX_API_KEY is present; qualification requires ChatGPT subscription OAuth"
+fi
+if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
+  fail "ANTHROPIC_API_KEY is present; failover qualification requires Claude subscription authentication, not API billing"
 fi
 
 codex_status="$(codex login status 2>&1 || true)"
@@ -30,6 +37,9 @@ pass "Claude Code authentication is present"
 
 npm ci
 pass "npm ci"
+
+npm run verify
+pass "repository verification"
 
 npm run agent:orchestration:qualify
 pass "deterministic orchestration unit qualification"
@@ -65,10 +75,10 @@ jq -e '.state == "HEALTHY" and .requested_model == "claude-sonnet-5" and .resolv
   /tmp/dial-claude-probe.json >/dev/null || { cat /tmp/dial-claude-probe.json >&2; fail "Claude Code Sonnet 5 probe did not prove the hard pin"; }
 pass "official Claude Code / Sonnet 5 failover runtime"
 
-# Normal election must pick Codex.
+# Normal election must pick Codex using fresh identity-proven health evidence.
 npm run agent:orchestration:elect >/tmp/dial-election-primary.json
-jq -e '.elected == true and .lease.runtime == "codex_app_server" and .lease.requested_model == "gpt-5.6-sol" and .lease.resolved_model == "gpt-5.6-sol"' \
-  /tmp/dial-election-primary.json >/dev/null || { cat /tmp/dial-election-primary.json >&2; fail "primary manager election did not select Sol"; }
+jq -e '.elected == true and .lease.runtime == "codex_app_server" and .lease.requested_model == "gpt-5.6-sol" and .lease.resolved_model == "gpt-5.6-sol" and .lease.health_state == "HEALTHY" and (.lease.health_observed_at | type == "string")' \
+  /tmp/dial-election-primary.json >/dev/null || { cat /tmp/dial-election-primary.json >&2; fail "primary manager election did not select identity-proven fresh Sol"; }
 pass "primary manager lease election"
 
 # Deterministic failover simulation: do not consume or bypass quota. Mark the direct
@@ -77,15 +87,15 @@ node agent-system/orchestration/supervisor.mjs health \
   --runtime codex_app_server --state ACCOUNT_LIMITED \
   --requested-model gpt-5.6-sol --resolved-model gpt-5.6-sol >/dev/null
 npm run agent:orchestration:elect >/tmp/dial-election-failover.json
-jq -e '.elected == true and .lease.runtime == "claude_code" and .lease.requested_model == "claude-sonnet-5" and .lease.resolved_model == "claude-sonnet-5"' \
-  /tmp/dial-election-failover.json >/dev/null || { cat /tmp/dial-election-failover.json >&2; fail "failover election did not select Sonnet 5"; }
+jq -e '.elected == true and .lease.runtime == "claude_code" and .lease.requested_model == "claude-sonnet-5" and .lease.resolved_model == "claude-sonnet-5" and .lease.health_state == "HEALTHY" and (.lease.health_observed_at | type == "string")' \
+  /tmp/dial-election-failover.json >/dev/null || { cat /tmp/dial-election-failover.json >&2; fail "failover election did not select identity-proven fresh Sonnet 5"; }
 pass "Codex unavailable → Sonnet manager lease"
 
 # Restore actual Codex health from a fresh direct probe and re-elect only at this explicit boundary.
 node agent-system/orchestration/codex-app-server-probe.mjs >/tmp/dial-codex-recovery.json
 npm run agent:orchestration:elect >/tmp/dial-election-recovery.json
-jq -e '.elected == true and .lease.runtime == "codex_app_server"' /tmp/dial-election-recovery.json >/dev/null \
-  || { cat /tmp/dial-election-recovery.json >&2; fail "Codex recovery did not regain eligibility at explicit boundary"; }
+jq -e '.elected == true and .lease.runtime == "codex_app_server" and .lease.requested_model == "gpt-5.6-sol" and .lease.resolved_model == "gpt-5.6-sol" and .lease.health_state == "HEALTHY" and (.lease.health_observed_at | type == "string")' \
+  /tmp/dial-election-recovery.json >/dev/null || { cat /tmp/dial-election-recovery.json >&2; fail "Codex recovery did not regain identity-proven eligibility at explicit boundary"; }
 pass "Codex recovery eligibility"
 
 systemctl --user is-active --quiet dial-orchestrator.service || fail "dial-orchestrator.service is not active"
@@ -98,7 +108,7 @@ else
   warn "Hermes dashboard is not active; session FTS retrieval is degraded but primary orchestration remains functional"
 fi
 
-# Capture a final clean runtime checkpoint and show status. This does not claim
+# Capture a final runtime checkpoint and show status. This does not claim
 # that a real quota-exhaustion event has occurred; that remains an operational soak test.
 npm run agent:orchestration:capture >/dev/null
 npm run agent:orchestration:status >/tmp/dial-orchestration-final-status.json
@@ -108,12 +118,13 @@ cat <<EOF
 DIAL Hermes/Codex qualification: GREEN for installed-runtime qualification.
 
 Proven here:
+- full repository verification
 - local deterministic state/memory primitives
 - ChatGPT OAuth route
 - direct Codex App Server / GPT-5.6 Sol hard pin
 - Hermes one-shot through openai-codex / Sol
 - official Claude Code / Sonnet 5 hard pin
-- deterministic primary/failover/recovery manager election
+- fresh identity-proven primary/failover/recovery manager election
 - persistent supervisor service
 
 Still requires real-world soak evidence before production activation:
