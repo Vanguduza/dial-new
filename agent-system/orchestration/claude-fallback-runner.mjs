@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -32,16 +31,25 @@ function now() { return new Date().toISOString(); }
 function classifyFailure(stderr = '', stdout = '') {
   const text = `${stderr}\n${stdout}`.toLowerCase();
   if (/login|authenticate|authentication|oauth|credential/.test(text)) return 'AUTH_FAILED';
-  if (/weekly.*limit|usage.*limit|session.*limit|you.*limit|capacity.*exhaust/.test(text)) return 'ACCOUNT_LIMITED';
+  if (/weekly.*limit|usage.*limit|session.*limit|overagestatus.*rejected|capacity.*exhaust/.test(text)) return 'ACCOUNT_LIMITED';
   if (/rate.?limit|429|too many requests/.test(text)) return 'RATE_LIMITED';
   if (/overload|unavailable|503/.test(text)) return 'MODEL_LIMITED';
   return 'PROCESS_FAILED';
 }
 
+function resultObject(stdout) {
+  try {
+    const parsed = JSON.parse(stdout || 'null');
+    return Array.isArray(parsed) ? (parsed.at(-1) ?? null) : parsed;
+  } catch {
+    return null;
+  }
+}
+
 export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = '', root, timeoutMs = 30 * 60 * 1000 } = {}) {
   const lease = readJson('state/manager-lease.json', null, root);
-  if (!lease || lease.status !== 'ACTIVE' || lease.runtime !== 'claude_code' || lease.requested_model !== MODEL) {
-    throw new Error(`active Claude manager lease for ${MODEL} is required before invoking fallback runtime`);
+  if (!lease || lease.status !== 'ACTIVE' || lease.runtime !== 'claude_code' || lease.requested_model !== MODEL || lease.resolved_model !== MODEL) {
+    throw new Error(`active, identity-proven Claude manager lease for ${MODEL} is required before invoking fallback runtime`);
   }
 
   const managerContext = await buildManagerContext({ repoDir, userMessage: instruction, root });
@@ -78,28 +86,33 @@ export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = 
   });
   const finishedAt = now();
 
-  let structured = null;
-  try { structured = result.stdout ? JSON.parse(result.stdout) : null; } catch {}
+  const structured = resultObject(result.stdout);
+  const modelUsage = structured?.modelUsage ?? structured?.model_usage ?? {};
+  const usedModels = Object.keys(modelUsage);
+  const resolvedModel = usedModels.length === 1 ? usedModels[0] : null;
+  const identityProven = resolvedModel === MODEL;
 
   const event = {
-    event: result.status === 0 ? 'CLAUDE_FALLBACK_TURN_COMPLETED' : 'CLAUDE_FALLBACK_TURN_FAILED',
+    event: result.status === 0 && identityProven ? 'CLAUDE_FALLBACK_TURN_COMPLETED' : 'CLAUDE_FALLBACK_TURN_FAILED',
     requested_model: MODEL,
+    resolved_model: resolvedModel,
+    identity_proven: identityProven,
     feature_id: managerContext.feature_id,
     lease_id: lease.lease_id,
     session_id: structured?.session_id ?? null,
-    result_model: structured?.model ?? structured?.response_model ?? null,
+    used_models: usedModels,
     started_at: startedAt,
     finished_at: finishedAt,
     exit_status: result.status,
     signal: result.signal ?? null,
-    error_class: result.status === 0 ? null : classifyFailure(result.stderr, result.stdout),
+    error_class: result.status === 0 && identityProven ? null : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout)),
   };
 
   appendJsonl('events/claude-fallback.jsonl', event, root);
   writeJsonAtomic('state/claude-fallback-last.json', event, root);
 
   if (result.error) throw result.error;
-  if (result.status !== 0) {
+  if (result.status !== 0 || !identityProven) {
     const error = new Error(`Claude fallback failed: ${event.error_class}`);
     error.cause = { stderr: result.stderr?.slice(-4000), stdout: result.stdout?.slice(-4000), event };
     throw error;
