@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 077
 
 DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
@@ -44,6 +45,33 @@ fi
 
 mkdir -p "$HERMES_HOME/agent-hooks" "$HOME/.config/systemd/user" "$CODEX_HOME"
 chmod 700 "$HERMES_HOME" "$HERMES_HOME/agent-hooks" "$CODEX_HOME" 2>/dev/null || true
+
+# Stable Hermes memory contains only control-plane invariants. Rapidly changing
+# work state lives in /var/lib/dial-control and is retrieved per turn.
+MEMORY="$HERMES_HOME/MEMORY.md"
+touch "$MEMORY"
+python3 - "$MEMORY" <<'PY'
+import re,sys
+p=sys.argv[1]
+start='<!-- DIAL_CONTROL_PLANE_BEGIN -->'
+end='<!-- DIAL_CONTROL_PLANE_END -->'
+block=f'''{start}
+DIAL control-plane invariants:
+- The DIAL repository, registries, tests and evidence are authoritative; memory never overrides them.
+- GPT-5.6 Sol via Codex App Server is the preferred manager only while an identity-proven healthy lease exists.
+- Claude Code Sonnet 5 is the cross-provider failover manager only after its own identity-proven health probe.
+- Models are replaceable lease-holders. DIAL's deterministic supervisor owns continuity, checkpoints and manager election.
+- Verify handoff capsules and retrieved memories against current Git/canon before acting.
+- Never advance a DIAL gate from model prose or cached memory alone.
+- Never put credentials, OAuth tokens, API keys or passwords into DIAL/Hermes memory.
+{end}'''
+text=open(p,'r',encoding='utf-8').read()
+pat=re.compile(re.escape(start)+r'.*?'+re.escape(end),re.S)
+if pat.search(text): text=pat.sub(block,text)
+else: text=(text.rstrip()+'\n\n'+block+'\n').lstrip()
+open(p,'w',encoding='utf-8').write(text)
+PY
+chmod 600 "$MEMORY"
 
 # Install reviewed hooks into the Hermes-private hook directory.
 install -m 0700 "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/hermes-hooks/dial-pre-turn-context.sh" \
@@ -182,12 +210,14 @@ fi
 
 # Hermes owns its gateway service. Installation is idempotent on supported Linux builds.
 hermes gateway install || warn "Hermes gateway install did not complete. Run it manually after confirming Hermes authentication."
+hermes gateway start || warn "Hermes gateway did not start yet; start it after completing the runtime activation step below."
 
 # The documented runtime command performs MCP/plugin migration and takes effect next session.
 # Config is already pinned here, but qualification must still prove the actual runtime/model.
 
 echo
 printf 'Hermes config:      %s\n' "$CONFIG"
+printf 'Hermes memory:      %s\n' "$MEMORY"
 printf 'Codex config:       %s\n' "$CODEX_CONFIG"
 printf 'Control state:      %s\n' "$DIAL_CONTROL_HOME"
 printf 'DIAL repo:          %s\n' "$DIAL_REPO_DIR"
@@ -204,5 +234,5 @@ This documented command is required because Hermes uses it to perform its suppor
 Codex MCP/plugin migration. The installer intentionally does not call private migration internals.
 
 Then run:
-  deploy/oracle/hermes-codex/qualify-control-plane.sh
+  bash deploy/oracle/hermes-codex/qualify-control-plane.sh
 EOF
