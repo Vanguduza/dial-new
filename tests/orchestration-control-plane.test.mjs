@@ -20,10 +20,13 @@ import {
   buildWorkerPacket,
   classifyDevelopmentTask,
   evaluateDevelopmentAuthority,
+  routeAutoDevelopmentTask,
   selectDevelopmentManager,
+  validateIndependentReview,
 } from '../agent-system/orchestration/development-policy.mjs';
 import { executeWorkerPacket, registerDeepSeekHarness } from '../agent-system/orchestration/execution-harnesses.mjs';
 import { routeHermesInstruction } from '../agent-system/orchestration/instruction-router.mjs';
+import { configureManagerChairModels, getModelsSettings } from '../agent-system/orchestration/settings-models.mjs';
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
 
@@ -110,6 +113,19 @@ describe('runtime evidence', () => {
     expect(healthFresh(health)).toBe(false);
     expect(runtimeEligible(health)).toBe(false);
   });
+
+  it('updates registered model availability without deleting the model', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'gpt-5.6-sol', runtime_id: 'codex_app_server' });
+    recordRuntimeHealth('codex_app_server', {
+      state: 'ACCOUNT_LIMITED',
+      requested_model: 'gpt-5.6-sol',
+      resolved_model: 'gpt-5.6-sol',
+    }, root);
+    const model = loadModelRegistry(root).models['gpt-5.6-sol'];
+    expect(model.availability).toBe('LIMIT_REACHED');
+    expect(chatSelectableModels(root).some((entry) => entry.model_id === 'gpt-5.6-sol')).toBe(true);
+  });
 });
 
 describe('Hermes availability-first runtime policy', () => {
@@ -178,6 +194,22 @@ describe('quality-first Development Manager Chair', () => {
     expect(decision.available_manager.model_id).toBe('fable-5.2');
   });
 
+  it('allows explicit user configuration to place a registered model in the Manager Chair', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'claude-sonnet-5', display_name: 'Claude Sonnet 5' });
+    configureManagerChairModels(['claude-sonnet-5'], root);
+    const decision = evaluateDevelopmentAuthority({ selected_model_id: 'claude-sonnet-5', task: { kind: 'architecture' }, root });
+    expect(decision.allowed).toBe(true);
+    expect(decision.authority).toBe('MANAGER_CHAIR');
+  });
+
+  it('never lets an explicit override make an unavailable or unregistered model executable', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'custom-offline', availability: 'UNAVAILABLE', health: 'PROCESS_FAILED' });
+    expect(evaluateDevelopmentAuthority({ selected_model_id: 'custom-offline', task: { kind: 'architecture' }, root, user_override: true }).allowed).toBe(false);
+    expect(evaluateDevelopmentAuthority({ selected_model_id: 'missing-model', task: { kind: 'architecture' }, root, user_override: true }).allowed).toBe(false);
+  });
+
   it('classifies unknown or ambiguous work as complex rather than lowering the quality floor', () => {
     expect(classifyDevelopmentTask({ kind: 'architecture' })).toBe('COMPLEX');
     expect(classifyDevelopmentTask({ kind: 'formatting' })).toBe('BOUNDED');
@@ -185,7 +217,49 @@ describe('quality-first Development Manager Chair', () => {
   });
 });
 
-describe('universal model registry and harness separation', () => {
+describe('Auto routing and independent review', () => {
+  it('Auto routes complex work only to an available Manager Chair', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
+    registerModel(root, { model_id: 'claude-sonnet-5', display_name: 'Claude Sonnet 5' });
+    const route = routeAutoDevelopmentTask({ task: { kind: 'architecture' }, root });
+    expect(route.route).toBe('MANAGER_CHAIR');
+    expect(route.model_id).toBe('fable-5.2');
+    expect(route.review_required).toBe(true);
+  });
+
+  it('Auto pauses complex work instead of selecting healthy lesser models', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'claude-sonnet-5' });
+    registerModel(root, { model_id: 'gpt-5.6-terra' });
+    registerModel(root, { model_id: 'deepseek-coder-v3' });
+    const route = routeAutoDevelopmentTask({ task: { kind: 'architecture' }, root });
+    expect(route.route).toBe('COMPLEX_WORK_PAUSED');
+    expect(route.reason).toBe('NO_QUALIFIED_MANAGER');
+  });
+
+  it('Auto prefers a lesser-task model for bounded work before spending Manager Chair capacity', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
+    registerModel(root, { model_id: 'deepseek-coder-v3', display_name: 'DeepSeek Coder v3' });
+    const route = routeAutoDevelopmentTask({ task: { kind: 'test_expansion' }, root });
+    expect(route.route).toBe('LESSER_TASK_POOL');
+    expect(route.model_id).toBe('deepseek-coder-v3');
+    expect(route.manager_capacity_used).toBe(false);
+  });
+
+  it('blocks same-model self-certification for high-consequence work and accepts another quality model', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
+    registerModel(root, { model_id: 'claude-opus-5.1', display_name: 'Claude Opus 5.1' });
+    const same = validateIndependentReview({ task: { kind: 'security_architecture' }, manager_model_id: 'fable-5.2', reviewer_model_id: 'fable-5.2', root });
+    expect(same.valid).toBe(false);
+    const cross = validateIndependentReview({ task: { kind: 'security_architecture' }, manager_model_id: 'fable-5.2', reviewer_model_id: 'claude-opus-5.1', root });
+    expect(cross.valid).toBe(true);
+  });
+});
+
+describe('universal model registry, Settings contract and harness separation', () => {
   it('keeps every registered model visible in chat even when unavailable', () => {
     const root = temp('dial-control');
     registerModel(root, { model_id: 'gpt-5.6-sol', display_name: 'GPT-5.6 Sol' });
@@ -202,6 +276,23 @@ describe('universal model registry and harness separation', () => {
     expect(model.bindings[0].runtime_id).toBe('codex_app_server');
   });
 
+  it('projects the full Settings → Models contract without hiding models', () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
+    registerModel(root, { model_id: 'claude-sonnet-5', display_name: 'Claude Sonnet 5' });
+    const settings = getModelsSettings(root);
+    expect(settings.surface_contract).toBe('SETTINGS_MODELS');
+    expect(settings).toHaveProperty('connections');
+    expect(settings).toHaveProperty('available_models');
+    expect(settings).toHaveProperty('manager_chair');
+    expect(settings).toHaveProperty('lesser_task_pool');
+    expect(settings).toHaveProperty('harness_assignments');
+    expect(settings).toHaveProperty('routing_policy');
+    expect(settings).toHaveProperty('health_and_capacity');
+    expect(settings.available_models.every((model) => model.chat_visible === true)).toBe(true);
+    expect(settings.manager_chair.models.find((model) => model.model_id === 'claude-sonnet-5').selected).toBe(false);
+  });
+
   it('refuses credential material in connection registry state', () => {
     const root = temp('dial-control');
     expect(() => registerConnection({ connection_id: 'bad', type: 'OPENAI_API', api_key: 'do-not-store' }, root)).toThrow(/may not persist credential material/);
@@ -209,17 +300,18 @@ describe('universal model registry and harness separation', () => {
 });
 
 describe('DeepSeek Harness worker execution', () => {
-  it('registers DeepSeek as first-class, discovers models, keeps them chat-selectable and executes bounded packets', async () => {
+  it('registers DeepSeek as first-class, discovers models, keeps them chat-selectable and executes bounded packets under active Manager Chair provenance', async () => {
     const root = temp('dial-control');
     registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
     registerDeepSeekHarness({ models: ['deepseek-coder-v3'], auth_state: 'AUTHENTICATED_OR_NOT_REQUIRED', local: true }, root);
+    const manager = electDevelopmentManager({ root, task: { kind: 'task_decomposition' } }).assignment;
     const packet = buildWorkerPacket({
       objective: 'expand accepted contract tests',
       scope: 'tests only',
       allowed_paths: ['tests/'],
       acceptance_criteria: ['tests pass'],
       expected_evidence: ['test output'],
-      manager_provenance: { model_id: 'fable-5.2', assignment_id: 'manager-1' },
+      manager_provenance: { model_id: manager.model_id, assignment_id: manager.assignment_id },
       task_kind: 'test_expansion',
     });
     const result = await executeWorkerPacket({
@@ -233,6 +325,23 @@ describe('DeepSeek Harness worker execution', () => {
     expect(chatSelectableModels(root).some((model) => model.model_id === 'deepseek-coder-v3')).toBe(true);
   });
 
+  it('rejects fabricated or stale Manager Chair provenance', async () => {
+    const root = temp('dial-control');
+    registerModel(root, { model_id: 'fable-5.2', display_name: 'Fable 5.2' });
+    registerDeepSeekHarness({ models: ['deepseek-coder-v3'] }, root);
+    electDevelopmentManager({ root, task: { kind: 'task_decomposition' } });
+    const packet = buildWorkerPacket({
+      objective: 'mechanical change',
+      scope: 'one file',
+      allowed_paths: ['tests/'],
+      acceptance_criteria: ['passes'],
+      expected_evidence: ['diff'],
+      manager_provenance: { model_id: 'fable-5.2', assignment_id: 'forged-assignment' },
+      task_kind: 'mechanical_implementation',
+    });
+    await expect(executeWorkerPacket({ model_id: 'deepseek-coder-v3', packet, root, executor: async () => ({ ok: true }) })).rejects.toThrow(/does not match the active development assignment/);
+  });
+
   it('blocks complex architecture authority inside a worker packet', () => {
     expect(() => buildWorkerPacket({
       objective: 'redesign architecture',
@@ -240,7 +349,7 @@ describe('DeepSeek Harness worker execution', () => {
       allowed_paths: ['agent-system/'],
       acceptance_criteria: ['architecture accepted'],
       expected_evidence: ['design review'],
-      manager_provenance: { model_id: 'fable-5.2' },
+      manager_provenance: { model_id: 'fable-5.2', assignment_id: 'manager-1' },
       task_kind: 'architecture',
     })).toThrow(/must be bounded/);
   });
