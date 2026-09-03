@@ -1,42 +1,81 @@
-# DIAL Hermes + Codex Orchestration Control Plane
+# DIAL Hermes + Codex Control Plane
 
 Status: **LOCKED TARGET DESIGN — QUALIFICATION REQUIRED BEFORE ACTIVATION**
 
-This document defines the target architecture for running the DIAL development orchestration control plane on an Oracle Cloud Linux host using Hermes as the persistent shell/session/memory host and Codex App Server as the preferred agent runtime.
+This document defines the Oracle-hosted persistent control plane. It must be read with `DIAL_HERMES_AND_DEVELOPMENT_ORCHESTRATION_SEPARATION.md`.
 
 ## 1. Authority boundary
 
 - **DIAL repository and registries are authoritative.**
-- **DIAL deterministic supervisor owns orchestration continuity, manager leases, runtime health, checkpoints and failover policy.**
-- **Hermes owns persistent sessions, memory services, gateway/scheduling and runtime hosting.**
-- **Codex App Server owns Codex model execution, shell, edits, sandbox, MCP and thread/turn lifecycle.**
-- **GPT-5.6 Sol is the preferred DIAL manager when available.**
-- **Claude Code / Sonnet 5 is the cross-provider failover manager.**
-- **Opus and Fable are high-value specialist/review tiers, not continuity owners.**
+- **Hermes is external persistent control:** gateway, sessions, memory, scheduling, remote/mobile access, runtime invocation and continuity.
+- **DIAL development orchestration is a separate quality-first authority layer.**
+- **Execution harnesses are replaceable runtimes:** Codex App Server/CLI, Claude Code, DeepSeek Harness, local/self-hosted and custom connections.
 - **Hermes memory accelerates reconstruction but never overrides Git, canonical registries, tests or evidence.**
 
-## 2. Process topology
+Critical invariant:
+
+> A model powering Hermes does not receive DIAL Development Manager Chair authority merely because it is the active Hermes runtime.
+
+## 2. Hermes runtime policy
+
+Hermes runtime continuity is availability-first:
+
+- primary runtime model: GPT-5.6 Sol via Codex App Server;
+- fallback runtime model: Claude Sonnet 5 via official Claude Code/supported integration.
+
+The persisted selection is `state/hermes-runtime.json` and always carries:
+
+```text
+authority = HERMES_RUNTIME_ONLY
+```
+
+Sonnet fallback keeps Hermes usable. It is not the DIAL development failover manager by default.
+
+## 3. Development Manager Chair policy
+
+DIAL development orchestration is quality-first.
+
+Default Manager Chair quality families:
+
+- Fable;
+- Claude Opus;
+- GPT Sol.
+
+Actual available point versions are taken from the universal model registry rather than embedded as a static Fable/Opus list.
+
+Sonnet, Terra, Luna and DeepSeek are not default Manager Chair families. They may be used for bounded work and remain directly user-selectable; they become Manager Chair candidates only through explicit user configuration.
+
+If no qualified Manager Chair is available, complex development is checkpointed/preserved and enters `COMPLEX_WORK_PAUSED`. The system must not lower the quality floor merely to continue throughput.
+
+## 4. Process topology
 
 ```text
 Oracle Cloud host
   ├─ hermes-gateway.service
   ├─ dial-orchestrator.service
   ├─ Hermes sessions / memory / retrieval
-  ├─ Codex App Server runtime
-  │    └─ preferred model: gpt-5.6-sol
-  ├─ Claude Code runtime (failover/specialists)
+  ├─ DIAL runtime health + model registry + development policy
+  ├─ Codex App Server / Codex CLI
+  ├─ Claude Code
+  ├─ DeepSeek Harness / local/custom runtimes where configured
   └─ DIAL repo + isolated worktrees
 ```
 
-No LLM process is allowed to own DIAL's ability to continue operating.
+No LLM process owns DIAL's ability to reconstruct state.
 
-## 3. Persistent Context & Memory Fabric
+## 5. Persistent context and state
 
-Runtime state lives outside Git under `/var/lib/dial-control` on Oracle persistent block storage.
+Runtime state lives outside Git under `/var/lib/dial-control` on persistent block storage.
 
 ```text
 /var/lib/dial-control/
   state/
+    control-plane.json
+    hermes-runtime.json
+    development-manager.json
+    development-policy.json
+    model-registry.json
+    runtime-health.json
   checkpoints/
   capsules/
   memory/
@@ -48,97 +87,64 @@ Runtime state lives outside Git under `/var/lib/dial-control` on Oracle persiste
     hermes/
     codex/
     claude/
+    deepseek/
   retrieval/
   evidence-cache/
   runtime-health/
   events/
 ```
 
+Legacy `manager-lease.json` represents the earlier conflated design. During semantic migration an active legacy lease is expired; it is never reinterpreted as development authority.
+
 ### HOT memory
-Current Feature ID, manager lease, atomic unit, dirty paths, last verified commit, current gate, recent decisions, active specialists and next action.
+Current Feature ID, Development Manager assignment if any, atomic unit, dirty paths, last verified commit, current gate, recent decisions and next action.
 
 ### WARM memory
-Feature-specific historical conclusions, review findings, rejected approaches, failure lessons, implementation summaries and session references.
+Feature-specific conclusions, review findings, rejected approaches, failure lessons, implementation summaries and session references.
 
 ### COLD memory
-Archived raw sessions, superseded capsules, detailed logs and historical investigations. Cold memory is searched only on explicit need.
+Archived sessions, superseded capsules, detailed logs and historical investigations. Cold memory is searched only on explicit need.
 
-## 4. Source-of-truth order
+## 6. Source-of-truth order
 
 1. DIAL canonical repository
-2. Machine registries and evidence
-3. Current Git/worktree state
+2. machine registries and evidence
+3. current Git/worktree state
 4. DIAL orchestration checkpoint
-5. Handoff capsule
+5. handoff capsule
 6. Feature-scoped Oracle memory
 7. Hermes session/history retrieval
-8. Historical conversational material
+8. historical conversational material
 
-A lower layer may never override a higher layer. Memory is an accelerator, not authority.
+A lower layer may never override a higher layer.
 
-## 5. Manager lease
+## 7. Universal model/runtime registry
 
-The manager role is represented by a renewable lease, not by conversational convention.
+The control plane distinguishes model from runtime/harness.
 
-Required fields:
-- lease id
-- runtime
-- requested model
-- resolved model
-- Feature ID
-- worktree
-- atomic unit
-- acquired timestamp
-- health state and health observation timestamp
-- expiry/renewal boundary
+Examples:
 
-A lease is invalid if the resolved model differs from the requested model when a hard model pin is required. New leases require fresh identity-proven runtime health evidence; persisted pre-restart health cannot authorize a new manager lease.
+- GPT-5.6 Sol → Codex App Server;
+- Claude Opus → Claude Code;
+- DeepSeek model → DeepSeek Harness.
 
-## 6. Preferred manager policy
+The registry records models, runtimes, connections, bindings, capabilities, availability, health, context metadata where known, auth state and last probe.
 
-Initial policy:
+Model availability states:
 
-- primary manager: Codex App Server / `gpt-5.6-sol`
-- failover manager: official Claude Code / Sonnet 5
-- deep specialist: Claude Opus
-- exceptional specialist/reviewer: Fable
-- high-volume Codex work: lower-cost Codex tiers where policy permits
+- `AVAILABLE`
+- `LIMIT_REACHED`
+- `RATE_LIMITED`
+- `AUTH_REQUIRED`
+- `UNAVAILABLE`
+- `MODEL_DISABLED`
+- `UNKNOWN`
 
-The supervisor selects by availability, quota, task criticality, security class, money/health sensitivity, context requirements, independent-review constraints and current continuity.
+Unavailable models remain visible. Every registered model remains in the development chat model-selector contract; model visibility and orchestration authority are separate.
 
-## 7. Context Broker
+## 8. Runtime health
 
-Before a manager turn, the broker assembles a bounded packet from:
-- `context-get.mjs <FEATURE_ID>` output
-- active checkpoint
-- current Git status/diff
-- handoff capsule
-- relevant Feature-scoped memory
-- selected historical session fragments only when needed
-
-The full historical transcript is never the default takeover mechanism.
-
-## 8. Handoff capsule
-
-Capsules record operational reasoning without attempting to preserve hidden chain-of-thought.
-
-They contain:
-- objective
-- completed units
-- active unit
-- remaining units
-- important decisions and evidence
-- rejected approaches worth retaining
-- known risks/failures
-- last green gate
-- next action
-- session references
-
-A replacement manager must verify the capsule against repository state before continuing.
-
-## 9. Runtime health states
-
-Minimum state vocabulary:
+Runtime health states remain:
 
 - `HEALTHY`
 - `DRAINING`
@@ -151,72 +157,95 @@ Minimum state vocabulary:
 - `TOOLCHAIN_DEGRADED`
 - `UNKNOWN`
 
-Runtime health and model/account capacity are separate dimensions.
+A runtime hard pin requires requested/resolved model agreement and fresh evidence.
 
-## 10. Failover
+Runtime health controls Hermes availability routing. It does not by itself grant Development Manager Chair authority.
 
-On manager failure:
+## 9. Development task authority
 
-1. freeze/expire current lease;
-2. persist current observable worktree state;
-3. classify failure;
-4. preserve/update checkpoint and capsule;
-5. select an eligible alternate runtime;
-6. construct a bounded takeover packet;
-7. start the replacement runtime;
-8. verify model identity and full tool envelope;
-9. verify Git/Feature/gate state;
-10. issue a new manager lease;
-11. continue from the next safe atomic boundary.
+Complex/high-consequence work includes architecture, ambiguous requirements, source-of-truth changes, financial/security/data architecture, cross-system integration, complex debugging, large ambiguous refactors, orchestration decisions, task decomposition, conflicting evidence, high-risk migrations and acceptance/gate synthesis.
 
-The outgoing model is not required to be alive for recovery.
+Unknown/ambiguous work defaults to complex.
 
-When a preferred runtime becomes available again, mark it `ELIGIBLE`; do not interrupt an active atomic unit. Re-election happens at a safe manager boundary.
+Bounded work includes boilerplate, mechanical implementation, accepted-interface implementation, accepted-contract test expansion, formatting, static-analysis cleanup, repetitive migrations, batch catalog work, data transformation, bounded repository scans and documentation extraction.
 
-## 11. Hermes/Codex runtime constraints
+Every worker packet carries objective, scope, allowed paths, forbidden paths where needed, acceptance criteria, evidence expectations, authority limit and Development Manager provenance. Recursive worker delegation is disabled by default.
 
-Hermes Codex App Server runtime is the preferred integration because it already provides:
-- ChatGPT subscription authentication via Codex CLI;
-- Codex shell/apply-patch/update-plan/view-image/web-search tools;
-- Codex sandboxing;
-- thread/turn lifecycle;
-- Hermes event projection/session persistence;
-- Hermes tool callbacks via MCP.
+## 10. DeepSeek Harness
 
-Known runtime limitation: Hermes `memory`, `session_search`, `delegate_task` and Hermes `todo` are not directly callable from the stateless Codex MCP callback. DIAL therefore performs memory retrieval and context preparation in the supervisor/context-broker stage before the Codex turn.
+DeepSeek Harness remains first-class for bounded implementation, repository analysis, repetitive transformations, test generation from accepted contracts, static analysis, bulk migration, lower-cost worker work, self-hosted/local execution and privacy-sensitive local workloads.
 
-## 12. Oracle role
+A DeepSeek model is not a default Manager Chair merely because it is available through DeepSeek Harness.
 
-Oracle is the persistent control-plane host and memory/storage host. It does not run a large local model.
+## 11. Instruction routing
 
-The control plane should be provisioned on ARM64 Linux where available and sized within the user's Always Free entitlement. Persistent block storage carries Hermes sessions, DIAL runtime state, feature memories, capsules, checkpoints and retrieval indexes.
+Hermes carries instructions into DIAL development policy.
+
+Required scenario:
+
+```text
+Sol unavailable
+→ Hermes selects Sonnet fallback
+→ complex DIAL instruction arrives
+→ policy checks Manager Chair pool
+→ Fable/Opus/Sol selected if qualified
+→ otherwise COMPLEX_WORK_PAUSED
+```
+
+The Sonnet fallback runner can route/capture the complex instruction but must not execute the complex development merely because Sonnet is the active Hermes runtime.
+
+## 12. Context broker and handoff
+
+Before a Development Manager turn, the broker assembles bounded context from:
+
+- `context-get.mjs <FEATURE_ID>`;
+- active checkpoint;
+- Git status/diff;
+- handoff capsule;
+- relevant Feature memory;
+- selected historical session fragments only when needed.
+
+Handoffs record operational facts without hidden chain-of-thought and use explicit `previous_development_manager` metadata. Their authority warning states that Hermes runtime identity is not development authority.
 
 ## 13. Security boundaries
 
-- secrets/OAuth tokens are never committed;
-- Codex and Claude credentials live only in their native home/config locations;
-- runtime state directories must be private to the service account;
-- `:danger-no-sandbox` is prohibited;
-- initial Codex workspace permission profile is `:workspace`;
-- DIAL gate advancement remains deterministic and cannot be asserted by model text;
-- memory/capsules may not contain secrets;
-- destructive host commands require explicit allowlisting outside the model layer.
+- credentials/OAuth tokens are never committed;
+- Codex/Claude credentials remain in their native secure locations;
+- API/custom-provider credentials are referenced through secure storage, never persisted as values in registry state;
+- Feature memory, handoffs, instruction-routing evidence and qualification evidence may not contain secrets;
+- `:danger-no-sandbox` remains prohibited;
+- DIAL gate advancement remains deterministic;
+- destructive host commands require explicit allowlisting outside the model layer;
+- model policy cannot override financial/security evidence or immutable product controls.
 
 ## 14. Qualification gates
 
-The system is not active until all are demonstrated:
+### HERMES_RUNTIME_QUALIFICATION
 
-1. Hermes survives Codex process termination.
-2. requested and resolved Codex model identity are recorded and agree.
-3. Codex can read/write/test inside a disposable DIAL worktree.
-4. Codex turns persist into Hermes history.
-5. a fresh Codex thread can reconstruct work from checkpoint + capsule without full transcript replay.
-6. Codex manager failure triggers a Sonnet manager lease.
-7. Sonnet takeover verifies repository truth before editing.
-8. Claude/Fable exhaustion does not stop Codex-led orchestration.
-9. Codex capacity exhaustion preserves a resumable state and selects Claude only if Claude capacity is actually available.
-10. stale/corrupted memory cannot override repository truth.
-11. control-plane services recover after reboot.
-12. secrets are absent from Git and memory artifacts.
+Prove independently:
 
-Until this suite is green, the branch remains qualification-only and must not replace the existing development entry path.
+1. Sol healthy → Hermes uses Sol.
+2. Sol unavailable → Hermes may use Sonnet 5.
+3. requested/resolved identity is proven.
+4. Hermes survives/reconstructs after runtime process death.
+5. services recover after reboot.
+
+### DEVELOPMENT_MANAGER_POLICY_QUALIFICATION
+
+Prove independently:
+
+1. Sonnet-powered Hermes plus Fable available → Fable gets Manager Chair for complex work.
+2. Fable unavailable plus Opus available → Opus gets Manager Chair.
+3. all approved Manager Chair models unavailable while Sonnet/Terra/DeepSeek are healthy → `NO_QUALIFIED_MANAGER` and `COMPLEX_WORK_PAUSED`.
+4. bounded worker packets execute on eligible worker models.
+5. lesser models cannot convert a bounded packet into architecture authority.
+6. every registered model remains chat-visible.
+7. changing Hermes runtime identity does not silently mutate the Development Manager identity.
+
+Passing Hermes runtime failover does not imply Development Manager qualification.
+
+## 15. Operational activation
+
+Repository tests prove deterministic policy. Oracle must still provide live evidence for OAuth, installed runtime identity, process kill/recovery, Hermes fallback continuity, reboot, memory survival, a real bounded packet, safe recovery to Sol and the real provider-capacity soak where required.
+
+Until all mandatory live gates are complete, PR #1 remains draft and the control plane remains in qualification mode.
