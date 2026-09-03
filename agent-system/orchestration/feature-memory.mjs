@@ -45,11 +45,11 @@ function featureDir(featureId) {
   return `memory/features/${assertFeatureId(featureId)}`;
 }
 
-export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [], source = null, manager = null } = {}, root = DEFAULT_CONTROL_HOME) {
+export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [], source = null, development_manager = null } = {}, root = DEFAULT_CONTROL_HOME) {
   if (!TYPES.has(type)) throw new Error(`unsupported feature memory type: ${type}`);
-  assertNoSecretMaterial(manager, 'feature memory manager metadata');
+  assertNoSecretMaterial(development_manager, 'feature memory development-manager metadata');
   const record = {
-    schema_version: 1,
+    schema_version: 2,
     feature_id: assertFeatureId(featureId),
     type,
     text: bounded(text),
@@ -57,7 +57,7 @@ export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [],
       ? refs.slice(0, 20).map((r) => boundedField(r, 500, 'feature memory reference')).filter(Boolean)
       : [],
     source: source ? boundedField(source, 500, 'feature memory source') : null,
-    manager,
+    development_manager,
     recorded_at: new Date().toISOString(),
     authority: 'NON_AUTHORITATIVE_CONTEXT',
   };
