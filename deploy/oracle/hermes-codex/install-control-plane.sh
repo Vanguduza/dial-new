@@ -32,10 +32,10 @@ PY
 
 # Subscription route guard. Ambient API-key credentials can silently change billing/auth mode.
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then
-  fail "OPENAI_API_KEY/CODEX_API_KEY is present in this shell. Unset it before installing the ChatGPT-subscription runtime."
+  fail "OPENAI_API_KEY/CODEX_API_KEY is present in this shell. Unset it before installing the ChatGPT-subscription Hermes primary runtime."
 fi
 if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
-  fail "ANTHROPIC_API_KEY is present in this shell. Unset it before installing the Claude subscription failover runtime."
+  fail "ANTHROPIC_API_KEY is present in this shell. Unset it before installing the Claude subscription Hermes fallback runtime."
 fi
 if [[ -f "$HERMES_HOME/.env" ]] && grep -Eq '^[[:space:]]*(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)[[:space:]]*=[[:space:]]*[^[:space:]#]+' "$HERMES_HOME/.env"; then
   fail "$HERMES_HOME/.env contains an API-key assignment for a subscription-only control-plane provider. Remove that assignment from the Hermes gateway environment before installation."
@@ -61,9 +61,14 @@ end='<!-- DIAL_CONTROL_PLANE_END -->'
 block=f'''{start}
 DIAL control-plane invariants:
 - The DIAL repository, registries, tests and evidence are authoritative; memory never overrides them.
-- GPT-5.6 Sol via Codex App Server is the preferred manager only while an identity-proven healthy lease exists.
-- Claude Code Sonnet 5 is the cross-provider failover manager only after its own identity-proven health probe.
-- Models are replaceable lease-holders. DIAL's deterministic supervisor owns continuity, checkpoints and manager election.
+- Hermes runtime orchestration and DIAL software-development orchestration are separate systems.
+- Hermes is availability-first: GPT-5.6 Sol via Codex App Server is the primary Hermes runtime model; Claude Sonnet 5 is the Hermes fallback runtime model.
+- A Hermes runtime selection carries runtime-continuity authority only. Sonnet powering Hermes does NOT automatically authorise Sonnet to manage complex DIAL development.
+- DIAL development orchestration is quality-first. Default Manager Chair families are Fable, Claude Opus and GPT Sol as dynamically registered and available.
+- Sonnet, Terra, Luna and DeepSeek models are not default Manager Chair models; they may perform bounded work or become Manager Chair only through explicit user configuration.
+- If no qualified Manager Chair is available, checkpoint and preserve the mission and pause complex development rather than lowering the quality floor.
+- DeepSeek Harness remains a first-class bounded development execution harness.
+- Model identity, runtime/harness identity, chat visibility and orchestration authority are separate concepts.
 - Verify handoff capsules and retrieved memories against current Git/canon before acting.
 - Never advance a DIAL gate from model prose or cached memory alone.
 - Never put credentials, OAuth tokens, API keys or passwords into DIAL/Hermes memory.
@@ -88,7 +93,7 @@ CONFIG="$HERMES_HOME/config.yaml"
 [[ -f "$CONFIG" ]] || printf '{}\n' >"$CONFIG"
 chmod 600 "$CONFIG"
 
-# Preserve existing Hermes configuration while locking the DIAL primary runtime and hooks.
+# Preserve existing Hermes configuration while locking the DIAL primary Hermes runtime and hooks.
 python3 - "$CONFIG" "$PRE_HOOK" "$POST_HOOK" <<'PY'
 import sys,yaml
 p,pre,post=sys.argv[1:]
@@ -238,4 +243,9 @@ Codex MCP/plugin migration. The installer intentionally does not call private mi
 
 Then run:
   bash deploy/oracle/hermes-codex/qualify-control-plane.sh
+
+Qualification treats these as separate gates:
+  HERMES_RUNTIME_QUALIFICATION
+  DEVELOPMENT_MANAGER_POLICY_QUALIFICATION
+Passing Sonnet fallback runtime qualification never grants Sonnet Development Manager Chair authority.
 EOF
