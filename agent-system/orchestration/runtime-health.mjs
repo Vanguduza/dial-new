@@ -61,11 +61,18 @@ export function healthFresh(health, { maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_
 
 export function runtimeEligible(
   health,
-  { hardPin = true, requireFresh = true, maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS, nowMs = Date.now() } = {},
+  {
+    hardPin = true,
+    requireFresh = true,
+    requireToolchain = true,
+    maxAgeMs = DEFAULT_RUNTIME_HEALTH_MAX_AGE_MS,
+    nowMs = Date.now(),
+  } = {},
 ) {
   const h = normalizeRuntimeHealth(health);
   if (h.state !== 'HEALTHY') return false;
   if (hardPin && !modelIdentityMatches(h)) return false;
+  if (requireToolchain && h.details?.toolchain_usable !== true) return false;
   if (requireFresh && !healthFresh(health, { maxAgeMs, nowMs })) return false;
   return true;
 }
