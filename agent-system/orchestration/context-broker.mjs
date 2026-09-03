@@ -71,7 +71,7 @@ function readDecisionHints(repoDir, featureId) {
   }
 }
 
-export async function buildManagerContext({ repoDir = DEFAULT_REPO, userMessage = '', root } = {}) {
+export async function buildDevelopmentManagerContext({ repoDir = DEFAULT_REPO, userMessage = '', root } = {}) {
   const checkpoint = readJson('state/active-checkpoint.json', null, root);
   const checkpointValue = checkpoint?.path ? readJson(checkpoint.path, null, root) : null;
   const featureId = resolveFeatureId({ userMessage, repoDir, checkpoint: checkpointValue });
@@ -81,15 +81,27 @@ export async function buildManagerContext({ repoDir = DEFAULT_REPO, userMessage 
   const decisions = readDecisionHints(repoDir, featureId);
   const featureMemory = featureId ? readFeatureMemory(featureId, { limit: 20 }, root) : null;
   const memoryHits = await searchHermesHistory(featureId || userMessage.slice(0, 120));
-  const lease = readJson('state/manager-lease.json', null, root);
+  const developmentManager = readJson('state/development-manager.json', null, root);
+  const hermesRuntime = readJson('state/hermes-runtime.json', null, root);
 
   const packet = [
-    'DIAL CONTROL-PLANE CONTEXT',
+    'DIAL DEVELOPMENT MANAGER CONTEXT',
     '',
-    'Authority order: DIAL canon/registries/evidence > Git/worktree > checkpoint > handoff capsule > Feature memory > Hermes session history.',
-    'Never advance a gate from model assertion or memory. Verify repository state before acting.',
+    'Authority order:',
+    '1. DIAL canonical repository',
+    '2. machine registries and evidence',
+    '3. current Git/worktree state',
+    '4. DIAL orchestration checkpoint',
+    '5. handoff capsule',
+    '6. Feature-scoped Oracle memory',
+    '7. Hermes session/history retrieval',
+    '8. historical conversational material',
+    '',
+    'A lower layer may never override a higher layer. Never advance a gate from model assertion or memory.',
+    'Hermes runtime identity is continuity context only and does not grant Development Manager Chair authority.',
     featureId ? `Active Feature ID: ${featureId}` : 'Active Feature ID: none resolved; do not perform material implementation until one is resolved.',
-    lease ? `Manager lease: ${JSON.stringify(lease)}` : 'Manager lease: none recorded.',
+    developmentManager ? `Development Manager Chair assignment: ${JSON.stringify(developmentManager)}` : 'Development Manager Chair assignment: none recorded.',
+    hermesRuntime ? `Hermes runtime selection (runtime-only authority): ${JSON.stringify(hermesRuntime)}` : 'Hermes runtime selection: none recorded.',
     '',
     `Observed Git state: ${JSON.stringify(gitState)}`,
     checkpointValue ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpointValue, null, 2), 5000)}` : '',
@@ -112,6 +124,10 @@ export async function buildManagerContext({ repoDir = DEFAULT_REPO, userMessage 
   };
 }
 
+// Compatibility alias for callers that used the old generic name. The generated
+// packet is explicitly a Development Manager Chair packet, not a Hermes runtime packet.
+export const buildManagerContext = buildDevelopmentManagerContext;
+
 async function readStdin() {
   let input = '';
   for await (const chunk of process.stdin) input += chunk;
@@ -124,7 +140,7 @@ async function main() {
   const payload = hook ? await readStdin() : {};
   const repoDir = process.env.DIAL_REPO_DIR || process.cwd();
   const userMessage = payload.user_message ?? payload.message ?? process.env.DIAL_USER_MESSAGE ?? '';
-  const result = await buildManagerContext({ repoDir, userMessage });
+  const result = await buildDevelopmentManagerContext({ repoDir, userMessage });
   if (hook) {
     process.stdout.write(`${JSON.stringify({ context: result.context })}\n`);
   } else {
