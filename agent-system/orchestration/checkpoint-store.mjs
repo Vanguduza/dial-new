@@ -86,6 +86,13 @@ export function saveCheckpoint(checkpoint, root) {
   const activeRel = `checkpoints/active/${name}`;
   archiveJson(activeRel, `checkpoints/archive/${checkpoint.feature_id || 'unscoped'}`, root);
   writeJsonAtomic(activeRel, checkpoint, root);
+  // HOT memory is a disposable acceleration copy of the latest checkpoint. It
+  // never becomes authoritative over the checkpoint/repository itself.
+  writeJsonAtomic(`memory/hot/${name}`, {
+    ...checkpoint,
+    authority: 'NON_AUTHORITATIVE_CONTEXT',
+    source_checkpoint: activeRel,
+  }, root);
   writeJsonAtomic('state/active-checkpoint.json', {
     feature_id: checkpoint.feature_id,
     path: activeRel,
