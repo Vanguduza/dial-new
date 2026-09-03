@@ -1,4 +1,5 @@
 import { archiveJson, readJson, writeJsonAtomic } from './state-store.mjs';
+import { appendFeatureMemory, updateFeatureSummary } from './feature-memory.mjs';
 
 const MAX_TEXT = 4000;
 const MAX_LIST = 24;
@@ -47,6 +48,19 @@ function name(featureId) {
   return `${featureId || 'unscoped'}.json`;
 }
 
+function handoffMemoryText(capsule) {
+  return [
+    capsule.objective ? `Objective: ${capsule.objective}` : null,
+    capsule.completed?.length ? `Completed: ${capsule.completed.join('; ')}` : null,
+    capsule.active_unit ? `Active unit: ${capsule.active_unit}` : null,
+    capsule.remaining?.length ? `Remaining: ${capsule.remaining.join('; ')}` : null,
+    capsule.important_decisions?.length ? `Decisions: ${capsule.important_decisions.join('; ')}` : null,
+    capsule.known_risks?.length ? `Risks: ${capsule.known_risks.join('; ')}` : null,
+    capsule.failures?.length ? `Failures: ${capsule.failures.join('; ')}` : null,
+    capsule.next_action ? `Next: ${capsule.next_action}` : null,
+  ].filter(Boolean).join('\n');
+}
+
 export function saveHandoffCapsule(capsule, root) {
   const activeRel = `capsules/active/${name(capsule.feature_id)}`;
   archiveJson(activeRel, `capsules/archive/${capsule.feature_id || 'unscoped'}`, root);
@@ -56,6 +70,20 @@ export function saveHandoffCapsule(capsule, root) {
     path: activeRel,
     created_at: capsule.created_at,
   }, root);
+
+  if (capsule.feature_id) {
+    const text = handoffMemoryText(capsule);
+    if (text) {
+      appendFeatureMemory(capsule.feature_id, {
+        type: 'HANDOFF',
+        text,
+        refs: [activeRel, ...(capsule.evidence_refs ?? [])],
+        source: 'handoff-capsule',
+        manager: capsule.previous_manager ?? null,
+      }, root);
+      updateFeatureSummary(capsule.feature_id, text, root);
+    }
+  }
   return capsule;
 }
 
