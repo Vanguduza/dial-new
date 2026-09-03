@@ -98,6 +98,9 @@ const SHELL_AND_TOOLING = new Set([
   'apps/preview-player/lib/next-error-fallback.tsx',
   // Shared test fixture, not production source.
   'tests/helpers/scene-fixture.ts',
+  // DIAL orchestration control-plane qualification. This tests operator
+  // infrastructure under agent-system/, not a customer Feature/Capability.
+  'tests/orchestration-control-plane.test.mjs',
   'apps/cli/src/index.ts',
   'workers/visual-generation-worker/src/index.ts',
   'playwright.config.ts',
