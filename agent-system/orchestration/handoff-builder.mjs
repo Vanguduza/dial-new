@@ -1,5 +1,5 @@
 import { archiveJson, readJson, writeJsonAtomic } from './state-store.mjs';
-import { appendFeatureMemory, updateFeatureSummary } from './feature-memory.mjs';
+import { appendFeatureMemory, assertNoSecretMaterial, updateFeatureSummary } from './feature-memory.mjs';
 
 const MAX_TEXT = 4000;
 const MAX_LIST = 24;
@@ -7,6 +7,7 @@ const MAX_LIST = 24;
 function cleanText(value, limit = MAX_TEXT) {
   if (value == null) return null;
   const text = String(value).replace(/\u0000/g, '').trim();
+  assertNoSecretMaterial(text, 'handoff capsule');
   return text.length > limit ? `${text.slice(0, limit)}…` : text;
 }
 
@@ -17,6 +18,7 @@ function cleanList(values) {
 
 export function buildHandoffCapsule(checkpoint, input = {}) {
   if (!checkpoint) throw new Error('checkpoint is required');
+  assertNoSecretMaterial(checkpoint.manager, 'handoff manager metadata');
   return {
     schema_version: 1,
     feature_id: checkpoint.feature_id ?? null,
@@ -26,7 +28,7 @@ export function buildHandoffCapsule(checkpoint, input = {}) {
       commit: checkpoint.repository?.commit ?? null,
       branch: checkpoint.repository?.branch ?? null,
       dirty: Boolean(checkpoint.repository?.dirty),
-      dirty_paths: checkpoint.repository?.dirty_paths ?? [],
+      dirty_paths: cleanList(checkpoint.repository?.dirty_paths ?? []),
     },
     target_gate: checkpoint.target_gate ?? null,
     last_green_gate: checkpoint.gates?.last_green ?? null,
@@ -62,6 +64,7 @@ function handoffMemoryText(capsule) {
 }
 
 export function saveHandoffCapsule(capsule, root) {
+  assertNoSecretMaterial(capsule, 'handoff capsule');
   const activeRel = `capsules/active/${name(capsule.feature_id)}`;
   archiveJson(activeRel, `capsules/archive/${capsule.feature_id || 'unscoped'}`, root);
   writeJsonAtomic(activeRel, capsule, root);
