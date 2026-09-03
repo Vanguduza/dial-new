@@ -1,92 +1,122 @@
 import crypto from 'node:crypto';
-import { managerEligible, normalizeRuntimeHealth } from './runtime-health.mjs';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
+import {
+  classifyDevelopmentTask,
+  isManagerChairModel,
+  loadDevelopmentPolicy,
+  markComplexWorkPaused,
+  selectDevelopmentManager,
+} from './development-policy.mjs';
+import { bestAvailableBinding, loadModelRegistry } from './model-registry.mjs';
 
-export const DEFAULT_MANAGER_POLICY = Object.freeze([
-  {
-    runtime: 'codex_app_server',
-    requested_model: 'gpt-5.6-sol',
-    role: 'PRIMARY_MANAGER',
-    hard_pin: true,
-    rank: 10,
-  },
-  {
-    runtime: 'claude_code',
-    requested_model: 'claude-sonnet-5',
-    role: 'FAILOVER_MANAGER',
-    hard_pin: true,
-    rank: 20,
-  },
-]);
+function now() { return new Date().toISOString(); }
 
-export function loadAvailability(root) {
-  return readJson('state/model-availability.json', { schema_version: 1, runtimes: {} }, root);
+export function loadDevelopmentManager(root) {
+  return readJson('state/development-manager.json', null, root);
 }
 
-export function recordRuntimeHealth(runtime, health, root) {
-  const current = loadAvailability(root);
-  current.schema_version = 1;
-  current.updated_at = new Date().toISOString();
-  current.runtimes[runtime] = normalizeRuntimeHealth({ ...health, runtime });
-  writeJsonAtomic('state/model-availability.json', current, root);
-  appendJsonl('events/runtime-health.jsonl', current.runtimes[runtime], root);
-  return current.runtimes[runtime];
-}
-
-export function selectManager(availability, policy = DEFAULT_MANAGER_POLICY) {
-  const runtimes = availability?.runtimes ?? {};
-  for (const candidate of [...policy].sort((a, b) => a.rank - b.rank)) {
-    const health = runtimes[candidate.runtime];
-    if (!health) continue;
-    if (!managerEligible(health, { hardPin: candidate.hard_pin })) continue;
-    if (health.requested_model !== candidate.requested_model) continue;
-    return { ...candidate, health };
+export function issueDevelopmentManagerAssignment({
+  candidate,
+  feature_id = null,
+  worktree = null,
+  atomic_unit = null,
+  previous_assignment_id = null,
+} = {}, root) {
+  if (!candidate?.model) throw new Error('development Manager Chair candidate is required');
+  const policy = loadDevelopmentPolicy(root);
+  if (!isManagerChairModel(candidate.model, policy)) {
+    throw new Error(`model is not configured for Manager Chair authority: ${candidate.model.model_id}`);
   }
-  return null;
-}
-
-export function issueManagerLease({ candidate, feature_id = null, worktree = null, atomic_unit = null, previous_lease_id = null }, root) {
-  if (!candidate) throw new Error('manager candidate is required');
-  if (!managerEligible(candidate.health, { hardPin: candidate.hard_pin ?? true })) {
-    throw new Error('manager candidate does not have fresh identity-proven HEALTHY runtime evidence');
-  }
-  if (candidate.health?.requested_model !== candidate.requested_model) {
-    throw new Error('manager candidate policy/model does not match runtime health evidence');
+  const binding = candidate.binding ?? bestAvailableBinding(candidate.model);
+  if (!binding || binding.availability !== 'AVAILABLE') {
+    throw new Error('development Manager Chair candidate requires an AVAILABLE runtime binding');
   }
 
-  const now = new Date().toISOString();
-  const lease = {
+  const assignment = {
     schema_version: 1,
-    lease_id: crypto.randomUUID(),
-    role: 'DIAL_MANAGER',
-    runtime: candidate.runtime,
-    requested_model: candidate.requested_model,
-    resolved_model: candidate.health?.resolved_model ?? null,
-    health_state: candidate.health?.state ?? null,
-    health_observed_at: candidate.health?.observed_at ?? null,
+    assignment_id: crypto.randomUUID(),
+    role: 'DEVELOPMENT_MANAGER_CHAIR',
+    authority: 'COMPLEX_DEVELOPMENT',
+    model_id: candidate.model.model_id,
+    display_name: candidate.model.display_name,
+    provider: candidate.model.provider,
+    runtime_id: binding.runtime_id,
+    connection_id: binding.connection_id ?? null,
     feature_id,
     worktree,
     atomic_unit,
     status: 'ACTIVE',
-    acquired_at: now,
-    previous_lease_id,
+    acquired_at: now(),
+    previous_assignment_id,
     renewal_boundary: 'ATOMIC_UNIT',
   };
-  writeJsonAtomic('state/manager-lease.json', lease, root);
-  appendJsonl('events/manager-leases.jsonl', { event: 'LEASE_ISSUED', ...lease }, root);
-  return lease;
+  writeJsonAtomic('state/development-manager.json', assignment, root);
+  appendJsonl('events/development-manager.jsonl', { event: 'DEVELOPMENT_MANAGER_ASSIGNED', ...assignment }, root);
+  return assignment;
 }
 
-export function expireManagerLease(reason = 'UNSPECIFIED', root) {
-  const existing = readJson('state/manager-lease.json', null, root);
-  if (!existing) return null;
+export function expireDevelopmentManagerAssignment(reason = 'UNSPECIFIED', root) {
+  const existing = loadDevelopmentManager(root);
+  if (!existing || existing.status !== 'ACTIVE') return existing;
   const expired = {
     ...existing,
     status: 'EXPIRED',
-    expired_at: new Date().toISOString(),
+    expired_at: now(),
     expiration_reason: reason,
   };
-  writeJsonAtomic('state/manager-lease.json', expired, root);
-  appendJsonl('events/manager-leases.jsonl', { event: 'LEASE_EXPIRED', ...expired }, root);
+  writeJsonAtomic('state/development-manager.json', expired, root);
+  appendJsonl('events/development-manager.jsonl', { event: 'DEVELOPMENT_MANAGER_EXPIRED', ...expired }, root);
   return expired;
+}
+
+export function electDevelopmentManager({
+  root,
+  feature_id = null,
+  worktree = null,
+  atomic_unit = null,
+  task = { kind: 'orchestration_decision' },
+} = {}) {
+  if (classifyDevelopmentTask(task) !== 'COMPLEX') {
+    throw new Error('development Manager Chair election is only required for complex work');
+  }
+  const previous = loadDevelopmentManager(root);
+  const candidate = selectDevelopmentManager({ root });
+  if (!candidate) {
+    if (previous?.status === 'ACTIVE') expireDevelopmentManagerAssignment('NO_QUALIFIED_MANAGER', root);
+    const paused = markComplexWorkPaused({ reason: 'NO_QUALIFIED_MANAGER', task }, root);
+    return { elected: false, paused: true, reason: 'NO_QUALIFIED_MANAGER', state: paused };
+  }
+  if (
+    previous?.status === 'ACTIVE'
+    && previous.model_id === candidate.model.model_id
+    && previous.runtime_id === candidate.binding.runtime_id
+  ) {
+    return { elected: true, changed: false, assignment: previous };
+  }
+  if (previous?.status === 'ACTIVE') expireDevelopmentManagerAssignment('MANAGER_CHAIR_REELECTION', root);
+  const assignment = issueDevelopmentManagerAssignment({
+    candidate,
+    feature_id,
+    worktree,
+    atomic_unit,
+    previous_assignment_id: previous?.assignment_id ?? null,
+  }, root);
+  return { elected: true, changed: true, assignment };
+}
+
+export function developmentManagerStatus(root) {
+  const registry = loadModelRegistry(root);
+  const policy = loadDevelopmentPolicy(root);
+  const current = loadDevelopmentManager(root);
+  const candidate = selectDevelopmentManager({ root, policy });
+  return {
+    current,
+    qualified_manager_available: Boolean(candidate),
+    next_candidate: candidate ? {
+      model_id: candidate.model.model_id,
+      display_name: candidate.model.display_name,
+      runtime_id: candidate.binding.runtime_id,
+    } : null,
+    registered_models: Object.keys(registry.models ?? {}).length,
+  };
 }
