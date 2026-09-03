@@ -1,4 +1,5 @@
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
+import { syncRuntimeBindingsHealth } from './runtime-model-sync.mjs';
 
 export const RUNTIME_STATES = Object.freeze([
   'HEALTHY',
@@ -80,7 +81,6 @@ export function managerEligible(health, options = {}) {
 export function loadRuntimeHealth(root) {
   const current = readJson('state/runtime-health.json', null, root);
   if (current) return current;
-  // One-way semantic migration from the earlier conflated filename.
   const legacy = readJson('state/model-availability.json', null, root);
   if (legacy) {
     const migrated = { schema_version: 1, runtimes: legacy.runtimes ?? {}, updated_at: legacy.updated_at ?? new Date().toISOString() };
@@ -98,5 +98,9 @@ export function recordRuntimeHealth(runtime, health, root) {
   current.runtimes[runtime] = normalizeRuntimeHealth({ ...health, runtime });
   writeJsonAtomic('state/runtime-health.json', current, root);
   appendJsonl('events/runtime-health.jsonl', { event: 'RUNTIME_HEALTH_RECORDED', ...current.runtimes[runtime] }, root);
+  // If a model is already registered through this runtime, its user-visible
+  // availability follows the latest runtime evidence. Unavailable models remain
+  // in the registry; only their state changes.
+  syncRuntimeBindingsHealth(runtime, current.runtimes[runtime], root);
   return current.runtimes[runtime];
 }
