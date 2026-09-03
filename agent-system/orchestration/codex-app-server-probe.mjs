@@ -4,7 +4,8 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, writeJsonAtomic } from './state-store.mjs';
-import { recordRuntimeHealth } from './manager-router.mjs';
+import { recordRuntimeHealth } from './runtime-health.mjs';
+import { registerConnection, registerRuntime, syncModelBindingFromRuntimeHealth } from './model-registry.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -142,12 +143,38 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
 
   writeJsonAtomic('runtime-health/codex-app-server-probe.json', probe, root);
   appendJsonl('events/runtime-probes.jsonl', probe, root);
-  recordRuntimeHealth('codex_app_server', {
+  const health = recordRuntimeHealth('codex_app_server', {
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
     reason: error ? JSON.stringify(error).slice(0, 2000) : (identityProven ? 'direct app-server probe passed' : 'model identity not proven'),
     details: { rerouted: Boolean(reroute), response_ok: responseOk, thread_id: thread?.id ?? null },
+  }, root);
+
+  registerConnection({
+    connection_id: 'codex-chatgpt-subscription',
+    type: 'CODEX_CHATGPT_SUBSCRIPTION',
+    name: 'Codex / ChatGPT subscription',
+    auth_state: state === 'AUTH_FAILED' ? 'AUTH_REQUIRED' : 'AUTHENTICATED_OR_NOT_REQUIRED',
+    discovery_supported: false,
+  }, root);
+  registerRuntime({
+    runtime_id: 'codex_app_server',
+    display_name: 'Codex App Server',
+    harness: 'Codex App Server / Codex CLI',
+    connection_id: 'codex-chatgpt-subscription',
+    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
+    health: state,
+    last_probe: health.observed_at,
+  }, root);
+  syncModelBindingFromRuntimeHealth({
+    model_id: resolvedModel ?? REQUESTED_MODEL,
+    display_name: resolvedModel ?? REQUESTED_MODEL,
+    provider: 'OpenAI',
+    runtime_id: 'codex_app_server',
+    connection_id: 'codex-chatgpt-subscription',
+    health,
+    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
   }, root);
   return probe;
 }
