@@ -8,13 +8,40 @@ This record tracks the Hermes/Oracle qualification branch only. It does not adva
 
 ```text
 REPOSITORY_IMPLEMENTED
-CURRENT_HEAD_CI_REQUIRED
+CURRENT_HEAD_CI_GREEN
 ORACLE_NOT_DEPLOYED
 RUNTIME_NOT_QUALIFIED
 SOAK_NOT_COMPLETE
 ```
 
 `PRODUCTION_GREEN` has not been reached.
+
+## Current-head CI evidence
+
+GitHub Actions workflow `verify` is the live authority. A prior green SHA is not reused after a later commit.
+
+Recorded 2026-09-03 against `bd2816d98573c367bec8ca9ebbda6ab01c35fde1`:
+
+- GitHub Actions `verify` run [33786133089](https://github.com/Vanguduza/dial-new/actions/runs/33786133089): success
+  - gates, types and unit suites: success
+  - pipeline produces a conforming pack: success
+  - customer transition contract: success
+- Local re-verification on the same tree:
+  - `npm ci`
+  - `npm run typecheck`
+  - `npm run agent:orchestration:qualify` — 14 passed
+  - `npm run verify` — 343 passed
+  - `node --check` for `agent-system/orchestration/*.mjs`
+  - `bash -n` for `deploy/oracle/hermes-codex/*.sh` and hooks
+  - `git diff --check origin/master...HEAD`
+
+This evidence commit itself must keep `verify` green on the resulting PR head.
+
+## Architecture-contamination review
+
+Reviewed this branch against the locked exclusion boundary. The PR diff does not implement a DDE model registry, Command Centre model picker, Settings → Models UI, Manager Chair, Lesser Task Pool, DeepSeek Harness settings, custom API provider UI, or generalized development-model routing. Those names appear only as explicit exclusions in `DIAL_HERMES_RUNTIME_BOUNDARY.md`.
+
+This review is repository-diff evidence only. It does not satisfy Oracle host, installed-runtime, soak, or secret-audit gates.
 
 ## Repository implementation present
 
