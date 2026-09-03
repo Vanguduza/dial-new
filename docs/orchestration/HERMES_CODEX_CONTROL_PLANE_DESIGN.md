@@ -70,10 +70,11 @@ Archived raw sessions, superseded capsules, detailed logs and historical investi
 3. Current Git/worktree state
 4. DIAL orchestration checkpoint
 5. Handoff capsule
-6. Hermes retrieved memory
-7. Historical conversational material
+6. Feature-scoped Oracle memory
+7. Hermes session/history retrieval
+8. Historical conversational material
 
-A lower layer may never override a higher layer.
+A lower layer may never override a higher layer. Memory is an accelerator, not authority.
 
 ## 5. Manager lease
 
@@ -88,10 +89,10 @@ Required fields:
 - worktree
 - atomic unit
 - acquired timestamp
-- health state
+- health state and health observation timestamp
 - expiry/renewal boundary
 
-A lease is invalid if the resolved model differs from the requested model when a hard model pin is required.
+A lease is invalid if the resolved model differs from the requested model when a hard model pin is required. New leases require fresh identity-proven runtime health evidence; persisted pre-restart health cannot authorize a new manager lease.
 
 ## 6. Preferred manager policy
 
