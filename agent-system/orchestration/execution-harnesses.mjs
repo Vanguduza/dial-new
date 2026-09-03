@@ -81,11 +81,29 @@ export function validateWorkerPacket(packet) {
   if (packet.recursive_delegation_allowed) throw new Error('recursive worker delegation is disabled by default');
   const required = ['objective', 'scope', 'allowed_paths', 'acceptance_criteria', 'expected_evidence', 'authority_limit', 'manager_provenance'];
   for (const field of required) if (packet[field] == null) throw new Error(`worker packet missing ${field}`);
+  if (!packet.manager_provenance?.model_id || !packet.manager_provenance?.assignment_id) {
+    throw new Error('worker packet requires Manager Chair model_id and assignment_id provenance');
+  }
   return true;
+}
+
+function assertActiveManagerProvenance(packet, root) {
+  const active = readJson('state/development-manager.json', null, root);
+  if (!active || active.status !== 'ACTIVE' || active.role !== 'DEVELOPMENT_MANAGER_CHAIR') {
+    throw new Error('bounded worker execution requires an active Development Manager Chair assignment');
+  }
+  if (
+    packet.manager_provenance.assignment_id !== active.assignment_id
+    || packet.manager_provenance.model_id !== active.model_id
+  ) {
+    throw new Error('worker packet Manager Chair provenance does not match the active development assignment');
+  }
+  return active;
 }
 
 export async function executeWorkerPacket({ model_id, packet, root, executor } = {}) {
   validateWorkerPacket(packet);
+  const activeManager = assertActiveManagerProvenance(packet, root);
   if (typeof executor !== 'function') throw new Error('worker executor is required');
   const registry = loadModelRegistry(root);
   const model = registry.models?.[model_id];
@@ -97,13 +115,14 @@ export async function executeWorkerPacket({ model_id, packet, root, executor } =
   const binding = bestAvailableBinding(model);
   if (!binding) throw new Error(`model has no AVAILABLE runtime binding: ${model_id}`);
   const started_at = now();
-  const result = await executor({ model, binding, packet });
+  const result = await executor({ model, binding, packet, activeManager });
   const event = {
     event: 'WORKER_PACKET_EXECUTED',
     model_id,
     runtime_id: binding.runtime_id,
     manager_provenance: packet.manager_provenance,
     authority_limit: packet.authority_limit,
+    recursive_delegation_allowed: false,
     started_at,
     finished_at: now(),
   };
