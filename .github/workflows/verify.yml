@@ -47,6 +47,11 @@ jobs:
       - name: npm run verify
         run: npm run verify
 
+      # Orchestration infrastructure is intentionally outside the product Feature
+      # source map, so qualify its deterministic primitives explicitly as a CI gate.
+      - name: orchestration control-plane primitives
+        run: npm run agent:orchestration:qualify
+
       # The manifest declares every pack file by hash. If regenerating it
       # produces a different file, someone changed pack content without
       # regenerating — the v2.1 overlay defect, which dropped 181 files while
