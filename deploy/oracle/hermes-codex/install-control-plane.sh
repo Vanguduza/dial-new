@@ -31,8 +31,8 @@ codex_status="$(codex login status 2>&1 || true)"
 [[ "$codex_status" == *"Logged in using ChatGPT"* ]] || fail "Codex must use ChatGPT subscription OAuth. Current status: $codex_status"
 claude auth status >/dev/null 2>&1 || fail "Claude Code must be authenticated through the supported Claude subscription route."
 
-mkdir -p "$HERMES_HOME/agent-hooks" "$HOME/.config/systemd/user" "$CODEX_HOME"
-chmod 700 "$HERMES_HOME" "$HERMES_HOME/agent-hooks" "$CODEX_HOME" 2>/dev/null || true
+mkdir -p "$HERMES_HOME/agent-hooks" "$HOME/.config/systemd/user" "$CODEX_HOME" "$HOME/.local/bin"
+chmod 700 "$HERMES_HOME" "$HERMES_HOME/agent-hooks" "$CODEX_HOME" "$HOME/.local/bin" 2>/dev/null || true
 
 MEMORY="$HERMES_HOME/MEMORY.md"; touch "$MEMORY"
 python3 - "$MEMORY" <<'PY'
@@ -43,8 +43,9 @@ DIAL Hermes external-runtime invariants:
 - The DIAL repository, registries, tests and evidence are authoritative; memory never overrides them.
 - Hermes is a persistent external runtime/control layer, not a second source of truth.
 - Preferred Hermes runtime: GPT-5.6 Sol through Codex App Server.
-- Operational fallback Hermes runtime: Claude Sonnet 5 through official Claude Code.
+- Operational fallback Hermes runtime: Claude Sonnet 5 through official Claude Code CLI.
 - Runtime fallback is an availability mechanism only and does not redefine DIAL development governance.
+- The DIAL runtime executor owns Sol-to-Sonnet failover; do not replace it with an Anthropic API fallback route.
 - Checkpoints, handoffs and Feature memory are continuity context and must be verified against current Git/canon.
 - Never advance a DIAL gate from model prose, cached memory or a previous session alone.
 - Never persist credentials, OAuth tokens, API keys, passwords, private SSH keys or secret environment files in DIAL/Hermes memory.
@@ -63,6 +64,10 @@ python3 - "$CONFIG" "$PRE_HOOK" "$POST_HOOK" <<'PY'
 import sys,yaml
 p,pre,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; model=cfg.setdefault('model',{})
 model['provider']='openai-codex'; model['default']='gpt-5.6-sol'; model['openai_runtime']='codex_app_server'; cfg['hooks_auto_accept']=False
+# DIAL intentionally does not use Hermes' built-in Anthropic fallback. The locked
+# fallback route invokes the official Claude Code CLI so Claude subscription auth
+# remains the execution path instead of silently becoming API billing.
+cfg['fallback_providers']=[]; cfg.pop('fallback_model',None)
 hooks=cfg.setdefault('hooks',{})
 for event,command,timeout in [('pre_llm_call',pre,12),('post_llm_call',post,12)]:
     entries=[e for e in hooks.setdefault(event,[]) if not (isinstance(e,dict) and e.get('command')==command)]; entries.append({'command':command,'timeout':timeout}); hooks[event]=entries
@@ -92,6 +97,15 @@ for key,value in [('model','gpt-5.6-sol'),('default_permissions',':workspace')]:
 open(p,'w',encoding='utf-8').write(text)
 PY
 
+cat >"$HOME/.local/bin/dial-hermes" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_REPO_DIR="${DIAL_REPO_DIR}"
+export DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME}"
+exec "$(command -v node)" "${DIAL_REPO_DIR}/agent-system/orchestration/hermes-runtime-executor.mjs" "\$@"
+EOF
+chmod 0700 "$HOME/.local/bin/dial-hermes"
+
 mkdir -p "$DIAL_CONTROL_HOME"; chmod 700 "$DIAL_CONTROL_HOME"
 node "$DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs" init >/dev/null
 NODE_BIN="$(command -v node)"; HERMES_BIN="$(command -v hermes)"
@@ -105,13 +119,15 @@ Type=simple
 WorkingDirectory=$DIAL_REPO_DIR
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=HERMES_HOME=$HERMES_HOME
+Environment=CODEX_HOME=$CODEX_HOME
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs daemon
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ReadWritePaths=$DIAL_CONTROL_HOME $DIAL_REPO_DIR
+ReadWritePaths=$DIAL_CONTROL_HOME $DIAL_REPO_DIR $HERMES_HOME $CODEX_HOME -$HOME/.claude -$HOME/.config/claude
 [Install]
 WantedBy=default.target
 EOF
@@ -124,6 +140,7 @@ Wants=network-online.target
 Type=simple
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=HERMES_HOME=$HERMES_HOME
 ExecStart=$HERMES_BIN dashboard --host 127.0.0.1 --port 9119 --no-open
 Restart=on-failure
 RestartSec=5
@@ -134,9 +151,34 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now dial-hermes-runtime.service
 if "$HERMES_BIN" dashboard --help >/dev/null 2>&1; then systemctl --user enable --now hermes-dial-dashboard.service || warn "Hermes dashboard could not start; session search remains degraded."; fi
+
 hermes gateway install || warn "Hermes gateway install did not complete; run it manually after authentication."
-hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
+GATEWAY_UNIT="$(systemctl --user list-unit-files --type=service --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
+if [[ -n "$GATEWAY_UNIT" ]]; then
+  mkdir -p "$HOME/.config/systemd/user/${GATEWAY_UNIT}.d"
+  cat >"$HOME/.config/systemd/user/${GATEWAY_UNIT}.d/dial-recovery.conf" <<'EOF'
+[Unit]
+StartLimitIntervalSec=0
+[Service]
+Restart=on-failure
+RestartSec=5
+EOF
+  systemctl --user daemon-reload
+  systemctl --user enable --now "$GATEWAY_UNIT" || warn "Hermes gateway unit $GATEWAY_UNIT could not be enabled yet."
+else
+  warn "Hermes gateway systemd unit was not discovered; process-recovery soak will remain blocked until it exists."
+  hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
+fi
+
 cat <<'EOF'
+
+DIAL OPERATIONAL ENTRYPOINT:
+  dial-hermes "<instruction>"
+
+This entrypoint attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a
+classified runtime failure it checkpoints observable repository state and
+continues through official Claude Code / claude-sonnet-5. It never substitutes
+Hermes' Anthropic API fallback for the locked Claude Code subscription route.
 
 NEXT REQUIRED INTERACTIVE HERMES ACTION:
   Start Hermes in /srv/dial/repo and run:
@@ -146,5 +188,6 @@ NEXT REQUIRED INTERACTIVE HERMES ACTION:
 Then run:
   bash deploy/oracle/hermes-codex/qualify-control-plane.sh
 
-Qualification proves the installed Hermes runtime path. It does not redefine DIAL repository governance and does not manufacture provider quota exhaustion.
+Qualification proves the installed runtime paths. Process/reboot soak remains a
+separate live gate and provider quota must not be deliberately exhausted.
 EOF
