@@ -49,6 +49,7 @@
     "agent:orchestration:capture": "node agent-system/orchestration/supervisor.mjs capture",
     "agent:orchestration:handoff": "node agent-system/orchestration/supervisor.mjs handoff",
     "agent:orchestration:context": "node agent-system/orchestration/context-broker.mjs",
+    "agent:orchestration:run": "node agent-system/orchestration/hermes-runtime-executor.mjs",
     "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs"
   },
   "dependencies": {
