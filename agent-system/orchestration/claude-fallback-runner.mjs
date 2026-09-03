@@ -3,12 +3,13 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
+import { recordRuntimeHealth } from './runtime-health.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const MODEL = 'claude-sonnet-5';
 
-const HERMES_SUPPORT_TOOLS = [
+const QUALIFICATION_TOOLS = [
   'Read',
   'Glob',
   'Grep',
@@ -18,12 +19,27 @@ const HERMES_SUPPORT_TOOLS = [
   'Bash(git diff*)',
 ];
 
+const OPERATIONAL_TOOLS = [
+  'Read',
+  'Glob',
+  'Grep',
+  'Edit',
+  'Write',
+  'Bash(git status*)',
+  'Bash(git log*)',
+  'Bash(git show*)',
+  'Bash(git diff*)',
+  'Bash(npm *)',
+  'Bash(npx *)',
+  'Bash(node *)',
+];
+
 function now() { return new Date().toISOString(); }
 
 function classifyFailure(stderr = '', stdout = '') {
   const text = `${stderr}\n${stdout}`.toLowerCase();
   if (/login|authenticate|authentication|oauth|credential/.test(text)) return 'AUTH_FAILED';
-  if (/weekly.*limit|usage.*limit|session.*limit|overagestatus.*rejected|capacity.*exhaust/.test(text)) return 'ACCOUNT_LIMITED';
+  if (/weekly.*limit|usage.*limit|session.*limit|overagestatus.*rejected|capacity.*exhaust|quota/.test(text)) return 'ACCOUNT_LIMITED';
   if (/rate.?limit|429|too many requests/.test(text)) return 'RATE_LIMITED';
   if (/overload|unavailable|503/.test(text)) return 'MODEL_LIMITED';
   return 'PROCESS_FAILED';
@@ -41,9 +57,15 @@ function resultObject(stdout) {
 export async function runClaudeHermesFallback({
   repoDir = DEFAULT_REPO,
   instruction = '',
+  context = '',
+  mode = 'qualification',
   root,
   timeoutMs = 30 * 60 * 1000,
 } = {}) {
+  if (!['qualification', 'operational'].includes(mode)) {
+    throw new Error(`unsupported Claude Hermes fallback mode: ${mode}`);
+  }
+
   const selection = readJson('state/hermes-runtime.json', null, root);
   if (
     !selection
@@ -58,24 +80,30 @@ export async function runClaudeHermesFallback({
     throw new Error(`active, identity-proven Hermes fallback runtime selection for ${MODEL} is required`);
   }
 
+  const operational = mode === 'operational';
   const prompt = [
     'DIAL HERMES FALLBACK RUNTIME',
-    'You are the active external Hermes runtime fallback.',
-    'DIAL repository canon, Feature IDs, gates, evidence and deterministic controls remain authoritative.',
-    'Use retrieved context as continuity support only; do not invent or advance repository gate state from memory or prose.',
-    'This qualification runner is read-only and exists to prove the fallback toolchain and model provenance.',
+    'You are the active external Hermes runtime fallback, powered by official Claude Code.',
+    'DIAL repository canon, Feature IDs, FRCs, gates, evidence and deterministic controls remain authoritative.',
+    'Runtime selection is availability/provenance only. Do not invent a parallel development-authority hierarchy.',
+    'Use retrieved context as continuity support only; verify it against current repository state before acting.',
+    operational
+      ? 'This is an operational fallback turn. Inspect current state before edits because the failed primary runtime may have completed partial work.'
+      : 'This is a read-only qualification turn. Do not modify repository files.',
+    context ? `\nDIAL CONTEXT PACKET\n${context}` : '',
     '',
-    `Instruction: ${instruction || 'Report current repository status without modifying files.'}`,
-  ].join('\n');
+    `Instruction: ${instruction || (operational ? 'Continue safely from current repository state.' : 'Report current repository status without modifying files.')}`,
+  ].filter(Boolean).join('\n');
 
   const args = [
     '-p', prompt,
     '--model', MODEL,
-    '--effort', 'low',
+    '--effort', operational ? 'high' : 'low',
     '--output-format', 'json',
-    '--permission-mode', 'plan',
-    '--allowedTools', ...HERMES_SUPPORT_TOOLS,
-    '--name', 'DIAL-HERMES-SONNET-FALLBACK',
+    '--permission-mode', operational ? 'acceptEdits' : 'plan',
+    '--max-turns', operational ? '100' : '1',
+    '--allowedTools', ...(operational ? OPERATIONAL_TOOLS : QUALIFICATION_TOOLS),
+    '--name', operational ? 'DIAL-HERMES-SONNET-FALLBACK' : 'DIAL-SONNET-RUNTIME-PROBE-TURN',
   ];
 
   const startedAt = now();
@@ -83,7 +111,7 @@ export async function runClaudeHermesFallback({
     cwd: repoDir,
     encoding: 'utf8',
     timeout: timeoutMs,
-    maxBuffer: 16 * 1024 * 1024,
+    maxBuffer: 32 * 1024 * 1024,
     env: {
       ...process.env,
       DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
@@ -97,12 +125,17 @@ export async function runClaudeHermesFallback({
   const usedModels = Object.keys(modelUsage);
   const resolvedModel = usedModels.length === 1 ? usedModels[0] : null;
   const identityProven = resolvedModel === MODEL;
+  const completed = result.status === 0 && identityProven;
+  const errorClass = completed
+    ? null
+    : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout));
 
   const event = {
-    event: result.status === 0 && identityProven
+    event: completed
       ? 'HERMES_SONNET_FALLBACK_TURN_COMPLETED'
       : 'HERMES_SONNET_FALLBACK_TURN_FAILED',
     authority: 'HERMES_RUNTIME_ONLY',
+    mode,
     runtime: 'claude_code',
     requested_model: MODEL,
     resolved_model: resolvedModel,
@@ -114,16 +147,30 @@ export async function runClaudeHermesFallback({
     finished_at: finishedAt,
     exit_status: result.status,
     signal: result.signal ?? null,
-    error_class: result.status === 0 && identityProven
-      ? null
-      : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout)),
+    error_class: errorClass,
   };
+
+  recordRuntimeHealth('claude_code', {
+    state: completed ? 'HEALTHY' : errorClass,
+    requested_model: MODEL,
+    resolved_model: resolvedModel,
+    reason: completed
+      ? `Claude Code ${mode} turn completed with exact Sonnet 5 provenance`
+      : `Claude Code ${mode} turn failed: ${errorClass}`,
+    details: {
+      identity_proven: identityProven,
+      toolchain_usable: completed,
+      session_id: event.session_id,
+      used_models: usedModels,
+      source: `${mode}_fallback_turn`,
+    },
+  }, root);
 
   appendJsonl('events/hermes-sonnet-fallback.jsonl', event, root);
   writeJsonAtomic('state/hermes-sonnet-fallback-last.json', event, root);
 
   if (result.error) throw result.error;
-  if (result.status !== 0 || !identityProven) {
+  if (!completed) {
     const error = new Error(`Hermes Sonnet fallback failed: ${event.error_class}`);
     error.cause = {
       stderr: result.stderr?.slice(-4000),
