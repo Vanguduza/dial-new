@@ -5,7 +5,6 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, writeJsonAtomic } from './state-store.mjs';
 import { recordRuntimeHealth } from './runtime-health.mjs';
-import { registerConnection, registerRuntime, syncModelBindingFromRuntimeHealth } from './model-registry.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -19,6 +18,7 @@ function classifyCodexError(error) {
   if (/usagelimitexceeded|sessionbudgetexceeded|usage.*limit|budget.*exceed/.test(text)) return 'ACCOUNT_LIMITED';
   if (/unauthorized|login|oauth|auth/.test(text)) return 'AUTH_FAILED';
   if (/429|rate.*limit/.test(text)) return 'RATE_LIMITED';
+  if (/overload|unavailable|503/.test(text)) return 'MODEL_LIMITED';
   if (/httpconnectionfailed|responsestreamconnectionfailed|disconnected|too.*failed.*attempt/.test(text)) return 'PROCESS_FAILED';
   return 'UNKNOWN';
 }
@@ -33,7 +33,10 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
 
   let stderr = '';
   child.stderr.setEncoding('utf8');
-  child.stderr.on('data', (chunk) => { stderr += chunk; if (stderr.length > 12000) stderr = stderr.slice(-12000); });
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk;
+    if (stderr.length > 12000) stderr = stderr.slice(-12000);
+  });
 
   const rl = readline.createInterface({ input: child.stdout, crlfDelay: Infinity });
   let nextId = 1;
@@ -75,7 +78,9 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
       if (msg.method === 'model/rerouted') reroute = msg.params ?? msg;
       if (msg.method === 'error') terminalError = msg.params?.error ?? msg.params ?? msg;
       if (msg.method === 'item/agentMessage/delta') finalMessage += msg.params?.delta ?? '';
-      if (msg.method === 'item/completed' && msg.params?.item?.type === 'agentMessage') finalMessage = msg.params.item.text ?? finalMessage;
+      if (msg.method === 'item/completed' && msg.params?.item?.type === 'agentMessage') {
+        finalMessage = msg.params.item.text ?? finalMessage;
+      }
       if (msg.method === 'turn/completed') {
         completedTurn = msg.params?.turn ?? msg.params ?? null;
         resolve();
@@ -87,7 +92,7 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
   let rpcFailure = null;
   try {
     await request('initialize', {
-      clientInfo: { name: 'dial_control_plane_probe', title: 'DIAL Control Plane Probe', version: '1.0.0' },
+      clientInfo: { name: 'dial_hermes_runtime_probe', title: 'DIAL Hermes Runtime Probe', version: '1.0.0' },
       capabilities: { experimentalApi: true },
     });
     send({ method: 'initialized' });
@@ -101,6 +106,7 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
     });
     thread = threadResult?.thread ?? null;
     if (!thread?.id) throw new Error('Codex thread/start did not return a thread id');
+
     await request('turn/start', {
       threadId: thread.id,
       input: [{ type: 'text', text: 'Reply with exactly DIAL_CODEX_OK and do not use tools.' }],
@@ -143,39 +149,22 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
 
   writeJsonAtomic('runtime-health/codex-app-server-probe.json', probe, root);
   appendJsonl('events/runtime-probes.jsonl', probe, root);
-  const health = recordRuntimeHealth('codex_app_server', {
+  recordRuntimeHealth('codex_app_server', {
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
-    reason: error ? JSON.stringify(error).slice(0, 2000) : (identityProven ? 'direct app-server probe passed' : 'model identity not proven'),
-    details: { rerouted: Boolean(reroute), response_ok: responseOk, thread_id: thread?.id ?? null },
+    reason: error
+      ? JSON.stringify(error).slice(0, 2000)
+      : (identityProven ? 'direct Codex App Server probe passed' : 'model identity not proven'),
+    details: {
+      identity_proven: identityProven,
+      rerouted: Boolean(reroute),
+      response_ok: responseOk,
+      thread_id: thread?.id ?? null,
+      toolchain_usable: state === 'HEALTHY' && responseOk && identityProven,
+    },
   }, root);
 
-  registerConnection({
-    connection_id: 'codex-chatgpt-subscription',
-    type: 'CODEX_CHATGPT_SUBSCRIPTION',
-    name: 'Codex / ChatGPT subscription',
-    auth_state: state === 'AUTH_FAILED' ? 'AUTH_REQUIRED' : 'AUTHENTICATED_OR_NOT_REQUIRED',
-    discovery_supported: false,
-  }, root);
-  registerRuntime({
-    runtime_id: 'codex_app_server',
-    display_name: 'Codex App Server',
-    harness: 'Codex App Server / Codex CLI',
-    connection_id: 'codex-chatgpt-subscription',
-    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
-    health: state,
-    last_probe: health.observed_at,
-  }, root);
-  syncModelBindingFromRuntimeHealth({
-    model_id: resolvedModel ?? REQUESTED_MODEL,
-    display_name: resolvedModel ?? REQUESTED_MODEL,
-    provider: 'OpenAI',
-    runtime_id: 'codex_app_server',
-    connection_id: 'codex-chatgpt-subscription',
-    health,
-    capabilities: ['CHAT', 'TOOLS', 'REPOSITORY_READ', 'REPOSITORY_WRITE', 'SHELL', 'WORKER_PACKETS'],
-  }, root);
   return probe;
 }
 

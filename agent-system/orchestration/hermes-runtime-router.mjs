@@ -28,6 +28,7 @@ export function selectHermesRuntime(runtimeHealth, policy = HERMES_RUNTIME_POLIC
     if (!health) continue;
     if (!runtimeEligible(health, { hardPin: candidate.hard_pin, requireFresh: true })) continue;
     if (health.requested_model !== candidate.requested_model) continue;
+    if (candidate.hard_pin && health.resolved_model !== candidate.requested_model) continue;
     return { ...candidate, health };
   }
   return null;
@@ -38,19 +39,24 @@ export function issueHermesRuntimeSelection({ candidate, previous_selection_id =
   if (!runtimeEligible(candidate.health, { hardPin: candidate.hard_pin ?? true, requireFresh: true })) {
     throw new Error('Hermes runtime candidate does not have fresh identity-proven HEALTHY evidence');
   }
-  if (candidate.health.requested_model !== candidate.requested_model) {
+  if (
+    candidate.health.requested_model !== candidate.requested_model
+    || ((candidate.hard_pin ?? true) && candidate.health.resolved_model !== candidate.requested_model)
+  ) {
     throw new Error('Hermes runtime policy/model does not match runtime health evidence');
   }
+
   const selection = {
-    schema_version: 1,
+    schema_version: 2,
     selection_id: crypto.randomUUID(),
     authority: 'HERMES_RUNTIME_ONLY',
     role: candidate.role,
     runtime: candidate.runtime,
     requested_model: candidate.requested_model,
     resolved_model: candidate.health.resolved_model,
-    health_state: candidate.health.state,
-    health_observed_at: candidate.health.observed_at,
+    runtime_session: candidate.health.details?.session_id ?? candidate.health.details?.thread_id ?? null,
+    runtime_health: candidate.health.state,
+    runtime_health_observed_at: candidate.health.observed_at,
     status: 'ACTIVE',
     selected_at: now(),
     previous_selection_id,
@@ -62,7 +68,7 @@ export function issueHermesRuntimeSelection({ candidate, previous_selection_id =
 
 export function expireHermesRuntimeSelection(reason = 'UNSPECIFIED', root) {
   const existing = readJson('state/hermes-runtime.json', null, root);
-  if (!existing) return null;
+  if (!existing || existing.status !== 'ACTIVE') return existing;
   const expired = {
     ...existing,
     status: 'EXPIRED',
@@ -77,19 +83,26 @@ export function expireHermesRuntimeSelection(reason = 'UNSPECIFIED', root) {
 export function reconcileHermesRuntime({ root, runtimeHealth = loadRuntimeHealth(root) } = {}) {
   const previous = readJson('state/hermes-runtime.json', null, root);
   const candidate = selectHermesRuntime(runtimeHealth);
+
   if (!candidate) {
-    if (previous?.status === 'ACTIVE') expireHermesRuntimeSelection('NO_HEALTHY_HERMES_RUNTIME', root);
-    return { selected: false, reason: 'NO_HEALTHY_HERMES_RUNTIME', runtime_health: runtimeHealth };
+    if (previous?.status === 'ACTIVE') expireHermesRuntimeSelection('NO_HERMES_RUNTIME_AVAILABLE', root);
+    return { selected: false, reason: 'NO_HERMES_RUNTIME_AVAILABLE', runtime_health: runtimeHealth };
   }
+
   if (
     previous?.status === 'ACTIVE'
     && previous.runtime === candidate.runtime
     && previous.requested_model === candidate.requested_model
+    && previous.resolved_model === candidate.health.resolved_model
     && healthFresh(candidate.health)
   ) {
     return { selected: true, changed: false, selection: previous };
   }
+
   if (previous?.status === 'ACTIVE') expireHermesRuntimeSelection('HERMES_RUNTIME_RESELECTION', root);
-  const selection = issueHermesRuntimeSelection({ candidate, previous_selection_id: previous?.selection_id ?? null }, root);
+  const selection = issueHermesRuntimeSelection({
+    candidate,
+    previous_selection_id: previous?.selection_id ?? null,
+  }, root);
   return { selected: true, changed: true, selection };
 }

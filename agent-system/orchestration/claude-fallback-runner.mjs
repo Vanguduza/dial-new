@@ -2,7 +2,6 @@
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { routeHermesInstruction } from './instruction-router.mjs';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -16,6 +15,7 @@ const HERMES_SUPPORT_TOOLS = [
   'Bash(git status*)',
   'Bash(git log*)',
   'Bash(git show*)',
+  'Bash(git diff*)',
 ];
 
 function now() { return new Date().toISOString(); }
@@ -41,8 +41,6 @@ function resultObject(stdout) {
 export async function runClaudeHermesFallback({
   repoDir = DEFAULT_REPO,
   instruction = '',
-  task = {},
-  selected_model_id = null,
   root,
   timeoutMs = 30 * 60 * 1000,
 } = {}) {
@@ -54,38 +52,18 @@ export async function runClaudeHermesFallback({
     || selection.runtime !== 'claude_code'
     || selection.requested_model !== MODEL
     || selection.resolved_model !== MODEL
-    || selection.health_state !== 'HEALTHY'
-    || !selection.health_observed_at
+    || selection.runtime_health !== 'HEALTHY'
+    || !selection.runtime_health_observed_at
   ) {
     throw new Error(`active, identity-proven Hermes fallback runtime selection for ${MODEL} is required`);
   }
 
-  const routing = routeHermesInstruction({
-    instruction,
-    task,
-    selected_model_id,
-    worktree: repoDir,
-    root,
-  });
-
-  // Critical separation invariant: Sonnet powering Hermes may capture/route a
-  // complex instruction, but this runtime runner never executes that complex
-  // development work merely because it is the active Hermes fallback.
-  if (routing.classification === 'COMPLEX') {
-    return {
-      routed_only: true,
-      hermes_runtime: MODEL,
-      hermes_selection_id: selection.selection_id,
-      routing,
-    };
-  }
-
   const prompt = [
     'DIAL HERMES FALLBACK RUNTIME',
-    'You are providing external shell/session continuity only.',
-    'You do NOT hold DIAL Development Manager Chair authority.',
-    'Do not make architecture, source-of-truth, financial, security, data-architecture, orchestration, or other complex development decisions.',
-    'Use only the allowed read/support tools.',
+    'You are the active external Hermes runtime fallback.',
+    'DIAL repository canon, Feature IDs, gates, evidence and deterministic controls remain authoritative.',
+    'Use retrieved context as continuity support only; do not invent or advance repository gate state from memory or prose.',
+    'This qualification runner is read-only and exists to prove the fallback toolchain and model provenance.',
     '',
     `Instruction: ${instruction || 'Report current repository status without modifying files.'}`,
   ].join('\n');
@@ -121,8 +99,11 @@ export async function runClaudeHermesFallback({
   const identityProven = resolvedModel === MODEL;
 
   const event = {
-    event: result.status === 0 && identityProven ? 'HERMES_SONNET_SUPPORT_TURN_COMPLETED' : 'HERMES_SONNET_SUPPORT_TURN_FAILED',
+    event: result.status === 0 && identityProven
+      ? 'HERMES_SONNET_FALLBACK_TURN_COMPLETED'
+      : 'HERMES_SONNET_FALLBACK_TURN_FAILED',
     authority: 'HERMES_RUNTIME_ONLY',
+    runtime: 'claude_code',
     requested_model: MODEL,
     resolved_model: resolvedModel,
     identity_proven: identityProven,
@@ -133,7 +114,9 @@ export async function runClaudeHermesFallback({
     finished_at: finishedAt,
     exit_status: result.status,
     signal: result.signal ?? null,
-    error_class: result.status === 0 && identityProven ? null : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout)),
+    error_class: result.status === 0 && identityProven
+      ? null
+      : (result.status === 0 ? 'TOOLCHAIN_DEGRADED' : classifyFailure(result.stderr, result.stdout)),
   };
 
   appendJsonl('events/hermes-sonnet-fallback.jsonl', event, root);
@@ -142,11 +125,15 @@ export async function runClaudeHermesFallback({
   if (result.error) throw result.error;
   if (result.status !== 0 || !identityProven) {
     const error = new Error(`Hermes Sonnet fallback failed: ${event.error_class}`);
-    error.cause = { stderr: result.stderr?.slice(-4000), stdout: result.stdout?.slice(-4000), event };
+    error.cause = {
+      stderr: result.stderr?.slice(-4000),
+      stdout: result.stdout?.slice(-4000),
+      event,
+    };
     throw error;
   }
 
-  return { routed_only: false, routing, event, output: structured ?? { result: result.stdout } };
+  return { event, output: structured ?? { result: result.stdout } };
 }
 
 export const runClaudeFallback = runClaudeHermesFallback;
@@ -156,7 +143,6 @@ async function main() {
   const result = await runClaudeHermesFallback({
     repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO,
     instruction,
-    task: { kind: process.env.DIAL_TASK_KIND || 'orchestration_decision' },
   });
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }

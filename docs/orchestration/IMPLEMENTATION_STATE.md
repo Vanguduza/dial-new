@@ -1,67 +1,90 @@
-# DIAL Hermes + Codex Control-Plane Implementation State
-
-Status: **REPO_QUALIFIED**
+# DIAL Hermes External Runtime Implementation State
 
 Last updated: 2026-09-03
 
-This record tracks deployment qualification only. It is not DIAL product canon and must not advance product Feature gates.
+This record tracks the Hermes/Oracle qualification branch only. It does not advance DIAL product Feature gates.
 
-## State ladder
+## Current state
 
-- `DESIGNED` — complete
-- `REPO_QUALIFIED` — **current**
-- `HOST_DEPLOYED` — pending
-- `RUNTIME_QUALIFIED` — pending
-- `FAILOVER_QUALIFIED` — pending
-- `REBOOT_QUALIFIED` — pending
-- `QUOTA_SOAK_PENDING` — expected until a genuine provider-capacity event is observed and recovered without manufacturing quota exhaustion
-- `PRODUCTION_GREEN` — not reached
+```text
+REPOSITORY_IMPLEMENTED
+ORACLE_NOT_DEPLOYED
+RUNTIME_NOT_QUALIFIED
+SOAK_NOT_COMPLETE
+```
 
-## Repository qualification evidence
+`PRODUCTION_GREEN` has not been reached.
 
-- Qualification branch: `chore/hermes-codex-control-plane`
-- PR: `#1` — remains draft
-- Repository verification on head `ac062ca7a12778385a253590640f2060cff67084`: GREEN in GitHub Actions run `33770622879` / run number 46
-- Explicit `agent:orchestration:qualify` CI gate: GREEN on that head
-- Product/pipeline verification on that head: GREEN
-- `master` at qualification time: `11933e9fbb00eb2f4686ad420a71007263de6a37`
-- Qualification branch was not behind `master` at the repository qualification boundary
+## Repository implementation present
 
-## Repository defects repaired during qualification
+The qualification branch contains:
 
-1. New manager leases now require fresh, identity-proven `HEALTHY` runtime evidence rather than accepting indefinitely persisted health.
-2. Supervisor restart invalidates previous runtime evidence and active lease, then performs fresh Codex and Claude probes before normal election.
-3. Lease issuance validates manager eligibility independently rather than trusting caller-selected candidates.
-4. Claude fallback execution requires an active healthy identity-proven Sonnet lease.
-5. Feature memory and handoff capsules reject additional secret classes, including access/refresh/OAuth tokens, private-key material and cookies.
-6. The full repository CI now explicitly runs the orchestration qualification suite.
-7. The installed-runtime qualification now runs full repository verification, requires ARM64, rejects ambient OpenAI/Codex/Anthropic API-key billing paths, and requires fresh health provenance on primary/failover/recovery leases.
-8. Source-of-truth ordering was aligned to the locked eight-layer control-plane authority order.
+- Oracle ARM64 bootstrap;
+- Hermes installation/configuration path;
+- Codex App Server / GPT-5.6 Sol primary-runtime probe;
+- Claude Code / Sonnet 5 fallback-runtime probe;
+- exact requested/resolved model provenance;
+- subscription-auth safeguards;
+- explicit Sol → Sonnet Hermes runtime router;
+- `NO_HERMES_RUNTIME_AVAILABLE` total-loss behavior;
+- runtime-health persistence;
+- HOT/WARM/COLD and Feature-scoped memory;
+- checkpoints and handoff capsules;
+- DIAL context broker and Hermes pre/post-turn hooks;
+- transaction-consistent Hermes `state.db` backup with bounded retention;
+- deterministic supervisor/systemd recovery path;
+- repository qualification tests and CI gate.
 
-## Pending host/runtime evidence
+Repository implementation does not imply Oracle deployment or installed-runtime qualification.
 
-No host/runtime item below may be marked complete from simulation or documentation alone:
+## Corrective architecture state
 
-- Oracle Always Free/free-allocation confirmation and host deployment
-- Oracle host OS/architecture/resource evidence
-- ChatGPT subscription OAuth for Codex
-- Hermes `openai-codex` OAuth and supported Codex App Server migration
-- Claude subscription authentication
-- installed-runtime qualification
-- live Codex engineering packet
-- actual Codex process-death test
-- actual Sonnet takeover with model provenance and tools
-- bounded HOT/WARM/COLD memory takeover verification
-- Hermes process-death/restart test
-- DIAL supervisor process-death/restart test
-- full Oracle reboot recovery
-- safe return from Sonnet to Sol at an atomic boundary
-- final secret/security audit
-- independent Codex and Claude cross-provider review against the final PR diff and evidence
-- final CI after evidence/status commits
+The mistaken generalized model-management implementation has been removed from this DIAL branch. This branch does not claim a DIAL model-settings UI, generalized model catalog, development model pool or arbitrary worker-harness architecture.
+
+Hermes runtime selection is availability/provenance only. DIAL repository canon, Feature IDs, FRCs, gates, evidence and existing deterministic governance remain authoritative.
+
+## CI evidence rule
+
+Do not reuse a prior green head after a corrective commit. Repository verification is valid only for the current PR head.
+
+Required current-head checks:
+
+```text
+npm ci
+npm run typecheck
+npm run agent:orchestration:qualify
+npm run verify
+git diff --check
+```
+
+GitHub Actions is the authoritative Linux CI evidence when local command execution is unavailable.
+
+## Oracle/runtime evidence still required
+
+No item below may be marked complete from simulation or documentation alone:
+
+- Oracle host provisioned and confirmed on the intended free allocation;
+- repository deployed to the host;
+- ChatGPT subscription OAuth for Codex;
+- Hermes supported Codex App Server activation;
+- Claude subscription authentication;
+- installed-runtime Sol probe;
+- installed-runtime Sonnet probe;
+- actual Codex process-death test;
+- actual Hermes process-death/restart;
+- actual supervisor process-death/restart;
+- full Oracle reboot recovery;
+- checkpoint/HOT/WARM/COLD persistence across takeover/reboot;
+- safe return to Sol after recovery;
+- final secret/security audit;
+- final independent architecture-contamination review.
 
 ## Real provider capacity gate
 
-`REAL_QUOTA_SOAK = PENDING`
+```text
+REAL_QUOTA_SOAK = PENDING
+```
 
-A simulated `ACCOUNT_LIMITED`, `MODEL_LIMITED`, or `RATE_LIMITED` route proves only the deterministic state machine. It must not be promoted to genuine provider-capacity evidence. Excessive quota must not be deliberately consumed merely to force this event. Until a genuine event is observed and passes recovery qualification, PR #1 remains draft and unmerged if this gate remains mandatory.
+Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states are deterministic routing evidence only. Subscription usage must not be deliberately exhausted to manufacture this event.
+
+PR #1 remains draft until the required Oracle/runtime gates are genuinely complete.

@@ -13,7 +13,12 @@ const FEATURE_RE = /\b[A-Z][A-Z0-9_-]*-F\d{3}\b/;
 
 function run(repoDir, command, args) {
   try {
-    return execFileSync(command, args, { cwd: repoDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 4 * 1024 * 1024 }).trim();
+    return execFileSync(command, args, {
+      cwd: repoDir,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 4 * 1024 * 1024,
+    }).trim();
   } catch {
     return '';
   }
@@ -33,7 +38,7 @@ export function resolveFeatureId({ userMessage = '', repoDir = DEFAULT_REPO, che
 }
 
 async function searchHermesHistory(query) {
-  if (!query) return [];
+  if (!query || process.env.DIAL_DISABLE_HERMES_HISTORY === '1') return [];
   const base = process.env.HERMES_DASHBOARD_URL || 'http://127.0.0.1:9119';
   try {
     const response = await fetch(`${base.replace(/\/$/, '')}/api/sessions/search?q=${encodeURIComponent(query)}`, {
@@ -71,62 +76,63 @@ function readDecisionHints(repoDir, featureId) {
   }
 }
 
-export async function buildDevelopmentManagerContext({ repoDir = DEFAULT_REPO, userMessage = '', root } = {}) {
-  const checkpoint = readJson('state/active-checkpoint.json', null, root);
-  const checkpointValue = checkpoint?.path ? readJson(checkpoint.path, null, root) : null;
-  const featureId = resolveFeatureId({ userMessage, repoDir, checkpoint: checkpointValue });
+export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessage = '', root } = {}) {
+  const checkpointPointer = readJson('state/active-checkpoint.json', null, root);
+  const checkpoint = checkpointPointer?.path ? readJson(checkpointPointer.path, null, root) : null;
+  const featureId = resolveFeatureId({ userMessage, repoDir, checkpoint });
   const capsule = loadHandoffCapsule(featureId, root);
-  const gitState = captureGitState(checkpointValue?.worktree || repoDir);
-  const boundedContext = contextGet(repoDir, featureId);
+  const gitState = captureGitState(checkpoint?.worktree || repoDir);
+  const canonicalContext = contextGet(repoDir, featureId);
   const decisions = readDecisionHints(repoDir, featureId);
   const featureMemory = featureId ? readFeatureMemory(featureId, { limit: 20 }, root) : null;
-  const memoryHits = await searchHermesHistory(featureId || userMessage.slice(0, 120));
-  const developmentManager = readJson('state/development-manager.json', null, root);
+  const history = await searchHermesHistory(featureId || userMessage.slice(0, 120));
   const hermesRuntime = readJson('state/hermes-runtime.json', null, root);
 
   const packet = [
-    'DIAL DEVELOPMENT MANAGER CONTEXT',
+    'DIAL HERMES EXTERNAL RUNTIME CONTEXT',
     '',
-    'Authority order:',
+    'Source-of-truth order:',
     '1. DIAL canonical repository',
     '2. machine registries and evidence',
     '3. current Git/worktree state',
-    '4. DIAL orchestration checkpoint',
+    '4. orchestration checkpoint',
     '5. handoff capsule',
     '6. Feature-scoped Oracle memory',
     '7. Hermes session/history retrieval',
-    '8. historical conversational material',
     '',
-    'A lower layer may never override a higher layer. Never advance a gate from model assertion or memory.',
-    'Hermes runtime identity is continuity context only and does not grant Development Manager Chair authority.',
-    featureId ? `Active Feature ID: ${featureId}` : 'Active Feature ID: none resolved; do not perform material implementation until one is resolved.',
-    developmentManager ? `Development Manager Chair assignment: ${JSON.stringify(developmentManager)}` : 'Development Manager Chair assignment: none recorded.',
-    hermesRuntime ? `Hermes runtime selection (runtime-only authority): ${JSON.stringify(hermesRuntime)}` : 'Hermes runtime selection: none recorded.',
+    'A lower layer may never override a higher layer. Never advance a DIAL gate from runtime output or memory.',
+    'Hermes runtime selection is availability/provenance only and does not modify DIAL canonical governance.',
+    featureId
+      ? `Active Feature ID: ${featureId}`
+      : 'Active Feature ID: none resolved; follow existing DIAL Feature-ID governance before material Feature implementation.',
+    hermesRuntime
+      ? `Hermes runtime provenance: ${JSON.stringify(hermesRuntime)}`
+      : 'Hermes runtime provenance: none recorded.',
     '',
     `Observed Git state: ${JSON.stringify(gitState)}`,
-    checkpointValue ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpointValue, null, 2), 5000)}` : '',
+    checkpoint ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpoint, null, 2), 5000)}` : '',
     capsule ? `\nHandoff capsule (verify before use):\n${bounded(JSON.stringify(capsule, null, 2), 5000)}` : '',
-    boundedContext ? `\nBounded DIAL Feature context:\n${bounded(boundedContext, 10000)}` : '',
+    canonicalContext ? `\nBounded DIAL Feature context:\n${bounded(canonicalContext, 10000)}` : '',
     decisions ? `\nDecision hints linked to Feature ID:\n${bounded(decisions, 5000)}` : '',
     featureMemory && (featureMemory.records.length || featureMemory.summary)
       ? `\nFeature-scoped Oracle memory (non-authoritative):\n${bounded(JSON.stringify(featureMemory, null, 2), 5000)}`
       : '',
-    memoryHits.length ? `\nHermes historical retrieval (non-authoritative):\n${bounded(JSON.stringify(memoryHits, null, 2), 3500)}` : '',
+    history.length
+      ? `\nHermes historical retrieval (non-authoritative):\n${bounded(JSON.stringify(history, null, 2), 3500)}`
+      : '',
     '',
-    'At an atomic boundary, leave repository-observable state clean or explicitly checkpoint dirty paths. Preserve independent-review requirements.',
+    'At an atomic boundary, leave repository-observable state clean or explicitly checkpoint dirty paths.',
   ].filter(Boolean).join('\n');
 
   return {
     feature_id: featureId,
     context: bounded(packet, 30000),
     feature_memory_records: featureMemory?.records.length ?? 0,
-    hermes_memory_hits: memoryHits.length,
+    hermes_memory_hits: history.length,
   };
 }
 
-// Compatibility alias for callers that used the old generic name. The generated
-// packet is explicitly a Development Manager Chair packet, not a Hermes runtime packet.
-export const buildManagerContext = buildDevelopmentManagerContext;
+export const buildContext = buildDialHermesContext;
 
 async function readStdin() {
   let input = '';
@@ -140,12 +146,9 @@ async function main() {
   const payload = hook ? await readStdin() : {};
   const repoDir = process.env.DIAL_REPO_DIR || process.cwd();
   const userMessage = payload.user_message ?? payload.message ?? process.env.DIAL_USER_MESSAGE ?? '';
-  const result = await buildDevelopmentManagerContext({ repoDir, userMessage });
-  if (hook) {
-    process.stdout.write(`${JSON.stringify({ context: result.context })}\n`);
-  } else {
-    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-  }
+  const result = await buildDialHermesContext({ repoDir, userMessage });
+  if (hook) process.stdout.write(`${JSON.stringify({ context: result.context })}\n`);
+  else process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

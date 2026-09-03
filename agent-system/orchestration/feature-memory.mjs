@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { appendJsonl, DEFAULT_CONTROL_HOME, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
+import {
+  appendJsonl,
+  DEFAULT_CONTROL_HOME,
+  ensureControlLayout,
+  readJson,
+  resolveControlPath,
+  writeJsonAtomic,
+} from './state-store.mjs';
 
 const FEATURE_RE = /^[A-Z][A-Z0-9_-]*-F\d{3}$/;
 const TYPES = new Set(['DECISION', 'RISK', 'FAILURE', 'REVIEW', 'HANDOFF', 'NOTE']);
@@ -45,11 +52,15 @@ function featureDir(featureId) {
   return `memory/features/${assertFeatureId(featureId)}`;
 }
 
-export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [], source = null, development_manager = null } = {}, root = DEFAULT_CONTROL_HOME) {
+export function appendFeatureMemory(
+  featureId,
+  { type = 'NOTE', text, refs = [], source = null, runtime_provenance = null } = {},
+  root = DEFAULT_CONTROL_HOME,
+) {
   if (!TYPES.has(type)) throw new Error(`unsupported feature memory type: ${type}`);
-  assertNoSecretMaterial(development_manager, 'feature memory development-manager metadata');
+  assertNoSecretMaterial(runtime_provenance, 'feature memory runtime provenance');
   const record = {
-    schema_version: 2,
+    schema_version: 3,
     feature_id: assertFeatureId(featureId),
     type,
     text: bounded(text),
@@ -57,7 +68,7 @@ export function appendFeatureMemory(featureId, { type = 'NOTE', text, refs = [],
       ? refs.slice(0, 20).map((r) => boundedField(r, 500, 'feature memory reference')).filter(Boolean)
       : [],
     source: source ? boundedField(source, 500, 'feature memory source') : null,
-    development_manager,
+    runtime_provenance,
     recorded_at: new Date().toISOString(),
     authority: 'NON_AUTHORITATIVE_CONTEXT',
   };
@@ -70,9 +81,12 @@ export function readFeatureMemory(featureId, { limit = 30 } = {}, root = DEFAULT
   ensureControlLayout(root);
   const target = resolveControlPath(`${featureDir(featureId)}/events.jsonl`, root);
   let lines = [];
-  try { lines = fs.readFileSync(target, 'utf8').split('\n').filter(Boolean); } catch (error) {
+  try {
+    lines = fs.readFileSync(target, 'utf8').split('\n').filter(Boolean);
+  } catch (error) {
     if (error?.code !== 'ENOENT') throw error;
   }
+
   const records = [];
   for (const line of lines.slice(-Math.max(1, Math.min(limit, 100)))) {
     try { records.push(JSON.parse(line)); } catch {}
@@ -101,11 +115,14 @@ export function compactFeatureMemory(featureId, { keep = 120 } = {}, root = DEFA
   const targetRel = `${featureDir(featureId)}/events.jsonl`;
   const target = resolveControlPath(targetRel, root);
   let lines;
-  try { lines = fs.readFileSync(target, 'utf8').split('\n').filter(Boolean); } catch (error) {
+  try {
+    lines = fs.readFileSync(target, 'utf8').split('\n').filter(Boolean);
+  } catch (error) {
     if (error?.code === 'ENOENT') return { feature_id: featureId, compacted: false, entries: 0 };
     throw error;
   }
   if (lines.length <= keep) return { feature_id: featureId, compacted: false, entries: lines.length };
+
   const archiveLines = lines.slice(0, -keep);
   const hotLines = lines.slice(-keep);
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -114,5 +131,11 @@ export function compactFeatureMemory(featureId, { keep = 120 } = {}, root = DEFA
   fs.mkdirSync(path.dirname(cold), { recursive: true, mode: 0o700 });
   fs.writeFileSync(cold, `${archiveLines.join('\n')}\n`, { encoding: 'utf8', mode: 0o600 });
   fs.writeFileSync(target, `${hotLines.join('\n')}\n`, { encoding: 'utf8', mode: 0o600 });
-  return { feature_id: featureId, compacted: true, archived: archiveLines.length, retained: hotLines.length, cold_path: coldRel };
+  return {
+    feature_id: featureId,
+    compacted: true,
+    archived: archiveLines.length,
+    retained: hotLines.length,
+    cold_path: coldRel,
+  };
 }

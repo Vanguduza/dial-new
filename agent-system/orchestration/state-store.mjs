@@ -16,7 +16,6 @@ const LAYOUT = [
   'sessions/hermes',
   'sessions/codex',
   'sessions/claude',
-  'sessions/deepseek',
   'retrieval/index',
   'retrieval/cache',
   'evidence-cache',

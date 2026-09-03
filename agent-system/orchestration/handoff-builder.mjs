@@ -18,12 +18,12 @@ function cleanList(values) {
 
 export function buildHandoffCapsule(checkpoint, input = {}) {
   if (!checkpoint) throw new Error('checkpoint is required');
-  assertNoSecretMaterial(checkpoint.development_manager, 'handoff development-manager metadata');
+  assertNoSecretMaterial(checkpoint.runtime_provenance, 'handoff runtime provenance');
   return {
-    schema_version: 2,
+    schema_version: 3,
     feature_id: checkpoint.feature_id ?? null,
     objective: cleanText(input.objective),
-    previous_development_manager: checkpoint.development_manager ?? input.previous_development_manager ?? null,
+    previous_runtime_provenance: checkpoint.runtime_provenance ?? input.previous_runtime_provenance ?? null,
     repository: {
       commit: checkpoint.repository?.commit ?? null,
       branch: checkpoint.repository?.branch ?? null,
@@ -41,7 +41,7 @@ export function buildHandoffCapsule(checkpoint, input = {}) {
     evidence_refs: cleanList(input.evidence_refs),
     next_action: cleanText(input.next_action ?? checkpoint.execution?.next_unit, 1200),
     session_refs: cleanList(input.session_refs),
-    authority_warning: 'This capsule is continuity context only. Hermes runtime identity is not development authority. Verify against DIAL canon, registries, Git state, tests and evidence before acting.',
+    authority_warning: 'Continuity context only. Runtime provenance and memory never override DIAL canon, registries, Git state, gates, tests or evidence.',
     created_at: new Date().toISOString(),
   };
 }
@@ -82,7 +82,7 @@ export function saveHandoffCapsule(capsule, root) {
         text,
         refs: [activeRel, ...(capsule.evidence_refs ?? [])],
         source: 'handoff-capsule',
-        development_manager: capsule.previous_development_manager ?? null,
+        runtime_provenance: capsule.previous_runtime_provenance ?? null,
       }, root);
       updateFeatureSummary(capsule.feature_id, text, root);
     }

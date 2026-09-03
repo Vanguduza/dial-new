@@ -5,7 +5,11 @@ import { archiveJson, readJson, writeJsonAtomic } from './state-store.mjs';
 
 function git(repoDir, args) {
   try {
-    return execFileSync('git', args, { cwd: repoDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    return execFileSync('git', args, {
+      cwd: repoDir,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
   } catch {
     return '';
   }
@@ -41,7 +45,7 @@ export function featureExists(repoDir, featureId) {
     const raw = fs.readFileSync(target, 'utf8');
     const parsed = JSON.parse(raw);
     const stack = Array.isArray(parsed) ? parsed : Object.values(parsed ?? {});
-    return JSON.stringify(stack).includes(`\"${featureId}\"`);
+    return JSON.stringify(stack).includes(`"${featureId}"`);
   } catch {
     return false;
   }
@@ -56,11 +60,11 @@ export function buildCheckpoint(repoDir, overrides = {}) {
 
   const gitState = captureGitState(overrides.worktree || repoActive.worktree || repoDir);
   return {
-    schema_version: 2,
+    schema_version: 3,
     feature_id: featureId,
     worktree: overrides.worktree ?? repoActive.worktree ?? gitState.repo_dir,
     target_gate: overrides.target_gate ?? repoActive.target_gate ?? null,
-    development_manager: overrides.development_manager ?? null,
+    runtime_provenance: overrides.runtime_provenance ?? null,
     execution: {
       phase: overrides.phase ?? null,
       atomic_unit: overrides.atomic_unit ?? null,
