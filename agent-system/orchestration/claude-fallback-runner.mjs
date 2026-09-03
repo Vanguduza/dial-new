@@ -48,8 +48,16 @@ function resultObject(stdout) {
 
 export async function runClaudeFallback({ repoDir = DEFAULT_REPO, instruction = '', root, timeoutMs = 30 * 60 * 1000 } = {}) {
   const lease = readJson('state/manager-lease.json', null, root);
-  if (!lease || lease.status !== 'ACTIVE' || lease.runtime !== 'claude_code' || lease.requested_model !== MODEL || lease.resolved_model !== MODEL) {
-    throw new Error(`active, identity-proven Claude manager lease for ${MODEL} is required before invoking fallback runtime`);
+  if (
+    !lease
+    || lease.status !== 'ACTIVE'
+    || lease.runtime !== 'claude_code'
+    || lease.requested_model !== MODEL
+    || lease.resolved_model !== MODEL
+    || lease.health_state !== 'HEALTHY'
+    || !lease.health_observed_at
+  ) {
+    throw new Error(`active, identity-proven healthy Claude manager lease for ${MODEL} is required before invoking fallback runtime`);
   }
 
   const managerContext = await buildManagerContext({ repoDir, userMessage: instruction, root });
