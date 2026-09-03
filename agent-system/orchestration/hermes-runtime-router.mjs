@@ -1,5 +1,6 @@
+import crypto from 'node:crypto';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
-import { healthFresh, runtimeEligible } from './runtime-health.mjs';
+import { healthFresh, loadRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
 
 export const HERMES_RUNTIME_POLICY = Object.freeze([
   {
@@ -19,10 +20,6 @@ export const HERMES_RUNTIME_POLICY = Object.freeze([
 ]);
 
 function now() { return new Date().toISOString(); }
-
-export function loadRuntimeHealth(root) {
-  return readJson('state/runtime-health.json', { schema_version: 1, runtimes: {}, updated_at: null }, root);
-}
 
 export function selectHermesRuntime(runtimeHealth, policy = HERMES_RUNTIME_POLICY) {
   const runtimes = runtimeHealth?.runtimes ?? {};
