@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildCheckpoint, captureGitState } from '../agent-system/orchestration/checkpoint-store.mjs';
+import { appendFeatureMemory } from '../agent-system/orchestration/feature-memory.mjs';
 import { buildHandoffCapsule } from '../agent-system/orchestration/handoff-builder.mjs';
 import { issueManagerLease, recordRuntimeHealth, selectManager } from '../agent-system/orchestration/manager-router.mjs';
 import { managerEligible } from '../agent-system/orchestration/runtime-health.mjs';
@@ -45,10 +46,22 @@ describe('orchestration state store', () => {
 });
 
 describe('manager health and lease routing', () => {
-  it('requires HEALTHY state and requested/resolved model identity for a hard-pinned manager', () => {
-    expect(managerEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' })).toBe(true);
-    expect(managerEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna' })).toBe(false);
-    expect(managerEligible({ state: 'MODEL_LIMITED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' })).toBe(false);
+  it('requires HEALTHY state, fresh evidence and requested/resolved model identity for a hard-pinned manager', () => {
+    const observedAt = new Date().toISOString();
+    expect(managerEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: observedAt })).toBe(true);
+    expect(managerEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna', observed_at: observedAt })).toBe(false);
+    expect(managerEligible({ state: 'MODEL_LIMITED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: observedAt })).toBe(false);
+    expect(managerEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' })).toBe(false);
+  });
+
+  it('rejects stale HEALTHY evidence for a new manager election', () => {
+    const stale = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    expect(managerEligible({
+      state: 'HEALTHY',
+      requested_model: 'gpt-5.6-sol',
+      resolved_model: 'gpt-5.6-sol',
+      observed_at: stale,
+    })).toBe(false);
   });
 
   it('elects Codex first and falls back to Claude only when Codex is ineligible', () => {
@@ -91,6 +104,20 @@ describe('checkpoint and handoff continuity', () => {
     expect(capsule.feature_id).toBe('GROC-F025');
     expect(capsule.active_unit).toBe('projection-tests');
     expect(capsule.authority_warning).toMatch(/Verify it against DIAL canon/);
+  });
+
+  it('rejects secret material before it can enter Feature memory or a handoff capsule', () => {
+    const root = temp('dial-control');
+    expect(() => appendFeatureMemory('GROC-F025', {
+      text: 'safe note',
+      refs: ['access_token=super-secret-token-value'],
+    }, root)).toThrow(/possible secret material/);
+
+    const repo = makeRepo();
+    const checkpoint = buildCheckpoint(repo);
+    expect(() => buildHandoffCapsule(checkpoint, {
+      objective: '-----BEGIN PRIVATE KEY----- do not persist',
+    })).toThrow(/possible secret material/);
   });
 });
 
