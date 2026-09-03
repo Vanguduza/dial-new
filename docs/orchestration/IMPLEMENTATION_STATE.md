@@ -8,6 +8,7 @@ This record tracks the Hermes/Oracle qualification branch only. It does not adva
 
 ```text
 REPOSITORY_IMPLEMENTED
+CURRENT_HEAD_CI_REQUIRED
 ORACLE_NOT_DEPLOYED
 RUNTIME_NOT_QUALIFIED
 SOAK_NOT_COMPLETE
@@ -22,18 +23,24 @@ The qualification branch contains:
 - Oracle ARM64 bootstrap;
 - Hermes installation/configuration path;
 - Codex App Server / GPT-5.6 Sol primary-runtime probe;
-- Claude Code / Sonnet 5 fallback-runtime probe;
-- exact requested/resolved model provenance;
+- official Claude Code / Sonnet 5 fallback-runtime probe;
+- exact requested/resolved model provenance and explicit toolchain-usability evidence;
 - subscription-auth safeguards;
 - explicit Sol → Sonnet Hermes runtime router;
+- operational `hermes-runtime-executor.mjs` / `dial-hermes` entrypoint;
+- automatic continuation through Claude Code when the primary runtime fails with an eligible runtime failure;
+- checkpoint-before-fallback protection against blind replay after a partially completed primary turn;
+- intentional disabling of Hermes' built-in Anthropic API fallback for this subscription-only design;
 - `NO_HERMES_RUNTIME_AVAILABLE` total-loss behavior;
+- bounded low-frequency background probing plus per-operational-turn health refresh;
 - runtime-health persistence;
 - HOT/WARM/COLD and Feature-scoped memory;
 - checkpoints and handoff capsules;
 - DIAL context broker and Hermes pre/post-turn hooks;
 - transaction-consistent Hermes `state.db` backup with bounded retention;
 - deterministic supervisor/systemd recovery path;
-- repository qualification tests and CI gate.
+- automated Oracle process-death and reboot soak harness;
+- repository qualification tests and CI gates, including JavaScript syntax, Oracle shell syntax and PR diff whitespace checks.
 
 Repository implementation does not imply Oracle deployment or installed-runtime qualification.
 
@@ -42,6 +49,14 @@ Repository implementation does not imply Oracle deployment or installed-runtime 
 The mistaken generalized model-management implementation has been removed from this DIAL branch. This branch does not claim a DIAL model-settings UI, generalized model catalog, development model pool or arbitrary worker-harness architecture.
 
 Hermes runtime selection is availability/provenance only. DIAL repository canon, Feature IDs, FRCs, gates, evidence and existing deterministic governance remain authoritative.
+
+## Runtime failover boundary
+
+The locked fallback is the official Claude Code CLI with `claude-sonnet-5`. Hermes' own Anthropic-provider fallback is intentionally empty in the Oracle configuration so a future Hermes change cannot silently convert this route into API billing.
+
+The operational executor attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a classified runtime failure it records the failure, checkpoints observable repository state, rehydrates bounded DIAL context, proves Claude Code/Sonnet health and continues the original instruction through Claude Code. The fallback is instructed to inspect current state before editing because the failed primary runtime may already have completed tool actions.
+
+This is a continuity mechanism, not a rollback/transaction layer. Repository state, tests and evidence determine what actually completed.
 
 ## CI evidence rule
 
@@ -54,7 +69,9 @@ npm ci
 npm run typecheck
 npm run agent:orchestration:qualify
 npm run verify
-git diff --check
+node --check for orchestration modules
+bash -n for Oracle scripts/hooks
+git diff --check against the PR base
 ```
 
 GitHub Actions is the authoritative Linux CI evidence when local command execution is unavailable.
@@ -70,13 +87,22 @@ No item below may be marked complete from simulation or documentation alone:
 - Claude subscription authentication;
 - installed-runtime Sol probe;
 - installed-runtime Sonnet probe;
-- actual Codex process-death test;
-- actual Hermes process-death/restart;
-- actual supervisor process-death/restart;
-- full Oracle reboot recovery;
-- checkpoint/HOT/WARM/COLD persistence across takeover/reboot;
-- safe return to Sol after recovery;
-- final secret/security audit;
+- installed `dial-hermes` primary path through exact Sol;
+- `soak-control-plane.sh process` green evidence:
+  - actual Codex App Server SIGKILL;
+  - Sonnet fallback identity/execution;
+  - safe return to Sol;
+  - supervisor SIGKILL/restart;
+  - Hermes gateway SIGKILL/restart;
+- `soak-control-plane.sh reboot-pre` followed by an actual Oracle reboot;
+- `soak-control-plane.sh reboot-post` green evidence:
+  - changed Linux boot ID;
+  - service recovery;
+  - checkpoint persistence;
+  - HOT/WARM/COLD persistence;
+  - Hermes `state.db` backup persistence;
+  - fresh return to Sol preference;
+- final installed-host secret/security audit;
 - final independent architecture-contamination review.
 
 ## Real provider capacity gate
@@ -85,6 +111,6 @@ No item below may be marked complete from simulation or documentation alone:
 REAL_QUOTA_SOAK = PENDING
 ```
 
-Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states are deterministic routing evidence only. Subscription usage must not be deliberately exhausted to manufacture this event.
+Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states and actual process-kill tests are routing/recovery evidence only. Subscription usage must not be deliberately exhausted to manufacture a provider quota event.
 
 PR #1 remains draft until the required Oracle/runtime gates are genuinely complete.
