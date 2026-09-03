@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { captureGitState, loadRepoActiveWork } from './checkpoint-store.mjs';
 import { loadHandoffCapsule } from './handoff-builder.mjs';
+import { readFeatureMemory } from './feature-memory.mjs';
 import { readJson } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -78,13 +79,14 @@ export async function buildManagerContext({ repoDir = DEFAULT_REPO, userMessage 
   const gitState = captureGitState(checkpointValue?.worktree || repoDir);
   const boundedContext = contextGet(repoDir, featureId);
   const decisions = readDecisionHints(repoDir, featureId);
+  const featureMemory = featureId ? readFeatureMemory(featureId, { limit: 20 }, root) : null;
   const memoryHits = await searchHermesHistory(featureId || userMessage.slice(0, 120));
   const lease = readJson('state/manager-lease.json', null, root);
 
   const packet = [
     'DIAL CONTROL-PLANE CONTEXT',
     '',
-    'Authority order: DIAL canon/registries/evidence > Git/worktree > checkpoint > handoff capsule > Hermes memory/history.',
+    'Authority order: DIAL canon/registries/evidence > Git/worktree > checkpoint > handoff capsule > Feature memory > Hermes session history.',
     'Never advance a gate from model assertion or memory. Verify repository state before acting.',
     featureId ? `Active Feature ID: ${featureId}` : 'Active Feature ID: none resolved; do not perform material implementation until one is resolved.',
     lease ? `Manager lease: ${JSON.stringify(lease)}` : 'Manager lease: none recorded.',
@@ -94,12 +96,20 @@ export async function buildManagerContext({ repoDir = DEFAULT_REPO, userMessage 
     capsule ? `\nHandoff capsule (verify before use):\n${bounded(JSON.stringify(capsule, null, 2), 5000)}` : '',
     boundedContext ? `\nBounded DIAL Feature context:\n${bounded(boundedContext, 10000)}` : '',
     decisions ? `\nDecision hints linked to Feature ID:\n${bounded(decisions, 5000)}` : '',
+    featureMemory && (featureMemory.records.length || featureMemory.summary)
+      ? `\nFeature-scoped Oracle memory (non-authoritative):\n${bounded(JSON.stringify(featureMemory, null, 2), 5000)}`
+      : '',
     memoryHits.length ? `\nHermes historical retrieval (non-authoritative):\n${bounded(JSON.stringify(memoryHits, null, 2), 3500)}` : '',
     '',
     'At an atomic boundary, leave repository-observable state clean or explicitly checkpoint dirty paths. Preserve independent-review requirements.',
   ].filter(Boolean).join('\n');
 
-  return { feature_id: featureId, context: bounded(packet, 26000), memory_hits: memoryHits.length };
+  return {
+    feature_id: featureId,
+    context: bounded(packet, 30000),
+    feature_memory_records: featureMemory?.records.length ?? 0,
+    hermes_memory_hits: memoryHits.length,
+  };
 }
 
 async function readStdin() {
