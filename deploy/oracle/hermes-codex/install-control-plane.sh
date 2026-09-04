@@ -42,10 +42,11 @@ block=f'''{start}
 DIAL Hermes external-runtime invariants:
 - The DIAL repository, registries, tests and evidence are authoritative; memory never overrides them.
 - Hermes is a persistent external runtime/control layer, not a second source of truth.
-- Preferred Hermes runtime: GPT-5.6 Sol through Codex App Server.
-- Operational fallback Hermes runtime: Claude Sonnet 5 through official Claude Code CLI.
+- Exact runtime chain: GPT-5.6 Sol through Codex App Server, then exact Claude Sonnet 5 through official Claude Code CLI, then fail closed.
+- Discovered plan models are informational only and never become runtime fallbacks.
 - Runtime fallback is an availability mechanism only and does not redefine DIAL development governance.
-- The DIAL runtime executor owns Sol-to-Sonnet failover; do not replace it with an Anthropic API fallback route.
+- Product development remains blocked until the external Oracle orchestrator reaches PRODUCTION_GREEN.
+- Once green, development enters through dial-hermes-submit; direct project-session development is not the canonical path.
 - Checkpoints, handoffs and Feature memory are continuity context and must be verified against current Git/canon.
 - Never advance a DIAL gate from model prose, cached memory or a previous session alone.
 - Never persist credentials, OAuth tokens, API keys, passwords, private SSH keys or secret environment files in DIAL/Hermes memory.
@@ -64,13 +65,7 @@ python3 - "$CONFIG" "$PRE_HOOK" "$POST_HOOK" <<'PY'
 import sys,yaml
 p,pre,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; model=cfg.setdefault('model',{})
 model['provider']='openai-codex'; model['default']='gpt-5.6-sol'; model['openai_runtime']='codex_app_server'; cfg['hooks_auto_accept']=False
-# Codex App Server is a local Codex subprocess, not an HTTP inference URL.
-# Hermes' installer may leave a third-party base_url (for example OpenRouter);
-# that must not survive into the subscription-only control plane.
 model.pop('base_url', None)
-# DIAL intentionally does not use Hermes' built-in Anthropic fallback. The locked
-# fallback route invokes the official Claude Code CLI so Claude subscription auth
-# remains the execution path instead of silently becoming API billing.
 cfg['fallback_providers']=[]; cfg.pop('fallback_model',None)
 hooks=cfg.setdefault('hooks',{})
 for event,command,timeout in [('pre_llm_call',pre,12),('post_llm_call',post,12)]:
@@ -97,9 +92,6 @@ normalize_codex_config(){
   python3 - "$CODEX_CONFIG" <<'PY'
 import re,sys
 p=sys.argv[1]; text=open(p,encoding='utf-8').read()
-# Hermes /codex-runtime migrate may rewrite a second default_permissions
-# assignment. Codex App Server rejects duplicate TOML keys, so strip every
-# existing assignment and write each locked key once.
 for key,value in [('model','gpt-5.6-sol'),('default_permissions',':workspace')]:
     text=re.sub(rf'(?m)^(?!\s*#){re.escape(key)}\s*=.*\n?', '', text)
     text=f'{key} = "{value}"\n'+text
@@ -132,6 +124,7 @@ Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
 Environment=HERMES_HOME=$HERMES_HOME
 Environment=CODEX_HOME=$CODEX_HOME
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs daemon
 Restart=on-failure
 RestartSec=5
@@ -152,6 +145,7 @@ Type=simple
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
 Environment=HERMES_HOME=$HERMES_HOME
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$HERMES_BIN dashboard --host 127.0.0.1 --port 9119 --no-open
 Restart=on-failure
 RestartSec=5
@@ -182,24 +176,38 @@ else
 fi
 normalize_codex_config
 
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
+
 cat <<'EOF'
 
-DIAL OPERATIONAL ENTRYPOINT:
-  dial-hermes "<instruction>"
+DIAL HERMES CONTROL PLANE INSTALLED
 
-This entrypoint attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a
-classified runtime failure it checkpoints observable repository state and
-continues through official Claude Code / claude-sonnet-5. It never substitutes
-Hermes' Anthropic API fallback for the locked Claude Code subscription route.
+Runtime chain is locked to:
+  GPT-5.6 Sol / Codex App Server
+  -> Claude Sonnet 5 / official Claude Code
+  -> NO_HERMES_RUNTIME_AVAILABLE
+
+The external Oracle orchestrator is installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
+The only pre-green queued action permitted is the fixed read-only/no-tools qualification canary.
 
 NEXT REQUIRED INTERACTIVE HERMES ACTION:
   Start Hermes in /srv/dial/repo and run:
     /codex-runtime codex_app_server
   Exit that cached session and start a fresh Hermes session.
 
-Then run:
+After live subscription capacity is available, execute in order:
   bash deploy/oracle/hermes-codex/qualify-control-plane.sh
+  bash deploy/oracle/hermes-codex/soak-control-plane.sh process
+  bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh
+  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-pre
+  sudo reboot
+  # reconnect
+  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-post
+  bash deploy/oracle/hermes-codex/finalize-control-plane.sh
 
-Qualification proves the installed runtime paths. Process/reboot soak remains a
-separate live gate and provider quota must not be deliberately exhausted.
+Only after finalization prints EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN may
+Dial development resume, and the canonical development entrypoint is then:
+  dial-hermes-submit "<development instruction>"
+
+Do not deliberately exhaust subscription quota to manufacture a provider failure.
 EOF
