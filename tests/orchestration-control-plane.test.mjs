@@ -19,6 +19,7 @@ import { listCodexPlanModels } from '../agent-system/orchestration/codex-app-ser
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
 import {
+  QUALIFICATION_CANARY_INSTRUCTION,
   externalWorkStatus,
   processNextExternalWork,
   submitExternalWork,
@@ -42,12 +43,9 @@ function makeRepo() {
   return repo;
 }
 function recordPair(root, {
-  sol = 'HEALTHY',
-  sonnet = 'HEALTHY',
-  solRequested = 'gpt-5.6-sol',
-  solResolved = 'gpt-5.6-sol',
-  sonnetRequested = 'claude-sonnet-5',
-  sonnetResolved = 'claude-sonnet-5',
+  sol = 'HEALTHY', sonnet = 'HEALTHY',
+  solRequested = 'gpt-5.6-sol', solResolved = 'gpt-5.6-sol',
+  sonnetRequested = 'claude-sonnet-5', sonnetResolved = 'claude-sonnet-5',
 } = {}) {
   recordRuntimeHealth('codex_app_server', {
     state: sol,
@@ -64,10 +62,7 @@ function recordPair(root, {
 }
 function healthyPlanModel(id) {
   return {
-    id,
-    state: 'HEALTHY',
-    requested_model: id,
-    resolved_model: id,
+    id, state: 'HEALTHY', requested_model: id, resolved_model: id,
     observed_at: new Date().toISOString(),
     details: { toolchain_usable: true, identity_proven: true },
   };
@@ -91,7 +86,8 @@ describe('locked Hermes runtime policy', () => {
     expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna', observed_at, ...usable })).toBe(false);
     expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, details: { toolchain_usable: false } })).toBe(false);
     const stale = { state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString(), ...usable };
-    expect(healthFresh(stale)).toBe(false); expect(runtimeEligible(stale)).toBe(false);
+    expect(healthFresh(stale)).toBe(false);
+    expect(runtimeEligible(stale)).toBe(false);
   });
 
   it('selects exact Sol when both locked runtimes are healthy', () => {
@@ -121,30 +117,25 @@ describe('locked Hermes runtime policy', () => {
     expect(result.selection.in_plan_fallback).toBe(false);
   });
 
-  it('rejects a non-Sol Codex slot even when it is healthy', () => {
-    const root = temp('dial-control');
-    recordPair(root, { solRequested: 'gpt-5.4', solResolved: 'gpt-5.4', sonnet: 'HEALTHY' });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selection.runtime).toBe('claude_code');
-    expect(result.selection.requested_model).toBe('claude-sonnet-5');
-  });
+  it('rejects non-Sol Codex and alternate Sonnet-class slots', () => {
+    const alternateCodex = temp('dial-control');
+    recordPair(alternateCodex, { solRequested: 'gpt-5.4', solResolved: 'gpt-5.4' });
+    expect(reconcileHermesRuntime({ root: alternateCodex }).selection.runtime).toBe('claude_code');
 
-  it('rejects alternate Sonnet-class models and fails closed', () => {
-    const root = temp('dial-control');
-    recordPair(root, {
+    const alternateClaude = temp('dial-control');
+    recordPair(alternateClaude, {
       sol: 'ACCOUNT_LIMITED',
       sonnetRequested: 'claude-sonnet-4-6',
       sonnetResolved: 'claude-sonnet-4-6',
     });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selected).toBe(false);
-    expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
+    expect(reconcileHermesRuntime({ root: alternateClaude }).reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
   });
 
   it('returns NO_HERMES_RUNTIME_AVAILABLE for total loss', () => {
     const root = temp('dial-control'); recordPair(root, { sol: 'PROCESS_FAILED', sonnet: 'ACCOUNT_LIMITED' });
     const result = reconcileHermesRuntime({ root });
-    expect(result.selected).toBe(false); expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
+    expect(result.selected).toBe(false);
+    expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
   });
 
   it('keeps model-list discovery informational rather than executable', async () => {
@@ -180,12 +171,8 @@ describe('Hermes operational executor', () => {
       root,
       instruction: 'Inspect TEST-F001.',
       primaryRunner: async ({ model }) => ({
-        ok: true,
-        runtime: 'codex_app_server',
-        requested_model: model,
-        resolved_model: model,
-        state: 'HEALTHY',
-        response: 'sol complete',
+        ok: true, runtime: 'codex_app_server', requested_model: model, resolved_model: model,
+        state: 'HEALTHY', response: 'sol complete',
       }),
       ensureFallback: async () => { fallbackCalled = true; return { eligible: true }; },
     });
@@ -202,7 +189,6 @@ describe('Hermes operational executor', () => {
     const before = readFileSync(active, 'utf8');
     const primaryModels = [];
     let fallbackCall = null;
-
     const result = await executeHermesInstruction({
       repoDir: repo,
       root,
@@ -215,13 +201,9 @@ describe('Hermes operational executor', () => {
       contextBuilder: async () => ({ context: 'CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED' }),
       fallbackRunner: async (input) => {
         fallbackCall = input;
-        return {
-          event: { requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' },
-          output: { result: 'continued safely' },
-        };
+        return { event: { requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' }, output: { result: 'continued safely' } };
       },
     });
-
     expect(primaryModels).toEqual(['gpt-5.6-sol']);
     expect(result.runtime).toBe('claude_code');
     expect(result.requested_model).toBe('claude-sonnet-5');
@@ -235,23 +217,19 @@ describe('Hermes operational executor', () => {
     expect(readFileSync(active, 'utf8')).toBe(before);
   });
 
-  it('fails closed when exact Sonnet 5 is unavailable', async () => {
+  it('fails closed when exact Sonnet 5 is unavailable or provenance is wrong', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const result = await executeHermesInstruction({
+    const unavailable = await executeHermesInstruction({
       repoDir: repo,
       root,
       instruction: 'Continue TEST-F001.',
       primaryRunner: async () => ({ ok: false, state: 'PROCESS_FAILED', resolved_model: 'gpt-5.6-sol' }),
       ensureFallback: async () => ({ eligible: false, reason: 'CLAUDE_SONNET_5_NOT_HEALTHY' }),
     });
-    expect(result.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
-    expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
-    expect(result.fallback_used).toBe(false);
-  });
+    expect(unavailable.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
+    expect(unavailable.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
 
-  it('fails closed if fallback provenance resolves to anything except Sonnet 5', async () => {
-    const repo = makeRepo(), root = temp('dial-control');
-    const result = await executeHermesInstruction({
+    const wrongIdentity = await executeHermesInstruction({
       repoDir: repo,
       root,
       instruction: 'Continue TEST-F001.',
@@ -260,50 +238,93 @@ describe('Hermes operational executor', () => {
       contextBuilder: async () => ({ context: 'TEST' }),
       fallbackRunner: async () => ({ event: { resolved_model: 'claude-sonnet-4-6' }, output: { result: 'wrong model' } }),
     });
-    expect(result.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
-    expect(result.failure_state).toBe('FALLBACK_FAILED');
+    expect(wrongIdentity.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
+    expect(wrongIdentity.failure_state).toBe('FALLBACK_FAILED');
   });
 });
 
 describe('external Oracle orchestration queue', () => {
-  it('submits and executes work from the persistent control plane with provenance', async () => {
-    const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({
-      root,
-      instruction: 'Verify TEST-F001 without changing its gate.',
-      requestedBy: 'qualification',
-    });
-    expect(queued.execution_origin).toBe('EXTERNAL_ORACLE_ORCHESTRATOR');
-    expect(externalWorkStatus(null, root).queued).toBe(1);
+  const executorSuccess = async ({ instruction }) => ({
+    event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
+    authority: 'HERMES_RUNTIME_ONLY',
+    policy: 'LOCKED_SOL_THEN_SONNET',
+    runtime: 'codex_app_server',
+    requested_model: 'gpt-5.6-sol',
+    resolved_model: 'gpt-5.6-sol',
+    fallback_used: false,
+    response: instruction,
+  });
 
+  it('executes ordinary work only when the development gate is green', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const queued = submitExternalWork({ root, instruction: 'Verify TEST-F001 without changing its gate.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
-      executor: async ({ instruction }) => ({
-        event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
-        authority: 'HERMES_RUNTIME_ONLY',
-        policy: 'LOCKED_SOL_THEN_SONNET',
-        runtime: 'codex_app_server',
-        requested_model: 'gpt-5.6-sol',
-        resolved_model: 'gpt-5.6-sol',
-        fallback_used: false,
-        response: instruction,
-      }),
+      executor: executorSuccess,
+      developmentGate: () => ({ unblocked: true }),
     });
-
     expect(processed.state).toBe('COMPLETED');
     expect(processed.execution_origin).toBe('EXTERNAL_ORACLE_ORCHESTRATOR');
     expect(processed.runtime_provenance.requested_model).toBe('gpt-5.6-sol');
     expect(externalWorkStatus(queued.job_id, root).state).toBe('COMPLETED');
-    expect(externalWorkStatus(null, root).queued).toBe(0);
   });
 
-  it('persists failed external work instead of silently advancing', async () => {
+  it('blocks ordinary development before PRODUCTION_GREEN instead of executing it', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    let executorCalled = false;
+    const processed = await processNextExternalWork({
+      repoDir: repo,
+      root,
+      executor: async () => { executorCalled = true; return executorSuccess({ instruction: 'unexpected' }); },
+      developmentGate: () => { throw new Error('external Hermes qualification gate not satisfied'); },
+    });
+    expect(executorCalled).toBe(false);
+    expect(processed.state).toBe('FAILED');
+    expect(processed.result.failure_state).toBe('DEVELOPMENT_BLOCKED');
+    expect(externalWorkStatus(queued.job_id, root).state).toBe('FAILED');
+  });
+
+  it('allows only the fixed safe qualification canary before the gate', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    expect(() => submitExternalWork({
+      root,
+      instruction: 'Do development work.',
+      requestedBy: 'qualification',
+      metadata: { qualification_canary: true },
+    })).toThrow(/instruction is fixed/);
+    expect(() => submitExternalWork({
+      root,
+      instruction: QUALIFICATION_CANARY_INSTRUCTION,
+      requestedBy: 'operator',
+      metadata: { qualification_canary: true },
+    })).toThrow(/requestedBy=qualification/);
+
+    const queued = submitExternalWork({
+      root,
+      instruction: QUALIFICATION_CANARY_INSTRUCTION,
+      requestedBy: 'qualification',
+      metadata: { qualification_canary: true },
+    });
+    const processed = await processNextExternalWork({
+      repoDir: repo,
+      root,
+      executor: executorSuccess,
+      developmentGate: () => { throw new Error('must not be called for safe canary'); },
+    });
+    expect(processed.state).toBe('COMPLETED');
+    expect(processed.instruction).toBe(QUALIFICATION_CANARY_INSTRUCTION);
+    expect(externalWorkStatus(queued.job_id, root).state).toBe('COMPLETED');
+  });
+
+  it('persists runtime failure instead of silently advancing', async () => {
     const repo = makeRepo(), root = temp('dial-control');
     const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
+      developmentGate: () => ({ unblocked: true }),
       executor: async () => ({
         event: 'HERMES_OPERATIONAL_TURN_FAILED',
         policy: 'LOCKED_SOL_THEN_SONNET',
@@ -325,8 +346,10 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
     const cp = buildCheckpoint(repo, { runtime_provenance: { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' } });
     saveCheckpoint(cp, root);
     const hot = readJson('memory/hot/TEST-F001.json', null, root);
-    expect(hot.target_gate).toBe('DOMAIN_TESTED'); expect(hot.authority).toBe('NON_AUTHORITATIVE_CONTEXT');
-    writeFileSync(path.join(repo, 'dirty.txt'), 'x'); expect(captureGitState(repo).dirty).toBe(true);
+    expect(hot.target_gate).toBe('DOMAIN_TESTED');
+    expect(hot.authority).toBe('NON_AUTHORITATIVE_CONTEXT');
+    writeFileSync(path.join(repo, 'dirty.txt'), 'x');
+    expect(captureGitState(repo).dirty).toBe(true);
     expect(() => buildCheckpoint(repo, { feature_id: 'TEST-F999' })).toThrow(/unknown Feature ID/);
   });
 
@@ -359,8 +382,10 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
   });
 
   it('runtime selection does not alter DIAL gate or ACTIVE_WORK state', () => {
-    const repo = makeRepo(), root = temp('dial-control'); saveCheckpoint(buildCheckpoint(repo), root);
-    const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json'); const before = readFileSync(active, 'utf8');
+    const repo = makeRepo(), root = temp('dial-control');
+    saveCheckpoint(buildCheckpoint(repo), root);
+    const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json');
+    const before = readFileSync(active, 'utf8');
     recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'HEALTHY' });
     expect(reconcileHermesRuntime({ root }).selection.runtime).toBe('claude_code');
     expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
@@ -368,6 +393,7 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
   });
 
   it('prefers explicit Feature ID in the incoming turn', () => {
-    const repo = makeRepo(); expect(resolveFeatureId({ userMessage: 'continue TEST-F001 please', repoDir: repo })).toBe('TEST-F001');
+    const repo = makeRepo();
+    expect(resolveFeatureId({ userMessage: 'continue TEST-F001 please', repoDir: repo })).toBe('TEST-F001');
   });
 });
