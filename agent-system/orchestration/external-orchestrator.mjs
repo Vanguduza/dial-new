@@ -17,6 +17,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const DEFAULT_POLL_MS = 2000;
 const ORIGIN = 'EXTERNAL_ORACLE_ORCHESTRATOR';
+export const QUALIFICATION_CANARY_INSTRUCTION = 'Reply with exactly DIAL_EXTERNAL_ORCHESTRATOR_OK. Do not modify files and do not use tools.';
 
 function now() { return new Date().toISOString(); }
 function queueRel(state, id) { return `work-queue/${state}/${id}.json`; }
@@ -31,9 +32,23 @@ function heartbeat(root, extra = {}) {
   }, root);
 }
 
+function validateQualificationCanary({ instruction, requestedBy, metadata }) {
+  const requested = metadata?.qualification_canary === true;
+  if (!requested) return false;
+  if (requestedBy !== 'qualification') {
+    throw new Error('qualification canary requires requestedBy=qualification');
+  }
+  if (instruction !== QUALIFICATION_CANARY_INSTRUCTION) {
+    throw new Error('qualification canary instruction is fixed and may not be changed');
+  }
+  return true;
+}
+
 export function submitExternalWork({ instruction, requestedBy = 'operator', metadata = {}, root } = {}) {
   const text = String(instruction ?? '').trim();
   if (!text) throw new Error('instruction is required');
+  const safeMetadata = metadata && typeof metadata === 'object' ? { ...metadata } : {};
+  validateQualificationCanary({ instruction: text, requestedBy, metadata: safeMetadata });
   ensureControlLayout(root);
   const id = crypto.randomUUID();
   const job = {
@@ -43,7 +58,7 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     state: 'QUEUED',
     instruction: text,
     requested_by: requestedBy,
-    metadata: metadata && typeof metadata === 'object' ? metadata : {},
+    metadata: safeMetadata,
     queued_at: now(),
   };
   writeJsonAtomic(queueRel('inbox', id), job, root);
@@ -124,7 +139,11 @@ function finalizeJob(job, result, root) {
 }
 
 function isQualificationCanary(job) {
-  return job?.requested_by === 'qualification' && job?.metadata?.qualification_canary === true;
+  return Boolean(
+    job?.requested_by === 'qualification'
+    && job?.metadata?.qualification_canary === true
+    && job?.instruction === QUALIFICATION_CANARY_INSTRUCTION
+  );
 }
 
 export async function processNextExternalWork({
@@ -169,7 +188,7 @@ export async function processNextExternalWork({
     appendJsonl('events/external-orchestrator.jsonl', {
       event: 'QUALIFICATION_CANARY_GATE_BYPASS',
       job_id: job.job_id,
-      reason: 'qualification canary must prove external execution before PRODUCTION_GREEN can exist',
+      reason: 'fixed read-only/no-tools qualification canary proves external execution before PRODUCTION_GREEN can exist',
       at: now(),
     }, root);
   }
