@@ -17,8 +17,9 @@ function now() { return new Date().toISOString(); }
 
 export function emptyHermesPlanModels() {
   return {
-    schema_version: 1,
+    schema_version: 2,
     authority: 'HERMES_RUNTIME_ONLY',
+    execution_policy: 'DISCOVERY_INFORMATIONAL_ONLY_EXCEPT_EXACT_LOCKED_MODELS',
     updated_at: null,
     runtimes: {
       codex_app_server: {
@@ -40,16 +41,23 @@ export function normalizeModelId(value) {
 }
 
 export function classifyCodexHermesModel(modelId) {
-  const id = String(modelId ?? '').trim();
+  const id = normalizeModelId(modelId);
   if (!id) {
     return { class: 'unknown', hermes_eligible: false, preferred: false, reason: 'MISSING_MODEL_ID' };
   }
-  const preferred = id === HERMES_PREFERRED_CODEX_MODEL;
+  if (id === HERMES_PREFERRED_CODEX_MODEL) {
+    return {
+      class: 'codex_locked_primary',
+      hermes_eligible: true,
+      preferred: true,
+      reason: 'HERMES_LOCKED_CODEX_MODEL',
+    };
+  }
   return {
-    class: 'codex_plan',
-    hermes_eligible: true,
-    preferred,
-    reason: preferred ? 'HERMES_PREFERRED_CODEX_MODEL' : 'CODEX_IN_PLAN_FALLBACK',
+    class: 'codex_discovered',
+    hermes_eligible: false,
+    preferred: false,
+    reason: 'DISCOVERY_ONLY_NOT_AN_EXECUTABLE_HERMES_FALLBACK',
   };
 }
 
@@ -58,40 +66,34 @@ export function classifyClaudeHermesModel(modelId) {
   if (!id) {
     return { class: CLAUDE_HERMES_CLASS.UNKNOWN, hermes_eligible: false, preferred: false, reason: 'MISSING_MODEL_ID' };
   }
-
-  // `best` is Claude Code's latest-Fable alias. Exact Fable 5 vs 5.1 is not a Hermes pin.
+  if (id === HERMES_PREFERRED_CLAUDE_MODEL) {
+    return {
+      class: CLAUDE_HERMES_CLASS.SONNET,
+      hermes_eligible: true,
+      preferred: true,
+      reason: 'HERMES_LOCKED_CLAUDE_MODEL',
+    };
+  }
   if (id === 'best' || id === 'fable' || id === 'fable[1m]' || /(^|[^a-z])fable([^a-z]|$)/.test(id)) {
     return {
       class: CLAUDE_HERMES_CLASS.FABLE,
       hermes_eligible: false,
       preferred: false,
       reason: 'FABLE_EXCLUDED_FROM_HERMES_POWER',
-      note: 'Hermes Claude preference is claude-sonnet-5. Fable 5 / Fable 5.1 are not Hermes hard pins.',
     };
   }
   if (id.includes('opus')) {
-    return {
-      class: CLAUDE_HERMES_CLASS.OPUS,
-      hermes_eligible: false,
-      preferred: false,
-      reason: 'TOP_TIER_EXCLUDED_FROM_HERMES_POWER',
-    };
+    return { class: CLAUDE_HERMES_CLASS.OPUS, hermes_eligible: false, preferred: false, reason: 'OPUS_NOT_A_DIAL_HERMES_RUNTIME_SLOT' };
   }
   if (id.includes('haiku')) {
-    return {
-      class: CLAUDE_HERMES_CLASS.HAIKU,
-      hermes_eligible: false,
-      preferred: false,
-      reason: 'HAIKU_NOT_HERMES_CONTINUITY_CLASS',
-    };
+    return { class: CLAUDE_HERMES_CLASS.HAIKU, hermes_eligible: false, preferred: false, reason: 'HAIKU_NOT_A_DIAL_HERMES_RUNTIME_SLOT' };
   }
-  if (id === 'sonnet' || id === 'sonnet[1m]' || id.includes('sonnet')) {
-    const preferred = id === HERMES_PREFERRED_CLAUDE_MODEL;
+  if (id.includes('sonnet')) {
     return {
       class: CLAUDE_HERMES_CLASS.SONNET,
-      hermes_eligible: true,
-      preferred,
-      reason: preferred ? 'HERMES_PREFERRED_CLAUDE_MODEL' : 'SONNET_CLASS_IN_PLAN_FALLBACK',
+      hermes_eligible: false,
+      preferred: false,
+      reason: 'ALTERNATE_SONNET_DISCOVERY_ONLY_NOT_EXECUTABLE',
     };
   }
   return {
@@ -135,11 +137,8 @@ export function parseClaudeModelListEvidence(payload) {
   if (typeof payload === 'string') {
     const trimmed = payload.trim();
     if (!trimmed) return [];
-    try {
-      return parseClaudeModelListEvidence(JSON.parse(trimmed));
-    } catch {
-      return [];
-    }
+    try { return parseClaudeModelListEvidence(JSON.parse(trimmed)); }
+    catch { return []; }
   }
   if (Array.isArray(payload)) {
     const models = [];
@@ -201,8 +200,9 @@ function normalizeRuntimePlan(runtime, input = {}) {
 
 export function normalizeHermesPlanModels(input = {}) {
   return {
-    schema_version: 1,
+    schema_version: 2,
     authority: 'HERMES_RUNTIME_ONLY',
+    execution_policy: 'DISCOVERY_INFORMATIONAL_ONLY_EXCEPT_EXACT_LOCKED_MODELS',
     updated_at: input.updated_at ?? now(),
     runtimes: {
       codex_app_server: normalizeRuntimePlan('codex_app_server', input.runtimes?.codex_app_server ?? {}),
@@ -222,6 +222,7 @@ export function saveHermesPlanModels(plan, root) {
   appendJsonl('events/hermes-plan-models.jsonl', {
     event: 'HERMES_PLAN_MODELS_RECORDED',
     authority: 'HERMES_RUNTIME_ONLY',
+    execution_policy: normalized.execution_policy,
     codex_source: normalized.runtimes.codex_app_server.source,
     claude_source: normalized.runtimes.claude_code.source,
     codex_models: normalized.runtimes.codex_app_server.models.map((model) => model.id),
@@ -258,8 +259,7 @@ export function planModelAsHealth(runtime, model = {}) {
     details: {
       ...(model.details ?? {}),
       identity_proven: model.details?.identity_proven === true || (
-        Boolean(model.resolved_model)
-        && model.resolved_model === (model.requested_model ?? model.id)
+        Boolean(model.resolved_model) && model.resolved_model === (model.requested_model ?? model.id)
       ),
       toolchain_usable: model.details?.toolchain_usable === true,
       plan_source: true,
@@ -275,9 +275,7 @@ export function healthForPlanModel(runtime, model, runtimeHealth) {
   const fromPlan = planModelAsHealth(runtime, model);
   const slot = runtimeHealth?.runtimes?.[runtime];
   if (slot && slotMatchesModel(slot, model.id)) return slot;
-  if (fromPlan.state === 'HEALTHY' && runtimeEligible(fromPlan, { hardPin: true, requireFresh: true })) {
-    return fromPlan;
-  }
+  if (fromPlan.state === 'HEALTHY' && runtimeEligible(fromPlan, { hardPin: true, requireFresh: true })) return fromPlan;
   return fromPlan;
 }
 
@@ -291,21 +289,21 @@ export function listedCodexPlanModels(planModels, runtimeHealth) {
   const ids = new Set(listed.map((model) => model.id));
   const slot = runtimeHealth?.runtimes?.codex_app_server;
   if (slot?.requested_model && !ids.has(slot.requested_model) && slot.requested_model === HERMES_PREFERRED_CODEX_MODEL) {
-    return [
-      normalizeListedModel('codex_app_server', {
-        id: HERMES_PREFERRED_CODEX_MODEL,
-        state: slot.state,
-        requested_model: slot.requested_model,
-        resolved_model: slot.resolved_model,
-        observed_at: slot.observed_at,
-        details: slot.details,
-      }),
-      ...listed,
-    ];
+    return [normalizeListedModel('codex_app_server', {
+      id: HERMES_PREFERRED_CODEX_MODEL,
+      state: slot.state,
+      requested_model: slot.requested_model,
+      resolved_model: slot.resolved_model,
+      observed_at: slot.observed_at,
+      details: slot.details,
+    }), ...listed];
   }
   return listed;
 }
 
+// Retained for compatibility with probes/tests. Because only the locked preferred
+// model is hermes_eligible and it is excluded by default, these functions return
+// no executable fallback candidates under the current policy.
 export function nextEligibleCodexPlanModels(planModels, runtimeHealth, { exclude = [HERMES_PREFERRED_CODEX_MODEL] } = {}) {
   const excluded = new Set(exclude.filter(Boolean));
   return listedCodexPlanModels(planModels, runtimeHealth)
