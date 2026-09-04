@@ -16,6 +16,10 @@ ORACLE_HOST_PREVIOUSLY_PROVISIONED
 ORACLE_BOOTSTRAP_PREVIOUSLY_COMPLETE
 SUBSCRIPTION_AUTH_PREVIOUSLY_PRESENT
 LIVE_AUXILIARY_OPERATIONS_PLANE_DEPLOYED
+LIVE_BOUNDED_SERVICE_RECOVERY_PROVEN
+LIVE_EXTERNAL_QUEUE_HEALTH_GREEN
+LIVE_READ_ONLY_SCHEDULED_VERIFY_GREEN
+LIVE_CHECKPOINT_AND_HERMES_BACKUP_GREEN
 CURRENT_HEAD_DETERMINISTIC_ORACLE_VERIFY_GREEN
 LIVE_CURRENT_HEAD_RUNTIME_QUALIFICATION_REQUIRED
 PROCESS_SOAK_REQUIRED
@@ -38,14 +42,17 @@ The auxiliary operations implementation has been installed on the Oracle control
 - `/srv/dial/repo` is read-only to the operations service;
 - `/var/lib/dial-control` is its only configured write path;
 - default schedules are active with API use disabled;
-- service-health, repository-integrity, evidence-preparation and backup-verification jobs execute deterministically;
-- a transaction-consistent Hermes `state.db` backup was created through the existing memory-maintenance mechanism and subsequent backup verification is green;
+- service-health, bounded service-recovery, external-queue-health, repository-integrity, deterministic-verification, evidence-preparation and backup-verification jobs execute deterministically;
+- the first scheduled `deterministic_verify` completed `npm run verify` successfully from inside the read-only operations-service sandbox with 21 test files and 361/361 tests passing and `model_runtime_used=false`;
+- external queue health is green with a fresh `EXTERNAL_ORACLE_ORCHESTRATOR` heartbeat, no queued/processing jobs and no stale-processing jobs;
+- a controlled live fault injection stopped only `hermes-dial-dashboard.service`; the operations plane restarted exactly that allowlisted service, confirmed recovery, and kept `dial-hermes-operations.service` explicitly excluded from recovery;
+- a transaction-consistent Hermes `state.db` backup was created through the existing memory-maintenance mechanism, mode `0600`, and subsequent checkpoint/backup verification is green;
 - supervisor state migrated to schema 5 with the auxiliary-operations boundary recorded;
 - auxiliary API status is currently unconfigured/disabled and exposes no key material;
 - Hermes runtime, external orchestrator and operations service environments contain no ambient OpenAI/Codex/Anthropic API-key assignments;
 - an ordinary external development negative-control job still fails with `DEVELOPMENT_BLOCKED`, with no runtime/model selected.
 
-Repository deterministic verification for the implementation commit passed with 21 test files and 358 tests. Live Sol/Sonnet qualification and the mandatory process/external/reboot soaks remain pending.
+Repository deterministic verification for the expanded operations implementation passed with 21 test files and 361 tests. The live operations evidence packet at commit `a17723294703533e8707d262ecac2ba84a2071ce` reports a clean repository, healthy services, healthy external queue, green deterministic verification and green backup/checkpoint evidence. Live Sol/Sonnet qualification and the mandatory process/external/reboot soaks remain pending.
 
 The only mechanism permitted to change that state is the installed-host finalizer:
 
