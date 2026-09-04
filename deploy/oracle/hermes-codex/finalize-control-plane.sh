@@ -15,6 +15,11 @@ latest(){ ls -1t "$@" 2>/dev/null | head -n1 || true; }
 
 cd "$DIAL_REPO_DIR"
 HEAD_SHA="$(git rev-parse HEAD)"
+FINGERPRINT_JSON="$(node agent-system/orchestration/development-unblock.mjs --fingerprint)"
+FINGERPRINT_VALUE="$(jq -r '.value // empty' <<<"$FINGERPRINT_JSON")"
+FINGERPRINT_ALGORITHM="$(jq -r '.algorithm // empty' <<<"$FINGERPRINT_JSON")"
+FINGERPRINT_OBJECTS="$(jq -c '.objects // []' <<<"$FINGERPRINT_JSON")"
+[[ -n "$FINGERPRINT_VALUE" && -n "$FINGERPRINT_ALGORITHM" ]] || fail "Hermes control-plane fingerprint could not be computed"
 
 QUAL="$(latest "$QUAL_DIR"/installed-runtime-*.json)"
 PROCESS="$(latest "$SOAK_DIR"/process-*.json)"
@@ -108,18 +113,22 @@ TMP="${GATE}.tmp.$$"
 jq -n \
   --arg observed_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --arg repo_head "$HEAD_SHA" \
+  --arg fp_algorithm "$FINGERPRINT_ALGORITHM" \
+  --arg fp_value "$FINGERPRINT_VALUE" \
+  --argjson fp_objects "$FINGERPRINT_OBJECTS" \
   --arg installed_runtime_evidence "$QUAL" \
   --arg process_soak_evidence "$PROCESS" \
   --arg external_failover_evidence "$EXTERNAL" \
   --arg reboot_soak_evidence "$REBOOT" \
   '{
-    schema_version:1,
+    schema_version:2,
     status:"PRODUCTION_GREEN",
     execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",
     runtime_policy:"gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",
     development_entrypoint:"dial-hermes-submit",
     direct_project_session_development_allowed:false,
-    repo_head:$repo_head,
+    qualified_repo_head:$repo_head,
+    control_plane_fingerprint:{algorithm:$fp_algorithm,value:$fp_value,objects:$fp_objects},
     installed_runtime_evidence:$installed_runtime_evidence,
     process_soak_evidence:$process_soak_evidence,
     external_failover_evidence:$external_failover_evidence,
@@ -147,4 +156,5 @@ pass "development is now resumable only through external Hermes orchestration"
 echo
 echo "EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN"
 echo "DEVELOPMENT_ENTRYPOINT=dial-hermes-submit"
-echo "REPO_HEAD=$HEAD_SHA"
+echo "QUALIFIED_REPO_HEAD=$HEAD_SHA"
+echo "CONTROL_PLANE_FINGERPRINT=$FINGERPRINT_VALUE"
