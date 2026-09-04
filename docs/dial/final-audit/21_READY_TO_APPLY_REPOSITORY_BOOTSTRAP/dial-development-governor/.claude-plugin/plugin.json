@@ -1,7 +1,0 @@
-{
-  "name": "dial-development-governor",
-  "version": "2.0.0",
-  "description": "DIAL feature-driven bounded-context engineering governor",
-  "hooks": "./hooks/hooks.json",
-  "mcpServers": "./.mcp.json"
-}

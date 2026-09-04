@@ -1,0 +1,81 @@
+{
+  "schema_version": 3,
+  "as_of": "2026-09-04",
+  "canon_status": "RECONCILED_SINGLE_SOURCE_ADOPTED",
+  "implementation_status": "CANON_MIGRATION_IN_PROGRESS",
+  "canonical_source": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md",
+  "evidence_base_sha": "11933e9fbb00eb2f4686ad420a71007263de6a37",
+  "closure_tests": [
+    {
+      "test": "CT-1 Concrete Feature Contracts",
+      "status": "AMBER",
+      "evidence": {
+        "features": 244,
+        "frcs": 244,
+        "distinct_command_skeletons_after_aggregate_substitution": 61,
+        "lifecycle_boilerplate_commands": 684,
+        "total_commands": 1894,
+        "feature_specific_command_ratio": 0.639,
+        "distinct_state_models": 32,
+        "distinct_acceptance_contracts": 28,
+        "distinct_permission_skeletons": 28,
+        "distinct_eventuality_ref_sets": 12
+      }
+    },
+    {
+      "test": "CT-2 Executable Eventuality Contracts",
+      "status": "AMBER",
+      "evidence": {
+        "eventualities": 254,
+        "material": 233,
+        "distinct_test_definitions": 8,
+        "distinct_procedures": 47,
+        "distinct_compensation_rules": 1,
+        "distinct_evidence_sets": 8
+      }
+    },
+    {
+      "test": "CT-7 Contract Specificity",
+      "status": "AMBER",
+      "evidence": {
+        "features": 244,
+        "frcs": 244,
+        "distinct_command_skeletons_after_aggregate_substitution": 61,
+        "lifecycle_boilerplate_commands": 684,
+        "total_commands": 1894,
+        "feature_specific_command_ratio": 0.639,
+        "distinct_state_models": 32,
+        "distinct_acceptance_contracts": 28,
+        "distinct_permission_skeletons": 28,
+        "distinct_eventuality_ref_sets": 12,
+        "material_eventualities": 233,
+        "distinct_eventuality_test_definitions": 8
+      }
+    }
+  ],
+  "counts": {
+    "top_level_features": 244,
+    "mandatory_realization_facets": 2196,
+    "feature_implementation_contracts": 244,
+    "executable_eventuality_contracts": 254,
+    "material_eventualities": 233,
+    "qualified_donor_records": 48,
+    "nfr_system_profiles": 17,
+    "deployment_environments": 7,
+    "activation_blockers": 11,
+    "operational_responsibility_records": 12,
+    "master_data_families": 13,
+    "branch_activation_records": 10,
+    "feature_security_profiles": 244,
+    "security_controls": 120,
+    "customer_endpoint_records": 180,
+    "supporting_capabilities": 125,
+    "whatsapp_flows": 59
+  },
+  "known_migrations": [
+    "Grocery Rounds domain packages contain legacy weighted-vote/exit terminology and require migration to the canonical equal-vote/ordinary-Groceries-entitlement model before higher readiness.",
+    "VITF and Product Comparison are canon-locked but still require Feature Registry/FRC injection.",
+    "Oracle/Hermes draft requires Sol-to-Sonnet fallback-order correction and live qualification.",
+    "Broad intended customer/business/operator runtime surfaces are not yet complete applications."
+  ],
+  "rule": "Counts and feature gates are machine-derived state. This scorecard is evidence/status, never product authority."

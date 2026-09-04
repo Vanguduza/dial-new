@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "canonical_source": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md",
+  "project_truth_projection": "agent-system/canon/PROJECT_TRUTH.md",
+  "engineering_entry": "CLAUDE.md",
+  "readiness_state": "docs/dial/status/BUILD_READINESS_SCORECARD.json",
+  "feature_registry": "agent-system/registries/FEATURE_REGISTRY.json",
+  "decision_registry": "agent-system/registries/DECISION_LOG.json",
+  "feature_contract_root": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS",
+  "eventuality_root": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS",
+  "security_root": "docs/dial/final-audit/17_SECURITY",
+  "rule": "Subordinate artifacts may add implementation detail but may never override the canonical source.",
+  "compatibility_pointer_marker": "NON-AUTHORITATIVE COMPATIBILITY POINTER"
+}

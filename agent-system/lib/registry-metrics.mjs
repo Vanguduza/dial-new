@@ -1,21 +1,10 @@
-// One computation of the registry metrics, imported by everything that reports
-// them.
-//
-// The build readiness scorecard carried hand-written counts and hand-written
-// CT-1/CT-2 evidence. Both drifted the moment the registries changed — the
-// scorecard still said 186 features after twenty were added, which makes the
-// project's own readiness artifact the least reliable document in the pack.
-// Numbers that are reported in two places will disagree; these are computed
-// once and read by both `contract-specificity` and `scorecard-refresh`.
 import fs from 'node:fs';
 import path from 'node:path';
 
 const PACK = 'docs/dial/final-audit';
-
 export function load(root, relative) {
   return JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
 }
-
 export function readRegistries(root) {
   const p = (rest) => `${PACK}/${rest}`;
   return {
@@ -36,28 +25,16 @@ export function readRegistries(root) {
     controls: load(root, p('17_SECURITY/SECURITY_CONTROL_REGISTRY.json')),
     endpoints: load(root, p('12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json')),
     whatsapp: load(root, p('16_HOME_IDENTITY_WHATSAPP/WHATSAPP_FLOW_REGISTRY.json')),
-    manifest: load(root, p('MANIFEST_v2_2.json')),
   };
 }
-
 const distinct = (items) => new Set(items.map((v) => JSON.stringify(v))).size;
-
-// Strip the aggregate name so two commands differing only by which aggregate
-// they act on collapse to the same skeleton. Distinctness measured over raw
-// names is distinct by construction and says nothing.
-const skeleton = (frc) =>
-  [...(frc.commands ?? [])].sort().map((command) => command.split(frc.aggregate).join('<A>'));
-
+const skeleton = (frc) => [...(frc.commands ?? [])].sort().map((c) => c.split(frc.aggregate).join('<A>'));
 const LIFECYCLE = new Set(['Create<A>', 'Start<A>', 'Block<A>', 'Resume<A>', 'Complete<A>', 'Cancel<A>']);
-
 export function computeCt1(frcs) {
-  let total = 0;
-  let boilerplate = 0;
-  for (const frc of frcs) {
-    for (const command of skeleton(frc)) {
-      total += 1;
-      if (LIFECYCLE.has(command)) boilerplate += 1;
-    }
+  let total = 0, boilerplate = 0;
+  for (const frc of frcs) for (const command of skeleton(frc)) {
+    total += 1;
+    if (LIFECYCLE.has(command)) boilerplate += 1;
   }
   return {
     features: frcs.length,
@@ -68,13 +45,10 @@ export function computeCt1(frcs) {
     feature_specific_command_ratio: Number(((total - boilerplate) / total).toFixed(3)),
     distinct_state_models: distinct(frcs.map((f) => f.states)),
     distinct_acceptance_contracts: distinct(frcs.map((f) => f.acceptance_contract)),
-    distinct_permission_skeletons: distinct(
-      frcs.map((f) => [...(f.permissions ?? [])].map((p) => p.split('.').pop()).sort()),
-    ),
+    distinct_permission_skeletons: distinct(frcs.map((f) => [...(f.permissions ?? [])].map((p) => p.split('.').pop()).sort())),
     distinct_eventuality_ref_sets: distinct(frcs.map((f) => f.eventuality_refs)),
   };
 }
-
 export function computeCt2(eventualities) {
   const material = eventualities.filter((e) => e.materiality === 'MATERIAL');
   return {
@@ -86,7 +60,6 @@ export function computeCt2(eventualities) {
     distinct_evidence_sets: distinct(eventualities.map((e) => e.evidence_to_freeze)),
   };
 }
-
 export function computeCounts(r) {
   return {
     top_level_features: r.features.length,
@@ -106,6 +79,5 @@ export function computeCounts(r) {
     customer_endpoint_records: r.endpoints.length,
     supporting_capabilities: r.capabilities.length,
     whatsapp_flows: r.whatsapp.length,
-    pack_files: r.manifest.file_count,
   };
 }

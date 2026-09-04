@@ -1,149 +1,97 @@
 #!/usr/bin/env node
-// Manifest and canon-reference integrity gate.
-//
-// Two failures this catches, both of which actually occurred:
-//   1. The v2.1 pack shipped as a 12-file overlay while being packaged as a
-//      replacement, silently dropping 181 files including 33 registries.
-//   2. The closure canon named 21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/ and
-//      REPOSITORY_BOOTSTRAP_CHECKLIST.json as the mechanism for clearing CT-6
-//      while neither was present in the shipped pack.
-//
-// A path that canon references must exist. A manifest that claims a file must
-// match it. Neither is checked anywhere else.
-import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const pack = 'docs/dial/final-audit';
-const failures = [];
-const notes = [];
+const canonical = 'docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md';
+const canonIndexPath = 'docs/dial/canon/CANON_INDEX.json';
+const scorecardPath = 'docs/dial/status/BUILD_READINESS_SCORECARD.json';
+const marker = 'NON-AUTHORITATIVE COMPATIBILITY POINTER';
+const exists = (p) => fs.existsSync(path.join(root, p));
+const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
+let fail = [];
 
-const sha256 = (p) => createHash('sha256').update(fs.readFileSync(p)).digest('hex');
-const abs = (...p) => path.join(root, ...p);
-const exists = (p) => fs.existsSync(abs(p));
-
-// ── 1. every manifest in the pack must be complete and hash-accurate ────────
-const manifests = fs
-  .readdirSync(abs(pack))
-  .filter((f) => /^MANIFEST.*\.json$/i.test(f));
-
-if (manifests.length === 0) failures.push(`${pack}: no MANIFEST file found`);
-
-for (const name of manifests) {
-  let manifest;
-  try {
-    manifest = JSON.parse(fs.readFileSync(abs(pack, name), 'utf8'));
-  } catch (error) {
-    failures.push(`${name}: not valid JSON — ${error.message}`);
-    continue;
-  }
-  const files = manifest.files ?? [];
-  if (files.length === 0) {
-    notes.push(`${name}: declares no file list (index-only manifest)`);
-    continue;
-  }
-  let missing = 0;
-  let mismatched = 0;
-  for (const entry of files) {
-    const target = path.join(pack, entry.path);
-    if (!exists(target)) {
-      failures.push(`${name}: declares missing file ${entry.path}`);
-      missing += 1;
-      continue;
-    }
-    if (entry.sha256 && sha256(abs(target)) !== entry.sha256) {
-      failures.push(`${name}: hash mismatch for ${entry.path}`);
-      mismatched += 1;
-    }
-  }
-  // A file present in the pack but absent from the manifest is the same defect
-  // seen from the other side: the manifest no longer describes the pack.
-  const declared = new Set(files.map((entry) => entry.path));
-  const present = [];
-  const walkPack = (dir) => {
-    for (const entry of fs.readdirSync(abs(dir), { withFileTypes: true })) {
-      if (entry.name === 'ARCHIVE') continue;
-      const rel = `${dir}/${entry.name}`;
-      if (entry.isDirectory()) walkPack(rel);
-      else if (!/^MANIFEST.*\.json$/.test(entry.name)) {
-        present.push(path.relative(pack, rel).replaceAll('\\', '/'));
-      }
-    }
-  };
-  walkPack(pack);
-  const undeclared = present.filter((file) => !declared.has(file));
-  for (const file of undeclared) {
-    failures.push(`${name}: pack contains a file the manifest does not declare — ${file}`);
-  }
-
-  notes.push(
-    `${name}: ${files.length} declared, ${missing} missing, ${mismatched} hash-mismatched, ${undeclared.length} undeclared`,
-  );
-}
-
-// ── 2. every path the canon names must exist ────────────────────────────────
-// Sourced from the closure canon (§9), the alignment audit and the v2.1 anchor
-// index. These are the paths an agent is instructed to open; a broken one sends
-// the session to a dead end.
-const canonReferenced = [
-  `${pack}/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md`,
-  `${pack}/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md`,
-  `${pack}/00_MASTER/V2_1_ANCHOR_INDEX.md`,
-  `${pack}/00_MASTER/BUILD_READINESS_SCORECARD.json`,
-  `${pack}/13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/02_EVENTUALITY_CONTRACTS/EXECUTABLE_EVENTUALITY_CONTRACT_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/04_NFR/NFR_BUDGET_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/05_DEPLOYMENT/ENVIRONMENT_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/06_ACTIVATION/ACTIVATION_BLOCKER_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/07_OPERATING_MODEL/OPERATIONAL_RESPONSIBILITY_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/08_MASTER_DATA/MASTER_DATA_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/10_ACTIVATION_CONFIG/BRANCH_ACTIVATION_REGISTRY.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json`,
-  `${pack}/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/ACTUAL_GITHUB_REPOSITORY_ALIGNMENT_AUDIT.md`,
-  `${pack}/21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP/CLAUDE.md`,
-  `${pack}/22_COMMERCE_FRONTEND_AND_TRANSITION/02_TRANSITION_EPC_LOCK/TRANSITION_EPC_INTEGRATION_LOCK.md`,
-  `${pack}/22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md`,
-  `${pack}/22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md`,
-  `${pack}/11_FEATURE_REALIZATION/SUBFEATURE_FUNCTION_REGISTRY.json`,
-  `${pack}/11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json`,
-  `${pack}/17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json`,
-  `${pack}/17_SECURITY/SECURITY_CONTROL_REGISTRY.json`,
+for (const p of [
+  canonical,
+  canonIndexPath,
+  scorecardPath,
   'CLAUDE.md',
   'agent-system/canon/PROJECT_TRUTH.md',
   'agent-system/registries/FEATURE_REGISTRY.json',
-  'agent-system/bin/context-get.mjs',
-  'agent-system/bin/v2-closure-check.mjs',
+  'agent-system/registries/DECISION_LOG.json',
+]) {
+  if (!exists(p)) fail.push(`missing required authority/state file: ${p}`);
+}
+
+const forbidden = [
+  'docs/dial/final-audit/13_PROMPTS',
+  'docs/dial/final-audit/ARCHIVE',
+  'docs/dial/final-audit/21_READY_TO_APPLY_REPOSITORY_BOOTSTRAP',
+  'docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/ready_to_copy',
+  'docs/dial/final-audit/07_IMPLEMENTATION',
+  'docs/dial/final-audit/README_v2_1.md',
+  'docs/dial/final-audit/MANIFEST_v2_2.json',
+  'ref',
+  'DIAL_MAIN_MASTER_RECONSTRUCTION_PROMPT.md',
+  'DIAL_Master_Product_Technical_Delivery_Architecture_vNext3.md',
+  'DIAL_Implementation_Closure_and_Build_Ready_Canon_v2_0.zip',
 ];
+for (const p of forbidden) if (exists(p)) fail.push(`superseded authority path reappeared: ${p}`);
 
-for (const target of canonReferenced) {
-  if (!exists(target)) failures.push(`canon references a path that does not exist: ${target}`);
+if (exists('CLAUDE.md') && !read('CLAUDE.md').includes(canonical)) {
+  fail.push('CLAUDE.md does not point to the canonical master');
+}
+if (exists('agent-system/canon/PROJECT_TRUTH.md') && !read('agent-system/canon/PROJECT_TRUTH.md').includes(canonical)) {
+  fail.push('PROJECT_TRUTH.md does not identify the canonical master');
+}
+if (exists('docs/dial/final-audit/README.md') && !read('docs/dial/final-audit/README.md').includes(canonical)) {
+  fail.push('final-audit README does not subordinate itself to the canonical master');
 }
 
-// ── 3. the harness must not point at scripts it does not ship ───────────────
-const claudeMd = exists('CLAUDE.md') ? fs.readFileSync(abs('CLAUDE.md'), 'utf8') : '';
-for (const match of claudeMd.matchAll(/node\s+(agent-system\/[\w./-]+\.mjs)/g)) {
-  if (!exists(match[1])) failures.push(`CLAUDE.md names a missing script: ${match[1]}`);
+const pointerFiles = [
+  'docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md',
+  'docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md',
+  'docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md',
+  'docs/dial/final-audit/00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md',
+  'docs/dial/final-audit/00_MASTER/DIAL_Module_Expansion_and_Operational_Realisation_Architecture_v1.md',
+  'docs/dial/final-audit/00_MASTER/V2_1_ANCHOR_INDEX.md',
+  'docs/dial/final-audit/00_MASTER/V2_2_ANCHOR_INDEX.md',
+  'docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md',
+  'docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_REVIEW_v1.md',
+  'docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md',
+];
+for (const p of pointerFiles) {
+  if (!exists(p)) continue; // may be deleted once all machine references migrate
+  const text = read(p);
+  if (!text.includes(marker) || !text.includes(canonical)) {
+    fail.push(`legacy compatibility path contains doctrine instead of a pointer: ${p}`);
+  }
 }
 
-for (const note of notes) console.log(`  ${note}`);
+if (exists(canonIndexPath)) {
+  const index = JSON.parse(read(canonIndexPath));
+  if (index.canonical_source !== canonical) fail.push('CANON_INDEX canonical_source is wrong');
+  if (index.project_truth_projection !== 'agent-system/canon/PROJECT_TRUTH.md') fail.push('CANON_INDEX Project Truth pointer is wrong');
+  if (index.readiness_state !== scorecardPath) fail.push('CANON_INDEX readiness pointer is wrong');
+}
 
-if (failures.length) {
-  console.error('\nDIAL manifest/canon-reference check: RED');
-  for (const failure of failures) console.error(`  - ${failure}`);
+if (exists('agent-system/registries/DECISION_LOG.json')) {
+  const decisions = JSON.parse(read('agent-system/registries/DECISION_LOG.json'));
+  const ids = new Set();
+  for (const d of decisions) {
+    if (ids.has(d.decision_id)) fail.push(`duplicate decision id: ${d.decision_id}`);
+    ids.add(d.decision_id);
+    if (d.status !== 'LOCKED') fail.push(`${d.decision_id}: active Decision Registry may contain LOCKED current decisions only`);
+    if (!String(d.record ?? '').includes(canonical)) fail.push(`${d.decision_id}: record does not point to current master`);
+  }
+  const text = JSON.stringify(decisions).toLowerCase();
+  if (/voting weight[^}]{0,120}(credits|contribution)/.test(text)) fail.push('Decision Registry reintroduces contribution-weighted voting');
+  if (/4% stands|permanent 4%|fixed 4%/.test(text)) fail.push('Decision Registry reintroduces a fixed 4% protection price');
+}
+
+if (fail.length) {
+  console.error('DIAL canon coherence: RED');
+  for (const f of fail) console.error(`- ${f}`);
   process.exit(1);
 }
-
-console.log(
-  JSON.stringify(
-    {
-      status: 'GREEN',
-      manifests_checked: manifests.length,
-      canon_referenced_paths_verified: canonReferenced.length,
-    },
-    null,
-    2,
-  ),
-);
+console.log('DIAL canon coherence: GREEN — one product authority, compatibility pointers contain no doctrine');
