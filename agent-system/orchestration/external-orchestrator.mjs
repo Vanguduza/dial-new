@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertDevelopmentUnblocked } from './development-unblock.mjs';
 import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
 import {
   appendJsonl,
@@ -51,6 +52,7 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     job_id: id,
     execution_origin: ORIGIN,
     requested_by: requestedBy,
+    qualification_canary: job.metadata?.qualification_canary === true,
     at: job.queued_at,
   }, root);
   return job;
@@ -114,16 +116,22 @@ function finalizeJob(job, result, root) {
     requested_model: record.runtime_provenance.requested_model,
     resolved_model: record.runtime_provenance.resolved_model,
     fallback_used: record.runtime_provenance.fallback_used,
+    reason: result?.reason ?? null,
     at: record.finished_at,
   }, root);
   heartbeat(root, { last_job_id: job.job_id, last_job_state: record.state });
   return record;
 }
 
+function isQualificationCanary(job) {
+  return job?.requested_by === 'qualification' && job?.metadata?.qualification_canary === true;
+}
+
 export async function processNextExternalWork({
   repoDir = DEFAULT_REPO,
   root,
   executor = executeHermesInstruction,
+  developmentGate = assertDevelopmentUnblocked,
 } = {}) {
   const job = claimNext(root);
   if (!job) {
@@ -137,8 +145,34 @@ export async function processNextExternalWork({
     job_id: job.job_id,
     execution_origin: ORIGIN,
     worker_pid: process.pid,
+    qualification_canary: isQualificationCanary(job),
     at: now(),
   }, root);
+
+  if (!isQualificationCanary(job)) {
+    try {
+      developmentGate({ repoDir, root });
+    } catch (error) {
+      return finalizeJob(job, {
+        event: 'HERMES_OPERATIONAL_TURN_FAILED',
+        authority: 'HERMES_RUNTIME_ONLY',
+        policy: 'LOCKED_SOL_THEN_SONNET',
+        runtime: null,
+        requested_model: null,
+        resolved_model: null,
+        fallback_used: false,
+        failure_state: 'DEVELOPMENT_BLOCKED',
+        reason: String(error?.message || error).slice(0, 4000),
+      }, root);
+    }
+  } else {
+    appendJsonl('events/external-orchestrator.jsonl', {
+      event: 'QUALIFICATION_CANARY_GATE_BYPASS',
+      job_id: job.job_id,
+      reason: 'qualification canary must prove external execution before PRODUCTION_GREEN can exist',
+      at: now(),
+    }, root);
+  }
 
   let result;
   try {
@@ -196,24 +230,35 @@ export async function runExternalOrchestratorDaemon({
   heartbeat(root, { service_state: 'STOPPED' });
 }
 
-function argValue(name) {
-  const args = process.argv.slice(3);
-  const idx = args.indexOf(name);
-  return idx >= 0 ? args[idx + 1] : null;
+function parseSubmitArgs(args) {
+  let requestedBy = process.env.USER || 'operator';
+  let qualificationCanary = false;
+  const instruction = [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i] === '--requested-by') {
+      if (!args[i + 1]) throw new Error('--requested-by requires a value');
+      requestedBy = args[i + 1];
+      i += 1;
+      continue;
+    }
+    if (args[i] === '--qualification-canary') {
+      qualificationCanary = true;
+      continue;
+    }
+    instruction.push(args[i]);
+  }
+  return {
+    instruction: instruction.join(' ').trim(),
+    requestedBy,
+    metadata: qualificationCanary ? { qualification_canary: true } : {},
+  };
 }
 
 async function main() {
   const command = process.argv[2] || 'status';
   const repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO;
   if (command === 'submit') {
-    const instruction = process.argv.slice(3).filter((value, index, all) => {
-      const requestedIndex = all.indexOf('--requested-by');
-      return requestedIndex < 0 || (index !== requestedIndex && index !== requestedIndex + 1);
-    }).join(' ').trim();
-    return console.log(JSON.stringify(submitExternalWork({
-      instruction,
-      requestedBy: argValue('--requested-by') || process.env.USER || 'operator',
-    }), null, 2));
+    return console.log(JSON.stringify(submitExternalWork(parseSubmitArgs(process.argv.slice(3))), null, 2));
   }
   if (command === 'run-once') {
     return console.log(JSON.stringify(await processNextExternalWork({ repoDir }), null, 2));
