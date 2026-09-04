@@ -4,6 +4,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
+import { evaluateDevelopmentUnblock } from './development-unblock.mjs';
 import { buildHandoffCapsule, saveHandoffCapsule } from './handoff-builder.mjs';
 import { expireHermesRuntimeSelection, reconcileHermesRuntime } from './hermes-runtime-router.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth } from './runtime-health.mjs';
@@ -11,10 +12,8 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-// Direct model probes consume subscription capacity. The operational runtime
-// executor records real-turn health and performs immediate failover, so the
-// idle supervisor only needs a low-frequency liveness/provenance refresh.
 const DEFAULT_PROBE_INTERVAL_MS = 12 * 60 * 60 * 1000;
+const CONTROL_SCHEMA = 4;
 
 function now() { return new Date().toISOString(); }
 function commandVersion(command, args = ['--version']) {
@@ -32,24 +31,44 @@ function semverAtLeast(value, minimum) {
   return true;
 }
 
+function desiredControlPlane(existing = null) {
+  const createdAt = existing?.created_at ?? now();
+  return {
+    schema_version: CONTROL_SCHEMA,
+    mode: 'EXTERNAL_ORCHESTRATION_QUALIFICATION',
+    architecture: {
+      external_persistent_runtime: 'HERMES',
+      external_orchestrator: 'dial-hermes-orchestrator.service',
+      external_work_queue: 'work-queue',
+      primary_runtime: 'codex_app_server/gpt-5.6-sol',
+      fallback_runtime: 'claude_code/claude-sonnet-5',
+      total_loss: 'NO_HERMES_RUNTIME_AVAILABLE',
+      governance_bridge: 'DIAL_CANONICAL_CONTEXT_CHECKPOINT_MEMORY',
+      development_entrypoint_after_green: 'dial-hermes-submit',
+      development_gate: 'state/external-orchestration-gate.json',
+    },
+    runtime_policy: 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
+    invariant: 'DIAL_PRODUCT_DEVELOPMENT_REQUIRES_PRODUCTION_GREEN_EXTERNAL_HERMES_ORCHESTRATION',
+    direct_project_session_development_allowed: false,
+    created_at: createdAt,
+    updated_at: now(),
+  };
+}
+
 export function initializeSupervisor(root) {
   ensureControlLayout(root);
-  if (!readJson('state/control-plane.json', null, root)) {
-    writeJsonAtomic('state/control-plane.json', {
-      schema_version: 3,
-      mode: 'QUALIFICATION',
-      architecture: {
-        external_persistent_runtime: 'HERMES',
-        primary_runtime: 'codex_app_server/gpt-5.6-sol',
-        fallback_runtime: 'claude_code/claude-sonnet-5',
-        governance_bridge: 'DIAL_CANONICAL_CONTEXT_CHECKPOINT_MEMORY',
-      },
-      invariant: 'HERMES_RUNTIME_SELECTION_DOES_NOT_CHANGE_DIAL_REPOSITORY_GOVERNANCE',
-      created_at: now(), updated_at: now(),
+  const existing = readJson('state/control-plane.json', null, root);
+  if (!existing || existing.schema_version !== CONTROL_SCHEMA) {
+    writeJsonAtomic('state/control-plane.json', desiredControlPlane(existing), root);
+    appendJsonl('events/supervisor.jsonl', {
+      event: existing ? 'CONTROL_PLANE_SCHEMA_MIGRATED' : 'CONTROL_PLANE_CREATED',
+      from_schema: existing?.schema_version ?? null,
+      to_schema: CONTROL_SCHEMA,
+      at: now(),
     }, root);
   }
   loadRuntimeHealth(root);
-  appendJsonl('events/supervisor.jsonl', { event: 'SUPERVISOR_INITIALIZED', architecture_version: 3, at: now() }, root);
+  appendJsonl('events/supervisor.jsonl', { event: 'SUPERVISOR_INITIALIZED', architecture_version: CONTROL_SCHEMA, at: now() }, root);
   return readJson('state/control-plane.json', null, root);
 }
 
@@ -120,6 +139,9 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
     project_truth_present: fs.existsSync(path.join(repoDir, 'agent-system/canon/PROJECT_TRUTH.md')),
     feature_registry_present: fs.existsSync(path.join(repoDir, 'agent-system/registries/FEATURE_REGISTRY.json')),
     context_get_present: fs.existsSync(path.join(repoDir, 'agent-system/bin/context-get.mjs')),
+    external_orchestrator_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/external-orchestrator.mjs')),
+    development_unblock_gate_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/development-unblock.mjs')),
+    finalizer_present: fs.existsSync(path.join(repoDir, 'deploy/oracle/hermes-codex/finalize-control-plane.sh')),
     git_present: Boolean(gitVersion),
     node_22_plus: Number(process.versions.node.split('.')[0]) >= 22,
     hermes_present: Boolean(hermesVersion),
@@ -133,9 +155,17 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
       primary: 'codex_app_server/gpt-5.6-sol',
       fallback: 'claude_code/claude-sonnet-5',
       no_runtime: 'NO_HERMES_RUNTIME_AVAILABLE',
+      additional_discovered_models_executable: false,
+    },
+    external_orchestration: {
+      service: 'dial-hermes-orchestrator.service',
+      queue: 'work-queue',
+      development_entrypoint_after_green: 'dial-hermes-submit',
+      direct_project_session_development_allowed: false,
     },
     versions: { node: nodeVersion, git: gitVersion, hermes: hermesVersion, codex: codexVersion, claude: claudeVersion },
-    checks, observed_at: now(),
+    checks,
+    observed_at: now(),
   };
 }
 
@@ -181,11 +211,14 @@ export function handoff({ repoDir = DEFAULT_REPO, root, input = {} } = {}) {
   return capsule;
 }
 
-export function status(root) {
+export function status({ repoDir = DEFAULT_REPO, root } = {}) {
   return {
     control_plane: readJson('state/control-plane.json', null, root),
     hermes_runtime: readJson('state/hermes-runtime.json', null, root),
     runtime_health: loadRuntimeHealth(root),
+    external_orchestrator_heartbeat: readJson('state/external-orchestrator-heartbeat.json', null, root),
+    external_orchestration_gate: readJson('state/external-orchestration-gate.json', null, root),
+    development_unblock: evaluateDevelopmentUnblock({ repoDir, root }),
     checkpoint: readJson('state/active-checkpoint.json', null, root),
     capsule: readJson('state/active-capsule.json', null, root),
     heartbeat: readJson('state/heartbeat.json', null, root),
@@ -235,7 +268,7 @@ async function main() {
   const repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO;
   if (command === 'init') return console.log(JSON.stringify(initializeSupervisor(), null, 2));
   if (command === 'doctor') return console.log(JSON.stringify(doctor({ repoDir }), null, 2));
-  if (command === 'status') return console.log(JSON.stringify(status(), null, 2));
+  if (command === 'status') return console.log(JSON.stringify(status({ repoDir }), null, 2));
   if (command === 'capture') return console.log(JSON.stringify(capture({ repoDir }), null, 2));
   if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir }), null, 2));
   if (command === 'select-runtime') return console.log(JSON.stringify(selectRuntime(), null, 2));
