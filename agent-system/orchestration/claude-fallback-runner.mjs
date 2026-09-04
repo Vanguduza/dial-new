@@ -3,7 +3,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
-import { classifyClaudeHermesModel, HERMES_PREFERRED_CLAUDE_MODEL } from './hermes-plan-models.mjs';
+import { HERMES_PREFERRED_CLAUDE_MODEL } from './hermes-plan-models.mjs';
 import { recordRuntimeHealth } from './runtime-health.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -68,25 +68,25 @@ export async function runClaudeHermesFallback({
   }
 
   const selection = readJson('state/hermes-runtime.json', null, root);
-  const selectedModel = selection?.selected_model ?? selection?.requested_model ?? null;
-  const classification = classifyClaudeHermesModel(selectedModel);
   if (
     !selection
     || selection.status !== 'ACTIVE'
     || selection.authority !== 'HERMES_RUNTIME_ONLY'
     || selection.runtime !== 'claude_code'
-    || !classification.hermes_eligible
-    || selection.resolved_model !== selectedModel
+    || selection.requested_model !== MODEL
+    || selection.selected_model !== MODEL
+    || selection.resolved_model !== MODEL
     || selection.runtime_health !== 'HEALTHY'
     || !selection.runtime_health_observed_at
   ) {
-    throw new Error(`active, identity-proven Hermes-eligible Claude Code selection is required (preferred ${MODEL}; Fable is not a Hermes pin)`);
+    throw new Error(`active, identity-proven exact ${MODEL} Hermes selection is required`);
   }
 
   const operational = mode === 'operational';
   const prompt = [
     'DIAL HERMES FALLBACK RUNTIME',
     'You are the active external Hermes runtime fallback, powered by official Claude Code.',
+    `You are hard-pinned to exact ${MODEL}. Do not switch models or aliases.`,
     'DIAL repository canon, Feature IDs, FRCs, gates, evidence and deterministic controls remain authoritative.',
     'Runtime selection is availability/provenance only. Do not invent a parallel development-authority hierarchy.',
     'Use retrieved context as continuity support only; verify it against current repository state before acting.',
@@ -100,13 +100,13 @@ export async function runClaudeHermesFallback({
 
   const args = [
     '-p', prompt,
-    '--model', selectedModel,
+    '--model', MODEL,
     '--effort', operational ? 'high' : 'low',
     '--output-format', 'json',
     '--permission-mode', operational ? 'acceptEdits' : 'plan',
     '--max-turns', operational ? '100' : '1',
     '--allowedTools', ...(operational ? OPERATIONAL_TOOLS : QUALIFICATION_TOOLS),
-    '--name', operational ? 'DIAL-HERMES-SONNET-FALLBACK' : 'DIAL-SONNET-RUNTIME-PROBE-TURN',
+    '--name', operational ? 'DIAL-HERMES-SONNET-5-FALLBACK' : 'DIAL-SONNET-5-RUNTIME-PROBE-TURN',
   ];
 
   const startedAt = now();
@@ -127,7 +127,7 @@ export async function runClaudeHermesFallback({
   const modelUsage = structured?.modelUsage ?? structured?.model_usage ?? {};
   const usedModels = Object.keys(modelUsage);
   const resolvedModel = usedModels.length === 1 ? usedModels[0] : null;
-  const identityProven = resolvedModel === selectedModel;
+  const identityProven = resolvedModel === MODEL;
   const completed = result.status === 0 && identityProven;
   const errorClass = completed
     ? null
@@ -138,11 +138,12 @@ export async function runClaudeHermesFallback({
       ? 'HERMES_SONNET_FALLBACK_TURN_COMPLETED'
       : 'HERMES_SONNET_FALLBACK_TURN_FAILED',
     authority: 'HERMES_RUNTIME_ONLY',
+    policy: 'LOCKED_SOL_THEN_SONNET',
     mode,
     runtime: 'claude_code',
     preferred_model: MODEL,
-    requested_model: selectedModel,
-    selected_model: selectedModel,
+    requested_model: MODEL,
+    selected_model: MODEL,
     resolved_model: resolvedModel,
     identity_proven: identityProven,
     hermes_selection_id: selection.selection_id,
@@ -157,10 +158,10 @@ export async function runClaudeHermesFallback({
 
   recordRuntimeHealth('claude_code', {
     state: completed ? 'HEALTHY' : errorClass,
-    requested_model: selectedModel,
+    requested_model: MODEL,
     resolved_model: resolvedModel,
     reason: completed
-      ? `Claude Code ${mode} turn completed with exact ${selectedModel} provenance`
+      ? `Claude Code ${mode} turn completed with exact ${MODEL} provenance`
       : `Claude Code ${mode} turn failed: ${errorClass}`,
     details: {
       identity_proven: identityProven,
@@ -176,7 +177,7 @@ export async function runClaudeHermesFallback({
 
   if (result.error) throw result.error;
   if (!completed) {
-    const error = new Error(`Hermes Sonnet fallback failed: ${event.error_class}`);
+    const error = new Error(`Hermes Sonnet 5 fallback failed: ${event.error_class}`);
     error.cause = {
       stderr: result.stderr?.slice(-4000),
       stdout: result.stdout?.slice(-4000),
