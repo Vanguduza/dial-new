@@ -1,49 +1,38 @@
-# DIAL Engineering Authority
+# DIAL Main — Engineering Entry
 
-Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
+## Single source of truth
 
-## Always
+Before any DIAL Main work, read:
 
-1. Identify Feature ID(s).
-2. Run bounded context retrieval.
-3. Inspect current code/tests before proposing changes.
-4. Use the concrete FRC states/commands/queries/events.
-5. Apply Security Profile + Material Eventuality contracts.
-6. Trigger Money/Security/Donor/Health/NFR/UI/Migration reviewer when applicable.
-7. Record fresh tests/evidence before advancing a gate.
-8. Preserve DIAL source-of-truth boundaries.
+`docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md`
 
-## Never
+That file is the sole top-level product, commercial, technical and runtime authority. No prompt, audit, donor document, historical plan, code comment or model memory may override it.
 
-- invent a hidden product decision;
-- use old v4/D-number docs as active authority when v2 supersedes them;
-- let AI or donor code create a second money/identity/fulfilment/health authority;
-- expose secrets/service-role keys;
-- mark a feature complete from code inspection alone;
-- start broad research when canon/current code already answers the question;
-- load the entire master pack when bounded context is sufficient.
+## Work protocol
 
-## Tooling
+1. Resolve the active Feature ID before changing product code.
+2. Run `node agent-system/bin/context-get.mjs <FEATURE_ID>` for bounded context.
+3. Inspect current code, tests, Feature Realisation Contract, Security Profile, Material Eventualities and current evidence.
+4. If any subordinate artifact conflicts with the master, treat the subordinate artifact as stale and report/migrate it; do not reopen the locked decision by assumption.
+5. Use typed commands and owning-domain state machines for consequential transitions.
+6. Preserve source-of-record boundaries, no-custody money architecture, immutable financial snapshots and append-only correction history.
+7. AI/Hermes is non-authoritative for binding money, fitment, safety, compliance or canonical business state.
+8. Trigger independent specialist review where the gate requires it; self-review is not independent evidence.
+9. Run fresh verification before advancing a gate.
 
-Installed skills and connectors fire on the work they were installed for.
-Which, and when: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md`
+## Current programme order
 
-The load-bearing ones:
-- a Feature entering implementation needs its own acceptance contract first
-  (`product-management:write-spec`) — the generic one is not a contract;
-- a material eventuality without a runbook gets one (`operations:runbook`);
-- pinning or importing any dependency or donor uses Context7 for exact version
-  facts — recalled versions are not evidence;
-- changes to the transition or EPC surfaces run `npm run test:e2e`.
+The master defines R0–R5. R0 canon integrity precedes new fan-out; Rounds implementation is then reconciled to current democratic governance before the active Grocery Rounds vertical slice continues. Oracle/Hermes qualification may proceed in parallel because deterministic DIAL commerce must not depend on AI runtime availability.
 
-No tool output is authority, and running a review skill does not satisfy the
-independent reviewer gate it resembles.
+## Commands
 
-Entry:
-`node agent-system/bin/context-get.mjs <FEATURE_ID>`
+```text
+node agent-system/bin/context-get.mjs <FEATURE_ID>
+npm run agent:canon-coherence
+npm run agent:closure-check
+npm run verify
+```
 
-Closure:
-`node agent-system/bin/v2-closure-check.mjs`
+## Hard boundary
 
-Verify everything:
-`npm run verify`
+DDE is a separate development system. DDE manager-chair/worker-routing architecture must never be imported into DIAL product/runtime canon. Hermes on Oracle belongs to DIAL and follows the master runtime rule: GPT-5.6 Sol → Claude Sonnet 5 → explicitly approved further fallback only.

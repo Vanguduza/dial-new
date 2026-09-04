@@ -1,5 +1,0 @@
-{
-  "moved": true,
-  "canonical_path": "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
-  "note": "This was an ungoverned duplicate outside the manifest. The canonical copy is declared in MANIFEST_v2_2.json and checked by agent:manifest-check. Read the canonical path."
-}

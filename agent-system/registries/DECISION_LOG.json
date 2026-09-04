@@ -1,257 +1,181 @@
 [
   {
     "decision_id": "DEC-001",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / MONEY",
-    "title": "Grocery Round subscriptions buy credits, and credits are not money",
-    "decision": "A subscription payment is consideration for a supply of groceries, not a repayable sum. Credits are not money, not redeemable in money, not transactional and not transferable. Dial therefore holds an obligation to deliver groceries rather than customer money.",
-    "consequence": "ACT-REG-001 is NOT ENGAGED by Grocery Rounds, and no second money-holding model is ratified. This holds only while credits settle grocery fulfilment and nothing else; a credit spendable across trades re-engages the blocker on worse facts, with real customer value already inside it.",
-    "supersedes": "GROCERY_ROUNDS_MASTER_PLAN_v1.md §2, the review finding B1 conflict",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md §1",
-    "enforced_by": [
-      "RCM-001",
-      "RCM-002",
-      "RCM-003",
-      "RCM-004",
-      "RCM-015"
-    ],
-    "evidence_refs": [
-      "packages/round-credit/src/credit-model.ts",
-      "tests/round-credit.test.ts"
-    ],
-    "activation_blocker_refs": [
-      "ACT-REG-001"
-    ],
-    "reopens_if": "any credit becomes settleable outside grocery fulfilment, or any redemption returns money"
+    "area": "GROCERIES / ROUNDS",
+    "title": "Rounds are prepaid grocery entitlement, not money products",
+    "decision": "A Round purchase creates an individually attributable Prepaid Grocery Entitlement. Rounds are collective prepaid grocery commerce, never savings, investment, lending, cash wallet, FX or interest products. Cash redemption is not the ordinary product mechanic.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §7"
   },
   {
     "decision_id": "DEC-002",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / FISCAL_TAX",
-    "title": "Credits carry monetary value, and the member carries the price risk",
-    "decision": "A credit is a dollar amount of future groceries, not a fixed quantity of them. Dial's obligation is discharged by delivering that value at the prices current when the Round collects.",
-    "consequence": "Food inflation falls on the member. Review finding B3 therefore closes by disclosure rather than by construction: the consent gateway must state, in the member's words, that credits are a dollar amount and not a fixed shopping list.",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C6",
-    "enforced_by": [
-      "RCM-013"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts"
-    ],
-    "reopens_if": "the commercial decision is taken to absorb price risk through forward supply contracts and denominate in goods"
+    "area": "GROCERIES / ROUNDS",
+    "title": "Governance and entitlement are separate",
+    "decision": "Entitlement value determines what grocery purchasing value belongs to a member; it never determines voting power.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §7.3"
   },
   {
     "decision_id": "DEC-003",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / FISCAL_TAX",
-    "title": "VAT is accounted for when the member pays, and a Round carries one credit pool per tax character",
-    "decision": "The tax point is payment, per VAT Act [Chapter 23:12] s8 (earlier of invoice or payment). Deferral to collection is available only against a written ZIMRA ruling recorded on the Round product. Each Round declares credit pools, one per tax character, each with its own catalogue; a payment splits across pools at a ratio fixed when it is taken.",
-    "consequence": "The rate is determined on the day money arrives even though the basket is chosen months later, because the pool fixes the menu rather than the shopping list. SI 248 of 2023 made the staples basket EXEMPT from 1 Jan 2024, so the flagship pool bears no output VAT and its input VAT is irrecoverable — a permanent cost that no tax-point choice touches, and the largest tax number in the product. IMTT is charged per instalment and is modelled. Rates resolve from a dated schedule; the standard rate moved 15% to 15.5% on 1 Jan 2026.",
-    "supersedes": "ROUND_CREDIT_MODEL_v1.md Rev 2 decision 1, which placed the tax point at collection",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md §0 and condition C3",
-    "enforced_by": [
-      "RCM-005",
-      "RCM-006",
-      "RCM-007",
-      "RCM-020",
-      "RCM-021",
-      "RCM-022",
-      "RCM-023",
-      "RCM-024"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts",
-      "packages/round-credit/src/credit-model.ts"
-    ],
-    "activation_blocker_refs": [
-      "ACT-REG-004"
-    ],
-    "reopens_if": "counsel confirms a monetary-voucher provision permitting taxation on redemption, or the exempt schedule changes"
+    "area": "PLATFORM / TAX_LEGAL",
+    "title": "Tax and legal treatment are effective-dated evidence",
+    "decision": "Tax rates, legal classifications and provider/legal positions are jurisdiction-aware, effective-dated, configuration/data-driven and activation-evidenced. Historical research is provenance, not timeless product law.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §5.7"
   },
   {
     "decision_id": "DEC-004",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
     "area": "GROCERIES / ACCOUNTING",
-    "title": "The tax point is not revenue recognition",
-    "decision": "Consideration for an unsettled credit is a contract liability. Revenue is recognised when the groceries transfer, never when the money arrives.",
-    "consequence": "Booking credit sales as revenue at payment would report unearned profit, attract income tax on it, and tell management the float is spendable margin — which is review finding B2's failure mode reached through the ledger.",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C4",
-    "enforced_by": [
-      "RCM-008",
-      "RCM-009",
-      "RCM-010"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts"
-    ],
-    "reopens_if": "never — this is an accounting standard, not a preference"
+    "title": "Unfulfilled prepaid grocery value remains an obligation",
+    "decision": "Receipt of prepaid grocery consideration does not by itself prove fulfilment/revenue. Accounting facts follow the applicable effective accounting policy and immutable ledger evidence; historical financial records are corrected through compensating entries.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §§4-5"
   },
   {
     "decision_id": "DEC-005",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / CONSUMER",
-    "title": "A leaving member receives groceries at standard retail, without Round benefits",
-    "decision": "Credits are owned individually. A member may leave at any time and receives groceries to the value of their credits at standard retail prices, with no Round pricing, no free delivery and no other Round benefit. Carrying credits to the next Round remains available. Cash never is. The group vote decides when the Round procures, not whether a member may leave.",
-    "consequence": "Permanent non-redeemability is defensible because a substantial in-kind remedy exists. Without it, an ordered cash refund would create the repayable sum DEC-001 exists to avoid.",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C5",
-    "enforced_by": [
-      "RCM-011",
-      "RCM-012",
-      "RCM-017"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts"
-    ],
-    "reopens_if": "counsel advises the in-kind exit is insufficient under the Consumer Protection Act [Chapter 14:44]"
+    "area": "GROCERIES / ROUNDS",
+    "title": "Lawful opt-out transfers uncommitted entitlement to ordinary Groceries",
+    "decision": "When the published Round state permits exit, the member leaves future governance and their uncommitted entitlement automatically transfers to their ordinary Dial Groceries purchasing entitlement. History is immutable and affected quorum/allocation/cart state is recomputed. No initiator approval is required.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §7.7"
   },
   {
     "decision_id": "DEC-006",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / CARE_INSURANCE",
-    "title": "A protection charge rides on top of credit value, flat, and is never a member premium",
-    "decision": "A charge of about 4% of credit value is collected in addition to it — 5,200 buys 5,000 of credit and 200 towards cover. It does not vary with the member's pool split. Dial buys cover for Dial's own delivery obligation; the member is never the policyholder or beneficiary.",
-    "consequence": "Disclosing that part of the price funds protection is lawful and permitted, and obliges accuracy: cover must be bound before it is described, and the disclosure must state insurer, scope, limits, exclusions and eligibility — including that cover does not reach ordinary commercial shortfall. Presenting the charge as a premium the member pays an insurer would be intermediation requiring IPEC registration Dial does not hold.",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C7",
-    "enforced_by": [
-      "RCM-014",
-      "RCM-016",
-      "RCM-018",
-      "RCM-019"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts"
-    ],
-    "activation_blocker_refs": [
-      "ACT-REG-007"
-    ],
-    "reopens_if": "the broker quote lands materially away from 4%"
+    "area": "GROCERIES / PROTECTION",
+    "title": "Protection covers DIAL's delivery obligation; price is evidence-based",
+    "decision": "DIAL may protect its paid-but-undelivered grocery obligation through an approved commercial protection structure, but must not present itself as the insurer. No historical approximate percentage is a permanently locked customer price; final pricing requires current approved commercial evidence.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §7.12"
   },
   {
     "decision_id": "DEC-007",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
     "area": "GROCERIES / GOVERNANCE",
-    "title": "Dial authors pools and catalogues; creators configure commerce; members choose their split",
-    "decision": "Which pools exist and every item on each catalogue is authored by Dial. The Round creator sets the default split and the band members may move within. The member chooses their own split inside that band, for future instalments only. Voting weight in a pool follows credits held in that pool.",
-    "consequence": "Tax classification is never a creator-facing knob: a creator who put a standard-rated item on a staples menu would mis-state a VAT return with no feedback loop to tell them. Pool-weighted voting also prevents members who bear none of a pool's cost from deciding how it is spent, which is review finding M4 in a new place.",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C3",
-    "enforced_by": [
-      "RCM-025",
-      "RCM-026",
-      "RCM-027"
-    ],
-    "evidence_refs": [
-      "tests/round-credit.test.ts"
-    ],
-    "reopens_if": "never for pool authorship; the split bands are commercial and may be retuned"
+    "title": "One active eligible member equals one vote",
+    "decision": "Every active eligible member has one equal vote regardless of contribution or entitlement value. The initiator has organisational convenience only and no treasury/procurement privilege. Valid collective state, not a human role, authorises procurement.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §§7.3-7.8",
+    "implementation_conflicts": ["packages/round-credit/src/credit-model.ts legacy RCM-027 semantics"]
   },
   {
     "decision_id": "DEC-008",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
     "area": "PLATFORM / PRICING",
-    "title": "The margin and pricing engine is PLAT-F014, cross-division, Groceries first",
-    "decision": "A single calculation authority computes contribution and profit for any priced product from evidenced cost inputs. It is allocated to the existing PLAT-F014 (PricePolicy, owner commercial/pricing) rather than a new Feature ID. The calculation contract is designed cross-division from day one; only the Grocery Rounds inputs land in v1. It is not a ledger, not a price setter, and not a dashboard in v1.",
-    "consequence": "PLAT-F014 already exists and already owns pricing and commercial policy, so no new module or Feature ID is invented. Shape is the expensive thing to change and inputs are not, which is why the contract goes wide immediately and the data does not. Cost-input ownership sits with commercial/pricing, PLAT-F014's registered owner, and the overhead allocation basis is decided once and serves both this engine and RCM-021's input-tax apportionment.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/MARGIN_ENGINE_SPEC_v1.md",
-    "evidence_refs": [
-      "packages/round-credit/src/credit-model.ts"
-    ],
+    "title": "Pricing and Margin is a shared authority",
+    "decision": "Pricing & Margin is a shared cross-DIAL domain and remains separate from Allocation, Payment Orchestration and Settlement/Reconciliation. It cannot post ledger entries or mutate beneficial ownership.",
     "feature_id": "PLAT-F014",
-    "reopens_if": "the engine is asked to post a ledger entry or set a customer price without a human decision, at which point it has become something else"
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §5"
   },
   {
     "decision_id": "DEC-009",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
     "area": "PROGRAMME",
-    "title": "The first vertical slice is Grocery Rounds §26",
-    "decision": "The milestone is the Grocery Rounds vertical slice at STAGING_GREEN — the master plan's sixteen §26 steps, from create Round to reconcile and complete.",
-    "consequence": "Chosen because it is buildable now: the money model is locked, the regulatory questions are closed by research, the protection rate has a defensible figure, and the sandbox EscrowAdapter exists. The Spare slice would today prove the plumbing rather than the product, because the pilot pack's hand-authored DGM ids are rejected by isProductionDgmId and the eleven-stage gate correctly reports zero ready vehicles. Spare becomes the stronger slice when a real catalogue lands.",
-    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md §5",
-    "reopens_if": "a real catalogue is injected before the Rounds slice completes, which would make the Spare slice the better proof"
+    "title": "Grocery Rounds remains the active first integrated vertical",
+    "decision": "After canon integrity, reconcile the existing Rounds domain implementation to current governance and continue the Grocery Rounds customer-to-operator vertical toward STAGING_GREEN before broad unrelated fan-out.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §23"
   },
   {
     "decision_id": "DEC-010",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / MONEY",
-    "title": "Round credits are not deposit-taking, on the Banking Act's own cumulative test",
-    "decision": "The Banking Act [Chapter 24:20] defines banking business cumulatively: accepting deposits withdrawable or repayable, AND employing those deposits by lending or any other means. Round credits fail both limbs independently — nothing is repayable, and consideration buys grocery stock rather than being lent.",
-    "consequence": "The deposit-taking question is closed for build. One gap remains and does not block: the National Payment Systems Act stored-value position was not examined, and the closed-loop non-transferable construction is the standard exclusion in such regimes rather than a checked Zimbabwean text.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §1",
-    "enforced_by": [
-      "RCM-001",
-      "RCM-002",
-      "RCM-015"
-    ],
-    "activation_blocker_refs": [
-      "ACT-REG-001"
-    ],
-    "reopens_if": "any credit becomes repayable in money, or float is employed by lending or investment rather than procurement"
+    "area": "MONEY",
+    "title": "Marketplace money is no-custody disclosed-agent commerce",
+    "decision": "DIAL does not solve marketplace settlement by routinely receiving gross supplier money into a normal DIAL account. Licensed PSP/acquirer execution preserves beneficiary allocation, or explicit supplier-grouped PaymentIntents are used when one-to-many settlement is unavailable.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §5"
   },
   {
     "decision_id": "DEC-011",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / CARE_INSURANCE",
-    "title": "Insuring Dial's own obligation and pricing it in triggers no IPEC registration",
-    "decision": "The Insurance Act [Chapter 24:07] defines an agent as acting on behalf of a registered insurer, a broker as negotiating on behalf of another person, and insurance business as assuming an insurer's obligations. Dial insuring its own delivery obligation and recovering the cost inside the product price is none of the three.",
-    "consequence": "Disclosing that part of the price funds protection is lawful and obliges accuracy — cover bound before it is described, and scope, limits and exclusions stated including that cover does not reach ordinary commercial shortfall. Registration risk begins only if the member becomes the insured, which is exactly the boundary RCM-019 already enforces.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §2",
-    "enforced_by": [
-      "RCM-019"
-    ],
-    "activation_blocker_refs": [
-      "ACT-REG-007"
-    ],
-    "reopens_if": "Dial collects premiums on an insurer's behalf, or arranges cover in which the member is the beneficiary"
+    "area": "CARE / INSURANCE",
+    "title": "DIAL does not silently become the insurer",
+    "decision": "True insurance benefits remain contractually and operationally separate under an approved insurer/partner. DIAL accurately states insurer, scope, limits and exclusions when cover is involved.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §§7.12,8"
   },
   {
     "decision_id": "DEC-012",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "GROCERIES / PRICING",
-    "title": "A researched position prices development; a broker quote prices a published tier",
-    "decision": "The protection charge stands at 4% of credit value on a researched position. Published surety pricing runs 1-3% for contract bonds and to 10% at the licence-bond end, which makes 4% defensible for an unrated principal. Trade credit insurance rates are the wrong comparator: they cover a seller against a buyer, the opposite exposure.",
-    "consequence": "RCM-019 now distinguishes commercialStage DEVELOPMENT, where a documented researched position suffices, from TIERS_PUBLISHED, where a real quote is required. The open broker question is availability and collateral for an unrated principal, not rate — surety markets often decline rather than price such a principal.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §3",
-    "enforced_by": [
-      "RCM-019"
-    ],
-    "reopens_if": "the broker returns a rate materially away from 4%, or declines to write the cover at all"
+    "area": "GROCERIES / PROTECTION",
+    "title": "Published protection pricing requires current evidence",
+    "decision": "Research may inform development scenarios, but a public customer price or protection representation must use current approved commercial/contractual evidence. The former 4% planning figure is provenance only.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §7.12"
   },
   {
     "decision_id": "DEC-013",
-    "decided_on": "2026-08-30",
-    "decided_by": "product owner",
     "status": "LOCKED",
-    "area": "PROGRAMME",
-    "title": "The catalogue is a scheduled dependency, not an open blocker",
-    "decision": "The catalogue and transition flow packs are produced outside this repository and injected against 24_INJECTION_STANDARDS, validated by packages/catalog-coverage/src/injection.ts. They are tracked as a delivery with a date.",
-    "consequence": "v2.1 steps 7 and 8 are re-read as receive, validate, integrate. Nothing in the programme waits on the catalogue except the Spare customer-ready gates, and no readiness assessment should record it as an open risk.",
-    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md §4 Track B",
-    "activation_blocker_refs": [
-      "ACT-REG-011"
-    ],
-    "reopens_if": "the delivery date is missed without a new one, at which point it becomes a risk rather than a dependency"
+    "area": "SPARE / CATALOGUE",
+    "title": "Catalogue and transition packs are validated dependencies",
+    "decision": "Externally produced catalogue/transition assets are received, validated and integrated; generated visuals never become catalogue/fitment truth and no vehicle is customer-ready without verified bindings and readiness evidence.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §10"
+  },
+  {
+    "decision_id": "DEC-014",
+    "status": "LOCKED",
+    "area": "MONEY / PROVIDERS",
+    "title": "Current core marketplace provider set",
+    "decision": "Appletree Hosted Checkout, ContiPay and ZimSwitch/participating acquiring-bank are the current first-class core marketplace routes. Provider code is adapter-only. Historical Paynow/PayPal/direct-EcoCash assumptions require explicit re-approval for specialist use.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §5.4"
+  },
+  {
+    "decision_id": "DEC-015",
+    "status": "LOCKED",
+    "area": "LOGISTICS",
+    "title": "One Logistics OS with open-source mapping",
+    "decision": "DIAL uses one shared Logistics OS/delivery app. Canonical open-source mapping/routing baseline is MapLibre + Nominatim + OSRM + VROOM.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §15"
+  },
+  {
+    "decision_id": "DEC-016",
+    "status": "LOCKED",
+    "area": "COMMUNICATION",
+    "title": "Communication Fabric provider/channel lock",
+    "decision": "Customer channels are System Inbox, official WhatsApp Cloud API/Flows, email and Econet Enterprise/A2P SMS. Telerivet is retired. Chatwoot is human conversation tooling, never business-state authority.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §16"
+  },
+  {
+    "decision_id": "DEC-017",
+    "status": "LOCKED",
+    "area": "INTELLIGENCE / COMPARISON",
+    "title": "Comparison Engine is shared, explainable and vendor-neutral",
+    "decision": "Product/offer/vendor comparison is a normative shared capability with reconstructable snapshots and explainable category-specific scoring. Unsupported counterfeit/fake/fraud allegations from heuristics are prohibited.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §11"
+  },
+  {
+    "decision_id": "DEC-018",
+    "status": "LOCKED",
+    "area": "INTELLIGENCE / VITF",
+    "title": "VITF is a projection fabric, not a system of record",
+    "decision": "Visual Intelligence/Enterprise Digital Twin projects canonical DIAL entities/relationships and routes consequential actions through owning-domain typed commands. It does not create a parallel graph/business authority.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §12"
+  },
+  {
+    "decision_id": "DEC-019",
+    "status": "LOCKED",
+    "area": "AI / RAG",
+    "title": "AI and RAG are non-authoritative",
+    "decision": "KRF/RAG never substitutes for live transactional truth. AI may retrieve, explain, forecast and propose but cannot own binding money, fitment, safety, compliance or canonical business state.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §13"
+  },
+  {
+    "decision_id": "DEC-020",
+    "status": "LOCKED",
+    "area": "RUNTIME / HERMES",
+    "title": "DIAL Hermes runtime order is Sol then Sonnet",
+    "decision": "Hermes on Oracle belongs to DIAL. Runtime order is GPT-5.6 Sol → Claude Sonnet 5 → only explicitly approved further fallback. Global model discovery must never silently insert another Codex model or Fable before Sonnet. Hermes memory is non-authoritative and secret-free.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §14",
+    "implementation_conflicts": ["chore/hermes-codex-control-plane currently contains in-plan Codex fallback before Sonnet"]
+  },
+  {
+    "decision_id": "DEC-021",
+    "status": "LOCKED",
+    "area": "PROGRAMME / SCOPE",
+    "title": "Dial Health is outside current DIAL Main",
+    "decision": "Dial Health/ZHOTN is a separate future specialist programme and cannot gate current DIAL Main feature counts, completion or branch activation.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §1.1"
+  },
+  {
+    "decision_id": "DEC-022",
+    "status": "LOCKED",
+    "area": "ENGINEERING / AUTHORITY",
+    "title": "One source of truth and dynamic implementation state",
+    "decision": "DIAL Main product/architecture authority lives only in the v1.2 master. Feature counts/gates are machine-derived dynamic state. DDE architecture is separate. Historical Git content is provenance only and cannot override current canon.",
+    "record": "docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md §§0,19,22"
   }
 ]

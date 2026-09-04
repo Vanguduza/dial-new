@@ -1,89 +1,42 @@
-# DIAL Project Truth — Compact Development Entry Point
+# DIAL Project Truth — Compact Projection
+
+**Authority:** `docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md`
+
+This file is a machine/developer projection only. It may not create or amend product doctrine.
 
 ## Product
-One operating platform that instantiates multiple business divisions and operates DIAL the company.
 
-## Required DIAL business divisions
-Spare, Tech, Groceries, Laundry, Fleet, Vehicle Hub, Care, Assist, Projects, **Dial Health/ZHOTN**.
+DIAL Main is one governed operating ecosystem with shared systems of record across customer, supplier, operational, business and corporate experiences.
 
-## Corporate
-Corporate Management OS is first-class and horizontal to the business divisions.
+Current non-health scope includes Consumer, Spare, Tech, Groceries/Rounds, Laundry, My Assets, Vehicle Hub, Care, Assist, Projects, Fleet Maintenance, Business, Supplier/Provider OS, Logistics, Communication, Support/RCE, KRF/Intelligence, Comparison, VITF, Command Centre and Corporate Management.
 
-## Dial Health
-Dial Health/ZHOTN is a **required standalone division**, not a portfolio candidate. Health-specific clinical/pharmacy/funder/emergency/safety authorities remain inside the Dial Health architecture while shared DIAL capabilities are consumed through explicit contracts.
+Dial Health/ZHOTN is outside the current DIAL Main programme and cannot gate its completeness.
 
-## Non-negotiable
-- DIAL domains remain SoR; donors never own canonical money/jobs/orders/delivery/auth/compliance.
-- agency-only Spare; no discarded D-51 owned-stock principal.
-- official WhatsApp Cloud API/Flows only.
-- Delivery SoR + locked maps/routing stack.
-- AI never determines binding payable values or posts/releases money.
-- simulation cannot mutate production.
-- human-readable operator refs.
-- generic AI UI prohibited.
-- FixItNow = `PORT-WHOLESALE`; canonical licensed publication for import is `Sachinrajawat/FixItNow` under MIT, pinned to an exact revision with notice/provenance preserved.
-- changed-tree gate inheritance requires migration regression revalidation.
-- E6a Command Centre has no automatic historical green.
-- Command Centre target is full.
-- Corporate donor assimilation follows Corporate OS v1.1.
+## Hard locks
 
-## Development
-Resolve a Feature ID first. Use JIT context. Completion claims require fresh evidence.
+- one canonical authority per shared domain; no division-local duplicate SoR;
+- Spare marketplace inventory is agency-only;
+- marketplace money uses disclosed-agent/no-custody architecture;
+- Pricing & Margin, Allocation/Entitlements, Payment Orchestration and Settlement/Reconciliation are separate domains;
+- checkout price/allocation snapshots are immutable; corrections are compensating;
+- every cent has an explicit beneficiary/reason;
+- core marketplace provider routes: Appletree Hosted Checkout, ContiPay, ZimSwitch/acquiring bank; provider logic is adapter-only;
+- browser/customer action is never authoritative paid state;
+- My Assets is canonical; Vehicle Hub is its specialist vehicle projection;
+- one shared Logistics OS; MapLibre + Nominatim + OSRM + VROOM is the open-source mapping/routing baseline;
+- communication: System Inbox, official WhatsApp Cloud/Flows, email and Econet Enterprise/A2P SMS; Telerivet is retired;
+- RAG/AI never substitutes for live domain truth and cannot own binding money, fitment, safety, compliance or canonical state;
+- VITF and Command Centre are projection/controlled-action planes, never duplicate writers;
+- Product Comparison is shared, explainable, evidence-based and vendor-neutral; unsupported counterfeit/fake/fraud claims are prohibited.
 
-## Final realization layer
-The 186 top-level features are anchors, not the completeness boundary.
-Every feature must implement its 8 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints, donor transformation and support/escalation requirements.
+## Grocery Rounds
 
-## Client app lock
-- DIAL Consumer: unified modular super-app for non-health consumer branches.
-- Dial Health/My Health: standalone specialist app/web.
-- DIAL Business: B2B workspace.
-- Operational/provider apps remain separate.
+Rounds are collective prepaid grocery commerce, not savings/wallet/investment. Each active eligible member has one equal vote regardless of contribution. The initiator has no treasury/procurement privilege. Uncommitted entitlement from a lawful opt-out transfers to ordinary Dial Groceries entitlement. Valid collective state authorises procurement. Discount calculation is separate from voting. Qualifying Round delivery is free within supported zones and active qualifying members receive Care Silver Access.
 
-## Customer service lock
-DIAL Support OS is horizontal. Automated support must be grounded/tool-scoped and hand off to human Chatwoot agents with full context. Formal disputes/liability/compensation escalate to RCE.
+## Hermes
 
-## EPC/visual lock
-The parallel EPC/hero transformation specialist specification must integrate through DIAL Vehicle Hub, Catalogue/Fitment, VisualAssetRegistry and EPC adapter contracts. Generated assets are navigation content, never catalogue truth.
+Hermes on Oracle belongs to DIAL, not DDE. Runtime order is GPT-5.6 Sol → Claude Sonnet 5 → only explicitly approved further fallback. Hermes memory is non-authoritative and secret-free.
 
-## Home / identity lock
-`/` is a public service-router home, not an auth wall.
-One DIAL Identity credential realm serves all customer-facing divisions. Permissions/relationships/consents remain scoped.
+## Development truth
 
-## WhatsApp lock
-DIAL owns the official Cloud API/Flows gateway.
-Chatwoot is a bridged human-support console through the Support architecture, not the canonical Meta/business-state owner.
-WhatsApp must support structured branch transactions, eligible payment initiation/status, fulfilment issues, automated support and human escalation. Paynow/ContiPay always use DIAL PaymentIntent and authoritative provider confirmation.
-
-## DIAL Home visual lock
-DIAL Home final art direction is `Premium Solutions Environment`.
-The shadcn landing donor is a structural/component source only; the final experience must exude solutions, professionalism, trust and modern premium restraint.
-
-## Security lock
-Security is a mandatory ninth realization facet for every top-level Feature ID.
-Use the feature Security Profile and Security Control Registry. Functional completion without applicable security evidence cannot advance to production-green.
-Supabase publishable key may be client-side; secret/service-role keys never are.
-RLS is mandatory on exposed tables.
-Server authorization + RLS + typed commands + negative tests are required.
-
-## Payment channels lock — v1.6
-DIAL accepts Cash, EcoCash Direct USSD Push, Paynow, ContiPay and PayPal through one canonical PaymentIntent/PaymentEvent/Ledger architecture.
-Provider/customer action is not settlement.
-Each BU has dedicated channel accounts/journals plus a non-posting combined control/journal view, Petty Cash and Returns journal.
-No division/payment provider owns a second ledger.
-
-## Finance UI lock — v1.6
-Finance accounts/journals use bank-statement-style rows:
-Date/Time | Ref | Description | Debit | Credit | Running Balance | Status.
-Transactions open full permission-filtered detail and support single-transaction PDF export.
-Selected date ranges support server-generated statement PDF export with opening/closing balances and separate balances per currency.
-
-## Petty cash lock — v1.6
-Each BU Petty Cash is funded through Requisition → Approval → Release → Custodian acknowledgement from an eligible settled same-BU source account by default.
-Request/approve/release/custody authority derives from Position/FinancialAuthority with DoA/SoD.
-
-## Position/onboarding lock — v1.6
-CompanyPosition is versioned and includes role-based contract template, permission bundles, financial authority, job description, compensation defaults, SHEQ/training/assets/PPE requirements.
-Onboarding captures employee photo via image picker/camera and processes it through private secure upload.
-Signed employment contracts are immutable snapshots; position template changes do not rewrite history.
-
+Feature counts and gates are machine-derived from registries/evidence, never durable prose constants. A screen, package, `200`, unit test or narrative claim cannot advance a gate. Current Rounds domain packages require canon migration before higher readiness; the current Hermes draft requires fallback-order correction and live qualification.

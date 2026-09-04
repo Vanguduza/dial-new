@@ -1,26 +1,19 @@
 ---
-description: DIAL agent authority pointer
+description: DIAL single-source authority pointer
 alwaysApply: true
 ---
 
 # DIAL authority
 
-DIAL is built from the v2 Implementation Closure & Build-Ready Canon, as reconciled by
-Consolidated Development Pack v2.2.
-
 Read in this order:
 
-1. `/CLAUDE.md`
-2. `docs/dial/final-audit/00_MASTER/V2_2_ANCHOR_INDEX.md`
-3. `docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md`
-4. the Feature Implementation Contract for the active Feature ID
-5. its Security Profile and Material Eventualities
+1. `docs/dial/canon/DIAL_SOURCE_OF_TRUTH_MASTER_PLAN_v1.2.md`
+2. `/CLAUDE.md`
+3. the active Feature ID's FRC, Security Profile, Material Eventualities and evidence
+4. current code/tests
+
+No other file may override the master. Historic names that remain as compatibility pointers contain no product doctrine.
 
 Bounded context: `node agent-system/bin/context-get.mjs <FEATURE_ID>`
 
-## Superseded authority
-
-The v4 / Development-Agent-Pack / D-number hierarchy is **no longer authoritative**.
-Material from it survives as provenance under `docs/dial/final-audit/ARCHIVE/` and the
-older numbered sections, and may be cited as history. It may not be used to decide what
-to build. A stale document does not regain authority by being found first.
+If a subordinate artifact or implementation conflicts with the master, classify it as stale/`IMPLEMENTATION_CONFLICT` and migrate it. Do not infer a new product decision.
