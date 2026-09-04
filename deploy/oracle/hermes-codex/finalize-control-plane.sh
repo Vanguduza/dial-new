@@ -18,9 +18,11 @@ HEAD_SHA="$(git rev-parse HEAD)"
 
 QUAL="$(latest "$QUAL_DIR"/installed-runtime-*.json)"
 PROCESS="$(latest "$SOAK_DIR"/process-*.json)"
+EXTERNAL="$(latest "$SOAK_DIR"/external-failover-*.json)"
 REBOOT="$(latest "$SOAK_DIR"/reboot-*.json)"
 [[ -n "$QUAL" && -f "$QUAL" ]] || fail "installed-runtime qualification evidence is missing"
 [[ -n "$PROCESS" && -f "$PROCESS" ]] || fail "process-soak evidence is missing"
+[[ -n "$EXTERNAL" && -f "$EXTERNAL" ]] || fail "external queued failover evidence is missing"
 [[ -n "$REBOOT" && -f "$REBOOT" ]] || fail "reboot-soak evidence is missing"
 
 jq -e --arg head "$HEAD_SHA" '
@@ -41,6 +43,18 @@ jq -e --arg head "$HEAD_SHA" '
   and .sol_recovery_proven == true
 ' "$PROCESS" >/dev/null || fail "process-soak evidence is not green for current HEAD"
 pass "actual Codex process death, Sonnet fallback and Sol recovery are proven"
+
+jq -e --arg head "$HEAD_SHA" '
+  .status == "GREEN"
+  and .repo_head == $head
+  and .execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR"
+  and .actual_codex_app_server_sigkill == true
+  and .same_job_sonnet_fallback == true
+  and .sonnet_requested_model == "claude-sonnet-5"
+  and .sonnet_resolved_model == "claude-sonnet-5"
+  and .sol_recovery_proven == true
+' "$EXTERNAL" >/dev/null || fail "external queued failover evidence is not green for current HEAD"
+pass "external queued job survived real Codex death via exact Sonnet 5 and returned to Sol"
 
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
@@ -96,6 +110,7 @@ jq -n \
   --arg repo_head "$HEAD_SHA" \
   --arg installed_runtime_evidence "$QUAL" \
   --arg process_soak_evidence "$PROCESS" \
+  --arg external_failover_evidence "$EXTERNAL" \
   --arg reboot_soak_evidence "$REBOOT" \
   '{
     schema_version:1,
@@ -107,6 +122,7 @@ jq -n \
     repo_head:$repo_head,
     installed_runtime_evidence:$installed_runtime_evidence,
     process_soak_evidence:$process_soak_evidence,
+    external_failover_evidence:$external_failover_evidence,
     reboot_soak_evidence:$reboot_soak_evidence,
     security_audit_green:true,
     observed_at:$observed_at
@@ -114,12 +130,18 @@ jq -n \
 chmod 600 "$TMP"
 mv "$TMP" "$GATE"
 
-node agent-system/orchestration/development-unblock.mjs >/tmp/dial-hermes-unblock.json || {
-  cat /tmp/dial-hermes-unblock.json >&2 || true
-  rm -f "$GATE"
+UNBLOCK="$(mktemp)"
+node agent-system/orchestration/development-unblock.mjs >"$UNBLOCK" || {
+  cat "$UNBLOCK" >&2 || true
+  rm -f "$UNBLOCK" "$GATE"
   fail "development-unblock gate did not accept the finalized evidence"
 }
-rm -f /tmp/dial-hermes-unblock.json
+jq -e '.unblocked == true and .development_state == "DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES"' "$UNBLOCK" >/dev/null || {
+  cat "$UNBLOCK" >&2
+  rm -f "$UNBLOCK" "$GATE"
+  fail "development-unblock result was not green"
+}
+rm -f "$UNBLOCK"
 pass "development is now resumable only through external Hermes orchestration"
 
 echo
