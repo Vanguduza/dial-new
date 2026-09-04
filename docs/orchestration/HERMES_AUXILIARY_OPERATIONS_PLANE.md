@@ -22,8 +22,9 @@ The Auxiliary Operations Plane has authority label `NON_AUTHORITATIVE_CONTROL_PL
 
 It may:
 
-- run fixed deterministic repository-integrity checks;
-- inspect fixed systemd service health;
+- run fixed deterministic repository-integrity and repository verification checks;
+- inspect fixed systemd service health and recover only a hard-coded DIAL service allowlist;
+- inspect persistent external-queue health without exposing queued instructions;
 - prepare bounded evidence bundles for a future manager-model turn;
 - verify checkpoint/Hermes backup presence and permissions;
 - persist scheduled operational evidence outside Git;
@@ -38,6 +39,7 @@ It may not:
 - select, replace or extend the Sol -> Sonnet runtime chain;
 - edit monitored repositories;
 - execute commands supplied by an API model;
+- restart arbitrary services or restart `dial-hermes-operations.service` itself;
 - treat API output as canonical truth, security authority, deployment authority, money authority or product authority.
 
 API output is evidence commentary only and must always carry `NON_AUTHORITATIVE_AUXILIARY_OPERATIONS_ONLY`.
@@ -113,18 +115,28 @@ Configuring a key does not automatically enable API use on schedules. API use is
 Current whitelist:
 
 - `service_health`
+- `service_recovery`
+- `queue_health`
 - `repo_integrity`
+- `deterministic_verify`
 - `evidence_prepare`
 - `backup_verify`
 
 There is no arbitrary-shell job type.
 
-`repo_integrity` uses Git with `GIT_OPTIONAL_LOCKS=0` and the systemd service mounts monitored repositories read-only. `evidence_prepare` aggregates repository/service/backup/control-plane evidence without mutating the project. `backup_verify` verifies existing checkpoint/Hermes state backup evidence; it does not fabricate backup success.
+`service_recovery` may restart only `dial-hermes-runtime.service`, `hermes-gateway.service`, `hermes-dial-dashboard.service`, and `dial-hermes-orchestrator.service`, and only when one is observed unhealthy. It cannot restart the operations service itself and cannot alter repository state or the production gate.
+
+`queue_health` reads queue counts, external-orchestrator heartbeat freshness, and stale-processing age without loading or exporting job instructions. `deterministic_verify` runs the repository-owned fixed `npm run verify` chain and records bounded output evidence; it invokes no model runtime.
+
+`repo_integrity` uses Git with `GIT_OPTIONAL_LOCKS=0` and the systemd service mounts monitored repositories read-only. `evidence_prepare` aggregates repository/service/queue/latest-verification/backup/control-plane evidence without mutating the project. `backup_verify` verifies existing checkpoint/Hermes state backup evidence; it does not fabricate backup success.
 
 Default DIAL schedules are conservative and API-disabled:
 
 - service health every 5 minutes;
+- bounded service recovery every 5 minutes;
+- external queue health every 5 minutes;
 - repo integrity every 30 minutes;
+- deterministic repository verification every 6 hours;
 - evidence preparation every 6 hours;
 - backup verification every 6 hours.
 
@@ -166,6 +178,9 @@ Registering another project never imports DIAL's product truth or grants it DIAL
 ```bash
 dial-hermes-ops status
 dial-hermes-ops run repo_integrity --project dial
+dial-hermes-ops run queue_health --project dial
+dial-hermes-ops run service_recovery --project dial
+dial-hermes-ops run deterministic_verify --project dial
 dial-hermes-ops prepare --project dial
 dial-hermes-ops run evidence_prepare --project dial --use-api
 dial-hermes-ops schedules

@@ -19,10 +19,12 @@ import {
   ALLOWED_OPERATION_JOBS,
   OPERATIONS_AUTHORITY,
   ensureOperationsSchedules,
+  queueHealth,
   runOperationsJob,
+  serviceRecovery,
   setOperationsSchedule,
 } from '../agent-system/orchestration/operations-plane.mjs';
-import { readJson, resolveControlPath } from '../agent-system/orchestration/state-store.mjs';
+import { readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function makeRepo(name = 'ops-repo') {
@@ -109,7 +111,7 @@ describe('strict project isolation', () => {
 
 describe('deterministic auxiliary operations', () => {
   it('supports only the fixed read-only job whitelist', async () => {
-    expect(ALLOWED_OPERATION_JOBS).toEqual(['service_health', 'repo_integrity', 'evidence_prepare', 'backup_verify']);
+    expect(ALLOWED_OPERATION_JOBS).toEqual(['service_health', 'service_recovery', 'queue_health', 'repo_integrity', 'deterministic_verify', 'evidence_prepare', 'backup_verify']);
     const root = temp('ops-control');
     const repo = makeRepo('ops-job');
     ensureProjectRegistry(root, { dialRepoDir: repo });
@@ -144,4 +146,56 @@ describe('deterministic auxiliary operations', () => {
     expect(updated.interval_minutes).toBe(720);
     expect(updated.use_api).toBe(true);
   });
+
+  it('recovers only the fixed DIAL service allowlist and never the operations service itself', async () => {
+    const root = temp('ops-control');
+    const repo = makeRepo('ops-recovery');
+    ensureProjectRegistry(root, { dialRepoDir: repo });
+    const active = new Set(['hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service']);
+    const restarted = [];
+    const runner = (_command, args) => {
+      const action = args[1], service = args[2];
+      if (action === 'is-active') return { ok: active.has(service), stdout: active.has(service) ? 'active' : 'inactive' };
+      if (action === 'is-enabled') return { ok: true, stdout: 'enabled' };
+      if (action === 'restart') { restarted.push(service); active.add(service); return { ok: true, stdout: '' }; }
+      throw new Error(`unexpected runner call: ${args.join(' ')}`);
+    };
+    const project = getProject('dial', root);
+    const result = serviceRecovery(project, runner);
+    expect(result.ok).toBe(true);
+    expect(result.action_taken).toBe(true);
+    expect(restarted).toEqual(['dial-hermes-runtime.service']);
+    expect(restarted).not.toContain('dial-hermes-operations.service');
+    expect(result.development_authority).toBe(false);
+  });
+
+  it('reports queue health from persistent queue state without exposing job instructions', () => {
+    const root = temp('ops-control');
+    const repo = makeRepo('ops-queue');
+    ensureProjectRegistry(root, { dialRepoDir: repo });
+    writeJsonAtomic('state/external-orchestrator-heartbeat.json', {
+      execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', observed_at: new Date().toISOString(),
+    }, root);
+    writeJsonAtomic('work-queue/inbox/job-visible-only-by-id.json', { instruction: 'SECRET JOB CONTENT MUST NOT LEAK' }, root);
+    const result = queueHealth(root);
+    expect(result.ok).toBe(true);
+    expect(result.counts.inbox).toBe(1);
+    expect(JSON.stringify(result)).not.toContain('SECRET JOB CONTENT MUST NOT LEAK');
+  });
+
+  it('runs only the fixed DIAL deterministic verification command through an injected runner', async () => {
+    const root = temp('ops-control');
+    const repo = makeRepo('ops-verify');
+    ensureProjectRegistry(root, { dialRepoDir: repo });
+    const calls = [];
+    const runner = (command, args, cwd) => {
+      calls.push({ command, args, cwd });
+      return { ok: true, stdout: 'verification green', duration_ms: 42 };
+    };
+    const result = await runOperationsJob({ job: 'deterministic_verify', projectSlug: 'dial', root, runner });
+    expect(result.evidence.ok).toBe(true);
+    expect(result.evidence.model_runtime_used).toBe(false);
+    expect(calls).toEqual([{ command: 'npm', args: ['run', 'verify'], cwd: repo }]);
+  });
+
 });

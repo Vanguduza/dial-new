@@ -71,9 +71,9 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `memory-maintenance.mjs` — memory compaction plus transaction-consistent Hermes `state.db` backup.
 - `context-broker.mjs` — bounded DIAL context assembly from repository authority.
 - `supervisor.mjs` — persistent runtime health, selection, checkpoints, heartbeat and qualification status.
-- `operations-plane.mjs` — fixed deterministic scheduled operations, evidence preparation and read-only control-tower checks.
-- `operations-api.mjs` — optional non-authoritative API summarisation with file-scoped secret handling.
-- `project-registry.mjs` — strict project registration and per-project operations-state isolation.
+- `operations-plane.mjs` — deterministic health, bounded service recovery, queue inspection, verification, evidence preparation and scheduling.
+- `operations-api.mjs` — optional API-key-backed non-authoritative evidence summarisation; secret never enters Hermes runtime.
+- `project-registry.mjs` — strict per-project operations-state isolation.
 
 ## Install
 
