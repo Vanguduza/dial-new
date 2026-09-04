@@ -54,7 +54,7 @@
     "agent:orchestration:queue-status": "node agent-system/orchestration/external-orchestrator.mjs status",
     "agent:orchestration:queue-run-once": "node agent-system/orchestration/external-orchestrator.mjs run-once",
     "agent:orchestration:queue-daemon": "node agent-system/orchestration/external-orchestrator.mjs daemon",
-    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs",
+    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs tests/orchestration-screen-factory.test.mjs",
     "agent:development:gate": "node agent-system/orchestration/development-unblock.mjs",
     "agent:operations:status": "node agent-system/orchestration/operations-plane.mjs status",
     "agent:operations:run": "node agent-system/orchestration/operations-plane.mjs run",
@@ -63,7 +63,15 @@
     "agent:operations:run-due": "node agent-system/orchestration/operations-plane.mjs run-due",
     "agent:operations:daemon": "node agent-system/orchestration/operations-plane.mjs daemon",
     "agent:operations:api": "node agent-system/orchestration/operations-api.mjs",
-    "agent:operations:projects": "node agent-system/orchestration/project-registry.mjs"
+    "agent:operations:projects": "node agent-system/orchestration/project-registry.mjs",
+    "agent:openrouter:status": "node agent-system/orchestration/auxiliary-openrouter.mjs status",
+    "agent:openrouter:catalog": "node agent-system/orchestration/auxiliary-openrouter.mjs catalog",
+    "agent:screen-factory:status": "node agent-system/orchestration/screen-factory.mjs status",
+    "agent:screen-factory:play": "node agent-system/orchestration/screen-factory.mjs play",
+    "agent:screen-factory:pause": "node agent-system/orchestration/screen-factory.mjs pause",
+    "agent:screen-factory:stop": "node agent-system/orchestration/screen-factory.mjs stop",
+    "agent:screen-factory:daemon": "node agent-system/orchestration/screen-factory.mjs daemon",
+    "agent:screen-factory:dashboard": "node agent-system/orchestration/screen-factory-server.mjs"
   },
   "dependencies": {
     "sharp": "0.35.4",

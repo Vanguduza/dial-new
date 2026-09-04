@@ -178,6 +178,7 @@ normalize_codex_config
 
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-screen-factory.sh"
 
 cat <<'EOF'
 
