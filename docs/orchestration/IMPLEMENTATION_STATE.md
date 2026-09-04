@@ -15,7 +15,8 @@ RUNTIME_POLICY_LOCKED_SOL_THEN_SONNET
 ORACLE_HOST_PREVIOUSLY_PROVISIONED
 ORACLE_BOOTSTRAP_PREVIOUSLY_COMPLETE
 SUBSCRIPTION_AUTH_PREVIOUSLY_PRESENT
-LIVE_CURRENT_HEAD_DEPLOYMENT_REQUIRED
+LIVE_AUXILIARY_OPERATIONS_PLANE_DEPLOYED
+CURRENT_HEAD_DETERMINISTIC_ORACLE_VERIFY_GREEN
 LIVE_CURRENT_HEAD_RUNTIME_QUALIFICATION_REQUIRED
 PROCESS_SOAK_REQUIRED
 EXTERNAL_QUEUE_FAILOVER_SOAK_REQUIRED
@@ -26,6 +27,25 @@ PRODUCTION_GREEN_NOT_REACHED
 ```
 
 **DIAL product development must not resume yet.**
+
+## Live Oracle auxiliary-operations evidence — 2026-09-04
+
+The auxiliary operations implementation has been installed on the Oracle control host without invoking either model runtime. Live evidence currently proves:
+
+- `dial-hermes-operations.service` is active and running;
+- operations authority is `NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS`;
+- the operations service has `NoNewPrivileges=yes`;
+- `/srv/dial/repo` is read-only to the operations service;
+- `/var/lib/dial-control` is its only configured write path;
+- default schedules are active with API use disabled;
+- service-health, repository-integrity, evidence-preparation and backup-verification jobs execute deterministically;
+- a transaction-consistent Hermes `state.db` backup was created through the existing memory-maintenance mechanism and subsequent backup verification is green;
+- supervisor state migrated to schema 5 with the auxiliary-operations boundary recorded;
+- auxiliary API status is currently unconfigured/disabled and exposes no key material;
+- Hermes runtime, external orchestrator and operations service environments contain no ambient OpenAI/Codex/Anthropic API-key assignments;
+- an ordinary external development negative-control job still fails with `DEVELOPMENT_BLOCKED`, with no runtime/model selected.
+
+Repository deterministic verification for the implementation commit passed with 21 test files and 358 tests. Live Sol/Sonnet qualification and the mandatory process/external/reboot soaks remain pending.
 
 The only mechanism permitted to change that state is the installed-host finalizer:
 
