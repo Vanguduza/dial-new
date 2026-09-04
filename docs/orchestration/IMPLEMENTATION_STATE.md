@@ -1,182 +1,218 @@
-# DIAL Hermes External Runtime Implementation State
+# DIAL Hermes External Orchestration — Implementation State
 
-Last updated: 2026-09-03 (in-plan Hermes availability fallback)
+Last updated: 2026-09-04
 
-This record tracks the Hermes/Oracle qualification branch only. It does not advance DIAL product Feature gates.
+This record tracks DIAL's Oracle-hosted Hermes orchestration branch only. It does not advance DIAL product Feature gates and it is not DDE model-management architecture.
 
 ## Current state
 
 ```text
-REPOSITORY_IMPLEMENTED
-CURRENT_HEAD_CI_REQUIRED
-ORACLE_HOST_PROVISIONED
-ORACLE_BOOTSTRAP_COMPLETE
-REPO_DEPLOYED
-SUBSCRIPTION_AUTH_PRESENT
-HERMES_CODEX_RUNTIME_ACTIVATED
-REAL_QUOTA_SOAK_OBSERVED
-RUNTIME_NOT_QUALIFIED
-SOAK_NOT_COMPLETE
+REPOSITORY_EXTERNAL_ORCHESTRATION_IMPLEMENTED
+RUNTIME_POLICY_LOCKED_SOL_THEN_SONNET
+ORACLE_HOST_PREVIOUSLY_PROVISIONED
+ORACLE_BOOTSTRAP_PREVIOUSLY_COMPLETE
+SUBSCRIPTION_AUTH_PREVIOUSLY_PRESENT
+LIVE_CURRENT_HEAD_DEPLOYMENT_REQUIRED
+LIVE_CURRENT_HEAD_RUNTIME_QUALIFICATION_REQUIRED
+PROCESS_SOAK_REQUIRED
+EXTERNAL_QUEUE_FAILOVER_SOAK_REQUIRED
+REBOOT_SOAK_REQUIRED
+FINAL_SECURITY_GATE_REQUIRED
+DEVELOPMENT_BLOCKED
+PRODUCTION_GREEN_NOT_REACHED
 ```
 
-`PRODUCTION_GREEN` has not been reached.
+**DIAL product development must not resume yet.**
 
-Installed-runtime Sol/Sonnet probes and live soak cannot be marked HEALTHY while both subscriptions are at a naturally observed weekly limit. Do not manufacture additional quota events.
+The only mechanism permitted to change that state is the installed-host finalizer:
 
-## Current-head CI evidence
+```bash
+bash deploy/oracle/hermes-codex/finalize-control-plane.sh
+```
 
-GitHub Actions workflow `verify` is the live authority. A prior green SHA is not reused after a later commit.
+It creates `PRODUCTION_GREEN` only when every required live evidence artifact is valid for the qualified Hermes control-plane implementation.
 
-Recorded 2026-09-03 against `bd2816d98573c367bec8ca9ebbda6ab01c35fde1`:
+## Locked runtime policy
 
-- GitHub Actions `verify` run [33786133089](https://github.com/Vanguduza/dial-new/actions/runs/33786133089): success
-  - gates, types and unit suites: success
-  - pipeline produces a conforming pack: success
-  - customer transition contract: success
-- Local re-verification on the same tree:
-  - `npm ci`
-  - `npm run typecheck`
-  - `npm run agent:orchestration:qualify` — 14 passed
-  - `npm run verify` — 343 passed
-  - `node --check` for `agent-system/orchestration/*.mjs`
-  - `bash -n` for `deploy/oracle/hermes-codex/*.sh` and hooks
-  - `git diff --check origin/master...HEAD`
+Exactly this chain is executable:
 
-This evidence commit itself must keep `verify` green on the resulting PR head.
+```text
+GPT-5.6 Sol / Hermes -> Codex App Server
+  -> Claude Sonnet 5 / official Claude Code CLI
+  -> NO_HERMES_RUNTIME_AVAILABLE
+```
 
-## Architecture-contamination review
+No additional Codex plan model, Sonnet-class alias/model, Fable, Opus, Haiku or generic provider is an executable Hermes fallback.
 
-Reviewed this branch against the locked exclusion boundary. The PR diff does not implement a DDE model registry, Command Centre model picker, Settings → Models UI, Manager Chair, Lesser Task Pool, DeepSeek Harness settings, custom API provider UI, or generalized development-model routing. Those names appear only as explicit exclusions in `DIAL_HERMES_RUNTIME_BOUNDARY.md`.
+Plan-model discovery remains available for observability only. Exact `gpt-5.6-sol` and exact `claude-sonnet-5` are the only models classified as Hermes-executable.
 
-This review is repository-diff evidence only. It does not satisfy Oracle host, installed-runtime, soak, or secret-audit gates.
+Hermes' built-in Anthropic fallback remains disabled so the Claude fallback cannot silently become Anthropic API billing. Both runtime paths are intended to use supported subscription authentication.
+
+## Outside-project orchestration implementation
+
+Repository implementation now includes a persistent Oracle-side execution path independent of an initiating project-local development session:
+
+- `dial-hermes-orchestrator.service`
+- `/var/lib/dial-control/work-queue/{inbox,processing,completed,failed}`
+- `dial-hermes-submit`
+- `dial-hermes-job`
+- atomic queue claim and persistent job state
+- runtime/model provenance on completed/failed jobs
+- external-orchestrator heartbeat
+- fail-closed development gate
+- fixed read-only/no-tools pre-green qualification canary
+
+Ordinary queued work is refused until `state/external-orchestration-gate.json` is `PRODUCTION_GREEN`.
+
+After qualification, the canonical development entrypoint is:
+
+```bash
+dial-hermes-submit "<development instruction>"
+```
+
+Direct ad-hoc project-session development is not the canonical production path.
+
+## Durable qualification boundary
+
+The production gate is not tied to every future DIAL product commit. It is tied to a cryptographic fingerprint of:
+
+- `agent-system/orchestration`
+- `deploy/oracle/hermes-codex`
+
+Therefore:
+
+- normal product commits do not force Hermes requalification;
+- any change to the Hermes orchestration implementation or Oracle deployment invalidates the gate and requires requalification/soak.
 
 ## Repository implementation present
 
-The qualification branch contains:
+The branch currently contains:
 
 - Oracle ARM64 bootstrap;
-- Hermes installation/configuration path;
-- Codex App Server / GPT-5.6 Sol primary-runtime probe;
-- official Claude Code / Sonnet 5 fallback-runtime probe;
-- exact requested/resolved model provenance and explicit toolchain-usability evidence;
-- in-plan availability fallback: Sol first, then the next listed Codex App Server plan model, then Claude Sonnet 5;
-- Claude Hermes eligibility limited to Sonnet-class plan models; Fable 5 / Fable 5.1 excluded (not a Hermes hard pin);
-- injected plan-model lists for deterministic qualification while live subscriptions are quota-limited;
 - subscription-auth safeguards;
-- explicit Sol → Codex in-plan → Sonnet Hermes runtime router;
-- operational `hermes-runtime-executor.mjs` / `dial-hermes` entrypoint;
-- automatic continuation through Claude Code when the primary runtime fails with an eligible runtime failure;
-- checkpoint-before-fallback protection against blind replay after a partially completed primary turn;
-- intentional disabling of Hermes' built-in Anthropic API fallback for this subscription-only design;
-- `NO_HERMES_RUNTIME_AVAILABLE` total-loss behavior;
-- bounded low-frequency background probing plus per-operational-turn health refresh;
-- runtime-health persistence;
+- Hermes configuration locked to `openai-codex`, `gpt-5.6-sol`, `codex_app_server`;
+- exact Sol provenance probe;
+- exact Sonnet 5 provenance probe;
+- exact Sol -> exact Sonnet operational failover;
+- no executable third model;
+- checkpoint-before-fallback protection against blind replay;
+- bounded DIAL context rehydration for fallback;
+- persistent runtime supervisor;
+- persistent external Oracle orchestrator queue/service;
+- external development gate and control-plane fingerprinting;
 - HOT/WARM/COLD and Feature-scoped memory;
-- checkpoints and handoff capsules;
-- DIAL context broker and Hermes pre/post-turn hooks;
-- transaction-consistent Hermes `state.db` backup with bounded retention;
-- deterministic supervisor/systemd recovery path;
-- automated Oracle process-death and reboot soak harness;
-- repository qualification tests and CI gates, including JavaScript syntax, Oracle shell syntax and PR diff whitespace checks.
+- checkpoint and handoff capsules;
+- transaction-consistent Hermes `state.db` backup;
+- process-death soak harness;
+- external queued-turn failover soak harness;
+- actual reboot persistence harness;
+- final installed-host security/production gate;
+- deterministic repository qualification tests.
 
-Repository implementation does not imply Oracle deployment or installed-runtime qualification.
+Repository implementation does **not** imply installed-host qualification.
 
-## Corrective architecture state
+## Previously recorded Oracle host baseline
 
-The mistaken generalized model-management implementation has been removed from this DIAL branch. This branch does not claim a DIAL model-settings UI, generalized model catalog, development model pool or arbitrary worker-harness architecture.
+The branch previously recorded successful host provisioning on an Oracle Always Free Ampere host in Johannesburg with Ubuntu 24.04 ARM64, Codex ChatGPT OAuth, Claude subscription authentication, Hermes activation, and persistent Hermes services.
 
-Hermes runtime selection is availability/provenance only. DIAL repository canon, Feature IDs, FRCs, gates, evidence and existing deterministic governance remain authoritative.
+That evidence establishes that the infrastructure was provisioned, but it does not automatically qualify the new current control-plane implementation. The branch must be pulled/deployed and all current live gates rerun.
 
-## Runtime failover boundary
+Sensitive operational details such as public IP addresses and account identifiers are intentionally omitted from this summary.
 
-The locked fallback is the official Claude Code CLI with `claude-sonnet-5`. Hermes' own Anthropic-provider fallback is intentionally empty in the Oracle configuration so a future Hermes change cannot silently convert this route into API billing.
+## Naturally observed provider-capacity block
 
-The operational executor attempts Hermes → Codex App Server → GPT-5.6 Sol first. On a classified runtime failure it records the failure, checkpoints observable repository state, then tries the next eligible Codex plan model on the same App Server runtime. Only when no eligible Codex plan model remains does it rehydrate bounded DIAL context, prove Claude Code/Sonnet health and continue the original instruction through Claude Code. The fallback is instructed to inspect current state before editing because the failed primary runtime may already have completed tool actions.
+The last recorded real subscription observations were:
 
-Plan models are never invented. Codex discovery uses App Server `model/list` (no turn). Official Claude Code has no non-interactive plan list; injected lists are the deterministic path while subscriptions are quota-limited. Fable is excluded from Hermes powering.
+```text
+Codex / GPT-5.6 Sol weekly reset: not before 2026-09-07 02:42 UTC
+Claude / Sonnet 5 weekly reset:    not before 2026-09-07 03:00 UTC
+```
 
-This is a continuity mechanism, not a rollback/transaction layer. Repository state, tests and evidence determine what actually completed.
+Those were naturally observed limits, not manufactured test states. Current live capacity must be re-probed when qualification is executed; do not assume either provider is healthy before the probe and do not deliberately exhaust subscriptions to create quota evidence.
+
+Because the current date is 2026-09-04, the recorded reset times are still in the future. Live exact-runtime qualification therefore remains potentially quota-blocked until those reset windows unless provider state changes independently.
+
+## Mandatory live qualification sequence
+
+On the Oracle host after pulling the current branch and running the current installer:
+
+```bash
+bash deploy/oracle/hermes-codex/install-control-plane.sh
+```
+
+Then, when real subscription capacity is available:
+
+```bash
+bash deploy/oracle/hermes-codex/qualify-control-plane.sh
+bash deploy/oracle/hermes-codex/soak-control-plane.sh process
+bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh
+bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-pre
+sudo reboot
+# reconnect
+bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-post
+bash deploy/oracle/hermes-codex/finalize-control-plane.sh
+```
+
+### Installed-runtime qualification must prove
+
+- current repository verification passes;
+- exact `gpt-5.6-sol` identity is HEALTHY;
+- exact `claude-sonnet-5` identity is HEALTHY;
+- `dial-hermes` primary path completes through exact Sol;
+- fixed external qualification canary is queued outside the project process and executed by `dial-hermes-orchestrator.service` through exact Sol;
+- Sol-unavailable routing selects exact Sonnet 5 immediately;
+- exact Sonnet 5 can execute through official Claude Code;
+- total loss produces `NO_HERMES_RUNTIME_AVAILABLE`;
+- Sol regains preference after recovery;
+- Hermes session backup succeeds.
+
+### Process soak must prove
+
+- actual Codex App Server SIGKILL;
+- exact Sonnet 5 fallback;
+- safe return to exact Sol;
+- runtime-supervisor SIGKILL/restart;
+- Hermes gateway SIGKILL/restart.
+
+### External queue failover soak must prove
+
+- a real externally queued qualification job is claimed by the Oracle orchestrator;
+- the actual Codex App Server process is SIGKILLed while that job is executing;
+- the **same queued job** continues and completes through exact Sonnet 5;
+- exact Sol regains preference after Codex recovery.
+
+### Reboot soak must prove
+
+- changed Linux boot ID;
+- persistent service recovery;
+- checkpoint persistence;
+- HOT/WARM/COLD persistence;
+- Hermes `state.db` backup persistence;
+- post-reboot exact Sol preference.
+
+### Finalizer must prove
+
+- all evidence is GREEN for the qualified control-plane implementation;
+- external orchestrator heartbeat is fresh;
+- subscription-only configuration contains no ambient OpenAI/Codex/Anthropic API-key material;
+- Hermes built-in provider fallback is still disabled;
+- the current Hermes control-plane fingerprint matches the qualified fingerprint.
+
+Only then may it write:
+
+```text
+EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN
+DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES
+```
 
 ## CI evidence rule
 
-Do not reuse a prior green head after a corrective commit. Repository verification is valid only for the current PR head.
+A prior green commit is not inherited after control-plane changes. Current repository verification must be run against the present branch state.
 
-Required current-head checks:
+If GitHub Actions creates jobs without a runner and executes zero steps, classify that as **CI EXECUTION UNAVAILABLE / NOT VERIFIED**, not as a test failure and not as a green result.
 
-```text
-npm ci
-npm run typecheck
-npm run agent:orchestration:qualify
-npm run verify
-node --check for orchestration modules
-bash -n for Oracle scripts/hooks
-git diff --check against the PR base
-```
+## Architecture contamination boundary
 
-GitHub Actions is the authoritative Linux CI evidence when local command execution is unavailable.
+This DIAL branch does not implement DDE's Manager Chair, Lesser Task Pool, generalized model registry, Settings -> Models UI, DeepSeek Harness configuration, custom provider marketplace, or generalized development-model routing.
 
-## Oracle host evidence
-
-Recorded 2026-09-03 on the live Always Free host (not a simulation):
-
-- Name: `dial-hermes-control`
-- Region: South Africa Central (Johannesburg) / AD-1
-- Shape: `VM.Standard.A1.Flex` 4 OCPU / 24 GB
-- Image: Canonical Ubuntu 24.04 aarch64
-- Public IPv4: `84.12.94.18`
-- VCN/subnet: `dial-hermes-vcn` / `dial-hermes-public-subnet` (`10.0.0.0/24`)
-- Ingress: TCP 22 only; egress all
-- Bootstrap: `deploy/oracle/hermes-codex/bootstrap-host.sh` completed
-- Repository: `/srv/dial/repo` on `chore/hermes-codex-control-plane`
-- Codex CLI: ChatGPT OAuth (`Logged in using ChatGPT`), `codex-cli 0.153.1`
-- Claude Code: `claude.ai` Max subscription (`guduzatapiwa@gmail.com`)
-- Hermes: `openai-codex` OAuth stored; `model.provider=openai-codex`, `model.default=gpt-5.6-sol`, `model.openai_runtime=codex_app_server`; leftover OpenRouter `base_url` removed
-- Services active: `dial-hermes-runtime.service`, `hermes-gateway.service`, `hermes-dial-dashboard.service`
-- `bubblewrap` installed (`0.9.0`); `kernel.unprivileged_userns_clone=1`
-
-Installer repairs applied after first host activation:
-
-- strip leftover third-party `model.base_url` when locking the Codex App Server route
-- dedupe `~/.codex/config.toml` `model` / `default_permissions` keys so Hermes migrate cannot leave a duplicate-key config that Codex App Server rejects
-
-## Real provider capacity gate
-
-```text
-REAL_QUOTA_SOAK = OBSERVED_WEEKLY_LIMIT
-RESET_NOT_BEFORE = 2026-09-07T02:42:00Z
-```
-
-Naturally observed on this host, not manufactured:
-
-- Codex App Server / GPT-5.6 Sol: ChatGPT usage limit, retry after 2026-09-07 02:42 UTC
-- official Claude Code / Claude Sonnet 5: weekly limit, resets 2026-09-07 03:00 UTC
-
-After the Codex `config.toml` duplicate-key repair, the Sol probe must be re-run only after the reset. A second Claude probe must not be issued just to re-observe the same weekly limit.
-
-## Oracle/runtime evidence still required
-
-No item below may be marked complete from simulation or documentation alone:
-
-- installed-runtime Sol probe HEALTHY with exact `gpt-5.6-sol` identity (blocked until quota reset);
-- installed-runtime Sonnet probe HEALTHY with exact `claude-sonnet-5` identity (blocked until quota reset);
-- installed `dial-hermes` primary path through exact Sol;
-- `soak-control-plane.sh process` green evidence:
-  - actual Codex App Server SIGKILL;
-  - Sonnet fallback identity/execution;
-  - safe return to Sol;
-  - supervisor SIGKILL/restart;
-  - Hermes gateway SIGKILL/restart;
-- `soak-control-plane.sh reboot-pre` followed by an actual Oracle reboot;
-- `soak-control-plane.sh reboot-post` green evidence:
-  - changed Linux boot ID;
-  - service recovery;
-  - checkpoint persistence;
-  - HOT/WARM/COLD persistence;
-  - Hermes `state.db` backup persistence;
-  - fresh return to Sol preference;
-- final installed-host secret/security audit;
-- final independent architecture-contamination review.
-
-Controlled `ACCOUNT_LIMITED`, `MODEL_LIMITED`, `RATE_LIMITED`, auth and process-failure states and actual process-kill tests remain routing/recovery evidence only. Subscription usage must not be deliberately exhausted to manufacture a provider quota event. The 2026-09-03 weekly-limit observation is the first real provider-capacity evidence for this branch.
-
-PR #1 remains draft until the required Oracle/runtime gates are genuinely complete.
+Hermes on Oracle is DIAL's external orchestration infrastructure. DDE remains a separate system.
