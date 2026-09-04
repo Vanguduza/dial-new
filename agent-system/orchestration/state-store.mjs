@@ -19,8 +19,14 @@ const LAYOUT = [
   'retrieval/index',
   'retrieval/cache',
   'evidence-cache',
+  'evidence-cache/qualification',
+  'evidence-cache/soak',
   'runtime-health',
   'events',
+  'work-queue/inbox',
+  'work-queue/processing',
+  'work-queue/completed',
+  'work-queue/failed',
 ];
 
 function assertRelative(rel) {
