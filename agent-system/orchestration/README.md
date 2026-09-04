@@ -71,16 +71,26 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `memory-maintenance.mjs` — memory compaction plus transaction-consistent Hermes `state.db` backup.
 - `context-broker.mjs` — bounded DIAL context assembly from repository authority.
 - `supervisor.mjs` — persistent runtime health, selection, checkpoints, heartbeat and qualification status.
+- `operations-plane.mjs` — fixed deterministic scheduled operations, evidence preparation and read-only control-tower checks.
+- `operations-api.mjs` — optional non-authoritative API summarisation with file-scoped secret handling.
+- `project-registry.mjs` — strict project registration and per-project operations-state isolation.
 
 ## Install
 
-On the Oracle host, `install-control-plane.sh` installs both the runtime supervisor and the external orchestrator:
+On the Oracle host, `install-control-plane.sh` installs the runtime supervisor, external orchestrator and non-authoritative auxiliary operations service:
 
 ```bash
 bash deploy/oracle/hermes-codex/install-control-plane.sh
 ```
 
 This does **not** unlock development.
+
+
+## Auxiliary operations plane
+
+The Oracle host also runs `dial-hermes-operations.service`. It performs fixed deterministic health/integrity/evidence jobs even when Sol/Sonnet are unavailable. An optional API key may be configured for evidence summarisation only; API output has no development authority and cannot execute tools or satisfy the production gate.
+
+Secrets are stored outside Git under `/var/lib/dial-control/secrets/` and are not exported to the Hermes runtime. API use is disabled on default schedules until explicitly enabled. See `docs/orchestration/HERMES_AUXILIARY_OPERATIONS_PLANE.md`.
 
 ## Mandatory qualification sequence
 

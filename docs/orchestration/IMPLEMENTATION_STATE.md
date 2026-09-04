@@ -8,6 +8,9 @@ This record tracks DIAL's Oracle-hosted Hermes orchestration branch only. It doe
 
 ```text
 REPOSITORY_EXTERNAL_ORCHESTRATION_IMPLEMENTED
+REPOSITORY_AUXILIARY_OPERATIONS_PLANE_IMPLEMENTED
+AUXILIARY_API_CONFIGURATION_IMPLEMENTED
+MULTI_PROJECT_OPERATIONS_ISOLATION_IMPLEMENTED
 RUNTIME_POLICY_LOCKED_SOL_THEN_SONNET
 ORACLE_HOST_PREVIOUSLY_PROVISIONED
 ORACLE_BOOTSTRAP_PREVIOUSLY_COMPLETE
@@ -99,6 +102,11 @@ The branch currently contains:
 - bounded DIAL context rehydration for fallback;
 - persistent runtime supervisor;
 - persistent external Oracle orchestrator queue/service;
+- non-authoritative auxiliary operations scheduler/service;
+- deterministic repo/service/evidence/backup verification jobs;
+- optional API summarisation using a file-scoped secret outside Git;
+- OpenAI-compatible and Anthropic auxiliary API protocols;
+- strict per-project operations registry/state isolation;
 - external development gate and control-plane fingerprinting;
 - HOT/WARM/COLD and Feature-scoped memory;
 - checkpoint and handoff capsules;
@@ -155,6 +163,9 @@ bash deploy/oracle/hermes-codex/finalize-control-plane.sh
 
 ### Installed-runtime qualification must prove
 
+- `dial-hermes-operations.service` is active and reports non-authoritative/no-development authority;
+- optional auxiliary API key material, when configured, remains outside all Hermes runtime service environments and is mode `0600`;
+
 - current repository verification passes;
 - exact `gpt-5.6-sol` identity is HEALTHY;
 - exact `claude-sonnet-5` identity is HEALTHY;
@@ -194,7 +205,8 @@ bash deploy/oracle/hermes-codex/finalize-control-plane.sh
 
 - all evidence is GREEN for the qualified control-plane implementation;
 - external orchestrator heartbeat is fresh;
-- subscription-only configuration contains no ambient OpenAI/Codex/Anthropic API-key material;
+- subscription-only Hermes runtime configuration contains no ambient OpenAI/Codex/Anthropic API-key material;
+- auxiliary API configuration, if present, is isolated to the operations secret file and cannot authorize development;
 - Hermes built-in provider fallback is still disabled;
 - the current Hermes control-plane fingerprint matches the qualified fingerprint.
 

@@ -17,7 +17,7 @@ import { defineConfig } from 'vitest/config';
  */
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts', 'tests/orchestration-control-plane.test.mjs'],
+    include: ['tests/**/*.test.ts', 'tests/orchestration-control-plane.test.mjs', 'tests/orchestration-operations-plane.test.mjs'],
     exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });

@@ -36,6 +36,8 @@ jq -e --arg head "$HEAD_SHA" '
   and .sol_identity_proven == true
   and .sonnet_identity_proven == true
   and .external_orchestration_canary == true
+  and .auxiliary_operations_plane == true
+  and .auxiliary_operations_authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS"
   and .runtime_policy == "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE"
 ' "$QUAL" >/dev/null || fail "installed-runtime qualification evidence is not green for current HEAD"
 pass "installed Sol, Sonnet and external orchestration canary are proven"
@@ -73,7 +75,13 @@ pass "actual reboot and persistent control-plane continuity are proven"
 
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
-pass "persistent supervisor and external orchestrator services are active"
+systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
+OPS_STATUS="$($HOME/.local/bin/dial-hermes-ops status)"
+jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' <<<"$OPS_STATUS" >/dev/null || fail "auxiliary operations plane boundary is invalid"
+if jq -e ".api.key_configured == true" <<<"$OPS_STATUS" >/dev/null; then
+  [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/operations-api.key")" == "600" ]] || fail "operations API key file must be mode 0600"
+fi
+pass "persistent supervisor, external orchestrator and non-authoritative operations services are active"
 
 node - "$DIAL_CONTROL_HOME/state/external-orchestrator-heartbeat.json" <<'NODE' || exit 1
 const fs = require('fs');
@@ -90,7 +98,7 @@ pass "external orchestrator heartbeat is fresh"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" || -n "${ANTHROPIC_API_KEY:-}" ]]; then
   fail "API-key environment material is present on the subscription-only control plane"
 fi
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service; do
   env_line="$(systemctl --user show "$unit" -p Environment --value 2>/dev/null || true)"
   if grep -Eq '(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)=' <<<"$env_line"; then
     fail "$unit contains forbidden API-key environment material"
@@ -134,6 +142,9 @@ jq -n \
     external_failover_evidence:$external_failover_evidence,
     reboot_soak_evidence:$reboot_soak_evidence,
     security_audit_green:true,
+    auxiliary_operations_plane:true,
+    auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
+    auxiliary_api_can_authorize_development:false,
     observed_at:$observed_at
   }' >"$TMP"
 chmod 600 "$TMP"

@@ -15,7 +15,7 @@ const MAX_TEXT = 2000;
 const SECRET_PATTERNS = [
   /\bsk-[A-Za-z0-9_-]{16,}\b/,
   /\bBearer\s+[A-Za-z0-9._~+\/-]{12,}/i,
-  /\b(?:OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_API_KEY|SUPABASE_SERVICE_ROLE_KEY|access[_-]?token|refresh[_-]?token|oauth[_-]?token)\s*[=:]\s*\S+/i,
+  /\b(?:OPENAI_API_KEY|ANTHROPIC_API_KEY|CODEX_API_KEY|DIAL_OPERATIONS_API_KEY|SUPABASE_SERVICE_ROLE_KEY|access[_-]?token|refresh[_-]?token|oauth[_-]?token)\s*[=:]\s*\S+/i,
   /\bpassword\s*[=:]\s*\S+/i,
   /-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----/i,
   /\b(?:session[_-]?cookie|cookie)\s*[=:]\s*\S+/i,

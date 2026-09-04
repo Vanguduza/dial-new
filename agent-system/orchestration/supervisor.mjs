@@ -13,7 +13,7 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const DEFAULT_PROBE_INTERVAL_MS = 12 * 60 * 60 * 1000;
-const CONTROL_SCHEMA = 4;
+const CONTROL_SCHEMA = 5;
 
 function now() { return new Date().toISOString(); }
 function commandVersion(command, args = ['--version']) {
@@ -46,6 +46,9 @@ function desiredControlPlane(existing = null) {
       governance_bridge: 'DIAL_CANONICAL_CONTEXT_CHECKPOINT_MEMORY',
       development_entrypoint_after_green: 'dial-hermes-submit',
       development_gate: 'state/external-orchestration-gate.json',
+      auxiliary_operations_service: 'dial-hermes-operations.service',
+      auxiliary_operations_authority: 'NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS',
+      auxiliary_api_secret: 'secrets/operations-api.key',
     },
     runtime_policy: 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
     invariant: 'DIAL_PRODUCT_DEVELOPMENT_REQUIRES_PRODUCTION_GREEN_EXTERNAL_HERMES_ORCHESTRATION',
@@ -142,6 +145,9 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
     external_orchestrator_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/external-orchestrator.mjs')),
     development_unblock_gate_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/development-unblock.mjs')),
     finalizer_present: fs.existsSync(path.join(repoDir, 'deploy/oracle/hermes-codex/finalize-control-plane.sh')),
+    operations_plane_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/operations-plane.mjs')),
+    operations_api_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/operations-api.mjs')),
+    project_registry_present: fs.existsSync(path.join(repoDir, 'agent-system/orchestration/project-registry.mjs')),
     git_present: Boolean(gitVersion),
     node_22_plus: Number(process.versions.node.split('.')[0]) >= 22,
     hermes_present: Boolean(hermesVersion),
@@ -162,6 +168,13 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
       queue: 'work-queue',
       development_entrypoint_after_green: 'dial-hermes-submit',
       direct_project_session_development_allowed: false,
+    },
+    auxiliary_operations: {
+      service: 'dial-hermes-operations.service',
+      authority: 'NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS',
+      api_key_location: 'outside_git_control_home_secret',
+      api_can_authorize_development: false,
+      api_can_execute_tools: false,
     },
     versions: { node: nodeVersion, git: gitVersion, hermes: hermesVersion, codex: codexVersion, claude: claudeVersion },
     checks,
@@ -218,6 +231,9 @@ export function status({ repoDir = DEFAULT_REPO, root } = {}) {
     runtime_health: loadRuntimeHealth(root),
     external_orchestrator_heartbeat: readJson('state/external-orchestrator-heartbeat.json', null, root),
     external_orchestration_gate: readJson('state/external-orchestration-gate.json', null, root),
+    auxiliary_operations_heartbeat: readJson('operations/heartbeat.json', null, root),
+    auxiliary_operations_api: readJson('operations/api-config.json', null, root),
+    auxiliary_operations_schedules: readJson('operations/schedules.json', null, root),
     development_unblock: evaluateDevelopmentUnblock({ repoDir, root }),
     checkpoint: readJson('state/active-checkpoint.json', null, root),
     capsule: readJson('state/active-capsule.json', null, root),

@@ -2,7 +2,11 @@
   "name": "dial-visual-transformation-generator",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/*", "packages/*", "workers/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "workers/*"
+  ],
   "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -50,10 +54,21 @@
     "agent:orchestration:queue-status": "node agent-system/orchestration/external-orchestrator.mjs status",
     "agent:orchestration:queue-run-once": "node agent-system/orchestration/external-orchestrator.mjs run-once",
     "agent:orchestration:queue-daemon": "node agent-system/orchestration/external-orchestrator.mjs daemon",
-    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs",
-    "agent:development:gate": "node agent-system/orchestration/development-unblock.mjs"
+    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs",
+    "agent:development:gate": "node agent-system/orchestration/development-unblock.mjs",
+    "agent:operations:status": "node agent-system/orchestration/operations-plane.mjs status",
+    "agent:operations:run": "node agent-system/orchestration/operations-plane.mjs run",
+    "agent:operations:prepare": "node agent-system/orchestration/operations-plane.mjs prepare",
+    "agent:operations:schedules": "node agent-system/orchestration/operations-plane.mjs schedules",
+    "agent:operations:run-due": "node agent-system/orchestration/operations-plane.mjs run-due",
+    "agent:operations:daemon": "node agent-system/orchestration/operations-plane.mjs daemon",
+    "agent:operations:api": "node agent-system/orchestration/operations-api.mjs",
+    "agent:operations:projects": "node agent-system/orchestration/project-registry.mjs"
   },
-  "dependencies": {"sharp": "0.35.4", "zod": "4.1.12"},
+  "dependencies": {
+    "sharp": "0.35.4",
+    "zod": "4.1.12"
+  },
   "devDependencies": {
     "@playwright/test": "1.56.1",
     "@types/node": "22.19.19",
@@ -62,5 +77,7 @@
     "typescript": "5.9.3",
     "vitest": "3.2.7"
   },
-  "engines": {"node": ">=22.13.0"}
+  "engines": {
+    "node": ">=22.13.0"
+  }
 }

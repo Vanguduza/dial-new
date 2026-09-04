@@ -177,6 +177,7 @@ fi
 normalize_codex_config
 
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
 
 cat <<'EOF'
 
@@ -187,7 +188,7 @@ Runtime chain is locked to:
   -> Claude Sonnet 5 / official Claude Code
   -> NO_HERMES_RUNTIME_AVAILABLE
 
-The external Oracle orchestrator is installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
+The external Oracle orchestrator and non-authoritative auxiliary operations plane are installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
 The only pre-green queued action permitted is the fixed read-only/no-tools qualification canary.
 
 NEXT REQUIRED INTERACTIVE HERMES ACTION:
