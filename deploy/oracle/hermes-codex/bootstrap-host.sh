@@ -47,9 +47,11 @@ fi
 
 sudo install -d -m 0750 -o "$SVC_USER" -g "$SVC_USER" /srv/dial
 sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control
-for rel in state checkpoints/active checkpoints/archive capsules/active capsules/archive \
+for rel in \
+  state checkpoints/active checkpoints/archive capsules/active capsules/archive \
   memory/hot memory/warm memory/cold memory/features sessions/hermes sessions/codex sessions/claude \
-  retrieval/index retrieval/cache evidence-cache runtime-health events; do
+  retrieval/index retrieval/cache evidence-cache evidence-cache/qualification evidence-cache/soak \
+  runtime-health events work-queue/inbox work-queue/processing work-queue/completed work-queue/failed; do
   sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" "/var/lib/dial-control/$rel"
 done
 sudo loginctl enable-linger "$SVC_USER" || true
@@ -58,15 +60,22 @@ cat <<EOF
 
 Host bootstrap complete.
 Persistent Hermes/DIAL control state: /var/lib/dial-control
-DIAL repository parent:              /srv/dial
-Service user:                        $SVC_USER
+External orchestration queue:          /var/lib/dial-control/work-queue
+DIAL repository parent:               /srv/dial
+Service user:                         $SVC_USER
 
-REQUIRED OPERATOR AUTH STEPS:
+REQUIRED OPERATOR AUTH + INSTALL STEPS:
   1. Authenticate GitHub and clone Vanguduza/dial-new into /srv/dial/repo.
   2. Run: codex login
   3. Run: hermes auth add openai-codex
   4. Run Claude Code once and complete Claude subscription login.
   5. From the repo, run deploy/oracle/hermes-codex/install-control-plane.sh
+     (this now also installs the persistent external orchestrator service).
+  6. Complete the live qualification/soak/finalization sequence printed by that installer.
+
+DEVELOPMENT MUST REMAIN BLOCKED until finalize-control-plane.sh creates a valid
+PRODUCTION_GREEN external-orchestration gate. After that, development enters
+through dial-hermes-submit, not through an ad-hoc project-local session.
 
 Do not export OPENAI_API_KEY, CODEX_API_KEY or ANTHROPIC_API_KEY into the subscription-runtime service environment.
 EOF
