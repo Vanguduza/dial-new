@@ -10,7 +10,6 @@ import { healthFresh, runtimeEligible, recordRuntimeHealth } from '../agent-syst
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
 import { classifyPrimaryFailure, executeHermesInstruction } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import {
-  classifyClaudeHermesModel,
   injectHermesPlanModels,
   parseClaudeModelListEvidence,
   parseCodexModelListEvidence,
@@ -19,6 +18,11 @@ import { listClaudePlanModels } from '../agent-system/orchestration/claude-code-
 import { listCodexPlanModels } from '../agent-system/orchestration/codex-app-server-probe.mjs';
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
+import {
+  externalWorkStatus,
+  processNextExternalWork,
+  submitExternalWork,
+} from '../agent-system/orchestration/external-orchestrator.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function makeRepo() {
@@ -38,12 +42,27 @@ function makeRepo() {
   return repo;
 }
 function recordPair(root, {
-  sol = 'HEALTHY', sonnet = 'HEALTHY', solResolved = 'gpt-5.6-sol', sonnetResolved = 'claude-sonnet-5',
+  sol = 'HEALTHY',
+  sonnet = 'HEALTHY',
+  solRequested = 'gpt-5.6-sol',
+  solResolved = 'gpt-5.6-sol',
+  sonnetRequested = 'claude-sonnet-5',
+  sonnetResolved = 'claude-sonnet-5',
 } = {}) {
-  recordRuntimeHealth('codex_app_server', { state: sol, requested_model: 'gpt-5.6-sol', resolved_model: solResolved, details: { toolchain_usable: sol === 'HEALTHY' } }, root);
-  recordRuntimeHealth('claude_code', { state: sonnet, requested_model: 'claude-sonnet-5', resolved_model: sonnetResolved, details: { toolchain_usable: sonnet === 'HEALTHY' } }, root);
+  recordRuntimeHealth('codex_app_server', {
+    state: sol,
+    requested_model: solRequested,
+    resolved_model: solResolved,
+    details: { toolchain_usable: sol === 'HEALTHY', identity_proven: solRequested === solResolved },
+  }, root);
+  recordRuntimeHealth('claude_code', {
+    state: sonnet,
+    requested_model: sonnetRequested,
+    resolved_model: sonnetResolved,
+    details: { toolchain_usable: sonnet === 'HEALTHY', identity_proven: sonnetRequested === sonnetResolved },
+  }, root);
 }
-function healthyPlanModel(id, extras = {}) {
+function healthyPlanModel(id) {
   return {
     id,
     state: 'HEALTHY',
@@ -51,7 +70,6 @@ function healthyPlanModel(id, extras = {}) {
     resolved_model: id,
     observed_at: new Date().toISOString(),
     details: { toolchain_usable: true, identity_proven: true },
-    ...extras,
   };
 }
 
@@ -65,332 +83,243 @@ describe('orchestration state store', () => {
   });
 });
 
-describe('Hermes runtime evidence and routing', () => {
-  it('requires fresh exact identity and explicitly proven toolchain usability', () => {
+describe('locked Hermes runtime policy', () => {
+  it('requires fresh exact identity and proven toolchain usability', () => {
     const observed_at = new Date().toISOString();
     const usable = { details: { toolchain_usable: true } };
     expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, ...usable })).toBe(true);
     expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-luna', observed_at, ...usable })).toBe(false);
-    expect(runtimeEligible({ state: 'AUTH_FAILED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, ...usable })).toBe(false);
     expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at, details: { toolchain_usable: false } })).toBe(false);
-    expect(runtimeEligible({ state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at })).toBe(false);
     const stale = { state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', observed_at: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString(), ...usable };
     expect(healthFresh(stale)).toBe(false); expect(runtimeEligible(stale)).toBe(false);
   });
-  it('prefers Sol when both runtimes are healthy', () => {
+
+  it('selects exact Sol when both locked runtimes are healthy', () => {
     const root = temp('dial-control'); recordPair(root);
     const result = reconcileHermesRuntime({ root });
     expect(result.selection.runtime).toBe('codex_app_server');
     expect(result.selection.requested_model).toBe('gpt-5.6-sol');
     expect(result.selection.resolved_model).toBe('gpt-5.6-sol');
-    expect(result.selection.authority).toBe('HERMES_RUNTIME_ONLY');
-  });
-  it('falls back to Sonnet when Sol is unavailable', () => {
-    const root = temp('dial-control'); recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'HEALTHY' });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selection.runtime).toBe('claude_code');
-    expect(result.selection.resolved_model).toBe('claude-sonnet-5');
-  });
-  it('returns NO_HERMES_RUNTIME_AVAILABLE for total loss', () => {
-    const root = temp('dial-control'); recordPair(root, { sol: 'PROCESS_FAILED', sonnet: 'ACCOUNT_LIMITED' });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selected).toBe(false); expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
-  });
-  it('rejects identity mismatch and auth failure', () => {
-    const mismatch = temp('dial-control'); recordPair(mismatch, { solResolved: 'gpt-5.6-luna', sonnet: 'PROCESS_FAILED' });
-    expect(reconcileHermesRuntime({ root: mismatch }).reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
-    const auth = temp('dial-control'); recordPair(auth, { sol: 'AUTH_FAILED', sonnet: 'AUTH_FAILED' });
-    expect(reconcileHermesRuntime({ root: auth }).reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
-  });
-});
-
-describe('Hermes in-plan availability fallback', () => {
-  it('prefers Sol when healthy even if other Codex plan models are listed', () => {
-    const root = temp('dial-control');
-    recordPair(root);
-    injectHermesPlanModels({
-      root,
-      codex: [healthyPlanModel('gpt-5.6-sol'), healthyPlanModel('gpt-5.4')],
-      claude: [healthyPlanModel('claude-sonnet-5')],
-    });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selection.runtime).toBe('codex_app_server');
-    expect(result.selection.preferred_model).toBe('gpt-5.6-sol');
-    expect(result.selection.requested_model).toBe('gpt-5.6-sol');
-    expect(result.selection.selected_model).toBe('gpt-5.6-sol');
-    expect(result.selection.resolved_model).toBe('gpt-5.6-sol');
+    expect(result.selection.policy).toBe('LOCKED_SOL_THEN_SONNET');
     expect(result.selection.in_plan_fallback).toBe(false);
-    expect(result.selection.authority).toBe('HERMES_RUNTIME_ONLY');
   });
 
-  it('selects the next Codex plan model on the same runtime when Sol is limited', () => {
-    const root = temp('dial-control');
-    recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'HEALTHY' });
-    injectHermesPlanModels({
-      root,
-      codex: [
-        { id: 'gpt-5.6-sol', state: 'ACCOUNT_LIMITED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' },
-        healthyPlanModel('gpt-5.4'),
-      ],
-      claude: [healthyPlanModel('claude-sonnet-5')],
-    });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selection.runtime).toBe('codex_app_server');
-    expect(result.selection.preferred_model).toBe('gpt-5.6-sol');
-    expect(result.selection.requested_model).toBe('gpt-5.4');
-    expect(result.selection.selected_model).toBe('gpt-5.4');
-    expect(result.selection.resolved_model).toBe('gpt-5.4');
-    expect(result.selection.in_plan_fallback).toBe(true);
-    expect(result.selection.authority).toBe('HERMES_RUNTIME_ONLY');
-    expect(result.selection.plan_source).toBe('injected');
-  });
-
-  it('does not jump to Sonnet while an eligible Codex plan model remains', () => {
-    const root = temp('dial-control');
-    recordPair(root, { sol: 'MODEL_LIMITED', sonnet: 'HEALTHY' });
-    injectHermesPlanModels({
-      root,
-      codex: [healthyPlanModel('gpt-5.5-codex')],
-      claude: [healthyPlanModel('claude-sonnet-5')],
-    });
-    expect(reconcileHermesRuntime({ root }).selection.runtime).toBe('codex_app_server');
-    expect(reconcileHermesRuntime({ root }).selection.selected_model).toBe('gpt-5.5-codex');
-  });
-
-  it('falls back to Sonnet 5 when no Codex plan model is eligible', () => {
-    const root = temp('dial-control');
-    recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'HEALTHY' });
-    injectHermesPlanModels({
-      root,
-      codex: [{ id: 'gpt-5.4', state: 'ACCOUNT_LIMITED', requested_model: 'gpt-5.4', resolved_model: 'gpt-5.4' }],
-      claude: [healthyPlanModel('claude-sonnet-5'), healthyPlanModel('claude-fable-5-1')],
-    });
+  it('falls immediately to exact Sonnet 5 when Sol is unavailable', () => {
+    const root = temp('dial-control'); recordPair(root, { sol: 'ACCOUNT_LIMITED' });
     const result = reconcileHermesRuntime({ root });
     expect(result.selection.runtime).toBe('claude_code');
-    expect(result.selection.preferred_model).toBe('claude-sonnet-5');
-    expect(result.selection.selected_model).toBe('claude-sonnet-5');
+    expect(result.selection.requested_model).toBe('claude-sonnet-5');
     expect(result.selection.resolved_model).toBe('claude-sonnet-5');
   });
 
-  it('may select a listed Sonnet-class Claude model when Sonnet 5 is unavailable', () => {
-    const root = temp('dial-control');
-    recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'ACCOUNT_LIMITED' });
-    injectHermesPlanModels({
-      root,
-      claude: [
-        { id: 'claude-sonnet-5', state: 'ACCOUNT_LIMITED' },
-        healthyPlanModel('claude-sonnet-4-6'),
-        healthyPlanModel('claude-fable-5-1'),
-      ],
-    });
+  it('never inserts another healthy Codex-plan model between Sol and Sonnet', () => {
+    const root = temp('dial-control'); recordPair(root, { sol: 'ACCOUNT_LIMITED' });
+    injectHermesPlanModels({ root, codex: [healthyPlanModel('gpt-5.4'), healthyPlanModel('gpt-5.5-codex')] });
     const result = reconcileHermesRuntime({ root });
     expect(result.selection.runtime).toBe('claude_code');
-    expect(result.selection.preferred_model).toBe('claude-sonnet-5');
-    expect(result.selection.selected_model).toBe('claude-sonnet-4-6');
-    expect(result.selection.in_plan_fallback).toBe(true);
+    expect(result.selection.selected_model).toBe('claude-sonnet-5');
+    expect(result.selection.in_plan_fallback).toBe(false);
   });
 
-  it('returns NO_HERMES_RUNTIME_AVAILABLE when Sonnet is limited and no eligible Claude Hermes model remains', () => {
+  it('rejects a non-Sol Codex slot even when it is healthy', () => {
     const root = temp('dial-control');
-    recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'ACCOUNT_LIMITED' });
-    injectHermesPlanModels({
-      root,
-      codex: [{ id: 'gpt-5.4', state: 'RATE_LIMITED' }],
-      claude: [
-        { id: 'claude-sonnet-5', state: 'ACCOUNT_LIMITED' },
-        healthyPlanModel('claude-fable-5'),
-        healthyPlanModel('claude-fable-5-1'),
-        healthyPlanModel('claude-opus-5'),
-      ],
+    recordPair(root, { solRequested: 'gpt-5.4', solResolved: 'gpt-5.4', sonnet: 'HEALTHY' });
+    const result = reconcileHermesRuntime({ root });
+    expect(result.selection.runtime).toBe('claude_code');
+    expect(result.selection.requested_model).toBe('claude-sonnet-5');
+  });
+
+  it('rejects alternate Sonnet-class models and fails closed', () => {
+    const root = temp('dial-control');
+    recordPair(root, {
+      sol: 'ACCOUNT_LIMITED',
+      sonnetRequested: 'claude-sonnet-4-6',
+      sonnetResolved: 'claude-sonnet-4-6',
     });
     const result = reconcileHermesRuntime({ root });
     expect(result.selected).toBe(false);
     expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
   });
 
-  it('does not treat Fable 5 vs Fable 5.1 as a Hermes hard pin', () => {
-    expect(classifyClaudeHermesModel('fable 5').hermes_eligible).toBe(false);
-    expect(classifyClaudeHermesModel('fable 5.1').hermes_eligible).toBe(false);
-    expect(classifyClaudeHermesModel('claude-fable-5').class).toBe('fable');
-    expect(classifyClaudeHermesModel('claude-fable-5-1').class).toBe('fable');
-    expect(classifyClaudeHermesModel('claude-sonnet-5').preferred).toBe(true);
-    const root = temp('dial-control');
-    recordPair(root, { sol: 'PROCESS_FAILED', sonnet: 'HEALTHY' });
-    injectHermesPlanModels({
-      root,
-      claude: [healthyPlanModel('claude-fable-5'), healthyPlanModel('claude-fable-5-1'), healthyPlanModel('claude-sonnet-5')],
-    });
+  it('returns NO_HERMES_RUNTIME_AVAILABLE for total loss', () => {
+    const root = temp('dial-control'); recordPair(root, { sol: 'PROCESS_FAILED', sonnet: 'ACCOUNT_LIMITED' });
     const result = reconcileHermesRuntime({ root });
-    expect(result.selection.selected_model).toBe('claude-sonnet-5');
-    expect(result.selection.preferred_model).toBe('claude-sonnet-5');
+    expect(result.selected).toBe(false); expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
   });
 
-  it('selecting an in-plan runtime model does not mutate DIAL gate or ACTIVE_WORK', () => {
-    const repo = makeRepo();
+  it('keeps model-list discovery informational rather than executable', async () => {
     const root = temp('dial-control');
-    saveCheckpoint(buildCheckpoint(repo), root);
-    const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json');
-    const before = readFileSync(active, 'utf8');
-    recordPair(root, { sol: 'ACCOUNT_LIMITED', sonnet: 'HEALTHY' });
-    injectHermesPlanModels({ root, codex: [healthyPlanModel('gpt-5.4')] });
-    const result = reconcileHermesRuntime({ root });
-    expect(result.selection.selected_model).toBe('gpt-5.4');
-    expect(result.selection.authority).toBe('HERMES_RUNTIME_ONLY');
-    expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
-    expect(readFileSync(active, 'utf8')).toBe(before);
-  });
-
-  it('parses Codex App Server model/list evidence without inventing names', () => {
-    const listed = parseCodexModelListEvidence({
-      result: {
-        data: [
-          { id: 'gpt-5.6-sol', model: 'gpt-5.6-sol', displayName: 'GPT-5.6 Sol' },
-          { id: 'gpt-5.4', model: 'gpt-5.4', displayName: 'GPT-5.4' },
-        ],
-        nextCursor: null,
-      },
-    });
-    expect(listed.map((model) => model.id)).toEqual(['gpt-5.6-sol', 'gpt-5.4']);
-    expect(parseCodexModelListEvidence({})).toEqual([]);
-  });
-
-  it('records injected Codex plan lists and does not invent Claude plan models', async () => {
-    const root = temp('dial-control');
-    const listed = await listCodexPlanModels({
+    const codex = await listCodexPlanModels({
       root,
       listRunner: async () => ({ data: [{ model: 'gpt-5.6-sol' }, { model: 'gpt-5.4' }] }),
     });
-    expect(listed.source).toBe('injected');
-    expect(listed.models.map((model) => model.id)).toEqual(['gpt-5.6-sol', 'gpt-5.4']);
+    expect(codex.models.map((model) => model.id)).toEqual(['gpt-5.6-sol', 'gpt-5.4']);
     const claude = listClaudePlanModels({
       root,
-      listRunner: () => [{ id: 'claude-sonnet-5' }, { id: 'claude-fable-5-1' }],
+      listRunner: () => [{ id: 'claude-sonnet-5' }, { id: 'claude-sonnet-4-6' }],
     });
-    expect(claude.source).toBe('injected');
-    expect(claude.models.find((model) => model.id === 'claude-fable-5-1').hermes_eligible).toBe(false);
-    expect(parseClaudeModelListEvidence('not-json and not a model catalog')).toEqual([]);
-  });
-
-  it('does not invent a Claude plan list when the official CLI has no list command', () => {
-    const root = temp('dial-control');
-    const listed = listClaudePlanModels({
-      root,
-      spawn: () => ({ status: 1, stdout: '', stderr: 'unrecognized subcommand' }),
-    });
-    expect(listed.source).toBe('claude_cli_has_no_noninteractive_plan_list');
-    expect(listed.models).toEqual([]);
+    expect(claude.models.map((model) => model.id)).toEqual(['claude-sonnet-5', 'claude-sonnet-4-6']);
+    expect(parseCodexModelListEvidence({ result: { data: [{ model: 'gpt-5.4' }] } })[0].id).toBe('gpt-5.4');
+    expect(parseClaudeModelListEvidence('not-json')).toEqual([]);
   });
 });
 
-describe('Hermes operational runtime executor', () => {
-  it('classifies primary capacity and process failures without confusing them with model provenance', () => {
+describe('Hermes operational executor', () => {
+  it('classifies capacity and process failures', () => {
     expect(classifyPrimaryFailure({ status: 1, stderr: 'usage limit exceeded for this account' })).toBe('ACCOUNT_LIMITED');
     expect(classifyPrimaryFailure({ status: 1, stderr: '429 too many requests' })).toBe('RATE_LIMITED');
     expect(classifyPrimaryFailure({ status: 1, stderr: 'Codex app-server turn failed: connection closed' })).toBe('PROCESS_FAILED');
     expect(classifyPrimaryFailure({ status: 0, stderr: 'resolved model identity mismatch' })).toBe('TOOLCHAIN_DEGRADED');
   });
 
-  it('automatically continues the same instruction through Sonnet from observable repository state', async () => {
+  it('completes through exact Sol without invoking fallback', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    let fallbackCalled = false;
+    const result = await executeHermesInstruction({
+      repoDir: repo,
+      root,
+      instruction: 'Inspect TEST-F001.',
+      primaryRunner: async ({ model }) => ({
+        ok: true,
+        runtime: 'codex_app_server',
+        requested_model: model,
+        resolved_model: model,
+        state: 'HEALTHY',
+        response: 'sol complete',
+      }),
+      ensureFallback: async () => { fallbackCalled = true; return { eligible: true }; },
+    });
+    expect(result.runtime).toBe('codex_app_server');
+    expect(result.requested_model).toBe('gpt-5.6-sol');
+    expect(result.resolved_model).toBe('gpt-5.6-sol');
+    expect(result.fallback_used).toBe(false);
+    expect(fallbackCalled).toBe(false);
+  });
+
+  it('continues the same instruction directly through exact Sonnet 5 after Sol failure', async () => {
     const repo = makeRepo(), root = temp('dial-control');
     const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json');
     const before = readFileSync(active, 'utf8');
+    const primaryModels = [];
     let fallbackCall = null;
 
     const result = await executeHermesInstruction({
       repoDir: repo,
       root,
-      instruction: 'Continue TEST-F001 and verify the current implementation.',
-      primaryRunner: async () => ({
-        ok: false,
-        runtime: 'codex_app_server',
-        requested_model: 'gpt-5.6-sol',
-        resolved_model: 'gpt-5.6-sol',
-        state: 'ACCOUNT_LIMITED',
-      }),
+      instruction: 'Continue TEST-F001 and verify current implementation.',
+      primaryRunner: async ({ model }) => {
+        primaryModels.push(model);
+        return { ok: false, runtime: 'codex_app_server', requested_model: model, resolved_model: model, state: 'ACCOUNT_LIMITED' };
+      },
       ensureFallback: async () => ({ eligible: true }),
       contextBuilder: async () => ({ context: 'CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED' }),
       fallbackRunner: async (input) => {
         fallbackCall = input;
         return {
-          event: { resolved_model: 'claude-sonnet-5' },
+          event: { requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' },
           output: { result: 'continued safely' },
         };
       },
     });
 
+    expect(primaryModels).toEqual(['gpt-5.6-sol']);
     expect(result.runtime).toBe('claude_code');
+    expect(result.requested_model).toBe('claude-sonnet-5');
+    expect(result.resolved_model).toBe('claude-sonnet-5');
     expect(result.fallback_used).toBe(true);
-    expect(result.primary_failure_state).toBe('ACCOUNT_LIMITED');
     expect(result.response).toBe('continued safely');
     expect(fallbackCall.mode).toBe('operational');
+    expect(fallbackCall.instruction).toContain('only permitted fallback runtime');
     expect(fallbackCall.instruction).toContain('ORIGINAL INSTRUCTION');
-    expect(fallbackCall.instruction).toContain('Continue TEST-F001 and verify the current implementation.');
-    expect(fallbackCall.instruction).toContain('Do not blindly replay the failed attempt');
-    expect(fallbackCall.context).toContain('CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED');
     expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
     expect(readFileSync(active, 'utf8')).toBe(before);
   });
 
-  it('continues on the next Codex plan model before leaving the Codex App Server runtime', async () => {
-    const repo = makeRepo(), root = temp('dial-control');
-    const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json');
-    const before = readFileSync(active, 'utf8');
-    injectHermesPlanModels({ root, codex: [{ id: 'gpt-5.4' }] });
-    const requested = [];
-    let fallbackCalled = false;
-
-    const result = await executeHermesInstruction({
-      repoDir: repo,
-      root,
-      instruction: 'Continue TEST-F001 after Sol limit.',
-      planModels: injectHermesPlanModels({ root, codex: [{ id: 'gpt-5.4' }] }),
-      primaryRunner: async ({ model }) => {
-        requested.push(model);
-        if (model === 'gpt-5.6-sol') {
-          return { ok: false, runtime: 'codex_app_server', requested_model: model, resolved_model: model, state: 'ACCOUNT_LIMITED' };
-        }
-        return {
-          ok: true,
-          runtime: 'codex_app_server',
-          requested_model: model,
-          resolved_model: model,
-          state: 'HEALTHY',
-          response: 'continued on next Codex plan model',
-        };
-      },
-      ensureFallback: async () => {
-        fallbackCalled = true;
-        return { eligible: true };
-      },
-    });
-
-    expect(requested).toEqual(['gpt-5.6-sol', 'gpt-5.4']);
-    expect(fallbackCalled).toBe(false);
-    expect(result.runtime).toBe('codex_app_server');
-    expect(result.preferred_model).toBe('gpt-5.6-sol');
-    expect(result.selected_model).toBe('gpt-5.4');
-    expect(result.in_plan_fallback).toBe(true);
-    expect(result.fallback_used).toBe(false);
-    expect(result.authority).toBe('HERMES_RUNTIME_ONLY');
-    expect(readFileSync(active, 'utf8')).toBe(before);
-  });
-
-  it('fails closed when the fallback runtime is not eligible', async () => {
+  it('fails closed when exact Sonnet 5 is unavailable', async () => {
     const repo = makeRepo(), root = temp('dial-control');
     const result = await executeHermesInstruction({
       repoDir: repo,
       root,
       instruction: 'Continue TEST-F001.',
       primaryRunner: async () => ({ ok: false, state: 'PROCESS_FAILED', resolved_model: 'gpt-5.6-sol' }),
-      ensureFallback: async () => ({ eligible: false, reason: 'CLAUDE_FALLBACK_NOT_HEALTHY' }),
+      ensureFallback: async () => ({ eligible: false, reason: 'CLAUDE_SONNET_5_NOT_HEALTHY' }),
     });
     expect(result.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
     expect(result.reason).toBe('NO_HERMES_RUNTIME_AVAILABLE');
     expect(result.fallback_used).toBe(false);
   });
+
+  it('fails closed if fallback provenance resolves to anything except Sonnet 5', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const result = await executeHermesInstruction({
+      repoDir: repo,
+      root,
+      instruction: 'Continue TEST-F001.',
+      primaryRunner: async () => ({ ok: false, state: 'MODEL_LIMITED', resolved_model: 'gpt-5.6-sol' }),
+      ensureFallback: async () => ({ eligible: true }),
+      contextBuilder: async () => ({ context: 'TEST' }),
+      fallbackRunner: async () => ({ event: { resolved_model: 'claude-sonnet-4-6' }, output: { result: 'wrong model' } }),
+    });
+    expect(result.event).toBe('HERMES_OPERATIONAL_TURN_FAILED');
+    expect(result.failure_state).toBe('FALLBACK_FAILED');
+  });
 });
 
-describe('checkpoint, memory and handoff continuity', () => {
+describe('external Oracle orchestration queue', () => {
+  it('submits and executes work from the persistent control plane with provenance', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const queued = submitExternalWork({
+      root,
+      instruction: 'Verify TEST-F001 without changing its gate.',
+      requestedBy: 'qualification',
+    });
+    expect(queued.execution_origin).toBe('EXTERNAL_ORACLE_ORCHESTRATOR');
+    expect(externalWorkStatus(null, root).queued).toBe(1);
+
+    const processed = await processNextExternalWork({
+      repoDir: repo,
+      root,
+      executor: async ({ instruction }) => ({
+        event: 'HERMES_OPERATIONAL_TURN_COMPLETED',
+        authority: 'HERMES_RUNTIME_ONLY',
+        policy: 'LOCKED_SOL_THEN_SONNET',
+        runtime: 'codex_app_server',
+        requested_model: 'gpt-5.6-sol',
+        resolved_model: 'gpt-5.6-sol',
+        fallback_used: false,
+        response: instruction,
+      }),
+    });
+
+    expect(processed.state).toBe('COMPLETED');
+    expect(processed.execution_origin).toBe('EXTERNAL_ORACLE_ORCHESTRATOR');
+    expect(processed.runtime_provenance.requested_model).toBe('gpt-5.6-sol');
+    expect(externalWorkStatus(queued.job_id, root).state).toBe('COMPLETED');
+    expect(externalWorkStatus(null, root).queued).toBe(0);
+  });
+
+  it('persists failed external work instead of silently advancing', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    const processed = await processNextExternalWork({
+      repoDir: repo,
+      root,
+      executor: async () => ({
+        event: 'HERMES_OPERATIONAL_TURN_FAILED',
+        policy: 'LOCKED_SOL_THEN_SONNET',
+        runtime: null,
+        requested_model: null,
+        resolved_model: null,
+        fallback_used: false,
+        reason: 'NO_HERMES_RUNTIME_AVAILABLE',
+      }),
+    });
+    expect(processed.state).toBe('FAILED');
+    expect(externalWorkStatus(queued.job_id, root).state).toBe('FAILED');
+  });
+});
+
+describe('checkpoint, memory and DIAL authority boundary', () => {
   it('mirrors checkpoint into HOT memory and captures dirty state', () => {
     const repo = makeRepo(), root = temp('dial-control');
     const cp = buildCheckpoint(repo, { runtime_provenance: { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol' } });
@@ -400,6 +329,7 @@ describe('checkpoint, memory and handoff continuity', () => {
     writeFileSync(path.join(repo, 'dirty.txt'), 'x'); expect(captureGitState(repo).dirty).toBe(true);
     expect(() => buildCheckpoint(repo, { feature_id: 'TEST-F999' })).toThrow(/unknown Feature ID/);
   });
+
   it('persists handoff into Feature memory and rejects secrets', () => {
     const repo = makeRepo(), root = temp('dial-control');
     const cp = buildCheckpoint(repo, { runtime_provenance: { runtime: 'claude_code', requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' } });
@@ -411,9 +341,7 @@ describe('checkpoint, memory and handoff continuity', () => {
     expect(memory.records.at(-1).runtime_provenance.runtime).toBe('claude_code');
     expect(() => appendFeatureMemory('TEST-F001', { text: 'safe note', refs: ['access_token=super-secret-token-value'] }, root)).toThrow(/possible secret material/);
   });
-});
 
-describe('DIAL context and runtime boundary', () => {
   it('resolves repository context above non-authoritative memory', async () => {
     const repo = makeRepo(), root = temp('dial-control');
     process.env.DIAL_DISABLE_HERMES_HISTORY = '1';
@@ -427,9 +355,9 @@ describe('DIAL context and runtime boundary', () => {
     expect(canonicalSection).toBeGreaterThanOrEqual(0);
     expect(memorySection).toBeGreaterThanOrEqual(0);
     expect(canonicalSection).toBeLessThan(memorySection);
-    expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
     delete process.env.DIAL_DISABLE_HERMES_HISTORY;
   });
+
   it('runtime selection does not alter DIAL gate or ACTIVE_WORK state', () => {
     const repo = makeRepo(), root = temp('dial-control'); saveCheckpoint(buildCheckpoint(repo), root);
     const active = path.join(repo, 'agent-system/registries/ACTIVE_WORK.json'); const before = readFileSync(active, 'utf8');
@@ -438,6 +366,7 @@ describe('DIAL context and runtime boundary', () => {
     expect(loadCheckpoint('TEST-F001', root).target_gate).toBe('DOMAIN_TESTED');
     expect(readFileSync(active, 'utf8')).toBe(before);
   });
+
   it('prefers explicit Feature ID in the incoming turn', () => {
     const repo = makeRepo(); expect(resolveFeatureId({ userMessage: 'continue TEST-F001 please', repoDir: repo })).toBe('TEST-F001');
   });
