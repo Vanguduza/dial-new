@@ -35,7 +35,7 @@ function extractJson(text){
 }
 function workspace(root){const dir=resolveControlPath('screen-factory/model-workspace',root);fs.mkdirSync(dir,{recursive:true,mode:0o700});return dir;}
 function contractShape(task){return {screen_id:task.screen_id,title:task.title,business_unit:task.business_unit,platform:task.platform,roles:task.roles,purpose:task.purpose,features:task.features,interaction:task.interaction,next_routes:task.next_routes,required_variants:task.required_variants,archetype:task.archetype,evidence_basis:task.evidence_basis,ux_profile:task.ux_profile,detail_policy:task.detail_policy,export_policy:task.export_policy};}
-function retryFeedback(task){return Number(task.generation_attempts||0)>1&&String(task.last_error||'').trim()?`\nRETRY_FEEDBACK: retry ${task.generation_attempts}; prior deterministic failure: ${String(task.last_error).slice(0,1200)}. Fix it without weakening the contract or hiding required capability.`:'';}
+function retryFeedback(task){return String(task.last_error||'').trim()?`\nRETRY_FEEDBACK: prior quality/runtime feedback: ${String(task.last_error).slice(0,1200)}. Fix it without weakening the contract or hiding required capability.`:'';}
 
 function implementationPrompt(task){
   assertTaskContractReady(task); const policy=experiencePolicy(task);
