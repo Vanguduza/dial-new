@@ -2,9 +2,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { renderedPolicyFailures, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
 
 export const SCREEN_RENDER_AUTHORITY = 'DETERMINISTIC_IMPLEMENTATION_FIRST_RENDERER';
-export const DESIGN_SYSTEM_VERSION = 'DIAL_HEALTH_UI_CANONICAL_1_0';
+export const DESIGN_SYSTEM_VERSION = SCREEN_FACTORY_DESIGN_SYSTEM;
 
 const PLATFORM_VIEWPORTS = Object.freeze({
   android_mobile: { width: 390, height: 844, dpr: 3 },
@@ -96,7 +97,7 @@ async function collectLayout(page) {
   });
 }
 
-async function deterministicQa(page, task, layout) {
+async function deterministicQa(page, task, packet, layout) {
   const metrics = await page.evaluate(() => ({
     viewport_width: innerWidth,
     viewport_height: innerHeight,
@@ -112,6 +113,7 @@ async function deterministicQa(page, task, layout) {
   if (tinyTargets.length) failures.push('TOUCH_TARGET_TOO_SMALL');
   if (unlabeled.length) failures.push('UNLABELED_ACTIONABLE_CONTROL');
   if (!layout.length) failures.push('NO_SEMANTIC_LAYOUT_NODES');
+  failures.push(...renderedPolicyFailures({ task, packet, layout }));
   return {
     schema_version: 1,
     authority: SCREEN_RENDER_AUTHORITY,
@@ -147,7 +149,7 @@ export async function renderScreenBundle({ task, packet, outputRoot } = {}) {
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => document.fonts?.ready);
     const layout = await collectLayout(page);
-    const qa = await deterministicQa(page, task, layout);
+    const qa = await deterministicQa(page, task, packet, layout);
     const tempPng = path.join(bundleDir, `${bundleName}.png.partial`);
     const pngPath = path.join(bundleDir, `${bundleName}.png`);
     await page.screenshot({ path: tempPng, type: 'png', fullPage: false, animations: 'disabled' });
