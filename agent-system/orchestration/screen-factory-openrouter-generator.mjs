@@ -140,7 +140,7 @@ export async function refreshOpenRouterScreenCatalog({ root, fetchImpl = globalT
   const payload = await response.json();
   const models = (payload?.data ?? []).filter(viable).map((model) => ({
     id: model.id, name: model.name, context_length: model.context_length,
-    pricing: model.pricing, supported_parameters: model.supported_parameters ?? [],
+    pricing: model.pricing, supported_parameters: model.supported_parameters ?? [], reasoning: model.reasoning ?? null,
     capability_score: Number(score(model).toFixed(3)), quality_profile: CURATED[model.id],
   })).sort((a, b) => b.capability_score - a.capability_score || a.id.localeCompare(b.id));
   const catalog = { schema_version: 1, authority: OPENROUTER_SCREEN_AUTHORITY, models, refreshed_at: now() };
@@ -204,6 +204,16 @@ function screenRoleSystemPrompt(role, model) {
   return `You are the authoritative Dial Health premium screen designer/compiler. Produce a finished, implementation-ready, App-Store-quality screen rather than a wireframe or admin template. ${common} ${coach}`;
 }
 
+
+function reasoningConfig(meta) {
+  const profile = meta?.reasoning ?? {};
+  if (!profile.mandatory) return { enabled: false, exclude: true };
+  if (profile.supports_max_tokens) return { max_tokens: 1800, exclude: true };
+  const efforts = Array.isArray(profile.supported_efforts) ? profile.supported_efforts : [];
+  const effort = efforts.includes('low') ? 'low' : (efforts.includes('medium') ? 'medium' : efforts.at(-1));
+  return effort ? { effort, exclude: true } : { enabled: true, exclude: true };
+}
+
 function responseText(payload) {
   const value = payload?.choices?.[0]?.message?.content;
   if (Array.isArray(value)) return value.map((item) => item?.text ?? '').join('\n').trim();
@@ -241,7 +251,7 @@ export async function callOpenRouterScreenCompiler({ content, root, taskKey, fet
       ],
       temperature: 0,
       max_tokens: Math.max(4096, Math.min(24000, Number(maxOutputTokens) || 20000)),
-      reasoning: { effort: ['art_director','final_auditor'].includes(role) ? 'medium' : 'high' },
+      reasoning: reasoningConfig(meta),
       // Free-provider training is permitted ONLY because this isolated key receives synthetic product contracts.
       // PHI, credentials and real member/provider records remain prohibited by the Screen Factory boundary.
       provider: { data_collection: 'allow', require_parameters: true },

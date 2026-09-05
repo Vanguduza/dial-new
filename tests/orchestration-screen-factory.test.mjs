@@ -118,6 +118,8 @@ describe('OpenRouter Screen Factory generation isolation', () => {
     const result = await callOpenRouterScreenCompiler({ content: 'synthetic contract', root, taskKey: 'test', fetchImpl, maxOutputTokens: 4096 });
     expect(result.model).toBe('minimax/minimax-m3:free');
     expect(calls[0].provider.data_collection).toBe('allow');
+    expect(calls[0].reasoning.enabled).toBe(false);
+    expect(calls[0].reasoning.exclude).toBe(true);
     expect(calls[0].messages[0].content).toContain('synthetic product contract');
   });
 });

@@ -60,7 +60,7 @@ export async function compileScreenPacket({task,root,modelCaller=callOpenRouterS
   let review=normalizeReview(extractJson(reviewTurn.response));
   const provenance={lead_model:lead.model,art_director_model:reviewTurn.model,initial_review:review,repaired:false,final_review:null,visual_standard:PREMIUM_VISUAL_STANDARD_VERSION};
   if(!reviewPass(review)){
-    const repair=await modelCaller({content:repairPrompt(task,packet,review),root,taskKey:key,role:'repair_polisher',excludeModels:[lead.model,reviewTurn.model],maxOutputTokens:18000});
+    const repair=await modelCaller({content:repairPrompt(task,packet,review),root,taskKey:key,role:'repair_polisher',excludeModels:[reviewTurn.model],maxOutputTokens:18000});
     packet=validate(extractJson(repair.response),task); provenance.repaired=true; provenance.repair_model=repair.model;
     const finalTurn=await modelCaller({content:reviewPrompt(task,packet),root,taskKey:key,role:'final_auditor',excludeModels:[repair.model],maxOutputTokens:2200});
     review=normalizeReview(extractJson(finalTurn.response)); provenance.final_review=review; provenance.final_auditor_model=finalTurn.model;
