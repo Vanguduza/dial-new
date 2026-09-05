@@ -15,6 +15,7 @@ import {
 import { readJson } from '../agent-system/orchestration/state-store.mjs';
 import { experiencePolicy } from '../agent-system/orchestration/screen-factory-design-policy.mjs';
 import { ensureStorageConfig, storagePressure, storageStatus } from '../agent-system/orchestration/screen-factory-storage.mjs';
+import { beginGoogleOauth, configureGoogleOauthClient, googleOauthStatus, GOOGLE_DRIVE_REDIRECT_URI } from '../agent-system/orchestration/screen-factory-google-oauth.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function tasks(count = 11) {
@@ -428,5 +429,30 @@ describe('Screen Factory bounded storage plane', () => {
     expect(status.state).toBe('STORAGE_BLOCKED');
     expect(status.requested_state).toBe('RUNNING');
     expect(readJson('screen-factory/manifest.json', null, root).tasks[0].generation_attempts).toBe(0);
+  });
+});
+
+describe('Screen Factory Google Drive OAuth bootstrap', () => {
+  it('fails closed until a dedicated Google OAuth client is configured', () => {
+    const root = temp('google-oauth-unconfigured');
+    ensureStorageConfig(root);
+    const status = googleOauthStatus(root);
+    expect(status.state).toBe('SETUP_REQUIRED');
+    expect(status.authenticated).toBe(false);
+    expect(() => beginGoogleOauth({ root })).toThrow(/SETUP_REQUIRED/);
+  });
+
+  it('creates a PKCE offline authorization request pinned to the canonical callback', () => {
+    const root = temp('google-oauth-configured');
+    ensureStorageConfig(root);
+    configureGoogleOauthClient({ clientId: '1234567890-test.apps.googleusercontent.com', clientSecret: 'example-client-secret-123', root });
+    const started = beginGoogleOauth({ root, forceConsent: true });
+    const url = new URL(started.authorization_url);
+    expect(url.origin).toBe('https://accounts.google.com');
+    expect(url.searchParams.get('access_type')).toBe('offline');
+    expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+    expect(url.searchParams.get('redirect_uri')).toBe(GOOGLE_DRIVE_REDIRECT_URI);
+    expect(url.searchParams.get('scope')).toContain('https://www.googleapis.com/auth/drive');
+    expect(url.searchParams.get('prompt')).toContain('consent');
   });
 });

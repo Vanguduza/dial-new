@@ -56,3 +56,15 @@ Required remote names are `dial-r2` and `dial-drive`. Until a remote is authenti
 `dial-health-screen-factory-storage sync` performs an immediate storage pass; the persistent service otherwise retries every 120 seconds.
 
 The live dashboard exposes local cache use, free disk, R2 state, Google Drive state, last successful sync and storage errors. Storage status is informational unless the Oracle guardrails are crossed; only then does it become a generation gate.
+
+## APK boot-time Google authorization
+
+The Android Screen Factory wrapper and live dashboard use a server-side Google OAuth 2.0 authorization-code flow with PKCE and `access_type=offline`. On launch, the dashboard checks Oracle for a stored refresh credential. If the expected Google account is not connected, a blocking authorization gate is shown before the operational dashboard can be used.
+
+The OAuth callback is the stable public entry point `https://vanguduza.github.io/dial-health-screen-factory-dashboard/oauth/google/callback.html`. The callback immediately deep-links back to the installed Android app using `dialhealthscreenfactory://oauth/google`; the APK then hands the authorization code and state to the protected Oracle dashboard, which performs the token exchange server-side. Client secrets and refresh tokens never belong in the APK or public GitHub Pages repository.
+
+The account is pinned to `tapiwaguduza@gmail.com`. Oracle validates the email returned by Google before accepting the refresh credential. A different Google account fails closed.
+
+For persistent unattended archive access, the Google Auth Platform app must be moved to **In production** before final authorization. Google testing-mode refresh tokens expire after seven days. In production, the stored refresh token is reused to obtain short-lived access tokens without further user interaction, subject to Google's normal revocation/invalidation rules. The dashboard exposes an explicit revoke action; revocation returns the boot authorization gate.
+
+The first installation may show a one-time OAuth-client setup form if Oracle does not yet have a dedicated Google OAuth Web client. The required redirect URI is displayed in the gate. The client ID and client secret are submitted only to the protected Oracle control plane and stored under the restricted control-plane secrets directory.
