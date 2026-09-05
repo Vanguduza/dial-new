@@ -42,11 +42,15 @@ const BASE_CSS = `
 --dh-radius:18px;--dh-shadow:0 8px 30px rgba(15,23,42,.08);--dh-space:8px}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--dh-bg);color:var(--dh-navy)}
 body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
--webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;overflow:hidden}
+-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;overflow-x:hidden;overflow-y:auto}
 button,input,select,textarea{font:inherit;min-height:44px}button,[role=button],a{min-height:44px}input[type=checkbox],input[type=radio]{min-width:44px!important;width:44px!important;min-height:44px!important;height:44px!important;margin:0;cursor:pointer}a{display:inline-flex;align-items:center;padding-block:12px}
 [data-ui]{position:relative}.dh-card{background:var(--dh-card);border:1px solid var(--dh-border);
 border-radius:var(--dh-radius);box-shadow:var(--dh-shadow)}
 .dh-chip{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-radius:999px;background:#ccfbf1;color:#115e59;font-weight:650;font-size:12px}
+`;
+const FINAL_GUARDRAIL_CSS = `
+button,input,select,textarea,a,[role="button"],[role="tab"]{min-width:44px!important;min-height:44px!important}
+html,body{max-width:100%;overflow-x:hidden!important}
 `;
 export function composeScreenDocument({ task, packet }) {
   const semanticHtml = rejectUnsafeMarkup(packet?.semantic_html);
@@ -55,7 +59,7 @@ export function composeScreenDocument({ task, packet }) {
   const platform = String(task?.platform || packet?.platform || 'cross_platform');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>${escapeHtml(title)}</title><style>${BASE_CSS}\n${String(packet?.css ?? '')}</style></head>
+<title>${escapeHtml(title)}</title><style>${BASE_CSS}\n${String(packet?.css ?? '')}\n${FINAL_GUARDRAIL_CSS}</style></head>
 <body data-screen-id="${escapeHtml(screenId)}" data-platform="${escapeHtml(platform)}" data-design-system="${DESIGN_SYSTEM_VERSION}">
 ${semanticHtml}</body></html>`;
 }
@@ -98,12 +102,18 @@ async function collectLayout(page) {
 }
 
 async function deterministicQa(page, task, packet, layout) {
-  const metrics = await page.evaluate(() => ({
-    viewport_width: innerWidth,
-    viewport_height: innerHeight,
-    scroll_width: document.documentElement.scrollWidth,
-    scroll_height: document.documentElement.scrollHeight,
-  }));
+  const metrics = await page.evaluate(() => {
+    const nodes = [...document.querySelectorAll('*')];
+    const rects = nodes.map((element) => element.getBoundingClientRect()).filter((rect) => rect.width || rect.height);
+    const maxRight = rects.length ? Math.max(...rects.map((rect) => rect.right)) : innerWidth;
+    const maxBottom = rects.length ? Math.max(...rects.map((rect) => rect.bottom)) : innerHeight;
+    return {
+      viewport_width: innerWidth,
+      viewport_height: innerHeight,
+      scroll_width: Math.ceil(Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth || 0, maxRight)),
+      scroll_height: Math.ceil(Math.max(document.documentElement.scrollHeight, document.body?.scrollHeight || 0, maxBottom)),
+    };
+  });
   const actionable = layout.filter((item) => ['button', 'input', 'select', 'textarea', 'a'].includes(item.tag) || item.role === 'button');
   // Hidden/inactive state controls legitimately have zero-size boxes. Accessibility QA
   // applies to controls rendered in the current state, not controls hidden for other states.
@@ -155,7 +165,7 @@ export async function renderScreenBundle({ task, packet, outputRoot } = {}) {
     const qa = await deterministicQa(page, task, packet, layout);
     const tempPng = path.join(bundleDir, `${bundleName}.png.partial`);
     const pngPath = path.join(bundleDir, `${bundleName}.png`);
-    await page.screenshot({ path: tempPng, type: 'png', fullPage: false, animations: 'disabled' });
+    await page.screenshot({ path: tempPng, type: 'png', fullPage: true, animations: 'disabled' });
     fs.renameSync(tempPng, pngPath);
     atomicJson(path.join(bundleDir, `${bundleName}.layout.json`), {
       schema_version: 1, screen_id: task.screen_id, platform: task.platform,
