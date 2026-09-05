@@ -46,3 +46,9 @@ Missing local runtime executables, model-runtime timeouts, account/rate limits, 
 The worker service must include the authenticated user's local executable paths so the Hermes and Claude Code CLIs resolve under systemd exactly as they do in an interactive shell. Dashboard control calls must also supply the user-systemd bus environment; otherwise a Play acknowledgement is invalid even if `requested_state=RUNNING` was written.
 
 The dashboard may collapse repeated identical retry events for readability, but the append-only factory event log remains unchanged as forensic evidence. Failure cards must expose the actual reason rather than only the event name.
+
+## Storage pressure gate
+
+Oracle storage protection is an autonomous fail-safe, not a manual continuation point. Before a new screen is claimed, the worker checks the bounded local cache and filesystem reserve. Crossing the configured threshold enters `STORAGE_BLOCKED` while keeping `requested_state=RUNNING`; no screen retry is consumed and canonical ordering is preserved.
+
+The independent storage service continues syncing to R2 and Google Drive. Once the local cache or disk reserve returns below the safety threshold, the worker resumes automatically. Current defaults are a 2 GiB Screen Factory local-cache target and an 8 GiB free-disk reserve.

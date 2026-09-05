@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -14,6 +14,7 @@ import {
 } from '../agent-system/orchestration/screen-factory.mjs';
 import { readJson } from '../agent-system/orchestration/state-store.mjs';
 import { experiencePolicy } from '../agent-system/orchestration/screen-factory-design-policy.mjs';
+import { ensureStorageConfig, storagePressure, storageStatus } from '../agent-system/orchestration/screen-factory-storage.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function tasks(count = 11) {
@@ -398,4 +399,34 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(experiencePolicy(detail).export_action_required_on_this_screen).toBe(true);
   });
 
+});
+
+describe('Screen Factory bounded storage plane', () => {
+  it('uses a 2 GB local cache target with an 8 GB Oracle disk reserve by default', () => {
+    const root = temp('screen-factory-storage-defaults');
+    const cfg = ensureStorageConfig(root);
+    const status = storageStatus(root);
+    expect(cfg.local_limit_bytes).toBe(2 * 1024 ** 3);
+    expect(cfg.disk_reserve_bytes).toBe(8 * 1024 ** 3);
+    expect(status.policy).toBe('R2_PRIMARY_DRIVE_ARCHIVE_LOCAL_BOUNDED_CACHE_V1');
+  });
+
+  it('enters STORAGE_BLOCKED before generation when the local cache limit is crossed', async () => {
+    const root = temp('screen-factory-storage-block');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
+    importScreenFactoryManifest(source, root);
+    const cfgPath = path.join(root, 'screen-factory', 'storage-config.json');
+    writeFileSync(cfgPath, JSON.stringify({ local_limit_bytes: 1, disk_reserve_bytes: 1 }));
+    const out = path.join(root, 'screen-factory', 'outputs');
+    mkdirSync(out, { recursive: true });
+    writeFileSync(path.join(out, 'pressure.bin'), '0123456789');
+    controlScreenFactory('play', root);
+    let invoked = false;
+    const status = await runScreenFactoryTick({ root, compiler: async () => { invoked = true; throw new Error('must not run'); } });
+    expect(invoked).toBe(false);
+    expect(status.state).toBe('STORAGE_BLOCKED');
+    expect(status.requested_state).toBe('RUNNING');
+    expect(readJson('screen-factory/manifest.json', null, root).tasks[0].generation_attempts).toBe(0);
+  });
 });

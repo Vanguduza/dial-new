@@ -38,6 +38,31 @@ else
 fi
 EOF
 chmod 0700 "$HOME/.local/bin/dial-health-screen-factory" "$HOME/.local/bin/dial-hermes-openrouter"
+if [[ ! -x "$HOME/.local/bin/rclone" ]]; then
+  command -v curl >/dev/null || fail "curl is required to install user-local rclone"
+  arch="$(uname -m)"; case "$arch" in aarch64|arm64) rarch=arm64;; x86_64) rarch=amd64;; *) fail "unsupported rclone architecture: $arch";; esac
+  tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+  curl -fsSL "https://downloads.rclone.org/rclone-current-linux-$rarch.zip" -o "$tmp/rclone.zip"
+  python3 -m zipfile -e "$tmp/rclone.zip" "$tmp/unpack"
+  rbin="$(find "$tmp/unpack" -type f -name rclone | head -1)"; [[ -n "$rbin" ]] || fail "rclone binary missing from archive"
+  install -m 0755 "$rbin" "$HOME/.local/bin/rclone"
+  rm -rf "$tmp"; trap - EXIT
+fi
+cat >"$HOME/.local/bin/dial-health-screen-factory-storage" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+CONTROL_HOME="\${DIAL_CONTROL_HOME:-$DIAL_CONTROL_HOME}"
+CONFIG="\$CONTROL_HOME/secrets/rclone.conf"
+RCLONE="$HOME/.local/bin/rclone"
+SYNC="$DIAL_REPO_DIR/deploy/oracle/hermes-codex/screen-factory-storage-sync.sh"
+case "\${1:-status}" in
+  status) cat "\$CONTROL_HOME/screen-factory/storage-status.json" 2>/dev/null || true; echo "Configured remotes:"; "\$RCLONE" listremotes --config "\$CONFIG" 2>/dev/null || true ;;
+  config) exec "\$RCLONE" config --config "\$CONFIG" ;;
+  sync) exec "\$SYNC" once ;;
+  *) echo "Usage: dial-health-screen-factory-storage {status|config|sync}" >&2; exit 2 ;;
+esac
+EOF
+chmod 0700 "$HOME/.local/bin/dial-health-screen-factory-storage"
 cat >"$HOME/.config/systemd/user/dial-health-screen-factory.service" <<EOF
 [Unit]
 Description=Dial Health Hermes Screen Factory worker
@@ -87,15 +112,38 @@ ReadWritePaths=$DIAL_CONTROL_HOME
 [Install]
 WantedBy=default.target
 EOF
+cat >"$HOME/.config/systemd/user/dial-health-screen-factory-storage.service" <<EOF
+[Unit]
+Description=Dial Health Screen Factory storage sync
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=$DIAL_REPO_DIR
+Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=RCLONE_BIN=$HOME/.local/bin/rclone
+ExecStart=$DIAL_REPO_DIR/deploy/oracle/hermes-codex/screen-factory-storage-sync.sh
+Restart=always
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadOnlyPaths=$DIAL_REPO_DIR
+ReadWritePaths=$DIAL_CONTROL_HOME $HOME/.config/rclone
+[Install]
+WantedBy=default.target
+EOF
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" init >/dev/null
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" catalog >/dev/null || true
 systemctl --user daemon-reload
 systemctl --user enable dial-health-screen-factory.service
 systemctl --user enable --now dial-health-screen-factory-dashboard.service
+systemctl --user enable --now dial-health-screen-factory-storage.service
 systemctl --user stop dial-health-screen-factory.service >/dev/null 2>&1 || true
 sleep 1
 systemctl --user is-enabled --quiet dial-health-screen-factory.service || fail "Screen Factory worker service is not enabled"
 systemctl --user is-active --quiet dial-health-screen-factory-dashboard.service || fail "Screen Factory dashboard did not start"
+systemctl --user is-active --quiet dial-health-screen-factory-storage.service || fail "Screen Factory storage sync did not start"
 cat <<'EOF'
 DIAL HEALTH SCREEN FACTORY INSTALLED
 Dashboard: http://127.0.0.1:9121
