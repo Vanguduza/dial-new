@@ -1,44 +1,17 @@
 import fs from 'node:fs';
-import path from 'node:path';
-import { spawnSync } from 'node:child_process';
-import { runPrimaryHermes } from './hermes-runtime-executor.mjs';
 import { resolveControlPath } from './state-store.mjs';
-import { loadRuntimeHealth } from './runtime-health.mjs';
+import { callOpenRouterScreenCompiler } from './screen-factory-openrouter-generator.mjs';
 import { assertTaskContractReady, experiencePolicy, validateDesignPacket, SCREEN_FACTORY_DESIGN_POLICY, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
 
-export const SCREEN_GENERATOR_POLICY='EXACT_GPT_5_6_SOL_THEN_EXACT_CLAUDE_SONNET_5_FAIL_CLOSED';
-const PRIMARY='gpt-5.6-sol',FALLBACK='claude-sonnet-5';
+export const SCREEN_GENERATOR_POLICY='OPENROUTER_CURATED_FREE_THREE_MODEL_POOL_WITH_AUTOMATIC_REPLACEMENT_FAIL_CLOSED';
 const REQUIRED_STATES=['LOADING','POPULATED','EMPTY','PARTIAL','VALIDATION_ERROR','PERMISSION_DENIED','STEP_UP_REQUIRED','STALE','SOURCE_UNAVAILABLE','OFFLINE_READ','OFFLINE_QUEUED','CONFLICT','RECONCILIATION_REQUIRED','SUCCESS','CANCELLED','ARCHIVED/SUPERSEDED'];
-
-const PRIMARY_CIRCUIT_TTL_MS=Object.freeze({
-  ACCOUNT_LIMITED:6*60*60*1000,
-  AUTH_FAILED:60*60*1000,
-  RATE_LIMITED:15*60*1000,
-  MODEL_LIMITED:10*60*1000,
-  PROCESS_FAILED:10*60*1000,
-  STALLED:10*60*1000,
-  TOOLCHAIN_DEGRADED:10*60*1000,
-});
-function primaryCircuitState(root){
-  const h=loadRuntimeHealth(root)?.runtimes?.codex_app_server;
-  const ttl=PRIMARY_CIRCUIT_TTL_MS[String(h?.state||'')];
-  const observed=Date.parse(h?.observed_at||'');
-  if(!ttl||!Number.isFinite(observed))return null;
-  const age=Date.now()-observed;
-  return age>=0&&age<ttl?String(h.state):null;
-}
 function extractJson(text){const s=String(text||'').trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');try{return JSON.parse(s)}catch{}const a=s.indexOf('{'),b=s.lastIndexOf('}');if(a<0||b<=a)throw new Error('generator returned no JSON object: '+s.slice(0,800));return JSON.parse(s.slice(a,b+1));}
 function workspace(root){const dir=resolveControlPath('screen-factory/model-workspace',root);fs.mkdirSync(dir,{recursive:true,mode:0o700});return dir;}
 function prompt(task){assertTaskContractReady(task);const policy=experiencePolicy(task);const retryFeedback=Number(task.generation_attempts||0)>1&&String(task.last_error||'').trim()?`\nRETRY_FEEDBACK: This is retry ${task.generation_attempts}. The prior deterministic QA/runtime failure was: ${String(task.last_error).slice(0,1200)}. Correct that failure explicitly without weakening the screen contract or hiding content.`:'';return `You are the authoritative Dial Health Screen Factory design/compiler model. Produce ONE evidence-backed implementation packet as JSON only. Do not call tools, modify files, browse, or include markdown.${retryFeedback}\nSCREEN_CONTRACT: ${JSON.stringify({screen_id:task.screen_id,title:task.title,business_unit:task.business_unit,platform:task.platform,roles:task.roles,purpose:task.purpose,features:task.features,interaction:task.interaction,next_routes:task.next_routes,required_variants:task.required_variants,archetype:task.archetype,evidence_basis:task.evidence_basis,ux_profile:task.ux_profile,detail_policy:task.detail_policy,export_policy:task.export_policy})}\nPOLICY: ${JSON.stringify(policy)}\nVISUAL: ${SCREEN_FACTORY_DESIGN_SYSTEM}; premium clean clinical UI, navy hierarchy, Dial teal/green accents, restrained semantic colours, white/soft neutral surfaces, polished cards, accessible typography and controls. My Health is warm, calm and customer-facing: progressive disclosure, one principal decision, low-to-moderate information density, concise summaries, generous breathing room, focused detail pages/sheets, no operations-dashboard density.\nFUNCTIONAL: semantic HTML only; no script/iframe/external URL/assets/fonts/inline handlers. Every button/link has data-action and every meaningful region has data-ui/data-feature-id. No cosmetic controls. Every action maps to interaction_map; every authoritative value maps to data_bindings. Frontend never invents clinical/financial/eligibility truth.\nEXPERIENCE_PROFILE: For My Health set experience_profile.progressive_disclosure to boolean true and experience_profile.information_density exactly LOW_TO_MODERATE.\nDATA PLACEHOLDERS: Do not invent patient/provider names, dates, diagnoses, prices, claim states, result values or other member-specific truth. Use generic non-authoritative preview copy backed by data_bindings, such as Your next appointment or Recent result available.\nRESPONSIVE SAFETY: The rendered screen must fit the target viewport with zero horizontal overflow. Do not use negative left/right offsets or absolutely positioned badges/decorations that extend outside the viewport. Keep all actionable and semantic content inside the viewport at the target platform width.\nRECORDS: any record/transaction item opens a complete focused detail route or modal/sheet. Detail experiences expose functional export/download/share when permitted, with backend ownership, permission/step-up, audit and failure/offline behaviour represented in contracts.\nDISCLOSURE: dense secondary content must be collapsed, moved to a dedicated focused route, or opened in a modal/sheet. Do not put the full dataset on a top-level consumer page.\nEVIDENCE: render documented features only. If a genuinely necessary feature is absent, declare it in additional_features with feature_id,name,rationale,source_gap and integration_plan{domain_owner,data,api_or_service,events,security_privacy,audit,qa,rollout}; also reference it from evidence_map. Never silently invent features.\nRETURN EXACT KEYS: screen_id,title,platform,semantic_html,css,experience_profile,interaction_map,data_bindings,state_map,feature_coverage,evidence_map,additional_features,component_contracts. All maps except experience_profile are arrays. experience_profile includes information_density and progressive_disclosure. state_map covers ${REQUIRED_STATES.join(', ')}. Make the packet directly renderable and straightforward to implement as software.`;}
-
-function claudeFallback({instruction,cwd,root,timeoutMs}){const r=spawnSync('claude',['-p',instruction,'--model',FALLBACK,'--effort','high','--output-format','json','--system-prompt','You are a deterministic UI implementation compiler. Do not inspect files, use tools, browse, plan aloud, or ask questions. Return only the exact JSON object requested by the user prompt.','--setting-sources','','--strict-mcp-config','--permission-mode','bypassPermissions','--tools','','--disable-slash-commands','--max-turns','1','--name','DIAL-SCREEN-FACTORY-SONNET-5'],{cwd,encoding:'utf8',timeout:timeoutMs,maxBuffer:32*1024*1024,env:{...process.env,DIAL_CONTROL_HOME:root||process.env.DIAL_CONTROL_HOME,DIAL_REPO_DIR:cwd}});let out=null;try{out=JSON.parse(r.stdout||'null')}catch{}if(Array.isArray(out))out=out.at(-1)||null;const usage=out?.modelUsage??out?.model_usage??{};const models=Object.keys(usage);const resolved=models.length===1?models[0]:null;if(r.status!==0)throw new Error(`exact Sonnet 5 screen fallback failed: ${String(r.stderr||r.stdout||r.error?.message||'process failure').slice(0,1200)}`);if(resolved!==FALLBACK)throw new Error(`exact Sonnet 5 identity not proven: ${resolved||'missing'}`);if(!String(out?.result||'').trim())throw new Error('exact Sonnet 5 returned empty screen packet');return {response:out.result,runtime:'claude_code',model:resolved};}
 function validate(packet,task){if(String(packet?.screen_id)!==String(task.screen_id)||String(packet?.platform)!==String(task.platform))throw new Error('generator packet identity mismatch');if(!String(packet.semantic_html||'').trim()||!String(packet.css||'').trim())throw new Error('generator semantic_html/css missing');validateDesignPacket(packet,task);return packet;}
-export async function compileScreenPacket({task,root,timeoutMs=5*60*1000}={}){
- if(!task?.screen_id)throw new Error('screen task required');assertTaskContractReady(task);const cwd=workspace(root),instruction=prompt(task);
- const blockedState=primaryCircuitState(root);
- const primary=blockedState?{ok:false,state:blockedState,skipped:true,reason:'PRIMARY_CIRCUIT_OPEN'}:runPrimaryHermes({repoDir:cwd,instruction,root,timeoutMs:Math.min(timeoutMs,120000),model:PRIMARY});
- let turn;if(primary?.ok)turn={response:primary.response,runtime:'codex_app_server',model:primary.resolved_model};
- else turn=claudeFallback({instruction,cwd,root,timeoutMs});
+export async function compileScreenPacket({task,root}={}){
+ if(!task?.screen_id)throw new Error('screen task required');assertTaskContractReady(task);workspace(root);
+ const turn=await callOpenRouterScreenCompiler({content:prompt(task),root,taskKey:task.task_id||`${task.screen_id}::${task.platform}`,maxOutputTokens:20000});
  const packet=validate(extractJson(turn.response),task);
- return {packet,runtime:turn.runtime,model:turn.model,policy:SCREEN_GENERATOR_POLICY,design_policy:SCREEN_FACTORY_DESIGN_POLICY,primary_state:primary?.state||null};
+ return {packet,runtime:turn.runtime,model:turn.model,policy:SCREEN_GENERATOR_POLICY,design_policy:SCREEN_FACTORY_DESIGN_POLICY,model_selection:turn.selection};
 }

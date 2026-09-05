@@ -92,3 +92,15 @@ Hermes is not a screen designer. Whenever it prepares the next generation group,
 Hermes must not prescribe screen-specific layout, visual styling, colours, typography, component placement, visual density, framing or composition. Those decisions remain with the canonical Dial Health design authority and are applied independently from the Hermes ping.
 
 The normative ping schema and fail-closed rules are defined in `docs/dial/health/HERMES_FUNCTIONAL_SCREEN_PING_CONTRACT.md`.
+
+## 13. Screen implementation compiler runtime policy — 2026-09-05
+
+Screen implementation compilation is performed by a dedicated OpenRouter free-model generation pool. The preferred models, in order of intended use, are `z-ai/glm-5.2:free`, `minimax/minimax-m3:free`, and `nvidia/nemotron-3-ultra-550b-a55b:free`. GPT-5.6 Sol and Claude Sonnet 5 are not Screen Factory generation fallbacks under this policy.
+
+The OpenRouter credential used by this path is generation-only. It is stored outside Git as `/var/lib/dial-control/secrets/openrouter-screen-generator.key` with mode `0600`, is never exported as a process-wide API-key environment variable, is not manager-eligible, is not a Hermes runtime credential, and is not shared with the auxiliary OpenRouter reviewer.
+
+The factory refreshes the live OpenRouter catalog and admits only curated exact `:free` models that remain zero-priced, reasoning-capable, and meet the minimum context and parameter requirements. `openrouter/free` is prohibited because it would permit uncontrolled model substitution.
+
+If a preferred model is retired, disappears from the live catalog, loses free pricing or required capabilities, is rate-limited, becomes unavailable, or is blocked by provider policy, the factory selects the next highest-scored compatible model from the curated replacement pool. Initial replacement candidates are Dots3-Note Preview, Nemotron 3 Super, Cohere North Mini Code, Poolside Laguna S, MiniMax M2.7 and Nemotron 3.5 Lightning; live catalog and capability scoring decide which replacement is admitted. Temporary faults receive bounded cooldowns; retirement/unavailability is re-evaluated from the live catalog so a recovered preferred model can automatically re-enter the pool.
+
+OpenRouter produces the implementation packet only. Playwright/Chromium remains the deterministic pixel renderer, and deterministic QA remains authoritative for render correctness. No OpenRouter model may invent patient, clinical, financial, eligibility or operational truth; Screen Factory prompts are limited to synthetic product contracts and canonical design/functional evidence.

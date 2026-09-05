@@ -6,14 +6,14 @@ import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
 import { renderScreenBundle } from './screen-factory-renderer.mjs';
 import { compileScreenPacket, SCREEN_GENERATOR_POLICY } from './screen-factory-model-generator.mjs';
-import { callOpenRouterAux, OPENROUTER_DATA_CLASS } from './auxiliary-openrouter.mjs';
+import { openRouterScreenGeneratorStatus } from './screen-factory-openrouter-generator.mjs';
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
 import { assertTaskContractReady, contractReadiness, validateDesignPacket, additionalFeaturesMarkdown, implementationHandoffMarkdown, readPacketFromBundle, SCREEN_FACTORY_DESIGN_POLICY, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
 import { ensureStorageConfig, storagePressure, storageStatus } from './screen-factory-storage.mjs';
 
 export const SCREEN_FACTORY_AUTHORITY = 'DIAL_HEALTH_SCREEN_FACTORY_CONTROL_PLANE';
 export const SCREEN_FACTORY_GENERATOR_MODE = 'MODEL_RUNTIME_AUTONOMOUS';
-export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'GPT-5.6_SOL_PRIMARY';
+export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL';
 export const HERMES_SCREEN_FACTORY_ROLE = 'FUNCTIONAL_REQUIREMENTS_COURIER_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY';
 export const SCREEN_FACTORY_STATES = Object.freeze([
   'STOPPED', 'RUNNING', 'PAUSING', 'PAUSED', 'GENERATING', 'RENDERING',
@@ -433,7 +433,7 @@ export function prepareChatGPTBatch(root) {
   const request = {
     schema_version: 3, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_SCREEN_IMPLEMENTATION_COMPILER_ONLY',
     ping_type: 'FUNCTION_ONLY_SCREEN_GENERATION_PING',
     design_boundary: {
       hermes_is_design_authority: false,
@@ -469,7 +469,7 @@ export function screenFactoryStatus(root) {
   return {
     schema_version: 4, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_SCREEN_IMPLEMENTATION_COMPILER_ONLY',
     state: control.state, requested_state: control.requested_state,
     active_task_id: control.active_task_id, active_batch_id: control.active_batch_id,
     last_error: control.last_error, required_total: required.length, complete: complete.length,
@@ -496,6 +496,7 @@ export function screenFactoryStatus(root) {
     by_business_unit: progressBreakdown(manifest.tasks, 'business_unit'),
     by_platform: progressBreakdown(manifest.tasks, 'platform'),
     storage: storageStatus(root),
+    generation_runtime: openRouterScreenGeneratorStatus(root),
     batches: manifest.batches || [], platform_packages: manifest.platform_packages || [], updated_at: now(),
   };
 }
@@ -695,7 +696,7 @@ export async function ingestChatGPTReceipt(receiptPath, root) {
     task.generator_provenance = {
       authority: 'CHATGPT',
       generator: entry.implementation_packet ? 'CHATGPT_IMPLEMENTATION_PACKET' : 'CHATGPT_BUILTIN_IMAGE_GENERATION',
-      orchestration_model: 'GPT-5.6 Sol', hermes_generated_pixels: false,
+      orchestration_model: 'EXTERNAL_CHATGPT_SESSION', hermes_generated_pixels: false,
       openrouter_generated_pixels: false, deterministic_renderer: entry.implementation_packet ? 'PLAYWRIGHT_CHROMIUM' : null,
       transport, received_at: now(),
     };
@@ -715,14 +716,8 @@ export async function ingestChatGPTReceipt(receiptPath, root) {
   return { results, status: screenFactoryStatus(root) };
 }
 
-async function auxiliaryReview(task, packet, root) {
-  try {
-    return await callOpenRouterAux({
-      purpose: 'contract_lint',
-      content: JSON.stringify({ purpose: 'Advisory contract completeness check only. Do not redesign.', screen: taskContract(task), packet: { feature_coverage: packet.feature_coverage, interaction_map: packet.interaction_map, data_bindings: packet.data_bindings, state_map: packet.state_map } }),
-      dataClassification: OPENROUTER_DATA_CLASS, root, structured: true, maxOutputTokens: 900,
-    });
-  } catch (error) { return { state: 'AUXILIARY_FAILED_NON_BLOCKING', reason: String(error?.message || error).slice(0,800) }; }
+async function auxiliaryReview() {
+  return { authority: 'SCREEN_FACTORY_GENERATION_ONLY_KEY_ISOLATION', state: 'NOT_RUN', model: null };
 }
 
 function claimNextTask(manifest) {
@@ -738,7 +733,7 @@ function claimNextTask(manifest) {
 }
 
 function runtimeInfrastructureBlocked(reason) {
-  return /NO_HERMES_RUNTIME_AVAILABLE|no authoritative model response|CLAUDE_SONNET_5_NOT_(?:HEALTHY|SELECTED)|usage limit|rate.?limit|HTTP 429|spawnSync (?:claude|hermes) ENOENT|\bENOENT\b|\bETIMEDOUT\b|timed? ?out|timeout|command not found|executable not found/i.test(String(reason || ''));
+  return /OpenRouter Screen Factory generation|OpenRouter model catalog|no eligible curated free OpenRouter|usage limit|rate.?limit|HTTP 429|HTTP 5\d\d|\bETIMEDOUT\b|timed? ?out|timeout|AbortError|command not found|executable not found/i.test(String(reason || ''));
 }
 
 export async function runScreenFactoryTick({ root, compiler = compileScreenPacket, renderer = renderScreenBundle, auxiliary = auxiliaryReview } = {}) {
@@ -785,7 +780,7 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
     setControl(root,{state:'QA'});
     task.bundle_dir=rendered.bundle_dir; task.asset_path=rendered.png_path; task.basic_qa=rendered.qa.pass?'PASS':'FAIL'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=true;
     task.status=rendered.qa.pass?'COMPLETE':'FAILED'; task.last_error=rendered.qa.pass?null:rendered.qa.failures.join(','); task.lease=null; task.updated_at=now();
-    task.generator_provenance={authority:'MODEL_RUNTIME',generator:'SCREEN_IMPLEMENTATION_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
+    task.generator_provenance={authority:'OPENROUTER_SCREEN_COMPILER',generator:'SCREEN_IMPLEMENTATION_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,model_selection:generated.model_selection||null,openrouter_compiled_implementation:true,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
     task.auxiliary_review={authority:'NON_AUTHORITATIVE_AUXILIARY_ONLY',state:aux?.state||null,model:aux?.model||null};
     reconcileBatch(manifest,task); reconcilePlatformPackage(manifest,task,root); writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);
     appendJsonl('events/screen-factory.jsonl',{event:task.status==='COMPLETE'?'SCREEN_FACTORY_TASK_COMPLETE':'SCREEN_FACTORY_TASK_QA_FAILED',task_id:task.task_id,screen_id:task.screen_id,platform:task.platform,model:generated.model,runtime:generated.runtime,basic_qa:task.basic_qa,qa_failures:rendered.qa.failures||[],at:now()},root);

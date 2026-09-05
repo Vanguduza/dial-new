@@ -7,6 +7,10 @@ import {
   assertAuxiliaryPayload, configureOpenRouterAux, refreshOpenRouterCatalog,
   selectOpenRouterAuxModels, OPENROUTER_DATA_CLASS,
 } from '../agent-system/orchestration/auxiliary-openrouter.mjs';
+import {
+  configureOpenRouterScreenGenerator, refreshOpenRouterScreenCatalog,
+  selectOpenRouterScreenModels, PREFERRED_SCREEN_MODELS,
+} from '../agent-system/orchestration/screen-factory-openrouter-generator.mjs';
 import { renderScreenBundle } from '../agent-system/orchestration/screen-factory-renderer.mjs';
 import {
   controlScreenFactory, importScreenFactoryManifest, importExternalScreenEvidence, ingestChatGPTReceipt,
@@ -67,6 +71,36 @@ describe('OpenRouter auxiliary isolation', () => {
   });
 });
 
+describe('OpenRouter Screen Factory generation isolation', () => {
+  it('uses a dedicated generation-only secret and the preferred three-model pool', () => {
+    const root = temp('openrouter-screen-generation');
+    const status = configureOpenRouterScreenGenerator({ apiKey: 'sk-test-openrouter-screen-generation-123456789' }, root);
+    expect(status.enabled).toBe(true);
+    expect(status.scope).toBe('SCREEN_FACTORY_IMPLEMENTATION_COMPILATION_ONLY');
+    expect(status.key_file_mode).toBe('600');
+    expect(status.key_material_exposed).toBe(false);
+    expect(status.preferred_models).toEqual(PREFERRED_SCREEN_MODELS);
+  });
+
+  it('replaces a retired preferred model with the next highest curated suitable free model', async () => {
+    const root = temp('openrouter-screen-retirement');
+    const fetchImpl = async () => ({ ok: true, async json() { return { data: [
+      { id: 'z-ai/glm-5.2:free', name: 'GLM', context_length: 256000, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens','response_format','structured_outputs'] },
+      { id: 'minimax/minimax-m3:free', name: 'M3', context_length: 1048576, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens','response_format'] },
+      { id: 'nvidia/nemotron-3-super-120b-a12b:free', name: 'Super', context_length: 262144, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens','response_format','structured_outputs'] },
+      { id: 'openrouter/free', name: 'Random', context_length: 1000000, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens'] },
+    ] }; } });
+    const catalog = await refreshOpenRouterScreenCatalog({ root, fetchImpl });
+    const selection = selectOpenRouterScreenModels(catalog, root);
+    expect(selection.active_models).toEqual([
+      'z-ai/glm-5.2:free', 'minimax/minimax-m3:free', 'nvidia/nemotron-3-super-120b-a12b:free',
+    ]);
+    expect(selection.retired_or_unavailable).toContain('nvidia/nemotron-3-ultra-550b-a55b:free');
+    expect(selection.replacements[0].replacement).toBe('nvidia/nemotron-3-super-120b-a12b:free');
+    expect(JSON.stringify(selection)).not.toContain('openrouter/free');
+  });
+});
+
 describe('implementation-convertible renderer utility', () => {
   it('produces PNG plus implementation/layout artifacts at high-DPI', async () => {
     const out = temp('screen-render');
@@ -116,9 +150,9 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     const request = prepareChatGPTBatch(root);
     const status = screenFactoryStatus(root);
     expect(status.state).toBe('STOPPED');
-    expect(status.generator_authority).toBe('GPT-5.6_SOL_PRIMARY');
+    expect(status.generator_authority).toBe('OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL');
     expect(status.complete).toBe(0);
-    expect(request.generator_authority).toBe('GPT-5.6_SOL_PRIMARY');
+    expect(request.generator_authority).toBe('OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL');
     expect(request.ping_type).toBe('FUNCTION_ONLY_SCREEN_GENERATION_PING');
     expect(request.tasks).toHaveLength(10);
     expect(request.instruction).toContain('functional requirements');
@@ -336,7 +370,7 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
     importScreenFactoryManifest(source, root);
     controlScreenFactory('play', root);
-    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('NO_HERMES_RUNTIME_AVAILABLE'); } });
+    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('OpenRouter Screen Factory generation unavailable across curated free pool: HTTP 429'); } });
     expect(status.state).toBe('RUNTIME_BLOCKED');
     expect(status.requested_state).toBe('RUNNING');
     expect(status.execution_policy.autonomous_run_latched).toBe(true);
@@ -359,13 +393,13 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(recovered.lease).toBe(null);
   });
 
-  it('treats a missing Hermes or Claude executable as runtime blockage without consuming retries', async () => {
+  it('treats OpenRouter generation transport failure as runtime blockage without consuming retries', async () => {
     const root = temp('screen-factory-cli-enoent');
     const source = path.join(root, 'source.json');
     writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
     importScreenFactoryManifest(source, root);
     controlScreenFactory('play', root);
-    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('exact Sonnet 5 screen fallback failed: spawnSync claude ENOENT'); } });
+    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('OpenRouter Screen Factory generation unavailable across curated free pool: HTTP 503'); } });
     expect(status.state).toBe('RUNTIME_BLOCKED');
     expect(status.requested_state).toBe('RUNNING');
     const task = readJson('screen-factory/manifest.json', null, root).tasks[0];

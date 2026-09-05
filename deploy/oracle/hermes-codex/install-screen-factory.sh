@@ -37,7 +37,19 @@ else
   exec "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" "\$@"
 fi
 EOF
-chmod 0700 "$HOME/.local/bin/dial-health-screen-factory" "$HOME/.local/bin/dial-hermes-openrouter"
+cat >"$HOME/.local/bin/dial-health-screen-factory-openrouter" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_CONTROL_HOME="$DIAL_CONTROL_HOME"
+if [[ "\${1:-}" == "configure" ]]; then
+  read -r -s -p "OpenRouter Screen Factory generation key: " OPENROUTER_SCREEN_SECRET; echo
+  printf '%s' "\$OPENROUTER_SCREEN_SECRET" | "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" configure --api-key-stdin
+  unset OPENROUTER_SCREEN_SECRET
+else
+  exec "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" "\$@"
+fi
+EOF
+chmod 0700 "$HOME/.local/bin/dial-health-screen-factory" "$HOME/.local/bin/dial-hermes-openrouter" "$HOME/.local/bin/dial-health-screen-factory-openrouter"
 if [[ ! -x "$HOME/.local/bin/rclone" ]]; then
   command -v curl >/dev/null || fail "curl is required to install user-local rclone"
   arch="$(uname -m)"; case "$arch" in aarch64|arm64) rarch=arm64;; x86_64) rarch=amd64;; *) fail "unsupported rclone architecture: $arch";; esac
@@ -65,16 +77,14 @@ EOF
 chmod 0700 "$HOME/.local/bin/dial-health-screen-factory-storage"
 cat >"$HOME/.config/systemd/user/dial-health-screen-factory.service" <<EOF
 [Unit]
-Description=Dial Health Hermes Screen Factory worker
-After=network-online.target dial-hermes-runtime.service
-Wants=network-online.target dial-hermes-runtime.service
+Description=Dial Health Screen Factory worker
+After=network-online.target
+Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=$DIAL_REPO_DIR
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
-Environment=HERMES_HOME=$HERMES_HOME
-Environment=CODEX_HOME=$CODEX_HOME
 Environment=PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY OPENROUTER_API_KEY
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs daemon
@@ -84,7 +94,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ReadOnlyPaths=$DIAL_REPO_DIR
-ReadWritePaths=$DIAL_CONTROL_HOME $HERMES_HOME $CODEX_HOME -$HOME/.claude -$HOME/.config/claude
+ReadWritePaths=$DIAL_CONTROL_HOME
 [Install]
 WantedBy=default.target
 EOF
@@ -135,6 +145,7 @@ WantedBy=default.target
 EOF
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" init >/dev/null
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" catalog >/dev/null || true
+"$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" catalog >/dev/null || true
 systemctl --user daemon-reload
 systemctl --user enable dial-health-screen-factory.service
 systemctl --user enable --now dial-health-screen-factory-dashboard.service
@@ -147,9 +158,10 @@ systemctl --user is-active --quiet dial-health-screen-factory-storage.service ||
 cat <<'EOF'
 DIAL HEALTH SCREEN FACTORY INSTALLED
 Dashboard: http://127.0.0.1:9121
-Manager policy remains exact GPT-5.6 Sol -> exact Claude Sonnet 5 -> fail closed.
-OpenRouter is auxiliary-only and cannot become a manager or runtime fallback.
-Configure the OpenRouter secret interactively with: dial-hermes-openrouter configure
+Hermes manager policy remains separate from Screen Factory generation.
+Screen Factory generation uses the dedicated curated OpenRouter free-model pool only; no Sol or Sonnet generation fallback is wired into the Screen Factory worker.
+Configure/rotate the Screen Factory generation key with: dial-health-screen-factory-openrouter configure
+The separate dial-hermes-openrouter helper remains auxiliary-only outside Screen Factory generation.
 Import the canonical expanded Screen Factory manifest with: dial-health-screen-factory import /path/to/generation_manifest.json
 Then press Play in the dashboard. Play starts and latches autonomous execution; Pause holds the worker, Resume continues, and Stop cooperatively exits the worker.
 EOF
