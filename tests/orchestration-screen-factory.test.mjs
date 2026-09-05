@@ -113,9 +113,20 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(status.generator_authority).toBe('GPT-5.6_SOL_PRIMARY');
     expect(status.complete).toBe(0);
     expect(request.generator_authority).toBe('GPT-5.6_SOL_PRIMARY');
+    expect(request.ping_type).toBe('FUNCTION_ONLY_SCREEN_GENERATION_PING');
     expect(request.tasks).toHaveLength(10);
-    expect(request.instruction).toContain('one separate standalone');
-    expect(request.design_policy_version).toBe('DIAL_HEALTH_SCREEN_FACTORY_UX_REV2');
+    expect(request.instruction).toContain('functional requirements');
+    expect(request.functional_message).toContain('Required functions: A; B');
+    expect(request.functional_message).toContain('Required user actions: Open; Continue');
+    expect(request.functional_message).toContain('Hermes supplies FUNCTIONAL REQUIREMENTS ONLY');
+    expect(request.design_boundary.hermes_is_design_authority).toBe(false);
+    expect(request.tasks[0].required_functions).toEqual(['A','B']);
+    expect(request.tasks[0].required_user_actions).toEqual(['Open','Continue']);
+    expect(request.tasks[0].routes_and_handoffs).toEqual(['/next']);
+    expect(request.tasks[0]).not.toHaveProperty('ux_profile');
+    expect(request.tasks[0]).not.toHaveProperty('archetype');
+    expect(request).not.toHaveProperty('design_version');
+    expect(request).not.toHaveProperty('design_policy_version');
     expect(readJson('screen-factory/manifest.json', null, root).tasks[0].bundle_dir).toBe(null);
   });
 

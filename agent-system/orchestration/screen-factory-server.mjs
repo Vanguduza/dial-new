@@ -68,6 +68,15 @@ async function handleApi(req, res, url) {
   if (req.method === 'GET' && url.pathname === '/api/batches') return json(res, { batches: manifest().batches || [] });
   if (req.method === 'GET' && url.pathname === '/api/platform-packages') return json(res, { platform_packages: manifest().platform_packages || [] });
   if (req.method === 'GET' && url.pathname === '/api/request') return json(res, readJson('screen-factory/requests/current.json', null));
+  if (req.method === 'GET' && url.pathname === '/api/ping') {
+    const request = readJson('screen-factory/requests/current.json', null);
+    if (!request) return json(res, { ping_type: null, message: 'No functional generation ping is currently prepared.' });
+    return json(res, {
+      ping_type: request.ping_type, batch_id: request.batch_id, business_unit: request.business_unit, platform: request.platform,
+      expected_count: request.expected_count, hermes_role: request.hermes_role, design_boundary: request.design_boundary,
+      functional_message: request.functional_message, tasks: request.tasks, prepared_at: request.prepared_at,
+    });
+  }
   if (req.method === 'GET' && url.pathname === '/api/current-batch') {
     const request = readJson('screen-factory/requests/current.json', null);
     if (!request) return json(res, { batch_id: null, expected_count: 0, complete_count: 0, tasks: [] });

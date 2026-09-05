@@ -84,3 +84,11 @@ The worker must remain STOPPED after the reset. No new screen generation may beg
 This policy extends the locked Dial Health division architecture in `docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md`, particularly HEALTH-F001 (My Health), HEALTH-F010 (identity/consent), HEALTH-F012 (prescriptions), HEALTH-F014 (claims), HEALTH-F015 (appointments/referrals/queueing), HEALTH-F016 (medicine delivery) and HEALTH-F017 (safety/compliance).
 
 It also incorporates the 2026-09-05 design decision that consumer-facing My Health pages must be warm, progressively disclosed, record/transaction-detail capable, export-aware, evidence-backed and implementation-convertible.
+
+## 12. Hermes function-only generation pings
+
+Hermes is not a screen designer. Whenever it prepares the next generation group, it must send the generation authority a function-only brief: purpose, roles, required functions, required actions, routes/handoffs, required states, record/detail obligations, export obligations, evidence and software acceptance rules.
+
+Hermes must not prescribe screen-specific layout, visual styling, colours, typography, component placement, visual density, framing or composition. Those decisions remain with the canonical Dial Health design authority and are applied independently from the Hermes ping.
+
+The normative ping schema and fail-closed rules are defined in `docs/dial/health/HERMES_FUNCTIONAL_SCREEN_PING_CONTRACT.md`.

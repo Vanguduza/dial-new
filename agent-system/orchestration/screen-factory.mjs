@@ -13,6 +13,7 @@ import { assertTaskContractReady, contractReadiness, validateDesignPacket, addit
 export const SCREEN_FACTORY_AUTHORITY = 'DIAL_HEALTH_SCREEN_FACTORY_CONTROL_PLANE';
 export const SCREEN_FACTORY_GENERATOR_MODE = 'MODEL_RUNTIME_AUTONOMOUS';
 export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'GPT-5.6_SOL_PRIMARY';
+export const HERMES_SCREEN_FACTORY_ROLE = 'FUNCTIONAL_REQUIREMENTS_COURIER_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY';
 export const SCREEN_FACTORY_STATES = Object.freeze([
   'STOPPED', 'RUNNING', 'PAUSING', 'PAUSED', 'GENERATING', 'RENDERING',
   'IMPORTING', 'QA', 'CONTRACT_BLOCKED', 'RUNTIME_BLOCKED', 'FAILED', 'COMPLETE', 'WAITING_FOR_CHATGPT',
@@ -37,7 +38,7 @@ function defaultControl() {
     schema_version: 2, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE,
     generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: 'CONTROL_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE,
     state: 'STOPPED', requested_state: 'STOPPED', active_task_id: null,
     active_batch_id: null, last_error: null, updated_at: now(),
   };
@@ -358,6 +359,61 @@ function taskContract(task) {
     design_version: task.design_version || SCREEN_FACTORY_DESIGN_SYSTEM, design_policy_version: SCREEN_FACTORY_DESIGN_POLICY,
   };
 }
+function contractList(value) {
+  if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+  return String(value || '').split(/;|\n/).map((item) => item.trim()).filter(Boolean);
+}
+function functionalTaskBrief(task) {
+  return {
+    task_id: task.task_id, screen_id: task.screen_id, title: task.title,
+    business_unit: task.business_unit, platform: task.platform, surface: task.surface || null,
+    intended_roles: contractList(task.roles),
+    purpose: task.purpose || null,
+    required_functions: contractList(task.features),
+    required_user_actions: contractList(task.interaction),
+    routes_and_handoffs: contractList(task.next_routes),
+    required_states: contractList(task.required_variants),
+    record_detail_requirement: task.detail_policy || null,
+    export_requirement: task.export_policy || null,
+    evidence_basis: Array.isArray(task.evidence_basis) ? task.evidence_basis : contractList(task.evidence_basis),
+    contract_source: task.contract_evidence?.source || null,
+    definition_status: task.definition_status || null,
+    contract_readiness: contractReadiness(task),
+    software_acceptance_rules: {
+      visible_controls_must_map_to_real_behaviour: true,
+      cosmetic_only_controls_forbidden: true,
+      frontend_may_not_invent_clinical_financial_or_operational_truth: true,
+      undocumented_functions_must_be_declared_with_full_integration_plan: true,
+      records_and_transactions_open_focused_detail_experiences: true,
+      permitted_record_exports_must_be_functional: true,
+    },
+  };
+}
+function functionalPingMessage(batch, tasks) {
+  const lines = [
+    `Dial Health Screen Factory functional generation ping — ${batch.batch_id}`,
+    `Generate ${tasks.length} standalone required screen(s) in canonical order.`,
+    'Hermes supplies FUNCTIONAL REQUIREMENTS ONLY. Hermes does not prescribe layout, visual style, colours, typography, component placement, density, framing or composition.',
+    'Use the canonical Dial Health design authority independently. Do not treat this ping as visual design guidance.',
+    '',
+  ];
+  for (const task of tasks) {
+    const brief = functionalTaskBrief(task);
+    lines.push(`${brief.screen_id} — ${brief.title} — ${brief.platform}`);
+    lines.push(`Purpose: ${brief.purpose || 'NOT DOCUMENTED'}`);
+    lines.push(`Roles: ${brief.intended_roles.join('; ') || 'NOT DOCUMENTED'}`);
+    lines.push(`Required functions: ${brief.required_functions.join('; ') || 'NOT DOCUMENTED'}`);
+    lines.push(`Required user actions: ${brief.required_user_actions.join('; ') || 'NOT DOCUMENTED'}`);
+    lines.push(`Routes/handoffs: ${brief.routes_and_handoffs.join('; ') || 'NOT DOCUMENTED'}`);
+    lines.push(`Required states: ${brief.required_states.join('; ') || 'NOT DOCUMENTED'}`);
+    if (brief.record_detail_requirement) lines.push(`Record/detail requirement: ${brief.record_detail_requirement}`);
+    if (brief.export_requirement) lines.push(`Export requirement: ${brief.export_requirement}`);
+    lines.push(`Evidence: ${brief.evidence_basis.join('; ') || brief.contract_source || 'NOT DOCUMENTED'}`);
+    lines.push('');
+  }
+  lines.push('Acceptance: every visible control must work; service-owned truth must not be invented; any necessary undocumented function must be declared with its integration plan.');
+  return lines.join('\n');
+}
 function currentRequest(root) { return readJson(REQUEST_REL, null, root); }
 export function prepareChatGPTBatch(root) {
   ensureScreenFactory(root);
@@ -369,14 +425,21 @@ export function prepareChatGPTBatch(root) {
   for (const task of candidates) { if (!contractReadiness(task).ready) break; tasks.push(task); if (tasks.length >= BATCH_SIZE) break; }
   if (!tasks.length) { const blocked = candidates[0]; throw new Error(`SCREEN_CONTRACT_NOT_READY ${blocked?.task_id || batch.batch_id}: ${contractReadiness(blocked || {}).reason}`); }
   const request = {
-    schema_version: 2, authority: SCREEN_FACTORY_AUTHORITY,
+    schema_version: 3, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    design_version: SCREEN_FACTORY_DESIGN_SYSTEM, design_policy_version: SCREEN_FACTORY_DESIGN_POLICY,
-    hermes_role: 'CONTROL_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY', openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
+    ping_type: 'FUNCTION_ONLY_SCREEN_GENERATION_PING',
+    design_boundary: {
+      hermes_is_design_authority: false,
+      visual_instructions_from_hermes_forbidden: true,
+      prohibited_ping_content: ['layout','visual_style','colours','typography','component_placement','density','framing','composition'],
+      canonical_design_policy_applied_separately: true,
+    },
     batch_id: batch.batch_id, business_unit: batch.business_unit, platform: batch.platform,
     expected_count: tasks.length,
-    instruction: 'Compile only these incomplete contract-ready tasks, one separate standalone screen per task. Use progressive disclosure on My Health, map every control to real software behaviour, open records/transactions into focused full detail, provide permitted export flows, document all additional features with integration plans, and never infer missing product truth. Batch boundaries are orchestration only; ZIP packaging is per completed business-unit/platform.',
-    tasks: tasks.map(taskContract), prepared_at: now(),
+    instruction: 'Generate only these incomplete contract-ready tasks as separate standalone screens. Treat Hermes as a courier of functional requirements, not a designer. Implement the documented purpose, functions, actions, roles, routes, states, detail/export obligations and software acceptance rules. Do not infer missing product truth; declare necessary undocumented functions with a full integration plan.',
+    functional_message: functionalPingMessage(batch, tasks),
+    tasks: tasks.map(functionalTaskBrief), prepared_at: now(),
   };
   // Queue preparation is control-plane only. Do not mutate manifest task state here:
   // ChatGPT receipt ingestion is the sole writer of generation completion state. This
@@ -400,7 +463,7 @@ export function screenFactoryStatus(root) {
   return {
     schema_version: 4, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: 'CONTROL_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY', openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'OPTIONAL_AUXILIARY_ONLY',
     state: control.state, requested_state: control.requested_state,
     active_task_id: control.active_task_id, active_batch_id: control.active_batch_id,
     last_error: control.last_error, required_total: required.length, complete: complete.length,
@@ -477,7 +540,7 @@ function reconcilePlatformPackage(manifest, task, root) {
 function setControl(root, patch) {
   const control = { ...readJson(CONTROL_REL, defaultControl(), root), ...patch,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: 'CONTROL_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY', updated_at: now() };
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, updated_at: now() };
   writeJsonAtomic(CONTROL_REL, control, root); return control;
 }
 export function controlScreenFactory(action, root) {
@@ -494,7 +557,7 @@ export function controlScreenFactory(action, root) {
 function heartbeat(root, extra = {}) {
   return writeJsonAtomic(HEARTBEAT_REL, { schema_version: 2, service: 'dial-health-screen-factory',
     authority: SCREEN_FACTORY_AUTHORITY, generator_mode: SCREEN_FACTORY_GENERATOR_MODE,
-    hermes_role: 'CONTROL_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY', pid: process.pid, observed_at: now(), ...extra }, root);
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, pid: process.pid, observed_at: now(), ...extra }, root);
 }
 
 export function validateChatGPTTransport(transport = {}) {
