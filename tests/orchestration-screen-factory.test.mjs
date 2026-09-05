@@ -9,9 +9,10 @@ import {
 } from '../agent-system/orchestration/auxiliary-openrouter.mjs';
 import {
   configureOpenRouterScreenGenerator, refreshOpenRouterScreenCatalog,
-  selectOpenRouterScreenModels, PREFERRED_SCREEN_MODELS,
+  selectOpenRouterScreenModels, PREFERRED_SCREEN_MODELS, callOpenRouterScreenCompiler,
 } from '../agent-system/orchestration/screen-factory-openrouter-generator.mjs';
 import { renderScreenBundle } from '../agent-system/orchestration/screen-factory-renderer.mjs';
+import { compileScreenPacket } from '../agent-system/orchestration/screen-factory-model-generator.mjs';
 import {
   controlScreenFactory, importScreenFactoryManifest, importExternalScreenEvidence, ingestChatGPTReceipt,
   prepareChatGPTBatch, reconcileLocalScreenArtifacts, recoverInterruptedGeneration, resetScreenFactory, runScreenFactoryTick, screenFactoryStatus, validateChatGPTTransport,
@@ -99,6 +100,58 @@ describe('OpenRouter Screen Factory generation isolation', () => {
     expect(selection.replacements[0].replacement).toBe('nvidia/nemotron-3-super-120b-a12b:free');
     expect(JSON.stringify(selection)).not.toContain('openrouter/free');
   });
+
+  it('permits free-provider training only for synthetic Screen Factory contracts and skips malformed JSON without consuming the task', async () => {
+    const root = temp('openrouter-screen-malformed-fallback');
+    configureOpenRouterScreenGenerator({ apiKey: 'sk-test-openrouter-screen-generation-123456789' }, root);
+    const calls = [];
+    const models = [
+      { id: 'z-ai/glm-5.2:free', name: 'GLM', context_length: 256000, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens','response_format','structured_outputs'] },
+      { id: 'minimax/minimax-m3:free', name: 'M3', context_length: 1048576, pricing: { prompt: '0', completion: '0' }, supported_parameters: ['reasoning','max_tokens','response_format'] },
+    ];
+    const fetchImpl = async (url, options = {}) => {
+      if (String(url).endsWith('/models')) return { ok: true, async json() { return { data: models }; } };
+      const body = JSON.parse(options.body); calls.push(body);
+      const content = body.model === 'z-ai/glm-5.2:free' ? '{"broken":' : '{"ok":true}';
+      return { ok: true, async json() { return { model: body.model, choices: [{ message: { content } }] }; } };
+    };
+    const result = await callOpenRouterScreenCompiler({ content: 'synthetic contract', root, taskKey: 'test', fetchImpl, maxOutputTokens: 4096 });
+    expect(result.model).toBe('minimax/minimax-m3:free');
+    expect(calls[0].provider.data_collection).toBe('allow');
+    expect(calls[0].messages[0].content).toContain('synthetic product contract');
+  });
+});
+
+
+describe('Rev 3 multi-model premium art direction', () => {
+  it('repairs a draft below the 90-point benchmark and requires a passing final audit', async () => {
+    const task = tasks(1)[0]; task.design_policy_version = 'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3'; task.design_version = 'DH-UI-CANONICAL-3.0';
+    const validPacket = (label) => ({
+      screen_id: task.screen_id, title: task.title, platform: task.platform,
+      semantic_html: `<main class="dh-screen" data-ui="screen"><section class="dh-card" data-ui="summary"><h1>${label}</h1><button class="dh-primary" data-action="open-care">Find care</button></section></main>`,
+      css: '.dh-screen{padding:18px}.dh-card{padding:18px}',
+      interaction_map: [{ element_id: 'open-care', action_id: 'open-care', action_type: 'route', target_route: '/care' }],
+      data_bindings: [], state_map: [{ state: 'POPULATED', trigger: 'load', visible_change: 'summary shown' }],
+      feature_coverage: [{ feature: 'Need care', element_id: 'open-care', realization: 'button', evidence: 'TEST-CANONICAL-CONTRACT' }],
+      evidence_map: [{ feature: 'Need care', source: 'TEST-CANONICAL-CONTRACT' }], additional_features: [],
+      component_contracts: [{ component_id: 'summary', type: 'card', data_owner: 'screen_read_model' }],
+      experience_profile: { information_density: 'LOW_TO_MODERATE', progressive_disclosure: true },
+    });
+    const calls = [];
+    const responses = [
+      { model: 'z-ai/glm-5.2:free', response: JSON.stringify(validPacket('Draft')) },
+      { model: 'minimax/minimax-m3:free', response: JSON.stringify({ verdict:'REPAIR', score:82, critical_defects:['flat hierarchy'], strengths:[], corrections:['create one strong focal card'], density_assessment:'LOW_TO_MODERATE', viewport_assessment:'FIT', reference_quality_assessment:'BELOW' }) },
+      { model: 'nvidia/nemotron-3-ultra-550b-a55b:free', response: JSON.stringify(validPacket('Polished')) },
+      { model: 'minimax/minimax-m3:free', response: JSON.stringify({ verdict:'PASS', score:94, critical_defects:[], strengths:['clear hierarchy'], corrections:[], density_assessment:'LOW_TO_MODERATE', viewport_assessment:'FIT', reference_quality_assessment:'MATCH' }) },
+    ];
+    const modelCaller = async (args) => { calls.push(args); const next = responses.shift(); return { runtime:'test-openrouter', selection:{active_models:['a','b','c']}, attempt_failures:[], ...next }; };
+    const result = await compileScreenPacket({ task, root: temp('premium-art-direction'), modelCaller });
+    expect(calls.map((x) => x.role)).toEqual(['lead_designer','art_director','repair_polisher','final_auditor']);
+    expect(result.quality_review.repaired).toBe(true);
+    expect(result.quality_review.initial_review.score).toBe(82);
+    expect(result.quality_review.final_review.score).toBe(94);
+    expect(result.packet.semantic_html).toContain('Polished');
+  });
 });
 
 describe('implementation-convertible renderer utility', () => {
@@ -124,6 +177,29 @@ describe('implementation-convertible renderer utility', () => {
     expect(existsSync(result.png_path)).toBe(true);
     expect(existsSync(result.html_path)).toBe(true);
     expect(result.viewport.dpr).toBe(3);
+  });
+});
+
+
+
+describe('Rev 3 premium viewport discipline', () => {
+  it('fails an excessively long My Health consumer screen instead of accepting full-page sprawl', async () => {
+    const out = temp('screen-render-long');
+    const task = tasks(1)[0]; task.platform = 'android_mobile'; task.task_id = 'MH-S001::android_mobile'; task.design_policy_version = 'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3'; task.design_version = 'DH-UI-CANONICAL-3.0';
+    const packet = {
+      screen_id: task.screen_id, title: task.title, platform: task.platform,
+      semantic_html: '<main class="dh-screen" data-ui="screen" style="min-height:1900px;padding:20px"><section data-ui="primary-card"><h1>Today</h1><button data-action="open-care">Find care</button></section></main>',
+      css: '.dh-card{border-radius:18px}',
+      interaction_map: [{ element_id: 'open-care', action_id: 'open-care', action_type: 'route', target_route: '/care' }],
+      data_bindings: [], state_map: [{ state: 'POPULATED', trigger: 'load', visible_change: 'summary shown' }],
+      feature_coverage: [{ feature: 'Need care', element_id: 'open-care', realization: 'button', evidence: 'TEST-CANONICAL-CONTRACT' }],
+      evidence_map: [{ feature: 'Need care', source: 'TEST-CANONICAL-CONTRACT' }], additional_features: [],
+      component_contracts: [{ component_id: 'primary-card', type: 'card', data_owner: 'screen_read_model' }],
+      experience_profile: { information_density: 'LOW_TO_MODERATE', progressive_disclosure: true },
+    };
+    const result = await renderScreenBundle({ task, packet, outputRoot: out });
+    expect(result.qa.pass).toBe(false);
+    expect(result.qa.failures).toContain('MY_HEALTH_EXCESSIVE_SCROLL_DEPTH');
   });
 });
 
@@ -154,6 +230,9 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(status.complete).toBe(0);
     expect(request.generator_authority).toBe('OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL');
     expect(request.ping_type).toBe('FUNCTION_ONLY_SCREEN_GENERATION_PING');
+    expect(request.calibration_profile.design_system).toBe('DIAL_HEALTH_UI_CANONICAL_3_0');
+    expect(request.calibration_profile.design_policy).toBe('DIAL_HEALTH_SCREEN_FACTORY_UX_REV3');
+    expect(request.calibration_profile.premium_visual_standard).toBe('DIAL_HEALTH_PREMIUM_SCREEN_QUALITY_REV3');
     expect(request.tasks).toHaveLength(10);
     expect(request.instruction).toContain('functional requirements');
     expect(request.functional_message).toContain('Required functions: A; B');

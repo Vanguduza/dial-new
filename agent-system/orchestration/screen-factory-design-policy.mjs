@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-export const SCREEN_FACTORY_DESIGN_POLICY = 'DIAL_HEALTH_SCREEN_FACTORY_UX_REV2';
-export const SCREEN_FACTORY_DESIGN_SYSTEM = 'DIAL_HEALTH_UI_CANONICAL_2_0';
+export const SCREEN_FACTORY_DESIGN_POLICY = 'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3';
+export const SCREEN_FACTORY_DESIGN_SYSTEM = 'DIAL_HEALTH_UI_CANONICAL_3_0';
 export const REQUIRED_CONTRACT_FIELDS = Object.freeze([
   'purpose', 'features', 'interaction', 'next_routes', 'required_variants', 'archetype',
 ]);
@@ -83,7 +83,7 @@ export function validateDesignPacket(packet, task) {
   return { packet, policy };
 }
 
-export function renderedPolicyFailures({ task, packet, layout = [] } = {}) {
+export function renderedPolicyFailures({ task, packet, layout = [], metrics = null } = {}) {
   const failures = [];
   const actions = new Set((packet?.interaction_map || []).flatMap((item) => [item?.data_action, item?.action_id, item?.action].filter(Boolean).map(String)));
   const actionable = layout.filter((item) => ['button','a'].includes(item.tag) || item.role === 'button');
@@ -102,6 +102,16 @@ export function renderedPolicyFailures({ task, packet, layout = [] } = {}) {
     if (!['LOW','LOW_TO_MODERATE','MODERATE'].includes(String(profile.information_density || '').toUpperCase())) failures.push('MY_HEALTH_DENSITY_NOT_CONSUMER_SAFE');
     const primary = actionable.filter((item) => /primary/i.test(String(item.ui || '')) || /primary/i.test(String(item.action || '')));
     if (primary.length > 2) failures.push('MY_HEALTH_TOO_MANY_PRIMARY_ACTIONS');
+    const visibleActionable = actionable.filter((item) => Number(item.rect?.width || 0) > 0 && Number(item.rect?.height || 0) > 0);
+    if (visibleActionable.length > 14) failures.push('MY_HEALTH_TOO_MANY_VISIBLE_ACTIONS');
+    const visibleSemantic = layout.filter((item) => item.ui && Number(item.rect?.width || 0) > 0 && Number(item.rect?.height || 0) > 0);
+    if (visibleSemantic.length > 50) failures.push('MY_HEALTH_EXCESSIVE_SEMANTIC_DENSITY');
+    const longForm = /terms|privacy policy|consent document|legal|full report document/i.test(`${task.title || ''} ${task.archetype || ''}`);
+    if (!longForm && metrics?.viewport_height && metrics?.scroll_height / metrics.viewport_height > 1.75) failures.push('MY_HEALTH_EXCESSIVE_SCROLL_DEPTH');
+    const rev3 = String(task.design_policy_version || '') === SCREEN_FACTORY_DESIGN_POLICY || /3\.0/.test(String(task.design_version || ''));
+    if (rev3 && !/class=["'][^"']*\bdh-screen\b/i.test(String(packet?.semantic_html || ''))) failures.push('MY_HEALTH_PREMIUM_ROOT_MISSING');
+    if (rev3 && /<table\b/i.test(String(packet?.semantic_html || ''))) failures.push('MY_HEALTH_CONSUMER_TABLE_LAYOUT');
+    if (rev3 && /[\u{1F300}-\u{1FAFF}]/u.test(String(packet?.semantic_html || ''))) failures.push('MY_HEALTH_EMOJI_ICONOGRAPHY');
   }
   return failures;
 }

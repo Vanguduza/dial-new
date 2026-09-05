@@ -110,7 +110,7 @@ export function configureOpenRouterScreenGenerator({ apiKey, enabled = true } = 
     preferred_models: PREFERRED_SCREEN_MODELS,
     retirement_policy: 'LIVE_CATALOG_THEN_CURATED_CAPABILITY_SCORE_REPLACEMENT',
     data_policy: OPENROUTER_SCREEN_DATA_CLASS,
-    provider_policy: { data_collection: 'deny', require_parameters: true },
+    provider_policy: { data_collection: 'allow', synthetic_contracts_only: true, require_parameters: true },
     updated_at: now(),
   }, root);
   appendJsonl('events/screen-factory-openrouter.jsonl', { event: 'SCREEN_FACTORY_OPENROUTER_CONFIGURED', authority: OPENROUTER_SCREEN_AUTHORITY, at: now() }, root);
@@ -173,7 +173,13 @@ export function selectOpenRouterScreenModels(catalog, root) {
 }
 async function currentSelection(root, fetchImpl) {
   let catalog = readJson(OPENROUTER_SCREEN_CATALOG_REL, null, root);
-  if (!catalogFresh(catalog)) catalog = await refreshOpenRouterScreenCatalog({ root, fetchImpl });
+  if (!catalogFresh(catalog)) {
+    try { catalog = await refreshOpenRouterScreenCatalog({ root, fetchImpl }); }
+    catch (error) {
+      if (!catalog?.models?.length) throw error;
+      appendJsonl('events/screen-factory-openrouter.jsonl', { event: 'SCREEN_FACTORY_OPENROUTER_CATALOG_STALE_FALLBACK', reason: String(error?.message || error).slice(0,300), cached_refreshed_at: catalog.refreshed_at || null, at: now() }, root);
+    }
+  }
   return { catalog, selection: selectOpenRouterScreenModels(catalog, root) };
 }
 function rotate(models, taskKey) {
@@ -182,6 +188,22 @@ function rotate(models, taskKey) {
   const start = hash[0] % models.length;
   return [...models.slice(start), ...models.slice(0, start)];
 }
+
+function modelCoach(model) {
+  if (model === 'z-ai/glm-5.2:free') return 'Use strict structure. Decide the viewport composition before markup. Do not expand every contract feature into visible content.';
+  if (model === 'minimax/minimax-m3:free') return 'Use strong frontend composition and refined CSS. Avoid repetitive card stacks, generic templates and unnecessary scroll depth.';
+  if (model === 'nvidia/nemotron-3-ultra-550b-a55b:free') return 'Use deep hierarchy reasoning, but keep UI copy concise. Return exactly one JSON object even when response_format is unavailable.';
+  return 'Match the Dial Health premium benchmark exactly; preserve concise consumer hierarchy, structured JSON and viewport-first composition.';
+}
+function screenRoleSystemPrompt(role, model) {
+  const common = 'Use only the supplied synthetic product contract. Never browse, call tools, request secrets, or invent patient/provider/clinical/financial truth. Never expose chain-of-thought. Return only the exact JSON object requested.';
+  const coach = modelCoach(model);
+  if (role === 'art_director') return `You are the independent Dial Health premium UI art director. Critique visual hierarchy, density, composition, brand coherence, component polish and platform-native feel. Do not rewrite product truth. ${common} ${coach}`;
+  if (role === 'repair_polisher') return `You are the Dial Health senior UI designer and implementation polisher. Repair the supplied draft using the art-director corrections and produce a finished App-Store-quality implementation packet. ${common} ${coach}`;
+  if (role === 'final_auditor') return `You are the Dial Health final visual-quality auditor. Score the implementation against the supplied premium benchmark and fail any template-like, crowded, overlong or unpolished consumer screen. ${common} ${coach}`;
+  return `You are the authoritative Dial Health premium screen designer/compiler. Produce a finished, implementation-ready, App-Store-quality screen rather than a wireframe or admin template. ${common} ${coach}`;
+}
+
 function responseText(payload) {
   const value = payload?.choices?.[0]?.message?.content;
   if (Array.isArray(value)) return value.map((item) => item?.text ?? '').join('\n').trim();
@@ -191,16 +213,21 @@ function failureDetail(status, text) {
   const compact = String(text || '').replace(/\s+/g, ' ').slice(0, 500);
   return `HTTP ${status}${compact ? ` ${compact}` : ''}`;
 }
-export async function callOpenRouterScreenCompiler({ content, root, taskKey, fetchImpl = globalThis.fetch, maxOutputTokens = 20000 } = {}) {
+export async function callOpenRouterScreenCompiler({ content, root, taskKey, fetchImpl = globalThis.fetch, maxOutputTokens = 20000, role = 'lead_designer', excludeModels = [] } = {}) {
   const status = openRouterScreenGeneratorStatus(root);
   if (!status.enabled) throw new Error('OpenRouter Screen Factory generation is not configured');
   const cfg = readJson(OPENROUTER_SCREEN_CONFIG_REL, null, root);
   if (cfg?.scope !== 'SCREEN_FACTORY_IMPLEMENTATION_COMPILATION_ONLY') throw new Error('OpenRouter key scope is not Screen Factory generation only');
   const key = readKey(root);
   const { catalog, selection } = await currentSelection(root, fetchImpl);
-  const primaryOrder = rotate(selection.active_models, taskKey);
+  // Quality-first deterministic role order: preferred healthy models first, then curated replacements.
+  // Different roles use excludeModels to force independent review without randomizing into weaker models.
+  const primaryOrder = [...selection.active_models];
   const replacementOrder = (catalog.models ?? []).map((m) => m.id).filter((id) => !primaryOrder.includes(id));
-  const models = [...primaryOrder, ...replacementOrder];
+  const allModels = [...primaryOrder, ...replacementOrder];
+  const excluded = new Set((excludeModels || []).map(String));
+  const filtered = allModels.filter((id) => !excluded.has(id));
+  const models = filtered.length ? filtered : allModels;
   const failures = [];
   for (const model of models) {
     if (healthBlocked(loadModelHealth(root).models?.[model])) continue;
@@ -209,20 +236,22 @@ export async function callOpenRouterScreenCompiler({ content, root, taskKey, fet
     const body = {
       model,
       messages: [
-        { role: 'system', content: 'You are the authoritative Dial Health Screen Factory implementation compiler. Use only the supplied synthetic product contract. Do not browse, call tools, request secrets, or invent patient/clinical/financial truth. Return only the requested JSON implementation packet.' },
+        { role: 'system', content: screenRoleSystemPrompt(role, model) },
         { role: 'user', content: String(content ?? '') },
       ],
       temperature: 0,
       max_tokens: Math.max(4096, Math.min(24000, Number(maxOutputTokens) || 20000)),
-      reasoning: { effort: 'high' },
-      provider: { data_collection: 'deny', require_parameters: true },
+      reasoning: { effort: ['art_director','final_auditor'].includes(role) ? 'medium' : 'high' },
+      // Free-provider training is permitted ONLY because this isolated key receives synthetic product contracts.
+      // PHI, credentials and real member/provider records remain prohibited by the Screen Factory boundary.
+      provider: { data_collection: 'allow', require_parameters: true },
     };
     if (params.has('response_format')) body.response_format = { type: 'json_object' };
     let response;
     try {
       response = await fetchImpl(`${OPENROUTER_SCREEN_BASE_URL}/chat/completions`, {
         method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${key}` },
-        body: JSON.stringify(body), signal: AbortSignal.timeout(90000),
+        body: JSON.stringify(body), signal: AbortSignal.timeout(['art_director','final_auditor'].includes(role) ? 120000 : 180000),
       });
     } catch (error) {
       const reason = String(error?.name || error?.message || error).slice(0, 160);
@@ -238,7 +267,12 @@ export async function callOpenRouterScreenCompiler({ content, root, taskKey, fet
       recordModelHealth(root, model, classified.state, detail, classified.retryMs);
       continue;
     }
-    const payload = await response.json();
+    let payload;
+    try { payload = await response.json(); }
+    catch (error) {
+      const detail = `response body failed: ${String(error?.name || error?.message || error).slice(0,180)}`;
+      failures.push(`${model}: ${detail}`); recordModelHealth(root, model, 'UPSTREAM_UNAVAILABLE', detail, 2 * 60 * 1000); continue;
+    }
     const resolved = String(payload?.model || model);
     if (resolved !== model) {
       const detail = `resolved model mismatch ${resolved}`; failures.push(`${model}: ${detail}`);
@@ -247,15 +281,28 @@ export async function callOpenRouterScreenCompiler({ content, root, taskKey, fet
     }
     const output = responseText(payload);
     if (!output) { failures.push(`${model}: empty output`); recordModelHealth(root, model, 'EMPTY_OUTPUT', 'empty output', 10 * 60 * 1000); continue; }
+    const normalized = output.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/,'');
+    let jsonOk = false;
+    try { JSON.parse(normalized); jsonOk = true; } catch {}
+    if (!jsonOk) {
+      const a = normalized.indexOf('{'), b = normalized.lastIndexOf('}');
+      if (a >= 0 && b > a) { try { JSON.parse(normalized.slice(a,b+1)); jsonOk = true; } catch {} }
+    }
+    if (!jsonOk) {
+      const detail = `malformed JSON output (${normalized.length} chars)`;
+      failures.push(`${model}: ${detail}`);
+      recordModelHealth(root, model, 'MALFORMED_OUTPUT', detail, 10 * 60 * 1000);
+      continue;
+    }
     recordModelHealth(root, model, 'HEALTHY', 'compile completed', 0);
     appendJsonl('events/screen-factory-openrouter.jsonl', {
-      event: 'SCREEN_FACTORY_OPENROUTER_COMPILE_COMPLETE', task_key: taskKey || null,
+      event: 'SCREEN_FACTORY_OPENROUTER_COMPILE_COMPLETE', task_key: taskKey || null, role,
       model, authority: OPENROUTER_SCREEN_AUTHORITY, at: now(),
     }, root);
-    return { response: output, runtime: 'openrouter_free_screen_compiler', model, selection, attempt_failures: failures };
+    return { response: output, runtime: 'openrouter_free_screen_compiler', model, role, selection, attempt_failures: failures };
   }
   appendJsonl('events/screen-factory-openrouter.jsonl', {
-    event: 'SCREEN_FACTORY_OPENROUTER_COMPILE_FAILED', task_key: taskKey || null,
+    event: 'SCREEN_FACTORY_OPENROUTER_COMPILE_FAILED', task_key: taskKey || null, role,
     attempted_models: models, failure_count: failures.length, authority: OPENROUTER_SCREEN_AUTHORITY, at: now(),
   }, root);
   throw new Error(`OpenRouter Screen Factory generation unavailable across curated free pool: ${failures.join(' | ').slice(0, 1800)}`);

@@ -10,6 +10,7 @@ import { openRouterScreenGeneratorStatus } from './screen-factory-openrouter-gen
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
 import { assertTaskContractReady, contractReadiness, validateDesignPacket, additionalFeaturesMarkdown, implementationHandoffMarkdown, readPacketFromBundle, SCREEN_FACTORY_DESIGN_POLICY, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
 import { ensureStorageConfig, storagePressure, storageStatus } from './screen-factory-storage.mjs';
+import { PREMIUM_VISUAL_STANDARD_VERSION } from './screen-factory-premium-visual-standard.mjs';
 
 export const SCREEN_FACTORY_AUTHORITY = 'DIAL_HEALTH_SCREEN_FACTORY_CONTROL_PLANE';
 export const SCREEN_FACTORY_GENERATOR_MODE = 'MODEL_RUNTIME_AUTONOMOUS';
@@ -168,14 +169,14 @@ export function resetScreenFactory(sourcePath, root) {
     if (!input.screen_id || !input.platform || seen.has(taskId)) throw new Error(`invalid/duplicate reset task at index ${index}: ${taskId}`);
     seen.add(taskId); const conditional = String(input.platform_policy || 'REQUIRED') !== 'REQUIRED';
     const clean = { ...input };
-    for (const key of ['status','basic_qa','visual_qa','external_evidence','asset_path','bundle_dir','generator_provenance','auxiliary_review','lease','last_error','approved','implementation_ready','generation_attempts']) delete clean[key];
+    for (const key of ['status','basic_qa','visual_qa','external_evidence','asset_path','bundle_dir','generator_provenance','auxiliary_review','quality_review','lease','last_error','approved','implementation_ready','generation_attempts']) delete clean[key];
     return { ...clean, task_id: taskId, platform_policy: input.platform_policy || 'REQUIRED',
       design_version: source.design_version || SCREEN_FACTORY_DESIGN_SYSTEM,
       design_policy_version: source.design_policy_version || SCREEN_FACTORY_DESIGN_POLICY,
       status: conditional ? 'CONDITIONAL_NOT_QUEUED' : 'NOT_GENERATED', generation_attempts: 0,
       basic_qa: 'NOT_RUN', visual_qa: 'NOT_RUN', implementation_ready: false, approved: false,
       asset_path: null, bundle_dir: null, external_evidence: null, generator_provenance: null,
-      auxiliary_review: null, lease: null, last_error: null, updated_at: now() };
+      auxiliary_review: null, quality_review: null, lease: null, last_error: null, updated_at: now() };
   }).sort(taskOrder);
   const manifest = { schema_version: 4, source: path.resolve(sourcePath), registry_source: source.registry_source || source.source || null,
     design_version: source.design_version || SCREEN_FACTORY_DESIGN_SYSTEM, design_policy_version: source.design_policy_version || SCREEN_FACTORY_DESIGN_POLICY,
@@ -435,6 +436,7 @@ export function prepareChatGPTBatch(root) {
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
     hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_SCREEN_IMPLEMENTATION_COMPILER_ONLY',
     ping_type: 'FUNCTION_ONLY_SCREEN_GENERATION_PING',
+    calibration_profile: { design_system: SCREEN_FACTORY_DESIGN_SYSTEM, design_policy: SCREEN_FACTORY_DESIGN_POLICY, premium_visual_standard: PREMIUM_VISUAL_STANDARD_VERSION, injection_owner: 'SCREEN_FACTORY_PROMPT_ASSEMBLER' },
     design_boundary: {
       hermes_is_design_authority: false,
       visual_instructions_from_hermes_forbidden: true,
@@ -780,7 +782,8 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
     setControl(root,{state:'QA'});
     task.bundle_dir=rendered.bundle_dir; task.asset_path=rendered.png_path; task.basic_qa=rendered.qa.pass?'PASS':'FAIL'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=true;
     task.status=rendered.qa.pass?'COMPLETE':'FAILED'; task.last_error=rendered.qa.pass?null:rendered.qa.failures.join(','); task.lease=null; task.updated_at=now();
-    task.generator_provenance={authority:'OPENROUTER_SCREEN_COMPILER',generator:'SCREEN_IMPLEMENTATION_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,model_selection:generated.model_selection||null,openrouter_compiled_implementation:true,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
+    task.generator_provenance={authority:'OPENROUTER_SCREEN_COMPILER',generator:'SCREEN_IMPLEMENTATION_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,model_selection:generated.model_selection||null,visual_standard:generated.quality_review?.visual_standard||null,openrouter_compiled_implementation:true,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
+    task.quality_review=generated.quality_review||null;
     task.auxiliary_review={authority:'NON_AUTHORITATIVE_AUXILIARY_ONLY',state:aux?.state||null,model:aux?.model||null};
     reconcileBatch(manifest,task); reconcilePlatformPackage(manifest,task,root); writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);
     appendJsonl('events/screen-factory.jsonl',{event:task.status==='COMPLETE'?'SCREEN_FACTORY_TASK_COMPLETE':'SCREEN_FACTORY_TASK_QA_FAILED',task_id:task.task_id,screen_id:task.screen_id,platform:task.platform,model:generated.model,runtime:generated.runtime,basic_qa:task.basic_qa,qa_failures:rendered.qa.failures||[],at:now()},root);

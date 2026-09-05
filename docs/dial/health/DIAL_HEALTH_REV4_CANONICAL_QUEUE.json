@@ -1,8 +1,8 @@
 {
   "schema_version": 4,
   "registry_source": "source/SCREEN_REGISTRY.csv",
-  "design_version": "DH-UI-CANONICAL-2.0",
-  "design_policy_version": "DIAL_HEALTH_SCREEN_FACTORY_UX_REV2",
+  "design_version": "DH-UI-CANONICAL-3.0",
+  "design_policy_version": "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3",
   "source_policy": "docs/dial/health/DIAL_HEALTH_SCREEN_FACTORY_UX_POLICY_REV2.md",
   "tasks": [
     {

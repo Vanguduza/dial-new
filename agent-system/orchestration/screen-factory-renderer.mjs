@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { renderedPolicyFailures, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
+import { PREMIUM_COMPONENT_CSS_ALL } from './screen-factory-premium-visual-standard.mjs';
 
 export const SCREEN_RENDER_AUTHORITY = 'DETERMINISTIC_IMPLEMENTATION_FIRST_RENDERER';
 export const DESIGN_SYSTEM_VERSION = SCREEN_FACTORY_DESIGN_SYSTEM;
@@ -59,7 +60,7 @@ export function composeScreenDocument({ task, packet }) {
   const platform = String(task?.platform || packet?.platform || 'cross_platform');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>${escapeHtml(title)}</title><style>${BASE_CSS}\n${String(packet?.css ?? '')}\n${FINAL_GUARDRAIL_CSS}</style></head>
+<title>${escapeHtml(title)}</title><style>${BASE_CSS}\n${PREMIUM_COMPONENT_CSS_ALL}\n${String(packet?.css ?? '')}\n${FINAL_GUARDRAIL_CSS}</style></head>
 <body data-screen-id="${escapeHtml(screenId)}" data-platform="${escapeHtml(platform)}" data-design-system="${DESIGN_SYSTEM_VERSION}">
 ${semanticHtml}</body></html>`;
 }
@@ -126,7 +127,7 @@ async function deterministicQa(page, task, packet, layout) {
   if (tinyTargets.length) failures.push('TOUCH_TARGET_TOO_SMALL');
   if (unlabeled.length) failures.push('UNLABELED_ACTIONABLE_CONTROL');
   if (!layout.length) failures.push('NO_SEMANTIC_LAYOUT_NODES');
-  failures.push(...renderedPolicyFailures({ task, packet, layout }));
+  failures.push(...renderedPolicyFailures({ task, packet, layout, metrics }));
   return {
     schema_version: 1,
     authority: SCREEN_RENDER_AUTHORITY,
