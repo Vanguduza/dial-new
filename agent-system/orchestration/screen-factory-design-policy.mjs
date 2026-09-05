@@ -85,7 +85,7 @@ export function validateDesignPacket(packet, task) {
 
 export function renderedPolicyFailures({ task, packet, layout = [] } = {}) {
   const failures = [];
-  const actions = new Set((packet?.interaction_map || []).flatMap((item) => [item?.action_id, item?.action].filter(Boolean).map(String)));
+  const actions = new Set((packet?.interaction_map || []).flatMap((item) => [item?.data_action, item?.action_id, item?.action].filter(Boolean).map(String)));
   const actionable = layout.filter((item) => ['button','a'].includes(item.tag) || item.role === 'button');
   const missingAction = actionable.filter((item) => !item.action);
   const unmappedAction = actionable.filter((item) => item.action && !actions.has(String(item.action)));

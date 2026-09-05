@@ -43,7 +43,7 @@ const BASE_CSS = `
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--dh-bg);color:var(--dh-navy)}
 body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;overflow:hidden}
-button,input,select,textarea{font:inherit}button,[role=button],a{min-height:44px}
+button,input,select,textarea{font:inherit;min-height:44px}button,[role=button],a{min-height:44px}input[type=checkbox],input[type=radio]{min-width:44px!important;width:44px!important;min-height:44px!important;height:44px!important;margin:0;cursor:pointer}a{display:inline-flex;align-items:center;padding-block:12px}
 [data-ui]{position:relative}.dh-card{background:var(--dh-card);border:1px solid var(--dh-border);
 border-radius:var(--dh-radius);box-shadow:var(--dh-shadow)}
 .dh-chip{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-radius:999px;background:#ccfbf1;color:#115e59;font-weight:650;font-size:12px}
@@ -108,7 +108,7 @@ async function deterministicQa(page, task, packet, layout) {
   // Hidden/inactive state controls legitimately have zero-size boxes. Accessibility QA
   // applies to controls rendered in the current state, not controls hidden for other states.
   const visibleActionable = actionable.filter((item) => Number(item.rect?.width || 0) > 0 && Number(item.rect?.height || 0) > 0);
-  const tinyTargets = visibleActionable.filter((item) => item.rect.width < 40 || item.rect.height < 40);
+  const tinyTargets = visibleActionable.filter((item) => item.rect.width < 44 || item.rect.height < 44);
   const unlabeled = visibleActionable.filter((item) => !item.text && !item.aria_label && item.tag !== 'input');
   const horizontalOverflow = metrics.scroll_width > metrics.viewport_width + 2;
   const failures = [];
