@@ -89,10 +89,11 @@ EOF
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" init >/dev/null
 "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" catalog >/dev/null || true
 systemctl --user daemon-reload
-systemctl --user enable --now dial-health-screen-factory.service
+systemctl --user enable dial-health-screen-factory.service
 systemctl --user enable --now dial-health-screen-factory-dashboard.service
+systemctl --user stop dial-health-screen-factory.service >/dev/null 2>&1 || true
 sleep 1
-systemctl --user is-active --quiet dial-health-screen-factory.service || fail "Screen Factory worker did not start"
+systemctl --user is-enabled --quiet dial-health-screen-factory.service || fail "Screen Factory worker service is not enabled"
 systemctl --user is-active --quiet dial-health-screen-factory-dashboard.service || fail "Screen Factory dashboard did not start"
 cat <<'EOF'
 DIAL HEALTH SCREEN FACTORY INSTALLED
@@ -101,5 +102,5 @@ Manager policy remains exact GPT-5.6 Sol -> exact Claude Sonnet 5 -> fail closed
 OpenRouter is auxiliary-only and cannot become a manager or runtime fallback.
 Configure the OpenRouter secret interactively with: dial-hermes-openrouter configure
 Import the canonical expanded Screen Factory manifest with: dial-health-screen-factory import /path/to/generation_manifest.json
-Then press Play in the dashboard or run: dial-health-screen-factory play
+Then press Play in the dashboard. Play starts and latches autonomous execution; Pause holds the worker, Resume continues, and Stop cooperatively exits the worker.
 EOF

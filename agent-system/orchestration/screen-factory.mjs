@@ -16,13 +16,16 @@ export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'GPT-5.6_SOL_PRIMARY';
 export const HERMES_SCREEN_FACTORY_ROLE = 'FUNCTIONAL_REQUIREMENTS_COURIER_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY';
 export const SCREEN_FACTORY_STATES = Object.freeze([
   'STOPPED', 'RUNNING', 'PAUSING', 'PAUSED', 'GENERATING', 'RENDERING',
-  'IMPORTING', 'QA', 'CONTRACT_BLOCKED', 'RUNTIME_BLOCKED', 'FAILED', 'COMPLETE', 'WAITING_FOR_CHATGPT',
+  'IMPORTING', 'QA', 'CONTRACT_BLOCKED', 'RUNTIME_BLOCKED', 'FAILED', 'COMPLETE', 'WAITING_FOR_CHATGPT', 'STOPPING',
 ]);
 const MANIFEST_REL = 'screen-factory/manifest.json';
 const CONTROL_REL = 'screen-factory/control.json';
 const HEARTBEAT_REL = 'screen-factory/heartbeat.json';
 const REQUEST_REL = 'screen-factory/requests/current.json';
 const BATCH_SIZE = 10;
+const CONTRACT_BLOCK_RECHECK_MS = Number(process.env.DIAL_SCREEN_FACTORY_CONTRACT_RECHECK_MS || 10000);
+const RUNTIME_BLOCK_RETRY_MS = Number(process.env.DIAL_SCREEN_FACTORY_RUNTIME_RETRY_MS || 60000);
+const FAILED_RECHECK_MS = Number(process.env.DIAL_SCREEN_FACTORY_FAILED_RECHECK_MS || 30000);
 const CHATGPT_TRANSPORT_REPOSITORY = 'Vanguduza/dial-new';
 const CHATGPT_TRANSPORT_TYPE = 'github_blob';
 
@@ -472,6 +475,18 @@ export function screenFactoryStatus(root) {
     contract_ready: required.filter((task) => contractReadiness(task).ready).length,
     contract_blocked: required.filter((task) => !contractReadiness(task).ready).length,
     design_version: manifest.design_version || SCREEN_FACTORY_DESIGN_SYSTEM, design_policy_version: manifest.design_policy_version || SCREEN_FACTORY_DESIGN_POLICY,
+    execution_policy: {
+      autonomous_run_latched: control.requested_state === 'RUNNING',
+      manual_pause: control.requested_state === 'PAUSED',
+      manual_stop: control.requested_state === 'STOPPED',
+      batch_boundary_stops: false,
+      platform_boundary_stops: false,
+      contract_blocked_auto_recheck_ms: CONTRACT_BLOCK_RECHECK_MS,
+      runtime_blocked_auto_retry_ms: RUNTIME_BLOCK_RETRY_MS,
+      failed_recheck_ms: FAILED_RECHECK_MS,
+      cooperative_pause_after_atomic_screen: true,
+      cooperative_stop_after_atomic_screen: true,
+    },
     next_task: next ? { task_id: next.task_id, screen_id: next.screen_id, title: next.title, business_unit: next.business_unit, platform: next.platform, contract_readiness: contractReadiness(next) } : null,
     current_request: request ? { batch_id: request.batch_id, expected_count: request.expected_count, prepared_at: request.prepared_at } : null,
     by_business_unit: progressBreakdown(manifest.tasks, 'business_unit'),
@@ -548,8 +563,14 @@ export function controlScreenFactory(action, root) {
   const normalized = String(action || '').toLowerCase();
   const current = readJson(CONTROL_REL, defaultControl(), root);
   if (['play', 'resume'].includes(normalized)) setControl(root, { requested_state: 'RUNNING', state: current.state === 'WAITING_FOR_CHATGPT' ? current.state : 'RUNNING', last_error: null });
-  else if (normalized === 'pause') setControl(root, { requested_state: 'PAUSED', state: 'PAUSED' });
-  else if (normalized === 'stop') setControl(root, { requested_state: 'STOPPED', state: 'STOPPED', active_task_id: null, active_batch_id: null });
+  else if (normalized === 'pause') {
+    const busy = Boolean(current.active_task_id) && ['GENERATING','RENDERING','QA','IMPORTING'].includes(String(current.state));
+    setControl(root, { requested_state: 'PAUSED', state: busy ? 'PAUSING' : 'PAUSED' });
+  }
+  else if (normalized === 'stop') {
+    const busy = Boolean(current.active_task_id) && ['GENERATING','RENDERING','QA','IMPORTING','PAUSING'].includes(String(current.state));
+    setControl(root, { requested_state: 'STOPPED', state: busy ? 'STOPPING' : 'STOPPED' });
+  }
   else throw new Error(`unsupported screen factory control action: ${action}`);
   appendJsonl('events/screen-factory.jsonl', { event: 'SCREEN_FACTORY_CONTROL', action: normalized.toUpperCase(), at: now() }, root);
   return screenFactoryStatus(root);
@@ -716,9 +737,10 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
   const firstIncomplete = manifest.tasks.filter((item) => requiredTask(item) && !completedTask(item)).sort(taskOrder)[0] || null;
   if (firstIncomplete && !contractReadiness(firstIncomplete).ready) {
     const reason = `SCREEN_CONTRACT_NOT_READY ${firstIncomplete.task_id}: ${contractReadiness(firstIncomplete).reason}`;
-    setControl(root,{state:'CONTRACT_BLOCKED',requested_state:'PAUSED',active_task_id:null,active_batch_id:null,last_error:reason});
-    heartbeat(root,{state:'CONTRACT_BLOCKED',next_task:taskContract(firstIncomplete),reason});
-    appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_CONTRACT_BLOCKED',task_id:firstIncomplete.task_id,reason,at:now()},root);
+    const sameBlock = control.state === 'CONTRACT_BLOCKED' && control.last_error === reason;
+    setControl(root,{state:'CONTRACT_BLOCKED',active_task_id:null,active_batch_id:null,last_error:reason});
+    heartbeat(root,{state:'CONTRACT_BLOCKED',next_task:taskContract(firstIncomplete),reason,autonomous_run_latched:control.requested_state==='RUNNING'});
+    if (!sameBlock) appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_CONTRACT_BLOCKED',task_id:firstIncomplete.task_id,reason,auto_recheck_ms:CONTRACT_BLOCK_RECHECK_MS,at:now()},root);
     return screenFactoryStatus(root);
   }
   const task = claimNextTask(manifest);
@@ -751,9 +773,11 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
     if(runtimeBlocked){
       task.status='NOT_GENERATED'; task.generation_attempts=Math.max(0,Number(task.generation_attempts||1)-1); task.basic_qa='NOT_RUN'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=false; task.lease=null; task.last_error=null; task.updated_at=now();
       writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);
-      setControl(root,{state:'RUNTIME_BLOCKED',requested_state:'PAUSED',active_task_id:null,active_batch_id:batch.batch_id,last_error:reason});
-      heartbeat(root,{state:'RUNTIME_BLOCKED',active_batch_id:batch.batch_id,next_task:taskContract(task),reason});
-      appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_RUNTIME_BLOCKED',task_id:task.task_id,batch_id:batch.batch_id,reason,at:now()},root);
+      const priorControl = readJson(CONTROL_REL, defaultControl(), root);
+      const sameBlock = priorControl.state === 'RUNTIME_BLOCKED' && priorControl.last_error === reason;
+      setControl(root,{state:'RUNTIME_BLOCKED',active_task_id:null,active_batch_id:batch.batch_id,last_error:reason});
+      heartbeat(root,{state:'RUNTIME_BLOCKED',active_batch_id:batch.batch_id,next_task:taskContract(task),reason,autonomous_run_latched:priorControl.requested_state==='RUNNING'});
+      if (!sameBlock) appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_RUNTIME_BLOCKED',task_id:task.task_id,batch_id:batch.batch_id,reason,auto_retry_ms:RUNTIME_BLOCK_RETRY_MS,at:now()},root);
       return screenFactoryStatus(root);
     }
     task.status='FAILED'; task.basic_qa=task.basic_qa==='PASS'?'PASS':'NOT_RUN'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=false; task.lease=null; task.last_error=reason; task.updated_at=now();
@@ -766,15 +790,40 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
   const status=screenFactoryStatus(root); heartbeat(root,{state:status.state,complete:status.complete,required_total:status.required_total,next_task:status.next_task}); return status;
 }
 
-export async function runScreenFactoryDaemon({ root, pollMs = 1500 } = {}) {
+export function recoverInterruptedGeneration(root) {
   ensureScreenFactory(root);
+  const manifest = readJson(MANIFEST_REL,{tasks:[],batches:[]},root);
+  let recovered = 0;
+  for (const task of manifest.tasks || []) {
+    if (task.status !== 'GENERATING') continue;
+    task.status = 'NOT_GENERATED'; task.lease = null; task.basic_qa = 'NOT_RUN'; task.visual_qa = 'NOT_RUN';
+    task.implementation_ready = false; task.approved = false; task.last_error = null;
+    task.generation_attempts = Math.max(0, Number(task.generation_attempts || 1) - 1); task.updated_at = now(); recovered += 1;
+  }
+  if (recovered) {
+    writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);
+    appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_INTERRUPTED_TASKS_RECOVERED',count:recovered,at:now()},root);
+  }
+  return recovered;
+}
+
+export async function runScreenFactoryDaemon({ root, pollMs = 1500 } = {}) {
+  ensureScreenFactory(root); recoverInterruptedGeneration(root);
   let stopping = false; const stop = () => { stopping = true; };
   process.on('SIGTERM', stop); process.on('SIGINT', stop); heartbeat(root, { state: 'STARTING' });
   while (!stopping) {
     const control = readJson(CONTROL_REL, defaultControl(), root);
-    if (control.requested_state === 'RUNNING') await runScreenFactoryTick({ root });
-    else { heartbeat(root, { state: control.requested_state === 'PAUSED' ? 'PAUSED' : 'STOPPED' }); await new Promise((resolve) => setTimeout(resolve, pollMs)); }
-    await new Promise((resolve) => setTimeout(resolve, pollMs));
+    if (control.requested_state === 'STOPPED') break;
+    let waitMs = pollMs;
+    if (control.requested_state === 'RUNNING') {
+      const status = await runScreenFactoryTick({ root });
+      if (status.state === 'CONTRACT_BLOCKED') waitMs = Math.max(pollMs, CONTRACT_BLOCK_RECHECK_MS);
+      else if (status.state === 'RUNTIME_BLOCKED') waitMs = Math.max(pollMs, RUNTIME_BLOCK_RETRY_MS);
+      else if (status.state === 'FAILED') waitMs = Math.max(pollMs, FAILED_RECHECK_MS);
+    } else {
+      heartbeat(root, { state: 'PAUSED', autonomous_run_latched: false });
+    }
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
   setControl(root, { state: 'STOPPED', requested_state: 'STOPPED', active_task_id: null, active_batch_id: null }); heartbeat(root, { state: 'STOPPED' });
 }

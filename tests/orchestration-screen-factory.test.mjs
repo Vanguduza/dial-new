@@ -10,7 +10,7 @@ import {
 import { renderScreenBundle } from '../agent-system/orchestration/screen-factory-renderer.mjs';
 import {
   controlScreenFactory, importScreenFactoryManifest, importExternalScreenEvidence, ingestChatGPTReceipt,
-  prepareChatGPTBatch, reconcileLocalScreenArtifacts, resetScreenFactory, runScreenFactoryTick, screenFactoryStatus, validateChatGPTTransport,
+  prepareChatGPTBatch, reconcileLocalScreenArtifacts, recoverInterruptedGeneration, resetScreenFactory, runScreenFactoryTick, screenFactoryStatus, validateChatGPTTransport,
 } from '../agent-system/orchestration/screen-factory.mjs';
 import { readJson } from '../agent-system/orchestration/state-store.mjs';
 
@@ -274,7 +274,7 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     const status = await runScreenFactoryTick({ root, compiler: async () => { invoked = true; throw new Error('must not run'); } });
     expect(invoked).toBe(false);
     expect(status.state).toBe('CONTRACT_BLOCKED');
-    expect(status.requested_state).toBe('PAUSED');
+    expect(status.requested_state).toBe('RUNNING');
     expect(status.complete).toBe(0);
     expect(status.next_task.contract_readiness.ready).toBe(false);
   });
@@ -305,5 +305,51 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(controlScreenFactory('pause', root).state).toBe('PAUSED');
     expect(controlScreenFactory('resume', root).requested_state).toBe('RUNNING');
     expect(controlScreenFactory('stop', root).requested_state).toBe('STOPPED');
+  });
+
+
+  it('keeps the autonomous run latched at a contract gate and rechecks without requiring Resume', async () => {
+    const root = temp('screen-factory-contract-autonomy');
+    const source = path.join(root, 'source.json');
+    const blocked = tasks(1); blocked[0].purpose = '';
+    writeFileSync(source, JSON.stringify({ tasks: blocked }));
+    importScreenFactoryManifest(source, root);
+    controlScreenFactory('play', root);
+    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('compiler must not run'); } });
+    expect(status.state).toBe('CONTRACT_BLOCKED');
+    expect(status.requested_state).toBe('RUNNING');
+    expect(status.execution_policy.autonomous_run_latched).toBe(true);
+    expect(status.execution_policy.batch_boundary_stops).toBe(false);
+    expect(status.execution_policy.platform_boundary_stops).toBe(false);
+    expect(status.execution_policy.contract_blocked_auto_recheck_ms).toBeGreaterThanOrEqual(1000);
+  });
+
+  it('keeps the autonomous run latched across transient runtime blockage for automatic retry', async () => {
+    const root = temp('screen-factory-runtime-autonomy');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
+    importScreenFactoryManifest(source, root);
+    controlScreenFactory('play', root);
+    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('NO_HERMES_RUNTIME_AVAILABLE'); } });
+    expect(status.state).toBe('RUNTIME_BLOCKED');
+    expect(status.requested_state).toBe('RUNNING');
+    expect(status.execution_policy.autonomous_run_latched).toBe(true);
+    expect(status.execution_policy.runtime_blocked_auto_retry_ms).toBeGreaterThanOrEqual(1000);
+    expect(readJson('screen-factory/manifest.json', null, root).tasks[0].generation_attempts).toBe(0);
+  });
+
+  it('recovers an interrupted atomic screen so a later Play can retry instead of deadlocking', () => {
+    const root = temp('screen-factory-interrupted');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
+    importScreenFactoryManifest(source, root);
+    const manifest = readJson('screen-factory/manifest.json', null, root);
+    manifest.tasks[0].status = 'GENERATING'; manifest.tasks[0].generation_attempts = 1; manifest.tasks[0].lease = { pid: 999999, lease_id: 'stale' };
+    writeFileSync(path.join(root, 'screen-factory', 'manifest.json'), JSON.stringify(manifest));
+    expect(recoverInterruptedGeneration(root)).toBe(1);
+    const recovered = readJson('screen-factory/manifest.json', null, root).tasks[0];
+    expect(recovered.status).toBe('NOT_GENERATED');
+    expect(recovered.generation_attempts).toBe(0);
+    expect(recovered.lease).toBe(null);
   });
 });
