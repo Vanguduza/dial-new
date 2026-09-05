@@ -88,6 +88,28 @@ function taskSummary(task) {
 }
 function taskList() { return manifest().tasks.map(taskSummary); }
 
+async function readJsonBody(req, maxBytes = 65536) {
+  const chunks = [];
+  let total = 0;
+  for await (const chunk of req) {
+    total += chunk.length;
+    if (total > maxBytes) throw new Error('request body too large');
+    chunks.push(chunk);
+  }
+  const text = Buffer.concat(chunks).toString('utf8');
+  return text ? JSON.parse(text) : {};
+}
+function configureGoogleDriveToken(rawToken) {
+  const cfg = storageConfig();
+  const parsed = typeof rawToken === 'string' ? JSON.parse(rawToken) : rawToken;
+  if (!parsed || typeof parsed !== 'object' || !parsed.access_token || !parsed.refresh_token) throw new Error('Google OAuth token must include access_token and refresh_token');
+  const token = JSON.stringify(parsed);
+  const bin = '/home/ubuntu/.local/bin/rclone';
+  execFileSync(bin, ['config','update','dial-drive','token',token,'root_folder_id',cfg.drive_root_folder_id,'--config',cfg.rclone_config,'--non-interactive'], { timeout: 15000, stdio: 'ignore' });
+  fs.chmodSync(cfg.rclone_config, 0o600);
+  execFileSync('/srv/dial/repo/deploy/oracle/hermes-codex/screen-factory-storage-sync.sh', ['once'], { timeout: 120000, stdio: 'ignore', env: { ...process.env, DIAL_CONTROL_HOME: process.env.DIAL_CONTROL_HOME || '/var/lib/dial-control' } });
+  return storageStatus();
+}
 function sendFile(res, target, downloadName, mime = 'application/octet-stream', cleanup = false) {
   if (!target || !fs.existsSync(target)) return json(res, { error: 'artifact not found' }, 404);
   const stat = fs.statSync(target);
@@ -113,6 +135,15 @@ function materializeRemotePackage(record) {
   catch { try { fs.rmSync(target, { force: true }); } catch {} return null; }
 }
 async function handleApi(req, res, url) {
+  if (req.method === 'POST' && url.pathname === '/api/storage/google-token') {
+    try {
+      const body = await readJsonBody(req);
+      const status = configureGoogleDriveToken(body.token);
+      return json(res, { ok: true, google_drive: status.google_drive, last_sync_at: status.last_sync_at });
+    } catch (error) {
+      return json(res, { ok: false, error: String(error?.message || error) }, 400);
+    }
+  }
   if (req.method === 'GET' && url.pathname === '/api/status') return json(res, screenFactoryStatus());
   if (req.method === 'GET' && url.pathname === '/api/dashboard') {
     const m = manifest(); const status = screenFactoryStatus();
@@ -197,7 +228,7 @@ const DASHBOARD = `<!doctype html><html><head><meta charset="utf-8"><meta name="
 <div id="actionNotice" class="notice" style="display:none"></div>
 <section id="kpis" class="kpis"></section>
 <section class="panel"><div class="panel-head"><div><h2>Factory readiness & generation</h2><p>Contract readiness is distinct from generated-screen progress and implementation readiness.</p></div><div id="lastUpdated" class="label"></div></div><div class="barrow"><div class="barlabel"><span>Generated REQUIRED screens</span><span id="overallText">0 / 0</span></div><div class="bar"><div id="overallFill" class="fill" style="width:0"></div></div></div><div class="barrow"><div class="barlabel"><span>Evidence-backed screen contracts</span><span id="contractText">0 / 0</span></div><div class="bar"><div id="contractFill" class="fill contract" style="width:0"></div></div></div><div id="mission" class="mission"></div></section>
-<section class="panel" style="margin-top:14px"><div class="panel-head"><div><h2>Storage & Oracle protection</h2><p>R2 is the primary durable artifact plane; Google Drive archives complete platform packs. Oracle keeps a bounded local cache and fails safe before disk pressure threatens the free-tier VM.</p></div><div class="label">2 GB local cache target · 8 GB disk reserve</div></div><div id="storagePanel" class="mission"></div></section>
+<section class="panel" style="margin-top:14px"><div class="panel-head"><div><h2>Storage & Oracle protection</h2><p>R2 is the primary durable artifact plane; Google Drive archives complete platform packs. Oracle keeps a bounded local cache and fails safe before disk pressure threatens the free-tier VM.</p></div><div class="label">2 GB local cache target · 8 GB disk reserve</div></div><div id="storagePanel" class="mission"></div><details id="googleAuthBox" style="margin-top:12px"><summary class="btn ghost" style="width:max-content">Authorize Google Drive on Oracle</summary><div class="ping-shell" style="padding:14px;margin-top:8px"><div class="briefblock"><h4>One-time OAuth handoff</h4><div class="text">Run <code>rclone authorize &quot;drive&quot;</code> on a browser-enabled device, sign in as <b>tapiwaguduza@gmail.com</b>, then paste the returned JSON token here. The token is sent only to the protected Oracle control plane and is not written to dashboard logs.</div></div><textarea id="googleToken" class="search" style="width:100%;min-height:110px;margin-top:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace" placeholder="Paste the JSON token returned by rclone authorize drive"></textarea><div style="margin-top:8px"><button id="submitGoogleToken" class="play">Complete Google Drive authorization</button></div></div></details></section>
 <section class="panel" style="margin-top:14px"><div class="panel-head"><div><h2>Hermes functional generation ping</h2><p>Hermes tells the designer what each screen must do. It does not prescribe how the screen should look.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap"><button id="copyPing" class="ghost">Copy functional brief</button><a id="openPing" class="btn ghost" href="#" target="_blank" rel="noreferrer">Open ping JSON</a></div></div><div id="pingPanel"></div></section>
 <section class="grid2" style="margin-top:14px"><div class="panel"><div class="panel-head"><div><h2>Business-unit progress</h2><p>Generation progress across REQUIRED surfaces.</p></div><button id="buToggle" class="ghost">Show all</button></div><div id="buRows" class="rows"></div></div><div class="panel"><div class="panel-head"><div><h2>Contract coverage</h2><p>Evidence-backed contracts by product family. Generation fails closed at the first gap.</p></div><button id="contractToggle" class="ghost">Show all</button></div><div id="contractRows" class="rows"></div></div></section>
 <section class="panel" style="margin-top:14px"><div class="panel-head"><div><h2>Platform queue & packaging</h2><p>Ten-screen groups are internal execution boundaries. ZIP files are created only when an entire business-unit/platform is complete.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap"><input id="platformSearch" class="search" placeholder="Filter business unit or platform…"><button id="platformToggle" class="ghost">Show all platforms</button></div></div><div class="tablewrap"><table><thead><tr><th>Business unit</th><th>Platform</th><th>Contract ready</th><th>Generated</th><th>Implementation ready</th><th>Package</th></tr></thead><tbody id="platformTable"></tbody></table></div></section>
@@ -217,6 +248,7 @@ function notice(msg,kind='ok'){const e=$('actionNotice');e.textContent=msg;e.cla
 function syncControls(s){const requested=String(s.requested_state||'STOPPED'),state=String(s.state||'STOPPED'),stopping=state==='STOPPING';document.querySelector('[data-act="play"]').disabled=requested==='RUNNING'||stopping;document.querySelector('[data-act="pause"]').disabled=requested!=='RUNNING'||stopping;document.querySelector('[data-act="resume"]').disabled=requested!=='PAUSED'||stopping;document.querySelector('[data-act="stop"]').disabled=requested==='STOPPED'}
 async function act(a){if(actionBusy)return;actionBusy=true;document.querySelectorAll('[data-act]').forEach(b=>b.disabled=true);notice('Sending '+a.toUpperCase()+'…');try{const s=await reqJson('/api/'+a,{method:'POST'});notice(a.toUpperCase()+' accepted · '+s.state);setTimeout(refresh,120)}catch(e){notice(a.toUpperCase()+' failed: '+e.message,'err')}finally{actionBusy=false}}
 document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>act(b.dataset.act)));
+$('submitGoogleToken').addEventListener('click',async()=>{const token=$('googleToken').value.trim();if(!token)return notice('Paste the rclone Google OAuth token first','err');const btn=$('submitGoogleToken');btn.disabled=true;notice('Authorizing Google Drive on Oracle…');try{const result=await reqJson('/api/storage/google-token',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token})});$('googleToken').value='';notice('Google Drive authorized · '+esc(result.google_drive?.state||'configured'));setTimeout(refresh,200)}catch(e){notice('Google Drive authorization failed: '+e.message,'err')}finally{btn.disabled=false}});
 function row(name,value,total,kind='normal'){return '<div class="prow"><div class="name" title="'+esc(name)+'">'+esc(name)+'</div><div class="microbar '+(kind==='contract'?'contract':'')+'"><span style="width:'+pct(value,total)+'%"></span></div><div style="text-align:right;color:#64748b">'+esc(value)+'/'+esc(total)+'</div></div>'}
 function aggregateContractByBu(platforms){const m=new Map();for(const p of platforms||[]){const g=m.get(p.business_unit)||{total:0,ready:0};g.total+=Number(p.total||0);g.ready+=Number(p.contract_ready||0);m.set(p.business_unit,g)}return m}
 function renderProgressLists(s,platforms){const bu=Object.entries(s.by_business_unit||{});const bvis=buExpanded?bu:bu.slice(0,10);$('buRows').innerHTML=bvis.map(([n,v])=>row(n,v.complete,v.total)).join('');$('buToggle').textContent=buExpanded?'Show fewer':'Show all '+bu.length;const contract=[...aggregateContractByBu(platforms).entries()];const cvis=contractExpanded?contract:contract.slice(0,10);$('contractRows').innerHTML=cvis.map(([n,v])=>row(n,v.ready,v.total,'contract')).join('');$('contractToggle').textContent=contractExpanded?'Show fewer':'Show all '+contract.length}
