@@ -36,3 +36,13 @@ Button semantics are therefore:
 - **Stop:** request safe stop; finish the active atomic screen if one exists, persist it, then let the worker exit normally.
 
 The control policy must never turn a ten-screen group or completed platform into a manual continuation gate.
+
+## Runtime-infrastructure fault handling
+
+The canonical queue is strictly sequential. The worker may claim only the first incomplete REQUIRED screen. It must never skip an exhausted or failed earlier screen and continue with a later screen.
+
+Missing local runtime executables, model-runtime timeouts, account/rate limits, or equivalent runtime transport failures are infrastructure blockers rather than screen-generation defects. These conditions enter `RUNTIME_BLOCKED`, preserve the RUN latch, clear the transient task lease, and do not consume the screen's bounded generation-attempt budget.
+
+The worker service must include the authenticated user's local executable paths so the Hermes and Claude Code CLIs resolve under systemd exactly as they do in an interactive shell. Dashboard control calls must also supply the user-systemd bus environment; otherwise a Play acknowledgement is invalid even if `requested_state=RUNNING` was written.
+
+The dashboard may collapse repeated identical retry events for readability, but the append-only factory event log remains unchanged as forensic evidence. Failure cards must expose the actual reason rather than only the event name.

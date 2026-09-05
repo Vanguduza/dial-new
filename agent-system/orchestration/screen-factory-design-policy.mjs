@@ -32,6 +32,10 @@ export function assertTaskContractReady(task = {}) {
 
 export function experiencePolicy(task = {}) {
   const consumer = isConsumerMyHealth(task);
+  const recordRelated = RECORD_WORDS.test(`${task.title || ''} ${task.features || ''} ${task.archetype || ''}`);
+  // Export belongs on the focused screen whose canonical interaction contract asks for it.
+  // A home/list teaser that merely links to a record must not be forced to expose export inline.
+  const exportOnThisScreen = /export|download|share/i.test(String(task.interaction || ''));
   return {
     policy_version: SCREEN_FACTORY_DESIGN_POLICY,
     design_system: SCREEN_FACTORY_DESIGN_SYSTEM,
@@ -39,8 +43,9 @@ export function experiencePolicy(task = {}) {
     progressive_disclosure: consumer,
     max_primary_decisions_per_view: consumer ? 1 : 4,
     max_primary_content_regions: consumer ? 4 : 8,
-    record_detail_required: RECORD_WORDS.test(`${task.title || ''} ${task.features || ''}`),
+    record_detail_required: recordRelated,
     export_required_when_record_or_transaction: true,
+    export_action_required_on_this_screen: exportOnThisScreen,
     cosmetic_controls_allowed: false,
     frontend_authoritative_truth_allowed: false,
     additional_features_must_be_documented: true,
@@ -67,6 +72,14 @@ export function validateDesignPacket(packet, task) {
   }
   if (!packet.evidence_map.length) throw new Error('evidence_map may not be empty');
   if (!packet.feature_coverage.length) throw new Error('feature_coverage may not be empty');
+  if (isConsumerMyHealth(task)) {
+    if (!packet.experience_profile || typeof packet.experience_profile !== 'object') throw new Error('My Health experience_profile is required');
+    const density = String(packet.experience_profile.information_density || '').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (!['LOW','LOW_TO_MODERATE','MODERATE'].includes(density)) throw new Error('My Health information_density must be LOW, LOW_TO_MODERATE or MODERATE');
+    packet.experience_profile.information_density = density;
+    if (String(packet.experience_profile.progressive_disclosure).toLowerCase() === 'true') packet.experience_profile.progressive_disclosure = true;
+    if (packet.experience_profile.progressive_disclosure !== true) throw new Error('My Health progressive_disclosure must be true');
+  }
   return { packet, policy };
 }
 
@@ -79,7 +92,7 @@ export function renderedPolicyFailures({ task, packet, layout = [] } = {}) {
   if (missingAction.length) failures.push('COSMETIC_OR_UNMAPPED_CONTROL');
   if (unmappedAction.length) failures.push('ACTION_NOT_IN_INTERACTION_MAP');
   const policy = experiencePolicy(task);
-  if (policy.record_detail_required) {
+  if (policy.export_action_required_on_this_screen) {
     const exportAction = [...actions].some((id) => /export|download|share|statement|receipt/i.test(id));
     if (!exportAction) failures.push('RECORD_OR_TRANSACTION_EXPORT_ACTION_MISSING');
   }

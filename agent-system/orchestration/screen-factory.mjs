@@ -720,12 +720,19 @@ async function auxiliaryReview(task, packet, root) {
 }
 
 function claimNextTask(manifest) {
-  const task = manifest.tasks.filter((item) => requiredTask(item) && !completedTask(item)
-    && item.status !== 'GENERATING' && !(item.status === 'FAILED' && Number(item.generation_attempts || 0) >= 3)).sort(taskOrder)[0] || null;
+  // Sequential invariant: only the first incomplete REQUIRED task may be claimed.
+  // Never skip an exhausted/failed earlier screen and continue later screens.
+  const task = manifest.tasks.filter((item) => requiredTask(item) && !completedTask(item)).sort(taskOrder)[0] || null;
   if (!task) return null;
+  if (task.status === 'GENERATING') return null;
+  if (task.status === 'FAILED' && Number(task.generation_attempts || 0) >= 3) return null;
   task.status = 'GENERATING'; task.generation_attempts = Number(task.generation_attempts || 0) + 1;
   task.lease = { lease_id: crypto.randomUUID(), pid: process.pid, claimed_at: now() }; task.updated_at = now();
   return task;
+}
+
+function runtimeInfrastructureBlocked(reason) {
+  return /NO_HERMES_RUNTIME_AVAILABLE|no authoritative model response|CLAUDE_SONNET_5_NOT_(?:HEALTHY|SELECTED)|usage limit|rate.?limit|HTTP 429|spawnSync (?:claude|hermes) ENOENT|\bENOENT\b|\bETIMEDOUT\b|timed? ?out|timeout|command not found|executable not found/i.test(String(reason || ''));
 }
 
 export async function runScreenFactoryTick({ root, compiler = compileScreenPacket, renderer = renderScreenBundle, auxiliary = auxiliaryReview } = {}) {
@@ -769,7 +776,7 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
     appendJsonl('events/screen-factory.jsonl',{event:task.status==='COMPLETE'?'SCREEN_FACTORY_TASK_COMPLETE':'SCREEN_FACTORY_TASK_QA_FAILED',task_id:task.task_id,screen_id:task.screen_id,platform:task.platform,model:generated.model,runtime:generated.runtime,basic_qa:task.basic_qa,at:now()},root);
   } catch(error) {
     const reason=String(error?.message||error).slice(0,2000);
-    const runtimeBlocked=/NO_HERMES_RUNTIME_AVAILABLE|no authoritative model response|CLAUDE_SONNET_5_NOT_(?:HEALTHY|SELECTED)|usage limit|rate.?limit|HTTP 429/i.test(reason);
+    const runtimeBlocked=runtimeInfrastructureBlocked(reason);
     if(runtimeBlocked){
       task.status='NOT_GENERATED'; task.generation_attempts=Math.max(0,Number(task.generation_attempts||1)-1); task.basic_qa='NOT_RUN'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=false; task.lease=null; task.last_error=null; task.updated_at=now();
       writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);

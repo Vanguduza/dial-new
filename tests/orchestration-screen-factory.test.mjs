@@ -13,6 +13,7 @@ import {
   prepareChatGPTBatch, reconcileLocalScreenArtifacts, recoverInterruptedGeneration, resetScreenFactory, runScreenFactoryTick, screenFactoryStatus, validateChatGPTTransport,
 } from '../agent-system/orchestration/screen-factory.mjs';
 import { readJson } from '../agent-system/orchestration/state-store.mjs';
+import { experiencePolicy } from '../agent-system/orchestration/screen-factory-design-policy.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function tasks(count = 11) {
@@ -352,4 +353,46 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     expect(recovered.generation_attempts).toBe(0);
     expect(recovered.lease).toBe(null);
   });
+
+  it('treats a missing Hermes or Claude executable as runtime blockage without consuming retries', async () => {
+    const root = temp('screen-factory-cli-enoent');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
+    importScreenFactoryManifest(source, root);
+    controlScreenFactory('play', root);
+    const status = await runScreenFactoryTick({ root, compiler: async () => { throw new Error('exact Sonnet 5 screen fallback failed: spawnSync claude ENOENT'); } });
+    expect(status.state).toBe('RUNTIME_BLOCKED');
+    expect(status.requested_state).toBe('RUNNING');
+    const task = readJson('screen-factory/manifest.json', null, root).tasks[0];
+    expect(task.status).toBe('NOT_GENERATED');
+    expect(task.generation_attempts).toBe(0);
+    expect(task.last_error).toBe(null);
+  });
+
+  it('never skips an exhausted earlier required screen to process a later screen', async () => {
+    const root = temp('screen-factory-sequential-fail-closed');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(2) }));
+    importScreenFactoryManifest(source, root);
+    const manifest = readJson('screen-factory/manifest.json', null, root);
+    manifest.tasks[0].status = 'FAILED'; manifest.tasks[0].generation_attempts = 3; manifest.tasks[0].last_error = 'persistent render defect';
+    writeFileSync(path.join(root, 'screen-factory', 'manifest.json'), JSON.stringify(manifest));
+    controlScreenFactory('play', root);
+    let invoked = false;
+    const status = await runScreenFactoryTick({ root, compiler: async () => { invoked = true; throw new Error('must not process later task'); } });
+    expect(invoked).toBe(false);
+    expect(status.state).toBe('FAILED');
+    expect(status.next_task.task_id).toBe('MH-S001::ios_mobile');
+    expect(readJson('screen-factory/manifest.json', null, root).tasks[1].status).toBe('NOT_GENERATED');
+  });
+
+
+  it('requires export on the contracted focused detail screen, not on a home/list teaser', () => {
+    const home = { ...tasks(1)[0], title: 'Home / Today', archetype: 'Consumer Home', features: 'recent result/record teaser', interaction: 'open recent result; view all' };
+    const detail = { ...tasks(1)[0], title: 'Claim Detail', archetype: 'Transaction Detail', features: 'claim record', interaction: 'download claim; share claim' };
+    expect(experiencePolicy(home).record_detail_required).toBe(true);
+    expect(experiencePolicy(home).export_action_required_on_this_screen).toBe(false);
+    expect(experiencePolicy(detail).export_action_required_on_this_screen).toBe(true);
+  });
+
 });

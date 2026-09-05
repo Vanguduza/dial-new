@@ -50,6 +50,7 @@ Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
 Environment=HERMES_HOME=$HERMES_HOME
 Environment=CODEX_HOME=$CODEX_HOME
+Environment=PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY OPENROUTER_API_KEY
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs daemon
 Restart=on-failure
