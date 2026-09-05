@@ -105,8 +105,11 @@ async function deterministicQa(page, task, packet, layout) {
     scroll_height: document.documentElement.scrollHeight,
   }));
   const actionable = layout.filter((item) => ['button', 'input', 'select', 'textarea', 'a'].includes(item.tag) || item.role === 'button');
-  const tinyTargets = actionable.filter((item) => item.rect.width < 40 || item.rect.height < 40);
-  const unlabeled = actionable.filter((item) => !item.text && !item.aria_label && item.tag !== 'input');
+  // Hidden/inactive state controls legitimately have zero-size boxes. Accessibility QA
+  // applies to controls rendered in the current state, not controls hidden for other states.
+  const visibleActionable = actionable.filter((item) => Number(item.rect?.width || 0) > 0 && Number(item.rect?.height || 0) > 0);
+  const tinyTargets = visibleActionable.filter((item) => item.rect.width < 40 || item.rect.height < 40);
+  const unlabeled = visibleActionable.filter((item) => !item.text && !item.aria_label && item.tag !== 'input');
   const horizontalOverflow = metrics.scroll_width > metrics.viewport_width + 2;
   const failures = [];
   if (horizontalOverflow) failures.push('HORIZONTAL_OVERFLOW');
@@ -122,7 +125,7 @@ async function deterministicQa(page, task, packet, layout) {
     pass: failures.length === 0,
     failures,
     metrics,
-    counts: { semantic_nodes: layout.length, actionable: actionable.length, tiny_targets: tinyTargets.length, unlabeled: unlabeled.length },
+    counts: { semantic_nodes: layout.length, actionable: actionable.length, visible_actionable: visibleActionable.length, tiny_targets: tinyTargets.length, unlabeled: unlabeled.length },
     note: 'Deterministic render QA is not visual approval and never implies UX_GREEN.',
     observed_at: now(),
   };

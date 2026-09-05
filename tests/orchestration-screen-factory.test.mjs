@@ -71,9 +71,9 @@ describe('implementation-convertible renderer utility', () => {
     const task = tasks(1)[0];
     const packet = {
       screen_id: task.screen_id, title: task.title, platform: task.platform,
-      semantic_html: '<main data-ui="screen"><section class="dh-card"><h1>Today</h1><button data-action="open-care">Find care</button></section></main>',
+      semantic_html: '<main data-ui="screen"><section class="dh-card"><h1>Today</h1><button data-action="open-care">Find care</button><button hidden data-action="retry-hidden-state">Retry</button></section></main>',
       css: 'main{padding:20px}.dh-card{padding:20px}button{border:0;border-radius:12px}',
-      interaction_map: [{ element_id: 'primary-action', action_id: 'open-care', action_type: 'route', target_route: '/care' }],
+      interaction_map: [{ element_id: 'primary-action', action_id: 'open-care', action_type: 'route', target_route: '/care' }, { element_id: 'hidden-retry', action_id: 'retry-hidden-state', action_type: 'retry' }],
       data_bindings: [], state_map: [{ state: 'POPULATED', trigger: 'load', visible_change: 'summary shown' }],
       feature_coverage: [{ feature: 'Need care', element_id: 'primary-action', realization: 'button', evidence: 'TEST-CANONICAL-CONTRACT' }],
       evidence_map: [{ feature: 'Need care', source: 'TEST-CANONICAL-CONTRACT' }], additional_features: [],
@@ -82,6 +82,9 @@ describe('implementation-convertible renderer utility', () => {
     };
     const result = await renderScreenBundle({ task, packet, outputRoot: out });
     expect(result.qa.pass).toBe(true);
+    expect(result.qa.counts.actionable).toBe(2);
+    expect(result.qa.counts.visible_actionable).toBe(1);
+    expect(result.qa.counts.tiny_targets).toBe(0);
     expect(existsSync(result.png_path)).toBe(true);
     expect(existsSync(result.html_path)).toBe(true);
     expect(result.viewport.dpr).toBe(3);
