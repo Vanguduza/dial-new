@@ -309,17 +309,29 @@ export function validateComposition(composition, task) {
   // remove duplicate/excess placement but never invent an action.
   const preferred = shortcutActionIndexes(task, actions);
   const grid = regions.find((region) => region.type === 'action_grid');
+  const actionCapacity={hero:1,action_grid:4,highlight:1,search:1,segmented:3,list:2,metrics:0,timeline:0,form:1,detail:2,document_list:2,support:2,confirmation:2,emergency:1};
+  // Strip action references from regions whose renderer cannot expose them. This prevents
+  // an action from being counted as "used" while remaining invisible in the rendered UI.
+  for(const region of regions){const cap=actionCapacity[region.type]??0;region.action_refs=region.action_refs.slice(0,cap);}
   if (grid && preferred.length >= 2) {
     grid.action_refs = [...new Set(preferred)].slice(0,4);
     const owned = new Set(grid.action_refs);
     for (const region of regions) if (region !== grid) region.action_refs = region.action_refs.filter((ref) => !owned.has(ref));
+  } else if (grid && String(task.business_unit||'') !== 'My Health' && actions.length) {
+    // Professional workspaces must expose a compact working action set rather than hide
+    // every command behind progressive disclosure. Product truth still comes only from
+    // the documented interaction catalogue; this only chooses where those actions render.
+    grid.action_refs = actions.map((_,i)=>i).slice(0,4);
+    const owned = new Set(grid.action_refs);
+    for (const region of regions) if (region !== grid) region.action_refs = region.action_refs.filter((ref) => !owned.has(ref));
+    grid.prominence = grid.prominence === 'quiet' ? 'secondary' : grid.prominence;
   }
   const seenActions = new Set(); let visibleActionCount = 0;
   for (const region of regions) {
     const normalized = [];
+    const cap=actionCapacity[region.type]??0;
     for (const ref of region.action_refs) {
-      if (seenActions.has(ref) || visibleActionCount >= 10) continue;
-      if (region.type === 'action_grid' && normalized.length >= 4) continue;
+      if (seenActions.has(ref) || visibleActionCount >= 10 || normalized.length >= cap) continue;
       seenActions.add(ref); normalized.push(ref); visibleActionCount += 1;
     }
     region.action_refs = normalized;
@@ -334,6 +346,9 @@ export function validateComposition(composition, task) {
   const allActionRefs = regions.flatMap((r) => r.action_refs);
   const selectedActions = new Set(allActionRefs);
   if (actions.length && !selectedActions.size) throw new Error(`composition ${task.screen_id} does not expose any canonical action`);
+  // Empty decorative regions add visual noise and can create headings with no content.
+  // Preserve structural input regions that can still be useful without feature refs.
+  regions=regions.filter((r)=>r.feature_refs.length||r.action_refs.length||['search','form','segmented'].includes(r.type));
   const selectedFeatures=new Set(regions.flatMap((r)=>r.feature_refs));
   if(features.length>1&&selectedFeatures.size<Math.min(3,features.length))throw new Error(`composition ${task.screen_id} under-represents first-load feature hierarchy`);
   const recipe=compositionRecipeFor(task), types=regions.map((r)=>r.type);

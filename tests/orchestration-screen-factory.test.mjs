@@ -299,6 +299,8 @@ describe('Practice OS bounded contract closure and professional composition', ()
     ]});
     expect(result.packet.semantic_html).toContain('dh-professional-screen');
     expect(result.packet.semantic_html).toContain('Doctor / Specialist Today');
+    expect((result.packet.semantic_html.match(/data-action=/g) || []).length).toBeGreaterThanOrEqual(4);
+    expect(result.packet.semantic_html).not.toContain('<div class="dh-action-grid"></div>');
     expect(result.packet.experience_profile.audience).toBe('PROFESSIONAL_OPERATOR');
     expect(result.packet.experience_profile.information_density).toBe('MODERATE_TO_HIGH');
   });
