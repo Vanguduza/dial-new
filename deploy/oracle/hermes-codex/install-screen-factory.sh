@@ -159,7 +159,7 @@ cat <<'EOF'
 DIAL HEALTH SCREEN FACTORY INSTALLED
 Dashboard: http://127.0.0.1:9121
 Hermes manager policy remains separate from Screen Factory generation.
-Screen Factory generation uses the dedicated curated OpenRouter free-model pool only; no Sol or Sonnet generation fallback is wired into the Screen Factory worker.
+Screen Factory composition uses the dedicated curated OpenRouter free-model pool only; models emit compact family-level composition DSL while Dial compiles the implementation locally. No Sol or Sonnet generation fallback is wired into the Screen Factory worker.
 Configure/rotate the Screen Factory generation key with: dial-health-screen-factory-openrouter configure
 The separate dial-hermes-openrouter helper remains auxiliary-only outside Screen Factory generation.
 Import the canonical expanded Screen Factory manifest with: dial-health-screen-factory import /path/to/generation_manifest.json

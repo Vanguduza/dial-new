@@ -18,9 +18,11 @@ All Screen Factory render evidence generated before this policy is rejected. Out
 
 Hermes remains the functional-requirements courier. It does not invent screen-specific visual design.
 
-The Screen Factory prompt assembler combines the Hermes function-only brief with the Rev 3 premium visual doctrine and passes that calibrated prompt to the curated OpenRouter generation pool.
+The Screen Factory prompt assembler combines canonical function-only contracts with the Rev 3 premium visual doctrine and passes **compact platform-family composition requests** to the curated OpenRouter generation pool. The model is allowed to decide hierarchy, approved region type, prominence and bounded component variant only. It does not write HTML, CSS, state maps, bindings, evidence maps or arbitrary design tokens.
 
-Every screen uses a lead designer/compiler pass plus an independent art-director pass. Drafts below 90/100 or with any critical visual defect must be repaired and re-audited before deterministic rendering is accepted.
+Ordinary screens use one family-level composition request, beginning at 27 screens per request and adaptively ranging from 10 to 40 based on measured QA. Dial compiles each composition independently through the locked premium component system and Playwright. Deterministic QA is the normal acceptance gate. AI criticism/repair is **exception-only** for a failed composition; successful sibling compositions are cached and never regenerated merely because another screen failed.
+
+The previous mandatory lead-designer → art-director → repair → final-auditor committee is retired for production because it multiplied shared API requests and repeatedly re-read/re-wrote full implementations. The Rev 3 visual benchmark remains authoritative through the locked component system, composition constraints, family-diversity checks and fail-closed deterministic QA.
 
 ## 4. Quality gates
 

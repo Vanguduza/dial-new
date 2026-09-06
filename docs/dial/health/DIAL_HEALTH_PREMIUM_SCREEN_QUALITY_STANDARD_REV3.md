@@ -154,7 +154,7 @@ Hermes remains the functional-requirements courier and does not invent screen-sp
 3. This Rev 3 visual-quality doctrine.
 4. Canonical component/token grammar.
 5. Platform-specific viewport constraints.
-6. A peer art-director review before a draft is accepted.
+6. Deterministic composition-schema, component, viewport and interaction QA on every screen; peer art-direction is exception-only when a composition fails or is explicitly classified high-risk.
 
 The preferred generation pool remains:
 - `z-ai/glm-5.2:free`
@@ -163,20 +163,22 @@ The preferred generation pool remains:
 
 A temporarily unavailable or retired preferred model is replaced by the best currently viable curated free model. Replacement must preserve the same coaching prompt and quality gates; model replacement is never permission to lower the design standard.
 
-## 8. Multi-model quality ladder
+## 8. Request-efficient quality ladder
 
-Every screen passes through a design quality ladder rather than trusting a single first draft.
+The production quality ladder no longer spends multiple model requests on every ordinary screen.
 
-### Pass A — Lead designer/compiler
-One eligible model produces the complete semantic HTML/CSS implementation packet under this benchmark.
+### Pass A — Platform-family composition
+MiniMax M3 is the preferred high-volume composer. One request plans a coherent business-unit/platform family using compact composition DSL only. The initial target is 27 screens and the adaptive governor may move between 10 and 40. GLM 5.2 is the preferred batch fallback.
 
-### Pass B — Independent art director
-A different eligible model, where available, reviews the packet against a 100-point rubric. It does not rewrite product truth. It identifies visual hierarchy, density, spacing, composition, native feel and component-polish defects.
+### Pass B — Deterministic Dial compiler and QA
+Each returned composition is separated and compiled locally into the locked Dial Health component system, contract-derived actions/bindings/states/evidence, and Playwright/Chromium pixels. Overflow, touch targets, density, first-load actions, contract coverage, archetype fit, variant validity and family clone limits are machine gates and consume no model request.
 
-### Pass C — Repair/polish
-If the art-director score is below 90/100 or any critical defect is present, another eligible model receives the contract, draft and correction list and produces a revised final packet.
+### Pass C — Exception repair
+Only a failed composition receives a small targeted repair request, normally on GLM 5.2 or the next healthy independent model. The repair changes composition DSL only; it never rewrites complete HTML/CSS. Successful sibling compositions stay cached.
 
-If only one model is currently healthy, the factory may reuse it with a fresh critique role rather than bypassing the quality ladder.
+### Pass D — High-risk qualitative escalation
+Nemotron 3 Ultra or another healthy independent model may apply the art-director rubric to unusually complex, novel or repeatedly failing screens. This is an escalation gate, not a mandatory request on ordinary screens.
+
 ## 9. Art-director scoring rubric
 
 A draft is scored on:
@@ -193,7 +195,7 @@ A draft is scored on:
 - Visual variety without drift — 4
 - Implementation cleanliness — 4
 
-Passing threshold: **90/100**, with no critical defect.
+When qualitative escalation is invoked, the passing threshold is **90/100**, with no critical defect. Routine screens are governed by the deterministic gates and locked component system without spending a separate critic request.
 
 Critical defects include excessive scroll depth, fake patient/provider/clinical data, wrong screen identity, dashboard/table density on a consumer screen, browser-default styling, malformed navigation, unmapped controls, horizontal overflow, unreadable typography, inconsistent brand colour, or a page that visibly resembles a wireframe/template rather than a finished product.
 
@@ -212,7 +214,7 @@ Rev 3 adds:
 - visible actionable controls should normally remain <= 14 on a My Health first-load state;
 - excessively dense semantic regions fail rather than being accepted because the screenshot is technically valid.
 
-Deterministic QA is still not visual approval. It prevents known structural failures; the peer art-director pass supplies the qualitative benchmark gate.
+Deterministic QA is still not formal visual approval. It prevents known structural failures and enforces the locked visual baseline; the peer art-director rubric remains available for exception/high-risk escalation without becoming a mandatory request tax on every screen.
 ## 11. Explicit anti-patterns
 
 Reject and regenerate when a screen shows any of the following:
@@ -236,19 +238,19 @@ Reject and regenerate when a screen shows any of the following:
 ## 12. Model-specific coaching
 
 ### GLM 5.2
-- Exploit its structured-output strength: require exact JSON, explicit layout intent and concise implementation.
-- Guard against over-explaining or expanding every contract feature into visible content.
-- Demand viewport-first composition before markup generation.
+- Use as the preferred targeted composition-repair and batch-fallback model.
+- Require exact compact DSL, contract indices and bounded variants.
+- Guard against over-explaining or expanding every contract feature into first-load content; no markup/CSS output is permitted.
 
 ### MiniMax M3
-- Use its frontend/coding strength to produce strong component composition and refined CSS.
-- Guard against dense card repetition and overlong screens.
-- Require deliberate hero/focal treatment only when the archetype benefits from it.
+- Use as the preferred high-volume platform-family composition model.
+- Plan the family holistically, then return concise hierarchy/region/variant DSL only.
+- Guard against dense card repetition, cloned compositions and overlong first-load hierarchy; the deterministic compiler owns CSS.
 
 ### Nemotron 3 Ultra
-- Use its reasoning strength for information hierarchy, edge cases and task architecture.
-- Because strict structured-output support may be weaker, enforce single-object JSON and deterministic packet validation.
-- Guard against verbose UI and ensure its reasoning does not surface as excessive explanatory text.
+- Use its reasoning strength for complex information hierarchy, repeated-failure diagnosis and high-risk qualitative escalation.
+- Because strict structured-output support may be weaker, enforce exact JSON and deterministic DSL validation.
+- Guard against verbose UI; reasoning must not surface as explanatory interface copy.
 
 Replacement models inherit the closest coaching profile based on their capabilities and are never allowed to relax the canonical rubric.
 
@@ -260,16 +262,16 @@ The immediate regeneration objective is to make first-pass screens visually comp
 
 ## 14. Machine-enforced Rev 3 component discipline
 
-For Rev 3 My Health tasks, the generated app root must use the canonical `dh-screen` class so the shared premium surface, spacing and brand tokens are always present even when a model's custom CSS is sparse.
+For Rev 3 My Health tasks, the deterministic compiler emits the canonical `dh-screen` root and locked premium surface, spacing and brand tokens. Models cannot override those tokens with custom CSS.
 
 Consumer My Health renders fail structural QA when they use HTML table layouts or emoji as interface iconography. Inline SVG line icons and semantic list/card patterns are the expected implementation path.
 
-These rules are intentionally deterministic so a weaker or replacement free model cannot silently regress the visual baseline simply by producing technically valid HTML.
+These rules are intentionally deterministic so a weaker or replacement free model cannot silently regress the visual baseline: the model only selects approved hierarchy/regions/variants, while Dial owns the implementation.
 
 ## Free-provider privacy boundary
 
 The Screen Factory may use OpenRouter free endpoints that permit provider training only because the generation credential is isolated to `SYNTHETIC_PRODUCT_CONTRACT_ONLY` prompts. Those prompts may contain canonical screen contracts, design-system rules, generic labels and synthetic placeholders only.
 
-Real patient/member/provider records, PHI, credentials, tenant secrets, real claims/results/eligibility/financial data and other regulated or identifying records are prohibited from this generation path. The broader OpenRouter auxiliary layer keeps its stricter non-sensitive/deny policy; this exception is scoped only to Screen Factory implementation compilation.
+Real patient/member/provider records, PHI, credentials, tenant secrets, real claims/results/eligibility/financial data and other regulated or identifying records are prohibited from this generation path. The broader OpenRouter auxiliary layer keeps its stricter non-sensitive/deny policy; this exception is scoped only to Screen Factory synthetic composition generation.
 
 A model/provider that cannot satisfy this synthetic-only boundary must be removed from the active pool. Model availability never overrides the data-classification gate.

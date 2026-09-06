@@ -13,6 +13,8 @@ import {
 } from '../agent-system/orchestration/screen-factory-openrouter-generator.mjs';
 import { renderScreenBundle } from '../agent-system/orchestration/screen-factory-renderer.mjs';
 import { compileScreenPacket } from '../agent-system/orchestration/screen-factory-model-generator.mjs';
+import { compileCompositionToPacket, SCREEN_COMPOSITION_DSL_VERSION } from '../agent-system/orchestration/screen-factory-composition-dsl.mjs';
+import { compositionPipelineStatus } from '../agent-system/orchestration/screen-factory-batch-composer.mjs';
 import {
   controlScreenFactory, importScreenFactoryManifest, importExternalScreenEvidence, ingestChatGPTReceipt,
   prepareChatGPTBatch, reconcileLocalScreenArtifacts, recoverInterruptedGeneration, resetScreenFactory, runScreenFactoryTick, screenFactoryStatus, validateChatGPTTransport,
@@ -77,10 +79,25 @@ describe('OpenRouter Screen Factory generation isolation', () => {
     const root = temp('openrouter-screen-generation');
     const status = configureOpenRouterScreenGenerator({ apiKey: 'sk-test-openrouter-screen-generation-123456789' }, root);
     expect(status.enabled).toBe(true);
-    expect(status.scope).toBe('SCREEN_FACTORY_IMPLEMENTATION_COMPILATION_ONLY');
+    expect(status.scope).toBe('SCREEN_FACTORY_COMPOSITION_GENERATION_ONLY');
     expect(status.key_file_mode).toBe('600');
     expect(status.key_material_exposed).toBe(false);
     expect(status.preferred_models).toEqual(PREFERRED_SCREEN_MODELS);
+  });
+
+  it('treats the free daily allowance as one account-wide quota and does not probe every model after exhaustion', async () => {
+    const root = temp('openrouter-account-quota');
+    configureOpenRouterScreenGenerator({ apiKey: 'sk-test-openrouter-account-quota-123456789' }, root);
+    await refreshOpenRouterScreenCatalog({ root, fetchImpl: async () => ({ ok:true, async json(){ return { data:[
+      { id:'z-ai/glm-5.2:free', name:'GLM', context_length:256000, pricing:{prompt:'0',completion:'0'}, supported_parameters:['reasoning','max_tokens','response_format'] },
+      { id:'minimax/minimax-m3:free', name:'M3', context_length:1048576, pricing:{prompt:'0',completion:'0'}, supported_parameters:['reasoning','max_tokens','response_format'] },
+      { id:'nvidia/nemotron-3-ultra-550b-a55b:free', name:'Ultra', context_length:1000000, pricing:{prompt:'0',completion:'0'}, supported_parameters:['reasoning','max_tokens'] },
+    ] }; } }) });
+    let calls=0; const reset=Date.now()+60*60*1000;
+    const fetchImpl=async()=>{calls++;return {ok:false,status:429,async text(){return JSON.stringify({error:{message:'Rate limit exceeded: free-models-per-day',metadata:{headers:{'X-RateLimit-Reset':String(reset)},limit_source:'openrouter_free_tier_daily'}}});}};};
+    await expect(callOpenRouterScreenCompiler({content:'synthetic',root,taskKey:'quota-1',role:'batch_composer',fetchImpl,maxOutputTokens:1200})).rejects.toThrow(/account quota blocked/i);
+    await expect(callOpenRouterScreenCompiler({content:'synthetic',root,taskKey:'quota-2',role:'batch_composer',fetchImpl,maxOutputTokens:1200})).rejects.toThrow(/account quota blocked/i);
+    expect(calls).toBe(1);
   });
 
   it('replaces a retired preferred model with the next highest curated suitable free model', async () => {
@@ -125,34 +142,66 @@ describe('OpenRouter Screen Factory generation isolation', () => {
 });
 
 
-describe('Rev 3 multi-model premium art direction', () => {
-  it('repairs a draft below the 90-point benchmark and requires a passing final audit', async () => {
-    const task = tasks(1)[0]; task.design_policy_version = 'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3'; task.design_version = 'DH-UI-CANONICAL-3.0';
-    const validPacket = (label) => ({
-      screen_id: task.screen_id, title: task.title, platform: task.platform,
-      semantic_html: `<main class="dh-screen" data-ui="screen"><section class="dh-card" data-ui="summary"><h1>${label}</h1><button class="dh-primary" data-action="open-care">Find care</button></section></main>`,
-      css: '.dh-screen{padding:18px}.dh-card{padding:18px}',
-      interaction_map: [{ element_id: 'open-care', action_id: 'open-care', action_type: 'route', target_route: '/care' }],
-      data_bindings: [], state_map: [{ state: 'POPULATED', trigger: 'load', visible_change: 'summary shown' }],
-      feature_coverage: [{ feature: 'Need care', element_id: 'open-care', realization: 'button', evidence: 'TEST-CANONICAL-CONTRACT' }],
-      evidence_map: [{ feature: 'Need care', source: 'TEST-CANONICAL-CONTRACT' }], additional_features: [],
-      component_contracts: [{ component_id: 'summary', type: 'card', data_owner: 'screen_read_model' }],
-      experience_profile: { information_density: 'LOW_TO_MODERATE', progressive_disclosure: true },
-    });
+describe('compact batch composition pipeline', () => {
+  it('generates 27 screen compositions in one model request and compiles implementation locally', async () => {
+    const root = temp('compact-batch-27');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(27) }));
+    importScreenFactoryManifest(source, root);
+    const manifest = readJson('screen-factory/manifest.json', null, root);
     const calls = [];
-    const responses = [
-      { model: 'z-ai/glm-5.2:free', response: JSON.stringify(validPacket('Draft')) },
-      { model: 'minimax/minimax-m3:free', response: JSON.stringify({ verdict:'REPAIR', score:82, critical_defects:['flat hierarchy'], strengths:[], corrections:['create one strong focal card'], density_assessment:'LOW_TO_MODERATE', viewport_assessment:'FIT', reference_quality_assessment:'BELOW' }) },
-      { model: 'nvidia/nemotron-3-ultra-550b-a55b:free', response: JSON.stringify(validPacket('Polished')) },
-      { model: 'minimax/minimax-m3:free', response: JSON.stringify({ verdict:'PASS', score:94, critical_defects:[], strengths:['clear hierarchy'], corrections:[], density_assessment:'LOW_TO_MODERATE', viewport_assessment:'FIT', reference_quality_assessment:'MATCH' }) },
-    ];
-    const modelCaller = async (args) => { calls.push(args); const next = responses.shift(); return { runtime:'test-openrouter', selection:{active_models:['a','b','c']}, attempt_failures:[], ...next }; };
-    const result = await compileScreenPacket({ task, root: temp('premium-art-direction'), modelCaller });
-    expect(calls.map((x) => x.role)).toEqual(['lead_designer','art_director','repair_polisher','final_auditor']);
-    expect(result.quality_review.repaired).toBe(true);
-    expect(result.quality_review.initial_review.score).toBe(82);
-    expect(result.quality_review.final_review.score).toBe(94);
-    expect(result.packet.semantic_html).toContain('Polished');
+    const modelCaller = async (args) => {
+      calls.push(args);
+      const heroVariants = ['summary','split','soft','compact'];
+      const listVariants = ['rich','cards','compact'];
+      const contracts = manifest.tasks.map((task, index) => ({ screen_id: task.screen_id, archetype: 'focused-task', regions: [
+        { type: 'hero', feature_refs: [0], action_refs: [0], prominence: 'primary', variant: heroVariants[index % heroVariants.length] },
+        { type: 'list', feature_refs: [1], action_refs: [1], prominence: 'secondary', variant: listVariants[Math.floor(index / heroVariants.length) % listVariants.length] },
+      ] }));
+      return { runtime: 'test-openrouter', model: 'minimax/minimax-m3:free', selection: { active_models: ['m3'] }, response: JSON.stringify({ dsl_version: SCREEN_COMPOSITION_DSL_VERSION, screens: contracts }), usage: { prompt_tokens: 1000, completion_tokens: 3000, total_tokens: 4000 } };
+    };
+    const first = await compileScreenPacket({ task: manifest.tasks[0], root, modelCaller });
+    const second = await compileScreenPacket({ task: manifest.tasks[1], root, modelCaller });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].role).toBe('batch_composer');
+    expect(first.model_selection.batch_size).toBe(27);
+    expect(first.packet.semantic_html).toContain('dh-screen');
+    expect(first.packet.css.length).toBeGreaterThan(100);
+    expect(first.packet.interaction_map).toHaveLength(3);
+    expect(second.model_selection.batch_size).toBe(27);
+    expect(compositionPipelineStatus(root).target_batch_size).toBe(27);
+  });
+
+  it('repairs only the failed composition instead of regenerating the full implementation', async () => {
+    const root = temp('compact-repair');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(1) }));
+    importScreenFactoryManifest(source, root);
+    const task = readJson('screen-factory/manifest.json', null, root).tasks[0];
+    const calls = [];
+    const base = { screen_id: task.screen_id, archetype: 'focused-task', regions: [
+      { type: 'hero', feature_refs: [0], action_refs: [0], prominence: 'primary', variant: 'calm' },
+      { type: 'list', feature_refs: [1], action_refs: [1], prominence: 'secondary', variant: 'compact' },
+    ] };
+    const modelCaller = async (args) => { calls.push(args); return { runtime:'test-openrouter', model:calls.length===1?'minimax/minimax-m3:free':'z-ai/glm-5.2:free', selection:{}, response: args.role==='batch_composer'?JSON.stringify({dsl_version:SCREEN_COMPOSITION_DSL_VERSION,screens:[base]}):JSON.stringify({...base,regions:[base.regions[0],{...base.regions[1],type:'highlight'}]}) }; };
+    await compileScreenPacket({ task, root, modelCaller });
+    task.generation_attempts = 2; task.last_error = 'HORIZONTAL_OVERFLOW';
+    const repaired = await compileScreenPacket({ task, root, modelCaller });
+    expect(calls.map((x)=>x.role)).toEqual(['batch_composer','composition_repair']);
+    expect(repaired.quality_review.repaired).toBe(true);
+    expect(repaired.packet.semantic_html).toContain('dh-featured');
+  });
+
+  it('compiles state, evidence and bindings deterministically from the canonical contract', () => {
+    const task = tasks(1)[0];
+    const result = compileCompositionToPacket(task, { screen_id: task.screen_id, archetype:'focused-task', regions:[
+      {type:'hero',feature_refs:[0],action_refs:[0],prominence:'primary',variant:'calm'},
+      {type:'list',feature_refs:[1],action_refs:[1],prominence:'secondary',variant:'compact'},
+    ]});
+    expect(result.packet.state_map.map((x)=>x.state)).toEqual(['LOADING','POPULATED','EMPTY']);
+    expect(result.packet.feature_coverage).toHaveLength(2);
+    expect(result.packet.data_bindings).toHaveLength(2);
+    expect(result.packet.additional_features).toEqual([]);
   });
 });
 
@@ -228,14 +277,14 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     const request = prepareChatGPTBatch(root);
     const status = screenFactoryStatus(root);
     expect(status.state).toBe('STOPPED');
-    expect(status.generator_authority).toBe('OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL');
+    expect(status.generator_authority).toBe('OPENROUTER_COMPACT_BATCH_COMPOSITION_POOL');
     expect(status.complete).toBe(0);
-    expect(request.generator_authority).toBe('OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL');
+    expect(request.generator_authority).toBe('OPENROUTER_COMPACT_BATCH_COMPOSITION_POOL');
     expect(request.ping_type).toBe('FUNCTION_ONLY_SCREEN_GENERATION_PING');
     expect(request.calibration_profile.design_system).toBe('DIAL_HEALTH_UI_CANONICAL_3_0');
     expect(request.calibration_profile.design_policy).toBe('DIAL_HEALTH_SCREEN_FACTORY_UX_REV3');
     expect(request.calibration_profile.premium_visual_standard).toBe('DIAL_HEALTH_PREMIUM_SCREEN_QUALITY_REV3');
-    expect(request.tasks).toHaveLength(10);
+    expect(request.tasks).toHaveLength(11);
     expect(request.instruction).toContain('functional requirements');
     expect(request.functional_message).toContain('Required functions: A; B');
     expect(request.functional_message).toContain('Required user actions: Open; Continue');
@@ -286,7 +335,7 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
   it('never creates batch ZIPs and creates one platform ZIP only when the platform is complete', async () => {
     const root = temp('screen-factory-control');
     const source = path.join(root, 'source.json');
-    writeFileSync(source, JSON.stringify({ tasks: tasks(11) }));
+    writeFileSync(source, JSON.stringify({ tasks: tasks(41) }));
     importScreenFactoryManifest(source, root);
     const request = prepareChatGPTBatch(root);
     const entries = [];
@@ -297,13 +346,13 @@ describe('ChatGPT-powered persistent Screen Factory controller', () => {
     const receipt = path.join(root, 'receipt-1.json'); writeFileSync(receipt, JSON.stringify({ entries }));
     await ingestChatGPTReceipt(receipt, root);
     let status = screenFactoryStatus(root);
-    expect(status.complete).toBe(10); expect(status.implementation_ready).toBe(10);
+    expect(status.complete).toBe(40); expect(status.implementation_ready).toBe(40);
     const batch = status.batches.find((item) => item.number === 1);
     expect(batch.state).toBe('COMPLETE'); expect(batch.downloadable).toBe(false); expect(batch.zip_path).toBe(null);
     let platform = status.platform_packages.find((item) => item.platform === 'ios_mobile');
     expect(platform.state).toBe('IN_PROGRESS'); expect(platform.downloadable).toBe(false);
-    const second = prepareChatGPTBatch(root); expect(second.tasks).toHaveLength(1); expect(second.tasks[0].screen_id).toBe('MH-S011');
-    const lastImage = path.join(root, 'MH-S011.png'); await makeImage(lastImage);
+    const second = prepareChatGPTBatch(root); expect(second.tasks).toHaveLength(1); expect(second.tasks[0].screen_id).toBe('MH-S041');
+    const lastImage = path.join(root, 'MH-S041.png'); await makeImage(lastImage);
     const receipt2 = path.join(root, 'receipt-2.json'); writeFileSync(receipt2, JSON.stringify({ entries: [{ task_id: second.tasks[0].task_id, image_path: lastImage, implementation_spec: implementationSpec() }] }));
     await ingestChatGPTReceipt(receipt2, root); status = screenFactoryStatus(root);
     platform = status.platform_packages.find((item) => item.platform === 'ios_mobile');

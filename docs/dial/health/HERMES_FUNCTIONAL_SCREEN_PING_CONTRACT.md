@@ -52,6 +52,6 @@ Every visible control in the resulting screen must map to real software behaviou
 
 Hermes may attach the canonical visual-policy identifiers `DIAL_HEALTH_SCREEN_FACTORY_UX_REV3`, `DIAL_HEALTH_UI_CANONICAL_3_0` and `DIAL_HEALTH_PREMIUM_SCREEN_QUALITY_REV3` to the generation request so the Screen Factory loads the correct training/calibration envelope.
 
-Hermes still does not invent screen-specific layout or styling. The model-facing prompt assembler, running inside the Screen Factory control plane, injects the canonical premium benchmark, design tokens, composition grammar, anti-patterns and art-director rubric alongside Hermes' function-only brief.
+Hermes still does not invent screen-specific layout or styling. The model-facing prompt assembler, running inside the Screen Factory control plane, injects the canonical premium benchmark and compact composition grammar alongside Hermes' function-only brief. Models return only approved hierarchy/region/variant DSL; design tokens and implementation remain locked in the deterministic Dial compiler. Art-director escalation is exception-only.
 
 This distinction is intentional: Hermes orchestrates and prompts the generation models with the approved design doctrine, but the visual doctrine itself remains a separate canonical source of truth rather than an ad hoc Hermes design decision.

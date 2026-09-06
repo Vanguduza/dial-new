@@ -11,10 +11,11 @@ import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJs
 import { assertTaskContractReady, contractReadiness, validateDesignPacket, additionalFeaturesMarkdown, implementationHandoffMarkdown, readPacketFromBundle, SCREEN_FACTORY_DESIGN_POLICY, SCREEN_FACTORY_DESIGN_SYSTEM } from './screen-factory-design-policy.mjs';
 import { ensureStorageConfig, storagePressure, storageStatus } from './screen-factory-storage.mjs';
 import { PREMIUM_VISUAL_STANDARD_VERSION } from './screen-factory-premium-visual-standard.mjs';
+import { compositionPipelineStatus, recordCompositionOutcome } from './screen-factory-batch-composer.mjs';
 
 export const SCREEN_FACTORY_AUTHORITY = 'DIAL_HEALTH_SCREEN_FACTORY_CONTROL_PLANE';
 export const SCREEN_FACTORY_GENERATOR_MODE = 'MODEL_RUNTIME_AUTONOMOUS';
-export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'OPENROUTER_CURATED_FREE_SCREEN_COMPILER_POOL';
+export const SCREEN_FACTORY_GENERATOR_AUTHORITY = 'OPENROUTER_COMPACT_BATCH_COMPOSITION_POOL';
 export const HERMES_SCREEN_FACTORY_ROLE = 'FUNCTIONAL_REQUIREMENTS_COURIER_HEARTBEAT_QUEUE_QA_PACKAGING_ONLY';
 export const SCREEN_FACTORY_STATES = Object.freeze([
   'STOPPED', 'RUNNING', 'PAUSING', 'PAUSED', 'GENERATING', 'RENDERING',
@@ -24,7 +25,7 @@ const MANIFEST_REL = 'screen-factory/manifest.json';
 const CONTROL_REL = 'screen-factory/control.json';
 const HEARTBEAT_REL = 'screen-factory/heartbeat.json';
 const REQUEST_REL = 'screen-factory/requests/current.json';
-const BATCH_SIZE = 10;
+const FUNCTIONAL_GROUP_SIZE = 40; // control-plane/Hermes envelope; composition requests use the adaptive 10-40 governor
 const CONTRACT_BLOCK_RECHECK_MS = Number(process.env.DIAL_SCREEN_FACTORY_CONTRACT_RECHECK_MS || 10000);
 const RUNTIME_BLOCK_RETRY_MS = Number(process.env.DIAL_SCREEN_FACTORY_RUNTIME_RETRY_MS || 60000);
 const STORAGE_BLOCK_RETRY_MS = Number(process.env.DIAL_SCREEN_FACTORY_STORAGE_RETRY_MS || 60000);
@@ -339,8 +340,8 @@ function batchForTask(manifest, task) {
     && item.business_unit === task.business_unit && item.platform === task.platform).sort(taskOrder);
   const index = peers.findIndex((item) => item.task_id === task.task_id);
   if (index < 0) throw new Error(`task not found in platform group: ${task.task_id}`);
-  const number = Math.floor(index / BATCH_SIZE) + 1;
-  const tasks = peers.slice((number - 1) * BATCH_SIZE, number * BATCH_SIZE);
+  const number = Math.floor(index / FUNCTIONAL_GROUP_SIZE) + 1;
+  const tasks = peers.slice((number - 1) * FUNCTIONAL_GROUP_SIZE, number * FUNCTIONAL_GROUP_SIZE);
   return {
     batch_id: `${safeName(task.business_unit)}__${task.platform}__B${String(number).padStart(3, '0')}`,
     business_unit: task.business_unit, platform: task.platform, number,
@@ -429,12 +430,12 @@ export function prepareChatGPTBatch(root) {
   if (!batch) return null;
   const candidates = batch.task_ids.map((id) => manifest.tasks.find((task) => task.task_id === id)).filter(Boolean).filter((task) => !completedTask(task));
   const tasks = [];
-  for (const task of candidates) { if (!contractReadiness(task).ready) break; tasks.push(task); if (tasks.length >= BATCH_SIZE) break; }
+  for (const task of candidates) { if (!contractReadiness(task).ready) break; tasks.push(task); if (tasks.length >= FUNCTIONAL_GROUP_SIZE) break; }
   if (!tasks.length) { const blocked = candidates[0]; throw new Error(`SCREEN_CONTRACT_NOT_READY ${blocked?.task_id || batch.batch_id}: ${contractReadiness(blocked || {}).reason}`); }
   const request = {
     schema_version: 3, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_SCREEN_IMPLEMENTATION_COMPILER_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_COMPACT_SCREEN_COMPOSITION_ONLY',
     ping_type: 'FUNCTION_ONLY_SCREEN_GENERATION_PING',
     calibration_profile: { design_system: SCREEN_FACTORY_DESIGN_SYSTEM, design_policy: SCREEN_FACTORY_DESIGN_POLICY, premium_visual_standard: PREMIUM_VISUAL_STANDARD_VERSION, injection_owner: 'SCREEN_FACTORY_PROMPT_ASSEMBLER' },
     design_boundary: {
@@ -468,10 +469,22 @@ export function screenFactoryStatus(root) {
   const materialized = required.filter(localCompletedTask);
   const next = required.filter((task) => !completedTask(task)).sort(taskOrder)[0] || null;
   const request = currentRequest(root);
+  const generationRuntime = openRouterScreenGeneratorStatus(root);
+  const compositionRuntime = compositionPipelineStatus(root);
+  const usage = generationRuntime?.usage || {};
+  const acceptedCount = complete.length;
+  const efficiency = {
+    request_attempts: Number(usage.request_attempts || 0),
+    successful_requests: Number(usage.successful_requests || 0),
+    total_tokens: Number(usage.total_tokens || 0),
+    requests_per_accepted_screen: acceptedCount ? Number((Number(usage.request_attempts || 0) / acceptedCount).toFixed(3)) : null,
+    tokens_per_accepted_screen: acceptedCount ? Math.round(Number(usage.total_tokens || 0) / acceptedCount) : null,
+    target_screens_per_composition_request: compositionRuntime.target_batch_size,
+  };
   return {
     schema_version: 4, authority: SCREEN_FACTORY_AUTHORITY,
     generator_mode: SCREEN_FACTORY_GENERATOR_MODE, generator_authority: SCREEN_FACTORY_GENERATOR_AUTHORITY,
-    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_SCREEN_IMPLEMENTATION_COMPILER_ONLY',
+    hermes_role: HERMES_SCREEN_FACTORY_ROLE, openrouter_role: 'AUTHORITATIVE_COMPACT_SCREEN_COMPOSITION_ONLY',
     state: control.state, requested_state: control.requested_state,
     active_task_id: control.active_task_id, active_batch_id: control.active_batch_id,
     last_error: control.last_error, required_total: required.length, complete: complete.length,
@@ -498,7 +511,8 @@ export function screenFactoryStatus(root) {
     by_business_unit: progressBreakdown(manifest.tasks, 'business_unit'),
     by_platform: progressBreakdown(manifest.tasks, 'platform'),
     storage: storageStatus(root),
-    generation_runtime: openRouterScreenGeneratorStatus(root),
+    generation_runtime: generationRuntime,
+    composition_pipeline: compositionRuntime, generation_efficiency: efficiency,
     batches: manifest.batches || [], platform_packages: manifest.platform_packages || [], updated_at: now(),
   };
 }
@@ -735,7 +749,7 @@ function claimNextTask(manifest) {
 }
 
 function runtimeInfrastructureBlocked(reason) {
-  return /OpenRouter Screen Factory generation|OpenRouter model catalog|no eligible curated free OpenRouter|usage limit|rate.?limit|HTTP 429|HTTP 5\d\d|\bETIMEDOUT\b|timed? ?out|timeout|AbortError|command not found|executable not found/i.test(String(reason || ''));
+  return /OpenRouter Screen Factory generation|OpenRouter Screen Factory account quota|OpenRouter model catalog|no eligible curated free OpenRouter|usage limit|rate.?limit|HTTP 429|HTTP 5\d\d|\bETIMEDOUT\b|timed? ?out|timeout|AbortError|command not found|executable not found/i.test(String(reason || ''));
 }
 
 export async function runScreenFactoryTick({ root, compiler = compileScreenPacket, renderer = renderScreenBundle, auxiliary = auxiliaryReview } = {}) {
@@ -782,8 +796,9 @@ export async function runScreenFactoryTick({ root, compiler = compileScreenPacke
     setControl(root,{state:'QA'});
     task.bundle_dir=rendered.bundle_dir; task.asset_path=rendered.png_path; task.basic_qa=rendered.qa.pass?'PASS':'FAIL'; task.visual_qa='NOT_RUN'; task.approved=false; task.implementation_ready=true;
     task.status=rendered.qa.pass?'COMPLETE':'FAILED'; task.last_error=rendered.qa.pass?null:rendered.qa.failures.join(','); task.lease=null; task.updated_at=now();
-    task.generator_provenance={authority:'OPENROUTER_SCREEN_COMPILER',generator:'SCREEN_IMPLEMENTATION_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,model_selection:generated.model_selection||null,visual_standard:generated.quality_review?.visual_standard||null,openrouter_compiled_implementation:true,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
+    task.generator_provenance={authority:'OPENROUTER_SCREEN_COMPOSITION',generator:'COMPACT_COMPOSITION_DSL_COMPILER',policy:generated.policy||SCREEN_GENERATOR_POLICY,runtime:generated.runtime,model:generated.model,model_selection:generated.model_selection||null,visual_standard:generated.quality_review?.visual_standard||null,composition_dsl:generated.quality_review?.composition_dsl||null,openrouter_compiled_composition:true,openrouter_compiled_implementation:false,hermes_generated_pixels:false,openrouter_generated_pixels:false,deterministic_renderer:'PLAYWRIGHT_CHROMIUM'};
     task.quality_review=generated.quality_review||null;
+    recordCompositionOutcome({root,task,pass:rendered.qa.pass,repaired:Boolean(generated.quality_review?.repaired)});
     task.auxiliary_review={authority:'NON_AUTHORITATIVE_AUXILIARY_ONLY',state:aux?.state||null,model:aux?.model||null};
     reconcileBatch(manifest,task); reconcilePlatformPackage(manifest,task,root); writeJsonAtomic(MANIFEST_REL,{...manifest,updated_at:now()},root);
     appendJsonl('events/screen-factory.jsonl',{event:task.status==='COMPLETE'?'SCREEN_FACTORY_TASK_COMPLETE':'SCREEN_FACTORY_TASK_QA_FAILED',task_id:task.task_id,screen_id:task.screen_id,platform:task.platform,model:generated.model,runtime:generated.runtime,basic_qa:task.basic_qa,qa_failures:rendered.qa.failures||[],at:now()},root);
