@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+set -euo pipefail
+umask 077
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
+HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export DIAL_REPO_DIR DIAL_CONTROL_HOME HERMES_HOME CODEX_HOME
+if [[ -S "/run/user/$(id -u)/bus" ]]; then
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+fi
+fail(){ echo "ERROR: $*" >&2; exit 1; }
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" ]] || fail "screen-factory.mjs missing"
+for cmd in node systemctl python3 npx; do command -v "$cmd" >/dev/null || fail "$cmd is required"; done
+mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user" "$DIAL_CONTROL_HOME/screen-factory" "$DIAL_CONTROL_HOME/secrets"
+chmod 700 "$HOME/.local/bin" "$DIAL_CONTROL_HOME" "$DIAL_CONTROL_HOME/screen-factory" "$DIAL_CONTROL_HOME/secrets" 2>/dev/null || true
+cd "$DIAL_REPO_DIR"
+npx playwright install chromium >/dev/null
+NODE_BIN="$(command -v node)"
+cat >"$HOME/.local/bin/dial-health-screen-factory" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_REPO_DIR="$DIAL_REPO_DIR"
+export DIAL_CONTROL_HOME="$DIAL_CONTROL_HOME"
+exec "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" "\$@"
+EOF
+cat >"$HOME/.local/bin/dial-hermes-openrouter" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_CONTROL_HOME="$DIAL_CONTROL_HOME"
+if [[ "\${1:-}" == "configure" ]]; then
+  read -r -s -p "OpenRouter API key: " OPENROUTER_SECRET; echo
+  printf '%s' "\$OPENROUTER_SECRET" | "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" configure --api-key-stdin
+  unset OPENROUTER_SECRET
+else
+  exec "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" "\$@"
+fi
+EOF
+cat >"$HOME/.local/bin/dial-health-screen-factory-openrouter" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_CONTROL_HOME="$DIAL_CONTROL_HOME"
+if [[ "\${1:-}" == "configure" ]]; then
+  read -r -s -p "OpenRouter Screen Factory generation key: " OPENROUTER_SCREEN_SECRET; echo
+  printf '%s' "\$OPENROUTER_SCREEN_SECRET" | "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" configure --api-key-stdin
+  unset OPENROUTER_SCREEN_SECRET
+else
+  exec "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" "\$@"
+fi
+EOF
+chmod 0700 "$HOME/.local/bin/dial-health-screen-factory" "$HOME/.local/bin/dial-hermes-openrouter" "$HOME/.local/bin/dial-health-screen-factory-openrouter"
+if [[ ! -x "$HOME/.local/bin/rclone" ]]; then
+  command -v curl >/dev/null || fail "curl is required to install user-local rclone"
+  arch="$(uname -m)"; case "$arch" in aarch64|arm64) rarch=arm64;; x86_64) rarch=amd64;; *) fail "unsupported rclone architecture: $arch";; esac
+  tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+  curl -fsSL "https://downloads.rclone.org/rclone-current-linux-$rarch.zip" -o "$tmp/rclone.zip"
+  python3 -m zipfile -e "$tmp/rclone.zip" "$tmp/unpack"
+  rbin="$(find "$tmp/unpack" -type f -name rclone | head -1)"; [[ -n "$rbin" ]] || fail "rclone binary missing from archive"
+  install -m 0755 "$rbin" "$HOME/.local/bin/rclone"
+  rm -rf "$tmp"; trap - EXIT
+fi
+cat >"$HOME/.local/bin/dial-health-screen-factory-storage" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+CONTROL_HOME="\${DIAL_CONTROL_HOME:-$DIAL_CONTROL_HOME}"
+CONFIG="\$CONTROL_HOME/secrets/rclone.conf"
+RCLONE="$HOME/.local/bin/rclone"
+SYNC="$DIAL_REPO_DIR/deploy/oracle/hermes-codex/screen-factory-storage-sync.sh"
+case "\${1:-status}" in
+  status) cat "\$CONTROL_HOME/screen-factory/storage-status.json" 2>/dev/null || true; echo "Configured remotes:"; "\$RCLONE" listremotes --config "\$CONFIG" 2>/dev/null || true ;;
+  config) exec "\$RCLONE" config --config "\$CONFIG" ;;
+  sync) exec "\$SYNC" once ;;
+  *) echo "Usage: dial-health-screen-factory-storage {status|config|sync}" >&2; exit 2 ;;
+esac
+EOF
+chmod 0700 "$HOME/.local/bin/dial-health-screen-factory-storage"
+cat >"$HOME/.config/systemd/user/dial-health-screen-factory.service" <<EOF
+[Unit]
+Description=Dial Health Screen Factory worker
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=$DIAL_REPO_DIR
+Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
+Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY OPENROUTER_API_KEY
+ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs daemon
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadOnlyPaths=$DIAL_REPO_DIR
+ReadWritePaths=$DIAL_CONTROL_HOME
+[Install]
+WantedBy=default.target
+EOF
+cat >"$HOME/.config/systemd/user/dial-health-screen-factory-dashboard.service" <<EOF
+[Unit]
+Description=Dial Health Screen Factory dashboard/controller
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=$DIAL_REPO_DIR
+Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
+Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=DIAL_SCREEN_FACTORY_HOST=127.0.0.1
+Environment=DIAL_SCREEN_FACTORY_PORT=9121
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY OPENROUTER_API_KEY
+ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/screen-factory-server.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadOnlyPaths=$DIAL_REPO_DIR
+ReadWritePaths=$DIAL_CONTROL_HOME
+[Install]
+WantedBy=default.target
+EOF
+cat >"$HOME/.config/systemd/user/dial-health-screen-factory-storage.service" <<EOF
+[Unit]
+Description=Dial Health Screen Factory storage sync
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=$DIAL_REPO_DIR
+Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=RCLONE_BIN=$HOME/.local/bin/rclone
+ExecStart=$DIAL_REPO_DIR/deploy/oracle/hermes-codex/screen-factory-storage-sync.sh
+Restart=always
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadOnlyPaths=$DIAL_REPO_DIR
+ReadWritePaths=$DIAL_CONTROL_HOME $HOME/.config/rclone
+[Install]
+WantedBy=default.target
+EOF
+"$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory.mjs" init >/dev/null
+"$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary-openrouter.mjs" catalog >/dev/null || true
+"$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/screen-factory-openrouter-generator.mjs" catalog >/dev/null || true
+systemctl --user daemon-reload
+systemctl --user enable dial-health-screen-factory.service
+systemctl --user enable --now dial-health-screen-factory-dashboard.service
+systemctl --user enable --now dial-health-screen-factory-storage.service
+systemctl --user stop dial-health-screen-factory.service >/dev/null 2>&1 || true
+sleep 1
+systemctl --user is-enabled --quiet dial-health-screen-factory.service || fail "Screen Factory worker service is not enabled"
+systemctl --user is-active --quiet dial-health-screen-factory-dashboard.service || fail "Screen Factory dashboard did not start"
+systemctl --user is-active --quiet dial-health-screen-factory-storage.service || fail "Screen Factory storage sync did not start"
+cat <<'EOF'
+DIAL HEALTH SCREEN FACTORY INSTALLED
+Dashboard: http://127.0.0.1:9121
+Hermes manager policy remains separate from Screen Factory generation.
+Screen Factory composition uses the dedicated curated OpenRouter free-model pool only; models emit compact family-level composition DSL while Dial compiles the implementation locally. No Sol or Sonnet generation fallback is wired into the Screen Factory worker.
+Configure/rotate the Screen Factory generation key with: dial-health-screen-factory-openrouter configure
+The separate dial-hermes-openrouter helper remains auxiliary-only outside Screen Factory generation.
+Import the canonical expanded Screen Factory manifest with: dial-health-screen-factory import /path/to/generation_manifest.json
+Then press Play in the dashboard. Play starts and latches autonomous execution; Pause holds the worker, Resume continues, and Stop cooperatively exits the worker.
+EOF

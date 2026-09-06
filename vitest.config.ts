@@ -9,10 +9,15 @@ import { defineConfig } from 'vitest/config';
  * This never surfaced while Playwright was uninstalled: the spec existed but
  * nothing could resolve its import, so it was skipped rather than run. Adding
  * the dependency turned a silently absent suite into a failing one.
+ *
+ * The orchestration control-plane qualification is intentionally an .mjs test
+ * because the control-plane implementation is native ESM infrastructure. Keep
+ * that single non-TypeScript suite explicit rather than widening collection to
+ * every JavaScript file under tests/.
  */
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/**/*.test.ts', 'tests/orchestration-control-plane.test.mjs', 'tests/orchestration-operations-plane.test.mjs', 'tests/orchestration-screen-factory.test.mjs'],
     exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });
