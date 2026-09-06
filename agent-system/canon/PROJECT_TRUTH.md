@@ -12,6 +12,21 @@ Corporate Management OS is first-class and horizontal to the business divisions.
 ## Dial Health
 Dial Health/ZHOTN is a **required standalone division**, not a portfolio candidate. Health-specific clinical/pharmacy/funder/emergency/safety authorities remain inside the Dial Health architecture while shared DIAL capabilities are consumed through explicit contracts.
 
+### Dial Health source-of-truth lock — v6.1
+The current singular specialist authority is:
+
+`Dial_Health_ZHOTN_v6.1_Singular_Source_of_Truth_Master.md`
+
+Reference date: **6 September 2026**.
+
+It supersedes v6.0 and all earlier independent Health masters/closure packs for implementation intent. Main-DIAL `docs/dial/final-audit/04_DIVISIONS/HEALTH_AUDIT.md` is a compact bridge into that specialist source; it is not a replacement for the Health master.
+
+`HEALTH-F014` now includes the incorporated **Claims Control Centre + Real-Time Financial Clearance + Shortfall Prevention + Claims Policy Studio + synchronous/deferred adjudication + Funding Stack/COB + claim preflight + coding/validation registry + rule-driven human review + payment/remittance/reconciliation + local/private Hermes claims intelligence** closure.
+
+The former standalone claims Rev 3 document is provenance/history only after incorporation into v6.1. Development must not treat it, an AI research note, UI board or donor reference as an independent competing source of truth.
+
+For claims implementation, the v6.1 master maps **330 atomic features to 113 canonical claims-related pages with zero orphan pages**. `MAPPED / SPEC-COMPLETE` is not implementation evidence.
+
 ## Non-negotiable
 - DIAL domains remain SoR; donors never own canonical money/jobs/orders/delivery/auth/compliance.
 - agency-only Spare; no discarded D-51 owned-stock principal.
@@ -34,6 +49,8 @@ Resolve a Feature ID first. Use JIT context. Completion claims require fresh evi
 The 186 top-level features are anchors, not the completeness boundary.
 Every feature must implement its 8 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints, donor transformation and support/escalation requirements.
 
+For Dial Health high-consequence domains, the specialist v6.1 atomic feature/page contracts and Health-specific security, clinical-safety, claims, money, privacy and regulatory gates additionally apply.
+
 ## Client app lock
 - DIAL Consumer: unified modular super-app for non-health consumer branches.
 - Dial Health/My Health: standalone specialist app/web.
@@ -42,6 +59,8 @@ Every feature must implement its 8 realization facets, applicable supporting cap
 
 ## Customer service lock
 DIAL Support OS is horizontal. Automated support must be grounded/tool-scoped and hand off to human Chatwoot agents with full context. Formal disputes/liability/compensation escalate to RCE.
+
+Health claims/clinical/pharmacy support cannot expose or resolve protected specialist matters through a generic Main-DIAL support path; it must respect the Dial Health privacy, role, purpose and escalation architecture.
 
 ## EPC/visual lock
 The parallel EPC/hero transformation specialist specification must integrate through DIAL Vehicle Hub, Catalogue/Fitment, VisualAssetRegistry and EPC adapter contracts. Generated assets are navigation content, never catalogue truth.
@@ -55,6 +74,8 @@ DIAL owns the official Cloud API/Flows gateway.
 Chatwoot is a bridged human-support console through the Support architecture, not the canonical Meta/business-state owner.
 WhatsApp must support structured branch transactions, eligible payment initiation/status, fulfilment issues, automated support and human escalation. Paynow/ContiPay always use DIAL PaymentIntent and authoritative provider confirmation.
 
+Health WhatsApp/AI interactions remain behind Dial Health's specialist gateway/privacy/tool boundaries. Identifiable health/claim data is not shipped to general external AI by default.
+
 ## DIAL Home visual lock
 DIAL Home final art direction is `Premium Solutions Environment`.
 The shadcn landing donor is a structural/component source only; the final experience must exude solutions, professionalism, trust and modern premium restraint.
@@ -66,11 +87,15 @@ Supabase publishable key may be client-side; secret/service-role keys never are.
 RLS is mandatory on exposed tables.
 Server authorization + RLS + typed commands + negative tests are required.
 
+Health additionally applies sensitive-health-data, purpose, authority, local-data-plane, AI-egress and regulatory controls from the v6.1 specialist master.
+
 ## Payment channels lock — v1.6
 DIAL accepts Cash, EcoCash Direct USSD Push, Paynow, ContiPay and PayPal through one canonical PaymentIntent/PaymentEvent/Ledger architecture.
 Provider/customer action is not settlement.
 Each BU has dedicated channel accounts/journals plus a non-posting combined control/journal view, Petty Cash and Returns journal.
 No division/payment provider owns a second ledger.
+
+Health funding-stack/claim settlement may consume shared payment rails through explicit contracts, but ClaimsService/Funding Stack/Health funder logic does not become a competing DIAL ledger.
 
 ## Finance UI lock — v1.6
 Finance accounts/journals use bank-statement-style rows:
@@ -86,4 +111,3 @@ Request/approve/release/custody authority derives from Position/FinancialAuthori
 CompanyPosition is versioned and includes role-based contract template, permission bundles, financial authority, job description, compensation defaults, SHEQ/training/assets/PPE requirements.
 Onboarding captures employee photo via image picker/camera and processes it through private secure upload.
 Signed employment contracts are immutable snapshots; position template changes do not rewrite history.
-
