@@ -6,7 +6,7 @@ import { contractReadiness } from './screen-factory-design-policy.mjs';
 import { PREMIUM_VISUAL_STANDARD_VERSION } from './screen-factory-premium-visual-standard.mjs';
 import {
   ALLOWED_REGION_TYPES, REGION_VARIANT_CATALOG, SCREEN_COMPOSITION_DSL_VERSION, compactCompositionContract,
-  compositionContractHash, validateComposition, compileCompositionToPacket,
+  compositionContractHash, validateComposition, compileCompositionToPacket, lockedCanonicalComposition,
 } from './screen-factory-composition-dsl.mjs';
 
 export const SCREEN_COMPOSITION_BATCH_POLICY = 'COMPACT_PLATFORM_FAMILY_BATCH_DSL_V1';
@@ -85,6 +85,11 @@ async function repairOne({root,task,entry,feedback,modelCaller=callOpenRouterScr
 
 export async function compactCompileScreenPacket({task,root,modelCaller=callOpenRouterScreenCompiler}={}){
   if(!task?.task_id)throw new Error('screen task required');
+  const locked=lockedCanonicalComposition(task);
+  if(locked){
+    const {packet,composition}=compileCompositionToPacket(task,locked);
+    return {packet,runtime:'dial_locked_canonical_composition',model:'LOCAL_DIAL_DESIGN_SYSTEM',policy:SCREEN_COMPOSITION_BATCH_POLICY,design_policy:'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3',model_selection:{batch_key:'LOCKED_MY_HEALTH_REV3',batch_size:0,composition_dsl:SCREEN_COMPOSITION_DSL_VERSION,provider_requests:0},quality_review:{visual_standard:PREMIUM_VISUAL_STANDARD_VERSION,composition_dsl:SCREEN_COMPOSITION_DSL_VERSION,batch_key:'LOCKED_MY_HEALTH_REV3',batch_size:0,repaired:false,deterministic_quality_gate:true,ai_review_mode:'NOT_REQUIRED_LOCKED_REFERENCE_COMPOSITION',provider_requests:0},composition};
+  }
   let cache=readCache(root,task), entry=cache.entries?.[task.task_id];
   // A family request is issued only for an unseen task. If a previous family batch already
   // cached siblings but left this one invalid, repair only this composition and keep the
@@ -109,4 +114,4 @@ export function recordCompositionOutcome({root,task,pass,repaired=false}={}){
   g.updated_at=now();writeJsonAtomic(GOVERNOR_REL,g,root);return g;
 }
 
-export function compositionPipelineStatus(root){const g=governor(root);return {policy:SCREEN_COMPOSITION_BATCH_POLICY,dsl_version:SCREEN_COMPOSITION_DSL_VERSION,target_batch_size:compositionBatchSize(root),min_batch_size:MIN_COMPOSITION_BATCH_SIZE,max_batch_size:MAX_COMPOSITION_BATCH_SIZE,last_sample:g.last_sample||null};}
+export function compositionPipelineStatus(root){const g=governor(root);return {policy:SCREEN_COMPOSITION_BATCH_POLICY,dsl_version:SCREEN_COMPOSITION_DSL_VERSION,target_batch_size:compositionBatchSize(root),min_batch_size:MIN_COMPOSITION_BATCH_SIZE,max_batch_size:MAX_COMPOSITION_BATCH_SIZE,locked_reference_fast_path:'MY_HEALTH_27_SCREEN_FAMILY_ZERO_PROVIDER_REQUESTS',last_sample:g.last_sample||null};}

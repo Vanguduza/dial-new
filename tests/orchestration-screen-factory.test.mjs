@@ -143,6 +143,25 @@ describe('OpenRouter Screen Factory generation isolation', () => {
 
 
 describe('compact batch composition pipeline', () => {
+  it('uses the locked My Health reference family with zero provider requests', async () => {
+    const root=temp('locked-my-health-zero-provider');
+    const task={
+      task_id:'MH-S001::android_mobile',screen_id:'MH-S001',title:'Home / Today',business_unit:'My Health',platform:'android_mobile',platform_policy:'REQUIRED',
+      purpose:'Give the member a calm, personalised starting point showing only what needs attention now and clear routes to care, medicines, cover and records.',
+      features:'greeting/context; next appointment summary; one health/cover attention card when relevant; recent result/record teaser; primary shortcuts to Need Care, Need Medicine, Medical Aid and Records; notifications badge',
+      interaction:'Open focused module; open next appointment; open recent result; dismiss non-critical teaser; view all for collections',
+      next_routes:'/my-health/need-care; /my-health/appointments; /my-health/records; /my-health/medical-aid',required_variants:'LOADING; POPULATED; EMPTY',archetype:'Consumer Home',
+      evidence_basis:['TEST-CANONICAL-CONTRACT'],ux_profile:'MY_HEALTH_WARM_PROGRESSIVE_DISCLOSURE',design_version:'DH-UI-CANONICAL-3.0',design_policy_version:'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3',generation_attempts:0,
+    };
+    let calls=0; const modelCaller=async()=>{calls+=1;throw new Error('provider should not be called')};
+    const result=await compileScreenPacket({task,root,modelCaller});
+    expect(calls).toBe(0);
+    expect(result.runtime).toBe('dial_locked_canonical_composition');
+    expect(result.model).toBe('LOCAL_DIAL_DESIGN_SYSTEM');
+    expect(result.model_selection.provider_requests).toBe(0);
+    expect(result.packet.semantic_html).toContain('dh-home-screen');
+  });
+
   it('generates 27 screen compositions in one model request and compiles implementation locally', async () => {
     const root = temp('compact-batch-27');
     const source = path.join(root, 'source.json');

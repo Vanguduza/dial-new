@@ -17,6 +17,13 @@ The model decides **hierarchy and composition only**. Dial's deterministic compi
 
 An AI repair request is made only when deterministic QA identifies a composition-level defect that cannot be corrected by the locked renderer. There is no mandatory model committee for ordinary screens.
 
+
+## Reference-locked zero-request fast path
+
+The approved My Health reference family has 27 canonical screen contracts and corresponding locked composition recipes. For these exact canonical contracts, Screen Factory does not call OpenRouter at all. Dial compiles the locked hierarchy, canonical contract and premium component system locally, then renders and QA-checks each platform independently. Android, iOS and responsive-web therefore require **zero provider requests for the 81 My Health screens**.
+
+The three-model OpenRouter pool remains active for families that do not yet have a locked reference composition and for explicitly authorized design exceptions. It is not used merely to re-decide already locked My Health hierarchy. This preserves provider quota for genuinely creative or unresolved screens while improving consistency.
+
 ## Request efficiency
 
 - Initial target: **27 screens per composition request**.

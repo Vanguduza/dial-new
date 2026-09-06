@@ -137,7 +137,7 @@ async function deterministicQa(page, task, packet, layout) {
     failures,
     metrics,
     counts: { semantic_nodes: layout.length, actionable: actionable.length, visible_actionable: visibleActionable.length, tiny_targets: tinyTargets.length, unlabeled: unlabeled.length },
-    note: 'Deterministic render QA is not visual approval and never implies UX_GREEN.',
+    note: 'Deterministic render QA is not visual approval and never implies UX_GREEN. Canonical PNG captures the target viewport; full scroll depth is validated from DOM metrics.',
     observed_at: now(),
   };
 }
@@ -166,7 +166,7 @@ export async function renderScreenBundle({ task, packet, outputRoot } = {}) {
     const qa = await deterministicQa(page, task, packet, layout);
     const tempPng = path.join(bundleDir, `${bundleName}.png.partial`);
     const pngPath = path.join(bundleDir, `${bundleName}.png`);
-    await page.screenshot({ path: tempPng, type: 'png', fullPage: true, animations: 'disabled' });
+    await page.screenshot({ path: tempPng, type: 'png', fullPage: false, animations: 'disabled' });
     fs.renameSync(tempPng, pngPath);
     atomicJson(path.join(bundleDir, `${bundleName}.layout.json`), {
       schema_version: 1, screen_id: task.screen_id, platform: task.platform,
