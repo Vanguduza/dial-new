@@ -25,6 +25,8 @@ An AI repair request is made only when deterministic QA identifies a composition
 - My Health has exactly 27 REQUIRED screens per platform, so Android, iOS and responsive-web can each be planned as one family request when the provider returns a valid batch.
 - The batch governor increases the target only after measured first-pass quality remains high and reduces it when QA pass rate falls.
 - A malformed subset is repaired together in one secondary batch request rather than one request per missing screen.
+- Mechanical model deviations such as duplicate action placement or more than four quick actions are normalized deterministically from the canonical action catalog, consuming no extra model request.
+- If a batch-repair still leaves one composition invalid, only that screen receives a targeted repair request; valid sibling compositions remain cached and the full family is never regenerated.
 - A later failed rendered screen receives a small composition patch request; successful sibling compositions remain cached and are never regenerated.
 
 ## Quality invariants

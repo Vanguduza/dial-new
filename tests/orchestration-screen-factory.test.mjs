@@ -172,6 +172,54 @@ describe('compact batch composition pipeline', () => {
     expect(compositionPipelineStatus(root).target_batch_size).toBe(27);
   });
 
+  it('normalizes duplicate and overfull action placement without spending another model request', () => {
+    const task = tasks(1)[0];
+    task.features = 'greeting/context; next appointment summary; primary shortcuts to Need Care, Need Medicine, Medical Aid and Records';
+    task.interaction = 'Open focused module; open next appointment; open recent result; dismiss non-critical teaser; view all for collections';
+    task.next_routes = '/my-health/need-care; /my-health/appointments; /my-health/records; /my-health/medical-aid';
+    task.archetype = 'Consumer Home';
+    const result = compileCompositionToPacket(task, { screen_id: task.screen_id, archetype:'consumer-home', regions:[
+      {type:'hero',feature_refs:[0],action_refs:[0,5],prominence:'primary',variant:'split'},
+      {type:'action_grid',feature_refs:[2],action_refs:[5,6,7,8,9,0],prominence:'primary',variant:'tiles'},
+      {type:'highlight',feature_refs:[1],action_refs:[1,5],prominence:'secondary',variant:'featured'},
+      {type:'list',feature_refs:[0],action_refs:[2,3,4],prominence:'quiet',variant:'compact'},
+    ]});
+    const refs = result.composition.regions.flatMap((r)=>r.action_refs);
+    const grid = result.composition.regions.find((r)=>r.type==='action_grid');
+    expect(grid.action_refs).toHaveLength(4);
+    expect(new Set(refs).size).toBe(refs.length);
+    expect(refs.length).toBeLessThanOrEqual(10);
+  });
+
+  it('targets one stubborn invalid composition after a family batch instead of regenerating valid siblings', async () => {
+    const root = temp('compact-targeted-invalid');
+    const source = path.join(root, 'source.json');
+    writeFileSync(source, JSON.stringify({ tasks: tasks(2) }));
+    importScreenFactoryManifest(source, root);
+    const manifest = readJson('screen-factory/manifest.json', null, root);
+    const calls = [];
+    const valid = (task) => ({ screen_id:task.screen_id, archetype:'focused-task', regions:[
+      {type:'hero',feature_refs:[0],action_refs:[0],prominence:'primary',variant:'summary'},
+      {type:'list',feature_refs:[1],action_refs:[1],prominence:'secondary',variant:'compact'},
+    ]});
+    const invalid = (task) => ({ screen_id:task.screen_id, archetype:'focused-task', regions:[
+      {type:'unsupported',feature_refs:[0],action_refs:[0],prominence:'primary',variant:'default'},
+      {type:'list',feature_refs:[1],action_refs:[1],prominence:'secondary',variant:'compact'},
+    ]});
+    const modelCaller = async (args) => {
+      calls.push(args);
+      if(calls.length===1) return {runtime:'test',model:'minimax/minimax-m3:free',selection:{},response:JSON.stringify({screens:[invalid(manifest.tasks[0]),valid(manifest.tasks[1])]})};
+      if(calls.length===2) return {runtime:'test',model:'nvidia/nemotron-3-ultra-550b-a55b:free',selection:{},response:JSON.stringify({screens:[invalid(manifest.tasks[0])]})};
+      return {runtime:'test',model:'z-ai/glm-5.2:free',selection:{},response:JSON.stringify(valid(manifest.tasks[0]))};
+    };
+    const first = await compileScreenPacket({task:manifest.tasks[0],root,modelCaller});
+    const second = await compileScreenPacket({task:manifest.tasks[1],root,modelCaller});
+    expect(calls.map((x)=>x.role)).toEqual(['batch_composer','batch_composer','composition_repair']);
+    expect(first.quality_review.repaired).toBe(true);
+    expect(second.packet.semantic_html).toContain('dh-screen');
+    expect(calls).toHaveLength(3);
+  });
+
   it('repairs only the failed composition instead of regenerating the full implementation', async () => {
     const root = temp('compact-repair');
     const source = path.join(root, 'source.json');

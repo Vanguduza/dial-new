@@ -92,17 +92,40 @@ export function validateComposition(composition, task) {
     const variant = allowedVariants.includes(requestedVariant) ? requestedVariant : allowedVariants[0] || 'default';
     return { type, feature_refs:uniqInts(region.feature_refs, features.length), action_refs:uniqInts(region.action_refs, actions.length), prominence:PROMINENCE.has(region.prominence)?region.prominence:'secondary', variant };
   });
+  // Normalize common model deviations locally so quota is not wasted repairing mechanics.
+  // Product truth still comes only from the canonical action catalog; normalization may
+  // remove duplicate/excess placement but never invent an action.
+  const shortcutFeature = features.find((feature) => /shortcuts?\s+to\s+/i.test(String(feature)));
+  if (shortcutFeature) {
+    const match = String(shortcutFeature).match(/shortcuts?\s+to\s+(.+)$/i);
+    const names = (match?.[1] || '').split(/,|\band\b/i).map((x) => x.trim()).filter(Boolean).slice(0,4);
+    const preferred = names.map((name) => actions.findIndex((item) => slug(item.label) === slug(`Open ${name}`))).filter((i) => i >= 0);
+    const grid = regions.find((region) => region.type === 'action_grid');
+    if (grid && preferred.length >= 2) {
+      grid.action_refs = [...new Set(preferred)].slice(0,4);
+      const owned = new Set(grid.action_refs);
+      for (const region of regions) if (region !== grid) region.action_refs = region.action_refs.filter((ref) => !owned.has(ref));
+    }
+  }
+  const seenActions = new Set(); let visibleActionCount = 0;
+  for (const region of regions) {
+    const normalized = [];
+    for (const ref of region.action_refs) {
+      if (seenActions.has(ref) || visibleActionCount >= 10) continue;
+      if (region.type === 'action_grid' && normalized.length >= 4) continue;
+      seenActions.add(ref); normalized.push(ref); visibleActionCount += 1;
+    }
+    region.action_refs = normalized;
+  }
   const allActionRefs = regions.flatMap((r) => r.action_refs);
   const selectedActions = new Set(allActionRefs);
-  if (selectedActions.size !== allActionRefs.length) throw new Error(`composition ${task.screen_id} duplicates canonical actions across regions`);
   if (actions.length && !selectedActions.size) throw new Error(`composition ${task.screen_id} does not expose any canonical action`);
-  if (selectedActions.size > 10) throw new Error(`composition ${task.screen_id} exposes too many first-load actions`);
   const selectedFeatures=new Set(regions.flatMap((r)=>r.feature_refs));
   if(features.length>1&&selectedFeatures.size<Math.min(3,features.length))throw new Error(`composition ${task.screen_id} under-represents first-load feature hierarchy`);
   const recipe=compositionRecipeFor(task), types=regions.map((r)=>r.type);
   if(recipe.length&&types[0]!==recipe[0])throw new Error(`composition ${task.screen_id} must start with recommended ${recipe[0]} region`);
   const fit=recipe.filter((type)=>types.includes(type)).length; if(fit<Math.min(2,recipe.length))throw new Error(`composition ${task.screen_id} does not fit its archetype recipe`);
-  const actionGrid=regions.find((r)=>r.type==='action_grid'); if(actionGrid&&actionGrid.action_refs.length>4)throw new Error(`composition ${task.screen_id} action grid exceeds four first-load choices`);
+  const actionGrid=regions.find((r)=>r.type==='action_grid'); if(actionGrid&&actionGrid.action_refs.length>4)throw new Error(`composition ${task.screen_id} action grid normalization failed`);
   return { dsl_version:SCREEN_COMPOSITION_DSL_VERSION, screen_id:task.screen_id, archetype:slug(composition.archetype || task.archetype || 'screen'), regions };
 }
 

@@ -56,10 +56,10 @@ async function generateBatch({root,task,modelCaller=callOpenRouterScreenCompiler
   const cache=readCache(root,task); let valid=0, invalid=0; const invalidTasks=[]; const validRows=[];
   for(const t of tasks){
     try{const composition=validateComposition(byId.get(String(t.screen_id)),t);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),composition,model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now(),repaired:false,usage:turn.usage||null};validRows.push({task:t,composition});valid++;}
-    catch(error){invalid++;invalidTasks.push(t);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),invalid:true,last_error:String(error?.message||error).slice(0,500),model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now()};}
+    catch(error){invalid++;invalidTasks.push(t);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),invalid:true,raw_composition:byId.get(String(t.screen_id))||null,last_error:String(error?.message||error).slice(0,500),model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now()};}
   }
   if(tasks.length>=10){
-    for(const row of diversityOverflow(validRows)){const t=row.task;cache.entries[t.task_id]={...cache.entries[t.task_id],invalid:true,composition:null,last_error:'composition family clone limit exceeded; vary hierarchy/type/variant'};invalidTasks.push(t);valid--;invalid++;}
+    for(const row of diversityOverflow(validRows)){const t=row.task;cache.entries[t.task_id]={...cache.entries[t.task_id],invalid:true,raw_composition:row.composition,composition:null,last_error:'composition family clone limit exceeded; vary hierarchy/type/variant'};invalidTasks.push(t);valid--;invalid++;}
   }
   let retryTurn=null, recovered=0;
   if(invalidTasks.length){
@@ -67,7 +67,7 @@ async function generateBatch({root,task,modelCaller=callOpenRouterScreenCompiler
     const retryPayload=parseJson(retryTurn.response);const retryScreens=Array.isArray(retryPayload?.screens)?retryPayload.screens:[];const retryById=new Map(retryScreens.map((x)=>[String(x.screen_id),x]));
     const signatureCounts=new Map();
     for(const t of tasks){const e=cache.entries[t.task_id];if(!e?.invalid&&e?.composition){const sig=compositionSignature(e.composition);signatureCounts.set(sig,(signatureCounts.get(sig)||0)+1);}}
-    for(const t of invalidTasks){try{const composition=validateComposition(retryById.get(String(t.screen_id)),t);const sig=compositionSignature(composition);if(tasks.length>=10&&(signatureCounts.get(sig)||0)>=4)throw new Error('composition family clone limit exceeded after repair');signatureCounts.set(sig,(signatureCounts.get(sig)||0)+1);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),composition,model:retryTurn.model,original_model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now(),repaired:true,batch_repair:true,usage:retryTurn.usage||null};recovered++;valid++;invalid--;}catch(error){cache.entries[t.task_id].last_error=`${cache.entries[t.task_id].last_error}; retry: ${String(error?.message||error).slice(0,300)}`;}}
+    for(const t of invalidTasks){try{const composition=validateComposition(retryById.get(String(t.screen_id)),t);const sig=compositionSignature(composition);if(tasks.length>=10&&(signatureCounts.get(sig)||0)>=4)throw new Error('composition family clone limit exceeded after repair');signatureCounts.set(sig,(signatureCounts.get(sig)||0)+1);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),composition,model:retryTurn.model,original_model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now(),repaired:true,batch_repair:true,usage:retryTurn.usage||null};recovered++;valid++;invalid--;}catch(error){const current=cache.entries[t.task_id];current.raw_composition=retryById.get(String(t.screen_id))||current.raw_composition||null;current.retry_model=retryTurn.model;current.last_error=`${current.last_error}; retry: ${String(error?.message||error).slice(0,300)}`;}}
     appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_COMPOSITION_BATCH_INVALID_REPAIR',family:familyKey(task),batch_key:key,requested:invalidTasks.length,recovered,remaining_invalid:invalid,model:retryTurn.model,usage:retryTurn.usage||null,at:now()},root);
   }
   writeCache(root,task,cache);
@@ -86,10 +86,16 @@ async function repairOne({root,task,entry,feedback,modelCaller=callOpenRouterScr
 export async function compactCompileScreenPacket({task,root,modelCaller=callOpenRouterScreenCompiler}={}){
   if(!task?.task_id)throw new Error('screen task required');
   let cache=readCache(root,task), entry=cache.entries?.[task.task_id];
-  if(!cacheEntryValid(entry,task)){await generateBatch({root,task,modelCaller});cache=readCache(root,task);entry=cache.entries?.[task.task_id];}
+  // A family request is issued only for an unseen task. If a previous family batch already
+  // cached siblings but left this one invalid, repair only this composition and keep the
+  // successful sibling work. This is the main request-quota protection invariant.
+  if(!entry){await generateBatch({root,task,modelCaller});cache=readCache(root,task);entry=cache.entries?.[task.task_id];}
   if(!cacheEntryValid(entry,task)){
-    const turn=await modelCaller({content:batchPrompt([task]),root,taskKey:`${task.task_id}::single-composition`,role:'batch_composer',maxOutputTokens:1800});
-    const payload=parseJson(turn.response);const raw=Array.isArray(payload?.screens)?payload.screens[0]:payload;const composition=validateComposition(raw,task);cache=readCache(root,task);entry={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(task),composition,model:turn.model,batch_key:`${task.task_id}::single`,batch_size:1,generated_at:now(),repaired:false,usage:turn.usage||null};cache.entries[task.task_id]=entry;writeCache(root,task,cache);
+    const targeted=Boolean(entry?.invalid);
+    const content=targeted&&entry?.raw_composition?singleRepairPrompt(task,entry.raw_composition,entry.last_error):batchPrompt([task]);
+    const turn=await modelCaller({content,root,taskKey:`${task.task_id}::targeted-composition`,role:targeted?'composition_repair':'batch_composer',excludeModels:[entry?.model,entry?.retry_model].filter(Boolean),maxOutputTokens:1800});
+    const payload=parseJson(turn.response);const raw=Array.isArray(payload?.screens)?payload.screens[0]:payload;const composition=validateComposition(raw,task);cache=readCache(root,task);const priorModel=entry?.model||null;entry={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(task),composition,model:turn.model,original_model:priorModel,batch_key:entry?.batch_key||`${task.task_id}::single`,batch_size:entry?.batch_size||1,generated_at:now(),repaired:targeted,targeted_repair:targeted,usage:turn.usage||null};cache.entries[task.task_id]=entry;writeCache(root,task,cache);
+    if(targeted)appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_COMPOSITION_TARGETED_REPAIR',task_id:task.task_id,model:turn.model,prior_model:priorModel,usage:turn.usage||null,at:now()},root);
   }
   const attempt=Number(task.generation_attempts||0); const feedback=String(task.last_error||task.prior_quality_feedback||'').trim();
   if(attempt>1&&feedback){const repaired=await repairOne({root,task,entry,feedback,modelCaller});entry=repaired.entry;}
