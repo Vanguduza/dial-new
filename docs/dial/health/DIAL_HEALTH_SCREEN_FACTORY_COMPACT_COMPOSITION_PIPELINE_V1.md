@@ -79,3 +79,9 @@ The dashboard API exposes both the composition-batch governor and OpenRouter usa
 ## Packaging and ordering
 
 Strict canonical screen order remains unchanged. Composition can be planned in a family batch, but each screen is still rendered, QA'd, persisted and accepted independently. A failed screen is not skipped. Batch ZIP files remain prohibited; packaging is one ZIP per completed business-unit/platform.
+
+## Professional workspace batching
+
+Family composition is audience-aware. My Health uses the consumer reference grammar; professional product families use a separate operator brief that favours command centres, workbenches, queues, schedules, reconciliation surfaces and longitudinal record workspaces. The renderer uses the same Dial Health brand system but switches professional desktop/tablet screens to a compact multi-column workspace profile instead of forcing consumer-mobile heroes and quick-action layouts.
+
+Practice OS core contract closure is bounded by `PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1.json`: 50 screen identities already containing documented features and interactions are ready across desktop and tablet. Missing route strings are represented by implementation-neutral `handoff://` identifiers derived from those documented interactions. The factory must stop at the next screen whose underlying behaviour is not documented rather than inferring specialty behaviour from a title.

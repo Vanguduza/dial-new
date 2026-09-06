@@ -275,3 +275,15 @@ The Screen Factory may use OpenRouter free endpoints that permit provider traini
 Real patient/member/provider records, PHI, credentials, tenant secrets, real claims/results/eligibility/financial data and other regulated or identifying records are prohibited from this generation path. The broader OpenRouter auxiliary layer keeps its stricter non-sensitive/deny policy; this exception is scoped only to Screen Factory synthetic composition generation.
 
 A model/provider that cannot satisfy this synthetic-only boundary must be removed from the active pool. Model availability never overrides the data-classification gate.
+
+## Professional operator workspace profile
+
+The reference-derived My Health quality bar also governs professional Dial Health products, but professional surfaces must not be forced into consumer-mobile composition. Practice OS, Pharmacy OS, Diagnostics, funder, enterprise, operations and related authorised workspaces use a separate professional profile inside the same visual system.
+
+- Prioritise the active working set above the fold: queue, exceptions, source context, current status and the next safe actions.
+- Desktop/tablet workspaces should use compact multi-column structure, concise rows, restrained metrics and 3–6 purposeful regions rather than oversized marketing heroes.
+- Command centres, workbenches, queues, schedules, reconciliation surfaces and longitudinal record workspaces are valid archetypes. A generic admin dashboard is not.
+- Dense information is allowed only when it improves the operator's task. Avoid giant tables, decorative charts, repetitive tiles, duplicated controls or a wall of equal-weight cards.
+- Clinical, payer, financial and operational values remain authoritative-service owned. Neutral placeholders are used when live data is unavailable; visually plausible invented data is forbidden.
+- Existing product routes are preserved. Implementation-neutral `handoff://` identifiers may be used only when a documented interaction exists but no application route has yet been assigned; they are not treated as invented URLs.
+- Professional UI composition may be model-selected in family batches, but the locked renderer owns typography, spacing, colour, component finish and responsive behaviour, and deterministic QA remains fail-closed.

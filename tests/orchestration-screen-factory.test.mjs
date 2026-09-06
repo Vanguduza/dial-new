@@ -13,7 +13,7 @@ import {
 } from '../agent-system/orchestration/screen-factory-openrouter-generator.mjs';
 import { renderScreenBundle } from '../agent-system/orchestration/screen-factory-renderer.mjs';
 import { compileScreenPacket } from '../agent-system/orchestration/screen-factory-model-generator.mjs';
-import { compileCompositionToPacket, SCREEN_COMPOSITION_DSL_VERSION } from '../agent-system/orchestration/screen-factory-composition-dsl.mjs';
+import { canonicalActionCatalog, compileCompositionToPacket, compositionRecipeFor, SCREEN_COMPOSITION_DSL_VERSION } from '../agent-system/orchestration/screen-factory-composition-dsl.mjs';
 import { compositionPipelineStatus } from '../agent-system/orchestration/screen-factory-batch-composer.mjs';
 import {
   controlScreenFactory, importScreenFactoryManifest, importExternalScreenEvidence, ingestChatGPTReceipt,
@@ -269,6 +269,38 @@ describe('compact batch composition pipeline', () => {
     expect(result.packet.feature_coverage).toHaveLength(2);
     expect(result.packet.data_bindings).toHaveLength(2);
     expect(result.packet.additional_features).toEqual([]);
+  });
+});
+
+
+describe('Practice OS bounded contract closure and professional composition', () => {
+  it('closes exactly the 50 evidence-bearing core screen identities without inventing missing specialty screens', () => {
+    const contracts = JSON.parse(readFileSync(path.resolve('docs/dial/health/PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1.json'), 'utf8'));
+    expect(contracts.contract_set).toBe('PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1');
+    expect(contracts.screens).toHaveLength(50);
+    expect(contracts.screens.some((screen) => screen.screen_id === 'PRC-CAR-S008')).toBe(false);
+    for (const screen of contracts.screens) {
+      for (const field of ['purpose','features','interaction','next_routes','required_variants','archetype']) expect(String(screen[field] || '').trim()).not.toBe('');
+      expect(screen.evidence_basis).toContain(`DIAL_HEALTH_REV4_CANONICAL_QUEUE::${screen.screen_id}`);
+    }
+  });
+
+  it('uses professional command-centre composition and handoff routes without duplicating actions', () => {
+    const contracts = JSON.parse(readFileSync(path.resolve('docs/dial/health/PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1.json'), 'utf8'));
+    const c = contracts.screens.find((screen) => screen.screen_id === 'PR-DOC-S001');
+    const task = { ...c, task_id:'PR-DOC-S001::desktop_web', business_unit:'Practice OS', platform:'desktop_web', platform_policy:'REQUIRED', design_version:'DH-UI-CANONICAL-3.0', design_policy_version:'DIAL_HEALTH_SCREEN_FACTORY_UX_REV3', contract_evidence:{source:path.resolve('docs/dial/health/PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1.json')} };
+    expect(compositionRecipeFor(task)).toEqual(['metrics','list','highlight','action_grid']);
+    expect(canonicalActionCatalog(task).map((item) => item.label)).toEqual(['open next patient','start encounter','review result','sign work','launch specialty queue']);
+    const result = compileCompositionToPacket(task, { screen_id:task.screen_id, archetype:task.archetype, regions:[
+      {type:'metrics',feature_refs:[0,1,2,3],action_refs:[],prominence:'primary',variant:'strip'},
+      {type:'list',feature_refs:[4,5],action_refs:[],prominence:'secondary',variant:'compact'},
+      {type:'highlight',feature_refs:[6],action_refs:[],prominence:'secondary',variant:'status'},
+      {type:'action_grid',feature_refs:[],action_refs:[0,1,2,3],prominence:'primary',variant:'compact'},
+    ]});
+    expect(result.packet.semantic_html).toContain('dh-professional-screen');
+    expect(result.packet.semantic_html).toContain('Doctor / Specialist Today');
+    expect(result.packet.experience_profile.audience).toBe('PROFESSIONAL_OPERATOR');
+    expect(result.packet.experience_profile.information_density).toBe('MODERATE_TO_HIGH');
   });
 });
 

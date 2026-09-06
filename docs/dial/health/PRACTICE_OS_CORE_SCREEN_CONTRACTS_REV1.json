@@ -1,0 +1,960 @@
+{
+  "schema_version": 1,
+  "contract_set": "PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1",
+  "authority": "DIAL_HEALTH_SCREEN_CONTRACT_CLOSURE",
+  "source": "docs/dial/health/DIAL_HEALTH_REV4_CANONICAL_QUEUE.json",
+  "scope": "Practice OS screen identities with existing documented features and interactions only",
+  "inference_boundary": "No missing feature or interaction is invented. Fourteen absent purpose fields are conservative summaries of the already documented features/interactions. Missing route strings use implementation-neutral handoff:// identifiers. Archetype is UX composition metadata, not business truth.",
+  "screens": [
+    {
+      "screen_id": "PR-DOC-S001",
+      "title": "Doctor / Specialist Today",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "purpose": "Answer who is next, what changed, what is still outstanding and what could be missed.",
+      "features": "own schedule/queue; specialty alerts; results needing review; unsigned notes; procedures; PA blockers; follow-ups",
+      "interaction": "open next patient; start encounter; review result; sign work; launch specialty queue",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "next_routes": "handoff://practice-os/pr-doc-s001/1-open-next-patient; handoff://practice-os/pr-doc-s001/2-start-encounter; handoff://practice-os/pr-doc-s001/3-review-result; handoff://practice-os/pr-doc-s001/4-sign-work; handoff://practice-os/pr-doc-s001/5-launch-specialty-queue",
+      "archetype": "Professional Command Centre",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S001",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-DOC-S002",
+      "title": "Specialty Patient Summary",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "features": "shared patient context; active Specialty Pack longitudinal widgets",
+      "interaction": "drill into source history; pin relevant facts into the encounter without rewriting history",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Give the doctor or specialist a concise longitudinal patient context with source-history drill-down and encounter-safe fact pinning.",
+      "next_routes": "handoff://practice-os/pr-doc-s002/1-drill-into-source-history; handoff://practice-os/pr-doc-s002/2-pin-relevant-facts-into-the-encounter-without-rewrit",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Summary",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S002",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-DOC-S003",
+      "title": "Clinical / Specialty Encounter",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "features": "specialty history/examination; observations; diagrams; assessments; procedures; order/Rx/referral actions; plan; rendered-service preview",
+      "interaction": "draft; review; sign; post-sign corrections only as addenda/amendments",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Provide the structured specialty encounter workspace from history and examination through plan, orders, referrals and signed evidence.",
+      "next_routes": "handoff://practice-os/pr-doc-s003/1-draft; handoff://practice-os/pr-doc-s003/2-review; handoff://practice-os/pr-doc-s003/3-sign; handoff://practice-os/pr-doc-s003/4-post-sign-corrections-only-as-addenda-amendments",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S003",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-DOC-S004",
+      "title": "Orders & Prescribing Workspace",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "features": "order sets; medicine master; indication; clinical safety; medical-aid/PA signal; destination",
+      "interaction": "issue typed clinical commands under credential and safety controls",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Issue orders and prescriptions under credential, clinical-safety, coverage and destination controls.",
+      "next_routes": "handoff://practice-os/pr-doc-s004/1-issue-typed-clinical-commands-under-credential-and-s",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S004",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-DOC-S005",
+      "title": "Results & Clinical Inbox",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "features": "unread; critical; amended; source; prior comparison; acknowledgement; patient/follow-up tasks",
+      "interaction": "review; acknowledge; action; escalate",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Prioritise, review and close the loop on unread, critical and amended clinical results.",
+      "next_routes": "handoff://practice-os/pr-doc-s005/1-review; handoff://practice-os/pr-doc-s005/2-acknowledge; handoff://practice-os/pr-doc-s005/3-action; handoff://practice-os/pr-doc-s005/4-escalate",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S005",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-DOC-S006",
+      "title": "Open Work / Follow-Up",
+      "surface": "Practice OS",
+      "roles": "doctor, specialist",
+      "features": "unsigned encounters; result acknowledgements; referrals awaiting outcome; recalls; monitoring; procedure/pathology closure",
+      "interaction": "complete the clinical tail rather than allowing it to disappear after consultation",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Keep unfinished clinical work visible until acknowledgement, follow-up, referral or procedure/pathology closure is evidenced.",
+      "next_routes": "handoff://practice-os/pr-doc-s006/1-complete-the-clinical-tail-rather-than-allowing-it-t",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-DOC-S006",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S001",
+      "title": "Nursing Today",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "purpose": "Show patients needing nursing action now.",
+      "features": "intake queue; vitals due; procedure preparation; clinician-requested tasks; pending specimens; follow-ups; high-priority escalations",
+      "interaction": "claim task; open patient; perform permitted work; escalate",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "next_routes": "handoff://practice-os/pr-nur-s001/1-claim-task; handoff://practice-os/pr-nur-s001/2-open-patient; handoff://practice-os/pr-nur-s001/3-perform-permitted-work; handoff://practice-os/pr-nur-s001/4-escalate",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Command Centre",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S001",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S002",
+      "title": "Intake & Vitals",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "features": "specialty-configured intake; observations; provenance; prior-value comparison; device/manual source",
+      "interaction": "record; confirm; repeat suspect measurement; complete intake; amend signed/verified observations rather than silently overwrite",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Capture specialty-configured intake and observations with provenance, prior comparison and safe amendment behaviour.",
+      "next_routes": "handoff://practice-os/pr-nur-s002/1-record; handoff://practice-os/pr-nur-s002/2-confirm; handoff://practice-os/pr-nur-s002/3-repeat-suspect-measurement; handoff://practice-os/pr-nur-s002/4-complete-intake; handoff://practice-os/pr-nur-s002/5-amend-signed-verified-observations-rather-than-silen",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S002",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S003",
+      "title": "Triage / Clinical Readiness",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "features": "configurable triage/readiness prompts; appointment/procedure prerequisites; waiting state; escalation reason",
+      "interaction": "record authorised triage facts; escalate; operational optimisation never overrides clinician/triage priority",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Establish clinical readiness using configurable triage and prerequisite checks while preserving clinical priority.",
+      "next_routes": "handoff://practice-os/pr-nur-s003/1-record-authorised-triage-facts; handoff://practice-os/pr-nur-s003/2-escalate; handoff://practice-os/pr-nur-s003/3-operational-optimisation-never-overrides-clinician-t",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S003",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S004",
+      "title": "Nursing Task Board",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "features": "task; patient; source encounter/order; due time; owner; prerequisite; completion evidence",
+      "interaction": "start; handoff; complete with evidence; escalate",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Coordinate nursing work with patient, source, ownership, prerequisites and completion evidence.",
+      "next_routes": "handoff://practice-os/pr-nur-s004/1-start; handoff://practice-os/pr-nur-s004/2-handoff; handoff://practice-os/pr-nur-s004/3-complete-with-evidence; handoff://practice-os/pr-nur-s004/4-escalate",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workspace",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S004",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S005",
+      "title": "Procedure Preparation",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "features": "correct patient; procedure; site/laterality where relevant; consent state; equipment; consumables; pre-procedure observations; outstanding blockers",
+      "interaction": "checklist completion; block/escalate; mark patient ready; ready never means procedure completed",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Prepare the correct patient, procedure, site, consent, equipment and observations before readiness is declared.",
+      "next_routes": "handoff://practice-os/pr-nur-s005/1-checklist-completion; handoff://practice-os/pr-nur-s005/2-block-escalate; handoff://practice-os/pr-nur-s005/3-mark-patient-ready; handoff://practice-os/pr-nur-s005/4-ready-never-means-procedure-completed",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S005",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-NUR-S006",
+      "title": "Nursing Follow-Up",
+      "surface": "Practice OS",
+      "roles": "nurse",
+      "features": "wound/education/check tasks; result-related actions permitted to nursing; due/overdue; contact outcome",
+      "interaction": "contact; document; escalate; close only with required evidence",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Manage nursing follow-up work with due status, contact outcomes, evidence and escalation.",
+      "next_routes": "handoff://practice-os/pr-nur-s006/1-contact; handoff://practice-os/pr-nur-s006/2-document; handoff://practice-os/pr-nur-s006/3-escalate; handoff://practice-os/pr-nur-s006/4-close-only-with-required-evidence",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-NUR-S006",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S001",
+      "title": "Reception Today",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "purpose": "Run arrivals, bookings, walk-ins and administrative blockers from one cockpit.",
+      "features": "today's appointments; arrivals; late/no-show; walk-ins; waiting queue; provider delay; PA/benefit readiness; deposits/shortfalls; room/resource blockers; unread patient administrative messages",
+      "interaction": "open appointment; check in; register walk-in; contact patient; rebook; allocate room; open blocker",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "next_routes": "handoff://practice-os/pr-rec-s001/1-open-appointment; handoff://practice-os/pr-rec-s001/2-check-in; handoff://practice-os/pr-rec-s001/3-register-walk-in; handoff://practice-os/pr-rec-s001/4-contact-patient; handoff://practice-os/pr-rec-s001/5-rebook; handoff://practice-os/pr-rec-s001/6-allocate-room; handoff://practice-os/pr-rec-s001/7-open-blocker",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Command Centre",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S001",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S002",
+      "title": "Registration & Check-In",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "purpose": "Complete patient identity and administrative readiness.",
+      "features": "identity search/match; demographics; proxy; consent prerequisites; visit reason; medical aid; payment/deposit; referral/document prerequisites",
+      "interaction": "verify; correct allowed admin data; satisfy prerequisites; check in; no completed clinical service inferred",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "next_routes": "handoff://practice-os/pr-rec-s002/1-verify; handoff://practice-os/pr-rec-s002/2-correct-allowed-admin-data; handoff://practice-os/pr-rec-s002/3-satisfy-prerequisites; handoff://practice-os/pr-rec-s002/4-check-in; handoff://practice-os/pr-rec-s002/5-no-completed-clinical-service-inferred",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workspace",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S002",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S003",
+      "title": "Reception Schedule & Resource Board",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "features": "provider/room/equipment calendars; holds; waitlist; blocked time; conflicts",
+      "interaction": "book/reschedule only after all required resource combinations are available",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Coordinate provider, room and equipment capacity while preventing booking and resource conflicts.",
+      "next_routes": "handoff://practice-os/pr-rec-s003/1-book-reschedule-only-after-all-required-resource-com",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Schedule",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S003",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S004",
+      "title": "Administrative Patient Summary",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "features": "demographics; contacts; proxy/family; upcoming appointments; outstanding admin forms; medical-aid link; balance; communication preference",
+      "interaction": "edit only administrative fields; clinical history is not exposed as a convenience shortcut",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Give reception a privacy-bounded administrative patient summary without exposing unnecessary clinical history.",
+      "next_routes": "handoff://practice-os/pr-rec-s004/1-edit-only-administrative-fields; handoff://practice-os/pr-rec-s004/2-clinical-history-is-not-exposed-as-a-convenience-sho",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Summary",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S004",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S005",
+      "title": "Reception Medical-Aid / Payment Readiness",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "features": "membership/eligibility/benefit freshness; PA requirement; expected shortfall; payment state",
+      "interaction": "refresh; request allowed workflow; initiate payment; escalate; cannot change funder truth",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Resolve medical-aid, preauthorisation and payment readiness from authoritative funder and payment state.",
+      "next_routes": "handoff://practice-os/pr-rec-s005/1-refresh; handoff://practice-os/pr-rec-s005/2-request-allowed-workflow; handoff://practice-os/pr-rec-s005/3-initiate-payment; handoff://practice-os/pr-rec-s005/4-escalate; handoff://practice-os/pr-rec-s005/5-cannot-change-funder-truth",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Workspace",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S005",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-REC-S006",
+      "title": "Reception Exception Queue",
+      "surface": "Practice OS",
+      "roles": "receptionist",
+      "features": "unresolved identity; missing referral; PA pending; payment unknown; resource conflict; patient contact failure",
+      "interaction": "assign/resolve through owning workflow; no generic resolved button hides domain state",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "purpose": "Keep unresolved administrative exceptions visible and routed to the owning workflow until genuinely resolved.",
+      "next_routes": "handoff://practice-os/pr-rec-s006/1-assign-resolve-through-owning-workflow; handoff://practice-os/pr-rec-s006/2-no-generic-resolved-button-hides-domain-state",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-REC-S006",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S001",
+      "title": "Reception Command Centre / Today",
+      "surface": "Practice OS",
+      "roles": "receptionist, practice manager",
+      "purpose": "Run the current practice day.",
+      "features": "arrivals; walk-ins; queue; provider delays; unused capacity; open encounters; missing signatures; PA/claim/payment exceptions; recalls",
+      "interaction": "filter by provider/location; arrive/check in; create walk-in; reassign room; open exception; launch patient chart",
+      "next_routes": "Schedule; Check-In; Queue; Encounter; Day Close",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Command Centre",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S001",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S002",
+      "title": "Calendar / Schedule",
+      "surface": "Practice OS",
+      "roles": "receptionist, practice manager",
+      "purpose": "Create and manage appointment capacity.",
+      "features": "day/week/resource views; provider/resource calendars; holds; blocked time; waitlist; capacity conflicts",
+      "interaction": "drag/reschedule where permitted; create hold; block slot; waitlist; open appointment",
+      "next_routes": "Appointment Detail / Check-In",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "required_variants": "LOADING; POPULATED; EMPTY; PARTIAL; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "archetype": "Professional Schedule",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S002",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S003",
+      "title": "Appointment Detail",
+      "purpose": "Show booking facts and readiness.",
+      "features": "Patient; service; resources; referral/PA; payment; communication history; cancellation policy; audit timeline",
+      "interaction": "Confirm; reschedule; cancel; send instructions; mark arrived",
+      "next_routes": "Check-In / Patient Chart",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Detail",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S003",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S004",
+      "title": "Walk-In Intake",
+      "purpose": "Create unscheduled encounter safely.",
+      "features": "Identity search/create; reason; provider/service; triage handoff; medical-aid check; payment policy",
+      "interaction": "Match patient; create visit; collect admin intake; queue",
+      "next_routes": "Check-In / Queue",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S004",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S005",
+      "title": "Check-In Workbench",
+      "purpose": "Resolve all administrative visit prerequisites.",
+      "features": "Identity; consent; intake; coverage; PA; authentication; deposit/shortfall; resource/room; arrival",
+      "interaction": "Verify/refresh; collect required data; request PA; initiate payment; check in",
+      "next_routes": "Queue",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S005",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S006",
+      "title": "Live Queue",
+      "purpose": "Coordinate operational flow.",
+      "features": "Queue entries; projected start; delays; rooms/resources; waitlist opportunities; overrides with reason",
+      "interaction": "Call patient; move operational sequence within permissions; declare delay; mark in service; contact patient",
+      "next_routes": "Encounter / Resource Board",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S006",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S007",
+      "title": "Rooms & Resources",
+      "purpose": "Prevent resource conflicts.",
+      "features": "Rooms/equipment; availability; maintenance/block; appointment dependencies",
+      "interaction": "Reserve/release; mark unavailable; reassign; open conflict",
+      "next_routes": "Schedule/Encounter",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Schedule",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S007",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S008",
+      "title": "Patient Search / Registry",
+      "purpose": "Find correct person and avoid duplicate chart.",
+      "features": "Identifier search; demographics; match confidence; active alerts; local patient number",
+      "interaction": "Search/scan; verify identity; create new only after match check; open chart",
+      "next_routes": "Patient Chart / Identity Review",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Search",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S008",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S009",
+      "title": "Patient Chart / Summary",
+      "purpose": "Provide authorised longitudinal clinical/admin context.",
+      "features": "Problems/allergies where provider owns them; visits; meds; results; documents; referrals; claims summary; consent",
+      "interaction": "Open encounter/result/document; add permitted admin item; launch new encounter/order/Rx",
+      "next_routes": "Encounter and clinical workflows",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Summary",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S009",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S010",
+      "title": "Encounter Composer",
+      "purpose": "Document care and drive downstream evidence.",
+      "features": "Structured note; history/exam; observations; diagnoses; procedures; orders; Rx; referrals; tasks; charge/rendered-service preview",
+      "interaction": "Edit draft; add order/Rx/referral; save; sign; create addendum after signing",
+      "next_routes": "Checkout / Orders / Results",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S010",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S011",
+      "title": "Clinical Orders",
+      "purpose": "Create lab/imaging/procedure/medication requests.",
+      "features": "Order catalogue; indication; priority; specimen/prep; destination; linked diagnosis; coverage/PA signals",
+      "interaction": "Search order; configure; sign; cancel if lawful; route",
+      "next_routes": "Order status/Results",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S011",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S012",
+      "title": "Results Inbox",
+      "purpose": "Close the loop on returned diagnostics.",
+      "features": "Unread/critical/amended filters; source; result status; acknowledgement requirement; patient communication",
+      "interaction": "Review; acknowledge; create follow-up; contact patient; escalate critical workflow",
+      "next_routes": "Result Detail / Follow-Up",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S012",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S013",
+      "title": "Prescription Composer",
+      "purpose": "Create legally valid prescription.",
+      "features": "Patient identity; medicine master; strength/dose/route; repeats; substitution; allergies/interactions; signing",
+      "interaction": "Search medicine; review safety; override with reason where allowed; sign; revoke",
+      "next_routes": "Prescription Detail/My Health fulfilment",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S013",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S014",
+      "title": "Referral Composer",
+      "purpose": "Create closed-loop referral.",
+      "features": "Recipient/provider; reason; urgency; documents; consent; expected feedback; status",
+      "interaction": "Select provider; attach scoped evidence; send; track; acknowledge outcome",
+      "next_routes": "Referral Tracker",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S014",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S015",
+      "title": "Referral Tracker",
+      "purpose": "Manage outstanding referral loops.",
+      "features": "State/SLA; recipient acknowledgement; outcome received; overdue tasks",
+      "interaction": "Resend; contact recipient; attach outcome; acknowledge; close",
+      "next_routes": "Patient Chart/Support",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S015",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S016",
+      "title": "Checkout Workbench",
+      "purpose": "Close visit operationally and financially.",
+      "features": "Rendered services; tariffs; claim lines; patient balance; payment; Rx/referral/documents; next appointment; open tasks",
+      "interaction": "Confirm services; scrub claim; collect payment; schedule follow-up; issue documents; finalise",
+      "next_routes": "Claim/Payment/Follow-Up",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S016",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S017",
+      "title": "RCM Overview",
+      "purpose": "Prioritise revenue-cycle work.",
+      "features": "Ready/blocked claims; PA; rejections; unpaid/underpaid; patient balances; reconciliation; ageing value",
+      "interaction": "Drill through; assign owner; bulk safe refresh; open claim",
+      "next_routes": "Eligibility, PA, Claims, Reconciliation",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Summary",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S017",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S018",
+      "title": "Eligibility & Benefit Inquiry",
+      "purpose": "Run assurance from provider context.",
+      "features": "Patient/member search; membership; benefit; network; service estimate; source/freshness",
+      "interaction": "Verify; refresh; check service; calculate shortfall; initiate auth/PA",
+      "next_routes": "Check-In/PA/Checkout",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S018",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S019",
+      "title": "PA Workbench",
+      "purpose": "Manage preauthorisation queues.",
+      "features": "Patient/service/funder/reference; state; SLA; missing info; owner",
+      "interaction": "Create; attach evidence; submit; answer info request; amend/extend/cancel",
+      "next_routes": "PA Detail/Encounter readiness",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S019",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S020",
+      "title": "Claim Readiness / Editor",
+      "purpose": "Build a claim from rendered evidence.",
+      "features": "Scorecard; line codes; tariff; PA; rendered service; attachments; duplicate check; warnings/blocks",
+      "interaction": "Correct line; map code; attach evidence; override only if authorised; submit when green",
+      "next_routes": "Submission/Claim detail",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Workbench",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S020",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S021",
+      "title": "Rejections / Resubmissions",
+      "purpose": "Recover denied revenue.",
+      "features": "Reason; affected lines; correction; deadline; recoverable value; owner",
+      "interaction": "Edit; attach evidence; resubmit; appeal; close unrecoverable with reason",
+      "next_routes": "Claim detail/Appeal",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Professional Queue",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S021",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S022",
+      "title": "Remittance / Reconciliation",
+      "purpose": "Match payer payment to claims.",
+      "features": "Remittance lines; claim/line; approved/paid/adjustment; unmatched; variance",
+      "interaction": "Auto/manual match; split; create reconciliation case; approve resolution",
+      "next_routes": "Underpayment/Finance",
+      "required_variants": "LOADING; POPULATED; EMPTY; VALIDATION_ERROR; PERMISSION_DENIED; STEP_UP_REQUIRED; STALE; SOURCE_UNAVAILABLE; OFFLINE_READ; OFFLINE_QUEUED; CONFLICT; RECONCILIATION_REQUIRED; SUCCESS; CANCELLED; ARCHIVED/SUPERSEDED",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "archetype": "Reconciliation Workspace",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S022",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S023",
+      "title": "Debtors / Patient Balances",
+      "roles": "RCM; front office; finance",
+      "purpose": "Manage valid patient receivables.",
+      "features": "Balance age; source claim/service; payments; refunds/credits; communication",
+      "interaction": "Collect payment; plan follow-up; issue statement; dispute incorrect balance.",
+      "next_routes": "Payments/Support",
+      "required_variants": "loading; populated; empty; validation/error; permission/step-up; stale/source-unavailable; offline/queued; conflict/reconciliation",
+      "archetype": "Work Queue",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S023",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S024",
+      "title": "Recall / Follow-Up",
+      "roles": "clinical team; front office",
+      "purpose": "Manage due patient follow-up.",
+      "features": "Due/overdue; reason; patient; channel; owner; last attempt",
+      "interaction": "Contact; schedule; snooze with policy; complete with evidence.",
+      "next_routes": "Appointment",
+      "required_variants": "loading; populated; empty; validation/error; permission/step-up; stale/source-unavailable; offline/queued; conflict/reconciliation",
+      "archetype": "Work Queue",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S024",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PR-S025",
+      "title": "Practice Day Close",
+      "roles": "practice manager; finance; authorised closer",
+      "purpose": "Prove the day is operationally closed.",
+      "features": "Unclosed encounters; unsigned notes; till/payment; claims; debtors; tasks; fiscal/communication/integration exceptions",
+      "interaction": "Resolve or explicitly carry exception; count till; run reconciliation; close day with authorised signoff.",
+      "next_routes": "Reports/Next day",
+      "required_variants": "loading; populated; empty; validation/error; permission/step-up; stale/source-unavailable; offline/queued; conflict/reconciliation",
+      "archetype": "Reconciliation Workspace",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PR-S025",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S001",
+      "title": "Cardiology Today",
+      "roles": "cardiologist; clinical team",
+      "purpose": "Run the Cardiology clinic day from one action-oriented cockpit.",
+      "features": "specialty appointment queue; late/no-show status; outstanding results; urgent tasks; procedures/tests due; medical-aid/PA exceptions; follow-up queue; resource constraints",
+      "interaction": "Filter by session/provider; open next patient; resolve blockers inline; start encounter; assign task; deep-link while retaining day state.",
+      "next_routes": "/practice/specialties/car/cardiology-today",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Command Centre",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S001",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S002",
+      "title": "Cardiovascular Summary",
+      "roles": "cardiologist",
+      "purpose": "Give the specialist a one-glance longitudinal Cardiology patient summary before and during care.",
+      "features": "cardiovascular diagnoses/problems; blood pressure and pulse trends; weight trend; current cardiovascular medicines; allergies; ECG latest + comparison; echo latest key summary/reference",
+      "interaction": "Select finding to open source timeline/result; reveal provenance and timestamp; pin a problem to current encounter without editing signed history.",
+      "next_routes": "/practice/specialties/car/cardiovascular-summary",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Record Workspace",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S002",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S003",
+      "title": "Cardiology Consultation",
+      "roles": "cardiologist",
+      "purpose": "Provide the principal specialty-specific clinical working surface for Cardiology.",
+      "features": "symptom-focused cardiovascular history; functional status; cardiovascular examination; BP repeat/position/site context; ECG workflow; echo/imaging review; ambulatory monitor issue-return-result workflow",
+      "interaction": "Move through configurable sections without page-hopping; quick entry; explicit carry-forward confirmation; launch orders/procedures/referrals; save draft; sign encounter creating immutable evidence.",
+      "next_routes": "/practice/specialties/car/cardiology-consultation",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Record Workspace",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S003",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S004",
+      "title": "BP & Haemodynamic Trends",
+      "roles": "cardiologist",
+      "purpose": "Provide the trade-specific BP & haemodynamic trends workspace required for real Cardiology practice.",
+      "features": "specialty structured data; longitudinal comparison; source/provenance; contextual actions; task creation; clinical documentation; relevant claim/service evidence",
+      "interaction": "Select values to expose history; launch typed commands in context; never silently change signed clinical or financial state.",
+      "next_routes": "/practice/specialties/car/bp-haemodynamic-trends",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Timeline/Journey",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S004",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S005",
+      "title": "ECG Workspace",
+      "roles": "cardiologist",
+      "purpose": "Provide the trade-specific ECG workspace required for real Cardiology practice.",
+      "features": "specialty structured data; longitudinal comparison; source/provenance; contextual actions; task creation; clinical documentation; relevant claim/service evidence",
+      "interaction": "Select values to expose history; launch typed commands in context; never silently change signed clinical or financial state; no autonomous interpretation as final diagnosis.",
+      "next_routes": "/practice/specialties/car/ecg-workspace",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Record Workspace",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S005",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S006",
+      "title": "Echo / Cardiac Imaging",
+      "roles": "cardiologist",
+      "purpose": "Review specialty-relevant diagnostic information with source provenance and closed-loop acknowledgement.",
+      "features": "pending/final/amended state; source facility; date; key structured values; report/document links; comparison with prior; acknowledgement; follow-up task",
+      "interaction": "Opening result marks viewed only when policy permits; explicit acknowledgement; abnormal/critical results may create/escalate tasks; amendments remain versioned.",
+      "next_routes": "/practice/specialties/car/echo-cardiac-imaging",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Record Workspace",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S006",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    },
+    {
+      "screen_id": "PRC-CAR-S007",
+      "title": "Ambulatory Monitor Tracker",
+      "roles": "cardiologist; clinical team",
+      "purpose": "Provide the trade-specific ambulatory monitor tracker workspace required for real Cardiology practice.",
+      "features": "specialty structured data; longitudinal comparison; source/provenance; contextual actions; task creation; clinical documentation; relevant claim/service evidence",
+      "interaction": "Select values to expose history; issue/return/result typed actions; never silently change signed clinical or financial state.",
+      "next_routes": "/practice/specialties/car/ambulatory-monitor-tracker",
+      "required_variants": "LOADING; READY; EMPTY/NO_HISTORY; DRAFT; VALIDATION_ERROR; ACCESS_DENIED; OFFLINE/STALE; SIGNED/FINAL; CONFLICT/AMENDMENT",
+      "archetype": "Work Queue",
+      "definition_status": "CANONICAL_CONTRACT_CLOSURE_REV1",
+      "evidence_basis": [
+        "DIAL_HEALTH_REV4_CANONICAL_QUEUE::PRC-CAR-S007",
+        "DIAL_HEALTH_SCREEN_FACTORY_UX_REV3"
+      ],
+      "interaction_contract_status": "DOCUMENTED_BEHAVIOUR_ONLY",
+      "ux_green_status": "NOT_CERTIFIED",
+      "route_semantics": "Existing product routes are preserved. Missing route fields use stable handoff:// identifiers derived only from documented interaction labels; they are implementation-neutral handoffs, not invented application URLs."
+    }
+  ]
+}
