@@ -85,3 +85,9 @@ Strict canonical screen order remains unchanged. Composition can be planned in a
 Family composition is audience-aware. My Health uses the consumer reference grammar; professional product families use a separate operator brief that favours command centres, workbenches, queues, schedules, reconciliation surfaces and longitudinal record workspaces. The renderer uses the same Dial Health brand system but switches professional desktop/tablet screens to a compact multi-column workspace profile instead of forcing consumer-mobile heroes and quick-action layouts.
 
 Practice OS core contract closure is bounded by `PRACTICE_OS_CORE_SCREEN_CONTRACTS_REV1.json`: 50 screen identities already containing documented features and interactions are ready across desktop and tablet. Missing route strings are represented by implementation-neutral `handoff://` identifiers derived from those documented interactions. The factory must stop at the next screen whose underlying behaviour is not documented rather than inferring specialty behaviour from a title.
+
+## Quota-efficient batch acceptance
+
+The provider batch governor starts at 27 screens and may grow toward the 40-screen ceiling only after repeated provider-batch validity of at least 95%. Render successes from locked/local compositions do not inflate the provider batch size. A weak provider batch reduces the target immediately.
+
+A family response is persisted as soon as the primary composition request returns. Valid sibling compositions are never held behind repair of an unrelated invalid sibling. Invalid entries remain explicitly marked in the family cache and receive one targeted repair request only when their canonical queue turn is reached. This prevents a single malformed screen from triggering a second full-family request or wasting the successful work already returned by the primary model.

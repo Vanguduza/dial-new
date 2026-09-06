@@ -55,26 +55,25 @@ async function generateBatch({root,task,modelCaller=callOpenRouterScreenCompiler
   const key=`${familyKey(task)}::${tasks[0].screen_id}-${tasks.at(-1).screen_id}::${tasks.length}`;
   const turn=await modelCaller({content:batchPrompt(tasks),root,taskKey:key,role:'batch_composer',maxOutputTokens:Math.min(14000,1800+tasks.length*420)});
   const payload=parseJson(turn.response); const screens=Array.isArray(payload?.screens)?payload.screens:[]; const byId=new Map(screens.map((x)=>[String(x.screen_id),x]));
-  const cache=readCache(root,task); let valid=0, invalid=0; const invalidTasks=[]; const validRows=[];
+  const cache=readCache(root,task); let valid=0, invalid=0; const validRows=[];
   for(const t of tasks){
     try{const composition=validateComposition(byId.get(String(t.screen_id)),t);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),composition,model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now(),repaired:false,usage:turn.usage||null};validRows.push({task:t,composition});valid++;}
-    catch(error){invalid++;invalidTasks.push(t);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),invalid:true,raw_composition:byId.get(String(t.screen_id))||null,last_error:String(error?.message||error).slice(0,500),model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now()};}
+    catch(error){invalid++;cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),invalid:true,raw_composition:byId.get(String(t.screen_id))||null,last_error:String(error?.message||error).slice(0,500),model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now()};}
   }
   if(tasks.length>=10){
-    for(const row of diversityOverflow(validRows)){const t=row.task;cache.entries[t.task_id]={...cache.entries[t.task_id],invalid:true,raw_composition:row.composition,composition:null,last_error:'composition family clone limit exceeded; vary hierarchy/type/variant'};invalidTasks.push(t);valid--;invalid++;}
+    for(const row of diversityOverflow(validRows)){const t=row.task;cache.entries[t.task_id]={...cache.entries[t.task_id],invalid:true,raw_composition:row.composition,composition:null,last_error:'composition family clone limit exceeded; vary hierarchy/type/variant'};valid--;invalid++;}
   }
-  let retryTurn=null, recovered=0;
-  if(invalidTasks.length){
-    retryTurn=await modelCaller({content:batchPrompt(invalidTasks),root,taskKey:`${key}::invalid-repair`,role:'batch_composer',excludeModels:[turn.model],maxOutputTokens:Math.min(10000,1600+invalidTasks.length*420)});
-    const retryPayload=parseJson(retryTurn.response);const retryScreens=Array.isArray(retryPayload?.screens)?retryPayload.screens:[];const retryById=new Map(retryScreens.map((x)=>[String(x.screen_id),x]));
-    const signatureCounts=new Map();
-    for(const t of tasks){const e=cache.entries[t.task_id];if(!e?.invalid&&e?.composition){const sig=compositionSignature(e.composition);signatureCounts.set(sig,(signatureCounts.get(sig)||0)+1);}}
-    for(const t of invalidTasks){try{const composition=validateComposition(retryById.get(String(t.screen_id)),t);const sig=compositionSignature(composition);if(tasks.length>=10&&(signatureCounts.get(sig)||0)>=4)throw new Error('composition family clone limit exceeded after repair');signatureCounts.set(sig,(signatureCounts.get(sig)||0)+1);cache.entries[t.task_id]={dsl_version:SCREEN_COMPOSITION_DSL_VERSION,contract_hash:compositionContractHash(t),composition,model:retryTurn.model,original_model:turn.model,batch_key:key,batch_size:tasks.length,generated_at:now(),repaired:true,batch_repair:true,usage:retryTurn.usage||null};recovered++;valid++;invalid--;}catch(error){const current=cache.entries[t.task_id];current.raw_composition=retryById.get(String(t.screen_id))||current.raw_composition||null;current.retry_model=retryTurn.model;current.last_error=`${current.last_error}; retry: ${String(error?.message||error).slice(0,300)}`;}}
-    appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_COMPOSITION_BATCH_INVALID_REPAIR',family:familyKey(task),batch_key:key,requested:invalidTasks.length,recovered,remaining_invalid:invalid,model:retryTurn.model,usage:retryTurn.usage||null,at:now()},root);
-  }
+  // Persist all useful sibling work immediately. Invalid siblings are repaired only when
+  // their turn reaches the canonical queue; one bad screen must never trigger a second
+  // full-family provider request or hold a valid current screen behind another API call.
   writeCache(root,task,cache);
-  appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_COMPOSITION_BATCH_COMPILED',family:familyKey(task),batch_key:key,requested:tasks.length,valid,invalid,model:turn.model,retry_model:retryTurn?.model||null,usage:turn.usage||null,at:now()},root);
-  return {cache,tasks,turn,key,retryTurn};
+  const g=governor(root); const ratio=tasks.length?valid/tasks.length:0; let target=Number(g.target_batch_size)||DEFAULT_COMPOSITION_BATCH_SIZE;
+  const batchOutcome={family:familyKey(task),batch_key:key,requested:tasks.length,valid,invalid,valid_rate:Number(ratio.toFixed(3)),model:turn.model,at:now()};
+  const history=Array.isArray(g.provider_batch_outcomes)?g.provider_batch_outcomes:[]; history.push(batchOutcome); g.provider_batch_outcomes=history.slice(-20);
+  if(tasks.length>=10){const recent=g.provider_batch_outcomes.slice(-3);if(recent.length===3&&recent.every((x)=>Number(x.valid_rate)>=.95))target=Math.min(MAX_COMPOSITION_BATCH_SIZE,target+3);else if(ratio<.70)target=Math.max(MIN_COMPOSITION_BATCH_SIZE,target-6);else if(ratio<.85)target=Math.max(MIN_COMPOSITION_BATCH_SIZE,target-3);}
+  g.target_batch_size=target; g.last_provider_batch=batchOutcome; g.updated_at=now(); writeJsonAtomic(GOVERNOR_REL,g,root);
+  appendJsonl('events/screen-factory.jsonl',{event:'SCREEN_FACTORY_COMPOSITION_BATCH_COMPILED',...batchOutcome,deferred_invalid_repair:true,next_target_batch_size:target,usage:turn.usage||null},root);
+  return {cache,tasks,turn,key,retryTurn:null};
 }
 
 async function repairOne({root,task,entry,feedback,modelCaller=callOpenRouterScreenCompiler}){
@@ -111,9 +110,11 @@ export async function compactCompileScreenPacket({task,root,modelCaller=callOpen
 }
 
 export function recordCompositionOutcome({root,task,pass,repaired=false}={}){
-  const g=governor(root);const recent=Array.isArray(g.recent_outcomes)?g.recent_outcomes:[];recent.push({task_id:task?.task_id||null,pass:Boolean(pass),repaired:Boolean(repaired),at:now()});g.recent_outcomes=recent.slice(-100);
-  const sample=g.recent_outcomes.slice(-12); if(sample.length>=10){const passRate=sample.filter((x)=>x.pass).length/sample.length;const repairRate=sample.filter((x)=>x.repaired).length/sample.length;let target=Number(g.target_batch_size)||DEFAULT_COMPOSITION_BATCH_SIZE;if(passRate>=.92&&repairRate<=.15)target=Math.min(MAX_COMPOSITION_BATCH_SIZE,target+3);else if(passRate<.80)target=Math.max(MIN_COMPOSITION_BATCH_SIZE,target-3);g.target_batch_size=target;g.last_sample={count:sample.length,pass_rate:Number(passRate.toFixed(3)),repair_rate:Number(repairRate.toFixed(3))};}
+  const g=governor(root);const recent=Array.isArray(g.render_outcomes)?g.render_outcomes:[];recent.push({task_id:task?.task_id||null,pass:Boolean(pass),repaired:Boolean(repaired),at:now()});g.render_outcomes=recent.slice(-100);
+  const sample=g.render_outcomes.slice(-12); if(sample.length){const passRate=sample.filter((x)=>x.pass).length/sample.length;const repairRate=sample.filter((x)=>x.repaired).length/sample.length;g.last_render_sample={count:sample.length,pass_rate:Number(passRate.toFixed(3)),repair_rate:Number(repairRate.toFixed(3))};}
+  // Batch-size tuning is provider-batch quality driven. Per-screen render successes must
+  // not inflate the provider batch size, especially locked/local reference compositions.
   g.updated_at=now();writeJsonAtomic(GOVERNOR_REL,g,root);return g;
 }
 
-export function compositionPipelineStatus(root){const g=governor(root);return {policy:SCREEN_COMPOSITION_BATCH_POLICY,dsl_version:SCREEN_COMPOSITION_DSL_VERSION,target_batch_size:compositionBatchSize(root),min_batch_size:MIN_COMPOSITION_BATCH_SIZE,max_batch_size:MAX_COMPOSITION_BATCH_SIZE,locked_reference_fast_path:'MY_HEALTH_27_SCREEN_FAMILY_ZERO_PROVIDER_REQUESTS',last_sample:g.last_sample||null};}
+export function compositionPipelineStatus(root){const g=governor(root);return {policy:SCREEN_COMPOSITION_BATCH_POLICY,dsl_version:SCREEN_COMPOSITION_DSL_VERSION,target_batch_size:compositionBatchSize(root),min_batch_size:MIN_COMPOSITION_BATCH_SIZE,max_batch_size:MAX_COMPOSITION_BATCH_SIZE,locked_reference_fast_path:'MY_HEALTH_27_SCREEN_FAMILY_ZERO_PROVIDER_REQUESTS',last_provider_batch:g.last_provider_batch||null,last_render_sample:g.last_render_sample||null};}

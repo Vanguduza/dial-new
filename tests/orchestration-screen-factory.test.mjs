@@ -227,16 +227,16 @@ describe('compact batch composition pipeline', () => {
     ]});
     const modelCaller = async (args) => {
       calls.push(args);
-      if(calls.length===1) return {runtime:'test',model:'minimax/minimax-m3:free',selection:{},response:JSON.stringify({screens:[invalid(manifest.tasks[0]),valid(manifest.tasks[1])]})};
-      if(calls.length===2) return {runtime:'test',model:'nvidia/nemotron-3-ultra-550b-a55b:free',selection:{},response:JSON.stringify({screens:[invalid(manifest.tasks[0])]})};
-      return {runtime:'test',model:'z-ai/glm-5.2:free',selection:{},response:JSON.stringify(valid(manifest.tasks[0]))};
+      if(calls.length===1) return {runtime:'test',model:'minimax/minimax-m3:free',selection:{},response:JSON.stringify({screens:[valid(manifest.tasks[0]),invalid(manifest.tasks[1])]})};
+      return {runtime:'test',model:'z-ai/glm-5.2:free',selection:{},response:JSON.stringify(valid(manifest.tasks[1]))};
     };
     const first = await compileScreenPacket({task:manifest.tasks[0],root,modelCaller});
     const second = await compileScreenPacket({task:manifest.tasks[1],root,modelCaller});
-    expect(calls.map((x)=>x.role)).toEqual(['batch_composer','batch_composer','composition_repair']);
-    expect(first.quality_review.repaired).toBe(true);
+    expect(calls.map((x)=>x.role)).toEqual(['batch_composer','composition_repair']);
+    expect(first.quality_review.repaired).toBe(false);
+    expect(second.quality_review.repaired).toBe(true);
     expect(second.packet.semantic_html).toContain('dh-screen');
-    expect(calls).toHaveLength(3);
+    expect(calls).toHaveLength(2);
   });
 
   it('repairs only the failed composition instead of regenerating the full implementation', async () => {
