@@ -56,7 +56,7 @@ find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --chec
 bash -n deploy/oracle/hermes-codex/*.sh deploy/oracle/hermes-codex/hermes-hooks/*.sh; pass "Oracle shell syntax"
 git diff --check; pass "git diff --check"
 npm run agent:orchestration:init >/dev/null
-DOCTOR="$(tmp)"; npm run agent:orchestration:doctor >"$DOCTOR"
+DOCTOR="$(tmp)"; npm run --silent agent:orchestration:doctor >"$DOCTOR"
 jq -e '.ok_for_hermes_runtime_qualification == true and .runtime_policy.primary == "codex_app_server/gpt-5.6-sol" and .runtime_policy.fallback == "claude_code/claude-sonnet-5" and .runtime_policy.no_runtime == "NO_HERMES_RUNTIME_AVAILABLE"' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "host/runtime doctor is not green"; }; pass "host/runtime doctor"
 hermes hooks doctor; pass "Hermes shell hooks doctor"
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
