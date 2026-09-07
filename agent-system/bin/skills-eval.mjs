@@ -22,7 +22,7 @@ const TASK_FIXTURES = Object.freeze({
   ANDROID_RELEASE_OPTIMIZATION: 'Diagnose Android R8 shrinking and release optimization',
   ANDROID_CAMERA: 'Implement Android CameraX capture lifecycle for proof of delivery',
   ANDROID_TESTING: 'Set up Android instrumentation and device tests',
-  ANDROID_DEVICE_VERIFICATION: 'Build run inspect screenshot and verify an Android app on a device',
+  ANDROID_DEVICE_VERIFICATION: 'Android device build run verify screenshot layout inspect',
   GA_ANALYTICS_ADAPTER: 'Build a read-only Google Analytics Data API reporting adapter',
   GA_ANALYTICS_ADMIN: 'Configure a Google Analytics property using the Admin API',
   CLOUD_SECURITY_REVIEW: 'Review Oracle cloud architecture security using transferable WAF principles',

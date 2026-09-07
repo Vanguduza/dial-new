@@ -96,7 +96,7 @@ it accepts and checks a bundle at injection.
 - Skill/provenance/conflict/bundle registries → `/agent-system/engineering-knowledge/`
 - Runtime broker/resolver/activation/outcome/learning → `/agent-system/orchestration/`
 - Oracle project-scoped runtime state → `/var/lib/dial-control/knowledge/` (runtime, not canonical repository content)
-- `android/skills@bac232fd02b0855df9275281a2a7a47643768719` is now the production pin for the selected qualified Android paths only. Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are approved with exact hashes and immutable Oracle snapshots; Android CLI remains quarantined and Testing Setup remains unapproved directly, with DIAL wrappers staged. `google/skills` remains research-reference-only until selected paths pass the same gate.
+- `android/skills@bac232fd02b0855df9275281a2a7a47643768719` is now the production pin for the selected qualified Android paths only. Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are approved with exact hashes and immutable Oracle snapshots; Android CLI remains quarantined and Testing Setup remains unapproved directly. The separately versioned DIAL wrappers `dial.android.device-verification` and `dial.android.testing-setup` are also approved as immutable guidance and are the governed alternatives for those blocked upstream procedures. `google/skills` remains research-reference-only until selected paths pass the same gate.
 
 ## Repository harness (applied, at repository root)
 

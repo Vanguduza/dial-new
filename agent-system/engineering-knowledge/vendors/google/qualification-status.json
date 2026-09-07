@@ -1,14 +1,15 @@
 {
   "schema_version": 1,
   "state": "SELECTED_SKILLS_APPROVED",
-  "approved_skill_count": 4,
+  "approved_skill_count": 6,
   "active_skill_count": 0,
   "research_reference_only": false,
   "notes": [
     "android/skills@bac232fd02b0855df9275281a2a7a47643768719 is a production pin only for individually qualified selected paths.",
     "Four vendor skills are approved: Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security.",
-    "Android CLI is quarantined; Testing Setup is not directly approved; DIAL wrappers are staged for those procedures.",
+    "Android CLI is quarantined and upstream Testing Setup is barred from direct activation.",
+    "Two DIAL-owned safe wrappers are approved for device verification and Android test setup at DIAL commit 8f3d68f441c03b34febe8198fe2127e34be5baf3.",
     "google/skills remains research-reference-only until selected paths pass the full DIAL VEKL gate."
   ],
-  "last_updated_at": "2026-09-07T22:01:05.450Z"
+  "last_updated_at": "2026-09-07T22:08:27.238Z"
 }

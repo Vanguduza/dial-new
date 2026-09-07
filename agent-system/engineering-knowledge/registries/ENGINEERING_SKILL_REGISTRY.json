@@ -715,12 +715,12 @@
     "provider": "dial",
     "upstream_repo": "Vanguduza/dial-new",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "8f3d68f441c03b34febe8198fe2127e34be5baf3",
     "source_path": "agent-system/engineering-knowledge/wrappers/dial-android-device-verification",
-    "content_hash": null,
+    "content_hash": "339768b086fc6f11c918b247e385e7f86651412c098d9d5c36e786152b9acb27",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "LOW",
     "task_classes": [
       "ANDROID_DEVICE_VERIFICATION"
@@ -745,10 +745,15 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null,
-    "derived_from_skill_id": "google.android.devtools.android-cli"
+    "snapshot_rel": "knowledge/vendor/dial/8f3d68f441c03b34febe8198fe2127e34be5baf3/dial.android.device-verification",
+    "runtime_name": "dial.android.device-verification",
+    "last_verified_at": "2026-09-07T22:08:27.161Z",
+    "derived_from_skill_id": "google.android.devtools.android-cli",
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/dial.android.device-verification-8f3d68f441c0.json",
+    "eval_evidence": "knowledge/evidence/qualification/dial.android.device-verification-8f3d68f441c0-eval.json",
+    "manager_review_sha256": "f8c0fb1ea6e655f68705449209267341e220d20356fef65f212fe5bd2e00296a",
+    "specialist_review_sha256": null
   },
   {
     "schema_version": 1,
@@ -757,12 +762,12 @@
     "provider": "dial",
     "upstream_repo": "Vanguduza/dial-new",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "8f3d68f441c03b34febe8198fe2127e34be5baf3",
     "source_path": "agent-system/engineering-knowledge/wrappers/dial-android-testing-setup",
-    "content_hash": null,
+    "content_hash": "eb31ed813c3d473c1fc375b5c50b69a55bd63bf86a865bdbe5fc2212782c609a",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "LOW",
     "task_classes": [
       "ANDROID_TESTING"
@@ -787,9 +792,14 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null,
-    "derived_from_skill_id": "google.android.testing.testing-setup"
+    "snapshot_rel": "knowledge/vendor/dial/8f3d68f441c03b34febe8198fe2127e34be5baf3/dial.android.testing-setup",
+    "runtime_name": "dial.android.testing-setup",
+    "last_verified_at": "2026-09-07T22:08:27.238Z",
+    "derived_from_skill_id": "google.android.testing.testing-setup",
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/dial.android.testing-setup-8f3d68f441c0.json",
+    "eval_evidence": "knowledge/evidence/qualification/dial.android.testing-setup-8f3d68f441c0-eval.json",
+    "manager_review_sha256": "83902aa83b056056978791bdeb1dae7bdda17e4370bccd6f2d98d15f9d9d5e0b",
+    "specialist_review_sha256": null
   }
 ]

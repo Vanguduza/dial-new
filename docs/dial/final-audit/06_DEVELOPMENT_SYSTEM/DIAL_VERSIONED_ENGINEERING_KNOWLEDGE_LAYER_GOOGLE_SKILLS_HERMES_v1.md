@@ -807,9 +807,9 @@ Deterministic classification/filtering/ranking, activation manifest, exact snaps
 
 Sol/Hermes and Sonnet/Claude paths carry one activation provenance; deterministic tests cover same-manifest failover. Live Oracle certification is required before the external Hermes production gate can be called green.
 
-### VEKL-4 — Android production slice — **QUALIFICATION IN PROGRESS / PRODUCT CANARY PENDING**
+### VEKL-4 — Android production slice — **FIRST KNOWLEDGE WAVE QUALIFIED / REAL PRODUCT CANARY PENDING**
 
-Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are now qualified for constrained use. Android CLI is quarantined and Testing Setup is rejected for direct activation at the pinned upstream revision; DIAL safe-wrapper candidates are staged. A real Android product/device slice remains pending because the current Oracle DIAL checkout does not yet contain a buildable Android app/toolchain surface to certify without inventing product work or installing uncontrolled host tooling.
+Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are qualified for constrained use. Android CLI is quarantined and Testing Setup is rejected for direct activation at the pinned upstream revision; the separately versioned DIAL wrappers `dial.android.device-verification` and `dial.android.testing-setup` have passed static qualification, deterministic eval and independent Development Manager review and are published as immutable approved snapshots. A real Android product/device slice remains pending because the current Oracle DIAL checkout does not yet contain a buildable Android app/toolchain surface to certify without inventing product work or installing uncontrolled host tooling.
 
 ### VEKL-5 — Self-learning outcome loop — **STAGING + PROMOTION GATE IMPLEMENTED**
 
@@ -883,13 +883,13 @@ The registry currently contains **19** engineering-skill records: the original G
 - active packet skills: **0** until a qualifying DIAL packet selects them;
 - upstream Android CLI: **QUARANTINED** because its pinned `SKILL.md` contains a blocked curl-pipe-shell installation instruction;
 - upstream Android Testing Setup: **not directly approved** after independent manager review because it proposes broad dependency/DI/refactor/`AGENTS.md` mutation defaults;
-- DIAL wrapper candidates: `dial.android.device-verification` and `dial.android.testing-setup`, staged for their own qualification;
+- approved DIAL wrappers: **2** — `dial.android.device-verification@8f3d68f441c03b34febe8198fe2127e34be5baf3` and `dial.android.testing-setup@8f3d68f441c03b34febe8198fe2127e34be5baf3`;
 - `google/skills`: still research-reference-only;
 - automatic action: **DENY unless qualified and selected**.
 
 Remaining Android priority qualification wave:
 
-**Android:** DIAL device-verification wrapper, DIAL testing-setup wrapper, R8 Analyzer, Perfetto Trace Analysis, Perfetto SQL and CameraX. The four approved vendor skills remain constrained guidance only.
+**Android:** R8 Analyzer, Perfetto Trace Analysis, Perfetto SQL and CameraX remain in the next qualification wave. The four approved upstream skills and two approved DIAL wrappers remain constrained guidance only.
 
 **Google after Android:** WAF Security/Reliability/Performance/Operational Excellence; Analytics Data API; Analytics Admin API when required; Skill Registry reference material.
 
