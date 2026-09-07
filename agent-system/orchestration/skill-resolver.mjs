@@ -182,6 +182,8 @@ export function resolveEngineeringSkills({
     snapshot_rel: skill.snapshot_rel,
     approval_state: skill.approval_state,
     task_classes: skill.task_classes || [],
+    activation_constraints: skill.activation_constraints || [],
+    requires_independent_specialist_review: skill.requires_independent_specialist_review === true,
     reason: `Matched task class ${skill.task_classes.filter((task) => taskClasses.includes(task)).join(', ')}`,
     mode: 'GUIDANCE_ONLY',
     selection_score: Number(score.toFixed(4)),

@@ -92,6 +92,17 @@ describe('VEKL deterministic skill resolution', () => {
     expect(plan.task_classes).toContain('ANDROID_RESPONSIVE_LAYOUT');
   });
 
+  it('carries DIAL activation constraints into the selected skill record', () => {
+    const adaptive = approvedSkill({ activation_constraints: ['Do not migrate navigation automatically.'], requires_independent_specialist_review: true });
+    const plan = resolveEngineeringSkills({
+      instruction: 'Implement responsive Android Compose UI for a tablet.',
+      affectedPaths: ['apps/consumer-android/src/main/Foo.kt'],
+      registry: [adaptive], conflicts: [], bundles: [], performanceRegistry: { skills: {} }, maxSkills: 3,
+    });
+    expect(plan.selected_skills[0].activation_constraints).toEqual(['Do not migrate navigation automatically.']);
+    expect(plan.selected_skills[0].requires_independent_specialist_review).toBe(true);
+  });
+
   it('blocks a Google Maps replacement even when it would otherwise score highly', () => {
     const maps = approvedSkill({ skill_id: 'google.maps.routing', display_name: 'Google Maps Routing', provider: 'google', task_classes: ['DELIVERY_MAPS'], path_triggers: ['packages/delivery/**'], runtime_name: 'dial-google-maps' });
     const plan = resolveEngineeringSkills({

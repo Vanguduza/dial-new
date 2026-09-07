@@ -698,7 +698,7 @@
   {
     "capability_id": "CATVIS-S005",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "Hero→exploded transition asset",
+    "name": "Hero\u2192exploded transition asset",
     "owner": "catalogue/visual-assets",
     "app_families": [
       "DIAL_CONSUMER",
@@ -766,7 +766,7 @@
       "SUPPLIER_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "Hotspot/region→DIAL category/assembly binding authored and reviewed, never guessed at runtime.",
+    "purpose": "Hotspot/region\u2192DIAL category/assembly binding authored and reviewed, never guessed at runtime.",
     "eventualities": [],
     "status": "DOMAIN_TESTED",
     "code_paths": [
@@ -819,7 +819,7 @@
       "SUPPLIER_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "VIN/chassis/model/generation/variant→EPC applicability context with confidence.",
+    "purpose": "VIN/chassis/model/generation/variant\u2192EPC applicability context with confidence.",
     "eventualities": [],
     "status": "CODE_PRESENT",
     "code_paths": [
@@ -893,7 +893,7 @@
   {
     "capability_id": "EPC-S005",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "EPC→DIAL catalogue binding",
+    "name": "EPC\u2192DIAL catalogue binding",
     "owner": "catalogue/epc",
     "app_families": [
       "DIAL_CONSUMER",
@@ -947,7 +947,7 @@
   {
     "capability_id": "EPC-S008",
     "area": "CATALOG_VISUAL_EPC",
-    "name": "Visual→EPC deep link",
+    "name": "Visual\u2192EPC deep link",
     "owner": "catalogue/epc",
     "app_families": [
       "DIAL_CONSUMER",
@@ -1470,7 +1470,7 @@
   {
     "capability_id": "WA-S010",
     "area": "WHATSAPP",
-    "name": "Automated→human escalation",
+    "name": "Automated\u2192human escalation",
     "owner": "support",
     "app_families": [
       "WHATSAPP",
@@ -1911,7 +1911,7 @@
       "STAFF_WEB",
       "COMMAND_CENTRE"
     ],
-    "purpose": "Request→approval→release→custodian acknowledgement.",
+    "purpose": "Request\u2192approval\u2192release\u2192custodian acknowledgement.",
     "eventualities": [],
     "status": "SPECIFIED",
     "code_paths": [],
@@ -2177,6 +2177,6 @@
       "tests/orchestration-vekl.test.mjs"
     ],
     "current_gate": "DOMAIN_TESTED",
-    "implementation_note": "VEKL v1 framework is implemented and deterministically tested. The initial 17 Google/Android records remain DISCOVERED with zero approved vendor skills; DOMAIN_TESTED applies to the governance/resolution/immutability/failover/learning framework, not to production qualification of any individual external skill. Vendor activation remains fail-closed until exact pin/hash/donor/eval approval."
+    "implementation_note": "VEKL v1 framework is implemented and deterministically tested. The registry now contains 19 records; four selected official Android skills are exact-pin/exact-hash APPROVED with immutable Oracle snapshots and encoded DIAL activation constraints. Upstream Android CLI is QUARANTINED for a blocked curl-pipe-shell instruction, and upstream Testing Setup is not directly approved; DIAL safe-wrapper candidates cover those procedures. DOMAIN_TESTED applies to the VEKL governance/resolution/immutability/failover/learning framework, not to product Feature completion or to unqualified vendor skills."
   }
 ]

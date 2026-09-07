@@ -34,7 +34,7 @@ And v2.1 predates 38 of the current 244 features: Grocery Rounds
 
 `DEC-019` adopts the DIAL Versioned Engineering Knowledge Layer (VEKL) as a horizontal development-system capability, not a product Feature fan-out and not a new source of truth. Every ordinary Oracle development packet resolves a versioned Skill Activation Manifest after Feature/JIT context. Approved specialist skills may improve execution technique, but canon/FRC/security/current code/evidence remain authoritative and the normal contract/reviewer/gate ladder is unchanged.
 
-The first qualification target is official Android engineering knowledge. Google/Android research references currently remain unapproved; they do not alter the Track A/Grocery Rounds programme priority. VEKL is an execution-quality multiplier applied to the packet that the plan already chooses, not a new competing workstream that can displace product dependencies.
+The first Android qualification wave is now partially production-qualified: Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are approved as exact-pin, exact-hash, immutable `ENGINEERING_GUIDANCE_ONLY` inputs under encoded DIAL constraints. The upstream Android CLI is quarantined for a blocked curl-pipe-shell install instruction and the upstream Testing Setup skill is not directly approved; DIAL-owned safe wrappers are staged for those two procedures. This does not alter the Track A/Grocery Rounds programme priority. VEKL remains an execution-quality multiplier applied to the packet the plan already chooses, not a competing product workstream.
 
 ### 2026-09-06 canonical breadth extension — GMPC
 

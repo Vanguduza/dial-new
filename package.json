@@ -71,6 +71,8 @@
     "agent:chat-control:tools": "node agent-system/orchestration/chat-control-bridge.mjs tools",
     "agent:chat-control:call": "node agent-system/orchestration/chat-control-bridge.mjs call",
     "agent:skills:check": "node agent-system/bin/skills-check.mjs",
+    "agent:skills:eval": "node agent-system/bin/skills-eval.mjs",
+    "agent:skills:promote": "node agent-system/bin/skills-promote.mjs",
     "agent:skills:resolve": "node agent-system/bin/skills-resolve.mjs",
     "agent:skills:show": "node agent-system/bin/skills-show.mjs",
     "agent:skills:active": "node agent-system/bin/skills-active.mjs",

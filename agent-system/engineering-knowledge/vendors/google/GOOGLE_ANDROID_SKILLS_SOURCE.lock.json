@@ -4,10 +4,11 @@
   "repo": "android/skills",
   "url": "https://github.com/android/skills",
   "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-  "production_pin": null,
+  "production_pin": "bac232fd02b0855df9275281a2a7a47643768719",
   "license": "Apache-2.0",
   "mode": "SELECTED_PATHS_ONLY",
-  "activation_allowed": false,
-  "state": "RESEARCH_REFERENCE_ONLY",
-  "qualification_required": true
+  "activation_allowed": true,
+  "state": "PRODUCTION_PINNED_SELECTED_PATHS",
+  "qualification_required": true,
+  "last_qualified_at": "2026-09-07T22:01:05.450Z"
 }

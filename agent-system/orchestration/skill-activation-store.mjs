@@ -198,7 +198,10 @@ export function renderSkillActivationBundle(manifest, root = DEFAULT_CONTROL_HOM
   for (const skill of manifest.skills) {
     const source = snapshotPath(skill.snapshot_rel, root);
     const body = fs.readFileSync(path.join(source, 'SKILL.md'), 'utf8');
-    sections.push('', `--- SKILL ${skill.skill_id} ---`, `Provider: ${skill.provider}`, `Commit: ${skill.upstream_commit}`, `Content hash: ${skill.content_hash}`, bounded(body));
+    const constraints = (skill.activation_constraints || []).length
+      ? ['DIAL activation constraints:', ...(skill.activation_constraints || []).map((c) => `- ${c}`), ''].join('\n')
+      : '';
+    sections.push('', `--- SKILL ${skill.skill_id} ---`, `Provider: ${skill.provider}`, `Commit: ${skill.upstream_commit}`, `Content hash: ${skill.content_hash}`, constraints, bounded(body));
   }
   return sections.join('\n');
 }
@@ -213,6 +216,6 @@ export function activationSummary(manifest) {
     manifest_sha256: manifest.manifest_sha256,
     execution_allowed: manifest.execution_allowed !== false,
     missing_mandatory_task_classes: manifest.missing_mandatory_task_classes || [],
-    selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name })),
+    selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name, activation_constraints: s.activation_constraints || [], requires_independent_specialist_review: s.requires_independent_specialist_review === true })),
   };
 }

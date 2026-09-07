@@ -60,8 +60,9 @@ for (const file of walk(selected)) {
   for (const match of text.matchAll(/https?:\/\/[^\s)>'"`]+/g)) urls.add(match[0].slice(0, 500));
 }
 
-const licenseCandidates = fs.readdirSync(sourceDir).filter((name) => /^LICEN[CS]E|^COPYING/i.test(name)).sort();
-const licenseFile = licenseCandidates[0] ? path.join(sourceDir, licenseCandidates[0]) : null;
+const rootLicenseCandidates = fs.readdirSync(sourceDir).filter((name) => /^LICEN[CS]E|^COPYING/i.test(name)).sort();
+const localLicenseCandidates = fs.readdirSync(selected).filter((name) => /^LICEN[CS]E|^COPYING/i.test(name)).sort();
+const licenseFile = rootLicenseCandidates[0] ? path.join(sourceDir, rootLicenseCandidates[0]) : (localLicenseCandidates[0] ? path.join(selected, localLicenseCandidates[0]) : null);
 if (!licenseFile) findings.push({ rule_id: 'VEKL-LIC-001', severity: 'BLOCK', file: null, finding: 'upstream licence file not found at repository root' });
 const hash = hashSkillDirectory(selected);
 const status = findings.some((f) => f.severity === 'BLOCK') ? 'STATIC_SCAN_FAILED' : (findings.some((f) => f.severity === 'REVIEW') ? 'STATIC_SCAN_REVIEW_REQUIRED' : 'STATIC_SCAN_PASSED');

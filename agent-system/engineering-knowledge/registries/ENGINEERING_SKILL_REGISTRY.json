@@ -11,7 +11,7 @@
     "content_hash": null,
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "QUARANTINED",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_DEVICE_VERIFICATION",
@@ -37,7 +37,9 @@
     "eval_suite": "android-core-v1",
     "snapshot_rel": null,
     "runtime_name": null,
-    "last_verified_at": null
+    "last_verified_at": null,
+    "replacement_skill_id": "dial.android.device-verification",
+    "qualification_note": "Upstream commit contains blocked curl-pipe-shell install instruction; use DIAL wrapper after its own qualification."
   },
   {
     "schema_version": 1,
@@ -46,12 +48,12 @@
     "provider": "google-android",
     "upstream_repo": "android/skills",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "bac232fd02b0855df9275281a2a7a47643768719",
     "source_path": "jetpack-compose/adaptive",
-    "content_hash": null,
+    "content_hash": "4af27a434016ed4a30eacfde046e4a78b8807528d89fa2b2b595f6585452b185",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_UI_IMPLEMENTATION",
@@ -75,9 +77,22 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null
+    "snapshot_rel": "knowledge/vendor/google-android/bac232fd02b0855df9275281a2a7a47643768719/google.android.jetpack-compose.adaptive",
+    "runtime_name": "google.android.jetpack-compose.adaptive",
+    "last_verified_at": "2026-09-07T22:00:55.980Z",
+    "activation_constraints": [
+      "Activate only for packet-scoped native Android Compose work.",
+      "Do not trigger XML-to-Compose or Navigation 3 migration automatically.",
+      "Any dependency change passes DIAL donor/tooling controls.",
+      "Experimental Grid/FlexBox/MediaQuery use requires explicit packet authorization and regression evidence.",
+      "DIAL FRC/design/accessibility/current-code contracts remain authoritative."
+    ],
+    "manager_review_state": "CONDITIONAL_CONSTRAINTS_ENCODED",
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/google.android.jetpack-compose.adaptive-bac232fd02b0.json",
+    "eval_evidence": "knowledge/evidence/qualification/google.android.jetpack-compose.adaptive-bac232fd02b0-eval.json",
+    "manager_review_sha256": "8cbc79e0ef7f96b82332184a73fbc0cbec6822c3c0a250f4f2c13d49f78f8642",
+    "specialist_review_sha256": null
   },
   {
     "schema_version": 1,
@@ -86,12 +101,12 @@
     "provider": "google-android",
     "upstream_repo": "android/skills",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "bac232fd02b0855df9275281a2a7a47643768719",
     "source_path": "navigation/navigation-3",
-    "content_hash": null,
+    "content_hash": "9ccecb6cef45f0702ee4fe2abb1b0fc2464da414ef3f1352eb53332e0525b8fd",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_NAVIGATION"
@@ -114,9 +129,22 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null
+    "snapshot_rel": "knowledge/vendor/google-android/bac232fd02b0855df9275281a2a7a47643768719/google.android.navigation.navigation-3",
+    "runtime_name": "google.android.navigation.navigation-3",
+    "last_verified_at": "2026-09-07T22:00:56.063Z",
+    "activation_constraints": [
+      "Use only where Navigation 3 is already selected by DIAL or an explicit architecture-evaluation packet authorizes migration.",
+      "No automatic Navigation 2 removal, dependency installation, DI-provider change or compile-SDK change.",
+      "DIAL identity/authorization/permission/route/Feature contracts override recipes.",
+      "Deep-link/authentication changes require negative tests and independent security review.",
+      "External URLs are reference-only unless normal DIAL research/tool policy explicitly authorizes access."
+    ],
+    "manager_review_state": "CONDITIONAL_CONSTRAINTS_ENCODED",
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/google.android.navigation.navigation-3-bac232fd02b0.json",
+    "eval_evidence": "knowledge/evidence/qualification/google.android.navigation.navigation-3-bac232fd02b0-eval.json",
+    "manager_review_sha256": "9dfdcb94aaf8340ec5b227985cd2251cacd046b916696184814e5538967d1fb6",
+    "specialist_review_sha256": null
   },
   {
     "schema_version": 1,
@@ -125,12 +153,12 @@
     "provider": "google-android",
     "upstream_repo": "android/skills",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "bac232fd02b0855df9275281a2a7a47643768719",
     "source_path": "system/edge-to-edge",
-    "content_hash": null,
+    "content_hash": "70dd67ed3b131eb89047a0fe288c126ef481550474775f8693b8f10757d2df7b",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_UI_IMPLEMENTATION"
@@ -153,9 +181,22 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null
+    "snapshot_rel": "knowledge/vendor/google-android/bac232fd02b0855df9275281a2a7a47643768719/google.android.system.edge-to-edge",
+    "runtime_name": "google.android.system.edge-to-edge",
+    "last_verified_at": "2026-09-07T22:00:56.125Z",
+    "activation_constraints": [
+      "Do not raise target SDK or change build configuration unless the packet explicitly authorizes and verifies it.",
+      "Apply only after inspecting current activity/screen behaviour.",
+      "DIAL screen/accessibility/design contracts control the result.",
+      "Require device/emulator regression evidence for gestures, three-button navigation, IME, themes and affected form factors.",
+      "This skill cannot certify UI/accessibility/release gates."
+    ],
+    "manager_review_state": "CONDITIONAL_CONSTRAINTS_ENCODED",
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/google.android.system.edge-to-edge-bac232fd02b0.json",
+    "eval_evidence": "knowledge/evidence/qualification/google.android.system.edge-to-edge-bac232fd02b0-eval.json",
+    "manager_review_sha256": "8aedfdee6a63c89df607ab5c3fab75f60ec2fc4645cc672c285cb810ea27092c",
+    "specialist_review_sha256": null
   },
   {
     "schema_version": 1,
@@ -169,7 +210,7 @@
     "content_hash": null,
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "SUSPENDED_PENDING_REVIEW",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_TESTING"
@@ -194,7 +235,9 @@
     "eval_suite": "android-core-v1",
     "snapshot_rel": null,
     "runtime_name": null,
-    "last_verified_at": null
+    "last_verified_at": null,
+    "replacement_skill_id": "dial.android.testing-setup",
+    "qualification_note": "Independent Development Manager rejected direct activation at the research commit because it defaults to broad dependency/DI/refactor/AGENTS changes; use DIAL wrapper."
   },
   {
     "schema_version": 1,
@@ -203,12 +246,12 @@
     "provider": "google-android",
     "upstream_repo": "android/skills",
     "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
-    "production_pin": null,
+    "production_pin": "bac232fd02b0855df9275281a2a7a47643768719",
     "source_path": "security/android-intent-security",
-    "content_hash": null,
+    "content_hash": "8914892c0e148606059c126541687b962014edd4e31a67ea387ed50d2b79aab1",
     "license": "Apache-2.0",
     "authority": "ENGINEERING_GUIDANCE_ONLY",
-    "approval_state": "DISCOVERED",
+    "approval_state": "APPROVED",
     "risk_class": "MEDIUM",
     "task_classes": [
       "ANDROID_SECURITY"
@@ -231,9 +274,23 @@
     "requires_tools": [],
     "conflict_tags": [],
     "eval_suite": "android-core-v1",
-    "snapshot_rel": null,
-    "runtime_name": null,
-    "last_verified_at": null
+    "snapshot_rel": "knowledge/vendor/google-android/bac232fd02b0855df9275281a2a7a47643768719/google.android.security.android-intent-security",
+    "runtime_name": "google.android.security.android-intent-security",
+    "last_verified_at": "2026-09-07T22:01:05.450Z",
+    "activation_constraints": [
+      "Treat examples as review prompts, not copy-ready authority; validate against current SDK behaviour and DIAL Security Profiles.",
+      "Do not add dependencies, change minimum SDK, expose components, create permissions or alter inter-app trust without packet authorization.",
+      "Never embed real certificate hashes, secrets, production identifiers or sensitive Health data in vendor context/reports.",
+      "Security logging follows DIAL privacy/redaction rules.",
+      "Independent security-reviewer approval and negative-test evidence remain mandatory."
+    ],
+    "manager_review_state": "CONDITIONAL_CONSTRAINTS_ENCODED",
+    "requires_independent_specialist_review": true,
+    "eval_score": 1,
+    "qualification_evidence": "knowledge/evidence/qualification/google.android.security.android-intent-security-bac232fd02b0.json",
+    "eval_evidence": "knowledge/evidence/qualification/google.android.security.android-intent-security-bac232fd02b0-eval.json",
+    "manager_review_sha256": "71a12da339d810d7f50ca54fee0901b4d09680253c7490b37e86a6d3002bda81",
+    "specialist_review_sha256": "28cf5d4749d2e5117fc0cc1fa9dc031b5538c319aacd1bb31787841defab7f81"
   },
   {
     "schema_version": 1,
@@ -650,5 +707,89 @@
     "snapshot_rel": null,
     "runtime_name": null,
     "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "dial.android.device-verification",
+    "display_name": "DIAL Android Device Verification",
+    "provider": "dial",
+    "upstream_repo": "Vanguduza/dial-new",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "agent-system/engineering-knowledge/wrappers/dial-android-device-verification",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "LOW",
+    "task_classes": [
+      "ANDROID_DEVICE_VERIFICATION"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY",
+      "SYSTEM_INSTALL",
+      "CHANGE_RELEASE_GATE"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null,
+    "derived_from_skill_id": "google.android.devtools.android-cli"
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "dial.android.testing-setup",
+    "display_name": "DIAL Android Testing Setup",
+    "provider": "dial",
+    "upstream_repo": "Vanguduza/dial-new",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "agent-system/engineering-knowledge/wrappers/dial-android-testing-setup",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "LOW",
+    "task_classes": [
+      "ANDROID_TESTING"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY",
+      "SYSTEM_INSTALL",
+      "MUTATE_PROJECT_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null,
+    "derived_from_skill_id": "google.android.testing.testing-setup"
   }
 ]

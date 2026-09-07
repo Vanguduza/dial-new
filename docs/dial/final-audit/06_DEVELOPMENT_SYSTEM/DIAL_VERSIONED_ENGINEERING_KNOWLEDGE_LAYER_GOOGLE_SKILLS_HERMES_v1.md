@@ -795,9 +795,9 @@ An executing model cannot unilaterally promote a vendor revision.
 
 Authority/conflict/memory boundaries ratified by `DEC-019` and this document.
 
-### VEKL-1 — Registry + ingestion framework — **FRAMEWORK IMPLEMENTED / VENDOR QUALIFICATION PENDING**
+### VEKL-1 — Registry + ingestion framework — **IMPLEMENTED / FIRST ANDROID WAVE PARTIALLY QUALIFIED**
 
-Schemas, registry, research locks, conflict/bundle registries and Oracle storage contracts exist. Initial Google/Android records remain `DISCOVERED`; this is intentionally not approval.
+Schemas, registry, source locks, conflict/bundle registries, deterministic qualification/eval/promotion tooling and Oracle immutable storage contracts exist. Four selected Android vendor skills are `APPROVED` at the exact production pin and exact content hashes. Unqualified records remain fail-closed.
 
 ### VEKL-2 — Selective activation broker — **IMPLEMENTED FOUNDATION**
 
@@ -807,13 +807,13 @@ Deterministic classification/filtering/ranking, activation manifest, exact snaps
 
 Sol/Hermes and Sonnet/Claude paths carry one activation provenance; deterministic tests cover same-manifest failover. Live Oracle certification is required before the external Hermes production gate can be called green.
 
-### VEKL-4 — Android production slice — **PENDING VENDOR QUALIFICATION**
+### VEKL-4 — Android production slice — **QUALIFICATION IN PROGRESS / PRODUCT CANARY PENDING**
 
-Qualify the first Android allowlist, then prove a real DIAL Android vertical slice improves verification/quality without canon violations.
+Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are now qualified for constrained use. Android CLI is quarantined and Testing Setup is rejected for direct activation at the pinned upstream revision; DIAL safe-wrapper candidates are staged. A real Android product/device slice remains pending because the current Oracle DIAL checkout does not yet contain a buildable Android app/toolchain surface to certify without inventing product work or installing uncontrolled host tooling.
 
-### VEKL-5 — Self-learning outcome loop — **STAGING FOUNDATION IMPLEMENTED**
+### VEKL-5 — Self-learning outcome loop — **STAGING + PROMOTION GATE IMPLEMENTED**
 
-Outcome records and learned-skill staging exist. Automatic promotion remains forbidden; scan/eval/manager-review/promotion workflow must be completed before any learned wrapper can become active.
+Outcome records, learned-skill staging and explicit scan/eval/manager-review/promotion tooling exist. Automatic self-promotion remains forbidden. DIAL wrapper skills are separately versioned and must pass the same evidence-backed promotion gate before activation.
 
 ### VEKL-6 — broader Google adoption — **DEFERRED**
 
@@ -876,16 +876,20 @@ A queued packet carries exact skill provenance across runtime failover. Sol and 
 
 ## 30. Initial allowlist and current qualification state
 
-The initial registry contains 17 candidate Google/Android records. At adoption:
+The registry currently contains **19** engineering-skill records: the original Google/Android candidates plus two DIAL-owned wrapper candidates. Current qualification state:
 
-- approved vendor skills: **0**;
-- active vendor skills: **0**;
-- research references: recorded;
+- approved external Android skills: **4** — Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security;
+- approved skill source pin for those selected paths: `android/skills@bac232fd02b0855df9275281a2a7a47643768719`;
+- active packet skills: **0** until a qualifying DIAL packet selects them;
+- upstream Android CLI: **QUARANTINED** because its pinned `SKILL.md` contains a blocked curl-pipe-shell installation instruction;
+- upstream Android Testing Setup: **not directly approved** after independent manager review because it proposes broad dependency/DI/refactor/`AGENTS.md` mutation defaults;
+- DIAL wrapper candidates: `dial.android.device-verification` and `dial.android.testing-setup`, staged for their own qualification;
+- `google/skills`: still research-reference-only;
 - automatic action: **DENY unless qualified and selected**.
 
-Priority qualification wave:
+Remaining Android priority qualification wave:
 
-**Android:** Android CLI, Adaptive Compose, Navigation 3, Edge-to-edge, Testing Setup, Intent Security, R8 Analyzer, Perfetto Trace Analysis, Perfetto SQL, CameraX.
+**Android:** DIAL device-verification wrapper, DIAL testing-setup wrapper, R8 Analyzer, Perfetto Trace Analysis, Perfetto SQL and CameraX. The four approved vendor skills remain constrained guidance only.
 
 **Google after Android:** WAF Security/Reliability/Performance/Operational Excellence; Analytics Data API; Analytics Admin API when required; Skill Registry reference material.
 

@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-07T21:31:34.672Z",
+  "generated_at": "2026-09-07T22:04:44.672Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
-      "bytes": 15732,
-      "sha256": "837175c50f652da99a71665466b7a030e9e8fa47f2b10367c242b167745956c9"
+      "bytes": 16041,
+      "sha256": "493b5fed8996cbddd2994890093deeeec9cd5b6bfef0cfdd95ff303483bed6ba"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -63,8 +63,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 6950,
-      "sha256": "55f4b0eaa2b7cfb0e7b8b8b98e8e464c194b14070b67393d561ffb47cb907bad"
+      "bytes": 7235,
+      "sha256": "f2abe10b179340f54df25884471bc4522a86ee72cb873dfc4edfbf144a406e15"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -183,8 +183,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
-      "bytes": 38310,
-      "sha256": "ebdd7ca5ce7a8b6aa0240b8696a6a393b18c2dec16af9136387ab5cdb82fae97"
+      "bytes": 39737,
+      "sha256": "02d15d6f457df26231b08ff7cf2002bbfe849e9738861d641959a753ca7d58ef"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",
@@ -528,8 +528,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 63133,
-      "sha256": "0b283e2041fbc0621101caef37f7be86310feb8f870704b41b57b900af3f8905"
+      "bytes": 63364,
+      "sha256": "1b202c4f485a085ee716d01823bfd9928bafeeb6efd237b5561fb74ebdff2de6"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",
@@ -848,8 +848,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json",
-      "bytes": 57609,
-      "sha256": "9606f541cee952eca01348707c5e42e454fa271c3f8d8c753d58a010f19188a6"
+      "bytes": 58211,
+      "sha256": "e6b4ed14c7c1f69753ededabacd3efe7b1b1d6d2ac69fe08068c41123ee40c56"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/04_NFR/NFR_BUDGET_REGISTRY.json",
