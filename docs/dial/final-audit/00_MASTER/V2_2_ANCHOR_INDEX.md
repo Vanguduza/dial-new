@@ -92,8 +92,10 @@ it accepts and checks a bundle at injection.
 
 - Canonical architecture → `../06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`
 - Tooling/activation policy → `../06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md`
-- Decision → `/agent-system/registries/DECISION_LOG.json` (`DEC-019`)
+- Decisions → `/agent-system/registries/DECISION_LOG.json` (`DEC-019` immutable-skill foundation; `DEC-020` federated resources + ahead-of-work research)
 - Skill/provenance/conflict/bundle registries → `/agent-system/engineering-knowledge/`
+- Federated source/resource registries → `/agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json`, `ENGINEERING_RESOURCE_REGISTRY.json`
+- Ahead-of-work research → `/agent-system/orchestration/engineering-research-manager.mjs`, `engineering-presearch.mjs`; Oracle state under `/var/lib/dial-control/knowledge/research/`
 - Runtime broker/resolver/activation/outcome/learning → `/agent-system/orchestration/`
 - Oracle project-scoped runtime state → `/var/lib/dial-control/knowledge/` (runtime, not canonical repository content)
 - `android/skills@bac232fd02b0855df9275281a2a7a47643768719` is now the production pin for the selected qualified Android paths only. Adaptive Compose, Navigation 3, Edge-to-edge and Android Intent Security are approved with exact hashes and immutable Oracle snapshots; Android CLI remains quarantined and Testing Setup remains unapproved directly. The separately versioned DIAL wrappers `dial.android.device-verification` and `dial.android.testing-setup` are also approved as immutable guidance and are the governed alternatives for those blocked upstream procedures. `google/skills` remains research-reference-only until selected paths pass the same gate.

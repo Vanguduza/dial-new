@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "DIAL Skill Activation Manifest",
+  "title": "DIAL Engineering Knowledge Activation Manifest",
   "type": "object",
   "required": [
     "schema_version",
@@ -11,7 +11,8 @@
     "resolution_state",
     "skills",
     "dial_guard_capsule",
-    "created_at"
+    "created_at",
+    "resources"
   ],
   "properties": {
     "schema_version": {
@@ -74,6 +75,30 @@
     },
     "created_at": {
       "type": "string"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "resource_rejected": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "resource_task_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "research_forecast_id": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": true

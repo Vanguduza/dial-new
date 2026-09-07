@@ -1,5 +1,7 @@
 # DIAL VERSIONED ENGINEERING KNOWLEDGE LAYER (VEKL)
 
+> **SUPERSEDED FOR ACTIVE VEKL INTENT:** Rev 2 at `DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` broadens VEKL from the Google/Android skill foundation into the federated engineering resource/capability layer. This Rev 1 remains canonical provenance for its immutable-skill qualification and runtime-symmetry foundation.
+
 **Google Skills + Hermes Adaptive Skill Orchestration, Persistent Learning & Project-Aware Development**
 
 **Document class:** Development-System Architecture / Canonical Addendum  

@@ -43,7 +43,9 @@ jq -e --arg head "$HEAD_SHA" '
   and .chat_control_project == "dial"
   and .chat_control_generic_shell_exposed == false
   and .vekl_framework == true
-  and .vekl_policy_version == "vekl-1.0"
+  and .vekl_policy_version == "vekl-2.0"
+  and .vekl_federated_resource_layer == true
+  and .vekl_ahead_of_work_research_scheduler == true
   and .vekl_packet_manifest_required == true
   and .vekl_vendor_content_authority == "ENGINEERING_GUIDANCE_ONLY"
   and .vekl_unqualified_vendor_activation_allowed == false
@@ -95,6 +97,8 @@ systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dia
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
 systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
+systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "chat-control token must be mode 0600"
 CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
 jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' <<<"$CHAT_HEALTH" >/dev/null || fail "chat-control health is invalid"
@@ -105,7 +109,9 @@ if jq -e ".api.key_configured == true" <<<"$OPS_STATUS" >/dev/null; then
 fi
 VEKL_RUNTIME="$(npm run --silent agent:skills:runtime-check)"
 jq -e '.status == "GREEN" and .policy_version == "vekl-1.0" and .vendor_snapshots_immutable == true' <<<"$VEKL_RUNTIME" >/dev/null || { echo "$VEKL_RUNTIME" >&2; fail "VEKL runtime snapshot audit is not green"; }
-pass "VEKL approved vendor snapshots, if any, are exact-hash and read-only"
+VEKL_KNOWLEDGE="$(npm run --silent agent:knowledge:check)"
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.0" and .resource_sources > 0 and .resource_records > 0' <<<"$VEKL_KNOWLEDGE" >/dev/null || { echo "$VEKL_KNOWLEDGE" >&2; fail "VEKL v2 federated resource audit is not green"; }
+pass "VEKL approved vendor snapshots are exact-hash/read-only and federated resource governance is green"
 
 pass "persistent supervisor, external orchestrator, mission controller, DIAL-only chat control and non-authoritative operations services are active"
 
@@ -124,7 +130,7 @@ pass "external orchestrator heartbeat is fresh"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" || -n "${ANTHROPIC_API_KEY:-}" ]]; then
   fail "API-key environment material is present on the subscription-only control plane"
 fi
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-mission-controller.service dial-chat-control.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-mission-controller.service dial-chat-control.service dial-engineering-research.service; do
   env_line="$(systemctl --user show "$unit" -p Environment --value 2>/dev/null || true)"
   if grep -Eq '(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)=' <<<"$env_line"; then
     fail "$unit contains forbidden API-key environment material"

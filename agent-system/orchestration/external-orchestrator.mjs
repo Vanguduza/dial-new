@@ -84,6 +84,8 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
     skill_resolution_state: job.engineering_knowledge?.resolution_state ?? null,
     selected_skills: job.engineering_knowledge?.selected_skills?.map((entry) => entry.skill_id) ?? [],
+    selected_resources: job.engineering_knowledge?.selected_resources?.map((entry) => entry.resource_id) ?? [],
+    research_forecast_id: job.engineering_knowledge?.research_forecast_id ?? null,
     at: job.queued_at,
   }, root);
   return job;
@@ -164,6 +166,8 @@ function finalizeJob(job, result, root) {
     fallback_used: record.runtime_provenance.fallback_used,
     skill_activation_id: record.engineering_knowledge?.activation_id ?? null,
     selected_skills: record.engineering_knowledge?.selected_skills?.map((entry) => entry.skill_id) ?? [],
+    selected_resources: record.engineering_knowledge?.selected_resources?.map((entry) => entry.resource_id) ?? [],
+    research_forecast_id: record.engineering_knowledge?.research_forecast_id ?? null,
     reason: result?.reason ?? null,
     at: record.finished_at,
   }, root);
@@ -216,6 +220,8 @@ export async function processNextExternalWork({
     worker_pid: process.pid,
     qualification_canary: isQualificationCanary(job),
     skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
+    selected_resources: job.engineering_knowledge?.selected_resources?.map((entry) => entry.resource_id) ?? [],
+    research_forecast_id: job.engineering_knowledge?.research_forecast_id ?? null,
     at: now(),
   }, root);
 

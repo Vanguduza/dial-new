@@ -1,0 +1,941 @@
+[
+  {
+    "resource_id": "dial.rules.tooling-policy",
+    "name": "DIAL Tooling Use Policy",
+    "source_id": "dial.project",
+    "resource_class": "RULESET",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "ACTIVE",
+    "activation_mode": "PROCESS_RULE",
+    "locator": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [],
+    "keywords": [
+      "tool",
+      "plugin",
+      "donor",
+      "security",
+      "testing"
+    ],
+    "forbidden_effects": []
+  },
+  {
+    "resource_id": "dial.hook.pre-tool-guard",
+    "name": "DIAL pre-tool guard",
+    "source_id": "dial.project",
+    "resource_class": "HOOK",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "ACTIVE",
+    "activation_mode": "PROCESS_RULE",
+    "locator": "agent-system/hooks/pre-tool-guard.mjs",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [],
+    "keywords": [
+      "write",
+      "edit",
+      "guard",
+      "tool"
+    ],
+    "forbidden_effects": []
+  },
+  {
+    "resource_id": "dial.loop.mission-controller",
+    "name": "DIAL persistent mission loop",
+    "source_id": "dial.project",
+    "resource_class": "WORKFLOW_LOOP",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "ACTIVE",
+    "activation_mode": "PROCESS_RULE",
+    "locator": "agent-system/orchestration/mission-controller.mjs",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [
+      "Hermes"
+    ],
+    "keywords": [
+      "mission",
+      "orchestration",
+      "autonomous",
+      "loop"
+    ],
+    "forbidden_effects": []
+  },
+  {
+    "resource_id": "dial.tool.context7",
+    "name": "Context7 documentation resolver",
+    "source_id": "dial.project",
+    "resource_class": "TOOL",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "POLICY_APPROVED_CONDITIONAL",
+    "activation_mode": "READ_ONLY_TOOL",
+    "locator": "connector:Context7",
+    "task_classes": [
+      "DEPENDENCY_RESEARCH",
+      "API_RESEARCH",
+      "BUILD_TOOLING"
+    ],
+    "technologies": [],
+    "keywords": [
+      "dependency",
+      "version",
+      "api",
+      "docs"
+    ],
+    "requires_tools": [
+      "Context7"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "BYPASS_DONOR_GATE"
+    ]
+  },
+  {
+    "resource_id": "dial.tool.exa",
+    "name": "Exa external engineering research",
+    "source_id": "dial.project",
+    "resource_class": "TOOL",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "POLICY_APPROVED_CONDITIONAL",
+    "activation_mode": "READ_ONLY_TOOL",
+    "locator": "connector:Exa",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "DEPENDENCY_RESEARCH",
+      "SECURITY_RESEARCH"
+    ],
+    "technologies": [],
+    "keywords": [
+      "research",
+      "current",
+      "external",
+      "documentation"
+    ],
+    "requires_tools": [
+      "Exa"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "TREAT_SEARCH_RESULT_AS_AUTHORITY"
+    ]
+  },
+  {
+    "resource_id": "ref.nextjs.docs",
+    "name": "Next.js documentation",
+    "source_id": "official.nextjs",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://nextjs.org/docs",
+    "seed_urls": [
+      "https://nextjs.org/docs",
+      "https://nextjs.org/docs/llms.txt"
+    ],
+    "task_classes": [
+      "WEB_UI_IMPLEMENTATION",
+      "WEB_ROUTING",
+      "WEB_SECURITY"
+    ],
+    "technologies": [
+      "Next.js",
+      "React"
+    ],
+    "keywords": [
+      "app router",
+      "server component",
+      "route handler",
+      "csp",
+      "nextjs"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS"
+    ]
+  },
+  {
+    "resource_id": "ref.react.docs",
+    "name": "React documentation",
+    "source_id": "official.react",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://react.dev/",
+    "seed_urls": [
+      "https://react.dev/"
+    ],
+    "task_classes": [
+      "WEB_UI_IMPLEMENTATION",
+      "WEB_STATE_MANAGEMENT"
+    ],
+    "technologies": [
+      "React"
+    ],
+    "keywords": [
+      "react",
+      "component",
+      "hook",
+      "state"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS"
+    ]
+  },
+  {
+    "resource_id": "ref.typescript.docs",
+    "name": "TypeScript documentation",
+    "source_id": "official.typescript",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://www.typescriptlang.org/docs/",
+    "seed_urls": [
+      "https://www.typescriptlang.org/docs/"
+    ],
+    "task_classes": [
+      "TYPESCRIPT_IMPLEMENTATION",
+      "BUILD_TOOLING"
+    ],
+    "technologies": [
+      "TypeScript"
+    ],
+    "keywords": [
+      "typescript",
+      "strict",
+      "nodenext",
+      "types"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS"
+    ]
+  },
+  {
+    "resource_id": "ref.supabase.docs",
+    "name": "Supabase documentation",
+    "source_id": "official.supabase",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://supabase.com/docs",
+    "seed_urls": [
+      "https://supabase.com/docs"
+    ],
+    "task_classes": [
+      "DATABASE",
+      "AUTH",
+      "RLS_SECURITY",
+      "POSTGRES",
+      "STORAGE"
+    ],
+    "technologies": [
+      "Supabase",
+      "PostgreSQL"
+    ],
+    "keywords": [
+      "rls",
+      "auth",
+      "postgres",
+      "storage",
+      "supabase"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ]
+  },
+  {
+    "resource_id": "ref.postgresql.docs",
+    "name": "PostgreSQL current documentation",
+    "source_id": "official.postgresql",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://www.postgresql.org/docs/current/",
+    "seed_urls": [
+      "https://www.postgresql.org/docs/current/"
+    ],
+    "task_classes": [
+      "DATABASE",
+      "POSTGRES",
+      "SQL",
+      "RLS_SECURITY"
+    ],
+    "technologies": [
+      "PostgreSQL"
+    ],
+    "keywords": [
+      "postgres",
+      "sql",
+      "transaction",
+      "rls",
+      "index"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOR"
+    ]
+  },
+  {
+    "resource_id": "ref.playwright.docs",
+    "name": "Playwright documentation",
+    "source_id": "official.playwright",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://playwright.dev/docs/intro",
+    "seed_urls": [
+      "https://playwright.dev/docs/intro"
+    ],
+    "task_classes": [
+      "E2E_TESTING",
+      "WEB_UI_VERIFICATION",
+      "BROWSER_AUTOMATION"
+    ],
+    "technologies": [
+      "Playwright"
+    ],
+    "keywords": [
+      "playwright",
+      "e2e",
+      "browser",
+      "locator"
+    ],
+    "forbidden_effects": [
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "ref.vitest.docs",
+    "name": "Vitest documentation",
+    "source_id": "official.vitest",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://vitest.dev/guide/",
+    "seed_urls": [
+      "https://vitest.dev/guide/"
+    ],
+    "task_classes": [
+      "UNIT_TESTING",
+      "TYPESCRIPT_TESTING"
+    ],
+    "technologies": [
+      "Vitest"
+    ],
+    "keywords": [
+      "vitest",
+      "unit test",
+      "mock",
+      "coverage"
+    ],
+    "forbidden_effects": [
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "ref.zod.docs",
+    "name": "Zod documentation",
+    "source_id": "official.zod",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://zod.dev/",
+    "seed_urls": [
+      "https://zod.dev/"
+    ],
+    "task_classes": [
+      "SCHEMA_VALIDATION",
+      "TYPESCRIPT_IMPLEMENTATION"
+    ],
+    "technologies": [
+      "Zod"
+    ],
+    "keywords": [
+      "zod",
+      "schema",
+      "validation"
+    ],
+    "forbidden_effects": []
+  },
+  {
+    "resource_id": "ref.maplibre.docs",
+    "name": "MapLibre GL JS documentation",
+    "source_id": "official.maplibre",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://maplibre.org/maplibre-gl-js/docs/",
+    "seed_urls": [
+      "https://maplibre.org/maplibre-gl-js/docs/"
+    ],
+    "task_classes": [
+      "DELIVERY_MAPS",
+      "MAP_RENDERING"
+    ],
+    "technologies": [
+      "MapLibre"
+    ],
+    "keywords": [
+      "maplibre",
+      "map",
+      "style",
+      "marker",
+      "layer"
+    ],
+    "forbidden_effects": [
+      "REPLACE_LOCKED_MAP_STACK"
+    ]
+  },
+  {
+    "resource_id": "ref.osrm.repo",
+    "name": "OSRM backend repository",
+    "source_id": "official.osrm",
+    "resource_class": "REPOSITORY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://github.com/Project-OSRM/osrm-backend",
+    "repository": "Project-OSRM/osrm-backend",
+    "task_classes": [
+      "DELIVERY_MAPS",
+      "ROUTING"
+    ],
+    "technologies": [
+      "OSRM"
+    ],
+    "keywords": [
+      "osrm",
+      "routing",
+      "route",
+      "table"
+    ],
+    "forbidden_effects": [
+      "CREATE_DELIVERY_SOR"
+    ]
+  },
+  {
+    "resource_id": "ref.vroom.repo",
+    "name": "VROOM repository",
+    "source_id": "official.vroom",
+    "resource_class": "REPOSITORY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://github.com/VROOM-Project/vroom",
+    "repository": "VROOM-Project/vroom",
+    "task_classes": [
+      "DELIVERY_MAPS",
+      "ROUTE_OPTIMIZATION"
+    ],
+    "technologies": [
+      "VROOM"
+    ],
+    "keywords": [
+      "vroom",
+      "vrp",
+      "route optimization",
+      "capacity"
+    ],
+    "forbidden_effects": [
+      "CREATE_DELIVERY_SOR"
+    ]
+  },
+  {
+    "resource_id": "ref.nominatim.docs",
+    "name": "Nominatim documentation",
+    "source_id": "official.nominatim",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://nominatim.org/release-docs/latest/",
+    "seed_urls": [
+      "https://nominatim.org/release-docs/latest/"
+    ],
+    "task_classes": [
+      "DELIVERY_MAPS",
+      "GEOCODING"
+    ],
+    "technologies": [
+      "Nominatim"
+    ],
+    "keywords": [
+      "nominatim",
+      "geocoding",
+      "reverse geocoding"
+    ],
+    "forbidden_effects": [
+      "CREATE_DELIVERY_SOR"
+    ]
+  },
+  {
+    "resource_id": "ref.meilisearch.docs",
+    "name": "Meilisearch documentation",
+    "source_id": "official.meilisearch",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://www.meilisearch.com/docs",
+    "seed_urls": [
+      "https://www.meilisearch.com/docs"
+    ],
+    "task_classes": [
+      "SEARCH",
+      "CATALOG_SEARCH",
+      "DKRF"
+    ],
+    "technologies": [
+      "Meilisearch"
+    ],
+    "keywords": [
+      "meilisearch",
+      "hybrid search",
+      "tenant token",
+      "index"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOR"
+    ]
+  },
+  {
+    "resource_id": "ref.opentelemetry.docs",
+    "name": "OpenTelemetry documentation",
+    "source_id": "official.opentelemetry",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://opentelemetry.io/docs/",
+    "seed_urls": [
+      "https://opentelemetry.io/docs/"
+    ],
+    "task_classes": [
+      "OBSERVABILITY",
+      "TRACING",
+      "NFR"
+    ],
+    "technologies": [
+      "OpenTelemetry"
+    ],
+    "keywords": [
+      "opentelemetry",
+      "trace",
+      "metric",
+      "span"
+    ],
+    "forbidden_effects": [
+      "LOG_SENSITIVE_DATA"
+    ]
+  },
+  {
+    "resource_id": "ref.litellm.docs",
+    "name": "LiteLLM documentation",
+    "source_id": "official.litellm",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://docs.litellm.ai/",
+    "seed_urls": [
+      "https://docs.litellm.ai/"
+    ],
+    "task_classes": [
+      "AI_GATEWAY",
+      "MODEL_ROUTING",
+      "DKRF"
+    ],
+    "technologies": [
+      "LiteLLM"
+    ],
+    "keywords": [
+      "litellm",
+      "model routing",
+      "fallback",
+      "budget"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_MODEL_AUTHORITY",
+      "EXPOSE_SENSITIVE_DATA"
+    ]
+  },
+  {
+    "resource_id": "ref.promptfoo.docs",
+    "name": "Promptfoo documentation",
+    "source_id": "official.promptfoo",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://www.promptfoo.dev/docs/",
+    "seed_urls": [
+      "https://www.promptfoo.dev/docs/"
+    ],
+    "task_classes": [
+      "AI_EVALUATION",
+      "AI_SECURITY",
+      "DKRF"
+    ],
+    "technologies": [
+      "Promptfoo"
+    ],
+    "keywords": [
+      "promptfoo",
+      "eval",
+      "red team",
+      "rag poisoning"
+    ],
+    "forbidden_effects": [
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "ref.chatwoot.docs",
+    "name": "Chatwoot developer documentation",
+    "source_id": "official.chatwoot",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://developers.chatwoot.com/",
+    "seed_urls": [
+      "https://developers.chatwoot.com/"
+    ],
+    "task_classes": [
+      "CUSTOMER_SUPPORT",
+      "CHATWOOT_INTEGRATION"
+    ],
+    "technologies": [
+      "Chatwoot"
+    ],
+    "keywords": [
+      "chatwoot",
+      "api channel",
+      "webhook",
+      "conversation"
+    ],
+    "forbidden_effects": [
+      "CREATE_CUSTOMER_SOR",
+      "EXPOSE_SENSITIVE_DATA"
+    ]
+  },
+  {
+    "resource_id": "ref.meta.whatsapp.docs",
+    "name": "WhatsApp Cloud API documentation",
+    "source_id": "official.meta.whatsapp",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://developers.facebook.com/docs/whatsapp/cloud-api/",
+    "seed_urls": [
+      "https://developers.facebook.com/docs/whatsapp/cloud-api/"
+    ],
+    "task_classes": [
+      "WHATSAPP",
+      "WEBHOOK_SECURITY",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "WhatsApp Cloud API"
+    ],
+    "keywords": [
+      "whatsapp",
+      "cloud api",
+      "flow",
+      "webhook",
+      "template"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_WHATSAPP_AUTHORITY"
+    ]
+  },
+  {
+    "resource_id": "ref.cloudflare.r2.docs",
+    "name": "Cloudflare R2 documentation",
+    "source_id": "official.cloudflare",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://developers.cloudflare.com/r2/",
+    "seed_urls": [
+      "https://developers.cloudflare.com/r2/"
+    ],
+    "task_classes": [
+      "OBJECT_STORAGE",
+      "R2",
+      "EDGE_SECURITY"
+    ],
+    "technologies": [
+      "Cloudflare R2"
+    ],
+    "keywords": [
+      "r2",
+      "object storage",
+      "presigned",
+      "cors"
+    ],
+    "forbidden_effects": [
+      "EXPOSE_SECRETS"
+    ]
+  },
+  {
+    "resource_id": "ref.oracle.cloud.docs",
+    "name": "Oracle Cloud Infrastructure documentation",
+    "source_id": "official.oracle",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://docs.oracle.com/en-us/iaas/Content/home.htm",
+    "seed_urls": [
+      "https://docs.oracle.com/en-us/iaas/Content/home.htm"
+    ],
+    "task_classes": [
+      "ORACLE_CLOUD",
+      "INFRASTRUCTURE",
+      "SECURITY",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "Oracle Cloud"
+    ],
+    "keywords": [
+      "oracle cloud",
+      "oci",
+      "compute",
+      "network",
+      "iam"
+    ],
+    "forbidden_effects": [
+      "MIGRATE_PROVIDER_WITHOUT_DECISION"
+    ]
+  },
+  {
+    "resource_id": "signal.stackoverflow",
+    "name": "Stack Overflow task-specific corroboration",
+    "source_id": "community.stackoverflow",
+    "resource_class": "FORUM_QA",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "DISCOVERY_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "https://stackoverflow.com/",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [],
+    "keywords": [
+      "error",
+      "bug",
+      "workaround",
+      "issue"
+    ],
+    "forbidden_effects": [
+      "CHANGE_ARCHITECTURE",
+      "SELF_CERTIFY_GATE",
+      "CHANGE_PRODUCT_REQUIREMENTS"
+    ]
+  },
+  {
+    "resource_id": "signal.github.issues",
+    "name": "GitHub issue/discussion corroboration",
+    "source_id": "community.github.issues",
+    "resource_class": "ISSUE_DISCUSSION",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "DISCOVERY_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "https://github.com/",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [],
+    "keywords": [
+      "bug",
+      "regression",
+      "issue",
+      "workaround",
+      "release"
+    ],
+    "forbidden_effects": [
+      "CHANGE_ARCHITECTURE",
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "signal.reddit",
+    "name": "Reddit engineering signal",
+    "source_id": "community.reddit.engineering",
+    "resource_class": "FORUM_QA",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "DISCOVERY_APPROVED",
+    "activation_mode": "DISCOVERY_ONLY",
+    "locator": "https://www.reddit.com/",
+    "task_classes": [
+      "*"
+    ],
+    "technologies": [],
+    "keywords": [
+      "experience",
+      "workaround",
+      "community"
+    ],
+    "forbidden_effects": [
+      "DIRECT_CODE_ADOPTION",
+      "CHANGE_ARCHITECTURE",
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "registry.npm.metadata",
+    "name": "npm package metadata",
+    "source_id": "registry.npm",
+    "resource_class": "PACKAGE_REGISTRY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://registry.npmjs.org/",
+    "task_classes": [
+      "WEB_UI_IMPLEMENTATION",
+      "BUILD_TOOLING",
+      "TYPESCRIPT_IMPLEMENTATION"
+    ],
+    "technologies": [
+      "npm"
+    ],
+    "keywords": [
+      "package",
+      "version",
+      "release",
+      "dependency"
+    ],
+    "forbidden_effects": [
+      "INSTALL_WITHOUT_DONOR_GATE"
+    ]
+  },
+  {
+    "resource_id": "registry.maven.metadata",
+    "name": "Maven Central metadata",
+    "source_id": "registry.maven",
+    "resource_class": "PACKAGE_REGISTRY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://search.maven.org/",
+    "task_classes": [
+      "ANDROID_UI_IMPLEMENTATION",
+      "ANDROID_TESTING",
+      "ANDROID_SECURITY"
+    ],
+    "technologies": [
+      "Maven",
+      "Gradle"
+    ],
+    "keywords": [
+      "artifact",
+      "version",
+      "dependency"
+    ],
+    "forbidden_effects": [
+      "INSTALL_WITHOUT_DONOR_GATE"
+    ]
+  },
+  {
+    "resource_id": "security.github.advisory",
+    "name": "GitHub Advisory Database",
+    "source_id": "registry.github.advisory",
+    "resource_class": "SECURITY_ADVISORY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://github.com/advisories",
+    "task_classes": [
+      "SECURITY",
+      "DEPENDENCY_SECURITY",
+      "ANDROID_SECURITY",
+      "WEB_SECURITY"
+    ],
+    "technologies": [],
+    "keywords": [
+      "cve",
+      "advisory",
+      "vulnerability",
+      "security"
+    ],
+    "forbidden_effects": [
+      "SELF_CERTIFY_GATE"
+    ]
+  },
+  {
+    "resource_id": "marketplace.claude-plugins-official",
+    "name": "Anthropic Claude Code plugin marketplace",
+    "source_id": "official.anthropic.plugin-marketplace",
+    "resource_class": "PLUGIN",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "DISCOVERY_APPROVED",
+    "activation_mode": "DISCOVERY_ONLY",
+    "locator": "https://github.com/anthropics/claude-plugins-official",
+    "repository": "anthropics/claude-plugins-official",
+    "task_classes": [
+      "PLUGIN_DISCOVERY",
+      "MCP_DISCOVERY",
+      "TOOL_DISCOVERY"
+    ],
+    "technologies": [
+      "Claude Code"
+    ],
+    "keywords": [
+      "plugin",
+      "mcp",
+      "tool",
+      "claude code"
+    ],
+    "forbidden_effects": [
+      "DIRECT_PLUGIN_INSTALL",
+      "BYPASS_DONOR_GATE",
+      "EXPAND_AUTHORITY"
+    ],
+    "notes": "The marketplace itself may be consulted for discovery. Every concrete plugin is a separate donor and cannot execute until its own qualification passes."
+  },
+  {
+    "resource_id": "dial.mcp.oracle-control",
+    "name": "DIAL Oracle chat-control MCP",
+    "source_id": "dial.project",
+    "resource_class": "MCP_SERVER",
+    "authority": "PROJECT_LOCAL_ENGINEERING_POLICY",
+    "status": "ACTIVE",
+    "activation_mode": "PROCESS_RULE",
+    "locator": "agent-system/orchestration/chat-control-bridge.mjs",
+    "task_classes": [
+      "ORCHESTRATION_CONTROL",
+      "MISSION_CONTROL",
+      "CHAT_CONTROL"
+    ],
+    "technologies": [
+      "MCP",
+      "Oracle",
+      "Hermes"
+    ],
+    "keywords": [
+      "mcp",
+      "chat control",
+      "mission",
+      "status"
+    ],
+    "forbidden_effects": [
+      "GENERIC_SHELL_EXPOSURE",
+      "CROSS_PROJECT_ACCESS",
+      "BYPASS_DEVELOPMENT_GATE"
+    ]
+  }
+]

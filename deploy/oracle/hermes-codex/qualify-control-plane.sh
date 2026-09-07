@@ -55,8 +55,10 @@ section "REPOSITORY QUALIFICATION"
 npm ci; pass "npm ci"
 npm run typecheck; pass "typecheck"
 VEKL_STATUS="$(tmp)"; npm run --silent agent:skills:check >"$VEKL_STATUS"
-jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL registry/policy validation is not green"; }
-pass "VEKL registry, research-pin and activation-policy validation"
+jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL skill registry/policy validation is not green"; }
+VEKL_KNOWLEDGE="$(tmp)"; npm run --silent agent:knowledge:check >"$VEKL_KNOWLEDGE"
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.0" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
+pass "VEKL v2 skill + federated resource registries and activation-policy validation"
 npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification including VEKL"
 npm run verify; pass "full repository verification"
 find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --check; pass "orchestration JavaScript syntax"
@@ -71,6 +73,8 @@ systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dia
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
 systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
+systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
 jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' <<<"$CHAT_HEALTH" >/dev/null || fail "DIAL chat control health endpoint is invalid"
 CHAT_TOKEN="$(cat "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
@@ -83,13 +87,21 @@ MISSION_STATUS="$(node agent-system/orchestration/mission-controller.mjs status)
 jq -e '.mission_id == "dial-development-root" and .project == "dial" and (.state == "PAUSED" or .state == "BLOCKED_OWNER" or .state == "WAITING_RUNTIME")' <<<"$MISSION_STATUS" >/dev/null || fail "DIAL root mission is not safely non-running during pre-green qualification"
 OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' "$OPS_STATUS" >/dev/null || { cat "$OPS_STATUS" >&2; fail "auxiliary operations boundary is not intact"; }
-pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control and non-authoritative operations services are active"
+pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
 
 section "INSTALLED RUNTIME IDENTITY"
 CODEX_PROBE="$(tmp)"; node agent-system/orchestration/codex-app-server-probe.mjs >"$CODEX_PROBE"
 jq -e '.state == "HEALTHY" and .requested_model == "gpt-5.6-sol" and .resolved_model == "gpt-5.6-sol" and .identity_proven == true and .rerouted == null' "$CODEX_PROBE" >/dev/null || { cat "$CODEX_PROBE" >&2; fail "Codex App Server Sol probe did not prove the hard pin"; }; pass "Codex App Server hard-pinned GPT-5.6 Sol"
 CLAUDE_PROBE="$(tmp)"; node agent-system/orchestration/claude-code-probe.mjs >"$CLAUDE_PROBE"
 jq -e '.state == "HEALTHY" and .requested_model == "claude-sonnet-5" and .resolved_model == "claude-sonnet-5" and .identity_proven == true' "$CLAUDE_PROBE" >/dev/null || { cat "$CLAUDE_PROBE" >&2; fail "Claude Code Sonnet 5 probe did not prove the hard pin"; }; pass "official Claude Code / exact Sonnet 5 fallback runtime"
+
+section "VEKL LIVE RUNTIME SYMMETRY"
+VEKL_CANARY="$(tmp)"; npm run --silent agent:skills:live-canary >"$VEKL_CANARY"
+jq -e '.status == "GREEN" and .kind == "DIAL_VEKL_LIVE_RUNTIME_SYMMETRY_CANARY" and .same_activation_across_runtimes == true and .exact_hashes_preserved == true and .federated_resource_provenance_preserved == true and .primary.resolved_model == "gpt-5.6-sol" and .fallback.resolved_model == "claude-sonnet-5"' "$VEKL_CANARY" >/dev/null || { cat "$VEKL_CANARY" >&2; fail "VEKL live Sol/Sonnet symmetry canary is not green"; }
+VEKL_CANARY_EVIDENCE="$(jq -r '.evidence_path // empty' "$VEKL_CANARY")"
+VEKL_CANARY_ACTIVATION="$(jq -r '.activation_id // empty' "$VEKL_CANARY")"
+[[ -n "$VEKL_CANARY_EVIDENCE" && -f "$VEKL_CANARY_EVIDENCE" && -n "$VEKL_CANARY_ACTIVATION" ]] || fail "VEKL live canary evidence was not persisted"
+pass "VEKL v2 exact skill + federated resource manifest provenance is identical across live Sol and Sonnet paths"
 
 section "OPERATIONAL PRIMARY PATH"
 OPERATIONAL="$(tmp)"
@@ -139,6 +151,8 @@ jq -n \
   --arg observed_at "$(now)" \
   --arg repo_head "$HEAD_SHA" \
   --arg canary_job_id "$CANARY_ID" \
+  --arg vekl_live_canary_evidence "$VEKL_CANARY_EVIDENCE" \
+  --arg vekl_live_canary_activation "$VEKL_CANARY_ACTIVATION" \
   '{
     schema_version:1,
     kind:"DIAL_HERMES_INSTALLED_RUNTIME_QUALIFICATION",
@@ -161,10 +175,15 @@ jq -n \
     project_isolated_qualification:true,
     shared_host_reboot_required:false,
     vekl_framework:true,
-    vekl_policy_version:"vekl-1.0",
+    vekl_policy_version:"vekl-2.0",
+    vekl_federated_resource_layer:true,
+    vekl_ahead_of_work_research_scheduler:true,
     vekl_packet_manifest_required:true,
     vekl_vendor_content_authority:"ENGINEERING_GUIDANCE_ONLY",
-    vekl_unqualified_vendor_activation_allowed:false
+    vekl_unqualified_vendor_activation_allowed:false,
+    vekl_live_runtime_symmetry:true,
+    vekl_live_canary_evidence:$vekl_live_canary_evidence,
+    vekl_live_canary_activation:$vekl_live_canary_activation
   }' >"$EVIDENCE"
 chmod 600 "$EVIDENCE"
 

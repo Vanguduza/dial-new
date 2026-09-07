@@ -12,7 +12,7 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 6. Trigger Money/Security/Donor/Health/NFR/UI/Migration reviewer when applicable.
 7. Record fresh tests/evidence before advancing a gate.
 8. Preserve DIAL source-of-truth boundaries.
-9. After Feature/JIT context, resolve/confirm the VEKL Skill Activation Manifest before material implementation. External skills are non-authoritative and exact-version governed; a valid result may be no external skill.
+9. After Feature/JIT context, resolve/confirm the VEKL v2 Engineering Knowledge Activation Manifest before material implementation. Skills are one governed resource class among official docs/repos/releases/issues/advisories/tools/rules/hooks/loops and bounded community corroboration; a valid result may contain no external executable skill.
 
 ## Never
 
@@ -23,8 +23,9 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 - mark a feature complete from code inspection alone;
 - start broad research when canon/current code already answers the question;
 - load the entire master pack when bounded context is sufficient;
-- treat an external/vendor skill, learned wrapper, session-memory hit or model prior as product/architecture/gate authority;
-- activate a Google/Android skill from a research reference or mutable upstream branch — VEKL requires approved exact pin/hash provenance.
+- treat an external/vendor resource, community/forum result, learned wrapper, session-memory hit or model prior as product/architecture/gate authority;
+- activate a skill/plugin/tool/hook/MCP from a research reference or mutable upstream branch — executable VEKL resources require the applicable exact-version donor/security/eval provenance;
+- let ahead-of-work research reprioritise the Development Plan or send secrets, payment/customer records or identifiable Health data to public research sources.
 
 
 ## GMPC integration lock
@@ -48,9 +49,11 @@ Architecture: `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
 
 ## VEKL engineering-knowledge lock
 
-Canonical VEKL: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`.
+Canonical VEKL v2: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` (`DEC-020`). Rev 1 remains provenance for the qualified immutable-skill substrate.
 
-For material Oracle packets, VEKL resolution is a process gate after canonical Feature context. The persisted activation ID/hash travels with the queue/checkpoint/failover path. Hermes/Sol may load only the packet-scoped approved external-skill directory; Sonnet fallback receives the exact same pinned skill bodies from that manifest. If repository inspection materially refines the task, use an explicit audited re-resolution before relying on newly relevant specialist knowledge. External skills never satisfy DIAL specialist reviews or completion gates.
+VEKL is not limited to Google/Android Agent Skills. It federates relevant official documentation, repositories, releases, issues/discussions, package/advisory data, qualified tools/plugins/MCPs, DIAL rules/hooks/loops and bounded community evidence. For material Oracle packets, deterministic VEKL resolution follows canonical Feature context and persists one activation ID/hash containing both skills and selected resources. Sol and Sonnet must retain the same activation provenance.
+
+Hermes also runs project-aware **ahead-of-work research**: exact Sol, then exact Sonnet fallback, reads Project Truth + the active Development Plan + mission/checkpoint context and forecasts the engineering knowledge likely needed for the next 3–5 dependency-safe packets. It may pre-cache approved reference sources but may not edit the repo, install anything, change programme priority, disclose sensitive data or treat community evidence as authority. If the concrete task materially changes after inspection, use audited VEKL re-resolution before relying on newly relevant knowledge.
 
 ## Tooling
 

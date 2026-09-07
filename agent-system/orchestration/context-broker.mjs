@@ -6,7 +6,7 @@ import { captureGitState, loadRepoActiveWork } from './checkpoint-store.mjs';
 import { loadHandoffCapsule } from './handoff-builder.mjs';
 import { readFeatureMemory } from './feature-memory.mjs';
 import { readJson } from './state-store.mjs';
-import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
+import { activationSummary, loadSkillActivationForPacket, renderResourceActivationBundle } from './skill-activation-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -91,6 +91,7 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
   const resolvedPacketId = packetId || process.env.DIAL_PACKET_ID || null;
   const activation = skillActivation || (resolvedPacketId ? loadSkillActivationForPacket(resolvedPacketId, root) : null);
   const engineeringKnowledge = activationSummary(activation);
+  const resourceKnowledgeBundle = activation ? renderResourceActivationBundle(activation, root) : '';
 
   const packet = [
     'DIAL HERMES EXTERNAL RUNTIME CONTEXT',
@@ -100,7 +101,7 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
     '2. machine registries and evidence',
     '3. current Git/worktree state',
     '4. DIAL engineering/tooling policy',
-    '5. approved Skill Activation Manifest metadata',
+    '5. approved Engineering Knowledge Activation Manifest metadata',
     '6. orchestration checkpoint',
     '7. handoff capsule',
     '8. Feature-scoped Oracle memory',
@@ -116,8 +117,9 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
       : 'Hermes runtime provenance: none recorded.',
     '',
     `Observed Git state: ${JSON.stringify(gitState)}`,
-    'Engineering knowledge policy: VEKL v1.0. External skills are non-authoritative procedural guidance; canon and evidence win.',
-    engineeringKnowledge ? `Engineering Skill Activation Manifest metadata: ${bounded(JSON.stringify(engineeringKnowledge), 5000)}` : 'Engineering Skill Activation Manifest metadata: none attached.',
+    'Engineering knowledge policy: VEKL v2.0. Skills are one governed resource class among official docs/repos/releases/issues/package registries/advisories/tools/rules/hooks/loops and bounded community corroboration. External material is non-authoritative; canon and evidence win.',
+    engineeringKnowledge ? `Engineering Knowledge Activation Manifest metadata: ${bounded(JSON.stringify(engineeringKnowledge), 7500)}` : 'Engineering Knowledge Activation Manifest metadata: none attached.',
+    resourceKnowledgeBundle ? `\nSelected VEKL engineering references (non-authoritative):\n${bounded(resourceKnowledgeBundle, 9000)}` : '',
     checkpoint ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpoint, null, 2), 5000)}` : '',
     capsule ? `\nHandoff capsule (verify before use):\n${bounded(JSON.stringify(capsule, null, 2), 5000)}` : '',
     canonicalContext ? `\nBounded DIAL Feature context:\n${bounded(canonicalContext, 10000)}` : '',
@@ -139,6 +141,8 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
     hermes_memory_hits: history.length,
     skill_activation_id: activation?.activation_id ?? null,
     selected_skills: engineeringKnowledge?.selected_skills ?? [],
+    selected_resources: engineeringKnowledge?.selected_resources ?? [],
+    research_forecast_id: engineeringKnowledge?.research_forecast_id ?? null,
   };
 }
 

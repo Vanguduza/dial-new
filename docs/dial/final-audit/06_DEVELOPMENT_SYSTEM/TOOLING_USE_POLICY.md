@@ -110,10 +110,10 @@ These bind regardless of which tool produced the output.
 
 ## Versioned Engineering Knowledge Layer (VEKL)
 
-`DEC-019` makes VEKL the governed path for external Agent Skills used by DIAL development. Canonical architecture:
-`DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`.
+`DEC-020` makes VEKL v2 DIAL's federated engineering knowledge/capability path. Agent Skills remain governed by the Rev 1 qualification foundation, but skills are now one resource class among official docs/repos/releases/issues/advisories/package registries, qualified tools/plugins/MCPs, DIAL rules/hooks/loops and bounded community corroboration. Active canon:
+`DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md`.
 
-**Every material Oracle packet is evaluated by VEKL after Feature/JIT context resolution.** This is not permission to load a skill catalogue. The resolver emits a persisted activation manifest whose valid result may be `NO_EXTERNAL_SKILL_REQUIRED` or `NO_APPROVED_SKILL_AVAILABLE`.
+**Every material Oracle packet is evaluated by VEKL after Feature/JIT context resolution.** This is not permission to load a skill or resource catalogue. The resolver emits one persisted Engineering Knowledge Activation Manifest containing the minimal relevant approved resource set. Separately, project-aware Sol→Sonnet ahead-of-work research may pre-cache likely-needed references for the next 3–5 dependency-safe packets; it is read-only, advisory and cannot change programme priority.
 
 External skills remain subject to Guardrail 5. In particular:
 
@@ -138,3 +138,5 @@ External skills remain subject to Guardrail 5. In particular:
 | Dial Health sensitive context | Vendor knowledge may receive code/synthetic fixtures, not identifiable production Health records; marketing/analytics guidance is purpose-gated |
 
 VEKL selection/outcome telemetry is process evidence, not Feature completion evidence. `SKILL_USED`, `SKILL_HELPFUL` and `GATE_PASSED` are separate states and must never be collapsed.
+
+Community/forum evidence is `CORROBORATION_ONLY` or `DISCOVERY_ONLY`; it can generate a hypothesis but cannot establish architecture/security/money/Health/provider truth. Public presearch must use registered allowlisted sources and may not carry secrets, customer/payment records or identifiable Health data. Executable resources such as third-party plugins, tools, MCPs, hooks and workflow loops remain subject to their donor/security/tooling qualification before use.

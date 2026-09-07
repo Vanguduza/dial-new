@@ -117,6 +117,10 @@ export function persistSkillActivation({
     missing_mandatory_task_classes: plan.missing_mandatory_task_classes || [],
     relevant_bundles: plan.relevant_bundles || [],
     skills: materialized,
+    resources: Array.isArray(plan.selected_resources) ? plan.selected_resources : [],
+    resource_rejected: Array.isArray(plan.resource_rejected) ? plan.resource_rejected : [],
+    resource_task_classes: Array.isArray(plan.resource_task_classes) ? plan.resource_task_classes : [],
+    research_forecast_id: plan.research_forecast_id || null,
     rejected: plan.rejected || [],
     dial_guard_capsule: guard,
     runtime_skill_dir: skillDir,
@@ -146,6 +150,8 @@ export function persistSkillActivation({
     task_classes: manifest.task_classes,
     resolution_state: manifest.resolution_state,
     skills: materialized.map((s) => ({ skill_id: s.skill_id, upstream_commit: s.upstream_commit, content_hash: s.content_hash })),
+    resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, content_hash: r.content_hash, cache_ref: r.cache_ref })),
+    research_forecast_id: manifest.research_forecast_id,
     at: manifest.created_at,
   }, root);
   return manifest;
@@ -183,19 +189,53 @@ function bounded(text, max = 16000) {
   return value.length > max ? `${value.slice(0, max)}\n…[skill body bounded]` : value;
 }
 
+export function renderResourceActivationBundle(manifest, root = DEFAULT_CONTROL_HOME) {
+  if (!manifest) return '';
+  const verification = verifySkillActivation(manifest, root);
+  if (!verification.ok) throw new Error(`cannot render invalid engineering knowledge activation ${manifest.activation_id}: ${verification.failures.join('; ')}`);
+  if (!(manifest.resources || []).length) return '';
+  const sections = [
+    'DIAL VEKL SELECTED ENGINEERING REFERENCES',
+    `Activation: ${manifest.activation_id}`,
+    `Manifest SHA-256: ${manifest.manifest_sha256}`,
+    'Authority: NON_AUTHORITATIVE_ENGINEERING_GUIDANCE',
+    'DIAL canon, Feature/FRC/security/current repository evidence and gates outrank every external reference below.',
+  ];
+  for (const resource of manifest.resources || []) {
+    const lines = [
+      '', `--- RESOURCE ${resource.resource_id} ---`,
+      `Class: ${resource.resource_class}`, `Source: ${resource.source_id}`, `Trust: ${resource.trust_tier}`,
+      `Authority: ${resource.authority}`, `Mode: ${resource.activation_mode}`, `Locator: ${resource.locator}`,
+      `Freshness: ${resource.freshness || 'UNKNOWN'}`, resource.corroboration_required ? 'CORROBORATION REQUIRED: community material may not be the sole basis for a DIAL decision.' : '',
+      (resource.forbidden_effects || []).length ? `Forbidden effects: ${(resource.forbidden_effects || []).join(', ')}` : '',
+    ].filter(Boolean);
+    if (resource.cache_ref) {
+      try {
+        const cached = readJson(resource.cache_ref, null, root);
+        if (cached?.content_excerpt) lines.push('Cached presearch evidence (non-authoritative):', bounded(cached.content_excerpt, 5000));
+        if (cached?.search_results?.length) lines.push('Cached presearch result metadata:', bounded(JSON.stringify(cached.search_results.slice(0, 8)), 5000));
+      } catch {}
+    }
+    sections.push(...lines);
+  }
+  return sections.join('\n');
+}
+
 export function renderSkillActivationBundle(manifest, root = DEFAULT_CONTROL_HOME) {
   if (!manifest) return '';
   const verification = verifySkillActivation(manifest, root);
   if (!verification.ok) throw new Error(`cannot render invalid skill activation ${manifest.activation_id}: ${verification.failures.join('; ')}`);
-  if (!(manifest.skills || []).length) return '';
+  if (!(manifest.skills || []).length && !(manifest.resources || []).length) return '';
+  const resourceBundle = renderResourceActivationBundle(manifest, root);
   const sections = [
     'DIAL APPROVED ENGINEERING KNOWLEDGE BUNDLE',
     `Activation: ${manifest.activation_id}`,
     `Manifest SHA-256: ${manifest.manifest_sha256}`,
     'Authority: NON_AUTHORITATIVE_ENGINEERING_GUIDANCE',
     'DIAL canon, Feature/FRC/security/current repository evidence and gates outrank everything below.',
-  ];
-  for (const skill of manifest.skills) {
+    resourceBundle,
+  ].filter(Boolean);
+  for (const skill of manifest.skills || []) {
     const source = snapshotPath(skill.snapshot_rel, root);
     const body = fs.readFileSync(path.join(source, 'SKILL.md'), 'utf8');
     const constraints = (skill.activation_constraints || []).length
@@ -217,5 +257,7 @@ export function activationSummary(manifest) {
     execution_allowed: manifest.execution_allowed !== false,
     missing_mandatory_task_classes: manifest.missing_mandatory_task_classes || [],
     selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name, activation_constraints: s.activation_constraints || [], requires_independent_specialist_review: s.requires_independent_specialist_review === true })),
+    selected_resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, trust_tier: r.trust_tier, authority: r.authority, activation_mode: r.activation_mode, content_hash: r.content_hash || null, cache_ref: r.cache_ref || null, freshness: r.freshness || 'UNKNOWN', corroboration_required: r.corroboration_required === true })),
+    research_forecast_id: manifest.research_forecast_id || null,
   };
 }

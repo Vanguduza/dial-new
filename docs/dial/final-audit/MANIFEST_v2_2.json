@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-07T22:08:52.789Z",
+  "generated_at": "2026-09-07T22:44:34.687Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 232,
+  "file_count": 233,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11234,
-      "sha256": "7fd1b9ae625ec67f964f6c358b5e49e4d719e3d1096028fbef6a2746948fa123"
+      "sha256": "6178927533b7300906fe5e3673ce93dc4c15decffd8a02c92cc83f29e42bd06d"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
-      "bytes": 16176,
-      "sha256": "baff9cfff95757d563f8348198f9e0b7ccf4a036969b92e53228a9e083a23c74"
+      "bytes": 16673,
+      "sha256": "ac4883e13d05af90b3b4b315f5850f8e3ab412739a7c2d083447fdfa063a1094"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -63,8 +63,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 7428,
-      "sha256": "b30f8a7ed586be9c4678da2001fe96e1dccac039cbafddc113b78a7b9f9559ae"
+      "bytes": 7869,
+      "sha256": "62224fe0b8696ab99d67fddb481f8553bd2f788e9244d9eeb51fe44f04b542d8"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -178,13 +178,18 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md",
-      "bytes": 10254,
-      "sha256": "b60bfc6df430ba9480f4a0e45da0f7a9f6f366cd63384e76d23bf61b269b63c5"
+      "bytes": 10725,
+      "sha256": "87c0bcc2893d53db0fc518767eb25de143999d7e1fdeb1797b2b0a577834d7f5"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md",
+      "bytes": 23298,
+      "sha256": "c1f48119a870ba593922f74d5b20b96d4cb0cf00d80f417fa7f1859b23859c96"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
-      "bytes": 40020,
-      "sha256": "911e5e287e525f1aa08b2dcebfec4d5af03560e55e65b71de9008de5717a588a"
+      "bytes": 40373,
+      "sha256": "2ec20e46ea6bd9612bb6fb479a7f236e35653a92b6b1c737778c93cd196d8c35"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",
@@ -443,8 +448,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md",
-      "bytes": 9679,
-      "sha256": "4dfb4c7e8101752b442b6935c7845d7ce08319aab589f6110f46db8376bfa997"
+      "bytes": 10615,
+      "sha256": "fc8b7fe694a6773233e41badcd263289314cdae98c0c1818d122363e0451c51d"
     },
     {
       "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
@@ -528,8 +533,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 63458,
-      "sha256": "65560ca679ddc89cf5869803230c5030b6403ab9c09f1df5fcb971ae307a55c3"
+      "bytes": 64124,
+      "sha256": "5aaa254a1c7ce5f11f281f2ec36451e74b53c3465b3c1c18a13629ed3339c9dd"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",

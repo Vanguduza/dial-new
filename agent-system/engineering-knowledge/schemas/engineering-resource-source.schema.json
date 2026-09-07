@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DIAL Engineering Resource Source",
+  "type": "object",
+  "required": [
+    "source_id",
+    "name",
+    "trust_tier",
+    "source_kind",
+    "resource_classes",
+    "task_classes",
+    "sensitive_data_allowed",
+    "executable_content_allowed"
+  ],
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "name": {
+      "type": "string"
+    },
+    "trust_tier": {
+      "pattern": "^T[0-4]_"
+    },
+    "source_kind": {
+      "type": "string"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retrieval_adapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resource_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "task_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sensitive_data_allowed": {
+      "const": false
+    },
+    "executable_content_allowed": {
+      "type": "boolean"
+    },
+    "freshness_ttl_hours": {
+      "type": "number",
+      "minimum": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

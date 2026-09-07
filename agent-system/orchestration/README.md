@@ -150,9 +150,9 @@ Do not deliberately exhaust subscription quota to manufacture provider failure e
 
 Generalized development model registries, Manager Chair controls, worker pools, DeepSeek Harness settings and DDE model-management UI are outside this DIAL Hermes implementation.
 
-## Versioned Engineering Knowledge Layer (VEKL)
+## Versioned Engineering Knowledge Layer (VEKL v2 — federated resources)
 
-`DEC-019` adds a governed engineering-knowledge resolution gate to ordinary DIAL packets. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator then persists a packet `Skill Activation Manifest`, which may select zero approved external skills.
+`DEC-020` extends the `DEC-019` immutable-skill foundation into a federated engineering knowledge/capability gate. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator persists one packet Engineering Knowledge Activation Manifest containing relevant skills plus registered docs/repos/releases/issues/advisories/tools/rules/hooks/loops/community corroboration as applicable. A zero-external-resource result remains valid.
 
 VEKL modules:
 - `skill-registry.mjs` — machine registry/approval invariants;
@@ -163,5 +163,8 @@ VEKL modules:
 - `learned-skill-curator.mjs` — proposal-only DIAL procedural learning boundary.
 
 The primary Hermes/Sol process receives `DIAL_SKILL_ACTIVATION_DIR` and may use Hermes native progressive skill loading. The direct Claude Code/Sonnet fallback receives the exact same selected `SKILL.md` bodies rendered from the persisted activation. Runtime failover therefore preserves skill provenance without requiring the two runtimes to use the same loading mechanism.
+
+
+Ahead-of-work research is handled by `engineering-research-manager.mjs` + `engineering-presearch.mjs`. Exact project-aware Sol (Codex App Server) is primary and exact Sonnet 5 is fallback. It reads current Project Truth, Development Plan and DIAL mission/checkpoint context in read-only mode, forecasts the next 3–5 dependency-safe packets, and pre-caches registered allowlisted references. `dial-engineering-research.timer` provides periodic refresh and `dial-engineering-research.path` reacts to truth/plan/mission/checkpoint changes. Research cannot reprioritise DIAL or carry sensitive production data.
 
 Research-reference Google/Android versions are not executable pins. No vendor skill may activate until its registry record is `APPROVED`/`ACTIVE` with exact production pin, content hash, immutable snapshot and completed donor/security/conflict/eval qualification.

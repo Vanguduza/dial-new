@@ -2154,7 +2154,7 @@
   {
     "capability_id": "DEV-S001",
     "area": "DEVELOPMENT_SYSTEM",
-    "name": "Versioned Engineering Knowledge Layer (VEKL)",
+    "name": "Versioned Engineering Knowledge Layer (VEKL v2 \u2014 Federated Engineering Resources)",
     "owner": "development-system/orchestration",
     "app_families": [
       "DEVELOPMENT_SYSTEM"
@@ -2171,12 +2171,19 @@
       "agent-system/orchestration/learned-skill-curator.mjs",
       "agent-system/orchestration/context-broker.mjs",
       "agent-system/orchestration/external-orchestrator.mjs",
-      "agent-system/orchestration/hermes-runtime-executor.mjs"
+      "agent-system/orchestration/hermes-runtime-executor.mjs",
+      "agent-system/orchestration/engineering-resource-registry.mjs",
+      "agent-system/orchestration/engineering-resource-resolver.mjs",
+      "agent-system/orchestration/engineering-research-manager.mjs",
+      "agent-system/orchestration/engineering-presearch.mjs",
+      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json",
+      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json"
     ],
     "test_paths": [
-      "tests/orchestration-vekl.test.mjs"
+      "tests/orchestration-vekl.test.mjs",
+      "tests/orchestration-vekl-resources.test.mjs"
     ],
     "current_gate": "DOMAIN_TESTED",
-    "implementation_note": "VEKL v1 framework is implemented and deterministically tested. The registry contains 19 records and six APPROVED skills: four selected official Android skills at the exact android/skills production pin plus two DIAL-owned safe wrappers for device verification and test setup. All approved content is exact-hash and published as immutable Oracle snapshots; activation constraints and specialist-review requirements travel with the persisted manifest. Upstream Android CLI remains QUARANTINED and upstream Testing Setup remains barred from direct activation. DOMAIN_TESTED applies to the VEKL governance/resolution/immutability/failover/learning framework, not to product Feature completion."
+    "implementation_note": "VEKL v2 is implemented as a federated engineering knowledge/capability layer. The exact-pin immutable skill substrate remains qualified (six approved Android procedures), while registered non-skill resources now include official stack docs/repos/releases/issues/advisories/package registries, policy-gated tools, DIAL rules/hooks/loops and bounded community corroboration. Project-aware exact Sol\u2192Sonnet ahead-of-work research reads current Project Truth/Development Plan/mission state, forecasts the next 3\u20135 dependency-safe packets and pre-caches allowlisted passive references under Oracle control state. Packet activation persists both skill and resource provenance. Research is read-only/non-authoritative, cannot reprioritise the programme, and cannot receive sensitive production data."
   }
 ]

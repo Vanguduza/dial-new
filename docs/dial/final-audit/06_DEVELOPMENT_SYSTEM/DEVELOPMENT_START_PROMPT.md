@@ -54,7 +54,7 @@ Then read the existing code and tests for the feature before proposing anything.
 Inspect first, then design. The registry's `code_paths` and `test_paths` tell you
 where to look.
 
-Before material implementation, confirm the packet's **VEKL Skill Activation Manifest**. VEKL is DIAL's governed external-engineering-knowledge layer (`DEC-019`). Its valid result may be no external skill. Do not load or install a vendor skill ad hoc. Approved external skills are non-authoritative exact-version guidance; canon/FRC/security/current code/evidence win. If repository inspection materially refines the task and newly makes specialist knowledge relevant, perform an explicit audited VEKL re-resolution before the first material action that depends on it. Sol and Sonnet must retain the same persisted skill provenance across failover.
+Before material implementation, confirm the packet's **VEKL v2 Engineering Knowledge Activation Manifest**. VEKL is DIAL's federated engineering knowledge/capability layer (`DEC-020`): skills plus task-relevant official docs/repos/releases/issues/advisories/package data, approved tools/plugins/MCPs and DIAL rules/hooks/loops, with community evidence restricted to corroboration/discovery. Hermes may use exact project-aware Sol→Sonnet to presearch upcoming plan-aligned packets, but that research is read-only/advisory and cannot reprioritise work. Do not load/install executable resources ad hoc. Canon/FRC/security/current code/evidence win. If repository inspection materially refines the task, perform an audited VEKL re-resolution before the first material action that depends on newly relevant knowledge. Sol and Sonnet retain the same persisted resource provenance across failover.
 
 Useful read-only checks:
 
@@ -131,8 +131,9 @@ Be sceptical of anything that sounds more finished than this:
 - paste a credential or token into the conversation;
 - use old v4 or D-number documents as active authority where v2 supersedes them.
 - for GMPC work, create a second RAG/customer/pricing/money authority or let an external marketing platform become DIAL source of truth;
-- bypass VEKL by loading an unqualified external skill, mutable upstream branch or research-reference revision into a material packet;
-- let vendor/learned skills change product scope, source-of-truth boundaries, locked providers, permissions, money/Health policy or gate status.
+- bypass VEKL by loading an unqualified executable resource (skill/plugin/tool/MCP/hook/loop), mutable upstream branch or research-reference revision into a material packet;
+- let vendor/community/learned resources change product scope, source-of-truth boundaries, locked providers, permissions, money/Health policy or gate status;
+- send secrets, customer/payment records or identifiable Health information to ahead-of-work public research sources, or let presearch reorder the canonical Development Plan.
 
 **GMPC-specific rule:** for any `GMPC-F*`, read the GMPC Rev 2 canon after bounded context. Commercial RAG consumes DKRF; margin/pricing consumes `PLAT-F014`; money consumes Finance/Ledger; sensitive Health data is not ordinary marketing targeting context.
 
