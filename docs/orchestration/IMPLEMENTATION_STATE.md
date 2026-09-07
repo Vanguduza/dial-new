@@ -39,7 +39,7 @@ The auxiliary operations implementation has been installed on the Oracle control
 - `dial-hermes-operations.service` is active and running;
 - operations authority is `NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS`;
 - the operations service has `NoNewPrivileges=yes`;
-- `/srv/dial/repo` is read-only to the operations service;
+- `/home/ubuntu/dial-new` is read-only to the operations service;
 - `/var/lib/dial-control` is its only configured write path;
 - default schedules are active with API use disabled;
 - service-health, bounded service-recovery, external-queue-health, repository-integrity, deterministic-verification, evidence-preparation and backup-verification jobs execute deterministically;
@@ -255,3 +255,28 @@ If GitHub Actions creates jobs without a runner and executes zero steps, classif
 This DIAL branch does not implement DDE's Manager Chair, Lesser Task Pool, generalized model registry, Settings -> Models UI, DeepSeek Harness configuration, custom provider marketplace, or generalized development-model routing.
 
 Hermes on Oracle is DIAL's external orchestration infrastructure. DDE remains a separate system.
+## Claude chat control bridge and persistent DIAL mission
+
+Implemented in the consolidated DIAL repository, but **not yet production-qualified after the current control-plane changes**:
+
+- `mission-control.mjs` persists the DIAL-only `dial-development-root` mission outside Git;
+- `mission-controller.mjs` dispatches the next bounded manager turn only when the mission is `RUNNING`, the queue is idle and the external-Hermes development gate is green;
+- `chat-control-bridge.mjs` exposes a bearer-token-protected, DIAL-only MCP/JSON-RPC surface on host-local `127.0.0.1:9130/mcp`;
+- the bridge exposes typed status/progress/pause/resume/reprioritisation/approval/instruction tools and no generic shell/filesystem primitive;
+- `external-orchestrator.mjs` now respects mission pause state and priority ordering;
+- cursor-based progress survives Claude session loss;
+- the chat-control token is stored outside Git at `/var/lib/dial-control/secrets/chat-control.token` with mode `0600`;
+- installer units are `dial-chat-control.service` and `dial-mission-controller.service`;
+- qualification/finalization/reboot-soak scripts now require the new services and DIAL-only chat-control boundary before `PRODUCTION_GREEN`.
+
+Target authority model:
+
+```text
+Claude chat = operator/control surface
+Oracle mission controller = continuity + next-turn dispatch
+External Oracle orchestrator = execution queue
+Sol/Sonnet = bounded workers
+Repository/tests/gates = implementation truth
+```
+
+Current evidence is limited to local module/HTTP smoke tests and unit/integration tests. A remote Claude chat connection, authenticated private tunnel/Access policy, live Sol/Sonnet qualification, process-failover soak and reboot soak remain required before claiming the chat-control path production-green.

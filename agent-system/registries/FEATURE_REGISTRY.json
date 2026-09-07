@@ -6188,5 +6188,1588 @@
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
     "implementation_note": "Allocated from GROCERY_ROUNDS_MASTER_PLAN_v1.md. SPECIFIED only: no code and no contract of its own. Per-feature acceptance contract required before implementation (CT-7). The money model is LOCKED at DEC-001..007: credits are not money, so ACT-REG-001 is not engaged by Rounds. Review finding B1 is resolved. Enforced by packages/round-credit rules RCM-001..027."
+  },
+  {
+    "feature_id": "GMPC-F001",
+    "module": "GMPC",
+    "outcome": "Real-time KPI command cockpit",
+    "owner": "growth-command",
+    "aggregate": "RealTimeKPICommandCockpit",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F001",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P001). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F002",
+    "module": "GMPC",
+    "outcome": "Opportunity detection queue with evidence",
+    "owner": "opportunity-intelligence",
+    "aggregate": "OpportunityDetectionQueueWithEvidence",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F002",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P002). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F003",
+    "module": "GMPC",
+    "outcome": "Explainable score with component drill-down",
+    "owner": "commercial-health",
+    "aggregate": "ExplainableScoreWithComponentDrillDown",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F003",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P003). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F004",
+    "module": "GMPC",
+    "outcome": "AI investigation with tool-backed evidence",
+    "owner": "investigations",
+    "aggregate": "AIInvestigationWithToolBackedEvidence",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F004",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P004). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F005",
+    "module": "GMPC",
+    "outcome": "Scenario simulator with low/likely/high cases",
+    "owner": "simulation",
+    "aggregate": "ScenarioSimulatorWithLowLikelyHighCases",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F005",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P005). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F010",
+    "module": "GMPC",
+    "outcome": "Campaign CRUD and lifecycle state machine",
+    "owner": "campaigns",
+    "aggregate": "CampaignCRUDAndLifecycleStateMachine",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F010",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P010-P013). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F011",
+    "module": "GMPC",
+    "outcome": "Contribution/margin view by campaign",
+    "owner": "campaign-finance",
+    "aggregate": "ContributionMarginViewByCampaign",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F011",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P014). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F020",
+    "module": "GMPC",
+    "outcome": "Promotion CRUD and deterministic rules",
+    "owner": "promotions",
+    "aggregate": "PromotionCRUDAndDeterministicRules",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F020",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P020-P023). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F021",
+    "module": "GMPC",
+    "outcome": "Stacking/exclusivity engine",
+    "owner": "promotions",
+    "aggregate": "StackingExclusivityEngine",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F021",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P024). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F022",
+    "module": "GMPC",
+    "outcome": "Margin floor validation",
+    "owner": "promotions-finance",
+    "aggregate": "MarginFloorValidation",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F022",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P021-P024). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F023",
+    "module": "GMPC",
+    "outcome": "Funding source allocation and ledger",
+    "owner": "supplier-funding",
+    "aggregate": "FundingSourceAllocationAndLedger",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F023",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P023, P132). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F030",
+    "module": "GMPC",
+    "outcome": "Audience builder",
+    "owner": "audiences",
+    "aggregate": "AudienceBuilder",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F030",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P030-P032). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F031",
+    "module": "GMPC",
+    "outcome": "AI-assisted segment proposals",
+    "owner": "audience-intelligence",
+    "aggregate": "AIAssistedSegmentProposals",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F031",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P031). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F032",
+    "module": "GMPC",
+    "outcome": "Commercial 360 view",
+    "owner": "customer-growth",
+    "aggregate": "Commercial360View",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F032",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P033). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F040",
+    "module": "GMPC",
+    "outcome": "Journey builder and runtime",
+    "owner": "journeys",
+    "aggregate": "JourneyBuilderAndRuntime",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F040",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P040-P043). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F050",
+    "module": "GMPC",
+    "outcome": "AI creative generation workflow",
+    "owner": "content",
+    "aggregate": "AICreativeGenerationWorkflow",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F050",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P050-P051). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F051",
+    "module": "GMPC",
+    "outcome": "Versioned asset library in R2",
+    "owner": "assets",
+    "aggregate": "VersionedAssetLibraryInR2",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F051",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P052-P053). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F052",
+    "module": "GMPC",
+    "outcome": "Business-unit brand rule engine",
+    "owner": "brand",
+    "aggregate": "BusinessUnitBrandRuleEngine",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F052",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P054). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F053",
+    "module": "GMPC",
+    "outcome": "Approval queue and decision state",
+    "owner": "approvals",
+    "aggregate": "ApprovalQueueAndDecisionState",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F053",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P055). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F060",
+    "module": "GMPC",
+    "outcome": "Unified social control room",
+    "owner": "social",
+    "aggregate": "UnifiedSocialControlRoom",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F060",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P060). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F061",
+    "module": "GMPC",
+    "outcome": "Cross-platform scheduling calendar",
+    "owner": "social",
+    "aggregate": "CrossPlatformSchedulingCalendar",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F061",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P061-P062). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F062",
+    "module": "GMPC",
+    "outcome": "Publish/read analytics via governed connector",
+    "owner": "integrations-social",
+    "aggregate": "PublishReadAnalyticsViaGovernedConnector",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F062",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P060-P064, P160). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F063",
+    "module": "GMPC",
+    "outcome": "Organic performance analysis",
+    "owner": "social-analytics",
+    "aggregate": "OrganicPerformanceAnalysis",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F063",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P063). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F064",
+    "module": "GMPC",
+    "outcome": "Competitor post/performance analysis",
+    "owner": "market-intelligence",
+    "aggregate": "CompetitorPostPerformanceAnalysis",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F064",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P064). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F070",
+    "module": "GMPC",
+    "outcome": "Unified paid media portfolio",
+    "owner": "paid-media",
+    "aggregate": "UnifiedPaidMediaPortfolio",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F070",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P070-P074). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F071",
+    "module": "GMPC",
+    "outcome": "Dial campaign ↔ ad platform IDs",
+    "owner": "paid-media",
+    "aggregate": "DialCampaignAdPlatformIDs",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F071",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P071). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F072",
+    "module": "GMPC",
+    "outcome": "Limits, pacing and approval thresholds",
+    "owner": "budgets",
+    "aggregate": "LimitsPacingAndApprovalThresholds",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F072",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P073, P130-P131). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F073",
+    "module": "GMPC",
+    "outcome": "Policy-limited budget recommendations/actions",
+    "owner": "ai-policy",
+    "aggregate": "PolicyLimitedBudgetRecommendationsActions",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F073",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P073, P152). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F080",
+    "module": "GMPC",
+    "outcome": "Search/indexing/landing-page intelligence",
+    "owner": "seo",
+    "aggregate": "SearchIndexingLandingPageIntelligence",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F080",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P080-P081). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F081",
+    "module": "GMPC",
+    "outcome": "Google Business/local profile operations",
+    "owner": "local-discovery",
+    "aggregate": "GoogleBusinessLocalProfileOperations",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F081",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P082). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F090",
+    "module": "GMPC",
+    "outcome": "Lead list/detail/scoring",
+    "owner": "sales-growth",
+    "aggregate": "LeadListDetailScoring",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F090",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P090-P091). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F091",
+    "module": "GMPC",
+    "outcome": "Account 360 and opportunity estimate",
+    "owner": "sales-growth",
+    "aggregate": "Account360AndOpportunityEstimate",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F091",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P092). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F092",
+    "module": "GMPC",
+    "outcome": "Opportunity stages and forecast",
+    "owner": "sales-growth",
+    "aggregate": "OpportunityStagesAndForecast",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F092",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P093). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F100",
+    "module": "GMPC",
+    "outcome": "Featured and recommended placements",
+    "owner": "merchandising",
+    "aggregate": "FeaturedAndRecommendedPlacements",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F100",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P100-P101). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F101",
+    "module": "GMPC",
+    "outcome": "Supplier-sponsored slots with disclosure",
+    "owner": "merchandising",
+    "aggregate": "SupplierSponsoredSlotsWithDisclosure",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F101",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P102). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F110",
+    "module": "GMPC",
+    "outcome": "Experiment lifecycle and metrics",
+    "owner": "experiments",
+    "aggregate": "ExperimentLifecycleAndMetrics",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F110",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P110-P112). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F120",
+    "module": "GMPC",
+    "outcome": "Touchpoint and conversion attribution",
+    "owner": "attribution",
+    "aggregate": "TouchpointAndConversionAttribution",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F120",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P120-P122). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F121",
+    "module": "GMPC",
+    "outcome": "Holdout/control causal lift analysis",
+    "owner": "incrementality",
+    "aggregate": "HoldoutControlCausalLiftAnalysis",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F121",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P123). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F130",
+    "module": "GMPC",
+    "outcome": "BU/channel/campaign budget tree",
+    "owner": "budgets",
+    "aggregate": "BUChannelCampaignBudgetTree",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F130",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P130-P131). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F131",
+    "module": "GMPC",
+    "outcome": "ROMI/contribution ROI dashboard",
+    "owner": "finance-analytics",
+    "aggregate": "ROMIContributionROIDashboard",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F131",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P133). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F140",
+    "module": "GMPC",
+    "outcome": "Approval inbox + decision trace",
+    "owner": "approvals",
+    "aggregate": "ApprovalInboxDecisionTrace",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F140",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P140-P141). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F150",
+    "module": "GMPC",
+    "outcome": "Agent registry and run tracking",
+    "owner": "hermes-growth",
+    "aggregate": "AgentRegistryAndRunTracking",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F150",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P150-P151). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F151",
+    "module": "GMPC",
+    "outcome": "Action capability policies",
+    "owner": "ai-policy",
+    "aggregate": "ActionCapabilityPolicies",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F151",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P152). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F160",
+    "module": "GMPC",
+    "outcome": "Connector configuration/health",
+    "owner": "integrations",
+    "aggregate": "ConnectorConfigurationHealth",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F160",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P160-P161). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F170",
+    "module": "GMPC",
+    "outcome": "Versioned marketing/promotion/privacy rules",
+    "owner": "policy",
+    "aggregate": "VersionedMarketingPromotionPrivacyRules",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F170",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P170-P171). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F180",
+    "module": "GMPC",
+    "outcome": "Immutable user/AI/action log",
+    "owner": "audit",
+    "aggregate": "ImmutableUserAIActionLog",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F180",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P180). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F181",
+    "module": "GMPC",
+    "outcome": "Connector/service/event health",
+    "owner": "observability",
+    "aggregate": "ConnectorServiceEventHealth",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F181",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P181). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F190",
+    "module": "GMPC",
+    "outcome": "Suppress/limit campaigns based on operations",
+    "owner": "capacity-gating",
+    "aggregate": "SuppressLimitCampaignsBasedOnOperations",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F190",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P011, P014, P073). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F191",
+    "module": "GMPC",
+    "outcome": "Frequency caps/suppression/quiet hours",
+    "owner": "comms-policy",
+    "aggregate": "FrequencyCapsSuppressionQuietHours",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F191",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P041, P170). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F192",
+    "module": "GMPC",
+    "outcome": "Purpose limitation and field filtering",
+    "owner": "privacy-policy",
+    "aggregate": "PurposeLimitationAndFieldFiltering",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F192",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P031, P170). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F193",
+    "module": "GMPC",
+    "outcome": "Cross-unit offer and journey rules",
+    "owner": "cross-dial-growth",
+    "aggregate": "CrossUnitOfferAndJourneyRules",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F193",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P011, P041, P101). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F194",
+    "module": "GMPC",
+    "outcome": "Campaign performance and funding summaries",
+    "owner": "supplier-growth",
+    "aggregate": "CampaignPerformanceAndFundingSummaries",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE"
+    ],
+    "realization_ref": "FR-GMPC-F194",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P132, supplier portal). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F195",
+    "module": "GMPC",
+    "outcome": "Tokens/model/cost/outcome per agent run",
+    "owner": "ai-finops",
+    "aggregate": "TokensModelCostOutcomePerAgentRun",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F195",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P151). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F200",
+    "module": "GMPC",
+    "outcome": "Query planner selects structured, vector, text, graph, time-series and artefact retrieval",
+    "owner": "commercial-rag",
+    "aggregate": "QueryPlannerSelectsStructuredVectorTextGraphTimeSeriesAndArtefactRetrieval",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F200",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P200, P203). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F201",
+    "module": "GMPC",
+    "outcome": "Register source authority, sensitivity, owner, refresh and retention",
+    "owner": "knowledge-sources",
+    "aggregate": "RegisterSourceAuthoritySensitivityOwnerRefreshAndRetention",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F201",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P201). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F202",
+    "module": "GMPC",
+    "outcome": "Persist campaign/promotion/creative/experiment learning with verified outcomes",
+    "owner": "commercial-memory",
+    "aggregate": "PersistCampaignPromotionCreativeExperimentLearningWithVerifiedOutcomes",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F202",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P202, P205). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F203",
+    "module": "GMPC",
+    "outcome": "Show exact evidence, source, timestamp, rank and retrieval method used by Hermes",
+    "owner": "retrieval-trace",
+    "aggregate": "ShowExactEvidenceSourceTimestampRankAndRetrievalMethodUsedByHermes",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F203",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P203). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F204",
+    "module": "GMPC",
+    "outcome": "Detect stale, superseded, conflicting and failed knowledge",
+    "owner": "knowledge-freshness",
+    "aggregate": "DetectStaleSupersededConflictingAndFailedKnowledge",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F204",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P204). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F205",
+    "module": "GMPC",
+    "outcome": "Enforce role, business-unit, purpose and sensitivity filtering before context assembly",
+    "owner": "retrieval-policy",
+    "aggregate": "EnforceRoleBusinessUnitPurposeAndSensitivityFilteringBeforeContextAssembly",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F205",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P206). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F206",
+    "module": "GMPC",
+    "outcome": "Monitor ingestion, chunking, embeddings, full-text, entity and graph indexing",
+    "owner": "knowledge-pipeline",
+    "aggregate": "MonitorIngestionChunkingEmbeddingsFullTextEntityAndGraphIndexing",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F206",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P207). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F207",
+    "module": "GMPC",
+    "outcome": "Inspect canonical metadata, versions, relationships and source authority",
+    "owner": "knowledge-objects",
+    "aggregate": "InspectCanonicalMetadataVersionsRelationshipsAndSourceAuthority",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F207",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P205). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F208",
+    "module": "GMPC",
+    "outcome": "Prevent historical/semantic evidence from overriding current authoritative facts",
+    "owner": "evidence-arbitration",
+    "aggregate": "PreventHistoricalSemanticEvidenceFromOverridingCurrentAuthoritativeFacts",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F208",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P203-P206). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F209",
+    "module": "GMPC",
+    "outcome": "Maintain campaign, promotion, creative, audience, supplier, experiment and playbook stores",
+    "owner": "commercial-memory",
+    "aggregate": "MaintainCampaignPromotionCreativeAudienceSupplierExperimentAndPlaybookStores",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F209",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P202). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F210",
+    "module": "GMPC",
+    "outcome": "Redact/tokenise/deny protected fields before retrieval context reaches external models",
+    "owner": "retrieval-policy",
+    "aggregate": "RedactTokeniseDenyProtectedFieldsBeforeRetrievalContextReachesExternalModels",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F210",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P206). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+  },
+  {
+    "feature_id": "GMPC-F211",
+    "module": "GMPC",
+    "outcome": "Measure groundedness, hit quality, freshness, citation coverage and policy-denial rates",
+    "owner": "rag-observability",
+    "aggregate": "MeasureGroundednessHitQualityFreshnessCitationCoverageAndPolicyDenialRates",
+    "status": "SPECIFIED",
+    "current_gate": "SPECIFIED",
+    "source_doc": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+    "code_paths": [],
+    "test_paths": [],
+    "evidence_refs": [],
+    "donor_refs": [
+      "SOURCE-DIAL-NATIVE",
+      "SERVICE-LITELLM-SUPPORT"
+    ],
+    "realization_ref": "FR-GMPC-F211",
+    "client_exposure": "INTERNAL",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "support_profile": "SUPPORT-PLATFORM",
+    "activation_blocker_refs": [],
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P200, P207). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
   }
 ]

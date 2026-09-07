@@ -4,7 +4,7 @@ set -euo pipefail
 # Hermes pre_llm_call shell hook. Reads Hermes' event payload on stdin and emits
 # only the directive JSON expected by Hermes on stdout.
 
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME
 

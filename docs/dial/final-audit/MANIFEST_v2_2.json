@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-04T20:02:57.943Z",
+  "generated_at": "2026-09-07T20:37:47.390Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 230,
+  "file_count": 231,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
-      "bytes": 10662,
-      "sha256": "e27d7a30c7cac483529ea38f61fa4333da7f47e8985fe8e5d2ede244373abd17"
+      "bytes": 11234,
+      "sha256": "0c2bb0d65ff4ad6b972cb5af5ec32118319df7cd5cd06cea3d6a72cad3b2115f"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
-      "bytes": 12913,
-      "sha256": "a2d018ea10ae79e278c6bcad50e31159a5648c57938bd553e9fef086d5ea7c55"
+      "bytes": 14829,
+      "sha256": "eb206e8531d44321664366bfeb1aeafa7d12df7c925675f3a91d24fafe77419d"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -63,8 +63,8 @@
     },
     {
       "path": "00_MASTER/V2_2_ANCHOR_INDEX.md",
-      "bytes": 5119,
-      "sha256": "1c99fd76d408fa6b180e5fa0d832c29c6190c05486450f9f27299891873081d6"
+      "bytes": 6124,
+      "sha256": "5360d099f2fcd8172e185f90b15c00fccaad2ce688c1f765fae8b127ece41f95"
     },
     {
       "path": "01_AUDIT/ACTUAL_REPOSITORY_AND_AGENT_HARNESS_AUDIT.md",
@@ -133,8 +133,8 @@
     },
     {
       "path": "04_DIVISIONS/HEALTH_AUDIT.md",
-      "bytes": 4443,
-      "sha256": "450d1541617c2b21404b815bbed778eae569ddd62da2f62229ea78b8967e63ad"
+      "bytes": 12846,
+      "sha256": "f855959f0801f850517848fcb145dfdad6fc4d83b66cfacb575845c79857cea2"
     },
     {
       "path": "04_DIVISIONS/LAUNDRY_AUDIT.md",
@@ -178,8 +178,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md",
-      "bytes": 8297,
-      "sha256": "5e441d50bc96b986d3ce6c6222931626988ba66e084b3f806b69b02d5218ea79"
+      "bytes": 9039,
+      "sha256": "22aea65833624ff87a17b64a34241f84f0ea5ba505a43d1427fdd45ae7aaa88c"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",
@@ -503,8 +503,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json",
-      "bytes": 1176131,
-      "sha256": "2aba0e8db8dea1d725fdafa1b3b011ae1833b9e0db21ee64a36b6ed0e9b83b3d"
+      "bytes": 1481474,
+      "sha256": "72bb91ff5acdb52048fb3399b1f82c7d442480461549de6dfbd3daaf70077844"
     },
     {
       "path": "11_FEATURE_REALIZATION/REALIZATION_LAYER_INDEX.md",
@@ -518,8 +518,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUBFEATURE_FUNCTION_REGISTRY.json",
-      "bytes": 1661396,
-      "sha256": "c11ae559f7595630a22324e3fd0c2374c8691f8ee1d3bf06f59d63083870b4d9"
+      "bytes": 2128462,
+      "sha256": "e76c880421f37415203162ff0ce46e78d16af5f7ea0860f349f331ab46403132"
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
@@ -658,8 +658,8 @@
     },
     {
       "path": "17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json",
-      "bytes": 194581,
-      "sha256": "b7cd8463f2fba767f7417269b28ad7ef94f65b20ffa988649891134f58e07ed7"
+      "bytes": 245878,
+      "sha256": "276d0dc9d6dad6f57bc101e067bc68b3bcc11b191c24b09970554a09bd198299"
     },
     {
       "path": "17_SECURITY/INCIDENT_RESPONSE_AND_VULNERABILITY_MANAGEMENT.md",
@@ -783,8 +783,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 928015,
-      "sha256": "1aa90752c4113de1cbe0ad507a6a1d0b22f4e1266c3a43a4f28325af54ea5dbb"
+      "bytes": 1217108,
+      "sha256": "8e9daa9c92299a3ac1bbe6bf23d696eeffa6204bc271f30b5ab296b6385e61ab"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
@@ -1128,8 +1128,8 @@
     },
     {
       "path": "23_KNOWLEDGE_RETRIEVAL_FABRIC/DKRF_ARCHITECTURE_v1.md",
-      "bytes": 50587,
-      "sha256": "3a7f79b04176bd0db1ec04414c4a1802bbd017cbd08fdcfa9a242d01ecd8163a"
+      "bytes": 52870,
+      "sha256": "53372707d1a3fe60396b8f5f1c449e2a44f82edc3316fc9ab4cf804a8cd074ea"
     },
     {
       "path": "24_INJECTION_STANDARDS/CATALOG_DATA_INJECTION_STANDARD_v1.md",
@@ -1158,13 +1158,18 @@
     },
     {
       "path": "26_MARGIN_AND_PRICING/MARGIN_ENGINE_SPEC_v1.md",
-      "bytes": 12224,
-      "sha256": "f6c3b17e936ab75ddf5f51bc7ce19f8881ba2838ca4a4d73b6feaf5d974781a5"
+      "bytes": 12895,
+      "sha256": "6e5cc23018a12c0cb6314dfb8246d0f1829917ac1de4af55d498d8c693f47737"
     },
     {
       "path": "26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md",
       "bytes": 9027,
       "sha256": "2a1c163c8a3dc120341924c8f7f3caeeadf82426f756b43b9e7dc704d0d5373f"
+    },
+    {
+      "path": "27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
+      "bytes": 100069,
+      "sha256": "2065d74f6df897eb436836ab079fca667fbcdf35df3e0227f45b433679fe8a8c"
     },
     {
       "path": "README_v2_1.md",

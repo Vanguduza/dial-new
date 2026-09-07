@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertDevelopmentUnblocked } from './development-unblock.mjs';
+import { missionExecutionAllowed } from './mission-control.mjs';
 import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
 import {
   appendJsonl,
@@ -78,11 +79,24 @@ function listInbox(root) {
   const dir = resolveControlPath('work-queue/inbox', root);
   return fs.readdirSync(dir)
     .filter((name) => name.endsWith('.json'))
-    .sort();
+    .map((name) => {
+      try {
+        const job = JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8'));
+        return { name, job };
+      } catch { return null; }
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      const priority = Number(b.job?.metadata?.priority || 0) - Number(a.job?.metadata?.priority || 0);
+      if (priority) return priority;
+      return String(a.job?.queued_at || '').localeCompare(String(b.job?.queued_at || '')) || a.name.localeCompare(b.name);
+    });
 }
 
 function claimNext(root) {
-  for (const name of listInbox(root)) {
+  for (const entry of listInbox(root)) {
+    if (!missionExecutionAllowed(entry.job, root)) continue;
+    const name = entry.name;
     const source = resolveControlPath(`work-queue/inbox/${name}`, root);
     const target = resolveControlPath(`work-queue/processing/${name}`, root);
     try {

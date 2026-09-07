@@ -41,7 +41,7 @@ Oracle host
   +-- Hermes gateway + optional localhost dashboard
   +-- Codex App Server / Codex CLI
   +-- Claude Code
-  +-- /srv/dial/repo
+  +-- /home/ubuntu/dial-new
 ```
 
 No LLM process owns the ability to reconstruct control state. The persistent queue and evidence live outside the Git worktree.

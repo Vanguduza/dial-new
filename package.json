@@ -54,7 +54,7 @@
     "agent:orchestration:queue-status": "node agent-system/orchestration/external-orchestrator.mjs status",
     "agent:orchestration:queue-run-once": "node agent-system/orchestration/external-orchestrator.mjs run-once",
     "agent:orchestration:queue-daemon": "node agent-system/orchestration/external-orchestrator.mjs daemon",
-    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs",
+    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs tests/orchestration-chat-control.test.mjs",
     "agent:development:gate": "node agent-system/orchestration/development-unblock.mjs",
     "agent:operations:status": "node agent-system/orchestration/operations-plane.mjs status",
     "agent:operations:run": "node agent-system/orchestration/operations-plane.mjs run",
@@ -63,7 +63,13 @@
     "agent:operations:run-due": "node agent-system/orchestration/operations-plane.mjs run-due",
     "agent:operations:daemon": "node agent-system/orchestration/operations-plane.mjs daemon",
     "agent:operations:api": "node agent-system/orchestration/operations-api.mjs",
-    "agent:operations:projects": "node agent-system/orchestration/project-registry.mjs"
+    "agent:operations:projects": "node agent-system/orchestration/project-registry.mjs",
+    "agent:mission:status": "node agent-system/orchestration/mission-controller.mjs status",
+    "agent:mission:tick": "node agent-system/orchestration/mission-controller.mjs tick",
+    "agent:mission:daemon": "node agent-system/orchestration/mission-controller.mjs daemon",
+    "agent:chat-control:serve": "node agent-system/orchestration/chat-control-bridge.mjs serve",
+    "agent:chat-control:tools": "node agent-system/orchestration/chat-control-bridge.mjs tools",
+    "agent:chat-control:call": "node agent-system/orchestration/chat-control-bridge.mjs call"
   },
   "dependencies": {
     "sharp": "0.35.4",

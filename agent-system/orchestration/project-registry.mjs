@@ -7,7 +7,7 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 export const PROJECT_REGISTRY_REL = 'operations/project-registry.json';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service'];
+const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service'];
 
 function now() { return new Date().toISOString(); }
 function validateSlug(slug) {

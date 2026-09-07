@@ -74,6 +74,9 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `operations-plane.mjs` — deterministic health, bounded service recovery, queue inspection, verification, evidence preparation and scheduling.
 - `operations-api.mjs` — optional API-key-backed non-authoritative evidence summarisation; secret never enters Hermes runtime.
 - `project-registry.mjs` — strict per-project operations-state isolation.
+- `mission-control.mjs` — durable DIAL root-mission state, pause/resume, owner priority and gate decisions.
+- `mission-controller.mjs` — persistent continuation loop that dispatches the next bounded manager turn when the DIAL mission is RUNNING and idle.
+- `chat-control-bridge.mjs` — DIAL-only typed MCP/JSON-RPC operator surface so Claude chat can inspect progress and issue controls while Oracle owns execution.
 
 ## Install
 
@@ -91,6 +94,18 @@ This does **not** unlock development.
 The Oracle host also runs `dial-hermes-operations.service`. It performs fixed deterministic health/integrity/evidence jobs even when Sol/Sonnet are unavailable. An optional API key may be configured for evidence summarisation only; API output has no development authority and cannot execute tools or satisfy the production gate.
 
 Secrets are stored outside Git under `/var/lib/dial-control/secrets/` and are not exported to the Hermes runtime. API use is disabled on default schedules until explicitly enabled. See `docs/orchestration/HERMES_AUXILIARY_OPERATIONS_PLANE.md`.
+
+## Claude chat control surface
+
+DIAL development remains resident on Oracle while Claude chat can act as a thin operator console. The local MCP endpoint exposes typed DIAL-only status, progress, pause/resume, reprioritisation, approval and instruction-submission tools. It does not expose a shell. See `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
+
+Install the bridge and persistent mission controller with:
+
+```bash
+bash deploy/oracle/hermes-codex/install-chat-control-bridge.sh
+```
+
+The endpoint is bound to `127.0.0.1:9130` and bearer-token protected. Remote Claude access must be placed behind an authenticated private tunnel/Access policy; the installer never opens the port publicly.
 
 ## Mandatory qualification sequence
 

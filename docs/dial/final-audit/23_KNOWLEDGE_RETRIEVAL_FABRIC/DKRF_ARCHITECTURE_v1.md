@@ -1753,6 +1753,23 @@ The moat is not “DIAL has RAG”. It is a permission-aware, outcome-learning k
 
 ---
 
+
+# 69A. GMPC commercial retrieval profile — canonical integration lock
+
+The adopted Growth, Marketing & Promotions Control Centre at `../27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md` extends DKRF with a **commercial domain profile**, not a second retrieval stack.
+
+`GMPC-F200..F211` consume `DKRF-F001..F022` for source registration, ingestion, ACL/RLS, hybrid retrieval, structured-fact fusion, context security, citations, evaluation and lifecycle. GMPC adds commercial control surfaces and domain semantics: campaign/promotion/creative/audience/channel/supplier/experiment/attribution learning, outcome verification, freshness/drift views and retrieval traces.
+
+Commercial namespaces include `growth.market_intelligence`, `growth.competitor_intelligence`, `growth.campaign_learning`, `growth.promotion_learning`, `growth.creative_learning`, `growth.audience_learning`, `growth.channel_learning`, `growth.social_learning`, `growth.paid_media_learning`, `growth.sales_learning`, `growth.supplier_learning`, `growth.experiment_learning`, `growth.attribution_learning`, `growth.commercial_playbooks`, `growth.brand_knowledge` and `growth.compliance_knowledge`. Namespaces are governed metadata/ACL boundaries on DKRF, not separate databases.
+
+Current spend, campaign state, promotion rule, price, margin input, inventory, capacity, consent and financial state remain structured DIAL reads. Commercial memory may be promoted only after relevant conversion, payment, fulfilment, refund/cancellation-window, contribution and experiment/incrementality outcomes are verified. A semantically similar historical campaign can never override a current approved policy, deterministic promotion rule or current domain fact.
+
+Material GMPC AI investigations/recommendations must retain a DKRF retrieval trace/evidence manifest. Purpose, business-unit, consent and sensitivity filtering occurs before model context assembly. Dial Health clinical/PHI data remains subject to the specialist Health boundary and is excluded from ordinary commercial retrieval profiles unless an explicit lawful-purpose contract authorizes the narrowly scoped use.
+
+This amendment closes the architecture ambiguity: **one DKRF, multiple governed retrieval profiles.**
+
+---
+
 # 70. Research anchors checked for this design
 
 Current official/project sources checked on 30 August 2026:

@@ -26,7 +26,7 @@ first, say so and stop rather than widening scope on your own.
 
 - `CLAUDE.md` at the repository root is the standing instruction. Read it first.
 - `agent-system/canon/PROJECT_TRUTH.md` is canonical truth.
-- `agent-system/registries/FEATURE_REGISTRY.json` holds all 244 features, their
+- `agent-system/registries/FEATURE_REGISTRY.json` holds all 309 features, their
   gate, aggregate, code paths, test paths and evidence.
 - `agent-system/registries/DECISION_LOG.json` holds locked product decisions.
   DEC-001..007 are LOCKED. Do not reopen one; if your work contradicts a locked
@@ -59,7 +59,7 @@ where to look.
 **A feature entering implementation gets its own acceptance contract first. The
 generic contract is not a contract.**
 
-23 of 244 features have one. Yours probably does not. Write it before you write
+23 dedicated feature acceptance-contract documents existed before the GMPC extension; the registry now has 309 features and every newly allocated `GMPC-F*` feature still requires its own contract before implementation. Yours probably does not. Write it before you write
 code, using `product-management:write-spec`, and model it on
 `docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md`.
 
@@ -121,6 +121,9 @@ Be sceptical of anything that sounds more finished than this:
   Assimilation Gate: pinned commit, licence hash, supply-chain scan, provenance;
 - paste a credential or token into the conversation;
 - use old v4 or D-number documents as active authority where v2 supersedes them.
+- for GMPC work, create a second RAG/customer/pricing/money authority or let an external marketing platform become DIAL source of truth.
+
+**GMPC-specific rule:** for any `GMPC-F*`, read the GMPC Rev 2 canon after bounded context. Commercial RAG consumes DKRF; margin/pricing consumes `PLAT-F014`; money consumes Finance/Ledger; sensitive Health data is not ordinary marketing targeting context.
 
 ## How to work
 
@@ -179,3 +182,8 @@ Verify everything before you finish:
 - **Update the honest-state block** in this file when it stops being true.
   A start prompt that overstates readiness produces an agent that overstates
   completion.
+
+
+## Oracle persistent orchestration control
+
+The persistent Oracle DIAL mission owns autonomous continuation; Claude chat is a typed operator console only.

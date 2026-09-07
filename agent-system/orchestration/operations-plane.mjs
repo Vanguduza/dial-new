@@ -13,6 +13,8 @@ export const RECOVERABLE_DIAL_SERVICES = Object.freeze([
   'hermes-gateway.service',
   'hermes-dial-dashboard.service',
   'dial-hermes-orchestrator.service',
+  'dial-mission-controller.service',
+  'dial-chat-control.service',
 ]);
 export const ALLOWED_OPERATION_JOBS = Object.freeze([
   'service_health', 'service_recovery', 'queue_health', 'repo_integrity',

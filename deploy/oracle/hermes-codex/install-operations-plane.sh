@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME
 fail(){ echo "ERROR: $*" >&2; exit 1; }

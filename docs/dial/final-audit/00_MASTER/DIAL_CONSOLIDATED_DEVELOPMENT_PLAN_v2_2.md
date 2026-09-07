@@ -29,6 +29,15 @@ validate, integrate*.
 And v2.1 predates 38 of the current 244 features: Grocery Rounds
 (`GROC-F019..F034`) and DKRF (`DKRF-F001..F022`). Neither appears in its sequence.
 
+
+### 2026-09-06 canonical breadth extension — GMPC
+
+The active registry now contains **309** feature anchors: the 244-feature state this plan was adopted against plus **65 `GMPC-F*`** Growth, Marketing & Promotions Control Centre features. The GMPC architecture is adopted at `27_GROWTH_MARKETING_PROMOTIONS/` with 195 atomic feature-to-page controls. All 65 enter at `SPECIFIED`; this breadth addition does not manufacture implementation evidence and does not change the Track A / Grocery Rounds execution priority.
+
+GMPC is horizontal Corporate commercial capability. It depends on the kernel, `PLAT-F014` margin/pricing, Finance/Ledger, consent/privacy, capacity signals, DKRF and governed external adapters. `GMPC-F200..F211` are a commercial DKRF profile over `DKRF-F001..F022`, not a competing knowledge fabric. Campaign/promotion economics therefore consume existing authorities rather than creating another pricing, money, customer or RAG source of truth.
+
+When GMPC implementation starts, use thin vertical commercial slices rather than horizontal fan-out: opportunity → campaign → deterministic promotion → approved creative/channel execution → conversion/fulfilment → contribution attribution → outcome-verified learning. Every participating `GMPC-F*` feature gets its own acceptance contract before code, exactly as §3 requires.
+
 ## 2. What does not change
 
 The architecture stands exactly as v2.1 states it:
@@ -90,7 +99,7 @@ not development, and nothing in Tracks A or C waits on it.
 
 v2.1 step 2: identity, permission, evidence, audit.
 
-The dependency root under all 244 features, blocked by nothing external, and the
+The dependency root under all 309 currently registered features, blocked by nothing external, and the
 cheapest place to learn the contract-first rhythm — a mistake here is caught by a
 test rather than by a customer. Work contract-first, feature by feature. Do not
 fan out.
@@ -173,7 +182,7 @@ contract. Six contracts is the first fortnight, before any implementation. That 
 not a reason to choose differently; it is the price of the first slice under §3's
 throttle, and it is the same price whichever slice is chosen.
 
-## 6. Where the 38 late features sit
+## 6. Where late canonical extensions sit
 
 **Grocery Rounds — `GROC-F019..F034`.** Its money model is LOCKED at `DEC-001` to
 `DEC-007` and enforced by `packages/round-credit` rules `RCM-001..027`. Credits are
@@ -185,6 +194,8 @@ implemented. The vertical slice in the master plan §26 is the right first bite.
 **DKRF — `DKRF-F001..F022`.** Sits alongside the kernel as a retrieval fabric, not
 inside the commerce path. It is not on the critical path to the vertical slice and
 should not compete with Track A for attention until the kernel exits.
+
+**GMPC — `GMPC-F*` (65 feature anchors).** Adopted 2026-09-06 as the horizontal Growth, Marketing & Promotions Control Centre. All are `SPECIFIED`. The source document contains the 195 atomic feature/page controls, the commercial workflow, promotion determinism, external connector boundaries and the commercial DKRF profile. It is canonical breadth but not permission for broad fan-out: implementation remains contract-first and should begin only as bounded commercial vertical slices after the current priority work permits it.
 
 **Catalogue and transition flow packs.** No longer built here. They arrive as
 injections validated by `packages/catalog-coverage/src/injection.ts` against

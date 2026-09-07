@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 umask 077
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 QUAL_DIR="$DIAL_CONTROL_HOME/evidence-cache/qualification"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME
@@ -25,6 +25,10 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -x "$HOME/.local/bin/dial-hermes-job" ]] || fail "dial-hermes-job is not installed; run install-external-orchestrator.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-ops" ]] || fail "dial-hermes-ops is not installed; run install-operations-plane.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-ops-config" ]] || fail "dial-hermes-ops-config is not installed; run install-operations-plane.sh"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/chat-control-bridge.mjs" ]] || fail "DIAL chat control bridge is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/mission-controller.mjs" ]] || fail "DIAL mission controller is missing"
+[[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "DIAL chat control bearer token is missing; run install-chat-control-bridge.sh"
+[[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "DIAL chat control bearer token must be mode 0600"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then fail "OPENAI_API_KEY/CODEX_API_KEY is present; Hermes primary qualification requires ChatGPT subscription OAuth"; fi
 if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then fail "ANTHROPIC_API_KEY is present; Hermes fallback qualification requires Claude subscription authentication"; fi
 codex_status="$(codex login status 2>&1 || true)"; [[ "$codex_status" == *"Logged in using ChatGPT"* ]] || fail "Codex is not using ChatGPT OAuth: $codex_status"; pass "Codex CLI uses ChatGPT subscription OAuth"
@@ -58,9 +62,20 @@ hermes hooks doctor; pass "Hermes shell hooks doctor"
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
+systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
+systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
+jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' <<<"$CHAT_HEALTH" >/dev/null || fail "DIAL chat control health endpoint is invalid"
+CHAT_TOKEN="$(cat "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
+CHAT_TOOLS="$(curl -fsS -H "Authorization: Bearer $CHAT_TOKEN" -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' http://127.0.0.1:9130/mcp)"
+unset CHAT_TOKEN
+jq -e '.result.tools | length >= 10' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control MCP tools are unavailable"
+jq -e '[.result.tools[].name | test("shell|exec|filesystem"; "i")] | any == false' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control exposes a forbidden generic execution primitive"
+MISSION_STATUS="$(node agent-system/orchestration/mission-controller.mjs status)"
+jq -e '.mission_id == "dial-development-root" and .project == "dial" and (.state == "PAUSED" or .state == "BLOCKED_OWNER" or .state == "WAITING_RUNTIME")' <<<"$MISSION_STATUS" >/dev/null || fail "DIAL root mission is not safely non-running during pre-green qualification"
 OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' "$OPS_STATUS" >/dev/null || { cat "$OPS_STATUS" >&2; fail "auxiliary operations boundary is not intact"; }
-pass "persistent runtime, external orchestrator and non-authoritative operations services are active"
+pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control and non-authoritative operations services are active"
 
 section "INSTALLED RUNTIME IDENTITY"
 CODEX_PROBE="$(tmp)"; node agent-system/orchestration/codex-app-server-probe.mjs >"$CODEX_PROBE"
@@ -130,7 +145,11 @@ jq -n \
     subscription_auth_proven:true,
     built_in_anthropic_fallback_disabled:true,
     auxiliary_operations_plane:true,
-    auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS"
+    auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
+    persistent_mission_controller:true,
+    chat_control_bridge:true,
+    chat_control_project:"dial",
+    chat_control_generic_shell_exposed:false
   }' >"$EVIDENCE"
 chmod 600 "$EVIDENCE"
 

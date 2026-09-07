@@ -4,7 +4,7 @@ set -euo pipefail
 # Hermes post_llm_call observer. Never stores raw prompt/response text here;
 # Hermes owns its own session DB. DIAL records only bounded provenance and Git state.
 
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME
 

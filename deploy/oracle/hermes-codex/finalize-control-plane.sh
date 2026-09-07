@@ -2,7 +2,7 @@
 set -euo pipefail
 umask 077
 
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 QUAL_DIR="$DIAL_CONTROL_HOME/evidence-cache/qualification"
 SOAK_DIR="$DIAL_CONTROL_HOME/evidence-cache/soak"
@@ -38,6 +38,10 @@ jq -e --arg head "$HEAD_SHA" '
   and .external_orchestration_canary == true
   and .auxiliary_operations_plane == true
   and .auxiliary_operations_authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS"
+  and .persistent_mission_controller == true
+  and .chat_control_bridge == true
+  and .chat_control_project == "dial"
+  and .chat_control_generic_shell_exposed == false
   and .runtime_policy == "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE"
 ' "$QUAL" >/dev/null || fail "installed-runtime qualification evidence is not green for current HEAD"
 pass "installed Sol, Sonnet and external orchestration canary are proven"
@@ -76,12 +80,17 @@ pass "actual reboot and persistent control-plane continuity are proven"
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
+systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
+systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+[[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "chat-control token must be mode 0600"
+CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
+jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' <<<"$CHAT_HEALTH" >/dev/null || fail "chat-control health is invalid"
 OPS_STATUS="$($HOME/.local/bin/dial-hermes-ops status)"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' <<<"$OPS_STATUS" >/dev/null || fail "auxiliary operations plane boundary is invalid"
 if jq -e ".api.key_configured == true" <<<"$OPS_STATUS" >/dev/null; then
   [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/operations-api.key")" == "600" ]] || fail "operations API key file must be mode 0600"
 fi
-pass "persistent supervisor, external orchestrator and non-authoritative operations services are active"
+pass "persistent supervisor, external orchestrator, mission controller, DIAL-only chat control and non-authoritative operations services are active"
 
 node - "$DIAL_CONTROL_HOME/state/external-orchestrator-heartbeat.json" <<'NODE' || exit 1
 const fs = require('fs');
@@ -98,7 +107,7 @@ pass "external orchestrator heartbeat is fresh"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" || -n "${ANTHROPIC_API_KEY:-}" ]]; then
   fail "API-key environment material is present on the subscription-only control plane"
 fi
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-mission-controller.service dial-chat-control.service; do
   env_line="$(systemctl --user show "$unit" -p Environment --value 2>/dev/null || true)"
   if grep -Eq '(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)=' <<<"$env_line"; then
     fail "$unit contains forbidden API-key environment material"
@@ -145,6 +154,10 @@ jq -n \
     auxiliary_operations_plane:true,
     auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
     auxiliary_api_can_authorize_development:false,
+    persistent_mission_controller:true,
+    chat_control_bridge:true,
+    chat_control_project:"dial",
+    chat_control_generic_shell_exposed:false,
     observed_at:$observed_at
   }' >"$TMP"
 chmod 600 "$TMP"

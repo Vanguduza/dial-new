@@ -42,12 +42,25 @@ For claims implementation, the v6.1 master maps **330 atomic features to 113 can
 - Command Centre target is full.
 - Corporate donor assimilation follows Corporate OS v1.1.
 
+
+## Growth, marketing & promotions lock
+DIAL Growth, Marketing & Promotions Control Centre (GMPC) is a first-class horizontal Corporate commercial operating layer across DIAL divisions.
+- Optimise for verified profitable contribution/customer value, not vanity engagement.
+- Promotions and binding transaction eligibility are deterministic; Hermes/AI may recommend, simulate, draft and act only inside approved autonomy/budget/policy envelopes.
+- `PLAT-F014` remains the one cross-division margin/pricing calculation authority; Finance/Ledger remains the money authority.
+- External social/ad/marketing platforms are adapters/execution surfaces, never canonical DIAL campaign/customer/promotion/money truth.
+- Capacity-aware growth reads Inventory, Supplier, Tech and Delivery truth; it does not invent fulfilment capacity.
+- `GMPC-F200..F211` consume `DKRF-F001..F022` as the commercial retrieval profile; no second RAG/vector source of truth.
+- Sensitive Dial Health information is excluded from ordinary commercial targeting unless an explicit lawful-purpose contract permits the narrowly scoped use.
+Canonical specification: `docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md`.
+
 ## Development
 Resolve a Feature ID first. Use JIT context. Completion claims require fresh evidence.
 
 ## Final realization layer
-The 186 top-level features are anchors, not the completeness boundary.
-Every feature must implement its 8 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints, donor transformation and support/escalation requirements.
+The 309 top-level features are anchors, not the completeness boundary.
+Every feature must implement its 9 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints where exposed, donor/source transformation and support/escalation requirements.
+The 65 `GMPC-F*` anchors are the adopted Growth, Marketing & Promotions Control Centre extension; their 195 atomic feature-to-page mappings remain the lower-level implementation completeness boundary in the GMPC canon.
 
 For Dial Health high-consequence domains, the specialist v6.1 atomic feature/page contracts and Health-specific security, clinical-safety, claims, money, privacy and regulatory gates additionally apply.
 

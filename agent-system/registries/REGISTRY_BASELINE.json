@@ -1,6 +1,6 @@
 {
-  "note": "Floor counts for the feature registries. The closure check asserts the registries agree with each other and never shrink below these numbers. Raising a floor is a deliberate, reviewable change; a silent drop is the v2.1 overlay defect, which removed 181 files while every count still looked plausible.",
-  "recorded_at": "2026-08-30",
-  "min_features": 186,
+  "note": "Floor counts for the feature registries. Raised deliberately to include the adopted GMPC canon extension (65 GMPC features) so the source-of-truth registry cannot silently shrink below the current canonical breadth.",
+  "recorded_at": "2026-09-06",
+  "min_features": 309,
   "facets_per_feature": 9
 }

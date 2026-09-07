@@ -45,7 +45,6 @@ if command -v uv >/dev/null 2>&1 && [[ -d "$SVC_HOME/.hermes/hermes-agent" ]]; t
   (cd "$SVC_HOME/.hermes/hermes-agent" && uv pip install -e '.[web,pty]' || true)
 fi
 
-sudo install -d -m 0750 -o "$SVC_USER" -g "$SVC_USER" /srv/dial
 sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control
 for rel in \
   state checkpoints/active checkpoints/archive capsules/active capsules/archive \
@@ -61,11 +60,11 @@ cat <<EOF
 Host bootstrap complete.
 Persistent Hermes/DIAL control state: /var/lib/dial-control
 External orchestration queue:          /var/lib/dial-control/work-queue
-DIAL repository parent:               /srv/dial
+DIAL repository:                      $SVC_HOME/dial-new
 Service user:                         $SVC_USER
 
 REQUIRED OPERATOR AUTH + INSTALL STEPS:
-  1. Authenticate GitHub and clone Vanguduza/dial-new into /srv/dial/repo.
+  1. Authenticate GitHub and clone Vanguduza/dial-new into $SVC_HOME/dial-new.
   2. Run: codex login
   3. Run: hermes auth add openai-codex
   4. Run Claude Code once and complete Claude subscription login.

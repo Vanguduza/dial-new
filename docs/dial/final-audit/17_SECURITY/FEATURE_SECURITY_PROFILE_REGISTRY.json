@@ -7068,5 +7068,1847 @@
       "dependency/integration failure does not bypass security"
     ],
     "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F001",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F002",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F003",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F004",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F005",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F010",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F011",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F020",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F021",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F022",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F023",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F030",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F031",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F032",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F040",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F050",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F051",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F052",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F053",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F060",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F061",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F062",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F063",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F064",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F070",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F071",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F072",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F073",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F080",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F081",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F090",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F091",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F092",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F100",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F101",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F110",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F120",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F121",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F130",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F131",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F140",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F150",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F151",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F160",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F170",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F180",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F181",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F190",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F191",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F192",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F193",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F194",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F195",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F200",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F201",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F202",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F203",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F204",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F205",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F206",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F207",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F208",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F209",
+    "module": "GMPC",
+    "security_tier": "S3",
+    "reasons": [
+      "commercial/customer/financial or private operational data"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F210",
+    "module": "GMPC",
+    "security_tier": "S4",
+    "reasons": [
+      "privileged high-impact commercial, policy, integration or privacy authority"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT",
+      "PRIVILEGED_ACCESS"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security",
+      "step-up authentication for privileged high-impact actions"
+    ],
+    "status": "SPECIFIED"
+  },
+  {
+    "feature_id": "GMPC-F211",
+    "module": "GMPC",
+    "security_tier": "S2",
+    "reasons": [
+      "internal commercial operating feature"
+    ],
+    "required_control_categories": [
+      "AUTH",
+      "DATABASE",
+      "INPUT_OUTPUT",
+      "ABUSE",
+      "WEB_TRANSPORT",
+      "DATA_PROTECTION",
+      "OBSERVABILITY",
+      "VULNERABILITY_MANAGEMENT",
+      "SUPPORT"
+    ],
+    "mandatory_tests": [
+      "server-side actor/permission enforcement",
+      "object/tenant/relationship negative authorization",
+      "input schema and state validation",
+      "abuse/rate-limit behavior where exposed",
+      "sensitive response minimization",
+      "dependency/integration failure does not bypass security"
+    ],
+    "status": "SPECIFIED"
   }
 ]

@@ -5,7 +5,7 @@ The single map of where authority lives. Open this before anything else.
 ## Master
 
 - Closure canon → `DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md`
-- Active plan → `DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md`
+- Active plan → `DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md`
 - Active development prompt → `../13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md`
 - Readiness → `BUILD_READINESS_SCORECARD.json`
 - Closure validation → `../20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md`
@@ -58,6 +58,16 @@ The single map of where authority lives. Open this before anything else.
   and `ACT-REG-001` (licensed hold-and-release). Gated additionally on
   `ACT-REG-004` (fiscalisation/VAT) and `ACT-REG-007` (insurance
   characterisation).
+
+
+## Growth, marketing & promotions (2026-09-06 canon extension)
+
+- Canonical architecture, feature audit, page catalog, atomic mapping and commercial RAG profile → `../27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md`
+- Machine authority → `/agent-system/registries/FEATURE_REGISTRY.json` (`65` `GMPC-F*` anchors, all `SPECIFIED`) plus the realization, security and implementation-contract registries.
+- `A001..A195` are the atomic feature-to-page acceptance inventory beneath the GMPC feature anchors.
+- `GMPC-F200..F211` specialize the existing DKRF (`DKRF-F001..F022`); they do **not** establish a second RAG/vector authority.
+- Promotion/campaign economics consume `PLAT-F014` and canonical Finance/Ledger; GMPC does not own a second pricing/money engine.
+- Current programme priority does not change: GMPC is canonical breadth, but each GMPC feature remains `SPECIFIED` until it receives its dedicated acceptance contract and enters the normal gate ladder.
 
 ## Injection standards (what arrives from outside)
 

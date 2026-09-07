@@ -2,7 +2,7 @@
 set -euo pipefail
 umask 077
 
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
@@ -178,6 +178,7 @@ normalize_codex_config
 
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-chat-control-bridge.sh"
 
 cat <<'EOF'
 
@@ -188,11 +189,11 @@ Runtime chain is locked to:
   -> Claude Sonnet 5 / official Claude Code
   -> NO_HERMES_RUNTIME_AVAILABLE
 
-The external Oracle orchestrator and non-authoritative auxiliary operations plane are installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
+The external Oracle orchestrator, non-authoritative auxiliary operations plane, persistent mission controller and DIAL-only Claude chat control bridge are installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
 The only pre-green queued action permitted is the fixed read-only/no-tools qualification canary.
 
 NEXT REQUIRED INTERACTIVE HERMES ACTION:
-  Start Hermes in /srv/dial/repo and run:
+  Start Hermes in the canonical DIAL repository configured by DIAL_REPO_DIR and run:
     /codex-runtime codex_app_server
   Exit that cached session and start a fresh Hermes session.
 

@@ -69,6 +69,13 @@ enough that a 2% modelling error is the whole business.**
 - **Not the VAT return.** It models tax to price correctly. Filing is the
   accounting system's job and stays there.
 
+
+## GMPC consumer integration — 2026-09-06
+
+The adopted GMPC canon (`../27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md`) is a first-class consumer of this authority. GMPC uses `PLAT-F014` outputs for campaign simulation, promotion margin floors, supplier-funded offer economics, contribution attribution and budget optimisation. GMPC MUST NOT reimplement cost allocation, tax treatment, contribution calculation or binding price authority. Promotion evaluation may refuse on a breached margin floor, but the margin input itself comes from this canonical engine and binding money remains in the Finance/Ledger architecture.
+
+---
+
 ## User stories
 
 **Pricing owner**

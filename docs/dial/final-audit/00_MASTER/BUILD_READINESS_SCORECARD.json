@@ -5,24 +5,24 @@
   "repository_status": "BOOTSTRAP_APPLIED",
   "broad_feature_fanout_authorized": false,
   "controlled_foundation_engineering_authorized": true,
-  "authorization_condition": "Repository bootstrap is COMPLETE: RBC-001 through RBC-010 all closed. RBC-010 was closed on evidence, not waiver — source-map reports 0 unclaimed source files and now runs as step 12 of npm run verify. Broad multi-worktree development is authorised. The standing constraint is CT-7, AMBER at 23 of 228: every feature except SPARE-F001 and SPARE-F004 still sits on a generic contract, so a feature entering implementation gets its own acceptance contract first. No independent specialist review has been performed on the SPARE-F004 pilot.",
-  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight.",
+  "authorization_condition": "Repository bootstrap is COMPLETE: RBC-001 through RBC-010 all closed. RBC-010 was closed on evidence, not waiver — source-map reports 0 unclaimed source files and runs in npm run verify. Broad multi-worktree development is authorised subject to feature-level gating. The standing constraint is CT-7: the registry now contains 309 features after the 2026-09-06 GMPC canon extension; newly allocated GMPC features are SPECIFIED and require dedicated acceptance contracts before implementation. No independent specialist review has been performed on the SPARE-F004 pilot.",
+  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight. On 2026-09-06 the GMPC canon extension added 65 feature anchors (244 -> 309) at SPECIFIED. This increases breadth only; it does not advance implementation gates or change the current execution priority.",
   "closure_tests": [
     {
       "test": "CT-1 Concrete Feature Contracts",
       "status": "AMBER",
       "previous_status": "GREEN",
       "evidence": {
-        "features": 244,
-        "frcs": 244,
-        "distinct_command_skeletons_after_aggregate_substitution": 61,
-        "lifecycle_boilerplate_commands": 684,
-        "total_commands": 1894,
-        "feature_specific_command_ratio": 0.639,
-        "distinct_state_models": 32,
-        "distinct_acceptance_contracts": 28,
-        "distinct_permission_skeletons": 28,
-        "distinct_eventuality_ref_sets": 12
+        "features": 309,
+        "frcs": 309,
+        "distinct_command_skeletons_after_aggregate_substitution": 66,
+        "lifecycle_boilerplate_commands": 704,
+        "total_commands": 2301,
+        "feature_specific_command_ratio": 0.694,
+        "distinct_state_models": 37,
+        "distinct_acceptance_contracts": 93,
+        "distinct_permission_skeletons": 31,
+        "distinct_eventuality_ref_sets": 14
       },
       "why_amber": "CT-1 requires a per-feature acceptance contract and per-feature permissions. One acceptance contract and two permission skeletons cover all 186 features, and 67 features share a single Create/Start/Block/Resume/Complete/Cancel skeleton. The structural elements are present; the feature-specific content is not yet.",
       "remedy": "Author per-feature acceptance contracts and permission sets ahead of each feature entering implementation, starting with the pilot's bounded context. Tracked by CT-7 against a committed baseline."
@@ -98,16 +98,16 @@
       "status": "AMBER",
       "introduced_in": "2.2",
       "evidence": {
-        "features": 244,
-        "frcs": 244,
-        "distinct_command_skeletons_after_aggregate_substitution": 61,
-        "lifecycle_boilerplate_commands": 684,
-        "total_commands": 1894,
-        "feature_specific_command_ratio": 0.639,
-        "distinct_state_models": 32,
-        "distinct_acceptance_contracts": 28,
-        "distinct_permission_skeletons": 28,
-        "distinct_eventuality_ref_sets": 12,
+        "features": 309,
+        "frcs": 309,
+        "distinct_command_skeletons_after_aggregate_substitution": 66,
+        "lifecycle_boilerplate_commands": 704,
+        "total_commands": 2301,
+        "feature_specific_command_ratio": 0.694,
+        "distinct_state_models": 37,
+        "distinct_acceptance_contracts": 93,
+        "distinct_permission_skeletons": 31,
+        "distinct_eventuality_ref_sets": 14,
         "material_eventualities": 233,
         "distinct_eventuality_test_definitions": 8
       },
@@ -115,9 +115,9 @@
     }
   ],
   "counts": {
-    "top_level_features": 244,
-    "mandatory_realization_facets": 2196,
-    "feature_implementation_contracts": 244,
+    "top_level_features": 309,
+    "mandatory_realization_facets": 2781,
+    "feature_implementation_contracts": 309,
     "executable_eventuality_contracts": 254,
     "material_eventualities": 233,
     "qualified_donor_records": 48,
@@ -127,12 +127,12 @@
     "operational_responsibility_records": 12,
     "master_data_families": 13,
     "branch_activation_records": 10,
-    "feature_security_profiles": 244,
+    "feature_security_profiles": 309,
     "security_controls": 120,
     "customer_endpoint_records": 180,
     "supporting_capabilities": 125,
     "whatsapp_flows": 59,
-    "pack_files": 230
+    "pack_files": 231
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",
@@ -160,9 +160,10 @@
     "The margin and pricing engine is specified and not built (26_MARGIN_AND_PRICING). Three of its five open questions are blocking, including its module and Feature ID, so it is not yet allocated in the registry.",
     "GROC-F021 (Round agreement & consent gateway) is at DOMAIN_TESTED on CI run 33334988260 against 5936216 — the first feature of the Grocery Rounds slice. No independent specialist review: it is S4 and triggers the security and money reviewers, which the implementing agent cannot self-certify.",
     "CI was red from 0c530da to 2225302 — twelve runs — because two workspace packages were added without regenerating package-lock.json, and npm ci refuses a lock that does not match the workspace set. npm run verify does not run npm ci, so local green did not catch it. Fixed at 5936216.",
-    "The remaining fifteen Grocery Rounds features (GROC-F019, F020, F022..F034) are SPECIFIED on generic contracts. The §26 slice needs roughly five more acceptance contracts before further implementation."
+    "The remaining fifteen Grocery Rounds features (GROC-F019, F020, F022..F034) are SPECIFIED on generic contracts. The §26 slice needs roughly five more acceptance contracts before further implementation.",
+    "GMPC Rev 2 is canonical and 65 GMPC-F feature anchors are registered at SPECIFIED with 195 atomic feature-to-page controls; no GMPC implementation is claimed. Each feature still requires its dedicated acceptance contract and normal evidence before advancing."
   ],
-  "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..007 are LOCKED; DEC-008 is PROPOSED and blocked on stakeholder answers.",
+  "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..016 are LOCKED as of the 2026-09-06 GMPC integration; later decisions must explicitly supersede an existing lock rather than silently drift it.",
   "active_development_plan": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md — supersedes v2.1 on execution sequence only. Work runs as three concurrent tracks (kernel, external clock, margin engine) rather than sixteen sequential steps, because two of the three wait on parties outside the team.",
   "development_start_prompt": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md — self-contained prompt for a fresh agent session, one Feature ID per session. Its honest-state block must be updated when it stops being true."
 }

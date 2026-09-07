@@ -2,7 +2,7 @@
 set -euo pipefail
 umask 077
 
-DIAL_REPO_DIR="${DIAL_REPO_DIR:-/srv/dial/repo}"
+DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 EVIDENCE_DIR="$DIAL_CONTROL_HOME/evidence-cache/soak"
 MODE="${1:-process}"
@@ -203,7 +203,11 @@ reboot_post(){
   [[ -n "$gateway" ]] || fail "Hermes gateway systemd unit not found after reboot"
   wait_active dial-hermes-runtime.service
   wait_active "$gateway"
-  pass "persistent runtime services active after reboot"
+  wait_active dial-hermes-orchestrator.service
+  wait_active dial-hermes-operations.service
+  wait_active dial-chat-control.service
+  wait_active dial-mission-controller.service
+  pass "persistent runtime, orchestration, chat-control and mission services active after reboot"
 
   repo_head="$(jq -r '.repo_head' "$marker")"
   [[ "$(git rev-parse HEAD)" == "$repo_head" ]] || fail "repository HEAD changed across reboot soak"

@@ -151,7 +151,7 @@ describe('deterministic auxiliary operations', () => {
     const root = temp('ops-control');
     const repo = makeRepo('ops-recovery');
     ensureProjectRegistry(root, { dialRepoDir: repo });
-    const active = new Set(['hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service']);
+    const active = new Set(['hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service']);
     const restarted = [];
     const runner = (_command, args) => {
       const action = args[1], service = args[2];
