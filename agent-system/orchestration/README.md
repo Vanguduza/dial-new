@@ -115,10 +115,7 @@ When real subscription capacity is available, run in order:
 bash deploy/oracle/hermes-codex/qualify-control-plane.sh
 bash deploy/oracle/hermes-codex/soak-control-plane.sh process
 bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh
-bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-pre
-sudo reboot
-# reconnect
-bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-post
+bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity
 bash deploy/oracle/hermes-codex/finalize-control-plane.sh
 ```
 
@@ -131,13 +128,17 @@ The evidence must prove:
 - exact Sonnet 5 fallback;
 - the **same externally queued job** surviving Codex process death and completing on Sonnet 5;
 - Sol regaining preference;
-- supervisor/gateway process recovery;
-- an actual host reboot proven by changed Linux boot ID;
-- checkpoint, HOT/WARM/COLD and Hermes `state.db` persistence;
-- service recovery after reboot;
+- DIAL runtime-supervisor recovery without restarting the shared Hermes gateway;
+- DIAL-only service continuity across runtime/orchestrator/operations/chat-control/mission-controller restarts;
+- persistent mission and chat-control credential continuity;
+- no unrelated project service or process is targeted by a DIAL soak;
 - subscription-only auth and secret/config security checks.
 
 Only `finalize-control-plane.sh` may create `PRODUCTION_GREEN`. Until it succeeds, DIAL development remains `DEVELOPMENT_BLOCKED`.
+
+### Shared-host reboot qualification
+
+The Oracle host can carry multiple independent Hermes projects. Therefore a host reboot and a global Hermes gateway SIGKILL are **not** DIAL development-gate actions. The DIAL soak is project-scoped. Optional whole-host reboot evidence may be collected only in an explicitly approved maintenance window and is not required for DIAL `PRODUCTION_GREEN`.
 
 After green, the canonical development entrypoint is:
 

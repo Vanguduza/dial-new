@@ -24,11 +24,11 @@ FINGERPRINT_OBJECTS="$(jq -c '.objects // []' <<<"$FINGERPRINT_JSON")"
 QUAL="$(latest "$QUAL_DIR"/installed-runtime-*.json)"
 PROCESS="$(latest "$SOAK_DIR"/process-*.json)"
 EXTERNAL="$(latest "$SOAK_DIR"/external-failover-*.json)"
-REBOOT="$(latest "$SOAK_DIR"/reboot-*.json)"
+CONTINUITY="$(latest "$SOAK_DIR"/continuity-*.json)"
 [[ -n "$QUAL" && -f "$QUAL" ]] || fail "installed-runtime qualification evidence is missing"
 [[ -n "$PROCESS" && -f "$PROCESS" ]] || fail "process-soak evidence is missing"
 [[ -n "$EXTERNAL" && -f "$EXTERNAL" ]] || fail "external queued failover evidence is missing"
-[[ -n "$REBOOT" && -f "$REBOOT" ]] || fail "reboot-soak evidence is missing"
+[[ -n "$CONTINUITY" && -f "$CONTINUITY" ]] || fail "project-isolated continuity-soak evidence is missing"
 
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
@@ -49,16 +49,20 @@ pass "installed Sol, Sonnet and external orchestration canary are proven"
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
   and .repo_head == $head
-  and .actual_codex_app_server_sigkill == true
+  and .project_isolated == true
+  and .shared_hermes_gateway_disrupted == false
+  and .actual_dial_owned_codex_app_server_sigkill == true
   and .sonnet_fallback_identity_proven == true
   and .sol_recovery_proven == true
-' "$PROCESS" >/dev/null || fail "process-soak evidence is not green for current HEAD"
-pass "actual Codex process death, Sonnet fallback and Sol recovery are proven"
+' "$PROCESS" >/dev/null || fail "project-isolated process-soak evidence is not green for current HEAD"
+pass "DIAL-owned Codex process death, Sonnet fallback and Sol recovery are proven without disrupting the shared Hermes gateway"
 
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
   and .repo_head == $head
   and .execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR"
+  and .project_isolated == true
+  and .unrelated_project_processes_targeted == false
   and .actual_codex_app_server_sigkill == true
   and .same_job_sonnet_fallback == true
   and .sonnet_requested_model == "claude-sonnet-5"
@@ -70,12 +74,16 @@ pass "external queued job survived real Codex death via exact Sonnet 5 and retur
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
   and .repo_head == $head
-  and .actual_reboot_proven == true
-  and .hot_warm_cold_survived == true
-  and .services_recovered == true
-  and .sol_preference_recovered == true
-' "$REBOOT" >/dev/null || fail "reboot-soak evidence is not green for current HEAD"
-pass "actual reboot and persistent control-plane continuity are proven"
+  and .project == "dial"
+  and .project_isolated == true
+  and .shared_host_reboot_required == false
+  and .shared_hermes_gateway_disrupted == false
+  and .unrelated_project_services_touched == false
+  and .dial_services_recovered == true
+  and .chat_control_recovered == true
+  and .mission_state_survived == true
+' "$CONTINUITY" >/dev/null || fail "project-isolated continuity-soak evidence is not green for current HEAD"
+pass "DIAL mission/control continuity is proven through DIAL-only service restarts; no shared-host reboot is required"
 
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
@@ -136,7 +144,7 @@ jq -n \
   --arg installed_runtime_evidence "$QUAL" \
   --arg process_soak_evidence "$PROCESS" \
   --arg external_failover_evidence "$EXTERNAL" \
-  --arg reboot_soak_evidence "$REBOOT" \
+  --arg continuity_soak_evidence "$CONTINUITY" \
   '{
     schema_version:2,
     status:"PRODUCTION_GREEN",
@@ -149,7 +157,9 @@ jq -n \
     installed_runtime_evidence:$installed_runtime_evidence,
     process_soak_evidence:$process_soak_evidence,
     external_failover_evidence:$external_failover_evidence,
-    reboot_soak_evidence:$reboot_soak_evidence,
+    continuity_soak_evidence:$continuity_soak_evidence,
+    project_isolated_qualification:true,
+    shared_host_reboot_required:false,
     security_audit_green:true,
     auxiliary_operations_plane:true,
     auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",

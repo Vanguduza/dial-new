@@ -283,7 +283,11 @@ Therefore the required order remains:
 1. consolidated DIAL repository;
 2. Oracle control-plane install/bootstrap;
 3. service/runtime/project isolation verification;
-4. live control-plane qualification and soak;
-5. `PRODUCTION_GREEN`;
+4. live project-isolated control-plane qualification and DIAL-only continuity/failover soak;
+5. `PRODUCTION_GREEN` (no shared-host reboot required);
 6. resume persistent DIAL mission through the chat control surface;
 7. Oracle continues development independently of chat session lifetime.
+
+## Multi-project host qualification rule
+
+A DIAL qualification must never reboot the shared Oracle host or kill a global/shared Hermes gateway as an ordinary DIAL development gate. Failure injection is scoped to processes provably owned by the DIAL control plane. DIAL continuity is certified through DIAL-only service restart, queue, mission and credential persistence. Whole-host reboot testing is optional platform maintenance evidence requiring explicit owner approval.

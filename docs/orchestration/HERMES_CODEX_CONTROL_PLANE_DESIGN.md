@@ -142,3 +142,8 @@ Reboot soak must prove a changed Linux boot ID plus service/checkpoint/HOT/WARM/
 Finalization must validate all evidence, service health, fresh external heartbeat, subscription-only security and the qualified control-plane fingerprint before writing `PRODUCTION_GREEN`.
 
 Deliberate quota exhaustion is prohibited. Live provider capacity must be observed naturally.
+
+
+## Shared-host isolation
+
+The Oracle machine is a shared infrastructure host for independent Hermes projects. DIAL qualification MUST NOT restart a global Hermes gateway, reboot the host, or target an unscoped Codex/Claude process. DIAL failure injection is limited to DIAL-owned process descendants and DIAL-specific services. Whole-host maintenance tests are outside the DIAL development-unblock gate.

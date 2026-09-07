@@ -149,7 +149,9 @@ jq -n \
     persistent_mission_controller:true,
     chat_control_bridge:true,
     chat_control_project:"dial",
-    chat_control_generic_shell_exposed:false
+    chat_control_generic_shell_exposed:false,
+    project_isolated_qualification:true,
+    shared_host_reboot_required:false
   }' >"$EVIDENCE"
 chmod 600 "$EVIDENCE"
 

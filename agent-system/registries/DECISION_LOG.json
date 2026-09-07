@@ -408,5 +408,23 @@
       "deploy/oracle/hermes-codex/finalize-control-plane.sh"
     ],
     "reopens_if": "the product owner explicitly replaces the Oracle-resident DIAL development orchestration and Claude-chat control model"
+  },
+  {
+    "decision_id": "DEC-018",
+    "decided_on": "2026-09-07",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / SHARED ORACLE HOST / PROJECT ISOLATION",
+    "title": "DIAL qualification is project-scoped and may not disrupt other Hermes projects",
+    "decision": "The Oracle host may run multiple independent Hermes projects. DIAL development qualification, failure injection and continuity tests must target only DIAL-owned processes, DIAL-specific services and DIAL-scoped state. A shared Hermes gateway restart or whole-host reboot is not a DIAL production-green prerequisite.",
+    "consequence": "Mandatory DIAL qualification uses DIAL-owned Codex process failure, external queued failover, and DIAL-only service continuity. Process selection must be proven through the DIAL process tree rather than an unscoped pgrep. Whole-host reboot testing is optional platform maintenance evidence and requires explicit owner approval/coordination because it affects unrelated projects.",
+    "record": "docs/orchestration/HERMES_CODEX_CONTROL_PLANE_DESIGN.md; docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md",
+    "enforced_by": [
+      "deploy/oracle/hermes-codex/soak-control-plane.sh",
+      "deploy/oracle/hermes-codex/soak-external-orchestrator.sh",
+      "deploy/oracle/hermes-codex/finalize-control-plane.sh",
+      "agent-system/orchestration/project-registry.mjs"
+    ],
+    "reopens_if": "DIAL is moved to a dedicated host with no unrelated workloads, or the product owner explicitly approves a different shared-host maintenance policy"
   }
 ]

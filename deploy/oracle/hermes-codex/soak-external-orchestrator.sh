@@ -30,16 +30,42 @@ submit="$($HOME/.local/bin/dial-hermes-submit --requested-by qualification --qua
 job_id="$(jq -r '.job_id // empty' <<<"$submit")"
 [[ -n "$job_id" ]] || { echo "$submit" >&2; fail "qualification canary did not return a job id"; }
 
+orchestrator_pid="$(systemctl --user show dial-hermes-orchestrator.service -p MainPID --value)"
+[[ "$orchestrator_pid" =~ ^[1-9][0-9]*$ ]] || fail "DIAL external orchestrator has no live MainPID"
+find_descendant_codex(){
+  python3 - "$orchestrator_pid" <<'PYDESC'
+import re, subprocess, sys
+root=int(sys.argv[1])
+rows=[]
+for line in subprocess.check_output(['ps','-eo','pid=,ppid=,args='], text=True).splitlines():
+    parts=line.strip().split(None,2)
+    if len(parts)<3: continue
+    try: pid,ppid=int(parts[0]),int(parts[1])
+    except ValueError: continue
+    rows.append((pid,ppid,parts[2]))
+children={}
+for pid,ppid,args in rows: children.setdefault(ppid,[]).append(pid)
+desc=set(); stack=[root]
+while stack:
+    parent=stack.pop()
+    for child in children.get(parent,[]):
+        if child not in desc:
+            desc.add(child); stack.append(child)
+for pid,ppid,args in rows:
+    if pid in desc and re.search(r'codex.*app-server', args, re.I):
+        print(pid); break
+PYDESC
+}
 killed_pid=""
 deadline=$((SECONDS + 60))
 while (( SECONDS < deadline )); do
-  killed_pid="$(pgrep -f 'codex.*app-server' | head -n1 || true)"
+  killed_pid="$(find_descendant_codex || true)"
   [[ "$killed_pid" =~ ^[1-9][0-9]*$ ]] && break
   sleep 0.1
 done
-[[ "$killed_pid" =~ ^[1-9][0-9]*$ ]] || fail "could not observe the Codex App Server process for the external queued turn"
+[[ "$killed_pid" =~ ^[1-9][0-9]*$ ]] || fail "could not observe a Codex App Server descendant owned by the DIAL external orchestrator"
 kill -KILL "$killed_pid"
-pass "actual Codex App Server process was SIGKILLed during an external queued Hermes turn"
+pass "DIAL-orchestrator-owned Codex App Server process was SIGKILLed; unrelated project Codex processes were not targeted"
 
 result=""
 state=""
@@ -81,6 +107,8 @@ jq -n \
     repo_head:$repo_head,
     execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",
     job_id:$job_id,
+    project_isolated:true,
+    unrelated_project_processes_targeted:false,
     actual_codex_app_server_sigkill:true,
     killed_codex_pid:$killed_pid,
     same_job_sonnet_fallback:true,

@@ -68,14 +68,11 @@ kill_and_require_restart(){
 
 process_soak(){
   require_host
-  local gateway supervisor_restart gateway_restart codex_probe_pid killed_codex_pid probe_rc=0 evidence selected fallback recovery
-  gateway="$(gateway_unit)"
-  [[ -n "$gateway" ]] || fail "Hermes gateway systemd unit not found; set HERMES_GATEWAY_UNIT if necessary"
+  local supervisor_restart codex_probe_pid killed_codex_pid probe_rc=0 evidence selected fallback recovery
   wait_active dial-hermes-runtime.service
-  wait_active "$gateway"
 
   probe_both_and_require_sol
-  pass "fresh runtime identity proves Sol preferred before process-death soak"
+  pass "fresh runtime identity proves Sol preferred before project-isolated process-death soak"
 
   local probe_out="$EVIDENCE_DIR/codex-kill-probe-$(stamp).json"
   node agent-system/orchestration/codex-app-server-probe.mjs >"$probe_out" 2>"$probe_out.err" &
@@ -85,15 +82,13 @@ process_soak(){
   while (( SECONDS < deadline )); do
     killed_codex_pid="$(pgrep -P "$codex_probe_pid" -f 'codex.*app-server' | head -n1 || true)"
     [[ -n "$killed_codex_pid" ]] && break
-    killed_codex_pid="$(pgrep -f 'codex.*app-server.*stdio' | head -n1 || true)"
-    [[ -n "$killed_codex_pid" && "$killed_codex_pid" != "$$" ]] && break
     sleep 0.2
   done
-  [[ "$killed_codex_pid" =~ ^[1-9][0-9]*$ ]] || { kill "$codex_probe_pid" 2>/dev/null || true; fail "could not identify live Codex App Server process for kill soak"; }
+  [[ "$killed_codex_pid" =~ ^[1-9][0-9]*$ ]] || { kill "$codex_probe_pid" 2>/dev/null || true; fail "could not identify the DIAL probe-owned Codex App Server child for kill soak"; }
   kill -KILL "$killed_codex_pid"
   wait "$codex_probe_pid" || probe_rc=$?
   [[ "$probe_rc" -ne 0 ]] || fail "Codex probe unexpectedly succeeded after app-server SIGKILL"
-  pass "actual Codex App Server SIGKILL produced a failed primary-runtime probe"
+  pass "DIAL-owned Codex App Server child SIGKILL produced a failed primary-runtime probe"
 
   node agent-system/orchestration/supervisor.mjs health \
     --runtime codex_app_server --state PROCESS_FAILED \
@@ -105,7 +100,7 @@ process_soak(){
   fallback="$(node agent-system/orchestration/claude-fallback-runner.mjs 'Reply with exactly DIAL_PROCESS_SOAK_SONNET_OK. Do not modify files.')"
   jq -e '.event.identity_proven == true and .event.resolved_model == "claude-sonnet-5" and .event.authority == "HERMES_RUNTIME_ONLY"' \
     <<<"$fallback" >/dev/null || { echo "$fallback" >&2; fail "Sonnet fallback did not execute with proven identity"; }
-  pass "Codex process death → official Claude Code / Sonnet 5 fallback is executable"
+  pass "DIAL-owned Codex process death → official Claude Code / Sonnet 5 fallback is executable"
 
   node agent-system/orchestration/codex-app-server-probe.mjs >/dev/null
   recovery="$(npm run --silent agent:orchestration:select-runtime)"
@@ -114,9 +109,7 @@ process_soak(){
   pass "Codex recovery → Sol preferred again"
 
   supervisor_restart="$(kill_and_require_restart dial-hermes-runtime.service)"
-  pass "runtime supervisor recovered from SIGKILL"
-  gateway_restart="$(kill_and_require_restart "$gateway")"
-  pass "Hermes gateway recovered from SIGKILL"
+  pass "DIAL runtime supervisor recovered from SIGKILL without touching the shared Hermes gateway"
 
   evidence="$EVIDENCE_DIR/process-$(stamp).json"
   jq -n \
@@ -125,17 +118,62 @@ process_soak(){
     --arg repo_head "$(git rev-parse HEAD)" \
     --arg killed_codex_pid "$killed_codex_pid" \
     --arg supervisor_restart "$supervisor_restart" \
-    --arg gateway_restart "$gateway_restart" \
-    --arg gateway_unit "$gateway" \
-    '{schema_version:1, kind:"DIAL_HERMES_PROCESS_SOAK", status:"GREEN", observed_at:$observed_at, boot_id:$boot_id, repo_head:$repo_head, actual_codex_app_server_sigkill:true, killed_codex_pid:$killed_codex_pid, sonnet_fallback_identity_proven:true, sol_recovery_proven:true, supervisor_restart:$supervisor_restart, hermes_gateway_restart:$gateway_restart, hermes_gateway_unit:$gateway_unit, real_quota_soak:"PENDING"}' \
+    '{schema_version:2, kind:"DIAL_HERMES_PROCESS_SOAK", status:"GREEN", observed_at:$observed_at, boot_id:$boot_id, repo_head:$repo_head, project_isolated:true, shared_hermes_gateway_disrupted:false, actual_dial_owned_codex_app_server_sigkill:true, killed_codex_pid:$killed_codex_pid, sonnet_fallback_identity_proven:true, sol_recovery_proven:true, supervisor_restart:$supervisor_restart, real_quota_soak:"PENDING"}' \
     >"$evidence"
   chmod 600 "$evidence"
   echo "PROCESS_SOAK=GREEN"
+  echo "PROJECT_ISOLATED=true"
   echo "EVIDENCE=$evidence"
   echo "REAL_QUOTA_SOAK=PENDING"
 }
 
+continuity_soak(){
+  require_host
+  local repo_head mission_before mission_after mission_id state_before state_after turn_before turn_after token_hash_before token_hash_after evidence
+  repo_head="$(git rev-parse HEAD)"
+  mission_before="$(node agent-system/orchestration/mission-controller.mjs status)"
+  mission_id="$(jq -r '.mission_id // empty' <<<"$mission_before")"
+  state_before="$(jq -r '.state // empty' <<<"$mission_before")"
+  turn_before="$(jq -r '.turn_number // 0' <<<"$mission_before")"
+  [[ "$mission_id" == "dial-development-root" ]] || fail "canonical DIAL root mission is missing"
+  case "$state_before" in PAUSED|BLOCKED_OWNER|WAITING_RUNTIME) ;; *) fail "project-isolated continuity soak requires a non-running mission; current state=$state_before" ;; esac
+  [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "chat-control token missing"
+  token_hash_before="$(sha256 "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
+
+  for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service; do
+    systemctl --user restart "$unit"
+    wait_active "$unit"
+  done
+  pass "all DIAL-specific control services restarted and recovered without touching unrelated project services"
+
+  curl -fsS http://127.0.0.1:9130/health | jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' >/dev/null || fail "chat-control bridge did not recover"
+  mission_after="$(node agent-system/orchestration/mission-controller.mjs status)"
+  state_after="$(jq -r '.state // empty' <<<"$mission_after")"
+  turn_after="$(jq -r '.turn_number // 0' <<<"$mission_after")"
+  [[ "$(jq -r '.mission_id // empty' <<<"$mission_after")" == "$mission_id" ]] || fail "mission identity changed across DIAL service restart"
+  [[ "$state_after" == "$state_before" ]] || fail "mission state changed across DIAL service restart: $state_before -> $state_after"
+  [[ "$turn_after" == "$turn_before" ]] || fail "mission turn changed during non-running continuity soak"
+  token_hash_after="$(sha256 "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
+  [[ "$token_hash_after" == "$token_hash_before" ]] || fail "chat-control credential changed across service restart"
+  [[ "$(git rev-parse HEAD)" == "$repo_head" ]] || fail "repository HEAD changed during continuity soak"
+
+  evidence="$EVIDENCE_DIR/continuity-$(stamp).json"
+  jq -n \
+    --arg observed_at "$(now)" \
+    --arg repo_head "$repo_head" \
+    --arg mission_id "$mission_id" \
+    --arg mission_state "$state_after" \
+    --arg turn_number "$turn_after" \
+    --arg token_sha256 "$token_hash_after" \
+    '{schema_version:1, kind:"DIAL_PROJECT_ISOLATED_SERVICE_CONTINUITY_SOAK", status:"GREEN", observed_at:$observed_at, repo_head:$repo_head, project:"dial", project_isolated:true, shared_host_reboot_required:false, shared_hermes_gateway_disrupted:false, unrelated_project_services_touched:false, mission_id:$mission_id, mission_state:$mission_state, mission_turn_number:($turn_number|tonumber), chat_control_token_sha256:$token_sha256, dial_services_recovered:true, chat_control_recovered:true, mission_state_survived:true}' >"$evidence"
+  chmod 600 "$evidence"
+  echo "DIAL_PROJECT_CONTINUITY_SOAK=GREEN"
+  echo "SHARED_HOST_REBOOT_REQUIRED=false"
+  echo "EVIDENCE=$evidence"
+}
+
 reboot_pre(){
+  [[ "${DIAL_ALLOW_SHARED_HOST_REBOOT_SOAK:-0}" == "1" ]] || fail "shared-host reboot soak is optional and requires explicit DIAL_ALLOW_SHARED_HOST_REBOOT_SOAK=1 owner maintenance approval"
   require_host
   local gateway cp_pointer cp_path cp_snapshot cp_hash memory backup backup_hash marker marker_id feature hot warm cold
   gateway="$(gateway_unit)"
@@ -190,6 +228,7 @@ reboot_pre(){
 }
 
 reboot_post(){
+  [[ "${DIAL_ALLOW_SHARED_HOST_REBOOT_SOAK:-0}" == "1" ]] || fail "shared-host reboot soak is optional and requires explicit DIAL_ALLOW_SHARED_HOST_REBOOT_SOAK=1 owner maintenance approval"
   require_host
   local marker pre_boot post_boot gateway cp_snapshot cp_hash backup backup_hash hot warm cold feature repo_head active_pointer active_path active_feature evidence
   marker="$EVIDENCE_DIR/reboot-pending.json"
@@ -257,7 +296,8 @@ reboot_post(){
 
 case "$MODE" in
   process) process_soak ;;
+  continuity) continuity_soak ;;
   reboot-pre) reboot_pre ;;
   reboot-post) reboot_post ;;
-  *) fail "usage: $0 {process|reboot-pre|reboot-post}" ;;
+  *) fail "usage: $0 {process|continuity|reboot-pre|reboot-post}" ;;
 esac

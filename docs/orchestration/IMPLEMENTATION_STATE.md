@@ -279,4 +279,9 @@ Sol/Sonnet = bounded workers
 Repository/tests/gates = implementation truth
 ```
 
-Current evidence is limited to local module/HTTP smoke tests and unit/integration tests. A remote Claude chat connection, authenticated private tunnel/Access policy, live Sol/Sonnet qualification, process-failover soak and reboot soak remain required before claiming the chat-control path production-green.
+Current evidence is limited to local module/HTTP smoke tests and unit/integration tests. A remote Claude chat connection, authenticated private tunnel/Access policy, live Sol/Sonnet qualification, DIAL-owned process-failover soak and DIAL-only service-continuity soak remain required before claiming the chat-control path production-green. A shared-host reboot is explicitly not a DIAL gate.
+
+
+## Shared multi-project Oracle host safety correction
+
+DIAL qualification is now project-isolated. The earlier host-reboot/global-Hermes-gateway soak requirement was unsafe on a shared Hermes host because it could disrupt independent projects. The mandatory DIAL gate now proves persistence through DIAL-specific runtime/orchestrator/operations/chat-control/mission-controller restarts. The process failover soak kills only a Codex App Server process proven to be owned by the DIAL probe/orchestrator process tree. Whole-host reboot testing remains available only as optional explicitly approved platform maintenance evidence.

@@ -201,11 +201,10 @@ After live subscription capacity is available, execute in order:
   bash deploy/oracle/hermes-codex/qualify-control-plane.sh
   bash deploy/oracle/hermes-codex/soak-control-plane.sh process
   bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh
-  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-pre
-  sudo reboot
-  # reconnect
-  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-post
+  bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity
   bash deploy/oracle/hermes-codex/finalize-control-plane.sh
+
+Do not reboot this shared multi-project Oracle host as part of ordinary DIAL qualification. A reboot soak is optional platform-wide maintenance evidence and requires explicit owner approval/maintenance coordination.
 
 Only after finalization prints EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN may
 Dial development resume, and the canonical development entrypoint is then:
