@@ -33,6 +33,14 @@ wait_active(){
 
 unit_pid(){ systemctl --user show "$1" -p MainPID --value; }
 
+wait_chat_control_health(){
+  local deadline=$((SECONDS + 40))
+  until curl -fsS http://127.0.0.1:9130/health 2>/dev/null | jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' >/dev/null; do
+    (( SECONDS >= deadline )) && fail "chat-control bridge did not become healthy"
+    sleep 1
+  done
+}
+
 gateway_unit(){
   if [[ -n "${HERMES_GATEWAY_UNIT:-}" ]]; then printf '%s\n' "$HERMES_GATEWAY_UNIT"; return; fi
   systemctl --user list-unit-files --type=service --no-legend 2>/dev/null \
@@ -146,7 +154,7 @@ continuity_soak(){
   done
   pass "all DIAL-specific control services restarted and recovered without touching unrelated project services"
 
-  curl -fsS http://127.0.0.1:9130/health | jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"' >/dev/null || fail "chat-control bridge did not recover"
+  wait_chat_control_health
   mission_after="$(node agent-system/orchestration/mission-controller.mjs status)"
   state_after="$(jq -r '.state // empty' <<<"$mission_after")"
   turn_after="$(jq -r '.turn_number // 0' <<<"$mission_after")"
