@@ -285,3 +285,9 @@ Current evidence is limited to local module/HTTP smoke tests and unit/integratio
 ## Shared multi-project Oracle host safety correction
 
 DIAL qualification is now project-isolated. The earlier host-reboot/global-Hermes-gateway soak requirement was unsafe on a shared Hermes host because it could disrupt independent projects. The mandatory DIAL gate now proves persistence through DIAL-specific runtime/orchestrator/operations/chat-control/mission-controller restarts. The process failover soak kills only a Codex App Server process proven to be owned by the DIAL probe/orchestrator process tree. Whole-host reboot testing remains available only as optional explicitly approved platform maintenance evidence.
+
+## 2026-09-07 — VEKL integration
+
+`DEC-019` adopts the DIAL Versioned Engineering Knowledge Layer. Repository schemas/registries, deterministic resolver, activation manifest/hash store, Oracle queue integration, Sol/Sonnet provenance continuity, non-authoritative outcome telemetry, learned-skill staging boundary and chat-control observability are implemented and covered by `tests/orchestration-vekl.test.mjs`.
+
+The current Google/Android registry contains research candidates only; **approved vendor skill count is zero**. This is intentional fail-closed state, not a missing-governance bypass. Actual Android skill activation begins only after exact production pins, licence/provenance, static/security scan, DIAL conflict review, deterministic evals and immutable Oracle snapshots are qualified.

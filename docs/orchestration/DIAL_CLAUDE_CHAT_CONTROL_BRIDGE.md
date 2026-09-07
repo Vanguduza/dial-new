@@ -291,3 +291,7 @@ Therefore the required order remains:
 ## Multi-project host qualification rule
 
 A DIAL qualification must never reboot the shared Oracle host or kill a global/shared Hermes gateway as an ordinary DIAL development gate. Failure injection is scoped to processes provably owned by the DIAL control plane. DIAL continuity is certified through DIAL-only service restart, queue, mission and credential persistence. Whole-host reboot testing is optional platform maintenance evidence requiring explicit owner approval.
+
+## VEKL observability
+
+The DIAL-only chat control surface exposes read-only `dial_skill_status` and includes VEKL activation/outcome events in its cursor-based progress feed. It may show activation ID, policy version, exact selected skill provenance and resolution state, but it has no generic skill-install/promote shell. Skill qualification/promotion remains governed by `DEC-019` and the DIAL tooling/donor gates.

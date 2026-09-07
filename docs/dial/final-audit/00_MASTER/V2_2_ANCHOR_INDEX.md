@@ -88,6 +88,16 @@ it accepts and checks a bundle at injection.
   acceptance contracts yet, and two packages gated on open activation blockers
   (ACT-REG-011 content rights, ACT-REG-005 cross-border/DPO).
 
+## Development engineering knowledge (VEKL — adopted 2026-09-07)
+
+- Canonical architecture → `../06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`
+- Tooling/activation policy → `../06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md`
+- Decision → `/agent-system/registries/DECISION_LOG.json` (`DEC-019`)
+- Skill/provenance/conflict/bundle registries → `/agent-system/engineering-knowledge/`
+- Runtime broker/resolver/activation/outcome/learning → `/agent-system/orchestration/`
+- Oracle project-scoped runtime state → `/var/lib/dial-control/knowledge/` (runtime, not canonical repository content)
+- Research-reference Google/Android revisions are **not approved production pins**; vendor activation remains fail-closed until donor/security/conflict/eval qualification passes.
+
 ## Repository harness (applied, at repository root)
 
 - Entry authority → `/CLAUDE.md`

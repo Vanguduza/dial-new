@@ -1,0 +1,75 @@
+[
+  {
+    "bundle_id": "dial-android-screen",
+    "task_classes": [
+      "ANDROID_UI_IMPLEMENTATION",
+      "ANDROID_RESPONSIVE_LAYOUT",
+      "ANDROID_NAVIGATION"
+    ],
+    "max_skills": 5,
+    "skills": [
+      "google.android.jetpack-compose.adaptive",
+      "google.android.navigation.navigation-3",
+      "google.android.system.edge-to-edge",
+      "google.android.devtools.android-cli",
+      "google.android.testing.testing-setup"
+    ],
+    "rule": "Select only the qualified subset relevant to the concrete packet; never load all by default."
+  },
+  {
+    "bundle_id": "dial-android-performance",
+    "task_classes": [
+      "ANDROID_PERFORMANCE"
+    ],
+    "max_skills": 3,
+    "skills": [
+      "google.android.profilers.perfetto-trace-analysis",
+      "google.android.profilers.perfetto-sql",
+      "google.android.performance.r8-analyzer"
+    ],
+    "rule": "R8 activates only for shrinker/size/release behaviour."
+  },
+  {
+    "bundle_id": "dial-android-security",
+    "task_classes": [
+      "ANDROID_SECURITY"
+    ],
+    "max_skills": 3,
+    "skills": [
+      "google.android.security.android-intent-security",
+      "google.android.devtools.android-cli",
+      "google.android.testing.testing-setup"
+    ],
+    "rule": "External guidance never satisfies the independent DIAL security gate."
+  },
+  {
+    "bundle_id": "dial-platform-review",
+    "task_classes": [
+      "CLOUD_SECURITY_REVIEW",
+      "CLOUD_RELIABILITY_REVIEW",
+      "CLOUD_PERFORMANCE_REVIEW",
+      "CLOUD_OPERATIONAL_REVIEW"
+    ],
+    "max_skills": 3,
+    "skills": [
+      "google.cloud.waf.security",
+      "google.cloud.waf.reliability",
+      "google.cloud.waf.performance",
+      "google.cloud.waf.operational-excellence"
+    ],
+    "rule": "Cross-cloud wrapper: transferable principles only; no implicit GCP migration."
+  },
+  {
+    "bundle_id": "dial-ga-analytics-adapter",
+    "task_classes": [
+      "GA_ANALYTICS_ADAPTER",
+      "GA_ANALYTICS_ADMIN"
+    ],
+    "max_skills": 2,
+    "skills": [
+      "google.analytics.data-api",
+      "google.analytics.admin-api"
+    ],
+    "rule": "GA remains an adapter; DIAL customer/order/money truth and privacy policy remain authoritative."
+  }
+]

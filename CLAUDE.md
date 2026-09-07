@@ -12,6 +12,7 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 6. Trigger Money/Security/Donor/Health/NFR/UI/Migration reviewer when applicable.
 7. Record fresh tests/evidence before advancing a gate.
 8. Preserve DIAL source-of-truth boundaries.
+9. After Feature/JIT context, resolve/confirm the VEKL Skill Activation Manifest before material implementation. External skills are non-authoritative and exact-version governed; a valid result may be no external skill.
 
 ## Never
 
@@ -21,7 +22,9 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 - expose secrets/service-role keys;
 - mark a feature complete from code inspection alone;
 - start broad research when canon/current code already answers the question;
-- load the entire master pack when bounded context is sufficient.
+- load the entire master pack when bounded context is sufficient;
+- treat an external/vendor skill, learned wrapper, session-memory hit or model prior as product/architecture/gate authority;
+- activate a Google/Android skill from a research reference or mutable upstream branch — VEKL requires approved exact pin/hash provenance.
 
 
 ## GMPC integration lock
@@ -42,6 +45,12 @@ When the `dial-oracle-control` MCP/chat-control bridge is available, Claude chat
 - Direct repository development remains blocked until the external Hermes production gate is green.
 
 Architecture: `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
+
+## VEKL engineering-knowledge lock
+
+Canonical VEKL: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`.
+
+For material Oracle packets, VEKL resolution is a process gate after canonical Feature context. The persisted activation ID/hash travels with the queue/checkpoint/failover path. Hermes/Sol may load only the packet-scoped approved external-skill directory; Sonnet fallback receives the exact same pinned skill bodies from that manifest. If repository inspection materially refines the task, use an explicit audited re-resolution before relying on newly relevant specialist knowledge. External skills never satisfy DIAL specialist reviews or completion gates.
 
 ## Tooling
 

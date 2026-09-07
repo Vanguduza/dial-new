@@ -1,0 +1,654 @@
+[
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.devtools.android-cli",
+    "display_name": "Android CLI",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "devtools/android-cli",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_DEVICE_VERIFICATION",
+      "ANDROID_UI_IMPLEMENTATION"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.jetpack-compose.adaptive",
+    "display_name": "Android Adaptive Compose",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "jetpack-compose/adaptive",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_UI_IMPLEMENTATION",
+      "ANDROID_RESPONSIVE_LAYOUT"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.navigation.navigation-3",
+    "display_name": "Android Navigation 3",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "navigation/navigation-3",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_NAVIGATION"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.system.edge-to-edge",
+    "display_name": "Android Edge-to-Edge",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "system/edge-to-edge",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_UI_IMPLEMENTATION"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.testing.testing-setup",
+    "display_name": "Android Testing Setup",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "testing/testing-setup",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_TESTING"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.security.android-intent-security",
+    "display_name": "Android Intent Security",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "security/android-intent-security",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_SECURITY"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.performance.r8-analyzer",
+    "display_name": "Android R8 Analyzer",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "performance/r8-analyzer",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_RELEASE_OPTIMIZATION"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.profilers.perfetto-trace-analysis",
+    "display_name": "Perfetto Trace Analysis",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "profilers/perfetto-trace-analysis",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_PERFORMANCE"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.profilers.perfetto-sql",
+    "display_name": "Perfetto SQL",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "profilers/perfetto-sql",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_PERFORMANCE"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.android.camera.camerax",
+    "display_name": "CameraX",
+    "provider": "google-android",
+    "upstream_repo": "android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "production_pin": null,
+    "source_path": "camera/camerax",
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "ANDROID_CAMERA"
+    ],
+    "eligible_modules": [
+      "DIAL_CONSUMER",
+      "DIAL_BUSINESS",
+      "DIAL_TECH_APP",
+      "DIAL_COURIER_APP",
+      "DIAL_HEALTH_ANDROID"
+    ],
+    "path_triggers": [
+      "apps/**-android/**"
+    ],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "android-core-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.cloud.waf.security",
+    "display_name": "Google Cloud WAF Security",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "CLOUD_SECURITY_REVIEW"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [
+      "CROSS_CLOUD_REVIEW_REQUIRED"
+    ],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.cloud.waf.reliability",
+    "display_name": "Google Cloud WAF Reliability",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "CLOUD_RELIABILITY_REVIEW"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [
+      "CROSS_CLOUD_REVIEW_REQUIRED"
+    ],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.cloud.waf.performance",
+    "display_name": "Google Cloud WAF Performance",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "CLOUD_PERFORMANCE_REVIEW"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [
+      "CROSS_CLOUD_REVIEW_REQUIRED"
+    ],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.cloud.waf.operational-excellence",
+    "display_name": "Google Cloud WAF Operational Excellence",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "CLOUD_OPERATIONAL_REVIEW"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [
+      "CROSS_CLOUD_REVIEW_REQUIRED"
+    ],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.analytics.data-api",
+    "display_name": "Google Analytics Data API",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "GA_ANALYTICS_ADAPTER"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.analytics.admin-api",
+    "display_name": "Google Analytics Admin API",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "GA_ANALYTICS_ADMIN"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  },
+  {
+    "schema_version": 1,
+    "skill_id": "google.agent-platform.skill-registry-reference",
+    "display_name": "Google Agent Platform Skill Registry Reference",
+    "provider": "google",
+    "upstream_repo": "google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "production_pin": null,
+    "source_path": null,
+    "content_hash": null,
+    "license": "Apache-2.0",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "approval_state": "DISCOVERED",
+    "risk_class": "MEDIUM",
+    "task_classes": [
+      "SKILL_LIFECYCLE_RESEARCH"
+    ],
+    "eligible_modules": [
+      "DIAL_PLATFORM",
+      "DIAL_COMMAND_CENTRE",
+      "GMPC"
+    ],
+    "path_triggers": [],
+    "forbidden_effects": [
+      "CHANGE_PRODUCT_REQUIREMENTS",
+      "CHANGE_INFRA_PROVIDER",
+      "CREATE_SECOND_SOR",
+      "EXPAND_AUTHORITY"
+    ],
+    "requires_tools": [],
+    "conflict_tags": [],
+    "eval_suite": "google-platform-v1",
+    "snapshot_rel": null,
+    "runtime_name": null,
+    "last_verified_at": null
+  }
+]

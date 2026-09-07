@@ -30,6 +30,12 @@ And v2.1 predates 38 of the current 244 features: Grocery Rounds
 (`GROC-F019..F034`) and DKRF (`DKRF-F001..F022`). Neither appears in its sequence.
 
 
+### 2026-09-07 development-system capability — VEKL
+
+`DEC-019` adopts the DIAL Versioned Engineering Knowledge Layer (VEKL) as a horizontal development-system capability, not a product Feature fan-out and not a new source of truth. Every ordinary Oracle development packet resolves a versioned Skill Activation Manifest after Feature/JIT context. Approved specialist skills may improve execution technique, but canon/FRC/security/current code/evidence remain authoritative and the normal contract/reviewer/gate ladder is unchanged.
+
+The first qualification target is official Android engineering knowledge. Google/Android research references currently remain unapproved; they do not alter the Track A/Grocery Rounds programme priority. VEKL is an execution-quality multiplier applied to the packet that the plan already chooses, not a new competing workstream that can displace product dependencies.
+
 ### 2026-09-06 canonical breadth extension — GMPC
 
 The active registry now contains **309** feature anchors: the 244-feature state this plan was adopted against plus **65 `GMPC-F*`** Growth, Marketing & Promotions Control Centre features. The GMPC architecture is adopted at `27_GROWTH_MARKETING_PROMOTIONS/` with 195 atomic feature-to-page controls. All 65 enter at `SPECIFIED`; this breadth addition does not manufacture implementation evidence and does not change the Track A / Grocery Rounds execution priority.

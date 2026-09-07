@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "state": "FRAMEWORK_ADOPTED_VENDOR_CONTENT_NOT_YET_APPROVED",
+  "approved_skill_count": 0,
+  "active_skill_count": 0,
+  "research_reference_only": true,
+  "notes": [
+    "Research commits are not production pins.",
+    "No Google/Android skill may activate until Donor Assimilation, conflict review and deterministic evals complete."
+  ]
+}

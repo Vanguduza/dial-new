@@ -105,3 +105,36 @@ These bind regardless of which tool produced the output.
    CT-3 does not exempt it for being convenient.
 6. **One memory authority.** Project memory and the DIAL evidence registry are
    the record. Do not install a second memory system alongside them.
+
+---
+
+## Versioned Engineering Knowledge Layer (VEKL)
+
+`DEC-019` makes VEKL the governed path for external Agent Skills used by DIAL development. Canonical architecture:
+`DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`.
+
+**Every material Oracle packet is evaluated by VEKL after Feature/JIT context resolution.** This is not permission to load a skill catalogue. The resolver emits a persisted activation manifest whose valid result may be `NO_EXTERNAL_SKILL_REQUIRED` or `NO_APPROVED_SKILL_AVAILABLE`.
+
+External skills remain subject to Guardrail 5. In particular:
+
+- a research-reference commit is not a production pin;
+- `DISCOVERED`, `QUARANTINED` or `EVAL_PASSED` is not `APPROVED`;
+- an approved vendor record requires exact production commit/path/hash, licence/provenance, scan, DIAL conflict review, deterministic eval and immutable Oracle snapshot;
+- vendor skill content is `ENGINEERING_GUIDANCE_ONLY` and cannot satisfy a specialist gate or create product/architecture truth;
+- an executing model may not install or update a vendor skill ad hoc to get around the resolver;
+- Hermes receives only the packet-scoped approved activation directory; Sonnet fallback receives the exact same skill-version bodies from the persisted manifest;
+- a materially refined task may trigger an audited re-resolution before relying on newly relevant specialist knowledge, but silent version drift is prohibited; and
+- learned procedural wrappers are staged separately, secret-checked and promoted only through scan/eval/review. They never mutate upstream vendor snapshots.
+
+### Initial external-skill policy
+
+| Task family | VEKL posture |
+|---|---|
+| Native Android screen/device/navigation/security/performance/camera work | Highest-priority qualification family; activate only approved relevant subset |
+| Google WAF review | Cross-cloud principles only; no implicit GCP migration |
+| Google Analytics adapter/admin | Adapter guidance only; DIAL customer/order/money/privacy truth remains authoritative |
+| Delivery/Courier/Fleet maps | Google Maps replacement auto-blocked by `SKC-MAPS-001` |
+| Firebase backend/auth replacement | Auto-blocked unless an explicit architecture-evaluation decision authorises research |
+| Dial Health sensitive context | Vendor knowledge may receive code/synthetic fixtures, not identifiable production Health records; marketing/analytics guidance is purpose-gated |
+
+VEKL selection/outcome telemetry is process evidence, not Feature completion evidence. `SKILL_USED`, `SKILL_HELPFUL` and `GATE_PASSED` are separate states and must never be collapsed.

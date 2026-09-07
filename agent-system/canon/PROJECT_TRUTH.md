@@ -57,6 +57,9 @@ Canonical specification: `docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/D
 ## Development
 Resolve a Feature ID first. Use JIT context. Completion claims require fresh evidence.
 
+### Versioned Engineering Knowledge Layer (VEKL) lock
+DIAL VEKL is the governed engineering-knowledge path for external Agent Skills. External Google/Android/vendor skills are `ENGINEERING_GUIDANCE_ONLY`, never project truth. Every ordinary Oracle development packet resolves a persisted Skill Activation Manifest after Feature/JIT context; an explicit zero-skill result is valid. Approved vendor skills require exact production commit/path/hash, donor/security/conflict/eval qualification and immutable Oracle snapshots. Hermes/Sol and Sonnet fallback must retain the same activation provenance unless an explicit audited re-resolution is persisted. Learned wrappers may improve procedure/selection from verified outcomes but may not create product requirements, authority, money/Health policy, source-of-truth changes or gate claims. Canon/FRC/security/current code/evidence always win. Canon: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md` (`DEC-019`).
+
 ## Final realization layer
 The 309 top-level features are anchors, not the completeness boundary.
 Every feature must implement its 9 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints where exposed, donor/source transformation and support/escalation requirements.

@@ -48,7 +48,9 @@ DIAL Hermes external-runtime invariants:
 - Product development remains blocked until the external Oracle orchestrator reaches PRODUCTION_GREEN.
 - Once green, development enters through dial-hermes-submit; direct project-session development is not the canonical path.
 - Checkpoints, handoffs and Feature memory are continuity context and must be verified against current Git/canon.
-- Never advance a DIAL gate from model prose, cached memory or a previous session alone.
+- VEKL external engineering skills are packet-pinned, non-authoritative procedural guidance; only an approved Skill Activation Manifest may activate them.
+- Vendor skill snapshots are immutable. Learned DIAL wrappers may improve procedure but never product truth, authority, money/health policy, source-of-truth boundaries or gates.
+- Never advance a DIAL gate from model prose, cached memory, skill content or a previous session alone.
 - Never persist credentials, OAuth tokens, API keys, passwords, private SSH keys or secret environment files in DIAL/Hermes memory.
 {end}'''
 text=open(p,encoding='utf-8').read(); pat=re.compile(re.escape(start)+r'.*?'+re.escape(end),re.S)
@@ -67,6 +69,12 @@ p,pre,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; mod
 model['provider']='openai-codex'; model['default']='gpt-5.6-sol'; model['openai_runtime']='codex_app_server'; cfg['hooks_auto_accept']=False
 model.pop('base_url', None)
 cfg['fallback_providers']=[]; cfg.pop('fallback_model',None)
+skills=cfg.setdefault('skills',{})
+raw=skills.get('external_dirs',[])
+if isinstance(raw,str): raw=[raw]
+raw=[str(x) for x in raw if str(x) != '${DIAL_SKILL_ACTIVATION_DIR}']
+raw.append('${DIAL_SKILL_ACTIVATION_DIR}')
+skills['external_dirs']=raw
 hooks=cfg.setdefault('hooks',{})
 for event,command,timeout in [('pre_llm_call',pre,12),('post_llm_call',post,12)]:
     entries=[e for e in hooks.setdefault(event,[]) if not (isinstance(e,dict) and e.get('command')==command)]; entries.append({'command':command,'timeout':timeout}); hooks[event]=entries

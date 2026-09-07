@@ -24,6 +24,9 @@ function buildManagerInstruction(mission, root) {
     'Do not import, inspect or consider unrelated project work as DIAL authority.',
     'Preserve all unrelated uncommitted work. Do not reset, clean, force-push, or fabricate evidence.',
     'Run the narrow tests needed for the packet and leave repository-observable evidence.',
+    'VEKL is mandatory process governance: after Feature/JIT context is resolved, confirm the persisted Skill Activation Manifest before material implementation. A zero-skill manifest is valid only when the resolver explicitly says no approved external skill is required.',
+    'External/vendor skills are non-authoritative guidance. Canon/FRC/security/current code/evidence win; skills cannot change product scope, sources of truth, locked providers, authority or gates.',
+    'If the concrete task becomes materially more specific than the queued activation (for example Android UI/security/performance), run node agent-system/bin/skills-resolve.mjs <FEATURE_ID> --task "<concrete task>" --packet-id "$DIAL_PACKET_ID" --activate --reason "task refined after repository inspection" before the first material edit that depends on that specialist knowledge.',
     'If ordinary unblocked work remains after the packet, finish normally; the Oracle mission controller will dispatch the next turn.',
     'If a genuine owner decision is required, end your final response with exactly: DIAL_MISSION_SIGNAL:BLOCKED_OWNER::<short reason>',
     'If the active canonical programme is genuinely complete, end with exactly: DIAL_MISSION_SIGNAL:COMPLETE::<short reason>',
@@ -62,6 +65,7 @@ export function missionControllerTick({ root, developmentGate = evaluateDevelopm
   const instruction = buildManagerInstruction({ ...mission, turn_number: turn }, root);
   const queued = submitExternalWork({
     root,
+    repoDir: mission.repo_dir || process.env.DIAL_REPO_DIR,
     instruction,
     requestedBy: 'mission_controller',
     metadata: { mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, priority: 50, generated_by: 'MISSION_CONTROLLER' },

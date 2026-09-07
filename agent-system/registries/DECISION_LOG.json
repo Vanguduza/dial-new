@@ -426,5 +426,30 @@
       "agent-system/orchestration/project-registry.mjs"
     ],
     "reopens_if": "DIAL is moved to a dedicated host with no unrelated workloads, or the product owner explicitly approves a different shared-host maintenance policy"
+  },
+  {
+    "decision_id": "DEC-019",
+    "decided_on": "2026-09-07",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / ENGINEERING KNOWLEDGE / HERMES",
+    "title": "VEKL is DIAL’s governed versioned engineering knowledge layer",
+    "decision": "DIAL adopts VEKL as the only governed path for selectively activating external Agent Skills in material Oracle development packets. External skills are ENGINEERING_GUIDANCE_ONLY: canon, Feature/FRC/security contracts, current code/evidence and gates outrank them. Every ordinary packet resolves and persists a Skill Activation Manifest; approved vendor content is exact-pin/exact-hash and immutable; learned procedural adaptations are separately versioned DIAL wrappers and cannot mutate product truth or authority.",
+    "consequence": "Research-reference Google/Android revisions are not production pins and cannot activate until DIAL donor qualification, conflict review and deterministic evals pass. Hermes/Sol receives packet-scoped approved skills through DIAL_SKILL_ACTIVATION_DIR; Sonnet fallback receives the exact same pinned skill bodies from the persisted manifest. Runtime failover may not silently change skill versions. VEKL outcome memory remains non-authoritative and project-scoped; no second memory/source-of-truth authority is created.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
+    "enforced_by": [
+      "agent-system/engineering-knowledge/registries/ENGINEERING_SKILL_REGISTRY.json",
+      "agent-system/engineering-knowledge/registries/SKILL_CONFLICT_REGISTRY.json",
+      "agent-system/orchestration/skill-registry.mjs",
+      "agent-system/orchestration/skill-resolver.mjs",
+      "agent-system/orchestration/skill-activation-store.mjs",
+      "agent-system/orchestration/engineering-knowledge-broker.mjs",
+      "agent-system/orchestration/skill-outcome-recorder.mjs",
+      "agent-system/orchestration/learned-skill-curator.mjs",
+      "agent-system/orchestration/external-orchestrator.mjs",
+      "agent-system/orchestration/hermes-runtime-executor.mjs",
+      "tests/orchestration-vekl.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly supersedes the DIAL engineering-knowledge authority model or replaces VEKL with another governed mechanism preserving equal-or-stronger pinning, immutability, failover provenance, learning and source-of-truth boundaries"
   }
 ]

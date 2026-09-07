@@ -10,6 +10,7 @@ const DEFAULT_REPO = path.resolve(here, '../..');
 const HEARTBEAT_MAX_AGE_MS = 2 * 60 * 1000;
 const FINGERPRINT_PATHS = Object.freeze([
   'agent-system/orchestration',
+  'agent-system/engineering-knowledge',
   'deploy/oracle/hermes-codex',
 ]);
 

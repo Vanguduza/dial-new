@@ -5,6 +5,7 @@ import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { compactFeatureMemory } from './feature-memory.mjs';
+import { summarizeSkillOutcomes } from './skill-outcome-recorder.mjs';
 import { DEFAULT_CONTROL_HOME, appendJsonl, ensureControlLayout, resolveControlPath } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -76,9 +77,17 @@ export function maintainMemory({ root = DEFAULT_CONTROL_HOME, hermesHome = DEFAU
     hermesBackup = { backed_up: false, reason: 'BACKUP_FAILED', error: String(error) };
   }
 
+  const skillOutcomeSummary = summarizeSkillOutcomes(root);
+  try {
+    const summaryPath = resolveControlPath('knowledge/evidence/outcomes/summary.json', root);
+    fs.mkdirSync(path.dirname(summaryPath), { recursive: true, mode: 0o700 });
+    fs.writeFileSync(summaryPath, `${JSON.stringify(skillOutcomeSummary, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 });
+  } catch {}
+
   const result = {
     event: 'MEMORY_MAINTENANCE',
     feature_memory: features,
+    skill_outcomes: skillOutcomeSummary,
     hermes_session_backup: hermesBackup,
     policy: {
       feature_hot_records_retained: featureKeep,

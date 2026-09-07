@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "schema_version": 1,
+      "provider": "google",
+      "repo": "google/skills",
+      "url": "https://github.com/google/skills",
+      "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+      "production_pin": null,
+      "license": "Apache-2.0",
+      "mode": "SELECTED_PATHS_ONLY",
+      "activation_allowed": false,
+      "state": "RESEARCH_REFERENCE_ONLY",
+      "qualification_required": true
+    },
+    {
+      "schema_version": 1,
+      "provider": "google-android",
+      "repo": "android/skills",
+      "url": "https://github.com/android/skills",
+      "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+      "production_pin": null,
+      "license": "Apache-2.0",
+      "mode": "SELECTED_PATHS_ONLY",
+      "activation_allowed": false,
+      "state": "RESEARCH_REFERENCE_ONLY",
+      "qualification_required": true
+    }
+  ],
+  "recorded_from": "Owner-supplied VEKL research, 2026-09-07",
+  "authority": "RESEARCH_PROVENANCE_ONLY"
+}

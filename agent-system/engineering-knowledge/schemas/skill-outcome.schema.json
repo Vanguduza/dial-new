@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DIAL Skill Outcome",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "activation_id",
+    "packet_id",
+    "outcome",
+    "recorded_at",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "activation_id": {
+      "type": "string"
+    },
+    "packet_id": {
+      "type": "string"
+    },
+    "feature_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "task_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outcome": {
+      "enum": [
+        "GREEN",
+        "RED",
+        "BLOCKED",
+        "UNASSESSED"
+      ]
+    },
+    "authority": {
+      "const": "NON_AUTHORITATIVE_PROCESS_TELEMETRY"
+    },
+    "tests": {
+      "type": "object"
+    },
+    "review_findings": {
+      "type": "object"
+    },
+    "skill_metrics": {
+      "type": "object"
+    },
+    "recorded_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -147,3 +147,9 @@ Deliberate quota exhaustion is prohibited. Live provider capacity must be observ
 ## Shared-host isolation
 
 The Oracle machine is a shared infrastructure host for independent Hermes projects. DIAL qualification MUST NOT restart a global Hermes gateway, reboot the host, or target an unscoped Codex/Claude process. DIAL failure injection is limited to DIAL-owned process descendants and DIAL-specific services. Whole-host maintenance tests are outside the DIAL development-unblock gate.
+
+## VEKL engineering-knowledge plane
+
+The DIAL control plane includes a project-scoped Versioned Engineering Knowledge Layer (`DEC-019`). It does not change runtime-model authority or repository truth. Each ordinary external queue packet resolves a persisted skill activation after Feature/JIT context. Hermes/Sol sees only the packet-scoped approved external-skill directory via `${DIAL_SKILL_ACTIVATION_DIR}`; Sonnet fallback receives the exact pinned bodies rendered from that same manifest. A mutable Google/Android checkout is never made the active skill directory.
+
+VEKL state is stored under `/var/lib/dial-control/knowledge` and is subject to the same shared-host project-isolation law as the work queue. Approved vendor snapshots are read-only and exact-hash checked; learned DIAL wrappers stage separately and cannot promote themselves or mutate product/architecture truth.

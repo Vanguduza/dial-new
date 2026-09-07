@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DIAL Skill Activation Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "activation_id",
+    "packet_id",
+    "policy_version",
+    "authority",
+    "resolution_state",
+    "skills",
+    "dial_guard_capsule",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "activation_id": {
+      "type": "string",
+      "pattern": "^ska_[A-Za-z0-9_-]+$"
+    },
+    "mission_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "packet_id": {
+      "type": "string"
+    },
+    "feature_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "task_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "authority": {
+      "const": "NON_AUTHORITATIVE_ENGINEERING_GUIDANCE"
+    },
+    "resolution_state": {
+      "type": "string"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "dial_guard_capsule": {
+      "type": "object"
+    },
+    "runtime_skill_dir": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "manifest_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

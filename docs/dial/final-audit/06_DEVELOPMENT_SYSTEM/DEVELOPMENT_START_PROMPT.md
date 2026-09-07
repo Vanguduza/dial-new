@@ -54,6 +54,15 @@ Then read the existing code and tests for the feature before proposing anything.
 Inspect first, then design. The registry's `code_paths` and `test_paths` tell you
 where to look.
 
+Before material implementation, confirm the packet's **VEKL Skill Activation Manifest**. VEKL is DIAL's governed external-engineering-knowledge layer (`DEC-019`). Its valid result may be no external skill. Do not load or install a vendor skill ad hoc. Approved external skills are non-authoritative exact-version guidance; canon/FRC/security/current code/evidence win. If repository inspection materially refines the task and newly makes specialist knowledge relevant, perform an explicit audited VEKL re-resolution before the first material action that depends on it. Sol and Sonnet must retain the same persisted skill provenance across failover.
+
+Useful read-only checks:
+
+    node agent-system/bin/skills-active.mjs <packet-id>
+    node agent-system/bin/skills-resolve.mjs <FEATURE_ID> --task "<concrete task>" --path <affected-path>
+
+A research-reference Google/Android revision or a `DISCOVERED` skill is not an approved skill.
+
 ## The one rule that governs everything
 
 **A feature entering implementation gets its own acceptance contract first. The
@@ -121,7 +130,9 @@ Be sceptical of anything that sounds more finished than this:
   Assimilation Gate: pinned commit, licence hash, supply-chain scan, provenance;
 - paste a credential or token into the conversation;
 - use old v4 or D-number documents as active authority where v2 supersedes them.
-- for GMPC work, create a second RAG/customer/pricing/money authority or let an external marketing platform become DIAL source of truth.
+- for GMPC work, create a second RAG/customer/pricing/money authority or let an external marketing platform become DIAL source of truth;
+- bypass VEKL by loading an unqualified external skill, mutable upstream branch or research-reference revision into a material packet;
+- let vendor/learned skills change product scope, source-of-truth boundaries, locked providers, permissions, money/Health policy or gate status.
 
 **GMPC-specific rule:** for any `GMPC-F*`, read the GMPC Rev 2 canon after bounded context. Commercial RAG consumes DKRF; margin/pricing consumes `PLAT-F014`; money consumes Finance/Ledger; sensitive Health data is not ordinary marketing targeting context.
 

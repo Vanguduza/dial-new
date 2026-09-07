@@ -50,7 +50,10 @@ for rel in \
   state checkpoints/active checkpoints/archive capsules/active capsules/archive \
   memory/hot memory/warm memory/cold memory/features sessions/hermes sessions/codex sessions/claude \
   retrieval/index retrieval/cache evidence-cache evidence-cache/qualification evidence-cache/soak \
-  runtime-health events work-queue/inbox work-queue/processing work-queue/completed work-queue/failed; do
+  runtime-health events knowledge/vendor knowledge/activation knowledge/activation/by-packet \
+  knowledge/learned/staged knowledge/learned/approved knowledge/evidence/qualification \
+  knowledge/evidence/outcomes knowledge/evidence/outcomes/latest \
+  work-queue/inbox work-queue/processing work-queue/completed work-queue/failed; do
   sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" "/var/lib/dial-control/$rel"
 done
 sudo loginctl enable-linger "$SVC_USER" || true

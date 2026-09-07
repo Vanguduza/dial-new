@@ -20,6 +20,7 @@ import {
   setDialMissionPriority,
 } from './mission-control.mjs';
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
+import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const CHAT_CONTROL_TOKEN_REL = 'secrets/chat-control.token';
@@ -31,6 +32,8 @@ const EVENT_FILES = [
   'events/external-orchestrator.jsonl',
   'events/operations-plane.jsonl',
   'events/chat-control.jsonl',
+  'events/engineering-knowledge.jsonl',
+  'events/skill-outcomes.jsonl',
 ];
 
 function now() { return new Date().toISOString(); }
@@ -176,6 +179,7 @@ const TOOL_DEFS = Object.freeze([
   ['dial_verification_status', 'Read latest deterministic verification, development gate and runtime health evidence.', {}],
   ['dial_recent_failures', 'List recent failed DIAL root-mission packets.', { limit: { type: 'integer', minimum: 1, maximum: 100 } }],
   ['dial_evidence', 'Read the latest non-authoritative deterministic operations evidence prepared for DIAL.', {}],
+  ['dial_skill_status', 'Read DIAL VEKL policy, approved/discovered skill counts, conflict count and the selected skill activation for a packet or current mission.', { packet_id: { type: 'string' } }],
 ]);
 
 const REQUIRED_ARGS = Object.freeze({
@@ -197,13 +201,13 @@ export async function callChatControlTool(name, args = {}, root) {
     return replay.result;
   }
   let result;
-  if (name === 'dial_project_status') result = { authority: CHAT_CONTROL_AUTHORITY, project, repository: repoSnapshot(project.repo_dir), operations: operationsStatus(root), queue: externalWorkStatus(null, root), mission_controller: readJson('state/mission-controller-heartbeat.json', null, root) };
+  if (name === 'dial_project_status') result = { authority: CHAT_CONTROL_AUTHORITY, project, repository: repoSnapshot(project.repo_dir), operations: operationsStatus(root), queue: externalWorkStatus(null, root), mission_controller: readJson('state/mission-controller-heartbeat.json', null, root), engineering_knowledge: engineeringKnowledgeStatus({ repoDir: project.repo_dir, root }) };
   else if (name === 'dial_mission_status') result = missionStatus(root);
   else if (name === 'dial_submit_instruction') {
     const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
     const mission = ensureDialMission({ root, repoDir: project.repo_dir });
     if (mission.state === 'COMPLETE') throw new Error('root mission is complete');
-    result = submitExternalWork({ root, instruction, requestedBy: 'claude_chat', metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE' } });
+    result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: 'claude_chat', metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE' } });
   }
   else if (name === 'dial_list_packets') result = { mission_id: DIAL_ROOT_MISSION_ID, packets: listMissionPackets({ root, limit: args.limit }) };
   else if (name === 'dial_packet_status') result = packetRecord(clean(args.packet_id, 160), root);
@@ -216,6 +220,7 @@ export async function callChatControlTool(name, args = {}, root) {
   else if (name === 'dial_verification_status') result = latestVerification(root);
   else if (name === 'dial_recent_failures') result = { failures: listMissionPackets({ root, limit: 500 }).filter((p) => p.state === 'FAILED').slice(0, Math.max(1, Math.min(100, Number(args.limit) || 20))) };
   else if (name === 'dial_evidence') result = readJson('operations/projects/dial/latest/evidence_prepare.json', { state: 'NO_EVIDENCE_PREPARED' }, root);
+  else if (name === 'dial_skill_status') result = engineeringKnowledgeStatus({ repoDir: project.repo_dir, root, packetId: clean(args.packet_id, 180) || null });
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
   saveIdempotentResult(name, args, result, root);
   auditTool(root, name, args, result);

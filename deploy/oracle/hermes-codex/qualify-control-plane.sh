@@ -44,13 +44,20 @@ assert model.get('default') == 'gpt-5.6-sol', model
 assert model.get('openai_runtime') == 'codex_app_server', model
 assert cfg.get('fallback_providers') == [], cfg.get('fallback_providers')
 assert 'fallback_model' not in cfg, cfg.get('fallback_model')
+skills=cfg.get('skills') or {}
+external=skills.get('external_dirs') or []
+if isinstance(external,str): external=[external]
+assert '${DIAL_SKILL_ACTIVATION_DIR}' in external, external
 PY
-pass "Hermes built-in provider fallback is disabled; DIAL owns exact Claude Code/Sonnet 5 failover"
+pass "Hermes built-in provider fallback is disabled and VEKL packet-scoped external skills are configured"
 
 section "REPOSITORY QUALIFICATION"
 npm ci; pass "npm ci"
 npm run typecheck; pass "typecheck"
-npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification"
+VEKL_STATUS="$(tmp)"; npm run --silent agent:skills:check >"$VEKL_STATUS"
+jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL registry/policy validation is not green"; }
+pass "VEKL registry, research-pin and activation-policy validation"
+npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification including VEKL"
 npm run verify; pass "full repository verification"
 find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --check; pass "orchestration JavaScript syntax"
 bash -n deploy/oracle/hermes-codex/*.sh deploy/oracle/hermes-codex/hermes-hooks/*.sh; pass "Oracle shell syntax"
@@ -69,8 +76,9 @@ jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"
 CHAT_TOKEN="$(cat "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
 CHAT_TOOLS="$(curl -fsS -H "Authorization: Bearer $CHAT_TOKEN" -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' http://127.0.0.1:9130/mcp)"
 unset CHAT_TOKEN
-jq -e '.result.tools | length >= 10' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control MCP tools are unavailable"
+jq -e '.result.tools | length >= 15' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control MCP tools are unavailable"
 jq -e '[.result.tools[].name | test("shell|exec|filesystem"; "i")] | any == false' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control exposes a forbidden generic execution primitive"
+jq -e '[.result.tools[].name] | index("dial_skill_status") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control does not expose read-only VEKL observability"
 MISSION_STATUS="$(node agent-system/orchestration/mission-controller.mjs status)"
 jq -e '.mission_id == "dial-development-root" and .project == "dial" and (.state == "PAUSED" or .state == "BLOCKED_OWNER" or .state == "WAITING_RUNTIME")' <<<"$MISSION_STATUS" >/dev/null || fail "DIAL root mission is not safely non-running during pre-green qualification"
 OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
@@ -151,7 +159,12 @@ jq -n \
     chat_control_project:"dial",
     chat_control_generic_shell_exposed:false,
     project_isolated_qualification:true,
-    shared_host_reboot_required:false
+    shared_host_reboot_required:false,
+    vekl_framework:true,
+    vekl_policy_version:"vekl-1.0",
+    vekl_packet_manifest_required:true,
+    vekl_vendor_content_authority:"ENGINEERING_GUIDANCE_ONLY",
+    vekl_unqualified_vendor_activation_allowed:false
   }' >"$EVIDENCE"
 chmod 600 "$EVIDENCE"
 
@@ -160,9 +173,10 @@ echo "INSTALLED_RUNTIME_QUALIFICATION=GREEN"
 echo "EXTERNAL_ORCHESTRATION_CANARY=GREEN"
 echo "EVIDENCE=$EVIDENCE"
 echo
-echo "Development remains BLOCKED until both live soak modes are green and finalize-control-plane.sh succeeds:"
+echo "Development remains BLOCKED until the project-isolated live soaks are green and finalize-control-plane.sh succeeds:"
 echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh process"
-echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-pre"
-echo "  sudo reboot"
-echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh reboot-post"
+echo "  bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh"
+echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity"
 echo "  bash deploy/oracle/hermes-codex/finalize-control-plane.sh"
+echo
+echo "Whole-host reboot is optional platform-maintenance evidence only and is not a DIAL production-green prerequisite on the shared Oracle host."

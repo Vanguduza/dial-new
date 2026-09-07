@@ -127,6 +127,9 @@ export function listMissionPackets({ root, missionId = DIAL_ROOT_MISSION_ID, lim
         runtime: job.runtime_provenance?.runtime ?? null,
         resolved_model: job.runtime_provenance?.resolved_model ?? null,
         fallback_used: job.runtime_provenance?.fallback_used ?? null,
+        skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
+        skill_resolution_state: job.engineering_knowledge?.resolution_state ?? null,
+        selected_skills: job.engineering_knowledge?.selected_skills?.map((entry) => entry.skill_id) ?? [],
         instruction_preview: clean(job.instruction, 220),
         result_state: job.result?.failure_state ?? job.result?.event ?? null,
       });

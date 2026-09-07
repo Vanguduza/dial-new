@@ -62,6 +62,9 @@ export async function runClaudeHermesFallback({
   mode = 'qualification',
   root,
   timeoutMs = 30 * 60 * 1000,
+  packetId = null,
+  skillActivation = null,
+  skillBundle = '',
 } = {}) {
   if (!['qualification', 'operational'].includes(mode)) {
     throw new Error(`unsupported Claude Hermes fallback mode: ${mode}`);
@@ -94,6 +97,8 @@ export async function runClaudeHermesFallback({
       ? 'This is an operational fallback turn. Inspect current state before edits because the failed primary runtime may have completed partial work.'
       : 'This is a read-only qualification turn. Do not modify repository files.',
     context ? `\nDIAL CONTEXT PACKET\n${context}` : '',
+    skillBundle ? `\nDIAL VEKL PINNED ENGINEERING KNOWLEDGE\n${skillBundle}` : '',
+    skillActivation ? `VEKL activation ${skillActivation.activation_id} is guidance only; do not resolve a different vendor version on fallback.` : '',
     '',
     `Instruction: ${instruction || (operational ? 'Continue safely from current repository state.' : 'Report current repository status without modifying files.')}`,
   ].filter(Boolean).join('\n');
@@ -119,6 +124,8 @@ export async function runClaudeHermesFallback({
       ...process.env,
       DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
       DIAL_REPO_DIR: repoDir,
+      ...(packetId ? { DIAL_PACKET_ID: packetId } : {}),
+      ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
     },
   });
   const finishedAt = now();
@@ -154,6 +161,8 @@ export async function runClaudeHermesFallback({
     exit_status: result.status,
     signal: result.signal ?? null,
     error_class: errorClass,
+    skill_activation_id: skillActivation?.activation_id ?? null,
+    skill_manifest_sha256: skillActivation?.manifest_sha256 ?? null,
   };
 
   recordRuntimeHealth('claude_code', {

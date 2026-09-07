@@ -103,6 +103,7 @@ const SHELL_AND_TOOLING = new Set([
   'tests/orchestration-control-plane.test.mjs',
   'tests/orchestration-operations-plane.test.mjs',
   'tests/orchestration-chat-control.test.mjs',
+  'tests/orchestration-vekl.test.mjs',
   'apps/cli/src/index.ts',
   'workers/visual-generation-worker/src/index.ts',
   'playwright.config.ts',

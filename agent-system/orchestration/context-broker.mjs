@@ -6,6 +6,7 @@ import { captureGitState, loadRepoActiveWork } from './checkpoint-store.mjs';
 import { loadHandoffCapsule } from './handoff-builder.mjs';
 import { readFeatureMemory } from './feature-memory.mjs';
 import { readJson } from './state-store.mjs';
+import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -76,7 +77,7 @@ function readDecisionHints(repoDir, featureId) {
   }
 }
 
-export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessage = '', root } = {}) {
+export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessage = '', root, packetId = null, skillActivation = null } = {}) {
   const checkpointPointer = readJson('state/active-checkpoint.json', null, root);
   const checkpoint = checkpointPointer?.path ? readJson(checkpointPointer.path, null, root) : null;
   const featureId = resolveFeatureId({ userMessage, repoDir, checkpoint });
@@ -87,6 +88,9 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
   const featureMemory = featureId ? readFeatureMemory(featureId, { limit: 20 }, root) : null;
   const history = await searchHermesHistory(featureId || userMessage.slice(0, 120));
   const hermesRuntime = readJson('state/hermes-runtime.json', null, root);
+  const resolvedPacketId = packetId || process.env.DIAL_PACKET_ID || null;
+  const activation = skillActivation || (resolvedPacketId ? loadSkillActivationForPacket(resolvedPacketId, root) : null);
+  const engineeringKnowledge = activationSummary(activation);
 
   const packet = [
     'DIAL HERMES EXTERNAL RUNTIME CONTEXT',
@@ -95,10 +99,12 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
     '1. DIAL canonical repository',
     '2. machine registries and evidence',
     '3. current Git/worktree state',
-    '4. orchestration checkpoint',
-    '5. handoff capsule',
-    '6. Feature-scoped Oracle memory',
-    '7. Hermes session/history retrieval',
+    '4. DIAL engineering/tooling policy',
+    '5. approved Skill Activation Manifest metadata',
+    '6. orchestration checkpoint',
+    '7. handoff capsule',
+    '8. Feature-scoped Oracle memory',
+    '9. Hermes session/history retrieval',
     '',
     'A lower layer may never override a higher layer. Never advance a DIAL gate from runtime output or memory.',
     'Hermes runtime selection is availability/provenance only and does not modify DIAL canonical governance.',
@@ -110,6 +116,8 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
       : 'Hermes runtime provenance: none recorded.',
     '',
     `Observed Git state: ${JSON.stringify(gitState)}`,
+    'Engineering knowledge policy: VEKL v1.0. External skills are non-authoritative procedural guidance; canon and evidence win.',
+    engineeringKnowledge ? `Engineering Skill Activation Manifest metadata: ${bounded(JSON.stringify(engineeringKnowledge), 5000)}` : 'Engineering Skill Activation Manifest metadata: none attached.',
     checkpoint ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpoint, null, 2), 5000)}` : '',
     capsule ? `\nHandoff capsule (verify before use):\n${bounded(JSON.stringify(capsule, null, 2), 5000)}` : '',
     canonicalContext ? `\nBounded DIAL Feature context:\n${bounded(canonicalContext, 10000)}` : '',
@@ -129,6 +137,8 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
     context: bounded(packet, 30000),
     feature_memory_records: featureMemory?.records.length ?? 0,
     hermes_memory_hits: history.length,
+    skill_activation_id: activation?.activation_id ?? null,
+    selected_skills: engineeringKnowledge?.selected_skills ?? [],
   };
 }
 

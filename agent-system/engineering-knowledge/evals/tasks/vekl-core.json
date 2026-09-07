@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "VEKL-E001",
+      "name": "Android adaptive selects Android only",
+      "task": "Implement adaptive Compose layout in apps/consumer-android",
+      "expected": [
+        "ALLOW_MATCHING_APPROVED_ANDROID_ONLY",
+        "NO_MAPS_NO_WAF_NO_ANALYTICS"
+      ]
+    },
+    {
+      "id": "VEKL-E002",
+      "name": "Delivery map lock",
+      "task": "Improve routing map in Delivery",
+      "expected": [
+        "BLOCK_GOOGLE_MAPS_REPLACEMENT"
+      ]
+    },
+    {
+      "id": "VEKL-E003",
+      "name": "Cross-cloud provider drift",
+      "task": "Review Oracle service reliability using WAF principles",
+      "expected": [
+        "TRANSFERABLE_REVIEW_ONLY",
+        "NO_GCP_MIGRATION"
+      ]
+    },
+    {
+      "id": "VEKL-E004",
+      "name": "Hash mismatch",
+      "task": "Activate modified vendor snapshot",
+      "expected": [
+        "REFUSE_HASH_MISMATCH"
+      ]
+    },
+    {
+      "id": "VEKL-E005",
+      "name": "Health privacy",
+      "task": "Use analytics guidance in patient-identifiable Health flow",
+      "expected": [
+        "BLOCK_EXTERNAL_MARKETING_CONTEXT"
+      ]
+    },
+    {
+      "id": "VEKL-E006",
+      "name": "Failover symmetry",
+      "task": "Continue same packet after Sol failure",
+      "expected": [
+        "SAME_ACTIVATION_ID_OR_AUDITED_RERESOLUTION"
+      ]
+    }
+  ]
+}

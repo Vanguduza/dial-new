@@ -1091,5 +1091,57 @@
     ],
     "dossier": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_DOSSIER_AGENT_TOOLING.md",
     "forbidden": "No donor may become an independent DIAL source of truth for identity, money, fulfilment, catalogue authority, employment, health consent or audit unless canon explicitly names it."
+  },
+  {
+    "donor_id": "DONOR-GOOGLE-AGENT-SKILLS",
+    "name": "Google Agent Skills",
+    "url": "https://github.com/google/skills",
+    "research_reference_commit": "d56d145e512dca644a3b7ba8332da523c9a60e3c",
+    "record": "agent-system/engineering-knowledge/vendors/google/GOOGLE_SKILLS_SOURCE.lock.json",
+    "kind": "AGENT_ENGINEERING_KNOWLEDGE",
+    "locked_adoption_mode": "SELECTED_PATHS_VERSIONED_GUIDANCE_ONLY",
+    "qualification_state": "RESEARCH_REFERENCE_ONLY_NOT_APPROVED",
+    "exact_commit_policy": "RESOLVE_AND_PIN_SELECTED_PATHS_AT_QUALIFICATION",
+    "pre_use_gate": "Before activation: exact production commit/path/hash, licence/hash, prompt/script/network scan, DIAL conflict review, deterministic evals, immutable Oracle snapshot and Development Manager approval. Research reference is not an executable pin.",
+    "required_provenance": [
+      "upstream URL",
+      "exact production commit",
+      "selected skill paths",
+      "tree/content hashes",
+      "licence and licence hash",
+      "referenced scripts/tools/URLs",
+      "security/static scan",
+      "DIAL conflict review",
+      "eval result",
+      "immutable snapshot path",
+      "upgrade/rollback strategy"
+    ],
+    "forbidden": "External skills are ENGINEERING_GUIDANCE_ONLY. They may not become DIAL product/architecture/money/identity/fulfilment/Health/audit authority, mutate vendor snapshots, advance gates, expose secrets, or replace locked providers/sources of truth without explicit canon."
+  },
+  {
+    "donor_id": "DONOR-ANDROID-AGENT-SKILLS",
+    "name": "Official Android Agent Skills",
+    "url": "https://github.com/android/skills",
+    "research_reference_commit": "bac232fd02b0855df9275281a2a7a47643768719",
+    "record": "agent-system/engineering-knowledge/vendors/google/GOOGLE_ANDROID_SKILLS_SOURCE.lock.json",
+    "kind": "AGENT_ENGINEERING_KNOWLEDGE",
+    "locked_adoption_mode": "SELECTED_PATHS_VERSIONED_GUIDANCE_ONLY",
+    "qualification_state": "RESEARCH_REFERENCE_ONLY_NOT_APPROVED",
+    "exact_commit_policy": "RESOLVE_AND_PIN_SELECTED_PATHS_AT_QUALIFICATION",
+    "pre_use_gate": "Before activation: exact production commit/path/hash, licence/hash, prompt/script/network scan, DIAL conflict review, deterministic evals, immutable Oracle snapshot and Development Manager approval. Research reference is not an executable pin.",
+    "required_provenance": [
+      "upstream URL",
+      "exact production commit",
+      "selected skill paths",
+      "tree/content hashes",
+      "licence and licence hash",
+      "referenced scripts/tools/URLs",
+      "security/static scan",
+      "DIAL conflict review",
+      "eval result",
+      "immutable snapshot path",
+      "upgrade/rollback strategy"
+    ],
+    "forbidden": "External skills are ENGINEERING_GUIDANCE_ONLY. They may not become DIAL product/architecture/money/identity/fulfilment/Health/audit authority, mutate vendor snapshots, advance gates, expose secrets, or replace locked providers/sources of truth without explicit canon."
   }
 ]

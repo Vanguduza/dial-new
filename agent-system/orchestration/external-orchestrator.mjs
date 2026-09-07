@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { assertDevelopmentUnblocked } from './development-unblock.mjs';
 import { missionExecutionAllowed } from './mission-control.mjs';
 import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
+import { ensurePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from './engineering-knowledge-broker.mjs';
+import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
+import { recordSkillOutcome } from './skill-outcome-recorder.mjs';
 import {
   appendJsonl,
   ensureControlLayout,
@@ -45,21 +48,30 @@ function validateQualificationCanary({ instruction, requestedBy, metadata }) {
   return true;
 }
 
-export function submitExternalWork({ instruction, requestedBy = 'operator', metadata = {}, root } = {}) {
+export function submitExternalWork({ instruction, requestedBy = 'operator', metadata = {}, root, repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO, engineeringKnowledgeResolver = resolvePacketEngineeringKnowledge } = {}) {
   const text = String(instruction ?? '').trim();
   if (!text) throw new Error('instruction is required');
   const safeMetadata = metadata && typeof metadata === 'object' ? { ...metadata } : {};
   validateQualificationCanary({ instruction: text, requestedBy, metadata: safeMetadata });
   ensureControlLayout(root);
   const id = crypto.randomUUID();
+  let skillActivation = null;
+  let engineeringKnowledge;
+  if (safeMetadata?.qualification_canary === true) {
+    engineeringKnowledge = { policy_version: 'vekl-1.0', activation_id: null, resolution_state: 'NOT_APPLICABLE_QUALIFICATION_CANARY', selected_skills: [] };
+  } else {
+    skillActivation = engineeringKnowledgeResolver({ repoDir, root, packetId: id, instruction: text, metadata: safeMetadata });
+    engineeringKnowledge = activationSummary(skillActivation);
+  }
   const job = {
-    schema_version: 1,
+    schema_version: 2,
     job_id: id,
     execution_origin: ORIGIN,
     state: 'QUEUED',
     instruction: text,
     requested_by: requestedBy,
     metadata: safeMetadata,
+    engineering_knowledge: engineeringKnowledge,
     queued_at: now(),
   };
   writeJsonAtomic(queueRel('inbox', id), job, root);
@@ -69,6 +81,9 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     execution_origin: ORIGIN,
     requested_by: requestedBy,
     qualification_canary: job.metadata?.qualification_canary === true,
+    skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
+    skill_resolution_state: job.engineering_knowledge?.resolution_state ?? null,
+    selected_skills: job.engineering_knowledge?.selected_skills?.map((entry) => entry.skill_id) ?? [],
     at: job.queued_at,
   }, root);
   return job;
@@ -121,10 +136,12 @@ function claimNext(root) {
 function finalizeJob(job, result, root) {
   const completed = result?.event === 'HERMES_OPERATIONAL_TURN_COMPLETED';
   const finalState = completed ? 'completed' : 'failed';
+  const latestActivation = loadSkillActivationForPacket(job.job_id, root);
   const record = {
     ...job,
     state: completed ? 'COMPLETED' : 'FAILED',
     execution_origin: ORIGIN,
+    engineering_knowledge: activationSummary(latestActivation) ?? job.engineering_knowledge ?? null,
     finished_at: now(),
     result,
     runtime_provenance: {
@@ -145,9 +162,28 @@ function finalizeJob(job, result, root) {
     requested_model: record.runtime_provenance.requested_model,
     resolved_model: record.runtime_provenance.resolved_model,
     fallback_used: record.runtime_provenance.fallback_used,
+    skill_activation_id: record.engineering_knowledge?.activation_id ?? null,
+    selected_skills: record.engineering_knowledge?.selected_skills?.map((entry) => entry.skill_id) ?? [],
     reason: result?.reason ?? null,
     at: record.finished_at,
   }, root);
+  if (latestActivation?.activation_id) {
+    try {
+      recordSkillOutcome({
+        activationId: latestActivation.activation_id,
+        packetId: job.job_id,
+        outcome: completed ? 'GREEN' : (result?.failure_state === 'DEVELOPMENT_BLOCKED' ? 'BLOCKED' : 'RED'),
+        skillMetrics: {
+          runtime: record.runtime_provenance.runtime,
+          fallback_used: record.runtime_provenance.fallback_used,
+          usefulness: 'UNASSESSED',
+        },
+        root,
+      });
+    } catch (error) {
+      appendJsonl('events/engineering-knowledge.jsonl', { event: 'SKILL_OUTCOME_RECORD_FAILED', packet_id: job.job_id, activation_id: latestActivation.activation_id, reason: String(error?.message || error).slice(0, 2000), at: now() }, root);
+    }
+  }
   heartbeat(root, { last_job_id: job.job_id, last_job_state: record.state });
   return record;
 }
@@ -179,6 +215,7 @@ export async function processNextExternalWork({
     execution_origin: ORIGIN,
     worker_pid: process.pid,
     qualification_canary: isQualificationCanary(job),
+    skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
     at: now(),
   }, root);
 
@@ -209,11 +246,31 @@ export async function processNextExternalWork({
 
   let result;
   try {
-    result = await executor({
-      repoDir,
-      root,
-      instruction: job.instruction,
-    });
+    const skillActivation = isQualificationCanary(job)
+      ? null
+      : ensurePacketEngineeringKnowledge({ repoDir, root, packetId: job.job_id, instruction: job.instruction, metadata: job.metadata });
+    if (skillActivation?.execution_allowed === false) {
+      result = {
+        event: 'HERMES_OPERATIONAL_TURN_FAILED',
+        authority: 'HERMES_RUNTIME_ONLY',
+        policy: 'LOCKED_SOL_THEN_SONNET',
+        runtime: null,
+        requested_model: null,
+        resolved_model: null,
+        fallback_used: false,
+        failure_state: 'ENGINEERING_KNOWLEDGE_BLOCKED',
+        reason: `VEKL mandatory approved skill unavailable for: ${(skillActivation.missing_mandatory_task_classes || []).join(', ')}`,
+        skill_activation_id: skillActivation.activation_id,
+      };
+    } else {
+      result = await executor({
+        repoDir,
+        root,
+        instruction: job.instruction,
+        packetId: job.job_id,
+        skillActivation,
+      });
+    }
   } catch (error) {
     result = {
       event: 'HERMES_OPERATIONAL_TURN_FAILED',
@@ -291,7 +348,7 @@ async function main() {
   const command = process.argv[2] || 'status';
   const repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO;
   if (command === 'submit') {
-    return console.log(JSON.stringify(submitExternalWork(parseSubmitArgs(process.argv.slice(3))), null, 2));
+    return console.log(JSON.stringify(submitExternalWork({ ...parseSubmitArgs(process.argv.slice(3)), repoDir }), null, 2));
   }
   if (command === 'run-once') {
     return console.log(JSON.stringify(await processNextExternalWork({ repoDir }), null, 2));

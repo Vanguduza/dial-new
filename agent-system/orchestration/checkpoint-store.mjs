@@ -60,11 +60,12 @@ export function buildCheckpoint(repoDir, overrides = {}) {
 
   const gitState = captureGitState(overrides.worktree || repoActive.worktree || repoDir);
   return {
-    schema_version: 3,
+    schema_version: 4,
     feature_id: featureId,
     worktree: overrides.worktree ?? repoActive.worktree ?? gitState.repo_dir,
     target_gate: overrides.target_gate ?? repoActive.target_gate ?? null,
     runtime_provenance: overrides.runtime_provenance ?? null,
+    skill_activation: overrides.skill_activation ?? null,
     execution: {
       phase: overrides.phase ?? null,
       atomic_unit: overrides.atomic_unit ?? null,

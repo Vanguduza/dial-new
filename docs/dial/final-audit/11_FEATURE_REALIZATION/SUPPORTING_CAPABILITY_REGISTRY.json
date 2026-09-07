@@ -2150,5 +2150,33 @@
     "code_paths": [],
     "test_paths": [],
     "current_gate": "SPECIFIED"
+  },
+  {
+    "capability_id": "DEV-S001",
+    "area": "DEVELOPMENT_SYSTEM",
+    "name": "Versioned Engineering Knowledge Layer (VEKL)",
+    "owner": "development-system/orchestration",
+    "app_families": [
+      "DEVELOPMENT_SYSTEM"
+    ],
+    "purpose": "Govern exact-version external engineering knowledge, deterministic/JIT skill activation, runtime-symmetric provenance, observable outcome learning and non-authoritative DIAL procedural wrappers without creating a second source of truth.",
+    "eventualities": [],
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "agent-system/orchestration/skill-registry.mjs",
+      "agent-system/orchestration/skill-resolver.mjs",
+      "agent-system/orchestration/skill-activation-store.mjs",
+      "agent-system/orchestration/engineering-knowledge-broker.mjs",
+      "agent-system/orchestration/skill-outcome-recorder.mjs",
+      "agent-system/orchestration/learned-skill-curator.mjs",
+      "agent-system/orchestration/context-broker.mjs",
+      "agent-system/orchestration/external-orchestrator.mjs",
+      "agent-system/orchestration/hermes-runtime-executor.mjs"
+    ],
+    "test_paths": [
+      "tests/orchestration-vekl.test.mjs"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "VEKL v1 framework is implemented and deterministically tested. The initial 17 Google/Android records remain DISCOVERED with zero approved vendor skills; DOMAIN_TESTED applies to the governance/resolution/immutability/failover/learning framework, not to production qualification of any individual external skill. Vendor activation remains fail-closed until exact pin/hash/donor/eval approval."
   }
 ]

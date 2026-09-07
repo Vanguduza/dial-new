@@ -14,6 +14,7 @@ import {
 } from './hermes-plan-models.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
 import { appendJsonl } from './state-store.mjs';
+import { activationSummary, loadSkillActivationForPacket, renderSkillActivationBundle, verifySkillActivation } from './skill-activation-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -73,6 +74,8 @@ export function runPrimaryHermes({
   root,
   timeoutMs = 30 * 60 * 1000,
   model = PRIMARY_MODEL,
+  packetId = null,
+  skillActivation = null,
 } = {}) {
   const requestedModel = String(model || PRIMARY_MODEL);
   if (requestedModel !== PRIMARY_MODEL) {
@@ -98,6 +101,9 @@ export function runPrimaryHermes({
         ...process.env,
         DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
         DIAL_REPO_DIR: repoDir,
+        ...(packetId ? { DIAL_PACKET_ID: packetId } : {}),
+        ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
+        ...(skillActivation?.runtime_skill_dir ? { DIAL_SKILL_ACTIVATION_DIR: skillActivation.runtime_skill_dir } : {}),
       },
     });
 
@@ -208,11 +214,34 @@ export async function executeHermesInstruction({
   ensureFallback = ensureClaudeFallbackEligible,
   fallbackRunner = runClaudeHermesFallback,
   contextBuilder = buildDialHermesContext,
+  packetId = null,
+  skillActivation = null,
 } = {}) {
   if (!String(instruction || '').trim()) throw new Error('instruction is required');
 
   const startedAt = now();
-  const primary = await primaryRunner({ repoDir, instruction, root, timeoutMs, model: PRIMARY_MODEL });
+  let activation = skillActivation || (packetId ? loadSkillActivationForPacket(packetId, root) : null);
+  if (activation) {
+    const activationCheck = verifySkillActivation(activation, root);
+    if (!activationCheck.ok) {
+      const event = { event: 'HERMES_OPERATIONAL_TURN_FAILED', authority: 'HERMES_RUNTIME_ONLY', policy: 'LOCKED_SOL_THEN_SONNET', runtime: null, fallback_used: false, failure_state: 'SKILL_ACTIVATION_INVALID', reason: activationCheck.failures.join('; '), skill_activation_id: activation.activation_id, started_at: startedAt, finished_at: now() };
+      appendJsonl('events/hermes-operational-turns.jsonl', event, root);
+      return event;
+    }
+  }
+  const skillSummary = activationSummary(activation);
+  const instructionWithKnowledge = activation ? [
+    'DIAL VEKL ACTIVATION',
+    `Activation ID: ${activation.activation_id}`,
+    `Manifest SHA-256: ${activation.manifest_sha256}`,
+    `Resolution: ${activation.resolution_state}`,
+    `Selected approved skills: ${(activation.skills || []).map((s) => `${s.skill_id}@${s.upstream_commit}`).join(', ') || 'none'}`,
+    'Only the listed approved skill versions may be treated as activated engineering guidance for this packet. They are non-authoritative: DIAL canon/FRC/security/current code/evidence win.',
+    'When a selected skill has a runtime_name, use Hermes skill_view for that exact activated skill before relying on it.',
+    '',
+    instruction,
+  ].join('\n') : instruction;
+  const primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation });
   if (primary?.ok) {
     reconcileHermesRuntime({ root });
     const event = {
@@ -224,6 +253,9 @@ export async function executeHermesInstruction({
       resolved_model: PRIMARY_MODEL,
       in_plan_fallback: false,
       fallback_used: false,
+      skill_activation_id: activation?.activation_id ?? null,
+      skill_manifest_sha256: activation?.manifest_sha256 ?? null,
+      selected_skills: skillSummary?.selected_skills ?? [],
     };
     appendJsonl('events/hermes-operational-turns.jsonl', event, root);
     return { ...event, response: primary.response, primary };
@@ -253,6 +285,7 @@ export async function executeHermesInstruction({
     phase: 'HERMES_RUNTIME_FAILOVER',
     atomic_unit: 'SOL_RUNTIME_FAILED',
     next_unit: 'CONTINUE_FROM_OBSERVED_REPOSITORY_STATE_ON_SONNET',
+    skill_activation: skillSummary,
     runtime_provenance: {
       runtime: 'codex_app_server',
       preferred_model: PRIMARY_MODEL,
@@ -282,10 +315,22 @@ export async function executeHermesInstruction({
     return { ...event, primary, fallback_eligibility: fallbackEligibility };
   }
 
+  if (packetId) {
+    const latestActivation = loadSkillActivationForPacket(packetId, root);
+    if (latestActivation?.activation_id && latestActivation.activation_id !== activation?.activation_id) {
+      const latestCheck = verifySkillActivation(latestActivation, root);
+      if (!latestCheck.ok) throw new Error(`audited VEKL re-resolution is invalid: ${latestCheck.failures.join('; ')}`);
+      appendJsonl('events/engineering-knowledge.jsonl', { event: 'SKILL_ACTIVATION_FAILOVER_RELOAD', packet_id: packetId, from_activation_id: activation?.activation_id ?? null, to_activation_id: latestActivation.activation_id, reason: latestActivation.re_resolution_reason || 'packet activation pointer changed through persisted re-resolution', at: now() }, root);
+      activation = latestActivation;
+    }
+  }
+  const fallbackSkillBundle = activation ? renderSkillActivationBundle(activation, root) : '';
   const packet = await contextBuilder({
     repoDir,
     userMessage: instruction,
     root,
+    packetId,
+    skillActivation: activation,
   });
   const fallbackInstruction = [
     'PRIMARY HERMES RUNTIME FAILURE',
@@ -309,6 +354,9 @@ export async function executeHermesInstruction({
       mode: 'operational',
       root,
       timeoutMs,
+      packetId,
+      skillActivation: activation,
+      skillBundle: fallbackSkillBundle,
     });
 
     const resolved = fallback?.event?.resolved_model ?? null;
@@ -327,6 +375,9 @@ export async function executeHermesInstruction({
       fallback_used: true,
       primary_failure_state: failureState,
       primary_requested_model: PRIMARY_MODEL,
+      skill_activation_id: activation?.activation_id ?? null,
+      skill_manifest_sha256: activation?.manifest_sha256 ?? null,
+      selected_skills: activationSummary(activation)?.selected_skills ?? [],
     };
     appendJsonl('events/hermes-operational-turns.jsonl', event, root);
     return {
@@ -349,6 +400,8 @@ export async function executeHermesInstruction({
       primary_failure_state: failureState,
       failure_state: 'FALLBACK_FAILED',
       reason: bounded(error?.message || error),
+      skill_activation_id: activation?.activation_id ?? null,
+      skill_manifest_sha256: activation?.manifest_sha256 ?? null,
       started_at: startedAt,
       finished_at: now(),
     };

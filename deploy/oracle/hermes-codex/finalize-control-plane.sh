@@ -42,6 +42,11 @@ jq -e --arg head "$HEAD_SHA" '
   and .chat_control_bridge == true
   and .chat_control_project == "dial"
   and .chat_control_generic_shell_exposed == false
+  and .vekl_framework == true
+  and .vekl_policy_version == "vekl-1.0"
+  and .vekl_packet_manifest_required == true
+  and .vekl_vendor_content_authority == "ENGINEERING_GUIDANCE_ONLY"
+  and .vekl_unqualified_vendor_activation_allowed == false
   and .runtime_policy == "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE"
 ' "$QUAL" >/dev/null || fail "installed-runtime qualification evidence is not green for current HEAD"
 pass "installed Sol, Sonnet and external orchestration canary are proven"
@@ -98,6 +103,10 @@ jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .developme
 if jq -e ".api.key_configured == true" <<<"$OPS_STATUS" >/dev/null; then
   [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/operations-api.key")" == "600" ]] || fail "operations API key file must be mode 0600"
 fi
+VEKL_RUNTIME="$(npm run --silent agent:skills:runtime-check)"
+jq -e '.status == "GREEN" and .policy_version == "vekl-1.0" and .vendor_snapshots_immutable == true' <<<"$VEKL_RUNTIME" >/dev/null || { echo "$VEKL_RUNTIME" >&2; fail "VEKL runtime snapshot audit is not green"; }
+pass "VEKL approved vendor snapshots, if any, are exact-hash and read-only"
+
 pass "persistent supervisor, external orchestrator, mission controller, DIAL-only chat control and non-authoritative operations services are active"
 
 node - "$DIAL_CONTROL_HOME/state/external-orchestrator-heartbeat.json" <<'NODE' || exit 1
@@ -130,8 +139,12 @@ assert model.get('default') == 'gpt-5.6-sol', model
 assert model.get('openai_runtime') == 'codex_app_server', model
 assert cfg.get('fallback_providers') == [], cfg.get('fallback_providers')
 assert 'fallback_model' not in cfg, cfg.get('fallback_model')
+skills=cfg.get('skills') or {}
+external=skills.get('external_dirs') or []
+if isinstance(external,str): external=[external]
+assert '${DIAL_SKILL_ACTIVATION_DIR}' in external, external
 PY
-pass "subscription-only auth and fallback configuration security audit is green"
+pass "subscription-only auth, fallback and packet-scoped VEKL external-skill configuration audit is green"
 
 mkdir -p "$(dirname "$GATE")"
 TMP="${GATE}.tmp.$$"
@@ -168,6 +181,11 @@ jq -n \
     chat_control_bridge:true,
     chat_control_project:"dial",
     chat_control_generic_shell_exposed:false,
+    vekl_framework:true,
+    vekl_policy_version:"vekl-1.0",
+    vekl_packet_manifest_required:true,
+    vekl_vendor_snapshots_immutable:true,
+    vekl_unqualified_vendor_activation_allowed:false,
     observed_at:$observed_at
   }' >"$TMP"
 chmod 600 "$TMP"

@@ -10,7 +10,7 @@ import {
 } from './state-store.mjs';
 
 const FEATURE_RE = /^[A-Z][A-Z0-9_-]*-F\d{3}$/;
-const TYPES = new Set(['DECISION', 'RISK', 'FAILURE', 'REVIEW', 'HANDOFF', 'NOTE']);
+const TYPES = new Set(['DECISION', 'RISK', 'FAILURE', 'REVIEW', 'HANDOFF', 'NOTE', 'SKILL_OUTCOME']);
 const MAX_TEXT = 2000;
 const SECRET_PATTERNS = [
   /\bsk-[A-Za-z0-9_-]{16,}\b/,
@@ -60,7 +60,7 @@ export function appendFeatureMemory(
   if (!TYPES.has(type)) throw new Error(`unsupported feature memory type: ${type}`);
   assertNoSecretMaterial(runtime_provenance, 'feature memory runtime provenance');
   const record = {
-    schema_version: 3,
+    schema_version: 4,
     feature_id: assertFeatureId(featureId),
     type,
     text: bounded(text),
