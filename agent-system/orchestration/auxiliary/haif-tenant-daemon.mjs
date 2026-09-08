@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { submitAuxiliaryTask, runOneAuxiliaryTask, haifTenantStatus, haifTaskProjection } from './tenant-service.mjs';
 import { qualifyXKiroTenant } from '../providers/xkiro/xkiro-qualification.mjs';
 import { benchmarkEliteModels } from '../providers/xkiro/elite-benchmark.mjs';
@@ -96,4 +97,13 @@ async function main() {
   throw new Error(`unknown HAIF tenant command: ${command}`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
+export function isDirectEntrypoint(argvPath = process.argv[1], moduleUrl = import.meta.url) {
+  if (!argvPath) return false;
+  try {
+    return fs.realpathSync(argvPath) === fs.realpathSync(fileURLToPath(moduleUrl));
+  } catch {
+    return false;
+  }
+}
+
+if (isDirectEntrypoint()) main().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

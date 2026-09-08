@@ -20,6 +20,7 @@ import { eliteCandidateIds, isEliteFreeCandidate } from '../agent-system/orchest
 import { qualificationCandidates } from '../agent-system/orchestration/providers/xkiro/xkiro-model-router.mjs';
 import { benchmarkEliteModels } from '../agent-system/orchestration/providers/xkiro/elite-benchmark.mjs';
 import { loadPerformanceLedger } from '../agent-system/orchestration/auxiliary/model-performance-ledger.mjs';
+import { isDirectEntrypoint } from '../agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs';
 import { r2ConfigFromEnv, r2ConfigStatus, r2ObjectKey, putR2Evidence } from '../agent-system/orchestration/auxiliary/r2-evidence-store.mjs';
 import { runOneAuxiliaryTask } from '../agent-system/orchestration/auxiliary/tenant-service.mjs';
 
@@ -269,6 +270,17 @@ describe('HAIF R2 evidence mirror isolation', () => {
     expect(seen.url).toContain('/dial-haif-evidence/haif/dial/evidence/t1/');
     expect(seen.options.body).not.toContain('super-secret-value');
     expect(JSON.stringify(result)).not.toContain('super-secret-value');
+  });
+});
+
+describe('HAIF daemon entrypoint', () => {
+  it('recognizes a symlinked installed runtime path as the direct entrypoint', () => {
+    const root = temp('haif-entrypoint');
+    const target = path.join(root, 'daemon.mjs');
+    const link = path.join(root, 'current-daemon.mjs');
+    fs.writeFileSync(target, 'export default true;\n');
+    fs.symlinkSync(target, link);
+    expect(isDirectEntrypoint(link, `file://${target}`)).toBe(true);
   });
 });
 
