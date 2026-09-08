@@ -135,20 +135,20 @@ jq -e '.execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR" and .result.event == 
 pass "work submitted outside the project process is claimed and executed by the Oracle Hermes orchestrator"
 
 section "DETERMINISTIC LOCKED RUNTIME ROUTING"
-PRIMARY="$(tmp)"; npm run agent:orchestration:select-runtime >"$PRIMARY"
+PRIMARY="$(tmp)"; node agent-system/orchestration/supervisor.mjs select-runtime >"$PRIMARY"
 jq -e '.selected == true and .selection.policy == "LOCKED_SOL_THEN_SONNET" and .selection.runtime == "codex_app_server" and .selection.requested_model == "gpt-5.6-sol" and .selection.resolved_model == "gpt-5.6-sol"' "$PRIMARY" >/dev/null || { cat "$PRIMARY" >&2; fail "Hermes did not select fresh identity-proven Sol"; }; pass "Sol healthy → Hermes selects exact Sol"
 node agent-system/orchestration/supervisor.mjs health --runtime codex_app_server --state ACCOUNT_LIMITED --requested-model gpt-5.6-sol --resolved-model gpt-5.6-sol >/dev/null
-FALLBACK="$(tmp)"; npm run agent:orchestration:select-runtime >"$FALLBACK"
+FALLBACK="$(tmp)"; node agent-system/orchestration/supervisor.mjs select-runtime >"$FALLBACK"
 jq -e '.selected == true and .selection.policy == "LOCKED_SOL_THEN_SONNET" and .selection.runtime == "claude_code" and .selection.requested_model == "claude-sonnet-5" and .selection.resolved_model == "claude-sonnet-5"' "$FALLBACK" >/dev/null || { cat "$FALLBACK" >&2; fail "Sol unavailable did not select exact Sonnet 5"; }; pass "Sol unavailable → Hermes selects exact Sonnet 5"
 SUPPORT="$(tmp)"; node agent-system/orchestration/claude-fallback-runner.mjs 'Reply with exactly DIAL_SONNET_5_FALLBACK_OK. Do not modify files.' >"$SUPPORT"
 jq -e '.event.authority == "HERMES_RUNTIME_ONLY" and .event.requested_model == "claude-sonnet-5" and .event.resolved_model == "claude-sonnet-5" and .event.identity_proven == true' "$SUPPORT" >/dev/null || { cat "$SUPPORT" >&2; fail "Sonnet fallback support turn did not prove runtime provenance"; }; pass "official Claude Code fallback executes with exact Sonnet 5 identity"
 node agent-system/orchestration/supervisor.mjs health --runtime claude_code --state PROCESS_FAILED --requested-model claude-sonnet-5 --resolved-model claude-sonnet-5 >/dev/null
-TOTAL_LOSS="$(tmp)"; npm run agent:orchestration:select-runtime >"$TOTAL_LOSS"
+TOTAL_LOSS="$(tmp)"; node agent-system/orchestration/supervisor.mjs select-runtime >"$TOTAL_LOSS"
 jq -e '.selected == false and .reason == "NO_HERMES_RUNTIME_AVAILABLE"' "$TOTAL_LOSS" >/dev/null || { cat "$TOTAL_LOSS" >&2; fail "total runtime loss did not produce NO_HERMES_RUNTIME_AVAILABLE"; }; pass "total loss fails closed without a third model"
 
 section "RECOVERY AND MEMORY"
 node agent-system/orchestration/codex-app-server-probe.mjs >/dev/null
-RECOVERY="$(tmp)"; npm run agent:orchestration:select-runtime >"$RECOVERY"
+RECOVERY="$(tmp)"; node agent-system/orchestration/supervisor.mjs select-runtime >"$RECOVERY"
 jq -e '.selected == true and .selection.runtime == "codex_app_server" and .selection.requested_model == "gpt-5.6-sol" and .selection.resolved_model == "gpt-5.6-sol"' "$RECOVERY" >/dev/null || { cat "$RECOVERY" >&2; fail "Hermes did not return to Sol after recovery"; }; pass "Codex recovery → exact Sol preferred again"
 npm run agent:orchestration:capture >/dev/null
 MEMORY="$(tmp)"; node agent-system/orchestration/memory-maintenance.mjs >"$MEMORY"
