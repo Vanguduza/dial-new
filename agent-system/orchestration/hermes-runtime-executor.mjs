@@ -20,6 +20,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const PRIMARY_MODEL = HERMES_PREFERRED_CODEX_MODEL;
 const FALLBACK_MODEL = HERMES_PREFERRED_CLAUDE_MODEL;
+const HERMES_BIN = process.env.DIAL_HERMES_BIN || (process.env.HOME && fs.existsSync(path.join(process.env.HOME, '.local/bin/hermes')) ? path.join(process.env.HOME, '.local/bin/hermes') : 'hermes');
 const FAILOVER_STATES = new Set([
   'ACCOUNT_LIMITED',
   'RATE_LIMITED',
@@ -110,7 +111,7 @@ export function runPrimaryHermes({
   const usageFile = path.join(tempDir, 'usage.json');
   const startedAt = now();
   try {
-    const result = spawnSync('hermes', [
+    const result = spawnSync(HERMES_BIN, [
       '-z',
       instruction,
       '--provider', 'openai-codex',
@@ -171,6 +172,7 @@ export function runPrimaryHermes({
         preferred_model: PRIMARY_MODEL,
         identity_source: identitySource,
         preflight_observed_at: preTurnHealth?.observed_at ?? null,
+        executable: HERMES_BIN,
       },
     }, root);
 
