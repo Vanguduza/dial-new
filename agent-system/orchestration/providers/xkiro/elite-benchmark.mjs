@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
+import { defaultProviderRatePolicy } from '../../auxiliary/rate-limiter.mjs';
+import { writeJsonAtomic } from '../../state-store.mjs';
 import { assertAssembledRequestSafe } from '../../auxiliary/data-classification.mjs';
 import { parseStructuredAuxiliaryOutput } from '../../auxiliary/evidence-packet.mjs';
 import { evaluatePromotion, loadPerformanceLedger, recordModelOutcome, setModelLifecycle } from '../../auxiliary/model-performance-ledger.mjs';
@@ -66,7 +68,9 @@ function scorePromotion(evalResult) {
     + ((1 - m.timeout_rate) * 0.05) - latencyPenalty;
 }
 
-export async function benchmarkEliteModels({ project, root, providerRoot, keyFile, archetype, fetchImpl = globalThis.fetch } = {}) {
+function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+
+export async function benchmarkEliteModels({ project, root, providerRoot, keyFile, archetype, fetchImpl = globalThis.fetch, paceMs = null } = {}) {
   if (!['dial', 'dde'].includes(project)) throw new Error('HAIF benchmark project must be dial or dde');
   if (!archetype) throw new Error('HAIF benchmark archetype is required');
   const apiKey = readSecureXKiroKey(keyFile);
@@ -75,6 +79,10 @@ export async function benchmarkEliteModels({ project, root, providerRoot, keyFil
   const usage = await fetchXKiroUsage({ apiKey, fetchImpl });
   persistUsageSnapshot(usage, providerRoot);
   const candidates = qualificationCandidates(catalog, { limit: 8 });
+  const policy = defaultProviderRatePolicy();
+  const derivedPaceMs = Math.ceil(60_000 / Math.max(1, policy.max_requests_per_minute));
+  const effectivePaceMs = paceMs == null ? (fetchImpl === globalThis.fetch ? derivedPaceMs : 0) : Math.max(0, Number(paceMs) || 0);
+  let nextRequestAt = 0;
   const results = [];
   for (const candidate of candidates) {
     let routeBlocked = null;
@@ -89,7 +97,10 @@ export async function benchmarkEliteModels({ project, root, providerRoot, keyFil
       const requestBody = buildXKiroRequest({ task, modelId: candidate.model_id });
       assertAssembledRequestSafe({ task, requestBody, root, maxBytes: 200_000 });
       try {
-        const response = await callXKiroChat({ apiKey, requestBody, fetchImpl, maxAttempts: 1, timeoutMs: 60000, rateLimit: { accountRoot: path.join(providerRoot, 'xkiro', 'rate'), estimatedTokens: 1000, requestId: task.task_id } });
+        const waitMs = Math.max(0, nextRequestAt - Date.now());
+        if (waitMs > 0) await sleep(waitMs);
+        nextRequestAt = Date.now() + effectivePaceMs;
+        const response = await callXKiroChat({ apiKey, requestBody, fetchImpl, maxAttempts: 2, timeoutMs: 60000, rateLimit: { accountRoot: path.join(providerRoot, 'xkiro', 'rate'), estimatedTokens: 1000, requestId: task.task_id, policy } });
         if (response.model !== candidate.model_id) throw new Error('xKiro benchmark model identity mismatch');
         recordModelOutcome({ root, modelId: candidate.model_id, archetype, metrics: metricFromResult({ content: response.content, fixture, latencyMs: response.latency_ms }), benchmarkVersion: ELITE_BENCHMARK_VERSION });
       } catch (error) {
@@ -111,12 +122,15 @@ export async function benchmarkEliteModels({ project, root, providerRoot, keyFil
   const eligible = results.filter((item) => item.promotion.eligible).sort((a, b) => b.score - a.score);
   if (eligible[0]) setModelLifecycle({ root, modelId: eligible[0].candidate.model_id, archetype, state: 'CHAMPION', thresholds: ELITE_BENCHMARK_THRESHOLDS, benchmarkVersion: ELITE_BENCHMARK_VERSION });
   if (eligible[1]) setModelLifecycle({ root, modelId: eligible[1].candidate.model_id, archetype, state: 'CHALLENGER', thresholds: ELITE_BENCHMARK_THRESHOLDS, benchmarkVersion: ELITE_BENCHMARK_VERSION });
-  return {
+  const summary = {
     schema_version: 1, project, archetype, benchmark_version: ELITE_BENCHMARK_VERSION,
     thresholds: ELITE_BENCHMARK_THRESHOLDS,
+    pacing: { requests_per_minute_ceiling: policy.max_requests_per_minute, effective_pace_ms: effectivePaceMs },
     candidates: results.map(({ candidate, route_blocked, promotion, score }) => ({ model_id: candidate.model_id, route_blocked, promotion, score })),
     champion: eligible[0]?.candidate.model_id ?? null,
     challenger: eligible[1]?.candidate.model_id ?? null,
     completed_at: new Date().toISOString(),
   };
+  writeJsonAtomic(`operations/auxiliary/benchmarks/${archetype}.json`, summary, root);
+  return summary;
 }

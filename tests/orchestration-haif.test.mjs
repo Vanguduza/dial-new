@@ -252,6 +252,8 @@ describe('xKiro elite-only contract and qualification', () => {
     };
     const result = await benchmarkEliteModels({ project: 'dial', root, providerRoot, keyFile, archetype: 'SUPPLIER_RESEARCH', fetchImpl });
     expect(result.champion).toBe(model);
+    expect(result.pacing.effective_pace_ms).toBe(0);
+    expect(fs.existsSync(path.join(root, 'operations/auxiliary/benchmarks/SUPPLIER_RESEARCH.json'))).toBe(true);
     const record = loadPerformanceLedger(root).routes[`${model}::SUPPLIER_RESEARCH`];
     expect(record.state).toBe('CHAMPION');
     expect(record.samples).toHaveLength(12);
