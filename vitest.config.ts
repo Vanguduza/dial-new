@@ -12,12 +12,12 @@ import { defineConfig } from 'vitest/config';
  *
  * The orchestration control-plane qualification is intentionally an .mjs test
  * because the control-plane implementation is native ESM infrastructure. Keep
- * that single non-TypeScript suite explicit rather than widening collection to
+ * the native-ESM orchestration suites explicit rather than widening collection to
  * every JavaScript file under tests/.
  */
 export default defineConfig({
   test: {
-    include: ['tests/**/*.test.ts', 'tests/orchestration-control-plane.test.mjs', 'tests/orchestration-operations-plane.test.mjs', 'tests/orchestration-chat-control.test.mjs', 'tests/orchestration-vekl.test.mjs', 'tests/orchestration-vekl-resources.test.mjs', 'tests/orchestration-process-capture.test.mjs'],
+    include: ['tests/**/*.test.ts', 'tests/orchestration-control-plane.test.mjs', 'tests/orchestration-operations-plane.test.mjs', 'tests/orchestration-chat-control.test.mjs', 'tests/orchestration-vekl.test.mjs', 'tests/orchestration-vekl-resources.test.mjs', 'tests/orchestration-process-capture.test.mjs', 'tests/orchestration-operator-status.test.mjs'],
     exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });

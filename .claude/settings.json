@@ -53,6 +53,21 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/agent-system/hooks/oracle-status-context.mjs\"",
+            "timeout": 12
+          }
+        ]
+      }
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "dial-oracle-status"
+  ]
 }

@@ -189,6 +189,7 @@ bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-chat-control-bridge.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
 
 cat <<'EOF'
 

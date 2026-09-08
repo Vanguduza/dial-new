@@ -39,6 +39,9 @@ Commercial retrieval consumes DKRF; pricing/margin consumes `PLAT-F014`; money c
 When the `dial-oracle-control` MCP/chat-control bridge is available, Claude chat is the owner-facing control console, not the process that keeps development alive. Use the typed `dial_*` control tools to read status/progress and to submit, pause, resume, reprioritise or approve DIAL work. Oracle owns the persistent `dial-development-root` mission, worker dispatch and recovery.
 
 - `Status`/progress questions must be answered from Oracle mission/control-plane evidence, not inferred from conversation history.
+- The project-scoped `dial-oracle-status` MCP plus SessionStart/UserPromptSubmit status hooks provide a read-only Oracle mirror even when the mutable `dial-oracle-control` MCP is not enrolled. For status questions, use that mirror first.
+- Never conclude that DIAL is idle because this device has no other Claude sessions, no local scheduled tasks, no local task-list items, a clean working tree, or no local agent process. Those facts describe only this client.
+- If neither the Oracle status mirror nor the typed control MCP is fresh/available, say that live Oracle status cannot be established from this client. Do not substitute a local-idle claim.
 - `Resume` means resume the persistent Oracle mission; it does not mean start an ad-hoc chat-local coding loop.
 - A Claude session ending or reaching its usage limit does not pause the Oracle mission.
 - Do not expose or request a generic shell through the chat bridge.
