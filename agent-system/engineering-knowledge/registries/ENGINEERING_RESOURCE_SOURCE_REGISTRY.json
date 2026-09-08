@@ -682,6 +682,39 @@
     "freshness_ttl_hours": 0
   },
   {
+    "source_id": "official.posthog",
+    "name": "PostHog official documentation and repository",
+    "trust_tier": "T1_OFFICIAL",
+    "source_kind": "OFFICIAL_DOCS_REPO",
+    "domains": [
+      "posthog.com"
+    ],
+    "repositories": [
+      "PostHog/posthog"
+    ],
+    "retrieval_adapters": [
+      "HTTPS_READ_ONLY",
+      "GITHUB_PUBLIC"
+    ],
+    "resource_classes": [
+      "OFFICIAL_DOC",
+      "REPOSITORY",
+      "RELEASE_NOTES",
+      "ISSUE_DISCUSSION"
+    ],
+    "task_classes": [
+      "PRODUCT_ANALYTICS",
+      "WEB_ANALYTICS",
+      "FEATURE_ROLLOUT",
+      "EXPERIMENTATION",
+      "SESSION_REPLAY"
+    ],
+    "sensitive_data_allowed": false,
+    "executable_content_allowed": false,
+    "freshness_ttl_hours": 24,
+    "notes": "Official implementation/reference source for DIAL product-experience analytics and bounded rollout. It grants no production data access and no business authority."
+  },
+  {
     "source_id": "community.stackoverflow",
     "name": "Stack Overflow engineering Q&A",
     "trust_tier": "T3_COMMUNITY_CORROBORATION",

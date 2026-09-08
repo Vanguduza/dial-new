@@ -130,9 +130,9 @@
     "feature_security_profiles": 309,
     "security_controls": 120,
     "customer_endpoint_records": 180,
-    "supporting_capabilities": 126,
+    "supporting_capabilities": 127,
     "whatsapp_flows": 59,
-    "pack_files": 236
+    "pack_files": 237
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",

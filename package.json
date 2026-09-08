@@ -35,7 +35,7 @@
     "agent:v2-closure-check": "node agent-system/bin/v2-closure-check.mjs",
     "agent:manifest-check": "node agent-system/bin/manifest-check.mjs",
     "agent:manifest-write": "node agent-system/bin/manifest-write.mjs",
-    "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:skills:check && npm run agent:knowledge:check && npm run agent:drift-check && npm run agent:gate-ladder && npm run agent:v2-closure-check && npm run agent:realization-coverage && npm run agent:security-coverage && npm run agent:contract-specificity && npm run agent:source-map && npm run agent:manifest-current && npm run agent:scorecard-current && npm run test",
+    "verify": "npm run typecheck && npm run schema:check && npm run agent:manifest-check && npm run agent:skills:check && npm run agent:knowledge:check && npm run agent:cohesion-check && npm run agent:drift-check && npm run agent:gate-ladder && npm run agent:v2-closure-check && npm run agent:realization-coverage && npm run agent:security-coverage && npm run agent:contract-specificity && npm run agent:source-map && npm run agent:manifest-current && npm run agent:scorecard-current && npm run test",
     "agent:gate-ladder": "node agent-system/bin/gate-ladder-check.mjs",
     "agent:contract-specificity": "node agent-system/bin/contract-specificity.mjs",
     "agent:manifest-current": "node agent-system/bin/manifest-write.mjs --check",
@@ -90,7 +90,8 @@
     "agent:research:status": "node agent-system/orchestration/engineering-presearch.mjs status",
     "agent:skills:live-fallback-canary": "node agent-system/bin/skills-live-canary.mjs --fallback-only",
     "agent:development:finalize-readiness": "bash deploy/oracle/hermes-codex/finalize-development-readiness.sh",
-    "agent:runtime:capacity-status": "node agent-system/orchestration/runtime-capacity-status.mjs"
+    "agent:runtime:capacity-status": "node agent-system/orchestration/runtime-capacity-status.mjs",
+    "agent:cohesion-check": "node agent-system/bin/technical-cohesion-check.mjs"
   },
   "dependencies": {
     "sharp": "0.35.4",

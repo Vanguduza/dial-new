@@ -2154,12 +2154,12 @@
   {
     "capability_id": "DEV-S001",
     "area": "DEVELOPMENT_SYSTEM",
-    "name": "Versioned Engineering Knowledge Layer (VEKL v2 \u2014 Federated Engineering Resources)",
+    "name": "Versioned Engineering Knowledge Layer (VEKL v2.1 \u2014 Federated Minimal-Coalition Resources)",
     "owner": "development-system/orchestration",
     "app_families": [
       "DEVELOPMENT_SYSTEM"
     ],
-    "purpose": "Govern exact-version external engineering knowledge, deterministic/JIT skill activation, runtime-symmetric provenance, observable outcome learning and non-authoritative DIAL procedural wrappers without creating a second source of truth.",
+    "purpose": "Govern exact-version external engineering knowledge with hard eligibility, deterministic purpose+role minimal-coalition selection, single-owner Skill activation, runtime-symmetric provenance, bounded context delivery and non-authoritative outcome learning without creating a second source of truth.",
     "eventualities": [],
     "status": "DOMAIN_TESTED",
     "code_paths": [
@@ -2177,13 +2177,39 @@
       "agent-system/orchestration/engineering-research-manager.mjs",
       "agent-system/orchestration/engineering-presearch.mjs",
       "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json",
-      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json"
+      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json",
+      "agent-system/registries/TECHNICAL_COHESION_AUTHORITY_REGISTRY.json",
+      "agent-system/bin/technical-cohesion-check.mjs"
     ],
     "test_paths": [
       "tests/orchestration-vekl.test.mjs",
+      "tests/orchestration-vekl-resources.test.mjs",
+      "tests/product-telemetry.test.ts"
+    ],
+    "current_gate": "DOMAIN_TESTED",
+    "implementation_note": "VEKL v2.1 keeps the exact-pin immutable Skill substrate and federated official/community/tool resource registry, but closes the global-top-N cohesion defect: hard eligibility runs before ranking, Skills have one resolver, resources receive deterministic purpose/role identities, redundant peers compete only in the same slot, complementary roles coexist, selected registry identity is fingerprinted, and context defaults to descriptor-only unless direct authority evidence is needed. Project-aware Sol\u2192Sonnet presearch and same-manifest failover remain unchanged. PostHog official docs are now an admitted product-analytics reference only; this grants no runtime analytics or business authority."
+  },
+  {
+    "capability_id": "DEV-S002",
+    "area": "DEVELOPMENT_SYSTEM",
+    "name": "Deterministic Technical Cohesion Guard",
+    "owner": "development-system/architecture-governance",
+    "app_families": [
+      "DEVELOPMENT_SYSTEM"
+    ],
+    "purpose": "Project one canonical owner per cross-cutting concern and mechanically reject cross-tool authority drift while keeping adapters symbiotic and optional telemetry non-transaction-critical.",
+    "eventualities": [],
+    "status": "DOMAIN_TESTED",
+    "code_paths": [
+      "agent-system/registries/TECHNICAL_COHESION_AUTHORITY_REGISTRY.json",
+      "agent-system/bin/technical-cohesion-check.mjs",
+      "packages/product-telemetry/src/index.ts"
+    ],
+    "test_paths": [
+      "tests/product-telemetry.test.ts",
       "tests/orchestration-vekl-resources.test.mjs"
     ],
     "current_gate": "DOMAIN_TESTED",
-    "implementation_note": "VEKL v2 is implemented as a federated engineering knowledge/capability layer. The exact-pin immutable skill substrate remains qualified (six approved Android procedures), while registered non-skill resources now include official stack docs/repos/releases/issues/advisories/package registries, policy-gated tools, DIAL rules/hooks/loops and bounded community corroboration. Project-aware exact Sol\u2192Sonnet ahead-of-work research reads current Project Truth/Development Plan/mission state, forecasts the next 3\u20135 dependency-safe packets and pre-caches allowlisted passive references under Oracle control state. Packet activation persists both skill and resource provenance. Research is read-only/non-authoritative, cannot reprioritise the programme, and cannot receive sensitive production data."
+    "implementation_note": "DEC-024 enforcement projection. The registry explicitly is not an independent source of truth. It binds PostHog, Formbricks, OTel/Grafana, Langfuse, Promptfoo, Metabase, Command Centre, Chatwoot, Meilisearch and core money/pricing/DKRF authorities to non-overlapping roles; CI validates required concern coverage and critical PostHog refusals."
   }
 ]

@@ -19,7 +19,7 @@ const repoDir=process.env.DIAL_REPO_DIR||process.cwd();const metadata={feature_i
 if(!activate){
   const skills=resolveEngineeringSkills({repoDir,featureId,instruction:task,affectedPaths:paths,metadata});
   const resources=resolveEngineeringResources({repoDir,instruction:task,affectedPaths:paths,availableTools:tools});
-  console.log(JSON.stringify({policy_version:'vekl-2.0',feature_id:featureId,skill_plan:skills,resource_plan:resources},null,2));
+  console.log(JSON.stringify({policy_version:'vekl-2.1',feature_id:featureId,skill_plan:skills,resource_plan:resources},null,2));
 }else{
   const id=packetId||process.env.DIAL_PACKET_ID;if(!id)throw new Error('--packet-id or DIAL_PACKET_ID is required with --activate');
   const manifest=reason

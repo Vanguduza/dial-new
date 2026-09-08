@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "status": "CANON_ENFORCEMENT_PROJECTION",
+  "authority": "NOT_AN_INDEPENDENT_SOURCE_OF_TRUTH",
+  "purpose": "Machine-checkable projection of existing DIAL ownership boundaries so overlapping tools remain symbiotic instead of becoming competing authorities.",
+  "invariants": [
+    "one_authority_per_concern",
+    "adapters_never_promote_to_sor",
+    "deterministic_core_before_optional_analytics",
+    "analytics_failure_never_breaks_core_transaction",
+    "vekl_is_development_only"
+  ],
+  "concerns": [
+    {
+      "concern_id": "PRODUCT_REQUIREMENTS",
+      "canonical_authority": "DIAL Project Truth + Feature/FRC/acceptance contracts",
+      "supporting_systems": ["VEKL", "Hermes research", "donors"],
+      "forbidden_authority": ["VEKL", "Hermes memory", "donor repositories", "PostHog"]
+    },
+    {
+      "concern_id": "DEVELOPMENT_ENGINEERING_KNOWLEDGE",
+      "canonical_authority": "DIAL VEKL selection law under Project Truth",
+      "supporting_systems": ["Hermes research/candidate learning", "official docs", "qualified Skills/tools/hooks/loops"],
+      "forbidden_authority": ["product DKRF", "PostHog", "unqualified web/community material"]
+    },
+    {
+      "concern_id": "PRODUCT_KNOWLEDGE_RETRIEVAL",
+      "canonical_authority": "DKRF-F001..F022 plus domain source-of-truth reads",
+      "supporting_systems": ["GMPC-F200..F211 domain profile", "Hermes where canon permits"],
+      "forbidden_authority": ["VEKL", "parallel growth vector store", "PostHog warehouse/CDP"]
+    },
+    {
+      "concern_id": "MONEY_LEDGER",
+      "canonical_authority": "DIAL Finance/Ledger + authoritative PSP reconciliation",
+      "supporting_systems": ["Metabase read-only views", "Command Centre alerts"],
+      "forbidden_authority": ["PostHog", "AI", "GMPC", "donor ledger"]
+    },
+    {
+      "concern_id": "PRICING_MARGIN",
+      "canonical_authority": "PLAT-F014 deterministic pricing/margin contracts",
+      "supporting_systems": ["GMPC recommendations/simulations", "AI draft assistance where permitted"],
+      "forbidden_authority": ["PostHog flags", "AI payable output", "promotion SaaS", "donor pricing engine"]
+    },
+    {
+      "concern_id": "BRANCH_ACTIVATION_CERTIFICATION",
+      "canonical_authority": "DIAL database activation/certification records and gates",
+      "supporting_systems": ["PostHog internal rollout exposure"],
+      "forbidden_authority": ["PostHog feature flags", "Unleash", "UI-only flag state"]
+    },
+    {
+      "concern_id": "PROMOTION_ELIGIBILITY",
+      "canonical_authority": "DIAL deterministic promotions/commercial policy over PLAT-F014",
+      "supporting_systems": ["GMPC", "PostHog experiment/rollout measurement"],
+      "forbidden_authority": ["PostHog flags", "AI", "OfferKit/Medusa runtime"]
+    },
+    {
+      "concern_id": "PRODUCT_EXPERIENCE_ANALYTICS",
+      "canonical_authority": "DIAL versioned event taxonomy over domain truth",
+      "supporting_systems": ["PostHog product analytics", "PostHog web analytics", "privacy-gated PostHog replay/heatmaps"],
+      "forbidden_authority": ["PostHog as business/customer/money source of truth", "analytics write-back to domain state"]
+    },
+    {
+      "concern_id": "EXPERIMENT_DEFINITION_AND_RESULT",
+      "canonical_authority": "GMPC-F110 experiment contracts/records",
+      "supporting_systems": ["PostHog variant assignment and measurement"],
+      "forbidden_authority": ["PostHog experiment state as sole DIAL experiment truth", "feature flag as business rule"]
+    },
+    {
+      "concern_id": "CUSTOMER_SURVEYS",
+      "canonical_authority": "DIAL quality/outcome contracts receiving Formbricks input",
+      "supporting_systems": ["Formbricks"],
+      "forbidden_authority": ["PostHog Surveys as parallel survey system"]
+    },
+    {
+      "concern_id": "TECHNICAL_OBSERVABILITY",
+      "canonical_authority": "DIAL OpenTelemetry telemetry contract + Prometheus/Loki/Tempo/Grafana technical plane",
+      "supporting_systems": ["PostHog UX evidence correlation"],
+      "forbidden_authority": ["PostHog Logs/Error Tracking replacing technical telemetry", "Metabase infra alert authority"]
+    },
+    {
+      "concern_id": "AI_OBSERVABILITY",
+      "canonical_authority": "Langfuse traces/prompts/datasets under DIAL AI contracts",
+      "supporting_systems": ["DIAL AiInvocation", "Promptfoo evidence"],
+      "forbidden_authority": ["PostHog AI Observability as parallel trace authority"]
+    },
+    {
+      "concern_id": "AI_EVALUATION_PROMOTION",
+      "canonical_authority": "Promptfoo deterministic gates + human promotion + DIAL evidence",
+      "supporting_systems": ["Langfuse", "AiInvocation corrections"],
+      "forbidden_authority": ["PostHog experiments", "LLM self-report", "Langfuse trace alone"]
+    },
+    {
+      "concern_id": "BUSINESS_BI",
+      "canonical_authority": "DIAL domain tables/events and MetricContracts",
+      "supporting_systems": ["Metabase read-only exploration"],
+      "forbidden_authority": ["Metabase write-back", "PostHog warehouse/CDP as business SoR"]
+    },
+    {
+      "concern_id": "OPERATIONAL_ACTIONS",
+      "canonical_authority": "DIAL Command Centre + typed domain commands/AuthZ",
+      "supporting_systems": ["Prometheus alerts", "Metabase insight links", "PostHog product signals"],
+      "forbidden_authority": ["analytics direct mutation", "dashboard write-back bypassing AuthZ"]
+    },
+    {
+      "concern_id": "CUSTOMER_SUPPORT",
+      "canonical_authority": "DIAL Support OS/domain records",
+      "supporting_systems": ["Chatwoot human-support console"],
+      "forbidden_authority": ["Chatwoot as canonical order/payment/claim truth", "PostHog"]
+    },
+    {
+      "concern_id": "SEARCH_PROJECTION",
+      "canonical_authority": "DIAL catalogue/fitment/domain records",
+      "supporting_systems": ["Meilisearch read/search projection"],
+      "forbidden_authority": ["Meilisearch as catalogue or fitment source of truth"]
+    }
+  ]
+}

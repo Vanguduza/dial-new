@@ -5042,6 +5042,18 @@ When two tools did the same job, DIAL keeps **one** — the stronger feature fit
 | Courier Android UX donor (D-44) | **foodhub-compose** (rider flavour) | Fleetbase Navigator as runtime (AGPL+RN) | Apache-2.0 Compose pattern only |
 | Drive-time / multi-stop | **OSRM + VROOM** | Google Distance Matrix as default; Valhalla as duplicate primary | Already Blueprint I-2; VROOM for multi-stop |
 
+##### 6.10.1 PostHog bounded adoption and cohesion law — `DEC-024` `[NEW]` `[FOUNDER]`
+
+PostHog is the selected **product-experience analytics and bounded rollout adapter**, not a new DIAL business platform. All application integration passes through the DIAL-owned `@dial/product-telemetry` contract so event naming, privacy, replay policy, flag purpose and failure behavior are deterministic before any vendor SDK call.
+
+**Adopted:** product/web analytics; funnels/activation/retention/adoption; consent/privacy-gated replay and heatmaps on permitted surfaces; staff/dogfood/progressive presentation exposure; GMPC-owned experiment variant assignment and product-behavior measurement.
+
+**Not adopted as parallel authorities:** PostHog Surveys (Formbricks stays survey input); PostHog AI Observability (Langfuse stays AI trace/prompt/dataset observability); PostHog experiment state as sole experiment truth (GMPC-F110 stays experiment owner); PostHog technical logs/metrics as the technical plane (OpenTelemetry + Prometheus/Loki/Tempo/Grafana remain that plane); PostHog warehouse/CDP as customer/money/catalogue/job/campaign truth; PostHog workflow automation as a replacement for Temporal/BullMQ/n8n; PostHog BI as a replacement for Metabase/MetricContracts.
+
+**Flag composition law:** DIAL database activation/certification and domain eligibility are evaluated first. A PostHog value can only further constrain/expose an already-authorized presentation or experiment surface; it cannot turn a canonical `false` into `true`. Flags may never determine price, discount value, payment/settlement/refund/payout, ledger posting, authorization/RLS/role, supplier/technician/customer eligibility, compliance, tax, Health/claims/clinical behavior or branch certification. Stable local fallback applies when PostHog is absent/slow, and analytics failure must never fail a core transaction.
+
+**Privacy law:** external product telemetry accepts only the DIAL exportable privacy classes and scalar/bounded event properties. Exact money fields, credentials/contact/identity secrets and Health/claims/clinical data are excluded. Session replay is prohibited on checkout, payment, identity/authentication, Health, claims and employee surfaces. Qualified conversion/contribution can be joined server-side from authoritative DIAL records rather than exporting exact monetary truth into PostHog.
+
 ---
 
 #### 6.11 ERP integration doctrine — OSS in code, API only when unavoidable `[NEW]` `[FOUNDER]`
@@ -5114,7 +5126,8 @@ packages/
   legal/                T&Cs versions, acceptances, compliance checklists
   notifications/        Resend / Brevo / WhatsApp / push / SMS adapters
   trust-risk/           fraud signals, media fingerprints, review queues
-  analytics/            event taxonomy → PostHog / warehouse
+  product-telemetry/    typed optional analytics/rollout boundary → PostHog (never business SoR)
+  analytics/            versioned event taxonomy + domain-event projections
   ai/                   §5.15 composition — Gemini sole brain
   media/                Sharp pipeline, signed URLs, retention
   shared/               money types, ids, errors, outbox, state-machine kit
@@ -5145,7 +5158,7 @@ adapters/               Tier-3 only: gemini, psp, whatsapp, email, maps, fdms
 | AI drafts | `AiInvocation` + human correction | Langfuse traces | Gemini chat history as SoR |
 | Ops inbox threads | Chatwoot (Tier 2) linked by `entity_id` | — | job status in Chatwoot |
 | Booking slots | Cal.com (Tier 2) linked by `job_id` | — | eligibility in Cal.com |
-| Feature flags / funnels | PostHog | — | money decisions |
+| Product analytics / rollout | DIAL versioned domain events + event taxonomy; DB activation/certification state | PostHog via `@dial/product-telemetry` | business/money/eligibility/compliance truth; flags overriding canonical gates |
 | BI | Metabase on replicas/views | — | write paths |
 
 ---

@@ -542,5 +542,28 @@
       "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md"
     ],
     "reopens_if": "the product owner explicitly replaces this SEO/indexability authority with an equal-or-stronger system preserving canonical-truth, anti-doorway, privacy, indexability, structured-data, sitemap/feed, local-discovery and AI-governance guarantees"
+  },
+  {
+    "decision_id": "DEC-024",
+    "decided_on": "2026-09-08",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "PLATFORM / DEVELOPMENT / TECHNICAL COHESION / PRODUCT ANALYTICS",
+    "title": "VEKL 2.1 minimal-coalition resolution and bounded PostHog adoption enforce one authority per concern",
+    "decision": "DIAL adopts a machine-checkable technical-cohesion law: each cross-cutting concern has one canonical DIAL authority and supporting tools remain bounded adapters/projections. VEKL resource selection is upgraded from global top-N ranking to hard-eligibility-first deterministic purpose+role minimal-coalition resolution; Skills have one exact-pin selection owner and generic VEKL resources cannot select them again. PostHog is retained as the canonical product-experience analytics/rollout tool, but only for product/web analytics, privacy-gated replay/heatmaps, bounded staff/dogfood rollout and GMPC-owned experiment assignment/measurement.",
+    "consequence": "PostHog cannot become a source of truth for money, pricing, authorization, branch certification, eligibility, compliance, Health/claims, fulfilment, surveys, AI observability/evals, technical telemetry, BI or workflow state. Formbricks, Langfuse, Promptfoo, OpenTelemetry/Prometheus/Loki/Tempo/Grafana, Metabase, Command Centre and Temporal/BullMQ/n8n retain their existing distinct roles. Optional analytics failure cannot break a core DIAL transaction. The Technical Cohesion Authority Registry is an enforcement projection, not a new truth store.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md; docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md; DIAL_Master_Product_Technical_Delivery_Architecture_vNext3.md",
+    "enforced_by": [
+      "agent-system/orchestration/engineering-resource-resolver.mjs",
+      "agent-system/orchestration/skill-activation-store.mjs",
+      "agent-system/registries/TECHNICAL_COHESION_AUTHORITY_REGISTRY.json",
+      "agent-system/bin/technical-cohesion-check.mjs",
+      "packages/product-telemetry/src/index.ts",
+      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json",
+      "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json",
+      "tests/orchestration-vekl-resources.test.mjs",
+      "tests/product-telemetry.test.ts"
+    ],
+    "reopens_if": "the product owner replaces this one-authority-per-concern model, PostHog bounded role or VEKL deterministic minimal-coalition law with an equal-or-stronger mechanism preserving source-of-truth, privacy, determinism, failover and anti-overengineering guarantees"
   }
 ]

@@ -150,14 +150,15 @@ Do not deliberately exhaust subscription quota to manufacture provider failure e
 
 Generalized development model registries, Manager Chair controls, worker pools, DeepSeek Harness settings and DDE model-management UI are outside this DIAL Hermes implementation.
 
-## Versioned Engineering Knowledge Layer (VEKL v2 — federated resources)
+## Versioned Engineering Knowledge Layer (VEKL Rev 2 + 2.1 deterministic resolver)
 
-`DEC-020` extends the `DEC-019` immutable-skill foundation into a federated engineering knowledge/capability gate. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator persists one packet Engineering Knowledge Activation Manifest containing relevant skills plus registered docs/repos/releases/issues/advisories/tools/rules/hooks/loops/community corroboration as applicable. A zero-external-resource result remains valid.
+`DEC-020` extends the `DEC-019` immutable-Skill foundation into a federated engineering knowledge/capability gate. `DEC-024` hardens packet selection to hard-eligibility-first deterministic purpose+role minimal-coalition resolution; Skills have one exact-pin selection owner; selected resource registry identity is fingerprinted; and descriptor-only context is the default. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator persists one packet Engineering Knowledge Activation Manifest containing relevant skills plus registered docs/repos/releases/issues/advisories/tools/rules/hooks/loops/community corroboration as applicable. A zero-external-resource result remains valid.
 
 VEKL modules:
 - `skill-registry.mjs` — machine registry/approval invariants;
 - `skill-resolver.mjs` — deterministic task classification, policy filters and evidence-aware ranking;
-- `skill-activation-store.mjs` — exact-hash immutable packet activation;
+- `engineering-resource-resolver.mjs` — hard eligibility + deterministic purpose/role minimal-coalition resource selection;
+- `skill-activation-store.mjs` — exact-hash immutable Skill activation plus resource fingerprint/provenance verification;
 - `engineering-knowledge-broker.mjs` — queue/Feature resolution gate;
 - `skill-outcome-recorder.mjs` — non-authoritative observable outcome telemetry;
 - `learned-skill-curator.mjs` — proposal-only DIAL procedural learning boundary.

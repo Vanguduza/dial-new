@@ -117,7 +117,7 @@ export async function buildDialHermesContext({ repoDir = DEFAULT_REPO, userMessa
       : 'Hermes runtime provenance: none recorded.',
     '',
     `Observed Git state: ${JSON.stringify(gitState)}`,
-    'Engineering knowledge policy: VEKL v2.0. Skills are one governed resource class among official docs/repos/releases/issues/package registries/advisories/tools/rules/hooks/loops and bounded community corroboration. External material is non-authoritative; canon and evidence win.',
+    'Engineering knowledge policy: VEKL v2.1. Skills are one governed resource class among official docs/repos/releases/issues/package registries/advisories/tools/rules/hooks/loops and bounded community corroboration. External material is non-authoritative; canon and evidence win.',
     engineeringKnowledge ? `Engineering Knowledge Activation Manifest metadata: ${bounded(JSON.stringify(engineeringKnowledge), 7500)}` : 'Engineering Knowledge Activation Manifest metadata: none attached.',
     resourceKnowledgeBundle ? `\nSelected VEKL engineering references (non-authoritative):\n${bounded(resourceKnowledgeBundle, 9000)}` : '',
     checkpoint ? `\nCheckpoint (continuity only):\n${bounded(JSON.stringify(checkpoint, null, 2), 5000)}` : '',

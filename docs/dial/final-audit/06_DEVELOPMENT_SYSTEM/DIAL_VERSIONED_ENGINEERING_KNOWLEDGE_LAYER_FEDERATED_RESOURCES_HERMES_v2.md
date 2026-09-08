@@ -1,7 +1,7 @@
 # DIAL VERSIONED ENGINEERING KNOWLEDGE LAYER (VEKL) — FEDERATED RESOURCES + PROJECT-AWARE HERMES RESEARCH
 
-**Status:** ACTIVE DIAL DEVELOPMENT CANON — REV 2  
-**Decision:** `DEC-020`  
+**Status:** ACTIVE DIAL DEVELOPMENT CANON — REV 2 + VEKL 2.1 RESOLVER AMENDMENT
+**Decision:** `DEC-020`; deterministic resolver/cohesion amendment `DEC-024`
 **Scope:** DIAL development system only. This is not DIAL business-runtime intelligence and is not DDE runtime architecture.  
 **Supersedes for active VEKL intent:** `DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md`. Rev 1 remains provenance for the immutable-skill foundation.
 
@@ -138,6 +138,7 @@ VEKL v2 registers DIAL-relevant sources rather than loading the internet indiscr
 - VROOM;
 - Meilisearch;
 - OpenTelemetry;
+- PostHog official engineering documentation for bounded product-analytics/rollout implementation;
 - LiteLLM;
 - Promptfoo;
 - Chatwoot;
@@ -293,28 +294,38 @@ If Sol and Sonnet are unavailable or quota-limited, VEKL records `MODEL_UNAVAILA
 
 ---
 
-## 9. Packet-time deterministic selection
+## 9. Packet-time deterministic selection — VEKL 2.1 law
 
-A research cache is not injected wholesale into every development prompt.
+A research cache is not injected wholesale into every development prompt. `DEC-024` replaces the former global top-N resource ranking with a hard-eligibility-first deterministic **minimal coalition**.
 
 For each material packet:
 
 1. resolve Feature/JIT canonical context;
 2. classify the concrete engineering task and affected paths;
-3. resolve approved skills;
-4. resolve relevant registered engineering resources;
-5. filter by trust, status, tool availability and DIAL conflict policy;
-6. rank for minimal useful context;
-7. persist the result in one Engineering Knowledge Activation Manifest;
-8. supply the same manifest provenance to Sol and Sonnet.
+3. resolve approved Skills through the exact-pin Skill resolver — this is the only Skill-selection owner;
+4. enumerate registered non-Skill engineering resources;
+5. apply hard eligibility before any ranking: source admission, resource-class admission, lifecycle state, executable-source permission, required-tool availability and task-specific community evidence;
+6. assign each eligible resource one stable `selection_role` and `selection_purpose`;
+7. preserve explicitly mandatory project policy bindings;
+8. make optional redundant peers compete only inside the same `(selection_purpose, selection_role)` slot;
+9. keep complementary roles/purposes together until the explicit context budget is applied;
+10. tie-break by stable resource identity so candidate input order cannot change selected identities;
+11. persist the result, prune reasons and registry fingerprints in one Engineering Knowledge Activation Manifest;
+12. supply the same manifest provenance to Sol and Sonnet.
+
+Stable roles are `AUTHORITY`, `GUIDANCE`, `EXECUTOR`, `VERIFIER`, `POLICY`, `REUSE`, `DIAGNOSTIC` and `REFERENCE`. `AUTHORITY` here means official authority for the relevant **engineering reference fact** inside the selected knowledge coalition; it never outranks DIAL Project Truth, product/domain authority or release gates.
+
+`maxResources` is a context budget, not a quality algorithm. It is applied after eligibility and slot competition. Descriptor-only delivery is the default; an external cached excerpt is injected eagerly only when the selection explicitly marks it directly relevant. Cached research remains non-executable.
 
 Valid results include:
 
-- approved skill + passive references;
+- approved exact-pin Skill + complementary passive references;
 - passive references only;
-- project-local rules only;
+- project-local policy only;
 - no external resource required;
 - relevant executable capability unavailable, which may fail closed for mandatory specialist task classes.
+
+The generic resource resolver must never return a `SKILL`; duplicate Skill selection is a manifest invariant violation.
 
 ---
 
@@ -322,24 +333,29 @@ Valid results include:
 
 The existing immutable Skill Activation Manifest is extended rather than replaced with a competing mechanism.
 
-The v2 manifest records:
+The manifest records:
 
 - packet and mission IDs;
 - Feature IDs;
-- VEKL policy version;
+- VEKL policy/resolver version;
 - task classes;
-- exact approved skill IDs/commits/hashes/snapshot paths;
+- exact approved Skill IDs/commits/hashes/snapshot paths;
 - selected resource IDs/classes/source IDs/trust tiers;
+- each resource's deterministic `selection_role` and `selection_purpose`;
+- selection reason and `context_delivery` mode;
+- selected resource registry fingerprint;
 - cached reference/content hashes where present;
 - freshness state;
 - activation mode;
 - community corroboration requirement;
 - current ahead-of-work research forecast ID;
-- rejected/conflicting resources;
+- rejected/conflicting/redundant/budget-pruned resources;
 - missing mandatory specialist classes;
 - DIAL guard capsule;
 - manifest hash;
 - previous activation ID/re-resolution reason where applicable.
+
+When current repository state is available, activation verification also checks that a selected resource is still registered, its source/class/state remains admitted, source trust has not silently changed and its registry fingerprint still matches. Any such drift requires audited re-resolution rather than silent reuse.
 
 Resource selection is therefore reproducible and auditable rather than hidden in model browsing history.
 
@@ -574,7 +590,7 @@ dial-engineering-research.path
 
 ## 20. Acceptance requirements
 
-VEKL v2 is repository-green only when tests prove at least:
+VEKL Rev 2 with the VEKL 2.1 resolver amendment is repository-green only when tests prove at least:
 
 1. official stack resources are preferred for matching tasks;
 2. community evidence is marked corroboration/discovery only;
@@ -587,15 +603,21 @@ VEKL v2 is repository-green only when tests prove at least:
 9. model unavailability creates an explicit degraded state rather than fabricated forecast;
 10. the forecast derives from current Project Truth/Development Plan/mission context;
 11. forecasted research cannot reprioritize the programme;
-12. packet resolution loads the minimal relevant resource subset;
-13. one manifest preserves skill and resource provenance;
-14. Sol/Sonnet fallback retains the same activation provenance;
-15. task refinement requires audited re-resolution;
-16. Delivery map/provider locks still defeat conflicting external recommendations;
-17. sensitive-data egress is prohibited;
-18. resource-selection outcome telemetry remains separate from Feature/gate truth;
-19. research scheduler is project-scoped and does not inspect unrelated Hermes projects;
-20. full `npm run verify` remains green.
+12. hard eligibility runs before ranking and ineligible resources cannot be rescued by score;
+13. redundant peers compete only inside deterministic purpose+role slots while complementary roles survive;
+14. reversing candidate input order preserves the same selected resource identities;
+15. Skills have one exact-pin selection owner and the generic resource resolver cannot select them;
+16. selected resource registry identity is fingerprinted and current-state drift is detectable;
+17. descriptor-only context is the default and eager external excerpts require explicit relevance;
+18. one manifest preserves Skill and resource provenance;
+19. Sol/Sonnet fallback retains the same activation provenance;
+20. task refinement requires audited re-resolution;
+21. Delivery map/provider locks still defeat conflicting external recommendations;
+22. sensitive-data egress is prohibited;
+23. resource-selection outcome telemetry remains separate from Feature/gate truth;
+24. research scheduler is project-scoped and does not inspect unrelated Hermes projects;
+25. `agent:cohesion-check` is green and confirms cross-tool one-authority boundaries;
+26. full `npm run verify` remains green.
 
 ---
 

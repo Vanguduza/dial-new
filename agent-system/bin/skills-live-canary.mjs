@@ -24,7 +24,7 @@ const fallbackOnly = process.argv.includes('--fallback-only');
 ensureControlLayout(root);
 const skillPlan = resolveEngineeringSkills({ repoDir, instruction, affectedPaths, metadata: { max_skills: 3, qualification_canary: true } });
 const resourcePlan = resolveEngineeringResources({ repoDir, root, instruction, affectedPaths, maxResources: 6 });
-const plan = { ...skillPlan, policy_version: 'vekl-2.0', selected_resources: resourcePlan.selected_resources, resource_rejected: resourcePlan.rejected, resource_task_classes: resourcePlan.task_classes };
+const plan = { ...skillPlan, policy_version: resourcePlan.policy_version || 'vekl-2.1', selected_resources: resourcePlan.selected_resources, resource_rejected: resourcePlan.rejected, resource_task_classes: resourcePlan.task_classes };
 if (!plan.execution_allowed || plan.resolution_state !== 'SELECTED_APPROVED_SKILLS' || plan.selected_skills.length < 1 || plan.selected_resources.length < 1) {
   throw new Error(`VEKL v2 qualification resolver did not select approved skills/resources: ${JSON.stringify(plan)}`);
 }

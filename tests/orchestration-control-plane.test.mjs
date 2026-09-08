@@ -363,7 +363,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('executes ordinary work only when the development gate is green', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Verify TEST-F001 without changing its gate.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Verify TEST-F001 without changing its gate.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
@@ -378,7 +378,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('refreshes the external-orchestrator heartbeat while a long packet is executing', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    submitExternalWork({ root, instruction: 'Verify TEST-F001 during a long packet.' });
+    submitExternalWork({ root, repoDir: repo, instruction: 'Verify TEST-F001 during a long packet.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
@@ -397,7 +397,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('blocks ordinary development before PRODUCTION_GREEN instead of executing it', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Continue TEST-F001.' });
     let executorCalled = false;
     const processed = await processNextExternalWork({
       repoDir: repo,
@@ -445,7 +445,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('persists runtime failure instead of silently advancing', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Continue TEST-F001.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,

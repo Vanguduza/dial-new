@@ -19,7 +19,10 @@
       "security",
       "testing"
     ],
-    "forbidden_effects": []
+    "forbidden_effects": [],
+    "always_bind": true,
+    "selection_role": "POLICY",
+    "selection_purpose": "DIAL_ENGINEERING_GOVERNANCE"
   },
   {
     "resource_id": "dial.hook.pre-tool-guard",
@@ -40,7 +43,10 @@
       "guard",
       "tool"
     ],
-    "forbidden_effects": []
+    "forbidden_effects": [],
+    "always_bind": false,
+    "selection_role": "POLICY",
+    "selection_purpose": "DIAL_RUNTIME_GOVERNANCE"
   },
   {
     "resource_id": "dial.loop.mission-controller",
@@ -63,7 +69,10 @@
       "autonomous",
       "loop"
     ],
-    "forbidden_effects": []
+    "forbidden_effects": [],
+    "always_bind": false,
+    "selection_role": "POLICY",
+    "selection_purpose": "DIAL_RUNTIME_GOVERNANCE"
   },
   {
     "resource_id": "dial.tool.context7",
@@ -936,6 +945,52 @@
       "GENERIC_SHELL_EXPOSURE",
       "CROSS_PROJECT_ACCESS",
       "BYPASS_DEVELOPMENT_GATE"
+    ],
+    "always_bind": false,
+    "selection_role": "POLICY",
+    "selection_purpose": "DIAL_RUNTIME_GOVERNANCE"
+  },
+  {
+    "resource_id": "ref.posthog.docs",
+    "name": "PostHog product analytics and feature rollout documentation",
+    "source_id": "official.posthog",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://posthog.com/docs",
+    "seed_urls": [
+      "https://posthog.com/docs"
+    ],
+    "task_classes": [
+      "PRODUCT_ANALYTICS",
+      "FEATURE_ROLLOUT",
+      "EXPERIMENTATION"
+    ],
+    "technologies": [
+      "PostHog"
+    ],
+    "keywords": [
+      "posthog",
+      "product analytics",
+      "funnel",
+      "retention",
+      "session replay",
+      "feature flag",
+      "experiment",
+      "heatmap"
+    ],
+    "selection_role": "AUTHORITY",
+    "selection_purpose": "POSTHOG_PRODUCT_EXPERIENCE_TELEMETRY",
+    "forbidden_effects": [
+      "BECOME_BUSINESS_SOR",
+      "CONTROL_MONEY_OR_PRICING",
+      "BYPASS_BRANCH_ACTIVATION",
+      "BYPASS_AUTHORIZATION",
+      "CAPTURE_RESTRICTED_DATA",
+      "REPLACE_FORMBRICKS_SURVEYS",
+      "REPLACE_LANGFUSE_PROMPTFOO",
+      "REPLACE_OPENTELEMETRY_OBSERVABILITY"
     ]
   }
 ]
