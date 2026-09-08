@@ -90,23 +90,20 @@ OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' "$OPS_STATUS" >/dev/null || { cat "$OPS_STATUS" >&2; fail "auxiliary operations boundary is not intact"; }
 pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
 
-section "INSTALLED RUNTIME IDENTITY + USEFUL SOL RESEARCH"
-# The first live Sol inference in full qualification performs useful project-aware
-# VEKL forecasting. That exact no-reroute App Server turn also refreshes the
-# fingerprint-bound identity cache/runtime health, eliminating a fixed-token
-# "prove you are Sol" call.
-RESEARCH_FORECAST="$(tmp)"; npm run --silent agent:research:refresh -- --force >"$RESEARCH_FORECAST"
-jq -e '.state == "READY" and (.items|length) >= 3 and (.items|length) <= 5 and .resource_cache_count > 0 and .runtime_provenance.runtime == "codex_app_server" and .runtime_provenance.requested_model == "gpt-5.6-sol" and .runtime_provenance.resolved_model == "gpt-5.6-sol" and .runtime_provenance.identity_proven == true' "$RESEARCH_FORECAST" >/dev/null || { cat "$RESEARCH_FORECAST" >&2; fail "VEKL ahead-of-work project-aware Sol forecast did not prove exact live Sol identity"; }
+section "PROJECT-AWARE RESEARCH + LOCKED RUNTIME IDENTITY"
+# DEC-020 permits the project-aware research manager to fall from exact Sol to
+# exact Sonnet 5. Reuse a current semantic forecast instead of forcing another
+# manager-model turn. Exact live Sol execution is still mandatory below through
+# the VEKL primary canary and external Oracle queue canary.
+RESEARCH_FORECAST="$(tmp)"; npm run --silent agent:research:refresh >"$RESEARCH_FORECAST"
+jq -e '.state == "READY" and (.items|length) >= 3 and (.items|length) <= 5 and .resource_cache_count > 0 and .runtime_provenance.identity_proven == true and ((.runtime_provenance.runtime == "codex_app_server" and .runtime_provenance.requested_model == "gpt-5.6-sol" and .runtime_provenance.resolved_model == "gpt-5.6-sol") or (.runtime_provenance.runtime == "claude_code" and .runtime_provenance.requested_model == "claude-sonnet-5" and .runtime_provenance.resolved_model == "claude-sonnet-5"))' "$RESEARCH_FORECAST" >/dev/null || { cat "$RESEARCH_FORECAST" >&2; fail "VEKL project-aware forecast is not live/ready through the locked Sol/Sonnet chain"; }
 RESEARCH_FORECAST_ID="$(jq -r '.forecast_id // empty' "$RESEARCH_FORECAST")"
+RESEARCH_FORECAST_RUNTIME="$(jq -r '.runtime_provenance.runtime // empty' "$RESEARCH_FORECAST")"
+RESEARCH_FORECAST_MODEL="$(jq -r '.runtime_provenance.resolved_model // empty' "$RESEARCH_FORECAST")"
 [[ -n "$RESEARCH_FORECAST_ID" ]] || fail "VEKL research forecast id missing"
-CAPACITY="$(tmp)"; npm run --silent agent:runtime:capacity-status >"$CAPACITY"
-jq -e '.identity_cache.valid == true and .current_health.state == "HEALTHY" and .current_health.requested_model == "gpt-5.6-sol" and .current_health.resolved_model == "gpt-5.6-sol"' "$CAPACITY" >/dev/null || { cat "$CAPACITY" >&2; fail "useful Sol research did not refresh exact fingerprint-bound runtime identity/health"; }
-pass "project-aware VEKL research proved exact GPT-5.6 Sol and refreshed reusable identity evidence"
+pass "VEKL project-aware next-3-to-5-packet research is current through $RESEARCH_FORECAST_MODEL"
 CLAUDE_PROBE="$(tmp)"; node agent-system/orchestration/claude-code-probe.mjs >"$CLAUDE_PROBE"
 jq -e '.state == "HEALTHY" and .requested_model == "claude-sonnet-5" and .resolved_model == "claude-sonnet-5" and .identity_proven == true' "$CLAUDE_PROBE" >/dev/null || { cat "$CLAUDE_PROBE" >&2; fail "Claude Code Sonnet 5 probe did not prove the hard pin"; }; pass "official Claude Code / exact Sonnet 5 fallback runtime"
-
-section "VEKL PROJECT-AWARE AHEAD-OF-WORK RESEARCH"
-pass "VEKL project-aware next-3-to-5-packet research is live through exact Sol (reused from identity proof)"
 
 section "VEKL LIVE RUNTIME SYMMETRY"
 VEKL_CANARY="$(tmp)"; npm run --silent agent:skills:live-canary >"$VEKL_CANARY"
@@ -161,6 +158,8 @@ jq -n \
   --arg vekl_live_canary_evidence "$VEKL_CANARY_EVIDENCE" \
   --arg vekl_live_canary_activation "$VEKL_CANARY_ACTIVATION" \
   --arg vekl_research_forecast_id "$RESEARCH_FORECAST_ID" \
+  --arg vekl_research_forecast_runtime "$RESEARCH_FORECAST_RUNTIME" \
+  --arg vekl_research_forecast_model "$RESEARCH_FORECAST_MODEL" \
   '{
     schema_version:1,
     kind:"DIAL_HERMES_INSTALLED_RUNTIME_QUALIFICATION",
@@ -188,8 +187,8 @@ jq -n \
     vekl_ahead_of_work_research_scheduler:true,
     vekl_ahead_of_work_live_forecast:true,
     vekl_ahead_of_work_forecast_id:$vekl_research_forecast_id,
-    vekl_ahead_of_work_forecast_runtime:"codex_app_server",
-    vekl_ahead_of_work_forecast_model:"gpt-5.6-sol",
+    vekl_ahead_of_work_forecast_runtime:$vekl_research_forecast_runtime,
+    vekl_ahead_of_work_forecast_model:$vekl_research_forecast_model,
     vekl_packet_manifest_required:true,
     vekl_vendor_content_authority:"ENGINEERING_GUIDANCE_ONLY",
     vekl_unqualified_vendor_activation_allowed:false,

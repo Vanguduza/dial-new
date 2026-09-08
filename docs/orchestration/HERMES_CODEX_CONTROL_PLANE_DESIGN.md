@@ -161,7 +161,7 @@ Finalization must validate all evidence, service health, fresh external heartbea
 
 Deliberate quota exhaustion is prohibited. Live provider capacity must be observed naturally.
 
-Full production qualification is allowed to force the minimum live Sol identity proof required after a control-plane fingerprint change. It must then reuse that proof wherever possible: the VEKL live Sol path can satisfy the operational-primary proof, deterministic routing tests replace live state mutation/support-model calls, and no extra recovery probe is issued solely to restate evidence already proven in the same qualification run. External-queue/process failover soaks remain live because they prove different failure semantics.
+Full production qualification is allowed to force the minimum live Sol identity/operational proof required after a control-plane fingerprint change. Project-aware VEKL forecasting follows its normal `Sol → Sonnet` research policy and a current exact-Sonnet forecast remains valid research evidence if Sol research times out or is provider-limited; full production still separately requires successful exact-Sol execution through the VEKL primary path and external Oracle queue. Qualification reuses live proofs wherever possible: the VEKL live Sol path can satisfy the operational-primary proof, deterministic routing tests replace live state mutation/support-model calls, and no extra recovery probe is issued solely to restate evidence already proven in the same qualification run. External-queue/process failover soaks remain live because they prove different failure semantics.
 
 
 ## Shared-host isolation

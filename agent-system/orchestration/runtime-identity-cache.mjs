@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { readJson, writeJsonAtomic, appendJsonl } from './state-store.mjs';
 import { HERMES_PREFERRED_CODEX_MODEL } from './hermes-plan-models.mjs';
@@ -16,6 +16,13 @@ function read(target) { try { return fs.readFileSync(target); } catch { return B
 function command(command, args = []) {
   try { return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); }
   catch { return ''; }
+}
+function commandCombined(commandName, args = []) {
+  try {
+    const result = spawnSync(commandName, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    return `${result.stdout || ''}
+${result.stderr || ''}`.trim();
+  } catch { return ''; }
 }
 function executable(commandName) { return command('bash', ['-lc', `command -v ${commandName} || true`]); }
 
@@ -37,7 +44,7 @@ export function codexIdentityFingerprint({ repoDir = DEFAULT_REPO } = {}) {
     requested_model: HERMES_PREFERRED_CODEX_MODEL,
     codex_path: codexPath,
     codex_version: codexPath ? command(codexPath, ['--version']) : '',
-    codex_auth_route: command('codex', ['login', 'status']).includes('Logged in using ChatGPT') ? 'CHATGPT_OAUTH' : 'OTHER_OR_UNAVAILABLE',
+    codex_auth_route: commandCombined(codexPath || 'codex', ['login', 'status']).includes('Logged in using ChatGPT') ? 'CHATGPT_OAUTH' : 'OTHER_OR_UNAVAILABLE',
     hermes_path: hermesPath,
     hermes_version: hermesPath ? command(hermesPath, ['--version']) : '',
     hermes_config_sha256: hash(read(configPath)),
