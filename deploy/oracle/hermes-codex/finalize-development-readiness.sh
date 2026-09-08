@@ -45,7 +45,11 @@ CLAUDE="$(tmp)"; node agent-system/orchestration/claude-code-probe.mjs >"$CLAUDE
 jq -e '.state=="HEALTHY" and .requested_model=="claude-sonnet-5" and .resolved_model=="claude-sonnet-5" and .identity_proven==true and .response_ok==true' "$CLAUDE" >/dev/null || { cat "$CLAUDE" >&2; fail "exact Sonnet fallback is not healthy"; }
 pass "exact Claude Sonnet 5 fallback is live"
 
-RESEARCH="$(tmp)"; npm run --silent agent:research:refresh -- --force >"$RESEARCH"
+# Reuse a current semantic forecast when the preceding qualification attempt already
+# produced one. If the forecast is stale/meaningfully invalidated, refreshAheadOfWorkResearch
+# will run the appropriate exact model; an active Sol cooldown routes that refresh directly
+# to Sonnet without spending another primary inference.
+RESEARCH="$(tmp)"; npm run --silent agent:research:refresh >"$RESEARCH"
 jq -e '.state=="READY" and (.items|length)>=3 and (.items|length)<=5 and .resource_cache_count>0 and .runtime_provenance.runtime=="claude_code" and .runtime_provenance.requested_model=="claude-sonnet-5" and .runtime_provenance.resolved_model=="claude-sonnet-5" and .runtime_provenance.identity_proven==true' "$RESEARCH" >/dev/null || { cat "$RESEARCH" >&2; fail "project-aware ahead-of-work Sonnet research forecast is not live/ready"; }
 pass "project-aware VEKL ahead-of-work forecast is live through exact Sonnet"
 

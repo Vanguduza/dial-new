@@ -89,6 +89,8 @@ When Sol returns `ACCOUNT_LIMITED`, `RATE_LIMITED` or `MODEL_LIMITED`, Oracle pe
 
 `AUTH_FAILED` remains fail-closed until an external authentication change. A process/toolchain failure is never relabelled as a quota state merely to unlock fallback. `dial_runtime_capacity_status` / `npm run agent:runtime:capacity-status` expose the current decision, retry boundary, identity-cache validity and recent live-versus-suppressed call counts.
 
+Fallback-readiness finalization also reuses a current semantic Sonnet ahead-of-work forecast when a preceding full-qualification attempt already produced it after discovering a Sol capacity boundary. It refreshes only when that forecast is stale or semantically invalid, avoiding a second identical fallback research turn.
+
 ## Operational execution
 
 A queued instruction first executes through exact Sol. The executor verifies provider/model provenance from the actual turn.
