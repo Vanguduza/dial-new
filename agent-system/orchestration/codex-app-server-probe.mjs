@@ -52,6 +52,16 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
   let finalMessage = '';
   let completedTurn = null;
 
+  function rejectPending(error) {
+    for (const waiter of pending.values()) waiter.reject(error);
+    pending.clear();
+  }
+
+  child.on('error', (error) => {
+    terminalError = terminalError ?? { message: String(error?.message || error), codexErrorInfo: 'AppServerProcessError' };
+    rejectPending(error);
+  });
+
   function send(message) {
     child.stdin.write(`${JSON.stringify(message)}\n`);
   }
@@ -91,7 +101,10 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
         resolve();
       }
     });
-    child.on('exit', () => resolve());
+    child.on('exit', (code, signal) => {
+      if (pending.size) rejectPending(new Error(`Codex App Server exited before RPC completion (code=${code}, signal=${signal})`));
+      resolve();
+    });
   });
 
   let rpcFailure = null;
@@ -191,6 +204,16 @@ async function withCodexAppServerRpc({ repoDir = DEFAULT_REPO, timeoutMs = 30000
   const rl = readline.createInterface({ input: child.stdout, crlfDelay: Infinity });
   let nextId = 1;
   const pending = new Map();
+
+  function rejectPending(error) {
+    for (const waiter of pending.values()) waiter.reject(error);
+    pending.clear();
+  }
+
+  child.on('error', (error) => rejectPending(error));
+  child.on('exit', (code, signal) => {
+    if (pending.size) rejectPending(new Error(`Codex App Server exited before RPC completion (code=${code}, signal=${signal})`));
+  });
 
   function send(message) {
     child.stdin.write(`${JSON.stringify(message)}\n`);
