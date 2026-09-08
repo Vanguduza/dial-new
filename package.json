@@ -89,7 +89,8 @@
     "agent:research:refresh": "node agent-system/orchestration/engineering-presearch.mjs refresh",
     "agent:research:status": "node agent-system/orchestration/engineering-presearch.mjs status",
     "agent:skills:live-fallback-canary": "node agent-system/bin/skills-live-canary.mjs --fallback-only",
-    "agent:development:finalize-readiness": "bash deploy/oracle/hermes-codex/finalize-development-readiness.sh"
+    "agent:development:finalize-readiness": "bash deploy/oracle/hermes-codex/finalize-development-readiness.sh",
+    "agent:runtime:capacity-status": "node agent-system/orchestration/runtime-capacity-status.mjs"
   },
   "dependencies": {
     "sharp": "0.35.4",

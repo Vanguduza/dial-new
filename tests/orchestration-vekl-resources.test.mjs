@@ -4,6 +4,9 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { resolveEngineeringResources } from '../agent-system/orchestration/engineering-resource-resolver.mjs';
 import { refreshAheadOfWorkResearch } from '../agent-system/orchestration/engineering-presearch.mjs';
+import { runProjectAwareResearchForecast } from '../agent-system/orchestration/engineering-research-manager.mjs';
+import { loadRuntimeHealth, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
+import { cachedCodexIdentity } from '../agent-system/orchestration/runtime-identity-cache.mjs';
 import { persistSkillActivation, activationSummary, renderSkillActivationBundle } from '../agent-system/orchestration/skill-activation-store.mjs';
 import { reResolvePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from '../agent-system/orchestration/engineering-knowledge-broker.mjs';
 import { ensureControlLayout, readJson, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
@@ -42,6 +45,64 @@ describe('VEKL 2 federated engineering resources',()=>{
     const cached=readJson(index.resources['ref.supabase.docs'].cache_ref,null,root);
     expect(cached.executable).toBe(false);
     expect(cached.authority).toBe('ENGINEERING_GUIDANCE_ONLY');
+  });
+
+  it('turns an exact Sol research quota response into reusable identity plus cooldown before falling back',async()=>{
+    const root=temp('vekl2-sol-boundary');ensureControlLayout(root);
+    const forecast={schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
+      {feature_id:'GROC-F021',objective:'A',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+      {feature_id:'PLAT-F014',objective:'B',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+      {feature_id:null,objective:'C',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+    ],exclusions:[]};
+    const result=await runProjectAwareResearchForecast({
+      repoDir,root,sourceIds:[],
+      primaryRunner:async()=>({ok:false,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,thread_id:'thread-test',forecast:null,error:"You've hit your usage limit; try again at Sep 12th, 2026 5:42 AM. usageLimitExceeded",stderr:''}),
+      fallbackRunner:async()=>({ok:true,runtime:'claude_code',requested_model:'claude-sonnet-5',resolved_model:'claude-sonnet-5',identity_proven:true,forecast}),
+    });
+    expect(result.runtime).toBe('claude_code');
+    const health=loadRuntimeHealth(root).runtimes.codex_app_server;
+    expect(health.state).toBe('ACCOUNT_LIMITED');
+    expect(health.retry_after).toBe('2026-09-12T05:42:00.000Z');
+    expect(cachedCodexIdentity({repoDir,root})).not.toBeNull();
+  });
+
+  it('does not invoke Sol research while a known provider cooldown is active',async()=>{
+    const root=temp('vekl2-sol-cooldown');ensureControlLayout(root);
+    recordRuntimeHealth('codex_app_server',{
+      state:'ACCOUNT_LIMITED',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',
+      retry_after:new Date(Date.now()+60_000).toISOString(),details:{identity_proven:true,toolchain_usable:false},
+    },root);
+    let primaryCalls=0,fallbackCalls=0;
+    const forecast={schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
+      {feature_id:'GROC-F021',objective:'A',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+      {feature_id:'PLAT-F014',objective:'B',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+      {feature_id:null,objective:'C',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
+    ],exclusions:[]};
+    const result=await runProjectAwareResearchForecast({
+      repoDir,root,sourceIds:[],
+      primaryRunner:async()=>{primaryCalls++;return {ok:true,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,forecast};},
+      fallbackRunner:async()=>{fallbackCalls++;return {ok:true,runtime:'claude_code',requested_model:'claude-sonnet-5',resolved_model:'claude-sonnet-5',identity_proven:true,forecast};},
+    });
+    expect(primaryCalls).toBe(0);
+    expect(fallbackCalls).toBe(1);
+    expect(result.runtime).toBe('claude_code');
+  });
+
+  it('keeps a forecast current across volatile mission turn changes but refreshes on priority changes',async()=>{
+    const root=temp('vekl2-semantic-fingerprint');ensureControlLayout(root);
+    let calls=0;
+    const item={feature_id:'GROC-F021',objective:'Research bounded work',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]};
+    const planner=async()=>{calls++;return {ok:true,runtime:'claude_code',requested_model:'claude-sonnet-5',resolved_model:'claude-sonnet-5',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[item,{...item,feature_id:'PLAT-F014'},{...item,feature_id:null}],exclusions:[]}};};
+    writeJsonAtomic('missions/dial-development-root.json',{state:'RUNNING',objective:'Continue DIAL',priority_directive:'canonical order',turn_number:1,last_packet_id:'a',last_packet_state:'COMPLETED'},root);
+    await refreshAheadOfWorkResearch({repoDir,root,planner,fetchImpl:async()=>new Response('ok',{status:200,headers:{'content-type':'text/plain'}})});
+    expect(calls).toBe(1);
+    writeJsonAtomic('missions/dial-development-root.json',{state:'BLOCKED_OWNER',objective:'Continue DIAL',priority_directive:'canonical order',turn_number:99,last_packet_id:'different',last_packet_state:'FAILED'},root);
+    const reused=await refreshAheadOfWorkResearch({repoDir,root,planner,fetchImpl:async()=>new Response('ok',{status:200,headers:{'content-type':'text/plain'}})});
+    expect(calls).toBe(1);
+    expect(reused.refresh_state).toBe('CURRENT');
+    writeJsonAtomic('missions/dial-development-root.json',{state:'RUNNING',objective:'Continue DIAL',priority_directive:'prioritise changed bounded work',turn_number:100,last_packet_id:'different2',last_packet_state:'COMPLETED'},root);
+    await refreshAheadOfWorkResearch({repoDir,root,planner,fetchImpl:async()=>new Response('ok',{status:200,headers:{'content-type':'text/plain'}})});
+    expect(calls).toBe(2);
   });
 
   it('persists resource provenance in the same packet activation and renders cached presearch evidence for fallback symmetry',()=>{

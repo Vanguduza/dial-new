@@ -13,6 +13,8 @@ import {
   HERMES_PREFERRED_CODEX_MODEL,
 } from './hermes-plan-models.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
+import { cachedCodexIdentity, recordCodexIdentityProof } from './runtime-identity-cache.mjs';
+import { parseProviderRetryAfter, primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 import { appendJsonl } from './state-store.mjs';
 import { activationSummary, loadSkillActivationForPacket, renderSkillActivationBundle, verifySkillActivation } from './skill-activation-store.mjs';
 
@@ -69,19 +71,25 @@ export function failoverEligible(state) {
   return FAILOVER_STATES.has(state);
 }
 
-export function resolvePrimaryTurnIdentity({ usage = null, preTurnHealth = null } = {}) {
+export function resolvePrimaryTurnIdentity({ usage = null, preTurnHealth = null, cachedIdentity = null } = {}) {
   const directUsageIdentity = usage?.model === PRIMARY_MODEL && usage?.provider === 'openai-codex';
   const freshPinnedPreflightIdentity = Boolean(
-    runtimeEligible(preTurnHealth, { hardPin: true, requireFresh: true, maxAgeMs: 15 * 60 * 1000 })
+    preTurnHealth
+    && runtimeEligible(preTurnHealth, { hardPin: true, requireFresh: true, maxAgeMs: 15 * 60 * 1000 })
     && preTurnHealth?.requested_model === PRIMARY_MODEL
     && preTurnHealth?.resolved_model === PRIMARY_MODEL
     && preTurnHealth?.details?.identity_proven === true
     && preTurnHealth?.details?.rerouted !== true
   );
+  const cachedPinnedIdentity = Boolean(
+    cachedIdentity?.identity_proven === true
+    && cachedIdentity?.requested_model === PRIMARY_MODEL
+    && cachedIdentity?.resolved_model === PRIMARY_MODEL
+  );
   const identityProven = directUsageIdentity || (
     usage?.model == null
     && usage?.provider == null
-    && freshPinnedPreflightIdentity
+    && (freshPinnedPreflightIdentity || cachedPinnedIdentity)
   );
   return {
     identityProven,
@@ -89,7 +97,9 @@ export function resolvePrimaryTurnIdentity({ usage = null, preTurnHealth = null 
     provider: usage?.provider ?? (identityProven ? 'openai-codex' : null),
     identitySource: directUsageIdentity
       ? 'HERMES_USAGE_REPORT'
-      : (identityProven ? 'EXPLICIT_HERMES_HARD_PIN_PLUS_FRESH_CODEX_PROVENANCE' : null),
+      : (freshPinnedPreflightIdentity
+        ? 'EXPLICIT_HERMES_HARD_PIN_PLUS_FRESH_CODEX_PROVENANCE'
+        : (cachedPinnedIdentity ? 'EXPLICIT_HERMES_HARD_PIN_PLUS_CACHED_CODEX_PROVENANCE' : null)),
   };
 }
 
@@ -133,11 +143,12 @@ export async function runPrimaryHermes({
 
     const usage = readJsonFile(usageFile);
     const preTurnHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
+    const cachedIdentity = cachedCodexIdentity({ repoDir, root });
     // Hermes' current openai-codex one-shot usage report can omit model/provider even
     // when the underlying Codex App Server turn is hard-pinned. In that specific
     // case, preserve fail-closed identity by requiring fresh exact App Server
     // provenance immediately before the explicitly pinned --provider/--model turn.
-    const { identityProven, resolvedModel, provider, identitySource } = resolvePrimaryTurnIdentity({ usage, preTurnHealth });
+    const { identityProven, resolvedModel, provider, identitySource } = resolvePrimaryTurnIdentity({ usage, preTurnHealth, cachedIdentity });
     const completed = result.status === 0 && usage?.failed !== true && usage?.completed !== false;
     const ok = completed && identityProven;
     const state = ok
@@ -153,10 +164,15 @@ export async function runPrimaryHermes({
           error: result.error,
         }));
 
+    const retryAfter = state === 'ACCOUNT_LIMITED' || state === 'RATE_LIMITED' || state === 'MODEL_LIMITED'
+      ? parseProviderRetryAfter([result.stderr, result.stdout, usage ? JSON.stringify(usage) : '', result.error?.message].filter(Boolean).join('\n'))
+      : null;
+    if (identityProven) recordCodexIdentityProof({ repoDir, root, source: 'HERMES_OPERATIONAL_TURN', sessionId: usage?.session_id ?? null });
     const observation = recordRuntimeHealth('codex_app_server', {
       state,
       requested_model: PRIMARY_MODEL,
       resolved_model: resolvedModel,
+      retry_after: retryAfter,
       reason: ok
         ? `operational Hermes turn completed through Codex App Server with exact ${PRIMARY_MODEL} provenance`
         : `operational Hermes turn failed or lost hard-pin proof: ${state}`,
@@ -271,7 +287,33 @@ export async function executeHermesInstruction({
     '',
     instruction,
   ].join('\n') : instruction;
-  const primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation });
+  const priorPrimaryHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
+  const primaryDecision = primaryAttemptDecision(priorPrimaryHealth);
+  let primary;
+  if (!primaryDecision.allowed) {
+    primary = {
+      ok: false,
+      runtime: 'codex_app_server',
+      preferred_model: PRIMARY_MODEL,
+      requested_model: PRIMARY_MODEL,
+      resolved_model: priorPrimaryHealth?.resolved_model ?? null,
+      state: priorPrimaryHealth?.state ?? 'UNKNOWN',
+      skipped: true,
+      skip_reason: primaryDecision.reason,
+      retry_after: primaryDecision.retry_after ?? priorPrimaryHealth?.retry_after ?? null,
+      health: priorPrimaryHealth,
+      started_at: startedAt,
+      finished_at: now(),
+    };
+    appendJsonl('events/hermes-operational-turns.jsonl', {
+      event: 'HERMES_PRIMARY_ATTEMPT_SUPPRESSED',
+      runtime: 'codex_app_server', requested_model: PRIMARY_MODEL,
+      state: primary.state, reason: primary.skip_reason, retry_after: primary.retry_after,
+      packet_id: packetId, at: now(),
+    }, root);
+  } else {
+    primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation });
+  }
   if (primary?.ok) {
     reconcileHermesRuntime({ root });
     const event = {
@@ -366,8 +408,12 @@ export async function executeHermesInstruction({
     'PRIMARY HERMES RUNTIME FAILURE',
     `Failure class: ${failureState}`,
     '',
-    `The ${PRIMARY_MODEL} / Codex App Server attempt may have completed some tool actions before the runtime failed.`,
-    'Do not blindly replay the failed attempt. Inspect the current repository/worktree first and continue only from observable current state.',
+    primary?.skipped
+      ? `The ${PRIMARY_MODEL} / Codex App Server call was intentionally skipped because a known provider cooldown is active; no primary tool actions occurred in this packet.`
+      : `The ${PRIMARY_MODEL} / Codex App Server attempt may have completed some tool actions before the runtime failed.`,
+    primary?.skipped
+      ? 'Continue through the exact approved fallback from current repository state without spending another Sol inference during the cooldown.'
+      : 'Do not blindly replay the failed attempt. Inspect the current repository/worktree first and continue only from observable current state.',
     'DIAL repository canon, Feature IDs, FRCs, gates, tests and evidence remain authoritative.',
     'Do not advance a gate merely because previous runtime prose or memory says work is complete.',
     `The only permitted fallback runtime is official Claude Code with exact ${FALLBACK_MODEL}.`,

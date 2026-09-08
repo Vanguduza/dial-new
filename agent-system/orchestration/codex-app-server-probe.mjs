@@ -4,7 +4,9 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, writeJsonAtomic } from './state-store.mjs';
-import { recordRuntimeHealth } from './runtime-health.mjs';
+import { healthFresh, loadRuntimeHealth, recordRuntimeHealth } from './runtime-health.mjs';
+import { cachedCodexIdentity, codexIdentityFingerprint, recordCodexIdentityProof } from './runtime-identity-cache.mjs';
+import { parseProviderRetryAfter, primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 import {
   loadHermesPlanModels,
   parseCodexModelListEvidence,
@@ -28,8 +30,57 @@ function classifyCodexError(error) {
   return 'UNKNOWN';
 }
 
-export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeoutMs = 90000 } = {}) {
+export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeoutMs = 90000, forceLive = false, ignoreCooldown = false } = {}) {
   const startedAt = now();
+  const currentHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
+  const staticIdentity = codexIdentityFingerprint({ repoDir });
+  if (!staticIdentity.material.codex_path || staticIdentity.material.codex_auth_route !== 'CHATGPT_OAUTH') {
+    const state = staticIdentity.material.codex_path ? 'AUTH_FAILED' : 'PROCESS_FAILED';
+    const reason = staticIdentity.material.codex_path
+      ? 'Codex deterministic auth check is not ChatGPT OAuth; live inference suppressed'
+      : 'Codex executable is unavailable; live inference suppressed';
+    const deterministic = {
+      event: 'CODEX_APP_SERVER_PROBE', state, requested_model: REQUESTED_MODEL, resolved_model: null,
+      identity_proven: false, rerouted: null, response_ok: false, live_inference: false, cached_identity: false,
+      skipped_reason: state === 'AUTH_FAILED' ? 'DETERMINISTIC_AUTH_FAILED' : 'DETERMINISTIC_CODEX_UNAVAILABLE',
+      retry_after: null, error: { message: reason }, stderr_tail: null, started_at: startedAt, finished_at: now(),
+    };
+    writeJsonAtomic('runtime-health/codex-app-server-probe.json', deterministic, root);
+    appendJsonl('events/runtime-probes.jsonl', { ...deterministic, event: 'CODEX_APP_SERVER_PROBE_SKIPPED' }, root);
+    recordRuntimeHealth('codex_app_server', {
+      state, requested_model: REQUESTED_MODEL, resolved_model: null, reason,
+      details: { identity_proven: false, toolchain_usable: false, source: 'deterministic_preflight', live_inference: false },
+    }, root);
+    return deterministic;
+  }
+  const cachedIdentity = cachedCodexIdentity({ repoDir, root });
+  const attempt = primaryAttemptDecision(currentHealth);
+  if (!forceLive && cachedIdentity && currentHealth?.state === 'HEALTHY' && healthFresh(currentHealth)) {
+    const reused = {
+      event: 'CODEX_APP_SERVER_PROBE', state: 'HEALTHY', requested_model: REQUESTED_MODEL,
+      resolved_model: REQUESTED_MODEL, identity_proven: true, rerouted: null,
+      response_ok: true, live_inference: false, cached_identity: true,
+      skipped_reason: 'FRESH_HEALTH_PLUS_IDENTITY_CACHE', retry_after: null,
+      thread_id: cachedIdentity.thread_id ?? currentHealth?.details?.thread_id ?? null,
+      error: null, stderr_tail: null, started_at: startedAt, finished_at: now(),
+    };
+    writeJsonAtomic('runtime-health/codex-app-server-probe.json', reused, root);
+    appendJsonl('events/runtime-probes.jsonl', { ...reused, event: 'CODEX_APP_SERVER_PROBE_REUSED' }, root);
+    return reused;
+  }
+  if (!forceLive && !ignoreCooldown && !attempt.allowed) {
+    const skipped = {
+      event: 'CODEX_APP_SERVER_PROBE', state: currentHealth?.state ?? 'UNKNOWN',
+      requested_model: REQUESTED_MODEL, resolved_model: cachedIdentity?.resolved_model ?? currentHealth?.resolved_model ?? null,
+      identity_proven: Boolean(cachedIdentity), rerouted: null, response_ok: false,
+      live_inference: false, cached_identity: Boolean(cachedIdentity), skipped_reason: attempt.reason,
+      retry_after: attempt.retry_after ?? currentHealth?.retry_after ?? null, error: null, stderr_tail: null,
+      started_at: startedAt, finished_at: now(),
+    };
+    writeJsonAtomic('runtime-health/codex-app-server-probe.json', skipped, root);
+    appendJsonl('events/runtime-probes.jsonl', { ...skipped, event: 'CODEX_APP_SERVER_PROBE_SKIPPED' }, root);
+    return skipped;
+  }
   const child = spawn('codex', ['app-server', '--listen', 'stdio://'], {
     cwd: repoDir,
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -149,6 +200,8 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
   const responseOk = /DIAL_CODEX_OK/.test(finalMessage);
   const identityProven = resolvedModel === REQUESTED_MODEL && !reroute;
   const state = error ? classifyCodexError(error) : (responseOk && identityProven ? 'HEALTHY' : 'TOOLCHAIN_DEGRADED');
+  const retryAfter = error ? parseProviderRetryAfter(JSON.stringify(error)) : null;
+  if (identityProven) recordCodexIdentityProof({ repoDir, root, source: 'LIVE_CODEX_APP_SERVER_PROBE', threadId: thread?.id ?? null });
 
   const probe = {
     event: 'CODEX_APP_SERVER_PROBE',
@@ -158,6 +211,9 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
     identity_proven: identityProven,
     rerouted: reroute,
     response_ok: responseOk,
+    live_inference: true,
+    cached_identity: false,
+    retry_after: retryAfter,
     thread_id: thread?.id ?? null,
     error: error ?? null,
     stderr_tail: stderr ? stderr.slice(-3000) : null,
@@ -171,6 +227,7 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
+    retry_after: retryAfter,
     reason: error
       ? JSON.stringify(error).slice(0, 2000)
       : (identityProven ? 'direct Codex App Server probe passed' : 'model identity not proven'),
@@ -344,9 +401,13 @@ async function main() {
     if (listed.source === 'unavailable') process.exitCode = 1;
     return;
   }
-  const probe = await probeCodexAppServer({ repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO });
+  const probe = await probeCodexAppServer({
+    repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO,
+    forceLive: process.argv.includes('--force-live'),
+    ignoreCooldown: process.argv.includes('--ignore-cooldown'),
+  });
   process.stdout.write(`${JSON.stringify(probe, null, 2)}\n`);
-  if (probe.state !== 'HEALTHY') process.exitCode = 1;
+  if (probe.state !== 'HEALTHY' && probe.live_inference !== false) process.exitCode = 1;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

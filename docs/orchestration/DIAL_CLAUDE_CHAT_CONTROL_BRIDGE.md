@@ -80,6 +80,10 @@ The bridge exposes:
 - `dial_verification_status`
 - `dial_recent_failures`
 - `dial_evidence`
+- `dial_skill_status`
+- `dial_engineering_knowledge_status`
+- `dial_engineering_research_status`
+- `dial_runtime_capacity_status`
 
 There is intentionally no arbitrary command execution tool.
 
@@ -294,4 +298,6 @@ A DIAL qualification must never reboot the shared Oracle host or kill a global/s
 
 ## VEKL observability
 
-The DIAL-only chat control surface exposes read-only `dial_skill_status` and includes VEKL activation/outcome events in its cursor-based progress feed. It may show activation ID, policy version, exact selected skill provenance and resolution state, but it has no generic skill-install/promote shell. Skill qualification/promotion remains governed by `DEC-019` and the DIAL tooling/donor gates.
+The DIAL-only chat control surface exposes read-only `dial_skill_status`, `dial_engineering_knowledge_status` and `dial_engineering_research_status`, and includes VEKL activation/outcome/research events in its cursor-based progress feed. It may show activation ID, policy version, exact selected skill/resource provenance, research forecast linkage and resolution state, but it has no generic skill-install/promote shell. Skill/capability qualification remains governed by `DEC-019`/`DEC-020` and the DIAL tooling/donor gates.
+
+`dial_runtime_capacity_status` adds `DEC-022` observability without creating a model-control primitive. It reports current exact-Sol health, provider cooldown/retry boundary, fingerprint-bound identity-cache validity, the current ahead-of-work forecast and recent counts of live versus suppressed/reused Sol probes, operational turns and research forecasts. It cannot change model selection, clear a cooldown or manufacture healthy evidence.

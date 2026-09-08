@@ -6,6 +6,9 @@ import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { HERMES_PREFERRED_CLAUDE_MODEL, HERMES_PREFERRED_CODEX_MODEL } from './hermes-plan-models.mjs';
 import { appendJsonl, readJson } from './state-store.mjs';
+import { loadRuntimeHealth, recordRuntimeHealth } from './runtime-health.mjs';
+import { recordCodexIdentityProof } from './runtime-identity-cache.mjs';
+import { classifyRuntimeBoundaryText, parseProviderRetryAfter, primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -113,7 +116,7 @@ async function runCodex({ repoDir, prompt, timeoutMs = DEFAULT_TIMEOUT_MS } = {}
   const resolved = reroute?.toModel || reroute?.to_model || thread?.model || thread?.modelId || null;
   const identity = resolved === HERMES_PREFERRED_CODEX_MODEL && !reroute;
   const forecast = extractJson(final);
-  return { ok: Boolean(identity && !error && forecast), runtime: 'codex_app_server', requested_model: HERMES_PREFERRED_CODEX_MODEL, resolved_model: resolved, identity_proven: identity, forecast, error: serialiseError(error) || (forecast ? null : 'Codex returned no valid forecast JSON'), raw: final.slice(-12000), stderr: stderr.slice(-4000) };
+  return { ok: Boolean(identity && !error && forecast), runtime: 'codex_app_server', requested_model: HERMES_PREFERRED_CODEX_MODEL, resolved_model: resolved, identity_proven: identity, thread_id: thread?.id ?? null, forecast, error: serialiseError(error) || (forecast ? null : 'Codex returned no valid forecast JSON'), raw: final.slice(-12000), stderr: stderr.slice(-4000) };
 }
 
 function runClaude({ repoDir, prompt, timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
@@ -127,11 +130,55 @@ function runClaude({ repoDir, prompt, timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
   return { ok: Boolean(result.status === 0 && identity && forecast), runtime: 'claude_code', requested_model: HERMES_PREFERRED_CLAUDE_MODEL, resolved_model: resolved, identity_proven: identity, forecast, error, raw: String(parsed?.result ?? result.stdout ?? '').slice(-12000) };
 }
 
-export async function runProjectAwareResearchForecast({ repoDir = DEFAULT_REPO, root, sourceIds = [] } = {}) {
+export async function runProjectAwareResearchForecast({ repoDir = DEFAULT_REPO, root, sourceIds = [], primaryRunner = runCodex, fallbackRunner = runClaude } = {}) {
   const prompt = forecastPrompt(sourceIds, { root, repoDir });
-  let primary; try { primary = await runCodex({ repoDir, prompt }); } catch (error) { primary = { ok: false, error: String(error?.message || error), runtime: 'codex_app_server' }; }
-  if (primary.ok) { appendJsonl('events/engineering-research.jsonl', { event: 'ENGINEERING_RESEARCH_FORECAST_MODEL_COMPLETED', runtime: primary.runtime, resolved_model: primary.resolved_model, at: now() }, root); return primary; }
-  let fallback; try { fallback = runClaude({ repoDir, prompt }); } catch (error) { fallback = { ok: false, error: String(error?.message || error), runtime: 'claude_code' }; }
+  const solHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
+  const solDecision = primaryAttemptDecision(solHealth);
+  let primary;
+  if (!solDecision.allowed) {
+    primary = {
+      ok: false, runtime: 'codex_app_server', requested_model: HERMES_PREFERRED_CODEX_MODEL,
+      resolved_model: solHealth?.resolved_model ?? null, identity_proven: solHealth?.details?.identity_proven === true,
+      skipped: true, retry_after: solDecision.retry_after ?? solHealth?.retry_after ?? null,
+      error: `Sol presearch skipped: ${solDecision.reason}${solDecision.retry_after ? ` until ${solDecision.retry_after}` : ''}`,
+    };
+    appendJsonl('events/engineering-research.jsonl', {
+      event: 'ENGINEERING_RESEARCH_SOL_SKIPPED', reason: solDecision.reason,
+      state: solHealth?.state ?? null, retry_after: primary.retry_after, at: now(),
+    }, root);
+  } else {
+    try { primary = await primaryRunner({ repoDir, prompt }); }
+    catch (error) { primary = { ok: false, error: String(error?.message || error), runtime: 'codex_app_server' }; }
+  }
+  if (primary.identity_proven === true && primary.resolved_model === HERMES_PREFERRED_CODEX_MODEL) {
+    recordCodexIdentityProof({ repoDir, root, source: 'ENGINEERING_RESEARCH_FORECAST', threadId: primary.thread_id ?? null });
+  }
+  if (primary.ok) {
+    recordRuntimeHealth('codex_app_server', {
+      state: 'HEALTHY',
+      requested_model: HERMES_PREFERRED_CODEX_MODEL,
+      resolved_model: HERMES_PREFERRED_CODEX_MODEL,
+      reason: 'project-aware ahead-of-work research completed through exact gpt-5.6-sol',
+      details: { identity_proven: true, toolchain_usable: true, rerouted: false, source: 'engineering_research_forecast' },
+    }, root);
+    appendJsonl('events/engineering-research.jsonl', { event: 'ENGINEERING_RESEARCH_FORECAST_MODEL_COMPLETED', runtime: primary.runtime, resolved_model: primary.resolved_model, identity_cache_refreshed: true, at: now() }, root);
+    return primary;
+  }
+  const primaryBoundary = classifyRuntimeBoundaryText([primary.error, primary.stderr].filter(Boolean).join('\n'));
+  if (primaryBoundary && primary.identity_proven === true && primary.resolved_model === HERMES_PREFERRED_CODEX_MODEL) {
+    const retryAfter = ['ACCOUNT_LIMITED', 'RATE_LIMITED', 'MODEL_LIMITED'].includes(primaryBoundary)
+      ? parseProviderRetryAfter([primary.error, primary.stderr].filter(Boolean).join('\n'))
+      : null;
+    recordRuntimeHealth('codex_app_server', {
+      state: primaryBoundary, requested_model: HERMES_PREFERRED_CODEX_MODEL, resolved_model: HERMES_PREFERRED_CODEX_MODEL,
+      retry_after: retryAfter, reason: `project-aware Sol research reached runtime boundary: ${primaryBoundary}`,
+      details: { identity_proven: true, toolchain_usable: false, rerouted: false, source: 'engineering_research_forecast_failure' },
+    }, root);
+    appendJsonl('events/engineering-research.jsonl', {
+      event: 'ENGINEERING_RESEARCH_SOL_BOUNDARY_RECORDED', state: primaryBoundary, retry_after: retryAfter, at: now(),
+    }, root);
+  }
+  let fallback; try { fallback = await fallbackRunner({ repoDir, prompt }); } catch (error) { fallback = { ok: false, error: String(error?.message || error), runtime: 'claude_code' }; }
   appendJsonl('events/engineering-research.jsonl', { event: fallback.ok ? 'ENGINEERING_RESEARCH_FORECAST_MODEL_COMPLETED' : 'ENGINEERING_RESEARCH_FORECAST_MODEL_UNAVAILABLE', runtime: fallback.runtime, resolved_model: fallback.resolved_model ?? null, primary_error: primary.error ?? null, fallback_error: fallback.error ?? null, at: now() }, root);
   return fallback.ok ? fallback : { ok: false, runtime: null, requested_model: null, resolved_model: null, identity_proven: false, forecast: null, error: `Sol unavailable: ${primary.error || 'unknown'}; Sonnet unavailable: ${fallback.error || 'unknown'}` };
 }

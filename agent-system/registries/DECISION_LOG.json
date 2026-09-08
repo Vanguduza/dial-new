@@ -497,5 +497,30 @@
       "tests/orchestration-vekl-resources.test.mjs"
     ],
     "reopens_if": "the product owner changes the locked runtime chain or replaces the Oracle development-readiness policy with an equal-or-stronger fail-closed mechanism"
+  },
+  {
+    "decision_id": "DEC-022",
+    "decided_on": "2026-09-08",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / ORACLE ORCHESTRATION / MODEL CAPACITY",
+    "title": "Sol inference capacity is reserved for meaningful manager and mandatory live-certification work",
+    "decision": "DIAL must preserve GPT-5.6 Sol subscription capacity by using deterministic checks, current runtime health and a fingerprint-bound exact-identity cache before any inference probe. A supervisor/service restart does not invalidate still-valid identity evidence. When Sol reports ACCOUNT_LIMITED, RATE_LIMITED or MODEL_LIMITED, the control plane records the provider retry boundary/cooldown and suppresses further Sol probes, ordinary packet attempts and ahead-of-work Sol research until that boundary; exact Claude Sonnet 5 is used according to the existing locked fallback policy. VEKL ahead-of-work forecasts are invalidated by semantic project/plan/priority/work changes, not volatile mission turn IDs, packet IDs or RUNNING/BLOCKED transitions. Full production qualification may deliberately force the minimum live Sol proofs required by the certification contract, but must reuse those proofs instead of issuing duplicate fixed-token/recovery calls.",
+    "consequence": "Sol capacity is spent first on meaningful manager/complex implementation/review work and the irreducible live evidence required for full certification, not repeated 'prove you are Sol' traffic. Identity-cache validity is fail-closed against Codex/Hermes/config/control-code fingerprint changes and expiry; provider cooldown never manufactures HEALTHY state; the exact GPT-5.6 Sol -> Claude Sonnet 5 -> no-runtime chain, VEKL provenance, contract/reviewer gates and PRODUCTION_GREEN requirements remain unchanged.",
+    "record": "docs/orchestration/HERMES_CODEX_CONTROL_PLANE_DESIGN.md; docs/orchestration/DIAL_HERMES_RUNTIME_BOUNDARY.md; docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md",
+    "enforced_by": [
+      "agent-system/orchestration/runtime-capacity-policy.mjs",
+      "agent-system/orchestration/runtime-identity-cache.mjs",
+      "agent-system/orchestration/runtime-capacity-status.mjs",
+      "agent-system/orchestration/codex-app-server-probe.mjs",
+      "agent-system/orchestration/supervisor.mjs",
+      "agent-system/orchestration/hermes-runtime-executor.mjs",
+      "agent-system/orchestration/engineering-research-manager.mjs",
+      "agent-system/orchestration/engineering-presearch.mjs",
+      "deploy/oracle/hermes-codex/qualify-control-plane.sh",
+      "tests/orchestration-control-plane.test.mjs",
+      "tests/orchestration-vekl-resources.test.mjs"
+    ],
+    "reopens_if": "the product owner changes the locked runtime chain, subscription-capacity policy or full-production live-evidence requirements"
   }
 ]

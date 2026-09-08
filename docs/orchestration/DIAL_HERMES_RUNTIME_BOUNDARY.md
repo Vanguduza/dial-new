@@ -65,6 +65,14 @@ A runtime is executable only when all are true:
 5. evidence is fresh;
 6. the exact model is one of the two locked runtime slots.
 
+### Sol capacity-preservation boundary (`DEC-022`)
+
+Runtime **identity**, **health**, and **capacity** are distinct evidence. A valid identity proof may outlive an individual health observation, but it is usable only while its runtime fingerprint remains unchanged. That fingerprint covers the Codex/Hermes executables and versions, ChatGPT OAuth route, Hermes configuration and identity-critical DIAL orchestration code. A service restart by itself is not an identity change and must not spend a new model turn.
+
+For a proven provider capacity state (`ACCOUNT_LIMITED`, `RATE_LIMITED`, `MODEL_LIMITED`), Oracle persists the provider reset/retry boundary where available and suppresses primary inference until it expires. This suppression is an availability decision, not a synthetic `HEALTHY` state. Ordinary work continues through exact Sonnet 5 only if the existing fallback eligibility/gate rules are satisfied. `AUTH_FAILED` requires external intervention; process/toolchain failures retain their real classifications.
+
+The same rule applies to project-aware VEKL research: a current semantic forecast is reused until Project Truth, the active plan, the owner priority directive or the active Feature/gate meaningfully changes or its TTL expires. Mission turn IDs, packet IDs, RUNNING/BLOCKED transitions and checkpoint timestamps do not by themselves justify another manager-model forecast.
+
 The complete policy is:
 
 ```text
@@ -91,6 +99,7 @@ Before either accepted development-ready gate, ordinary jobs are rejected as `DE
 The development gate is cryptographically pinned to the Git tree objects for:
 
 - `agent-system/orchestration`
+- `agent-system/engineering-knowledge`
 - `deploy/oracle/hermes-codex`
 
 Product-only commits therefore do not invalidate qualification. Any Hermes/deployment change does.

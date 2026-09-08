@@ -36,6 +36,7 @@ describe('DIAL Claude chat control surface', () => {
     expect(names).toContain('dial_mission_status');
     expect(names).toContain('dial_resume_mission');
     expect(names).toContain('dial_progress_since');
+    expect(names).toContain('dial_runtime_capacity_status');
     expect(names.some((name) => /shell|exec|filesystem/i.test(name))).toBe(false);
   });
 

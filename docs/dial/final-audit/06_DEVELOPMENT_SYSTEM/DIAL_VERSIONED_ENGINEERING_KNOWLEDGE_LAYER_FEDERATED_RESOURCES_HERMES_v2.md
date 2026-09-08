@@ -251,12 +251,14 @@ Ahead-of-work research refreshes when:
 
 - Project Truth changes;
 - the active Development Plan changes;
-- the DIAL mission advances;
-- the active checkpoint changes;
-- the periodic research timer expires;
-- an operator explicitly requests refresh.
+- the owner priority directive changes;
+- the active Feature or target gate changes materially;
+- the semantic research TTL expires;
+- an operator explicitly requests a forced refresh.
 
-A plan/mission fingerprint prevents unnecessary duplicate model calls.
+The fingerprint is deliberately **semantic**. Mission turn numbers, packet IDs, RUNNING/BLOCKED transitions, repository commit churn unrelated to the forecast meaning and checkpoint timestamps do not by themselves invalidate an otherwise-current forecast. This prevents repeated manager-model calls after every orchestration cycle.
+
+Under `DEC-022`, if Sol has a current proven account/rate/model cooldown, the research manager does not probe or invoke Sol again during that boundary. It records `ENGINEERING_RESEARCH_SOL_SKIPPED` and goes directly to exact Sonnet 5. If the current forecast fingerprint and TTL are still valid, neither model is invoked.
 
 ---
 

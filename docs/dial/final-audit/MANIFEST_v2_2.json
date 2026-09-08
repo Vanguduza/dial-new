@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-08T06:46:09.564Z",
+  "generated_at": "2026-09-08T10:09:32.606Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
-      "bytes": 17452,
-      "sha256": "bff6082201027a5ba10e9fb56d0ad30834d00c12cc118b99820c4ad06671ed33"
+      "bytes": 18153,
+      "sha256": "2b40ba3008489540916a897fcaa068267d538d72a7992c570e3f875e0942c359"
     },
     {
       "path": "00_MASTER/DIAL_FINAL_360_ECOSYSTEM_AUDIT_AND_DEVELOPMENT_PLAN_v1.md",
@@ -183,8 +183,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md",
-      "bytes": 23298,
-      "sha256": "c1f48119a870ba593922f74d5b20b96d4cb0cf00d80f417fa7f1859b23859c96"
+      "bytes": 23923,
+      "sha256": "437600a76ff738a5c78f2ba658ec8f92c4561fd093635076562098563358e97d"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",

@@ -7,7 +7,8 @@ import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
 import { evaluateDevelopmentUnblock } from './development-unblock.mjs';
 import { buildHandoffCapsule, saveHandoffCapsule } from './handoff-builder.mjs';
 import { expireHermesRuntimeSelection, reconcileHermesRuntime } from './hermes-runtime-router.mjs';
-import { loadRuntimeHealth, recordRuntimeHealth } from './runtime-health.mjs';
+import { healthFresh, loadRuntimeHealth, recordRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
+import { primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './state-store.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -76,30 +77,40 @@ export function initializeSupervisor(root) {
 }
 
 export function invalidateRuntimeEvidenceAfterSupervisorRestart(root) {
+  // Kept as a compatibility name, but restarts no longer burn model capacity by
+  // invalidating still-fresh identity/health evidence. Runtime identity is
+  // independently fingerprinted and operational turns refresh health.
   const runtimeHealth = loadRuntimeHealth(root);
-  for (const [runtime, health] of Object.entries(runtimeHealth.runtimes ?? {})) {
-    recordRuntimeHealth(runtime, {
-      state: 'UNKNOWN',
-      requested_model: health?.requested_model ?? null,
-      resolved_model: health?.resolved_model ?? null,
-      reason: 'supervisor restart requires fresh runtime/model provenance',
-      details: { previous_state: health?.state ?? null, previous_observed_at: health?.observed_at ?? null },
-    }, root);
-  }
   const hermes = readJson('state/hermes-runtime.json', null, root);
-  if (hermes?.status === 'ACTIVE') expireHermesRuntimeSelection('SUPERVISOR_RESTART_REQUIRES_REVALIDATION', root);
+  const activeHealth = hermes?.runtime ? runtimeHealth.runtimes?.[hermes.runtime] : null;
+  if (hermes?.status === 'ACTIVE' && !healthFresh(activeHealth)) {
+    expireHermesRuntimeSelection('SUPERVISOR_RESTART_FOUND_STALE_RUNTIME_HEALTH', root);
+  }
   appendJsonl('events/supervisor.jsonl', {
-    event: 'RUNTIME_EVIDENCE_INVALIDATED_AFTER_RESTART',
+    event: 'RUNTIME_EVIDENCE_PRESERVED_AFTER_RESTART',
     previous_hermes_selection_id: hermes?.selection_id ?? null,
+    active_health_fresh: healthFresh(activeHealth),
     at: now(),
   }, root);
+  return runtimeHealth;
 }
 
-export async function refreshRuntimeHealth({ repoDir = DEFAULT_REPO, root } = {}) {
+export async function refreshRuntimeHealth({ repoDir = DEFAULT_REPO, root, forceLive = false } = {}) {
   const results = {};
+  const current = loadRuntimeHealth(root)?.runtimes ?? {};
+  const sol = current.codex_app_server ?? null;
+  const solExactHealthy = runtimeEligible(sol, { hardPin: true, requireFresh: true })
+    && sol?.requested_model === 'gpt-5.6-sol' && sol?.resolved_model === 'gpt-5.6-sol';
+  const solAttempt = primaryAttemptDecision(sol);
   try {
-    const { probeCodexAppServer } = await import('./codex-app-server-probe.mjs');
-    results.codex_app_server = await probeCodexAppServer({ repoDir, root });
+    if (!forceLive && solExactHealthy) {
+      results.codex_app_server = { ...sol, reused: true, live_inference: false, skipped_reason: 'FRESH_RUNTIME_HEALTH' };
+    } else if (!forceLive && !solAttempt.allowed) {
+      results.codex_app_server = { ...sol, reused: true, live_inference: false, skipped_reason: solAttempt.reason, retry_after: solAttempt.retry_after ?? sol?.retry_after ?? null };
+    } else {
+      const { probeCodexAppServer } = await import('./codex-app-server-probe.mjs');
+      results.codex_app_server = await probeCodexAppServer({ repoDir, root, forceLive });
+    }
   } catch (error) {
     results.codex_app_server = recordRuntimeHealth('codex_app_server', {
       state: 'PROCESS_FAILED', requested_model: 'gpt-5.6-sol', resolved_model: null,
@@ -107,8 +118,15 @@ export async function refreshRuntimeHealth({ repoDir = DEFAULT_REPO, root } = {}
     }, root);
   }
   try {
-    const { probeClaudeCode } = await import('./claude-code-probe.mjs');
-    results.claude_code = probeClaudeCode({ repoDir, root });
+    const sonnet = current.claude_code ?? null;
+    const sonnetExactHealthy = runtimeEligible(sonnet, { hardPin: true, requireFresh: true })
+      && sonnet?.requested_model === 'claude-sonnet-5' && sonnet?.resolved_model === 'claude-sonnet-5';
+    if (!forceLive && sonnetExactHealthy) {
+      results.claude_code = { ...sonnet, reused: true, live_inference: false, skipped_reason: 'FRESH_RUNTIME_HEALTH' };
+    } else {
+      const { probeClaudeCode } = await import('./claude-code-probe.mjs');
+      results.claude_code = probeClaudeCode({ repoDir, root });
+    }
   } catch (error) {
     results.claude_code = recordRuntimeHealth('claude_code', {
       state: 'PROCESS_FAILED', requested_model: 'claude-sonnet-5', resolved_model: null,
@@ -286,7 +304,7 @@ async function main() {
   if (command === 'doctor') return console.log(JSON.stringify(doctor({ repoDir }), null, 2));
   if (command === 'status') return console.log(JSON.stringify(status({ repoDir }), null, 2));
   if (command === 'capture') return console.log(JSON.stringify(capture({ repoDir }), null, 2));
-  if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir }), null, 2));
+  if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir, forceLive: process.argv.includes('--force-live') }), null, 2));
   if (command === 'select-runtime') return console.log(JSON.stringify(selectRuntime(), null, 2));
   if (command === 'daemon') return daemon({ repoDir });
   if (command === 'health') {

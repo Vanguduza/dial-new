@@ -6,7 +6,10 @@ import { describe, expect, it } from 'vitest';
 import { buildCheckpoint, captureGitState, loadCheckpoint, saveCheckpoint } from '../agent-system/orchestration/checkpoint-store.mjs';
 import { appendFeatureMemory, readFeatureMemory } from '../agent-system/orchestration/feature-memory.mjs';
 import { buildHandoffCapsule, saveHandoffCapsule } from '../agent-system/orchestration/handoff-builder.mjs';
-import { healthFresh, runtimeEligible, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
+import { healthFresh, runtimeEligible, recordRuntimeHealth, loadRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
+import { classifyRuntimeBoundaryText, parseProviderRetryAfter, primaryAttemptDecision } from '../agent-system/orchestration/runtime-capacity-policy.mjs';
+import { cachedCodexIdentity, recordCodexIdentityProof, DEFAULT_IDENTITY_CACHE_MAX_AGE_MS } from '../agent-system/orchestration/runtime-identity-cache.mjs';
+import { invalidateRuntimeEvidenceAfterSupervisorRestart } from '../agent-system/orchestration/supervisor.mjs';
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
 import { classifyPrimaryFailure, executeHermesInstruction, resolvePrimaryTurnIdentity } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import {
@@ -80,6 +83,16 @@ describe('orchestration state store', () => {
 });
 
 describe('primary Hermes turn identity provenance', () => {
+  it('accepts missing Hermes usage model/provider with a matching cached exact identity proof', () => {
+    const cachedIdentity = {
+      identity_proven: true, requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol',
+    };
+    const exact = resolvePrimaryTurnIdentity({ usage: { model: null, provider: null }, cachedIdentity });
+    expect(exact.identityProven).toBe(true);
+    expect(exact.resolvedModel).toBe('gpt-5.6-sol');
+    expect(exact.identitySource).toBe('EXPLICIT_HERMES_HARD_PIN_PLUS_CACHED_CODEX_PROVENANCE');
+  });
+
   it('accepts missing Hermes usage model/provider only with fresh exact preflight identity', () => {
     const preflight = {
       state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol',
@@ -95,6 +108,49 @@ describe('primary Hermes turn identity provenance', () => {
     const wrong = resolvePrimaryTurnIdentity({ usage: { model: null, provider: null }, preTurnHealth: { ...preflight, resolved_model: 'gpt-5.6-mini' } });
     expect(wrong.identityProven).toBe(false);
     expect(wrong.resolvedModel).toBeNull();
+  });
+});
+
+describe('runtime capacity preservation policy', () => {
+  it('parses provider reset hints and suppresses repeated calls until the retry boundary', () => {
+    const nowMs = Date.parse('2026-09-08T08:00:00Z');
+    expect(parseProviderRetryAfter('try again at 9:16 AM', { nowMs })).toBe('2026-09-08T09:16:00.000Z');
+    expect(parseProviderRetryAfter('try again in 45 minutes', { nowMs })).toBe('2026-09-08T08:45:00.000Z');
+    expect(parseProviderRetryAfter('try again in 2 days', { nowMs })).toBe('2026-09-10T08:00:00.000Z');
+    expect(classifyRuntimeBoundaryText('usageLimitExceeded: weekly quota')).toBe('ACCOUNT_LIMITED');
+    expect(classifyRuntimeBoundaryText('HTTP 429 too many requests')).toBe('RATE_LIMITED');
+    const health = { state: 'ACCOUNT_LIMITED', observed_at: '2026-09-08T08:00:00Z', retry_after: '2026-09-08T09:16:00Z' };
+    expect(primaryAttemptDecision(health, { nowMs }).allowed).toBe(false);
+    expect(primaryAttemptDecision(health, { nowMs: Date.parse('2026-09-08T09:17:00Z') }).allowed).toBe(true);
+  });
+
+  it('preserves runtime evidence across supervisor restart instead of forcing a new inference probe', () => {
+    const root = temp('dial-runtime-restart');
+    recordRuntimeHealth('codex_app_server', {
+      state: 'ACCOUNT_LIMITED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol',
+      retry_after: new Date(Date.now() + 60_000).toISOString(), details: { identity_proven: true, toolchain_usable: false },
+    }, root);
+    invalidateRuntimeEvidenceAfterSupervisorRestart(root);
+    const preserved = loadRuntimeHealth(root).runtimes.codex_app_server;
+    expect(preserved.state).toBe('ACCOUNT_LIMITED');
+    expect(preserved.requested_model).toBe('gpt-5.6-sol');
+  });
+
+  it('keeps exact identity proof only while its fingerprint and bounded age remain valid', () => {
+    const root = temp('dial-identity-cache');
+    const observed = new Date().toISOString();
+    recordCodexIdentityProof({ repoDir: process.cwd(), root, source: 'TEST_IDENTITY_PROOF', observedAt: observed });
+    const current = cachedCodexIdentity({ repoDir: process.cwd(), root, nowMs: Date.parse(observed) + 1_000 });
+    expect(current?.identity_proven).toBe(true);
+    expect(current?.resolved_model).toBe('gpt-5.6-sol');
+    const expired = cachedCodexIdentity({ repoDir: process.cwd(), root, nowMs: Date.parse(observed) + DEFAULT_IDENTITY_CACHE_MAX_AGE_MS + 1 });
+    expect(expired).toBeNull();
+  });
+
+  it('fails closed on authentication failure without scheduling a model retry', () => {
+    const decision = primaryAttemptDecision({ state: 'AUTH_FAILED', observed_at: new Date().toISOString() });
+    expect(decision.allowed).toBe(false);
+    expect(decision.reason).toBe('AUTH_FAILED_REQUIRES_EXTERNAL_CHANGE');
   });
 });
 
@@ -201,6 +257,26 @@ describe('Hermes operational executor', () => {
     expect(result.resolved_model).toBe('gpt-5.6-sol');
     expect(result.fallback_used).toBe(false);
     expect(fallbackCalled).toBe(false);
+  });
+
+  it('does not spend another Sol turn while a known provider cooldown is active', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    recordRuntimeHealth('codex_app_server', {
+      state: 'ACCOUNT_LIMITED', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol',
+      retry_after: new Date(Date.now() + 60_000).toISOString(), details: { identity_proven: true, toolchain_usable: false },
+    }, root);
+    let primaryCalls = 0;
+    const result = await executeHermesInstruction({
+      repoDir: repo, root, instruction: 'Continue TEST-F001.',
+      primaryRunner: async () => { primaryCalls += 1; return { ok: true, state: 'HEALTHY' }; },
+      ensureFallback: async () => ({ eligible: true }),
+      contextBuilder: async () => ({ context: 'TEST' }),
+      fallbackRunner: async () => ({ event: { requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' }, output: { result: 'fallback without primary retry' } }),
+    });
+    expect(primaryCalls).toBe(0);
+    expect(result.runtime).toBe('claude_code');
+    expect(result.primary.skipped).toBe(true);
+    expect(result.primary.skip_reason).toBe('KNOWN_PROVIDER_LIMIT_COOLDOWN');
   });
 
   it('continues the same instruction directly through exact Sonnet 5 after Sol failure', async () => {

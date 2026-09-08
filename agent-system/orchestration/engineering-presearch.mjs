@@ -17,9 +17,12 @@ function fingerprint(repoDir,root){
   const h=crypto.createHash('sha256');
   for(const rel of TRUTH_FILES){const p=path.join(repoDir,rel);h.update(rel);h.update('\0');if(fs.existsSync(p))h.update(fs.readFileSync(p));h.update('\0');}
   const mission=readJson('missions/dial-development-root.json',null,root);
-  const missionSignal=mission?{state:mission.state,objective:mission.objective,priority_directive:mission.priority_directive,last_packet_id:mission.last_packet_id,last_packet_state:mission.last_packet_state,turn_number:mission.turn_number}:null;
+  // Forecast invalidation is semantic, not per-turn. Packet ids, turn numbers and
+  // RUNNING/BLOCKED transitions used to force a new model forecast after nearly
+  // every orchestration cycle and unnecessarily consumed manager-model capacity.
+  const missionSignal=mission?{objective:mission.objective,priority_directive:mission.priority_directive}:null;
   const pointer=readJson('state/active-checkpoint.json',null,root);const checkpoint=pointer?.path?readJson(pointer.path,null,root):null;
-  const checkpointSignal=checkpoint?{feature_id:checkpoint.feature_id,target_gate:checkpoint.target_gate,repository:checkpoint.repository?{commit:checkpoint.repository.commit,dirty:checkpoint.repository.dirty}:null}:null;
+  const checkpointSignal=checkpoint?{feature_id:checkpoint.feature_id,target_gate:checkpoint.target_gate}:null;
   for(const [rel,value] of [['mission-signal',missionSignal],['checkpoint-signal',checkpointSignal]]){h.update(rel);h.update('\0');if(value)h.update(JSON.stringify(value));h.update('\0');}
   return h.digest('hex');
 }

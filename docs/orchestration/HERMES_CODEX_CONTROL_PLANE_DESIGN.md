@@ -55,6 +55,7 @@ Before green, the queue accepts no development bypass. The sole exception is an 
 The production gate binds qualification to a cryptographic fingerprint of:
 
 - `agent-system/orchestration`
+- `agent-system/engineering-knowledge`
 - `deploy/oracle/hermes-codex`
 
 This means normal product changes can proceed without requalifying Hermes, but any control-plane/deployment change automatically blocks future queued work until requalification.
@@ -72,6 +73,21 @@ An executable runtime requires:
 - exact locked model identity.
 
 Codex qualification rejects rerouting. Claude qualification derives resolved identity from structured model-usage output.
+
+### Capacity-preserving runtime evidence (`DEC-022`)
+
+Sol inference is not a heartbeat. The control plane must exhaust deterministic evidence before issuing a model turn. Exact Codex identity is cached only after a live identity-proven Sol interaction and is bound to a fingerprint covering the Codex executable/version, ChatGPT OAuth route, Hermes executable/version/config and the identity/routing control code. The cache expires after seven days by default and becomes invalid immediately when that fingerprint changes.
+
+A supervisor or DIAL service restart preserves fresh runtime evidence rather than rewriting it to `UNKNOWN`. Background refresh reuses fresh health; a live Codex probe is required only when evidence is stale/invalid, a provider retry boundary has elapsed, an operator explicitly forces it, or a production-certification contract requires it.
+
+When Sol returns `ACCOUNT_LIMITED`, `RATE_LIMITED` or `MODEL_LIMITED`, Oracle persists `retry_after` when the provider supplies one and otherwise applies a bounded state-specific cooldown. During the active cooldown:
+
+- ordinary packets do not invoke Sol and continue through exact Sonnet 5;
+- VEKL ahead-of-work research skips Sol and uses exact Sonnet 5;
+- background health refresh does not issue a Sol inference probe;
+- repeated probe attempts are recorded as suppressed/reused evidence rather than charged model turns.
+
+`AUTH_FAILED` remains fail-closed until an external authentication change. A process/toolchain failure is never relabelled as a quota state merely to unlock fallback. `dial_runtime_capacity_status` / `npm run agent:runtime:capacity-status` expose the current decision, retry boundary, identity-cache validity and recent live-versus-suppressed call counts.
 
 ## Operational execution
 
@@ -142,6 +158,8 @@ Reboot soak must prove a changed Linux boot ID plus service/checkpoint/HOT/WARM/
 Finalization must validate all evidence, service health, fresh external heartbeat, subscription-only security and the qualified control-plane fingerprint before writing `PRODUCTION_GREEN`.
 
 Deliberate quota exhaustion is prohibited. Live provider capacity must be observed naturally.
+
+Full production qualification is allowed to force the minimum live Sol identity proof required after a control-plane fingerprint change. It must then reuse that proof wherever possible: the VEKL live Sol path can satisfy the operational-primary proof, deterministic routing tests replace live state mutation/support-model calls, and no extra recovery probe is issued solely to restate evidence already proven in the same qualification run. External-queue/process failover soaks remain live because they prove different failure semantics.
 
 
 ## Shared-host isolation

@@ -22,6 +22,7 @@ import {
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
 import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 import { engineeringResearchStatus } from './engineering-presearch.mjs';
+import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const CHAT_CONTROL_TOKEN_REL = 'secrets/chat-control.token';
@@ -35,6 +36,10 @@ const EVENT_FILES = [
   'events/chat-control.jsonl',
   'events/engineering-knowledge.jsonl',
   'events/skill-outcomes.jsonl',
+  'events/runtime-probes.jsonl',
+  'events/runtime-identity.jsonl',
+  'events/hermes-operational-turns.jsonl',
+  'events/engineering-research.jsonl',
 ];
 
 function now() { return new Date().toISOString(); }
@@ -183,6 +188,7 @@ const TOOL_DEFS = Object.freeze([
   ['dial_skill_status', 'Backward-compatible VEKL status alias: read skills plus federated engineering-resource activation for a packet/current mission.', { packet_id: { type: 'string' } }],
   ['dial_engineering_knowledge_status', 'Read VEKL v2 skills, federated resource/source counts, current packet activation provenance and ahead-of-work research linkage.', { packet_id: { type: 'string' } }],
   ['dial_engineering_research_status', 'Read the current project-aware VEKL ahead-of-work forecast and passive resource-cache index.', {}],
+  ['dial_runtime_capacity_status', 'Read Sol capacity-preservation state, exact-identity cache validity, provider cooldown and recent model-call suppression/usage evidence.', {}],
 ]);
 
 const REQUIRED_ARGS = Object.freeze({
@@ -225,6 +231,7 @@ export async function callChatControlTool(name, args = {}, root) {
   else if (name === 'dial_evidence') result = readJson('operations/projects/dial/latest/evidence_prepare.json', { state: 'NO_EVIDENCE_PREPARED' }, root);
   else if (name === 'dial_skill_status' || name === 'dial_engineering_knowledge_status') result = engineeringKnowledgeStatus({ repoDir: project.repo_dir, root, packetId: clean(args.packet_id, 180) || null });
   else if (name === 'dial_engineering_research_status') result = engineeringResearchStatus(root);
+  else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
   saveIdempotentResult(name, args, result, root);
   auditTool(root, name, args, result);
