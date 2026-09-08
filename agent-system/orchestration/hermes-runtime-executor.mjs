@@ -68,6 +68,30 @@ export function failoverEligible(state) {
   return FAILOVER_STATES.has(state);
 }
 
+export function resolvePrimaryTurnIdentity({ usage = null, preTurnHealth = null } = {}) {
+  const directUsageIdentity = usage?.model === PRIMARY_MODEL && usage?.provider === 'openai-codex';
+  const freshPinnedPreflightIdentity = Boolean(
+    runtimeEligible(preTurnHealth, { hardPin: true, requireFresh: true, maxAgeMs: 15 * 60 * 1000 })
+    && preTurnHealth?.requested_model === PRIMARY_MODEL
+    && preTurnHealth?.resolved_model === PRIMARY_MODEL
+    && preTurnHealth?.details?.identity_proven === true
+    && preTurnHealth?.details?.rerouted !== true
+  );
+  const identityProven = directUsageIdentity || (
+    usage?.model == null
+    && usage?.provider == null
+    && freshPinnedPreflightIdentity
+  );
+  return {
+    identityProven,
+    resolvedModel: usage?.model ?? (identityProven ? PRIMARY_MODEL : null),
+    provider: usage?.provider ?? (identityProven ? 'openai-codex' : null),
+    identitySource: directUsageIdentity
+      ? 'HERMES_USAGE_REPORT'
+      : (identityProven ? 'EXPLICIT_HERMES_HARD_PIN_PLUS_FRESH_CODEX_PROVENANCE' : null),
+  };
+}
+
 export function runPrimaryHermes({
   repoDir = DEFAULT_REPO,
   instruction = '',
@@ -108,9 +132,12 @@ export function runPrimaryHermes({
     });
 
     const usage = readJsonFile(usageFile);
-    const resolvedModel = usage?.model ?? null;
-    const provider = usage?.provider ?? null;
-    const identityProven = resolvedModel === PRIMARY_MODEL && provider === 'openai-codex';
+    const preTurnHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
+    // Hermes' current openai-codex one-shot usage report can omit model/provider even
+    // when the underlying Codex App Server turn is hard-pinned. In that specific
+    // case, preserve fail-closed identity by requiring fresh exact App Server
+    // provenance immediately before the explicitly pinned --provider/--model turn.
+    const { identityProven, resolvedModel, provider, identitySource } = resolvePrimaryTurnIdentity({ usage, preTurnHealth });
     const completed = result.status === 0 && usage?.failed !== true && usage?.completed !== false;
     const ok = completed && identityProven;
     const state = ok
@@ -142,6 +169,8 @@ export function runPrimaryHermes({
         signal: result.signal ?? null,
         source: 'operational_turn',
         preferred_model: PRIMARY_MODEL,
+        identity_source: identitySource,
+        preflight_observed_at: preTurnHealth?.observed_at ?? null,
       },
     }, root);
 

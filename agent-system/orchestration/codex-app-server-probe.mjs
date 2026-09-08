@@ -164,6 +164,7 @@ export async function probeCodexAppServer({ repoDir = DEFAULT_REPO, root, timeou
     details: {
       identity_proven: identityProven,
       rerouted: Boolean(reroute),
+      source: 'codex_app_server_probe',
       response_ok: responseOk,
       thread_id: thread?.id ?? null,
       toolchain_usable: state === 'HEALTHY' && responseOk && identityProven,

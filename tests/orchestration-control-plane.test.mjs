@@ -8,7 +8,7 @@ import { appendFeatureMemory, readFeatureMemory } from '../agent-system/orchestr
 import { buildHandoffCapsule, saveHandoffCapsule } from '../agent-system/orchestration/handoff-builder.mjs';
 import { healthFresh, runtimeEligible, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
-import { classifyPrimaryFailure, executeHermesInstruction } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
+import { classifyPrimaryFailure, executeHermesInstruction, resolvePrimaryTurnIdentity } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import {
   injectHermesPlanModels,
   parseClaudeModelListEvidence,
@@ -76,6 +76,25 @@ describe('orchestration state store', () => {
     expect(JSON.parse(readFileSync(target, 'utf8'))).toEqual({ ok: true });
     expect(readJson('state/test.json', null, root)).toEqual({ ok: true });
     expect(() => resolveControlPath('../escape.json', root)).toThrow(/escapes control root/);
+  });
+});
+
+describe('primary Hermes turn identity provenance', () => {
+  it('accepts missing Hermes usage model/provider only with fresh exact preflight identity', () => {
+    const preflight = {
+      state: 'HEALTHY', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol',
+      observed_at: new Date().toISOString(),
+      details: { toolchain_usable: true, identity_proven: true, rerouted: false },
+    };
+    const exact = resolvePrimaryTurnIdentity({ usage: { model: null, provider: null }, preTurnHealth: preflight });
+    expect(exact.identityProven).toBe(true);
+    expect(exact.resolvedModel).toBe('gpt-5.6-sol');
+    expect(exact.provider).toBe('openai-codex');
+    expect(exact.identitySource).toBe('EXPLICIT_HERMES_HARD_PIN_PLUS_FRESH_CODEX_PROVENANCE');
+
+    const wrong = resolvePrimaryTurnIdentity({ usage: { model: null, provider: null }, preTurnHealth: { ...preflight, resolved_model: 'gpt-5.6-mini' } });
+    expect(wrong.identityProven).toBe(false);
+    expect(wrong.resolvedModel).toBeNull();
   });
 });
 
