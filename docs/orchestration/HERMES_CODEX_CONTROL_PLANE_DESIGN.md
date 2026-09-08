@@ -78,7 +78,7 @@ Codex qualification rejects rerouting. Claude qualification derives resolved ide
 
 Sol inference is not a heartbeat. The control plane must exhaust deterministic evidence before issuing a model turn. Exact Codex identity is cached only after a live identity-proven Sol interaction and is bound to a fingerprint covering the Codex executable/version, ChatGPT OAuth route, Hermes executable/version/config and the identity/routing control code. The cache expires after seven days by default and becomes invalid immediately when that fingerprint changes.
 
-A supervisor or DIAL service restart preserves fresh runtime evidence rather than rewriting it to `UNKNOWN`. Background refresh reuses fresh health; a live Codex probe is required only when evidence is stale/invalid, a provider retry boundary has elapsed, an operator explicitly forces it, or a production-certification contract requires it.
+A supervisor or DIAL service restart preserves fresh runtime evidence rather than rewriting it to `UNKNOWN`. Restart also anchors the next background probe to the oldest persisted runtime observation instead of probing immediately; only a true bootstrap with no evidence performs an immediate refresh. Background refresh reuses fresh health; a live Codex probe is required only when the normal cadence makes evidence due/stale, a provider retry boundary has elapsed, an operator explicitly forces it, or a production-certification contract requires it.
 
 When Sol returns `ACCOUNT_LIMITED`, `RATE_LIMITED` or `MODEL_LIMITED`, Oracle persists `retry_after` when the provider supplies one and otherwise applies a bounded state-specific cooldown. During the active cooldown:
 

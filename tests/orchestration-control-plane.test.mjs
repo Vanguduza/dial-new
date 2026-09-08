@@ -9,7 +9,7 @@ import { buildHandoffCapsule, saveHandoffCapsule } from '../agent-system/orchest
 import { healthFresh, runtimeEligible, recordRuntimeHealth, loadRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
 import { classifyRuntimeBoundaryText, parseProviderRetryAfter, primaryAttemptDecision } from '../agent-system/orchestration/runtime-capacity-policy.mjs';
 import { cachedCodexIdentity, recordCodexIdentityProof, DEFAULT_IDENTITY_CACHE_MAX_AGE_MS } from '../agent-system/orchestration/runtime-identity-cache.mjs';
-import { invalidateRuntimeEvidenceAfterSupervisorRestart } from '../agent-system/orchestration/supervisor.mjs';
+import { invalidateRuntimeEvidenceAfterSupervisorRestart, runtimeProbeAnchorMs } from '../agent-system/orchestration/supervisor.mjs';
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
 import { classifyPrimaryFailure, executeHermesInstruction, resolvePrimaryTurnIdentity } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import {
@@ -134,6 +134,16 @@ describe('runtime capacity preservation policy', () => {
     const preserved = loadRuntimeHealth(root).runtimes.codex_app_server;
     expect(preserved.state).toBe('ACCOUNT_LIMITED');
     expect(preserved.requested_model).toBe('gpt-5.6-sol');
+  });
+
+  it('anchors post-restart probing to persisted evidence instead of probing immediately', () => {
+    const older = Date.parse('2026-09-08T08:00:00Z');
+    const newer = Date.parse('2026-09-08T08:30:00Z');
+    expect(runtimeProbeAnchorMs({ runtimes: {
+      codex_app_server: { observed_at: new Date(older).toISOString() },
+      claude_code: { observed_at: new Date(newer).toISOString() },
+    } })).toBe(older);
+    expect(runtimeProbeAnchorMs({ runtimes: {} })).toBe(0);
   });
 
   it('keeps exact identity proof only while its fingerprint and bounded age remain valid', () => {

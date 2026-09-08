@@ -259,15 +259,29 @@ export function status({ repoDir = DEFAULT_REPO, root } = {}) {
   };
 }
 
+export function runtimeProbeAnchorMs(runtimeHealth) {
+  const observed = Object.values(runtimeHealth?.runtimes ?? {})
+    .map((health) => Date.parse(health?.observed_at ?? ''))
+    .filter(Number.isFinite);
+  return observed.length ? Math.min(...observed) : 0;
+}
+
 export async function daemon({
   repoDir = DEFAULT_REPO, root, intervalMs = 60000,
   probeIntervalMs = Number(process.env.DIAL_RUNTIME_PROBE_INTERVAL_MS || DEFAULT_PROBE_INTERVAL_MS),
 } = {}) {
   initializeSupervisor(root);
   invalidateRuntimeEvidenceAfterSupervisorRestart(root);
-  await refreshRuntimeHealth({ repoDir, root });
+  // A service restart is not a reason to spend a model turn. Anchor the next
+  // scheduled refresh to the oldest persisted runtime observation. Only a true
+  // bootstrap with no evidence probes immediately; otherwise the normal probe
+  // cadence decides when a live refresh is due.
+  let lastProbeAt = runtimeProbeAnchorMs(loadRuntimeHealth(root));
+  if (!lastProbeAt) {
+    await refreshRuntimeHealth({ repoDir, root });
+    lastProbeAt = Date.now();
+  }
   reconcileHermesRuntime({ root });
-  let lastProbeAt = Date.now();
 
   const tick = async () => {
     if (Date.now() - lastProbeAt >= probeIntervalMs) {
