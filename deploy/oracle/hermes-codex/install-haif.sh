@@ -101,7 +101,8 @@ systemctl --user daemon-reload
 systemctl --user enable dial-hermes-haif.service dde-hermes-haif.service
 
 for unit in dial-hermes-haif.service dde-hermes-haif.service; do
-  if systemctl --user start "$unit"; then
+  # Restart active tenants so they execute the newly installed immutable release.
+  if systemctl --user restart "$unit"; then
     systemctl --user is-active "$unit" >/dev/null 2>&1 || true
   fi
 done

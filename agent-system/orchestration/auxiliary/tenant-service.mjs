@@ -21,9 +21,19 @@ function readProviderJson(providerRoot, rel, fallback = null) {
   try { return JSON.parse(fs.readFileSync(path.join(providerRoot, rel), 'utf8')); } catch (error) { if (error?.code === 'ENOENT') return fallback; throw error; }
 }
 
+function readQualification(root, project) {
+  try {
+    return JSON.parse(fs.readFileSync(resolveControlPath(`operations/auxiliary/qualification/xkiro-${project}-latest.json`, root), 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
 export function haifTenantStatus({ project, root, providerRoot, keyFile }) {
   const catalog = readProviderJson(providerRoot, 'xkiro/catalog/latest.json', null);
   const usage = readProviderJson(providerRoot, 'xkiro/usage/latest.json', null);
+  const qualification = readQualification(root, project);
   const counts = {};
   for (const state of ['queued', 'running', 'completed', 'failed', 'parked']) {
     try { counts[state] = fs.readdirSync(resolveControlPath(`operations/auxiliary/tasks/${state}`, root)).filter((x) => x.endsWith('.json')).length; }
@@ -35,6 +45,7 @@ export function haifTenantStatus({ project, root, providerRoot, keyFile }) {
     elite_model_policy_version: ELITE_FREE_MODEL_POLICY_VERSION,
     secret: { ...xkiroSecretStatus(keyFile), material_exposed: false },
     provider_governance: providerGovernance(root),
+    qualification: qualification ? { status: qualification.status, observed_at: qualification.observed_at ?? null, completed_at: qualification.completed_at ?? null, authentication_verified: qualification.authentication?.verified === true, canary_completed: qualification.canary?.completed === true } : null,
     r2_archive: r2ConfigStatus(),
     catalog: catalog ? { snapshot_id: catalog.catalog_snapshot_id, observed_at: catalog.observed_at, model_count: catalog.model_count, free_model_count: catalog.free_model_count } : null,
     usage: usage ? { snapshot_id: usage.usage_snapshot_id, observed_at: usage.observed_at, plan: usage.plan, free_tokens: usage.free_tokens, wallet: usage.wallet, quota_state: quotaOperatingState(usage.free_tokens) } : null,
@@ -180,6 +191,12 @@ export async function runOneAuxiliaryTask({ project, root, providerRoot, keyFile
       return { state: 'COMPLETED', task: completed, reconciled: true, recovered };
     }
 
+    const qualification = readQualification(root, project);
+    if (qualification?.status !== 'PUBLIC_ONLY_TRANSPORT_QUALIFIED') {
+      const parked = failTask(task, { root, reason: 'PROVIDER_QUALIFICATION_REQUIRED', park: true });
+      appendJsonl('operations/auxiliary/events.jsonl', { event: 'HAIF_PROVIDER_QUALIFICATION_BLOCKED', task_id: task.task_id, qualification_status: qualification?.status ?? 'MISSING', at: now() }, root);
+      return { state: 'PARKED', task: parked, reason: 'PROVIDER_QUALIFICATION_REQUIRED', recovered };
+    }
     const apiKey = readSecureXKiroKey(keyFile);
     const { catalog, usage } = await currentProviderState({ apiKey, providerRoot, fetchImpl });
     if (!routeSelection) {
