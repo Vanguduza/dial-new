@@ -1,0 +1,10 @@
+{
+  "name": "@dial/round-purchase-schedule",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "main": "src/purchase-schedule.ts",
+  "dependencies": {
+    "@dial/round-ledger": "*"
+  }
+}
