@@ -327,3 +327,15 @@ The false-idle defect on local Claude desktop/mobile sessions is closed at the p
 A project-scoped read-only MCP server, `dial-oracle-status`, exposes the same mirror as the single `dial_oracle_status` tool. It contains no shell/write primitive and no remote-control credential. The existing authenticated `dial-oracle-control` MCP remains the mutable steering path. A Claude client may require its normal one-time approval for the checked-in project MCP; status-hook injection remains available independently once current project settings are loaded.
 
 Live Oracle evidence during implementation proved the mirror branch could be fetched from a separate Git worktree using private-repository credentials, the snapshot was fresh and DIAL-scoped, and `dial-operator-status-publisher.timer` was active. The service writes no development worktree/index state and publishes immediately on semantic mission/gate/runtime changes with bounded liveness refreshes when state is otherwise unchanged.
+
+## 2026-09-08 — Hermes xKiro Auxiliary Intelligence Fabric (`DEC-023`)
+
+DIAL now has a fail-closed xKiro HAIF implementation under `agent-system/orchestration/auxiliary/` and `agent-system/orchestration/providers/xkiro/`. It preserves the Sol→Sonnet manager boundary, hard-enforces `FREE_ONLY`, performs deterministic pre-serialization classification plus final egress DLP, persists restart/idempotency state, maintains project-account-local quota ledgers, emits provenance-carrying evidence packets, and routes disagreements only through typed premium-adjudication candidates.
+
+The provider catalogue is discovery-only. `elite-model-policy.mjs` limits qualification to the strongest approved candidate families and `elite-benchmark.mjs` requires twelve public fixtures plus numerical fidelity/error gates before a route may become CHAMPION or CHALLENGER. Catalogue `free` metadata is not admission evidence; each account must pass a real execution canary.
+
+HAIF now also enforces account-local RPM/TPM/concurrency ceilings, deterministic sanitized-aggregate re-identification controls, crash-safe provider-response reconciliation without blind duplicate inference, and an optional SigV4 Cloudflare R2 evidence mirror using per-project credentials and content-addressed object keys.
+
+DIAL and DDE are separate HAIF tenants and separate xKiro accounts. The shared Oracle deployment installs one versioned runtime implementation while denying each service access to the other project's control root. DDE's separate repository consumes HAIF through a localhost/token-authenticated auxiliary-evidence bridge; no xKiro API key enters DDE Core.
+
+Live qualification evidence on 2026-09-08 proved the DDE account's `/v1/usage` authentication and a real free-model inference through `minimax/minimax-m3:free`. DIAL account qualification remains a deployment proof and must not be inferred from DDE evidence. Provider-side spend ceilings remain an account-console control in addition to the client `FREE_ONLY` guard.

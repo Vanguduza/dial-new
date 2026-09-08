@@ -54,7 +54,7 @@
     "agent:orchestration:queue-status": "node agent-system/orchestration/external-orchestrator.mjs status",
     "agent:orchestration:queue-run-once": "node agent-system/orchestration/external-orchestrator.mjs run-once",
     "agent:orchestration:queue-daemon": "node agent-system/orchestration/external-orchestrator.mjs daemon",
-    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs tests/orchestration-chat-control.test.mjs tests/orchestration-vekl.test.mjs tests/orchestration-vekl-resources.test.mjs",
+    "agent:orchestration:qualify": "vitest run tests/orchestration-control-plane.test.mjs tests/orchestration-operations-plane.test.mjs tests/orchestration-chat-control.test.mjs tests/orchestration-vekl.test.mjs tests/orchestration-vekl-resources.test.mjs tests/orchestration-haif.test.mjs",
     "agent:development:gate": "node agent-system/orchestration/development-unblock.mjs",
     "agent:operations:status": "node agent-system/orchestration/operations-plane.mjs status",
     "agent:operations:run": "node agent-system/orchestration/operations-plane.mjs run",
@@ -91,7 +91,13 @@
     "agent:skills:live-fallback-canary": "node agent-system/bin/skills-live-canary.mjs --fallback-only",
     "agent:development:finalize-readiness": "bash deploy/oracle/hermes-codex/finalize-development-readiness.sh",
     "agent:runtime:capacity-status": "node agent-system/orchestration/runtime-capacity-status.mjs",
-    "agent:cohesion-check": "node agent-system/bin/technical-cohesion-check.mjs"
+    "agent:cohesion-check": "node agent-system/bin/technical-cohesion-check.mjs",
+    "agent:haif:status": "HAIF_PROJECT=dial node agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs status",
+    "agent:haif:qualify": "HAIF_PROJECT=dial node agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs qualify",
+    "agent:haif:benchmark": "HAIF_PROJECT=dial node agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs benchmark",
+    "agent:haif:run-once": "HAIF_PROJECT=dial node agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs run-once",
+    "agent:haif:daemon": "HAIF_PROJECT=dial node agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs daemon",
+    "agent:haif:install": "bash deploy/oracle/hermes-codex/install-haif.sh"
   },
   "dependencies": {
     "sharp": "0.35.4",
