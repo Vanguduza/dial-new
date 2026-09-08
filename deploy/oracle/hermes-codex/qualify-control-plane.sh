@@ -22,6 +22,8 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -x "$HOME/.hermes/agent-hooks/dial-pre-turn-context.sh" ]] || fail "pre-turn hook not installed"
 [[ -x "$HOME/.hermes/agent-hooks/dial-post-turn-checkpoint.sh" ]] || fail "post-turn hook not installed"
 [[ -x "$HOME/.local/bin/dial-hermes" ]] || fail "dial-hermes operational runtime entrypoint is not installed"
+[[ -x "$HOME/.local/bin/dial-doctor" ]] || fail "dial-doctor is not installed; run install-control-plane.sh"
+[[ -x "$HOME/.local/bin/dial" ]] || fail "dial CLI is not installed; run install-control-plane.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-submit" ]] || fail "dial-hermes-submit is not installed; run install-external-orchestrator.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-job" ]] || fail "dial-hermes-job is not installed; run install-external-orchestrator.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-ops" ]] || fail "dial-hermes-ops is not installed; run install-operations-plane.sh"
@@ -66,8 +68,12 @@ find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --chec
 bash -n deploy/oracle/hermes-codex/*.sh deploy/oracle/hermes-codex/hermes-hooks/*.sh; pass "Oracle shell syntax"
 git diff --check; pass "git diff --check"
 npm run agent:orchestration:init >/dev/null
-DOCTOR="$(tmp)"; npm run --silent agent:orchestration:doctor >"$DOCTOR"
-jq -e '.ok_for_hermes_runtime_qualification == true and .runtime_policy.primary == "codex_app_server/gpt-5.6-sol" and .runtime_policy.fallback == "claude_code/claude-sonnet-5" and .runtime_policy.no_runtime == "NO_HERMES_RUNTIME_AVAILABLE"' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "host/runtime doctor is not green"; }; pass "host/runtime doctor"
+DOCTOR="$(tmp)"; "$HOME/.local/bin/dial" doctor >"$DOCTOR"
+jq -e '.ok_for_hermes_runtime_qualification == true and .diagnostic_scope == "DIAL_PLUS_SUBORDINATE_HERMES" and .runtime_policy.primary == "codex_app_server/gpt-5.6-sol" and .runtime_policy.fallback == "claude_code/claude-sonnet-5" and .runtime_policy.no_runtime == "NO_HERMES_RUNTIME_AVAILABLE" and .native_hermes_doctor.kind == "DIAL_SUBORDINATE_HERMES_DOCTOR" and .native_hermes_doctor.authority == "DIAGNOSTIC_EVIDENCE_ONLY" and .native_hermes_doctor.usable_for_dial_qualification == true and .native_hermes_doctor.mutating_mode_requested == false and .native_hermes_doctor.live_probe_requested == false and .native_hermes_doctor.raw_report_persisted == false' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "federated DIAL/Hermes doctor is not usable"; }
+HERMES_NATIVE_DOCTOR_STATUS="$(jq -r '.native_hermes_doctor.status' "$DOCTOR")"
+HERMES_NATIVE_DOCTOR_HASH="$(jq -r '.native_hermes_doctor.report_sha256' "$DOCTOR")"
+HERMES_NATIVE_DOCTOR_EVIDENCE="$(jq -r '.native_hermes_doctor.evidence_relative_path' "$DOCTOR")"
+pass "DIAL doctor with subordinate native Hermes doctor ($HERMES_NATIVE_DOCTOR_STATUS)"
 hermes hooks doctor; pass "Hermes shell hooks doctor"
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
@@ -160,6 +166,9 @@ jq -n \
   --arg vekl_research_forecast_id "$RESEARCH_FORECAST_ID" \
   --arg vekl_research_forecast_runtime "$RESEARCH_FORECAST_RUNTIME" \
   --arg vekl_research_forecast_model "$RESEARCH_FORECAST_MODEL" \
+  --arg hermes_native_doctor_status "$HERMES_NATIVE_DOCTOR_STATUS" \
+  --arg hermes_native_doctor_hash "$HERMES_NATIVE_DOCTOR_HASH" \
+  --arg hermes_native_doctor_evidence "$HERMES_NATIVE_DOCTOR_EVIDENCE" \
   '{
     schema_version:1,
     kind:"DIAL_HERMES_INSTALLED_RUNTIME_QUALIFICATION",
@@ -173,6 +182,12 @@ jq -n \
     external_orchestration_canary_job_id:$canary_job_id,
     subscription_auth_proven:true,
     built_in_anthropic_fallback_disabled:true,
+    dial_doctor_federated:true,
+    hermes_native_doctor_subordinate:true,
+    hermes_native_doctor_authority:"DIAGNOSTIC_EVIDENCE_ONLY",
+    hermes_native_doctor_status:$hermes_native_doctor_status,
+    hermes_native_doctor_report_sha256:$hermes_native_doctor_hash,
+    hermes_native_doctor_evidence:$hermes_native_doctor_evidence,
     auxiliary_operations_plane:true,
     auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
     persistent_mission_controller:true,

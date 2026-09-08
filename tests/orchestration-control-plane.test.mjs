@@ -9,8 +9,14 @@ import { buildHandoffCapsule, saveHandoffCapsule } from '../agent-system/orchest
 import { healthFresh, runtimeEligible, recordRuntimeHealth, loadRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
 import { classifyRuntimeBoundaryText, parseProviderRetryAfter, primaryAttemptDecision } from '../agent-system/orchestration/runtime-capacity-policy.mjs';
 import { cachedCodexIdentity, recordCodexIdentityProof, DEFAULT_IDENTITY_CACHE_MAX_AGE_MS } from '../agent-system/orchestration/runtime-identity-cache.mjs';
-import { invalidateRuntimeEvidenceAfterSupervisorRestart, runtimeProbeAnchorMs } from '../agent-system/orchestration/supervisor.mjs';
+import { doctor, invalidateRuntimeEvidenceAfterSupervisorRestart, runtimeProbeAnchorMs } from '../agent-system/orchestration/supervisor.mjs';
 import { reconcileHermesRuntime } from '../agent-system/orchestration/hermes-runtime-router.mjs';
+import {
+  HERMES_NATIVE_DOCTOR_EVIDENCE,
+  persistNativeHermesDoctorEvidence,
+  runNativeHermesDoctor,
+  summarizeHermesDoctorOutput,
+} from '../agent-system/orchestration/hermes-native-doctor.mjs';
 import { classifyPrimaryFailure, executeHermesInstruction, resolvePrimaryTurnIdentity } from '../agent-system/orchestration/hermes-runtime-executor.mjs';
 import {
   injectHermesPlanModels,
@@ -79,6 +85,90 @@ describe('orchestration state store', () => {
     expect(JSON.parse(readFileSync(target, 'utf8'))).toEqual({ ok: true });
     expect(readJson('state/test.json', null, root)).toEqual({ ok: true });
     expect(() => resolveControlPath('../escape.json', root)).toThrow(/escapes control root/);
+  });
+});
+
+
+
+describe('federated DIAL doctor', () => {
+  it('runs native Hermes Doctor only as a non-mutating subordinate diagnostic', () => {
+    let observed = null;
+    const native = runNativeHermesDoctor({
+      runner: (command, args, options) => {
+        observed = { command, args, options };
+        return {
+          status: 0,
+          signal: null,
+          error: null,
+          stderr: '',
+          stdout: [
+            '◆ Security Advisories',
+            '  ✓ No active security advisories',
+            '◆ Required Packages',
+            '  ✓ OpenAI SDK',
+            '  ✓ Version files consistent (0.21.0)',
+            '  ⚠ optional package not installed',
+            'Found 2 issue(s) to address:',
+            '  1. Migrate config',
+            '  2. Review a build-tool advisory',
+          ].join('\n'),
+        };
+      },
+    });
+
+    expect(observed.command).toBe('hermes');
+    expect(observed.args).toEqual(['doctor']);
+    expect(observed.args).not.toContain('--fix');
+    expect(observed.args).not.toContain('--live');
+    expect(observed.options.stdio).toEqual(['ignore', 'pipe', 'pipe']);
+    expect(native.kind).toBe('DIAL_SUBORDINATE_HERMES_DOCTOR');
+    expect(native.authority).toBe('DIAGNOSTIC_EVIDENCE_ONLY');
+    expect(native.status).toBe('DEGRADED');
+    expect(native.usable_for_dial_qualification).toBe(true);
+    expect(native.issue_count).toBe(2);
+    expect(native.issues).toEqual(['Migrate config', 'Review a build-tool advisory']);
+    expect(native.security_advisory_state).toBe('CLEAR');
+    expect(native.hermes_version).toBe('0.21.0');
+    expect(native.raw_report_persisted).toBe(false);
+  });
+
+  it('fails closed when the subordinate Hermes Doctor times out', () => {
+    const error = Object.assign(new Error('timed out'), { code: 'ETIMEDOUT' });
+    const native = runNativeHermesDoctor({
+      runner: () => ({ status: null, signal: 'SIGTERM', error, stdout: '', stderr: '' }),
+    });
+    expect(native.status).toBe('TIMEOUT');
+    expect(native.timed_out).toBe(true);
+    expect(native.usable_for_dial_qualification).toBe(false);
+  });
+
+  it('persists only structured summary/hash evidence and lets DIAL retain authority', () => {
+    const root = temp('dial-doctor');
+    const native = summarizeHermesDoctorOutput(
+      '◆ Security Advisories\n  ✓ No active security advisories\nNo issues found',
+      { exitCode: 0, durationMs: 12 },
+    );
+    const persisted = persistNativeHermesDoctorEvidence(native, { root });
+    const stored = readJson(HERMES_NATIVE_DOCTOR_EVIDENCE, null, root);
+    expect(stored.report_sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(stored.raw_report_persisted).toBe(false);
+    expect(stored.evidence_relative_path).toBe(HERMES_NATIVE_DOCTOR_EVIDENCE);
+    expect(JSON.stringify(stored)).not.toContain('No active security advisories');
+
+    const report = doctor({
+      repoDir: process.cwd(),
+      root,
+      nativeHermesDoctor: persisted,
+      versionResolver: (command) => ({
+        codex: 'codex-cli 0.144.0',
+        hermes: 'Hermes Agent v0.21.0',
+        git: 'git version 2.45.0',
+        claude: 'Claude Code 1.0.0',
+      })[command] ?? null,
+    });
+    expect(report.diagnostic_scope).toBe('DIAL_PLUS_SUBORDINATE_HERMES');
+    expect(report.native_hermes_doctor.authority).toBe('DIAGNOSTIC_EVIDENCE_ONLY');
+    expect(report.checks.hermes_native_doctor_non_mutating).toBe(true);
   });
 });
 
