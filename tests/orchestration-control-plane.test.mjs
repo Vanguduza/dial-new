@@ -290,6 +290,25 @@ describe('external Oracle orchestration queue', () => {
     expect(externalWorkStatus(queued.job_id, root).state).toBe('COMPLETED');
   });
 
+  it('refreshes the external-orchestrator heartbeat while a long packet is executing', async () => {
+    const repo = makeRepo(), root = temp('dial-control');
+    submitExternalWork({ root, instruction: 'Verify TEST-F001 during a long packet.' });
+    const processed = await processNextExternalWork({
+      repoDir: repo,
+      root,
+      heartbeatMs: 10,
+      developmentGate: () => ({ unblocked: true }),
+      executor: async ({ instruction }) => {
+        const first = readJson('state/external-orchestrator-heartbeat.json', null, root)?.observed_at;
+        await new Promise((resolve) => setTimeout(resolve, 45));
+        const second = readJson('state/external-orchestrator-heartbeat.json', null, root)?.observed_at;
+        expect(Date.parse(second)).toBeGreaterThan(Date.parse(first));
+        return executorSuccess({ instruction });
+      },
+    });
+    expect(processed.state).toBe('COMPLETED');
+  });
+
   it('blocks ordinary development before PRODUCTION_GREEN instead of executing it', async () => {
     const repo = makeRepo(), root = temp('dial-control');
     const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });

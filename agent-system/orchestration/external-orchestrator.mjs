@@ -205,6 +205,7 @@ export async function processNextExternalWork({
   root,
   executor = executeHermesInstruction,
   developmentGate = assertDevelopmentUnblocked,
+  heartbeatMs = Number(process.env.DIAL_EXTERNAL_ORCHESTRATOR_HEARTBEAT_MS || 30_000),
 } = {}) {
   const job = claimNext(root);
   if (!job) {
@@ -250,6 +251,12 @@ export async function processNextExternalWork({
     }, root);
   }
 
+  const heartbeatPulse = setInterval(
+    () => heartbeat(root, { queue_state: 'BUSY', active_job_id: job.job_id }),
+    Math.max(10, heartbeatMs),
+  );
+  heartbeatPulse.unref?.();
+
   let result;
   try {
     const skillActivation = isQualificationCanary(job)
@@ -290,6 +297,7 @@ export async function processNextExternalWork({
       reason: String(error?.message || error).slice(0, 4000),
     };
   }
+  clearInterval(heartbeatPulse);
   return finalizeJob(job, result, root);
 }
 
