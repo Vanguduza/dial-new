@@ -7860,7 +7860,8 @@
     "module": "GMPC",
     "security_tier": "S2",
     "reasons": [
-      "internal commercial operating feature"
+      "internal commercial operating feature controlling public search outputs",
+      "indexability/public metadata/feed mistakes can disclose or misrepresent DIAL truth"
     ],
     "required_control_categories": [
       "AUTH",
@@ -7879,7 +7880,9 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "private/account/transactional/Health-sensitive data cannot enter public pages, structured data, sitemaps, merchant feeds or search-provider payloads",
+      "AI cannot override deterministic indexability or fabricate public commercial facts"
     ],
     "status": "SPECIFIED"
   },
@@ -7888,7 +7891,8 @@
     "module": "GMPC",
     "security_tier": "S2",
     "reasons": [
-      "internal commercial operating feature"
+      "internal commercial operating feature controlling external local-profile writes and public location outputs",
+      "location/review/privacy mistakes can create public misinformation or data leakage"
     ],
     "required_control_categories": [
       "AUTH",
@@ -7907,7 +7911,9 @@
       "input schema and state validation",
       "abuse/rate-limit behavior where exposed",
       "sensitive response minimization",
-      "dependency/integration failure does not bypass security"
+      "dependency/integration failure does not bypass security",
+      "location/service-area publication requires canonical operational provenance",
+      "review provenance is preserved and member/patient-specific Health data cannot enter public local discovery"
     ],
     "status": "SPECIFIED"
   },

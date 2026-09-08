@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-08T10:50:23.787Z",
+  "generated_at": "2026-09-08T13:10:10.329Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 234,
+  "file_count": 236,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11234,
-      "sha256": "2ca09c303216541776e52860a1bf69faabefc223b93f00222231571e450beeb8"
+      "sha256": "2b1ac0af8356af20e438068a6e66ed8575411b3acaf388380a41e11ab4865f89"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -513,8 +513,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json",
-      "bytes": 1481474,
-      "sha256": "72bb91ff5acdb52048fb3399b1f82c7d442480461549de6dfbd3daaf70077844"
+      "bytes": 1481718,
+      "sha256": "e03fb00dd1ecc2d3e47d6ee6c475658f6cf72f38e9e53e617c6dcffcd0ef6386"
     },
     {
       "path": "11_FEATURE_REALIZATION/REALIZATION_LAYER_INDEX.md",
@@ -668,8 +668,8 @@
     },
     {
       "path": "17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json",
-      "bytes": 245878,
-      "sha256": "276d0dc9d6dad6f57bc101e067bc68b3bcc11b191c24b09970554a09bd198299"
+      "bytes": 246616,
+      "sha256": "0f64167338d7b083dcbce7200554faf976c2b0f4096c1eb66911640418c6c212"
     },
     {
       "path": "17_SECURITY/INCIDENT_RESPONSE_AND_VULNERABILITY_MANAGEMENT.md",
@@ -793,8 +793,18 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 1217108,
-      "sha256": "8e9daa9c92299a3ac1bbe6bf23d696eeffa6204bc271f30b5ab296b6385e61ab"
+      "bytes": 1218997,
+      "sha256": "65dcd5338db21077afe29df921d5e3fa3f10558e3efac0a99e3886f47e75a8ea"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md",
+      "bytes": 7840,
+      "sha256": "c6925466e26293b5854574849d52b9165cd3b06c5e9a0481de643bfc78f93d47"
+    },
+    {
+      "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md",
+      "bytes": 3959,
+      "sha256": "5527e7596859c76378fd27960f06bcda78dc62dc9e6c951ac5e15b924f0f1bb0"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
@@ -1183,8 +1193,8 @@
     },
     {
       "path": "27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
-      "bytes": 100069,
-      "sha256": "2065d74f6df897eb436836ab079fca667fbcdf35df3e0227f45b433679fe8a8c"
+      "bytes": 112994,
+      "sha256": "11472898da109d367eb36dd3cb158152a4bacf44794ccaba60396bd4d67b8c6e"
     },
     {
       "path": "README_v2_1.md",

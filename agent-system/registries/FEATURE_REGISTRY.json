@@ -6883,7 +6883,7 @@
   {
     "feature_id": "GMPC-F080",
     "module": "GMPC",
-    "outcome": "Search/indexing/landing-page intelligence",
+    "outcome": "Search demand, deterministic indexability, programmatic landing-page, structured-data, sitemap and merchant-feed intelligence",
     "owner": "seo",
     "aggregate": "SearchIndexingLandingPageIntelligence",
     "status": "SPECIFIED",
@@ -6902,12 +6902,12 @@
     ],
     "support_profile": "SUPPORT-PLATFORM",
     "activation_blocker_refs": [],
-    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P080-P081). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P080-P081). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative. Dedicated acceptance authority: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md. Programmatic publication, indexability, canonical/schema/sitemap/feed and anti-doorway controls are mandatory, not optional implementation detail."
   },
   {
     "feature_id": "GMPC-F081",
     "module": "GMPC",
-    "outcome": "Google Business/local profile operations",
+    "outcome": "Business profile, real-location/service-area and review-signal local discovery operations",
     "owner": "local-discovery",
     "aggregate": "GoogleBusinessLocalProfileOperations",
     "status": "SPECIFIED",
@@ -6926,7 +6926,7 @@
     ],
     "support_profile": "SUPPORT-PLATFORM",
     "activation_blocker_refs": [],
-    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P082). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative in the source document. A dedicated feature acceptance contract is required before implementation (CT-7)."
+    "implementation_note": "Allocated from GMPC Rev 2 feature audit (P082). SPECIFIED only: no code is claimed. Atomic A001-A195 mapping remains authoritative. Dedicated acceptance authority: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md. Local pages/profiles require real location/service-area provenance, duplicate control, review provenance and privacy/compliance gates."
   },
   {
     "feature_id": "GMPC-F090",

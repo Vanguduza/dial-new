@@ -75,7 +75,7 @@ Generated media QA must catch malformed equipment, unsafe practice, incorrect PP
 Every substantive product claim and depicted capability traces to Project Truth.
 
 ## SEO
-Crawlable content, metadata, canonical URLs, semantic HTML, sitemap, structured data/social metadata as applicable.
+Public indexable surfaces MUST use crawlable server/static primary content, semantic HTML, entity-derived metadata, absolute canonical URLs, deterministic indexability policy, sitemap-index/shard generation, applicable structured data/social metadata and realistic mobile Core Web Vitals gates. Arbitrary facets, internal search, tracking/session URLs, private/account/transactional and Health-sensitive routes are not index inventory. Programmatic pages require unique authoritative user value; AI-generated keyword/doorway pages are prohibited. Merchant/search-shopping feeds, where supported, reconcile to canonical commerce truth. GMPC §22 and the GMPC-F080/F081 acceptance contracts are the governing detailed authority.
 
 ## Records
 PSA, CDB, CEM, ASR, APM, EDR, Performance Budget, Mobile Strategy, Reduced-Motion Strategy.

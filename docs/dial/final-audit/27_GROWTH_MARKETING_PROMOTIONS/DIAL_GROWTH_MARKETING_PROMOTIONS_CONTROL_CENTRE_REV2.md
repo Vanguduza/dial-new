@@ -445,8 +445,8 @@ The following table converts the primary documented GMPC intentions into impleme
 | GMPC-F071 | External campaign mapping | Dial campaign ↔ ad platform IDs | P071 | paid-media |
 | GMPC-F072 | Budget controls | Limits, pacing and approval thresholds | P073, P130-P131 | budgets |
 | GMPC-F073 | Bounded AI optimisation | Policy-limited budget recommendations/actions | P073, P152 | ai-policy |
-| GMPC-F080 | SEO monitoring | Search/indexing/landing-page intelligence | P080-P081 | seo |
-| GMPC-F081 | Local discovery | Google Business/local profile operations | P082 | local-discovery |
+| GMPC-F080 | SEO & programmatic discovery | Search demand, deterministic indexability, structured data, sitemaps, landing-page and merchant-feed intelligence | P080-P081 | seo |
+| GMPC-F081 | Local discovery | Business profile, location, service-area and review-signal operations | P082 | local-discovery |
 | GMPC-F090 | Lead management | Lead list/detail/scoring | P090-P091 | sales-growth |
 | GMPC-F091 | B2B account intelligence | Account 360 and opportunity estimate | P092 | sales-growth |
 | GMPC-F092 | Pipeline management | Opportunity stages and forecast | P093 | sales-growth |
@@ -650,10 +650,10 @@ This section defines the atomic, independently testable user-facing feature inve
 
 | Atomic ID | Atomic Feature | Page | UI Element | Backend Contract |
 |---|---|---|---|---|
-| A113 | View search demand | P080 | query table | GET /seo/queries |
-| A114 | Detect content gap | P081 | opportunity list | GET /seo/opportunities |
-| A115 | View indexing errors | P080 | issue list | GET /seo/issues |
-| A116 | Manage local profile content | P082 | local profile editor | /local-discovery |
+| A113 | View search demand and landing performance | P080 | query/landing table | GET /seo/queries |
+| A114 | Detect content/programmatic landing opportunity | P081 | opportunity list | GET /seo/opportunities |
+| A115 | View indexability/canonical/schema/sitemap/feed issues | P080 | issue list | GET /seo/issues |
+| A116 | Manage local profile/location/service-area content | P082 | local discovery editor | /local-discovery |
 | A117 | View leads | P090 | table | GET /leads |
 | A118 | View explainable lead score | P091 | score panel | GET /leads/{id}/score |
 | A119 | Update sales stage | P091/P093 | stage control | PATCH /opportunities/{id} |
@@ -1228,18 +1228,170 @@ AI execution MUST be bounded by policy.
 
 # 22. SEO & DISCOVERY
 
+SEO is a governed DIAL discovery system, not a collection of manually written pages or an unrestricted AI-content channel. It MUST convert real DIAL entity truth into crawlable, useful public discovery surfaces while preventing duplicate, thin, private, stale or misleading pages from entering search indexes.
+
+## 22.1 SEO operating objectives
+
 GMPC SHALL support:
-- search query intelligence;
-- impressions/clicks;
-- rankings;
-- landing-page performance;
-- indexing issues;
-- content gaps;
-- structured data issues;
-- local discovery;
-- business profile posts;
-- location information;
-- review signals where integration permits.
+- search query intelligence, impressions, clicks, click-through rate and rankings;
+- landing-page performance linked through conversion, fulfilment, revenue and contribution margin;
+- indexing, canonical, robots, sitemap and structured-data diagnostics;
+- content and entity-demand gaps;
+- programmatic landing-page opportunities backed by canonical DIAL truth;
+- merchant/search-shopping feed health where an approved market/provider supports feeds;
+- local discovery, business profiles, service areas, location information and review signals where integration permits;
+- Core Web Vitals and crawlability health for every indexable public template;
+- search opportunity learning through the governed Commercial RAG/Knowledge Fabric and Hermes.
+
+Search success MUST NOT be reduced to rankings or traffic. The terminal commercial measures are qualified conversion, fulfilled demand, customer value and contribution margin, subject to brand, privacy and customer-experience constraints.
+
+## 22.2 Eligible public surfaces and privacy boundary
+
+SEO MAY apply to any DIAL business unit only where the route is deliberately public and useful without authentication. Eligible examples include verified vehicle/make/model/fitment and EPC information, product/category pages, public supplier or service listings, technician/service discovery, grocery catalogue/category pages, Care public plan/information pages, Logistics/B2B public service pages, real location/service-area pages and governed editorial/help content.
+
+The following MUST NOT become indexable SEO inventory:
+- account, identity, cart, checkout, order, payment, wallet/entitlement, case, internal admin, supplier-private or operational routes;
+- private customer, vehicle-owner, technician, employee or supplier records;
+- customer-specific price/eligibility or non-public contractual information;
+- health-sensitive, clinical, member-specific or other protected data;
+- internal search-result URLs, arbitrary filter combinations, tracking/session URLs or machine/debug routes unless deliberately promoted into a governed canonical landing page.
+
+Public Health informational/provider content, if any, requires its own compliance and lawful-purpose gate and MUST never expose or derive from an individual's health context.
+
+## 22.3 DIAL Search Landing Page Factory — programmatic SEO
+
+`GMPC-F080` owns the governed **Search Landing Page Factory**. It MAY materialise public pages from verified DIAL entities such as:
+
+```text
+make/model/generation + component/category + fitment + market/location
+product/category + verified offers/inventory + fulfilment geography
+service + asset/vehicle applicability + real provider/service-area coverage
+public plan/category + location + authoritative business rules
+```
+
+A programmatic page is eligible for publication only when it contains sufficient unique user value from authoritative data. Repeating a template while swapping a keyword, suburb, model or product name is not sufficient. Candidate value may come from verified fitment, EPC hierarchy, real inventory/offers, pricing/availability, service coverage, diagrams, technical facts, delivery/collection options, merchant/provider facts, genuine reviews or useful expert content.
+
+The factory MUST maintain a deterministic `LandingPageCandidate` and `SeoQualityAssessment`. Hermes/SEO agents MAY discover demand, propose candidates, draft bounded copy and explain evidence; they MUST NOT override the publish/index decision, fabricate product/service coverage, manufacture reviews, invent locations, or turn missing data into claims.
+
+## 22.4 Deterministic Indexability Policy
+
+Every public route family MUST resolve an `IndexabilityDecision` before production promotion. The policy is deterministic and versioned. At minimum it records:
+
+```text
+route/entity identity
+index_state = INDEX | NOINDEX | GONE
+canonical_target
+crawl_directive = ALLOW | DISALLOW
+reason codes
+policy version
+data freshness/value score
+last evaluated at
+```
+
+Rules:
+1. `INDEX` requires a stable canonical route, useful server-rendered primary content and an allowlisted route template.
+2. Internal search pages and arbitrary facets default to `NOINDEX`; only curated high-value combinations may be promoted to canonical landing pages.
+3. Sort order, tracking, session, experiment and presentation-only parameters MUST NOT create separate index inventory.
+4. Equivalent URLs canonicalise to one stable entity route. Redirects are used only where the replacement is genuinely equivalent.
+5. Pagination uses stable crawlable page URLs when needed; each page is self-canonical unless a genuinely equivalent canonical representation exists.
+6. Temporarily unavailable products/services SHOULD retain a useful canonical page when the entity remains valid, with accurate availability and alternatives. Permanently removed entities with no equivalent resolve `GONE`/410 after policy checks.
+7. Private/authenticated surfaces are protected by authorization, not merely robots directives.
+8. `robots.txt`, meta robots and canonical directives MUST NOT contradict one another. Blocking crawl is not a substitute for a required `noindex`/removal lifecycle.
+9. Sitemap membership derives from `INDEX`; sitemap presence never grants indexability by itself.
+10. An AI recommendation can trigger reevaluation but cannot mutate `IndexabilityDecision` outside the deterministic policy service.
+
+## 22.5 Technical SEO contract
+
+Every indexable template MUST provide:
+- crawlable server-rendered or statically rendered primary content and crawlable internal links;
+- one meaningful H1 and semantic document hierarchy;
+- entity-derived title and description, not global prototype metadata;
+- absolute canonical URL and correct status-code behaviour;
+- Open Graph/social metadata where public sharing is appropriate;
+- accessible descriptive media metadata for meaningful images;
+- deterministic structured data generated from the same canonical entities visible to the customer;
+- route-level performance budgets and realistic mobile Core Web Vitals verification;
+- no requirement for client-side interaction before the primary entity/content can be understood by a crawler.
+
+Cinematic transitions, 3D-style visuals, EPC interaction and rich app behaviour are enhancements. They MUST NOT replace the crawlable textual/entity representation or trap navigation inside non-crawlable client events.
+
+## 22.6 Structured-data contracts
+
+DIAL SHALL map canonical entities to applicable schema.org/search-engine supported structures, including where appropriate:
+- `Product` with `Offer` or `AggregateOffer`;
+- `BreadcrumbList`;
+- `ItemList` for genuine list/category contexts;
+- `Organization` and the applicable `LocalBusiness` subtype;
+- `Service` and other applicable public entity semantics;
+- review/rating properties only from genuine eligible review evidence.
+
+Structured data MUST match visible page truth. Price, currency, availability, condition, seller, identifiers, shipping/collection and return information MUST come from canonical commerce/provider contracts. Fake ratings, invisible claims, unsupported eligibility or stale offer data are prohibited. Rich-result eligibility is treated as an external search-provider concern, not promised by DIAL.
+
+## 22.7 Sitemap and crawl architecture
+
+DIAL MUST generate a sitemap index from the Indexability Policy rather than maintain a manual monolith. Shards SHOULD be partitioned by useful entity/route families such as vehicles, parts/products, EPC, services, providers/technicians, locations, groceries, Care, B2B/logistics and editorial/help content, and rotated within search-engine protocol limits.
+
+Each sitemap record carries the canonical URL and evidence-backed modification time. Deleted, redirected, `NOINDEX`, private or policy-failed URLs are removed automatically. Sitemap generation, submission and fetch errors are observable.
+
+## 22.8 Merchant/search-shopping feeds
+
+Where a target market and approved provider support merchant/search shopping feeds, DIAL SHALL generate them from canonical catalogue, pricing, inventory, seller, shipping and returns truth rather than maintain a second product database. Google Merchant Center/free-listing integration MAY be used where supported, behind the DIAL Tool Gateway.
+
+Feed items MUST be reconciled against landing pages. Product identity, title, brand, identifiers (GTIN/MPN where legitimately known), image, price, currency, availability, condition, seller, destination URL and applicable shipping/returns fields MUST fail stale rather than silently diverge. Feed rejection, disapproval and mismatch reasons are ingested into `GMPC-P080` issues and never silently hidden.
+
+## 22.9 Content quality, authority and anti-doorway controls
+
+Every indexable page must serve a user purpose independent of search ranking. The SEO quality gate MUST reject:
+- keyword-swapped doorway pages with no material entity/data difference;
+- invented expertise, inventory, fitment, location, price, availability, review or performance claims;
+- duplicate AI copy that adds no operational or technical value;
+- pages whose authoritative data is below freshness/coverage thresholds;
+- mass publication triggered solely by keyword volume.
+
+Technical/editorial content MUST retain source/provenance and review metadata where expertise materially affects the claim. Vehicle/parts fitment claims remain subordinate to canonical fitment/EPC truth. Commercial claims remain subordinate to pricing, inventory, supplier, Care and fulfilment authorities.
+
+## 22.10 Local discovery contract
+
+`GMPC-F081` governs public local discovery. Location/service-area pages exist only for real supported operations or providers. Business name, address/service area, phone/contact channel, hours, fulfilment/service capability and profile identifiers are reconciled with canonical organisation/location truth. Duplicate local profiles are detected and resolved. Review signals may inform discovery only when obtained through an authorised integration and must retain source and freshness; DIAL never fabricates or rewrites customer sentiment as a review.
+
+## 22.11 Hermes + GMPC SEO learning loop
+
+The governed loop is:
+
+```text
+search/query + indexing + landing performance evidence
+        -> GMPC opportunity detection
+        -> entity/inventory/service/location coverage check
+        -> Hermes evidence-backed candidate/recommendation
+        -> deterministic quality + privacy + indexability gates
+        -> approved publication/update
+        -> sitemap/feed/structured-data propagation
+        -> impressions/clicks/conversion/fulfilment/contribution measurement
+        -> Commercial Learning Store
+```
+
+Hermes MUST receive the minimum necessary evidence through DKRF/GMPC retrieval controls. Search opportunity generation must never expose private customer or Health data to public-search tooling. Reusable SEO learning is promoted only after downstream business outcomes are known.
+
+## 22.12 SEO observability and acceptance gates
+
+Before `GMPC-F080` can advance beyond its specified planning state, its dedicated acceptance contract MUST prove at least:
+1. every indexable route resolves a deterministic indexability decision;
+2. arbitrary filter/query combinations cannot create unbounded index inventory;
+3. canonical, robots, redirect/status and sitemap behaviour agree;
+4. public primary content is server/static rendered and linked through crawlable navigation;
+5. metadata is entity-derived and unique enough for the route purpose;
+6. structured data validates and equals visible canonical truth;
+7. sitemap shards contain only policy-approved canonical `INDEX` URLs;
+8. merchant feeds, where enabled, reconcile against canonical product/offer pages;
+9. stale price/inventory/location/fitment fails closed or degrades honestly;
+10. programmatic pages pass unique-value and anti-doorway gates;
+11. private/account/transaction/Health-sensitive routes are not index inventory;
+12. Core Web Vitals/performance budgets are tested on realistic mobile profiles;
+13. search/index/schema/feed failures are visible in P080/P081 and support/observability surfaces;
+14. search outcomes link through conversion, fulfilment and contribution rather than stopping at ranking/traffic;
+15. Hermes/AI cannot directly override indexability, canonical truth, review truth or public factual claims.
+
+`GMPC-F081` additionally requires real-location/service-area provenance, local-profile reconciliation, duplicate detection, genuine review provenance, and explicit compliance boundaries for any public Health-adjacent information.
 
 ---
 

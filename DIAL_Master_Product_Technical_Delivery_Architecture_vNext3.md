@@ -7949,7 +7949,7 @@ Source: [thelazydeveloper.org](https://www.thelazydeveloper.org/) adaptations in
 | Webhook AC | Signature verify + idempotency on all `/webhooks/*` (Paynow/ContiPay/EcoCash/PayPal/WA/FDMS) |
 | Headers / CORS / abuse limits | Security headers middleware + CORS allowlist per app; rate-limit auth, search proxy, WA/PSP webhooks |
 | Cost/health | Admin dashboard + alerts for AI (LiteLLM) + cloud + messaging (SMS/WA) |
-| Ship-less-JS | Customer-web route splitting; landing ≠ admin bundle; SEO only on public Spare/Tech |
+| Ship-less-JS | Customer-web route splitting; landing ≠ admin bundle; SEO only on explicitly indexable public DIAL commercial/informational surfaces; private/account/transactional/Health-sensitive surfaces never index; GMPC §22 governs |
 | API cost discipline | External calls budgeted/rate-limited — align with v4 §5.11 |
 | Launch metrics | Appendix C / §8.1 remain launch gates; eng checklist under T9 |
 
@@ -9413,7 +9413,7 @@ Mandatory with Agent Pack / D-47. Detail: `DIAL_Lazy_Developer_Playbook_Adaptati
 | **Security checklist** | AuthN ≠ AuthZ (`assertResourceAccess`); fail-closed `INTERNAL_API_SECRET`; no body-supplied identity; Zod re-validate server-side; security headers + CORS allowlist; bundle-grep for leaked secrets |
 | **AppSec toolchain (D-48)** | Threat Dragon models in-repo; Semgrep CE + Checkov in CI; Renovate for deps (not dual Dependabot version PRs); Strix only on authorized staging — see `DIAL_Security_Toolchain.md` / `docs/security/README.md` |
 | **API integration discipline** | n8n/Temporal/BullMQ only (not Make); webhook signature + idempotency; rate-limit and budget every Tier-3 call (Gemini, PSP, WA) |
-| **Launch metrics** | Appendix C / §8.1 remain the customer-open gate; eng add-ons = cost/health alerts, route-level JS splitting on customer web, marketing SEO only on public Spare/Tech pages |
+| **Launch metrics** | Appendix C / §8.1 remain the customer-open gate; eng add-ons = cost/health alerts, route-level JS splitting on customer web, marketing SEO only on explicitly indexable public DIAL commercial/informational surfaces; private/account/transactional/Health-sensitive surfaces never index; GMPC §22 governs pages |
 | **D-46 stitch** | When scaffolding admin/supplier/fleet/ops gaps, prefer locked donors in stitch §7 (csv-import, Tracktor, react-pdf, ESC/POS, Formance Console patterns, bull-board, Schedule-X) |
 
 #### 8.2 AI Hero–inspired agent / AI-app habits
@@ -11373,7 +11373,7 @@ Ignores `.env*`, keys/certs, `node_modules`, build artifacts, large binaries, of
 | `dial-money-fiscal.mdc` | globs payments/ledger/pricing/… | Integer minor units, outbox, FDMS virtual |
 | `dial-promotions.mdc` | globs `packages/promotions` | `computeActions` via pricing only |
 | `dial-delivery-maps.mdc` | globs delivery / admin delivery | D-45 SoR + MapLibre |
-| `dial-web-bundles.mdc` | globs web apps | Customer vs admin JS split; SEO only on public Spare/Tech |
+| `dial-web-bundles.mdc` | globs web apps | Customer vs admin JS split; SEO only on explicitly indexable public DIAL commercial/informational surfaces; private/account/transactional/Health-sensitive surfaces never index; GMPC §22 governs |
 | `SOURCES.md` | — | Attribution |
 
 ---
@@ -12187,7 +12187,7 @@ Technical AEO; Writing for citation; Measuring AI visibility; Database RLS & pri
 #### P2 — DevEx / growth hygiene
 
 12. ~~Agent audit prompt library + Cursor skills~~ → applied  
-13. Marketing SEO/AEO checklist (Spare/Tech public pages only).  
+13. Marketing SEO/AEO checklist for explicitly indexable public DIAL surfaces, governed by GMPC §22; private/account/transactional/Health-sensitive routes are excluded.
 14. Optional MCP for schema exploration in Cursor.  
 15. Off-box code backup habit (git + optional rsync); DB restore drill remains canonical.
 

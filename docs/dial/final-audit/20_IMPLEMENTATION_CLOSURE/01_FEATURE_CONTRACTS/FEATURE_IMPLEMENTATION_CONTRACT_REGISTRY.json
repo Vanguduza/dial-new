@@ -32186,7 +32186,7 @@
   {
     "feature_id": "GMPC-F080",
     "module": "GMPC",
-    "outcome": "Search/indexing/landing-page intelligence",
+    "outcome": "Search demand, deterministic indexability, programmatic landing-page, structured-data, sitemap and merchant-feed intelligence",
     "planning_status": "FRC_CLOSED",
     "implementation_status": "SPECIFIED",
     "domain_owner": "seo",
@@ -32233,6 +32233,12 @@
     ],
     "data_entities": [
       "SearchIndexingLandingPageIntelligence",
+      "LandingPageCandidate",
+      "SeoQualityAssessment",
+      "IndexabilityDecision",
+      "StructuredDataValidation",
+      "SitemapShard",
+      "MerchantFeedItem",
       "HumanReference",
       "AuditEvent",
       "EvidenceRef"
@@ -32261,21 +32267,24 @@
       "DIAL_WEB"
     ],
     "acceptance_contract": [
-      "GMPC-F080: Search/indexing/landing-page intelligence is accepted only when the mapped P080-P081 surface(s) execute against canonical DIAL domain truth with feature-specific tests.",
-      "all 9 realization facets are resolved",
-      "state and allowed actions derive from domain truth rather than UI-local status",
-      "commands are idempotent where retry or replay is possible",
-      "negative authorization, privacy and connector-scope tests pass",
-      "applicable eventuality and degraded-mode tests pass",
-      "observability, audit, support and Command Centre hooks are registered",
-      "a dedicated acceptance contract document is required before implementation can advance beyond SPECIFIED",
-      "implementation paths, tests and fresh evidence are filled before CODE_PRESENT or higher"
+      "GMPC-F080 is governed by docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md and GMPC Rev 2 section 22; every criterion there is mandatory.",
+      "every indexable route has a deterministic versioned IndexabilityDecision and stable canonical identity",
+      "arbitrary facets, internal search, tracking/session parameters and private/account/transactional/Health-sensitive routes cannot create uncontrolled index inventory",
+      "programmatic landing pages pass authoritative-data, unique-value, freshness and anti-doorway gates before publication/indexing",
+      "canonical, robots, status/redirect, sitemap and removal behaviour agree under positive and negative tests",
+      "structured data is generated from canonical visible truth and validates for every eligible template",
+      "sitemap shards contain only policy-approved canonical INDEX URLs and remove redirects, GONE, NOINDEX and private routes",
+      "merchant/search-shopping feeds where enabled reconcile product identity, offer, price, availability, seller, shipping/returns and destination URL to canonical commerce truth",
+      "public primary content and navigation are crawlable without client interaction and realistic mobile Core Web Vitals budgets pass",
+      "search outcomes are observable through conversion, fulfilment, revenue and contribution, not rankings/traffic alone",
+      "Hermes/AI may recommend opportunities and draft bounded content but cannot override indexability, canonical facts, fitment, price, availability, review or location truth",
+      "all 9 realization facets are resolved with feature-specific tests, negative authorization/privacy/connector tests, eventuality/degraded-mode coverage, audit/support hooks and fresh evidence before promotion"
     ]
   },
   {
     "feature_id": "GMPC-F081",
     "module": "GMPC",
-    "outcome": "Google Business/local profile operations",
+    "outcome": "Business profile, real-location/service-area and review-signal local discovery operations",
     "planning_status": "FRC_CLOSED",
     "implementation_status": "SPECIFIED",
     "domain_owner": "local-discovery",
@@ -32350,15 +32359,15 @@
       "DIAL_WEB"
     ],
     "acceptance_contract": [
-      "GMPC-F081: Google Business/local profile operations is accepted only when the mapped P082 surface(s) execute against canonical DIAL domain truth with feature-specific tests.",
-      "all 9 realization facets are resolved",
-      "state and allowed actions derive from domain truth rather than UI-local status",
-      "commands are idempotent where retry or replay is possible",
-      "negative authorization, privacy and connector-scope tests pass",
-      "applicable eventuality and degraded-mode tests pass",
-      "observability, audit, support and Command Centre hooks are registered",
-      "a dedicated acceptance contract document is required before implementation can advance beyond SPECIFIED",
-      "implementation paths, tests and fresh evidence are filled before CODE_PRESENT or higher"
+      "GMPC-F081 is governed by docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md and GMPC Rev 2 section 22; every criterion there is mandatory.",
+      "every public location/service-area landing surface maps to a real canonical DIAL organisation/location/provider capability and never invents geographic coverage",
+      "business profile name, address/service area, hours, contact channel and capabilities reconcile to canonical operational truth",
+      "duplicate local profiles and duplicate/doorway location pages are detected and cannot both remain canonical/indexable",
+      "review/rating signals preserve authorised source, freshness and provenance; DIAL never fabricates or rewrites sentiment as a review",
+      "public Health-adjacent discovery is compliance-gated and never derives from member/patient-specific health context",
+      "external profile writes are idempotent, connector-scoped, auditable and visibly degraded when provider sync is stale or failed",
+      "local discovery outcomes are measured through qualified demand, conversion/booking/order and fulfilled contribution where applicable",
+      "all 9 realization facets are resolved with feature-specific tests, negative authorization/privacy/connector tests, eventuality/degraded-mode coverage, audit/support hooks and fresh evidence before promotion"
     ]
   },
   {

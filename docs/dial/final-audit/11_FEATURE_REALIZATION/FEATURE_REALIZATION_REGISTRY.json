@@ -35576,7 +35576,7 @@
     "realization_id": "FR-GMPC-F080",
     "feature_id": "GMPC-F080",
     "module": "GMPC",
-    "outcome": "Search/indexing/landing-page intelligence",
+    "outcome": "Search demand, deterministic indexability, programmatic landing-page, structured-data, sitemap and merchant-feed intelligence",
     "canonical_owner": "seo",
     "aggregate": "SearchIndexingLandingPageIntelligence",
     "exposure": "INTERNAL",
@@ -35589,6 +35589,7 @@
     "screens": [
       "SEO & Discovery",
       "Search Opportunities",
+      "Indexability / schema / sitemap / feed workbench",
       "Context actions sheet",
       "Issue/support entry",
       "History/timeline"
@@ -35678,7 +35679,7 @@
     "realization_id": "FR-GMPC-F081",
     "feature_id": "GMPC-F081",
     "module": "GMPC",
-    "outcome": "Google Business/local profile operations",
+    "outcome": "Business profile, real-location/service-area and review-signal local discovery operations",
     "canonical_owner": "local-discovery",
     "aggregate": "GoogleBusinessLocalProfileOperations",
     "exposure": "INTERNAL",
@@ -35690,6 +35691,7 @@
     "support_profile": "SUPPORT-PLATFORM",
     "screens": [
       "Local Discovery",
+      "Location / profile reconciliation workbench",
       "Context actions sheet",
       "Issue/support entry",
       "History/timeline"

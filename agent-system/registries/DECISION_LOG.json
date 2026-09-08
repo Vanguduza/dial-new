@@ -522,5 +522,25 @@
       "tests/orchestration-vekl-resources.test.mjs"
     ],
     "reopens_if": "the product owner changes the locked runtime chain, subscription-capacity policy or full-production live-evidence requirements"
+  },
+  {
+    "decision_id": "DEC-023",
+    "decided_on": "2026-09-08",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "CORPORATE / GROWTH / SEO & DISCOVERY",
+    "title": "DIAL SEO is a governed programmatic and local discovery system, not an unrestricted content channel",
+    "decision": "Strengthen GMPC-F080/F081 so all deliberately public, useful DIAL commercial/informational surfaces may participate in SEO under a deterministic versioned Indexability Policy. Programmatic landing pages must be backed by canonical DIAL entity truth and pass unique-value, freshness, duplication, privacy, canonical, structured-data, sitemap and performance gates. Arbitrary facets/internal search/tracking URLs and private/account/transactional/Health-sensitive surfaces are not index inventory. Merchant/search-shopping feeds are generated from canonical commerce truth where supported. Hermes/AI may discover opportunities and draft bounded content but cannot override indexability or fabricate inventory, fitment, price, availability, location, coverage, expertise or reviews.",
+    "consequence": "The older Spare/Tech-only SEO wording is superseded. GMPC section 22, PREMIUM_CINEMATIC_WEB_STANDARD.md and the GMPC-F080/F081 dedicated acceptance contracts are the canonical SEO implementation boundary. Search success is measured through qualified conversion, fulfilment and contribution rather than ranking/traffic alone. No implementation may claim feature completion with metadata/sitemap/Search Console connectivity alone.",
+    "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md; docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md; docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md; PREMIUM_CINEMATIC_WEB_STANDARD.md",
+    "enforced_by": [
+      "GMPC-F080",
+      "GMPC-F081",
+      "agent-system/registries/FEATURE_REGISTRY.json",
+      "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
+      "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md",
+      "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F081_ACCEPTANCE_CONTRACT.md"
+    ],
+    "reopens_if": "the product owner explicitly replaces this SEO/indexability authority with an equal-or-stronger system preserving canonical-truth, anti-doorway, privacy, indexability, structured-data, sitemap/feed, local-discovery and AI-governance guarantees"
   }
 ]
