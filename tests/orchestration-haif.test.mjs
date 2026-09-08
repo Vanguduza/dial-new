@@ -22,7 +22,7 @@ import { benchmarkEliteModels } from '../agent-system/orchestration/providers/xk
 import { loadPerformanceLedger } from '../agent-system/orchestration/auxiliary/model-performance-ledger.mjs';
 import { isDirectEntrypoint } from '../agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs';
 import { r2ConfigFromEnv, r2ConfigStatus, r2ObjectKey, putR2Evidence } from '../agent-system/orchestration/auxiliary/r2-evidence-store.mjs';
-import { runOneAuxiliaryTask } from '../agent-system/orchestration/auxiliary/tenant-service.mjs';
+import { runOneAuxiliaryTask, haifTenantStatus } from '../agent-system/orchestration/auxiliary/tenant-service.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function publicTask(project = 'dial', archetype = project === 'dial' ? 'SUPPLIER_RESEARCH' : 'VEKL_SYNTHESIS') {
@@ -136,6 +136,21 @@ describe('HAIF restart safety and account quota', () => {
     expect(result.task.evidence.packets[0].model).toBe(route.model_id);
   });
 
+  it('parks new work before provider access when qualification is missing', async () => {
+    const root = temp('haif-unqualified');
+    const providerRoot = path.join(root, 'operations/auxiliary/provider');
+    const keyFile = path.join(root, 'secrets/xkiro-api.key');
+    fs.mkdirSync(path.dirname(keyFile), { recursive: true });
+    writeFileSync(keyFile, 'test-token-material-1234567890\n', { mode: 0o600 });
+    const task = publicTask();
+    submitAuxiliaryTask({ project: 'dial', taskArchetype: 'SUPPLIER_RESEARCH', purpose: task.purpose, evidence: task.evidence, evidenceRefs: task.evidence_refs }, { root, expectedProject: 'dial' });
+    let providerCalls = 0;
+    const result = await runOneAuxiliaryTask({ project: 'dial', root, providerRoot, keyFile, fetchImpl: async () => { providerCalls += 1; throw new Error('provider should not be called'); } });
+    expect(result.state).toBe('PARKED');
+    expect(result.reason).toBe('PROVIDER_QUALIFICATION_REQUIRED');
+    expect(providerCalls).toBe(0);
+  });
+
   it('keeps quota ledgers account-local instead of sharing DIAL and DDE capacity', () => {
     const dialRoot = temp('haif-dial-account'); const ddeRoot = temp('haif-dde-account');
     const usage = { free_tokens: { limit_per_day: 5_000_000, used_today: 0, remaining: 5_000_000 } };
@@ -234,6 +249,24 @@ describe('xKiro elite-only contract and qualification', () => {
     expect((statSync(keyFile).mode & 0o777).toString(8)).toBe('600');
   });
 
+  it('persists provider authentication failure without credential material', async () => {
+    const root = temp('haif-auth-fail');
+    const providerRoot = path.join(root, 'operations/auxiliary/provider');
+    const keyFile = path.join(root, 'secrets/xkiro-api.key');
+    fs.mkdirSync(path.dirname(keyFile), { recursive: true });
+    writeFileSync(keyFile, 'test-token-material-1234567890\n', { mode: 0o600 });
+    const fetchImpl = async (url) => {
+      if (String(url).endsWith('/models')) return response(200, { object: 'list', data: [] });
+      if (String(url).endsWith('/usage')) return response(401, { error: { message: 'invalid', code: 'authentication_error' } });
+      throw new Error(`unexpected URL ${url}`);
+    };
+    const artifact = await qualifyXKiroTenant({ project: 'dial', root, providerRoot, keyFile, fetchImpl });
+    expect(artifact.status).toBe('AUTHENTICATION_FAILED');
+    expect(artifact.authentication.verified).toBe(false);
+    expect(JSON.stringify(artifact)).not.toContain('test-token-material');
+    expect(haifTenantStatus({ project: 'dial', root, providerRoot, keyFile }).qualification.status).toBe('AUTHENTICATION_FAILED');
+  });
+
   it('promotes only elite models that pass all numerical benchmark gates', async () => {
     const root = temp('haif-benchmark'); const providerRoot = path.join(root, 'operations/auxiliary/provider');
     const keyFile = path.join(root, 'secrets/xkiro-api.key'); fs.mkdirSync(path.dirname(keyFile), { recursive: true });
@@ -296,5 +329,6 @@ describe('HAIF shared-runtime deployment isolation', () => {
     expect(installer).toContain('UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY');
     expect(installer).toContain('ConditionPathExists=/var/lib/dial-control/secrets/xkiro-api.key');
     expect(installer).toContain('ConditionPathExists=/home/ubuntu/.dde-control/secrets/xkiro-api.key');
+    expect(installer).toContain('systemctl --user restart \"$unit\"');
   });
 });

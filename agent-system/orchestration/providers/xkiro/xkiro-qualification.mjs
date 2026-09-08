@@ -11,6 +11,17 @@ import { assertAssembledRequestSafe } from '../../auxiliary/data-classification.
 
 function now() { return new Date().toISOString(); }
 
+function persistQualificationArtifact(artifact, root, { history = false } = {}) {
+  writeJsonAtomic(`operations/auxiliary/qualification/xkiro-${artifact.project}-latest.json`, artifact, root);
+  if (history) {
+    const dir = path.join(root, 'operations', 'auxiliary', 'qualification', 'history');
+    fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+    const stamp = String(artifact.completed_at ?? artifact.observed_at ?? now()).replace(/[:.]/g, '-');
+    fs.writeFileSync(path.join(dir, `xkiro-${artifact.project}-${stamp}.json`), `${JSON.stringify(artifact, null, 2)}\n`, { mode: 0o600 });
+  }
+  return artifact;
+}
+
 export function readSecureXKiroKey(keyFile) {
   const stat = fs.statSync(keyFile);
   if (!stat.isFile()) throw new Error('xKiro key path is not a file');
@@ -54,12 +65,18 @@ export async function qualifyXKiroTenant({ project, root, providerRoot, keyFile,
     data_governance: { state: 'PUBLIC_ONLY', non_public_authorized: false },
     status: 'AUTHENTICATED_PROOFS_PENDING',
   };
-  if (!secret.configured || !secret.secure) {
-    writeJsonAtomic(`operations/auxiliary/qualification/xkiro-${project}-latest.json`, artifact, root);
-    return artifact;
-  }
+  if (!secret.configured || !secret.secure) return persistQualificationArtifact(artifact, root);
   const key = readSecureXKiroKey(keyFile);
-  const usage = await fetchXKiroUsage({ apiKey: key, fetchImpl });
+  let usage;
+  try {
+    usage = await fetchXKiroUsage({ apiKey: key, fetchImpl });
+  } catch (error) {
+    artifact.authentication = { verified: false, category: error?.category ?? 'PROVIDER_ERROR' };
+    artifact.status = error?.category === 'AUTH_FAILED' ? 'AUTHENTICATION_FAILED' : 'AUTHENTICATED_PROOFS_FAILED';
+    artifact.completed_at = now();
+    return persistQualificationArtifact(artifact, root, { history: true });
+  }
+  artifact.authentication = { verified: true, category: null };
   persistUsageSnapshot(usage, providerRoot);
   artifact.usage = { snapshot_id: usage.usage_snapshot_id, plan: usage.plan, free_tokens: usage.free_tokens, wallet: usage.wallet };
   const candidates = qualificationCandidates(catalog, { requiredCapabilities: {}, limit: 12 });
@@ -100,9 +117,5 @@ export async function qualifyXKiroTenant({ project, root, providerRoot, keyFile,
   };
   artifact.status = 'PUBLIC_ONLY_TRANSPORT_QUALIFIED';
   artifact.completed_at = now();
-  writeJsonAtomic(`operations/auxiliary/qualification/xkiro-${project}-latest.json`, artifact, root);
-  const dir = path.join(root, 'operations', 'auxiliary', 'qualification', 'history');
-  fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
-  fs.writeFileSync(path.join(dir, `xkiro-${project}-${artifact.completed_at.replace(/[:.]/g, '-')}.json`), `${JSON.stringify(artifact, null, 2)}\n`, { mode: 0o600 });
-  return artifact;
+  return persistQualificationArtifact(artifact, root, { history: true });
 }
