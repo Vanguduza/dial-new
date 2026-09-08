@@ -48,7 +48,7 @@ EXTERNAL ORACLE CONTROL PLANE
 
 > Runtime selection is availability/provenance only and never changes DIAL product authority, Feature IDs, FRCs, gates, security policy, tests or evidence requirements.
 
-> Ordinary DIAL development remains blocked until the external Oracle orchestrator is `PRODUCTION_GREEN`.
+> Ordinary DIAL development remains blocked until the external Oracle orchestrator is either full `PRODUCTION_GREEN` or the `DEC-021` development-only `DEVELOPMENT_READY_FALLBACK` gate is valid. Both require external-queue execution; fallback-ready is explicitly not production certification.
 
 > After green, the canonical development entrypoint is `dial-hermes-submit`, not an ad-hoc project-local model session.
 
@@ -86,7 +86,7 @@ else
 
 The external orchestrator persists instructions under `/var/lib/dial-control`, outside the Git worktree. It atomically claims jobs, invokes the locked runtime executor against DIAL, and writes completed/failed records carrying runtime/model provenance.
 
-Before `PRODUCTION_GREEN`, ordinary jobs are rejected as `DEVELOPMENT_BLOCKED`. The only pre-green bypass is one exact fixed read-only/no-tools qualification canary; arbitrary text cannot be marked as a canary.
+Before either accepted development-ready gate, ordinary jobs are rejected as `DEVELOPMENT_BLOCKED`. The only bypass is the exact fixed read-only/no-tools qualification canary. `DEVELOPMENT_READY_FALLBACK` may be issued only from real exact-Sol temporary capacity evidence plus exact-Sonnet/VEKL/research/queue/continuity proof; arbitrary text or synthetic health injection cannot create it.
 
 The development gate is cryptographically pinned to the Git tree objects for:
 

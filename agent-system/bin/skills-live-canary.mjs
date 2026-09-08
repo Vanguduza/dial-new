@@ -19,6 +19,7 @@ const repoHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, enco
 const packetId = `vekl-qualification-${crypto.randomUUID()}`;
 const instruction = 'Read-only VEKL qualification: review responsive Android Compose UI considerations for tablet and foldable. Do not modify files, install anything, or change architecture. Reply with exactly DIAL_VEKL_PRIMARY_CANARY_OK.';
 const affectedPaths = ['apps/consumer-android/src/main/kotlin/VEKLQualification.kt'];
+const fallbackOnly = process.argv.includes('--fallback-only');
 
 ensureControlLayout(root);
 const skillPlan = resolveEngineeringSkills({ repoDir, instruction, affectedPaths, metadata: { max_skills: 3, qualification_canary: true } });
@@ -39,13 +40,23 @@ if (!verified.ok) throw new Error(`VEKL activation verification failed: ${JSON.s
 
 const codexProbe = await probeCodexAppServer({ repoDir, root });
 const claudeProbe = probeClaudeCode({ repoDir, root });
-if (codexProbe.state !== 'HEALTHY' || codexProbe.resolved_model !== 'gpt-5.6-sol') throw new Error('exact Sol probe is not healthy');
+const limitedPrimaryStates = new Set(['ACCOUNT_LIMITED', 'RATE_LIMITED', 'MODEL_LIMITED']);
+if (fallbackOnly) {
+  if (codexProbe.requested_model !== 'gpt-5.6-sol' || codexProbe.resolved_model !== 'gpt-5.6-sol' || codexProbe.identity_proven !== true || !limitedPrimaryStates.has(codexProbe.state)) {
+    throw new Error(`fallback-only VEKL canary requires exact Sol identity with a temporary provider limitation: ${JSON.stringify(codexProbe)}`);
+  }
+} else if (codexProbe.state !== 'HEALTHY' || codexProbe.resolved_model !== 'gpt-5.6-sol') {
+  throw new Error('exact Sol probe is not healthy');
+}
 if (claudeProbe.state !== 'HEALTHY' || claudeProbe.resolved_model !== 'claude-sonnet-5') throw new Error('exact Sonnet 5 probe is not healthy');
-const primarySelection = reconcileHermesRuntime({ root });
-if (primarySelection?.selection?.runtime !== 'codex_app_server') throw new Error('Sol was not selected for VEKL canary primary');
 
-const primary = runPrimaryHermes({ repoDir, root, packetId, skillActivation: manifest, instruction, timeoutMs: 180000 });
-if (!primary.ok || primary.resolved_model !== 'gpt-5.6-sol') throw new Error(`VEKL Sol canary failed: ${JSON.stringify(primary)}`);
+let primary = null;
+if (!fallbackOnly) {
+  const primarySelection = reconcileHermesRuntime({ root });
+  if (primarySelection?.selection?.runtime !== 'codex_app_server') throw new Error('Sol was not selected for VEKL canary primary');
+  primary = runPrimaryHermes({ repoDir, root, packetId, skillActivation: manifest, instruction, timeoutMs: 180000 });
+  if (!primary.ok || primary.resolved_model !== 'gpt-5.6-sol') throw new Error(`VEKL Sol canary failed: ${JSON.stringify(primary)}`);
+}
 
 const fallbackSelection = reconcileHermesRuntime({ root, includeRuntimes: ['claude_code'] });
 if (fallbackSelection?.selection?.runtime !== 'claude_code') throw new Error('Sonnet 5 was not selected for VEKL canary fallback');
@@ -65,13 +76,16 @@ if (fallback.event.resolved_model !== 'claude-sonnet-5' || fallback.event.identi
   throw new Error(`VEKL Sonnet canary failed: ${JSON.stringify(fallback.event)}`);
 }
 
-await probeCodexAppServer({ repoDir, root });
-const restored = reconcileHermesRuntime({ root });
-if (restored?.selection?.runtime !== 'codex_app_server') throw new Error('Sol preference did not restore after VEKL canary');
+let restored = null;
+if (!fallbackOnly) {
+  await probeCodexAppServer({ repoDir, root });
+  restored = reconcileHermesRuntime({ root });
+  if (restored?.selection?.runtime !== 'codex_app_server') throw new Error('Sol preference did not restore after VEKL canary');
+}
 
 const evidence = {
   schema_version: 1,
-  kind: 'DIAL_VEKL_LIVE_RUNTIME_SYMMETRY_CANARY',
+  kind: fallbackOnly ? 'DIAL_VEKL_LIVE_FALLBACK_CANARY' : 'DIAL_VEKL_LIVE_RUNTIME_SYMMETRY_CANARY',
   status: 'GREEN',
   observed_at: now(),
   repo_head: repoHead,
@@ -81,15 +95,17 @@ const evidence = {
   selected_skills: manifest.skills.map((s) => ({ skill_id: s.skill_id, upstream_commit: s.upstream_commit, content_hash: s.content_hash })),
   selected_resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, source_id: r.source_id, resource_class: r.resource_class, content_hash: r.content_hash || null, cache_ref: r.cache_ref || null })),
   activation_verified: true,
-  primary: { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: primary.resolved_model, activation_id: manifest.activation_id },
+  primary: fallbackOnly ? { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: codexProbe.resolved_model, state: codexProbe.state, identity_proven: codexProbe.identity_proven, activation_id: null } : { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: primary.resolved_model, state: 'HEALTHY', identity_proven: true, activation_id: manifest.activation_id },
   fallback: { runtime: 'claude_code', requested_model: 'claude-sonnet-5', resolved_model: fallback.event.resolved_model, activation_id: fallback.event.skill_activation_id },
-  same_activation_across_runtimes: fallback.event.skill_activation_id === manifest.activation_id,
+  same_activation_across_runtimes: fallbackOnly ? false : fallback.event.skill_activation_id === manifest.activation_id,
+  fallback_activation_proven: fallback.event.skill_activation_id === manifest.activation_id,
   exact_hashes_preserved: true,
   federated_resource_provenance_preserved: (manifest.resources || []).length > 0,
-  primary_restored: true,
+  primary_restored: fallbackOnly ? false : true,
+  temporary_primary_limitation: fallbackOnly ? codexProbe.state : null,
   authority: 'NON_AUTHORITATIVE_QUALIFICATION_EVIDENCE',
 };
 const rel = `evidence-cache/qualification/vekl-live-canary-${stamp()}.json`;
 writeJsonAtomic(rel, evidence, root);
-appendJsonl('events/engineering-knowledge.jsonl', { event: 'VEKL_V2_LIVE_RUNTIME_CANARY_GREEN', activation_id: manifest.activation_id, repo_head: repoHead, at: evidence.observed_at }, root);
+appendJsonl('events/engineering-knowledge.jsonl', { event: fallbackOnly ? 'VEKL_V2_LIVE_FALLBACK_CANARY_GREEN' : 'VEKL_V2_LIVE_RUNTIME_CANARY_GREEN', activation_id: manifest.activation_id, repo_head: repoHead, at: evidence.observed_at }, root);
 console.log(JSON.stringify({ ...evidence, evidence_path: `${root}/${rel}` }, null, 2));

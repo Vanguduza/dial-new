@@ -46,6 +46,9 @@ jq -e --arg head "$HEAD_SHA" '
   and .vekl_policy_version == "vekl-2.0"
   and .vekl_federated_resource_layer == true
   and .vekl_ahead_of_work_research_scheduler == true
+  and .vekl_ahead_of_work_live_forecast == true
+  and .vekl_ahead_of_work_forecast_runtime == "codex_app_server"
+  and .vekl_ahead_of_work_forecast_model == "gpt-5.6-sol"
   and .vekl_packet_manifest_required == true
   and .vekl_vendor_content_authority == "ENGINEERING_GUIDANCE_ONLY"
   and .vekl_unqualified_vendor_activation_allowed == false
@@ -88,6 +91,7 @@ jq -e --arg head "$HEAD_SHA" '
   and .unrelated_project_services_touched == false
   and .dial_services_recovered == true
   and .chat_control_recovered == true
+  and .engineering_research_scheduler_recovered == true
   and .mission_state_survived == true
 ' "$CONTINUITY" >/dev/null || fail "project-isolated continuity-soak evidence is not green for current HEAD"
 pass "DIAL mission/control continuity is proven through DIAL-only service restarts; no shared-host reboot is required"

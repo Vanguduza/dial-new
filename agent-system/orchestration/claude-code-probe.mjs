@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +15,7 @@ import {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const REQUESTED_MODEL = 'claude-sonnet-5';
+const CLAUDE_BIN = process.env.DIAL_CLAUDE_BIN || (process.env.HOME && fs.existsSync(path.join(process.env.HOME, '.local/bin/claude')) ? path.join(process.env.HOME, '.local/bin/claude') : 'claude');
 
 function now() { return new Date().toISOString(); }
 
@@ -37,16 +40,17 @@ function classify(stderr = '', stdout = '') {
 
 export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 90000 } = {}) {
   const startedAt = now();
-  const result = spawnSync('claude', [
+  const result = spawnSync(CLAUDE_BIN, [
     '-p', 'Reply with exactly DIAL_CLAUDE_OK. Do not use tools.',
     '--model', REQUESTED_MODEL,
     '--effort', 'low',
     '--output-format', 'json',
     '--permission-mode', 'plan',
-    '--max-turns', '1',
+    '--max-turns', '2',
     '--name', 'DIAL-SONNET-RUNTIME-PROBE',
   ], {
-    cwd: repoDir,
+    cwd: process.env.DIAL_RUNTIME_PROBE_CWD || os.tmpdir(),
+    input: '',
     encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 8 * 1024 * 1024,
@@ -119,7 +123,7 @@ function claudeCommandLooksLikeUnknown(stderr = '', stdout = '') {
 
 export function detectClaudePlanListCommand({ spawn = spawnSync } = {}) {
   for (const args of CLAUDE_LIST_CANDIDATES) {
-    const help = spawn('claude', [...args, '--help'], {
+    const help = spawn(CLAUDE_BIN, [...args, '--help'], {
       encoding: 'utf8',
       timeout: 8000,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -127,7 +131,7 @@ export function detectClaudePlanListCommand({ spawn = spawnSync } = {}) {
     if (help.status === 0 && !claudeCommandLooksLikeUnknown(help.stderr, help.stdout)) {
       return { available: true, args };
     }
-    const direct = spawn('claude', args, {
+    const direct = spawn(CLAUDE_BIN, args, {
       encoding: 'utf8',
       timeout: 8000,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -169,7 +173,7 @@ export function listClaudePlanModels({
         source = 'claude_cli_has_no_noninteractive_plan_list';
         sourceDetail = 'Claude Code exposes models through interactive /model only. Hermes does not use the Anthropic API catalog and does not pin Fable 5 vs Fable 5.1.';
       } else {
-        const listed = spawn('claude', detected.args, {
+        const listed = spawn(CLAUDE_BIN, detected.args, {
           cwd: repoDir,
           encoding: 'utf8',
           timeout: 15000,

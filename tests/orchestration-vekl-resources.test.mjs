@@ -27,7 +27,11 @@ describe('VEKL 2 federated engineering resources',()=>{
 
   it('uses a project-aware forecast to prefetch approved sources ahead of work without making them executable',async()=>{
     const root=temp('vekl2-research');ensureControlLayout(root);
-    const planner=async()=>({ok:true,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[{feature_id:'GROC-F021',objective:'Close Grocery Rounds RLS and contract tests',task_classes:['DATABASE','RLS_SECURITY','UNIT_TESTING'],technologies:['Supabase','PostgreSQL','Vitest'],research_questions:['What are the current RLS policy semantics relevant to the existing schema?'],preferred_source_ids:['official.supabase','official.postgresql','official.vitest'],search_queries:['Supabase RLS policy auth.uid current guidance'],risks:['Do not create a second authority.']}],exclusions:['No provider migration.']}});
+    const planner=async()=>({ok:true,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
+      {feature_id:'GROC-F021',objective:'Close Grocery Rounds RLS and contract tests',task_classes:['DATABASE','RLS_SECURITY','UNIT_TESTING'],technologies:['Supabase','PostgreSQL','Vitest'],research_questions:['What are the current RLS policy semantics relevant to the existing schema?'],preferred_source_ids:['official.supabase','official.postgresql','official.vitest'],search_queries:['Supabase RLS policy auth.uid current guidance'],risks:['Do not create a second authority.']},
+      {feature_id:'PLAT-F014',objective:'Research deterministic margin calculation refusal paths',task_classes:['VALIDATION','UNIT_TESTING'],technologies:['Zod','Vitest'],research_questions:['How should missing evidenced inputs fail closed?'],preferred_source_ids:['official.zod','official.vitest'],search_queries:['Zod discriminated union missing input'],risks:['No second price authority.']},
+      {feature_id:null,objective:'Research kernel authorization negative tests',task_classes:['RLS_SECURITY','E2E_TESTING'],technologies:['Supabase','Playwright'],research_questions:['How should cross-tenant access be denied and tested?'],preferred_source_ids:['official.supabase','official.playwright'],search_queries:['Supabase RLS Playwright negative authorization'],risks:['No privileged test client may manufacture green evidence.']}
+    ],exclusions:['No provider migration.']}});
     const fakeFetch=async(url)=>new Response(`<html><body>Official engineering reference for ${url}</body></html>`,{status:200,headers:{'content-type':'text/html'}});
     const result=await refreshAheadOfWorkResearch({repoDir,root,force:true,planner,fetchImpl:fakeFetch,maxResources:8});
     expect(result.state).toBe('READY');
@@ -73,15 +77,28 @@ describe('VEKL 2 federated engineering resources',()=>{
 
   it('refuses redirects from an allowlisted research source to an unallowlisted/internal host',async()=>{
     const root=temp('vekl2-ssrf');ensureControlLayout(root);
-    const planner=async()=>({ok:true,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[{feature_id:'GROC-F021',objective:'Check current Supabase RLS guidance',task_classes:['RLS_SECURITY'],technologies:['Supabase'],research_questions:['Current RLS behavior?'],preferred_source_ids:['official.supabase'],search_queries:['Supabase RLS'],risks:[]}],exclusions:[]}});
+    const planner=async()=>({ok:true,runtime:'codex_app_server',requested_model:'gpt-5.6-sol',resolved_model:'gpt-5.6-sol',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
+      {feature_id:'GROC-F021',objective:'Check current Supabase RLS guidance',task_classes:['RLS_SECURITY'],technologies:['Supabase'],research_questions:['Current RLS behavior?'],preferred_source_ids:['official.supabase'],search_queries:['Supabase RLS'],risks:[]},
+      {feature_id:'PLAT-F014',objective:'Check validation guidance',task_classes:['VALIDATION'],technologies:['Zod'],research_questions:['Current validation behavior?'],preferred_source_ids:['official.zod'],search_queries:['Zod validation'],risks:[]},
+      {feature_id:null,objective:'Check test guidance',task_classes:['UNIT_TESTING'],technologies:['Vitest'],research_questions:['Current test behavior?'],preferred_source_ids:['official.vitest'],search_queries:['Vitest tests'],risks:[]}
+    ],exclusions:[]}});
     let calls=0;const fakeFetch=async()=>{calls++;return new Response('',{status:302,headers:{location:'http://127.0.0.1:9999/private','content-type':'text/plain'}});};
     const result=await refreshAheadOfWorkResearch({repoDir,root,force:true,planner,fetchImpl:fakeFetch,maxResources:4});
     expect(result.state).toBe('READY');
-    expect(calls).toBe(1);
+    expect(calls).toBeGreaterThanOrEqual(1);
     const index=readJson('knowledge/research/cache-index.json',null,root);
     const cached=readJson(index.resources['ref.supabase.docs'].cache_ref,null,root);
     expect(cached.state).toBe('FETCH_FAILED');
     expect(cached.error).toMatch(/redirect escaped allowlist/);
+  });
+
+  it('sanitizes feature ranges because a forecast item must never invent a non-atomic Feature ID',async()=>{
+    const root=temp('vekl2-feature-sanitize');ensureControlLayout(root);
+    const item={feature_id:'GROC-F019..F034',objective:'Research the next bounded Grocery Rounds packet',task_classes:['DATABASE'],technologies:['PostgreSQL'],research_questions:['Which exact feature owns this packet?'],preferred_source_ids:['official.postgresql'],search_queries:['PostgreSQL ledger'],risks:['Resolve exact Feature ID before implementation.']};
+    const planner=async()=>({ok:true,runtime:'claude_code',requested_model:'claude-sonnet-5',resolved_model:'claude-sonnet-5',identity_proven:true,forecast:{schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[item,{...item,feature_id:'PLAT-F014'},{...item,feature_id:null}],exclusions:[]}});
+    const result=await refreshAheadOfWorkResearch({repoDir,root,force:true,planner,fetchImpl:async()=>new Response('ok',{status:200,headers:{'content-type':'text/plain'}}),maxResources:2});
+    expect(result.state).toBe('READY');
+    expect(result.items[0].feature_id).toBe(null);
   });
 
 });

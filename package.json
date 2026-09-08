@@ -85,7 +85,11 @@
     "agent:knowledge:check": "node agent-system/bin/engineering-knowledge-check.mjs",
     "agent:knowledge:resolve": "node agent-system/bin/engineering-knowledge-resolve.mjs",
     "agent:knowledge:presearch": "node agent-system/orchestration/engineering-presearch.mjs refresh",
-    "agent:knowledge:presearch-status": "node agent-system/orchestration/engineering-presearch.mjs status"
+    "agent:knowledge:presearch-status": "node agent-system/orchestration/engineering-presearch.mjs status",
+    "agent:research:refresh": "node agent-system/orchestration/engineering-presearch.mjs refresh",
+    "agent:research:status": "node agent-system/orchestration/engineering-presearch.mjs status",
+    "agent:skills:live-fallback-canary": "node agent-system/bin/skills-live-canary.mjs --fallback-only",
+    "agent:development:finalize-readiness": "bash deploy/oracle/hermes-codex/finalize-development-readiness.sh"
   },
   "dependencies": {
     "sharp": "0.35.4",

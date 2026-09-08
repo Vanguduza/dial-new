@@ -199,3 +199,5 @@ Verify everything before you finish:
 ## Oracle persistent orchestration control
 
 The persistent Oracle DIAL mission owns autonomous continuation; Claude chat is a typed operator console only.
+
+Ordinary development is executable only through the external Oracle orchestrator after a valid runtime gate. `PRODUCTION_GREEN` is the full dual-runtime certification. `DEC-021` also permits the explicitly development-only `DEVELOPMENT_READY_FALLBACK` state when exact Sol is temporarily provider-limited but exact Sonnet 5, the external fallback queue, VEKL v2 fallback/research evidence, repository verification, continuity and current control-plane fingerprint are all proven. Never describe this fallback state as production-green, and never use it for ad-hoc chat-local development.

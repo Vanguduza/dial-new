@@ -18,6 +18,7 @@ import { listClaudePlanModels } from '../agent-system/orchestration/claude-code-
 import { listCodexPlanModels } from '../agent-system/orchestration/codex-app-server-probe.mjs';
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
+import { controlPlaneFingerprint, evaluateDevelopmentUnblock } from '../agent-system/orchestration/development-unblock.mjs';
 import {
   QUALIFICATION_CANARY_INSTRUCTION,
   externalWorkStatus,
@@ -395,5 +396,48 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
   it('prefers explicit Feature ID in the incoming turn', () => {
     const repo = makeRepo();
     expect(resolveFeatureId({ userMessage: 'continue TEST-F001 please', repoDir: repo })).toBe('TEST-F001');
+  });
+});
+
+
+describe('development readiness gates', () => {
+  function heartbeat(root) {
+    writeJsonAtomic('state/external-orchestrator-heartbeat.json', { execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', observed_at: new Date().toISOString() }, root);
+  }
+  function fallbackGate(repoDir, overrides = {}) {
+    return {
+      schema_version: 3,
+      status: 'DEVELOPMENT_READY_FALLBACK',
+      development_only: true,
+      production_certified: false,
+      execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR',
+      runtime_policy: 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
+      control_plane_fingerprint: controlPlaneFingerprint(repoDir),
+      primary: { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', identity_proven: true, state: 'ACCOUNT_LIMITED' },
+      fallback: { runtime: 'claude_code', requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5', identity_proven: true, state: 'HEALTHY' },
+      external_fallback_canary: { completed: true, execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', resolved_model: 'claude-sonnet-5' },
+      vekl: { live_fallback_canary: true, ahead_of_work_forecast_ready: true },
+      continuity: { green: true },
+      ...overrides,
+    };
+  }
+
+  it('unblocks development through exact Sonnet when Sol identity is proven but temporarily provider-limited', () => {
+    const root = temp('dial-fallback-ready'), repoDir = process.cwd(); ensureControlLayout(root); heartbeat(root);
+    writeJsonAtomic('state/external-orchestration-gate.json', fallbackGate(repoDir), root);
+    const result = evaluateDevelopmentUnblock({ repoDir, root });
+    expect(result.unblocked).toBe(true);
+    expect(result.development_state).toBe('DEVELOPMENT_RESUMABLE_THROUGH_EXACT_SONNET_FALLBACK');
+    expect(result.checks.production_green).toBe(false);
+    expect(result.checks.fallback_readiness_valid).toBe(true);
+  });
+
+  it('fails closed when the primary failure is authentication rather than a temporary provider limitation', () => {
+    const root = temp('dial-fallback-auth-red'), repoDir = process.cwd(); ensureControlLayout(root); heartbeat(root);
+    const gate = fallbackGate(repoDir); gate.primary.state = 'AUTH_FAILED';
+    writeJsonAtomic('state/external-orchestration-gate.json', gate, root);
+    const result = evaluateDevelopmentUnblock({ repoDir, root });
+    expect(result.unblocked).toBe(false);
+    expect(result.checks.fallback_readiness_valid).toBe(false);
   });
 });

@@ -75,8 +75,8 @@ REQUIRED OPERATOR AUTH + INSTALL STEPS:
      (this now also installs the persistent external orchestrator service).
   6. Complete the live qualification/soak/finalization sequence printed by that installer.
 
-DEVELOPMENT MUST REMAIN BLOCKED until finalize-control-plane.sh creates a valid
-PRODUCTION_GREEN external-orchestration gate. After that, development enters
+DEVELOPMENT MUST REMAIN BLOCKED until either finalize-control-plane.sh creates a valid
+PRODUCTION_GREEN or, when exact Sol is temporarily provider-limited, finalize-development-readiness.sh creates a strict development-only DEVELOPMENT_READY_FALLBACK external-orchestration gate. After that, development enters
 through dial-hermes-submit, not through an ad-hoc project-local session.
 
 Do not export OPENAI_API_KEY, CODEX_API_KEY or ANTHROPIC_API_KEY into the subscription-runtime service environment.

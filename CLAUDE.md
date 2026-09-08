@@ -43,7 +43,7 @@ When the `dial-oracle-control` MCP/chat-control bridge is available, Claude chat
 - A Claude session ending or reaching its usage limit does not pause the Oracle mission.
 - Do not expose or request a generic shell through the chat bridge.
 - The bridge is DIAL-only. Never query, control or import state from other Hermes projects.
-- Direct repository development remains blocked until the external Hermes production gate is green.
+- Direct/ad-hoc repository development is never the entrypoint. Ordinary work is allowed only when the external Oracle gate is `PRODUCTION_GREEN` or, under `DEC-021`, the development-only `DEVELOPMENT_READY_FALLBACK` gate is valid; in either case execution enters through the persistent Oracle orchestrator. The fallback gate is not production certification.
 
 Architecture: `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
 

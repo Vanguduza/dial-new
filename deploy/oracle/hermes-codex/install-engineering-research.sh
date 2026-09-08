@@ -27,6 +27,8 @@ Environment=DIAL_REPO_DIR=$REPO_DIR
 Environment=DIAL_CONTROL_HOME=$CONTROL_HOME
 Environment=CODEX_HOME=$CODEX_HOME
 Environment=DIAL_ENGINEERING_RESEARCH_TTL_HOURS=12
+Environment=DIAL_ENGINEERING_RESEARCH_RETRY_MINUTES=30
+Environment=PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/engineering-presearch.mjs refresh
 NoNewPrivileges=true
@@ -60,7 +62,6 @@ Description=Refresh DIAL VEKL research when project truth, plan, or mission adva
 PathChanged=$REPO_DIR/agent-system/canon/PROJECT_TRUTH.md
 PathChanged=$REPO_DIR/docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md
 PathChanged=$CONTROL_HOME/missions/dial-development-root.json
-PathChanged=$CONTROL_HOME/state/active-checkpoint.json
 Unit=dial-engineering-research.service
 
 [Install]

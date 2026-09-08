@@ -48,7 +48,7 @@ No LLM process owns the ability to reconstruct control state. The persistent que
 
 ## Development gating
 
-Ordinary work may be submitted/executed only after `finalize-control-plane.sh` creates a valid `PRODUCTION_GREEN` external-orchestration gate.
+Ordinary work may be submitted/executed only through the external Oracle queue after either (a) `finalize-control-plane.sh` creates full `PRODUCTION_GREEN`, or (b) `DEC-021`'s `finalize-development-readiness.sh` creates a development-only `DEVELOPMENT_READY_FALLBACK` gate while exact Sol is temporarily provider-limited and exact Sonnet/VEKL/queue/continuity evidence is live-green. The latter is not production certification.
 
 Before green, the queue accepts no development bypass. The sole exception is an exact fixed qualification canary whose instruction is read-only/no-tools and cannot be replaced with arbitrary work.
 
@@ -118,7 +118,7 @@ Install/update:
 bash deploy/oracle/hermes-codex/install-control-plane.sh
 ```
 
-After `PRODUCTION_GREEN`, submit work externally:
+After either valid development-ready gate, submit work externally:
 
 ```bash
 dial-hermes-submit "<development instruction>"
@@ -147,6 +147,13 @@ Deliberate quota exhaustion is prohibited. Live provider capacity must be observ
 ## Shared-host isolation
 
 The Oracle machine is a shared infrastructure host for independent Hermes projects. DIAL qualification MUST NOT restart a global Hermes gateway, reboot the host, or target an unscoped Codex/Claude process. DIAL failure injection is limited to DIAL-owned process descendants and DIAL-specific services. Whole-host maintenance tests are outside the DIAL development-unblock gate.
+
+
+## Development-only capacity fallback gate
+
+`DEVELOPMENT_READY_FALLBACK` exists so a temporary Sol subscription/provider capacity boundary does not unnecessarily stop contract-first repository development when the already-locked exact Sonnet 5 fallback is fully healthy. It is fail-closed: Sol must still resolve as exact `gpt-5.6-sol`; only `ACCOUNT_LIMITED`, `RATE_LIMITED` or `MODEL_LIMITED` qualifies; exact `claude-sonnet-5` must be healthy; the actual external queue must complete a fallback canary; VEKL v2 must prove the exact fallback activation and a project-aware ahead-of-work forecast; full repository verification and DIAL-only continuity must be green; and the gate is bound to the current control-plane Git-tree fingerprint.
+
+`AUTH_FAILED`, `PROCESS_FAILED`, wrong-model identity, stale heartbeat, dirty/uncommitted control-plane code or missing evidence block the gate. Once Sol is healthy, normal routing prefers Sol automatically. Full `PRODUCTION_GREEN` still requires the existing live Sol primary, real process death, same-job failover and Sol-recovery soaks; the fallback gate cannot satisfy those production-certification claims.
 
 ## VEKL engineering-knowledge plane
 

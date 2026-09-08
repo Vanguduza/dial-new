@@ -45,7 +45,7 @@ DIAL Hermes external-runtime invariants:
 - Exact runtime chain: GPT-5.6 Sol through Codex App Server, then exact Claude Sonnet 5 through official Claude Code CLI, then fail closed.
 - Discovered plan models are informational only and never become runtime fallbacks.
 - Runtime fallback is an availability mechanism only and does not redefine DIAL development governance.
-- Product development remains blocked until the external Oracle orchestrator reaches PRODUCTION_GREEN.
+- Product development remains blocked until the external Oracle orchestrator reaches full PRODUCTION_GREEN or the strict DEC-021 development-only DEVELOPMENT_READY_FALLBACK gate; both permit work only through the external queue.
 - Once green, development enters through dial-hermes-submit; direct project-session development is not the canonical path.
 - Checkpoints, handoffs and Feature memory are continuity context and must be verified against current Git/canon.
 - VEKL external engineering skills are packet-pinned, non-authoritative procedural guidance; only an approved Skill Activation Manifest may activate them.
@@ -198,7 +198,7 @@ Runtime chain is locked to:
   -> Claude Sonnet 5 / official Claude Code
   -> NO_HERMES_RUNTIME_AVAILABLE
 
-The external Oracle orchestrator, non-authoritative auxiliary operations plane, persistent mission controller and DIAL-only Claude chat control bridge are installed, but PRODUCT DEVELOPMENT REMAINS BLOCKED.
+The external Oracle orchestrator, non-authoritative auxiliary operations plane, persistent mission controller and DIAL-only Claude chat control bridge are installed. PRODUCT DEVELOPMENT remains blocked until either full PRODUCTION_GREEN or the strict development-only DEVELOPMENT_READY_FALLBACK gate is issued.
 The only pre-green queued action permitted is the fixed read-only/no-tools qualification canary.
 
 NEXT REQUIRED INTERACTIVE HERMES ACTION:
@@ -213,10 +213,13 @@ After live subscription capacity is available, execute in order:
   bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity
   bash deploy/oracle/hermes-codex/finalize-control-plane.sh
 
+If exact Sol is identity-proven but temporarily account/rate/model limited, do not weaken the full qualifier. Run instead:
+  bash deploy/oracle/hermes-codex/finalize-development-readiness.sh
+This produces a development-only gate and preserves the requirement to upgrade to full PRODUCTION_GREEN after Sol recovery.
+
 Do not reboot this shared multi-project Oracle host as part of ordinary DIAL qualification. A reboot soak is optional platform-wide maintenance evidence and requires explicit owner approval/maintenance coordination.
 
-Only after finalization prints EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN may
-Dial development resume, and the canonical development entrypoint is then:
+After full finalization prints EXTERNAL_HERMES_ORCHESTRATION=PRODUCTION_GREEN, or while exact Sol is temporarily provider-limited after finalize-development-readiness.sh prints DEVELOPMENT_READY_FALLBACK, Dial development may resume. The canonical development entrypoint in either case is:
   dial-hermes-submit "<development instruction>"
 
 Do not deliberately exhaust subscription quota to manufacture a provider failure.

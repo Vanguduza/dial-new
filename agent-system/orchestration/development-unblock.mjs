@@ -51,9 +51,35 @@ export function evaluateDevelopmentUnblock({
     && nowMs >= heartbeatMs
     && nowMs - heartbeatMs <= HEARTBEAT_MAX_AGE_MS;
 
+  const productionGreen = gate?.status === 'PRODUCTION_GREEN';
+  const fallbackReady = gate?.status === 'DEVELOPMENT_READY_FALLBACK';
+  const limitedPrimaryStates = new Set(['ACCOUNT_LIMITED', 'RATE_LIMITED', 'MODEL_LIMITED']);
+  const fallbackReadinessValid = productionGreen || Boolean(
+    fallbackReady
+    && gate?.development_only === true
+    && gate?.primary?.requested_model === 'gpt-5.6-sol'
+    && gate?.primary?.resolved_model === 'gpt-5.6-sol'
+    && gate?.primary?.identity_proven === true
+    && limitedPrimaryStates.has(gate?.primary?.state)
+    && gate?.fallback?.runtime === 'claude_code'
+    && gate?.fallback?.requested_model === 'claude-sonnet-5'
+    && gate?.fallback?.resolved_model === 'claude-sonnet-5'
+    && gate?.fallback?.identity_proven === true
+    && gate?.fallback?.state === 'HEALTHY'
+    && gate?.external_fallback_canary?.completed === true
+    && gate?.external_fallback_canary?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR'
+    && gate?.external_fallback_canary?.resolved_model === 'claude-sonnet-5'
+    && gate?.vekl?.live_fallback_canary === true
+    && gate?.vekl?.ahead_of_work_forecast_ready === true
+    && gate?.continuity?.green === true
+  );
+
   const checks = {
     gate_present: Boolean(gate),
-    production_green: gate?.status === 'PRODUCTION_GREEN',
+    accepted_runtime_gate: productionGreen || fallbackReady,
+    production_green: productionGreen,
+    fallback_ready: fallbackReady,
+    fallback_readiness_valid: fallbackReadinessValid,
     external_origin: gate?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR',
     locked_policy: gate?.runtime_policy === 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
     control_plane_fingerprint_known: Boolean(currentFingerprint?.value),
@@ -65,14 +91,19 @@ export function evaluateDevelopmentUnblock({
     external_orchestrator_heartbeat_fresh: heartbeatFresh,
     heartbeat_origin_valid: heartbeat?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR',
   };
-  const unblocked = Object.values(checks).every(Boolean);
-  const failed = Object.entries(checks).filter(([, ok]) => !ok).map(([name]) => name);
+  const requiredCheckNames = [
+    'gate_present', 'accepted_runtime_gate', 'fallback_readiness_valid', 'external_origin', 'locked_policy',
+    'control_plane_fingerprint_known', 'qualified_control_plane_unchanged',
+    'external_orchestrator_heartbeat_fresh', 'heartbeat_origin_valid',
+  ];
+  const unblocked = requiredCheckNames.every((name) => checks[name] === true);
+  const failed = requiredCheckNames.filter((name) => checks[name] !== true);
 
   return {
     schema_version: 2,
     unblocked,
-    development_state: unblocked ? 'DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES' : 'DEVELOPMENT_BLOCKED',
-    reason: unblocked ? null : `external Hermes qualification gate not satisfied: ${failed.join(', ')}`,
+    development_state: unblocked ? (fallbackReady ? 'DEVELOPMENT_RESUMABLE_THROUGH_EXACT_SONNET_FALLBACK' : 'DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES') : 'DEVELOPMENT_BLOCKED',
+    reason: unblocked ? null : `external Hermes development-readiness gate not satisfied: ${failed.join(', ')}`,
     repo_head: currentHead,
     control_plane_fingerprint: currentFingerprint,
     gate,
@@ -85,7 +116,7 @@ export function evaluateDevelopmentUnblock({
 export function assertDevelopmentUnblocked(options = {}) {
   const result = evaluateDevelopmentUnblock(options);
   if (!result.unblocked) {
-    const error = new Error(result.reason || 'DIAL development is blocked until external Hermes orchestration is production-qualified');
+    const error = new Error(result.reason || 'DIAL development is blocked until external Hermes orchestration is development-ready or production-qualified');
     error.gate = result;
     throw error;
   }

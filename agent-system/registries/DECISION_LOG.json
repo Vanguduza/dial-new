@@ -475,5 +475,27 @@
       "tests/orchestration-vekl-resources.test.mjs"
     ],
     "reopens_if": "the product owner explicitly replaces the federated VEKL resource model or project-aware ahead-of-work research with an equal-or-stronger governed mechanism preserving DIAL authority, privacy, provenance, failover and executable-capability qualification boundaries"
+  },
+  {
+    "decision_id": "DEC-021",
+    "decided_on": "2026-09-08",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / ORACLE ORCHESTRATION / RUNTIME READINESS",
+    "title": "Exact Sonnet fallback may satisfy development readiness while Sol is temporarily provider-limited",
+    "decision": "The locked DIAL runtime chain remains GPT-5.6 Sol -> Claude Sonnet 5 -> no third runtime. When exact Sol identity is proven but the live provider state is temporarily ACCOUNT_LIMITED, RATE_LIMITED or MODEL_LIMITED, DIAL may issue a development-only DEVELOPMENT_READY_FALLBACK gate if exact Sonnet 5 is healthy and identity-proven, a real external Oracle queue canary completes through that fallback, VEKL v2 fallback activation and project-aware ahead-of-work research are live-green, repository verification is green, DIAL-only continuity is green and the gate is bound to the current control-plane fingerprint. AUTH_FAILED and PROCESS_FAILED are not eligible temporary-provider states.",
+    "consequence": "DEVELOPMENT_READY_FALLBACK permits ordinary development only through the persistent external Oracle orchestrator and does not claim PRODUCTION_GREEN, alter product authority, add another model, or weaken contract/reviewer/gate requirements. Sol remains preferred automatically when healthy. Full PRODUCTION_GREEN still requires the existing dual-runtime installed qualification, real DIAL-owned process failover, same-job external failover, Sol recovery and continuity evidence once Sol capacity is available.",
+    "record": "docs/orchestration/HERMES_CODEX_CONTROL_PLANE_DESIGN.md; docs/orchestration/DIAL_HERMES_RUNTIME_BOUNDARY.md",
+    "enforced_by": [
+      "agent-system/orchestration/development-unblock.mjs",
+      "agent-system/bin/skills-live-canary.mjs",
+      "agent-system/orchestration/engineering-research-manager.mjs",
+      "agent-system/orchestration/engineering-presearch.mjs",
+      "deploy/oracle/hermes-codex/finalize-development-readiness.sh",
+      "deploy/oracle/hermes-codex/soak-control-plane.sh",
+      "tests/orchestration-control-plane.test.mjs",
+      "tests/orchestration-vekl-resources.test.mjs"
+    ],
+    "reopens_if": "the product owner changes the locked runtime chain or replaces the Oracle development-readiness policy with an equal-or-stronger fail-closed mechanism"
   }
 ]

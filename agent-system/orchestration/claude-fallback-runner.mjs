@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +10,7 @@ import { recordRuntimeHealth } from './runtime-health.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const MODEL = HERMES_PREFERRED_CLAUDE_MODEL;
+const CLAUDE_BIN = process.env.DIAL_CLAUDE_BIN || (process.env.HOME && fs.existsSync(path.join(process.env.HOME, '.local/bin/claude')) ? path.join(process.env.HOME, '.local/bin/claude') : 'claude');
 
 const QUALIFICATION_TOOLS = [
   'Read',
@@ -109,13 +111,13 @@ export async function runClaudeHermesFallback({
     '--effort', operational ? 'high' : 'low',
     '--output-format', 'json',
     '--permission-mode', operational ? 'acceptEdits' : 'plan',
-    '--max-turns', operational ? '100' : '1',
+    '--max-turns', operational ? '100' : '2',
     '--allowedTools', ...(operational ? OPERATIONAL_TOOLS : QUALIFICATION_TOOLS),
     '--name', operational ? 'DIAL-HERMES-SONNET-5-FALLBACK' : 'DIAL-SONNET-5-RUNTIME-PROBE-TURN',
   ];
 
   const startedAt = now();
-  const result = spawnSync('claude', args, {
+  const result = spawnSync(CLAUDE_BIN, args, {
     cwd: repoDir,
     encoding: 'utf8',
     timeout: timeoutMs,

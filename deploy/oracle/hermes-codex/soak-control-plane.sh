@@ -152,7 +152,10 @@ continuity_soak(){
     systemctl --user restart "$unit"
     wait_active "$unit"
   done
-  pass "all DIAL-specific control services restarted and recovered without touching unrelated project services"
+  systemctl --user restart dial-engineering-research.timer dial-engineering-research.path
+  wait_active dial-engineering-research.timer
+  wait_active dial-engineering-research.path
+  pass "all DIAL-specific control services and the VEKL research scheduler restarted and recovered without touching unrelated project services"
 
   wait_chat_control_health
   mission_after="$(node agent-system/orchestration/mission-controller.mjs status)"
@@ -173,7 +176,7 @@ continuity_soak(){
     --arg mission_state "$state_after" \
     --arg turn_number "$turn_after" \
     --arg token_sha256 "$token_hash_after" \
-    '{schema_version:1, kind:"DIAL_PROJECT_ISOLATED_SERVICE_CONTINUITY_SOAK", status:"GREEN", observed_at:$observed_at, repo_head:$repo_head, project:"dial", project_isolated:true, shared_host_reboot_required:false, shared_hermes_gateway_disrupted:false, unrelated_project_services_touched:false, mission_id:$mission_id, mission_state:$mission_state, mission_turn_number:($turn_number|tonumber), chat_control_token_sha256:$token_sha256, dial_services_recovered:true, chat_control_recovered:true, mission_state_survived:true}' >"$evidence"
+    '{schema_version:1, kind:"DIAL_PROJECT_ISOLATED_SERVICE_CONTINUITY_SOAK", status:"GREEN", observed_at:$observed_at, repo_head:$repo_head, project:"dial", project_isolated:true, shared_host_reboot_required:false, shared_hermes_gateway_disrupted:false, unrelated_project_services_touched:false, mission_id:$mission_id, mission_state:$mission_state, mission_turn_number:($turn_number|tonumber), chat_control_token_sha256:$token_sha256, dial_services_recovered:true, chat_control_recovered:true, engineering_research_scheduler_recovered:true, mission_state_survived:true}' >"$evidence"
   chmod 600 "$evidence"
   echo "DIAL_PROJECT_CONTINUITY_SOAK=GREEN"
   echo "SHARED_HOST_REBOOT_REQUIRED=false"

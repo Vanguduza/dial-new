@@ -95,6 +95,13 @@ jq -e '.state == "HEALTHY" and .requested_model == "gpt-5.6-sol" and .resolved_m
 CLAUDE_PROBE="$(tmp)"; node agent-system/orchestration/claude-code-probe.mjs >"$CLAUDE_PROBE"
 jq -e '.state == "HEALTHY" and .requested_model == "claude-sonnet-5" and .resolved_model == "claude-sonnet-5" and .identity_proven == true' "$CLAUDE_PROBE" >/dev/null || { cat "$CLAUDE_PROBE" >&2; fail "Claude Code Sonnet 5 probe did not prove the hard pin"; }; pass "official Claude Code / exact Sonnet 5 fallback runtime"
 
+section "VEKL PROJECT-AWARE AHEAD-OF-WORK RESEARCH"
+RESEARCH_FORECAST="$(tmp)"; npm run --silent agent:research:refresh -- --force >"$RESEARCH_FORECAST"
+jq -e '.state == "READY" and (.items|length) >= 3 and (.items|length) <= 5 and .resource_cache_count > 0 and .runtime_provenance.runtime == "codex_app_server" and .runtime_provenance.requested_model == "gpt-5.6-sol" and .runtime_provenance.resolved_model == "gpt-5.6-sol" and .runtime_provenance.identity_proven == true' "$RESEARCH_FORECAST" >/dev/null || { cat "$RESEARCH_FORECAST" >&2; fail "VEKL ahead-of-work project-aware Sol forecast is not live/ready"; }
+RESEARCH_FORECAST_ID="$(jq -r '.forecast_id // empty' "$RESEARCH_FORECAST")"
+[[ -n "$RESEARCH_FORECAST_ID" ]] || fail "VEKL research forecast id missing"
+pass "VEKL project-aware next-3-to-5-packet research is live through exact Sol"
+
 section "VEKL LIVE RUNTIME SYMMETRY"
 VEKL_CANARY="$(tmp)"; npm run --silent agent:skills:live-canary >"$VEKL_CANARY"
 jq -e '.status == "GREEN" and .kind == "DIAL_VEKL_LIVE_RUNTIME_SYMMETRY_CANARY" and .same_activation_across_runtimes == true and .exact_hashes_preserved == true and .federated_resource_provenance_preserved == true and .primary.resolved_model == "gpt-5.6-sol" and .fallback.resolved_model == "claude-sonnet-5"' "$VEKL_CANARY" >/dev/null || { cat "$VEKL_CANARY" >&2; fail "VEKL live Sol/Sonnet symmetry canary is not green"; }
@@ -153,6 +160,7 @@ jq -n \
   --arg canary_job_id "$CANARY_ID" \
   --arg vekl_live_canary_evidence "$VEKL_CANARY_EVIDENCE" \
   --arg vekl_live_canary_activation "$VEKL_CANARY_ACTIVATION" \
+  --arg vekl_research_forecast_id "$RESEARCH_FORECAST_ID" \
   '{
     schema_version:1,
     kind:"DIAL_HERMES_INSTALLED_RUNTIME_QUALIFICATION",
@@ -178,6 +186,10 @@ jq -n \
     vekl_policy_version:"vekl-2.0",
     vekl_federated_resource_layer:true,
     vekl_ahead_of_work_research_scheduler:true,
+    vekl_ahead_of_work_live_forecast:true,
+    vekl_ahead_of_work_forecast_id:$vekl_research_forecast_id,
+    vekl_ahead_of_work_forecast_runtime:"codex_app_server",
+    vekl_ahead_of_work_forecast_model:"gpt-5.6-sol",
     vekl_packet_manifest_required:true,
     vekl_vendor_content_authority:"ENGINEERING_GUIDANCE_ONLY",
     vekl_unqualified_vendor_activation_allowed:false,
@@ -192,7 +204,7 @@ echo "INSTALLED_RUNTIME_QUALIFICATION=GREEN"
 echo "EXTERNAL_ORCHESTRATION_CANARY=GREEN"
 echo "EVIDENCE=$EVIDENCE"
 echo
-echo "Development remains BLOCKED until the project-isolated live soaks are green and finalize-control-plane.sh succeeds:"
+echo "Full PRODUCTION_GREEN remains pending until the project-isolated live soaks are green and finalize-control-plane.sh succeeds. If exact Sol is temporarily provider-limited, use finalize-development-readiness.sh instead of weakening this full-production qualifier."
 echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh process"
 echo "  bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh"
 echo "  bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity"
