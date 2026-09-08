@@ -14,7 +14,13 @@ RUNTIME_DIR="$SHARED_HOME/releases/$REV"
 TMP_DIR="$SHARED_HOME/releases/.${REV}.$$"
 
 mkdir -p "$SHARED_HOME/releases" "$SYSTEMD_DIR"
-rm -rf "$TMP_DIR"
+cleanup_tmp() {
+  if [[ -e "$TMP_DIR" ]]; then
+    chmod -R u+w "$TMP_DIR" 2>/dev/null || true
+    rm -rf "$TMP_DIR"
+  fi
+}
+cleanup_tmp
 mkdir -p "$TMP_DIR/agent-system/orchestration/providers"
 cp "$DIAL_REPO_DIR/agent-system/orchestration/state-store.mjs" "$TMP_DIR/agent-system/orchestration/"
 cp -R "$DIAL_REPO_DIR/agent-system/orchestration/auxiliary" "$TMP_DIR/agent-system/orchestration/"
@@ -22,7 +28,7 @@ cp -R "$DIAL_REPO_DIR/agent-system/orchestration/providers/xkiro" "$TMP_DIR/agen
 find "$TMP_DIR" -type f -exec chmod 0444 {} +
 find "$TMP_DIR" -type d -exec chmod 0555 {} +
 if [[ -e "$RUNTIME_DIR" ]]; then
-  rm -rf "$TMP_DIR"
+  cleanup_tmp
 else
   mv "$TMP_DIR" "$RUNTIME_DIR"
 fi
