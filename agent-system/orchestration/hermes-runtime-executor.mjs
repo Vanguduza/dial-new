@@ -2,11 +2,11 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
 import { buildDialHermesContext } from './context-broker.mjs';
 import { runClaudeHermesFallback } from './claude-fallback-runner.mjs';
+import { spawnCapture } from './process-capture.mjs';
 import { reconcileHermesRuntime } from './hermes-runtime-router.mjs';
 import {
   HERMES_PREFERRED_CLAUDE_MODEL,
@@ -93,7 +93,7 @@ export function resolvePrimaryTurnIdentity({ usage = null, preTurnHealth = null 
   };
 }
 
-export function runPrimaryHermes({
+export async function runPrimaryHermes({
   repoDir = DEFAULT_REPO,
   instruction = '',
   root,
@@ -111,7 +111,7 @@ export function runPrimaryHermes({
   const usageFile = path.join(tempDir, 'usage.json');
   const startedAt = now();
   try {
-    const result = spawnSync(HERMES_BIN, [
+    const result = await spawnCapture(HERMES_BIN, [
       '-z',
       instruction,
       '--provider', 'openai-codex',
@@ -119,7 +119,6 @@ export function runPrimaryHermes({
       '--usage-file', usageFile,
     ], {
       cwd: repoDir,
-      encoding: 'utf8',
       timeout: timeoutMs,
       maxBuffer: 32 * 1024 * 1024,
       env: {

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
 import { HERMES_PREFERRED_CLAUDE_MODEL } from './hermes-plan-models.mjs';
 import { recordRuntimeHealth } from './runtime-health.mjs';
+import { spawnCapture } from './process-capture.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -117,9 +117,8 @@ export async function runClaudeHermesFallback({
   ];
 
   const startedAt = now();
-  const result = spawnSync(CLAUDE_BIN, args, {
+  const result = await spawnCapture(CLAUDE_BIN, args, {
     cwd: repoDir,
-    encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 32 * 1024 * 1024,
     env: {

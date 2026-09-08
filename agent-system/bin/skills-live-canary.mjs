@@ -54,7 +54,7 @@ let primary = null;
 if (!fallbackOnly) {
   const primarySelection = reconcileHermesRuntime({ root });
   if (primarySelection?.selection?.runtime !== 'codex_app_server') throw new Error('Sol was not selected for VEKL canary primary');
-  primary = runPrimaryHermes({ repoDir, root, packetId, skillActivation: manifest, instruction, timeoutMs: 180000 });
+  primary = await runPrimaryHermes({ repoDir, root, packetId, skillActivation: manifest, instruction, timeoutMs: 180000 });
   if (!primary.ok || primary.resolved_model !== 'gpt-5.6-sol') throw new Error(`VEKL Sol canary failed: ${JSON.stringify(primary)}`);
 }
 
