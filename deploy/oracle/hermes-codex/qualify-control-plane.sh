@@ -10,8 +10,10 @@ fail(){ echo "QUALIFICATION RED: $*" >&2; exit 1; }
 pass(){ echo "✓ $*"; }
 warn(){ echo "! $*" >&2; }
 section(){ echo; echo "=== $* ==="; }
-TMP_FILES=(); cleanup(){ for file in "${TMP_FILES[@]:-}"; do [[ -n "$file" ]] && rm -f "$file"; done; }; trap cleanup EXIT
-tmp(){ local file; file="$(mktemp)"; TMP_FILES+=("$file"); printf '%s' "$file"; }
+TMP_DIR="$(mktemp -d)"
+cleanup(){ rm -rf "$TMP_DIR"; return 0; }
+trap cleanup EXIT
+tmp(){ mktemp "$TMP_DIR/tmp.XXXXXX"; }
 stamp(){ date -u +%Y%m%dT%H%M%SZ; }
 now(){ date -u +%Y-%m-%dT%H:%M:%SZ; }
 cd "$DIAL_REPO_DIR"
