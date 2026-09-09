@@ -37,6 +37,11 @@ jq -e --arg head "$HEAD_SHA" '
   and .sol_identity_proven == true
   and .sonnet_identity_proven == true
   and .external_orchestration_canary == true
+  and .dial_doctor_federated == true
+  and .hermes_native_doctor_subordinate == true
+  and .hermes_native_doctor_authority == "DIAGNOSTIC_EVIDENCE_ONLY"
+  and (.hermes_native_doctor_status == "PASS" or .hermes_native_doctor_status == "DEGRADED")
+  and (.hermes_native_doctor_report_sha256 | test("^[0-9a-f]{64}$"))
   and .auxiliary_operations_plane == true
   and .auxiliary_operations_authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS"
   and .persistent_mission_controller == true
@@ -55,7 +60,7 @@ jq -e --arg head "$HEAD_SHA" '
   and .vekl_unqualified_vendor_activation_allowed == false
   and .runtime_policy == "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE"
 ' "$QUAL" >/dev/null || fail "installed-runtime qualification evidence is not green for current HEAD"
-pass "installed Sol, Sonnet and external orchestration canary are proven"
+pass "installed Sol, Sonnet, subordinate Hermes Doctor and external orchestration canary are proven"
 
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
@@ -188,6 +193,9 @@ jq -n \
     project_isolated_qualification:true,
     shared_host_reboot_required:false,
     security_audit_green:true,
+    dial_doctor_federated:true,
+    hermes_native_doctor_subordinate:true,
+    hermes_native_doctor_authority:"DIAGNOSTIC_EVIDENCE_ONLY",
     auxiliary_operations_plane:true,
     auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
     auxiliary_api_can_authorize_development:false,

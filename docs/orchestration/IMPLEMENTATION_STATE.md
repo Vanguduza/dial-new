@@ -328,6 +328,10 @@ A project-scoped read-only MCP server, `dial-oracle-status`, exposes the same mi
 
 Live Oracle evidence during implementation proved the mirror branch could be fetched from a separate Git worktree using private-repository credentials, the snapshot was fresh and DIAL-scoped, and `dial-operator-status-publisher.timer` was active. The service writes no development worktree/index state and publishes immediately on semantic mission/gate/runtime changes with bounded liveness refreshes when state is otherwise unchanged.
 
+## 2026-09-08 — Federated DIAL doctor / subordinate Hermes Doctor
+
+The DIAL control-plane doctor now owns the diagnostic hierarchy. Installed `dial doctor` (backed by `dial-doctor`) runs the existing DIAL host/runtime checks and invokes native `hermes doctor` strictly as `DIAGNOSTIC_EVIDENCE_ONLY`. The subprocess is bounded, captures output instead of streaming it into the machine-readable DIAL report, never requests `--fix` or `--live`, stores only a sanitised summary/hash under `evidence-cache/diagnostics/hermes-native-doctor.json`, and marks native warnings/issues as `DEGRADED` without allowing Hermes to decide DIAL readiness. Invocation failure, timeout or unavailability fails the DIAL qualification check. Installed-runtime qualification records the subordinate status/hash/evidence pointer. The supervisor heartbeat keeps its fast local doctor path and does not rerun native Hermes diagnostics every minute.
+
 ## 2026-09-08 — Hermes xKiro Auxiliary Intelligence Fabric (`DEC-023`)
 
 DIAL now has a fail-closed xKiro HAIF implementation under `agent-system/orchestration/auxiliary/` and `agent-system/orchestration/providers/xkiro/`. It preserves the Sol→Sonnet manager boundary, hard-enforces `FREE_ONLY`, performs deterministic pre-serialization classification plus final egress DLP, persists restart/idempotency state, maintains project-account-local quota ledgers, emits provenance-carrying evidence packets, and routes disagreements only through typed premium-adjudication candidates.
