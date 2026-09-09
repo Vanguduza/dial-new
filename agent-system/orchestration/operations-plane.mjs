@@ -15,6 +15,8 @@ export const RECOVERABLE_DIAL_SERVICES = Object.freeze([
   'dial-hermes-orchestrator.service',
   'dial-mission-controller.service',
   'dial-chat-control.service',
+  'dial-hermes-whatsapp-operator.service',
+  'dial-whatsapp-cloud-operator.service',
 ]);
 export const ALLOWED_OPERATION_JOBS = Object.freeze([
   'service_health', 'service_recovery', 'queue_health', 'repo_integrity',

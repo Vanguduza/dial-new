@@ -29,7 +29,7 @@ npm run verify >/dev/null
 pass "full repository verification is green at $HEAD_SHA"
 
 bash deploy/oracle/hermes-codex/install-engineering-research.sh >/dev/null
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service; do
   systemctl --user restart "$unit"
   systemctl --user is-active --quiet "$unit" || fail "$unit did not restart"
 done
@@ -74,7 +74,7 @@ pass "external Oracle queue executes a real fallback canary through exact Sonnet
 bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity >/dev/null
 CONTINUITY="$(ls -1t "$DIAL_CONTROL_HOME"/evidence-cache/soak/continuity-*.json 2>/dev/null | head -n1)"
 [[ -n "$CONTINUITY" && -f "$CONTINUITY" ]] || fail "continuity evidence missing"
-jq -e --arg head "$HEAD_SHA" '.status=="GREEN" and .repo_head==$head and .project_isolated==true and .dial_services_recovered==true and .chat_control_recovered==true and .engineering_research_scheduler_recovered==true and .mission_state_survived==true and .shared_hermes_gateway_disrupted==false and .unrelated_project_services_touched==false' "$CONTINUITY" >/dev/null || { cat "$CONTINUITY" >&2; fail "DIAL-only continuity soak is not green for current HEAD"; }
+jq -e --arg head "$HEAD_SHA" '.status=="GREEN" and .repo_head==$head and .project_isolated==true and .dial_services_recovered==true and .chat_control_recovered==true and .operator_channels_recovered==true and .engineering_research_scheduler_recovered==true and .mission_state_survived==true and .shared_hermes_gateway_disrupted==false and .unrelated_project_services_touched==false' "$CONTINUITY" >/dev/null || { cat "$CONTINUITY" >&2; fail "DIAL-only continuity soak is not green for current HEAD"; }
 pass "DIAL-only mission/control/research continuity is green"
 
 # Continuity restarts the orchestrator; require its fresh heartbeat before issuing the gate.
