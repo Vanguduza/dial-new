@@ -1,0 +1,14 @@
+{
+  "actor": "ubuntu",
+  "branch": "fix/canonical-readiness-20260909",
+  "changed_files": [
+    "PROJECT_TRUTH_PROTOCOL.md",
+    "scripts/project_truth_local.py"
+  ],
+  "diff_sha256": "fbe70568e248c2b9cece9923864c373c2cde128d1b8051b8ba79368619b6ad96",
+  "kind": "precommit-staged-diff",
+  "recorded_at_utc": "2026-09-09T02:34:41.587609+00:00",
+  "schema_version": 1,
+  "source_parent": "4c9531c46d3780f884bf7fa2a69427f870757123",
+  "state": "PENDING_COMMIT"
+}
