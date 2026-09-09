@@ -665,4 +665,3 @@ describe('Oracle qualification shell lifecycle', () => {
     expect(script).not.toContain('TMP_FILES+=');
   });
 });
-

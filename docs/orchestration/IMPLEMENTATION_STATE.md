@@ -377,4 +377,3 @@ Oracle qualification and both production/development finalizers now consume the 
 - Replaced the command-substitution-local `TMP_FILES` array in `qualify-control-plane.sh` with one parent-owned temporary directory.
 - The EXIT cleanup now always returns success after removing that directory, so a fully GREEN qualification cannot be reported as process exit 1 merely because the temp tracker was empty in the parent shell.
 - This also removes the leaked `/tmp` files created by qualifier command substitutions.
-
