@@ -655,3 +655,14 @@ describe('development readiness gates', () => {
     expect(result.checks.fallback_readiness_valid).toBe(false);
   });
 });
+
+describe('Oracle qualification shell lifecycle', () => {
+  it('uses a parent-owned temp directory so a successful qualifier exits successfully and cleans command-substitution temporaries', () => {
+    const script = readFileSync(path.join(process.cwd(), 'deploy/oracle/hermes-codex/qualify-control-plane.sh'), 'utf8');
+    expect(script).toContain('TMP_DIR="$(mktemp -d)"');
+    expect(script).toContain('cleanup(){ rm -rf "$TMP_DIR"; return 0; }');
+    expect(script).toContain('tmp(){ mktemp "$TMP_DIR/tmp.XXXXXX"; }');
+    expect(script).not.toContain('TMP_FILES+=');
+  });
+});
+

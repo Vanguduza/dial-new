@@ -372,3 +372,9 @@ The sanitized `oracle-runtime-status` publisher now parents each status-only tre
 ## 2026-09-09 — VEKL 2.1 runtime-certification reconciliation
 
 Oracle qualification and both production/development finalizers now consume the active `vekl-2.1` federated engineering-resource policy emitted by `engineering-knowledge-check.mjs`. The stale `vekl-2.0` certification assertions were removed; a regression test scans all three certification scripts so VEKL policy upgrades cannot silently strand runtime qualification again.
+### 2026-09-09 — qualifier exit-status/temp lifecycle repair
+
+- Replaced the command-substitution-local `TMP_FILES` array in `qualify-control-plane.sh` with one parent-owned temporary directory.
+- The EXIT cleanup now always returns success after removing that directory, so a fully GREEN qualification cannot be reported as process exit 1 merely because the temp tracker was empty in the parent shell.
+- This also removes the leaked `/tmp` files created by qualifier command substitutions.
+
