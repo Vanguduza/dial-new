@@ -1,14 +1,9 @@
 {
-  "actor": "ubuntu",
   "branch": "work/operator-gateway-20260908",
-  "changed_files": [
-    "PROJECT_TRUTH_PROTOCOL.md",
-    "scripts/project_truth_local.py"
-  ],
-  "diff_sha256": "fe07c997ffb02582ef88235ac1bf7e4a2db521f5d9ae29dbf87cead93e69905b",
-  "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T02:38:50.374618+00:00",
+  "observed_at_utc": "2026-09-09T02:39:09.273922+00:00",
+  "recorded_commit_count": 1,
+  "repository": "Vanguduza/dial-new",
   "schema_version": 1,
-  "source_parent": "15e28015f51815d2f520a7936b1aa4cd3f1fc934",
-  "state": "PENDING_COMMIT"
+  "source_commit": "6c71e7fbda1baf375d8cb494eb294a1934aa52d7",
+  "source_tree": "7c3c341e22fdbd0936635b00d68d825b32752fc7"
 }
