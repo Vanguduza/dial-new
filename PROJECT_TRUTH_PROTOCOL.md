@@ -19,4 +19,4 @@ The default installation deliberately uses `CANONICAL_DISCOVERY_REQUIRED`. A pro
 
 ## Automation boundary
 
-The repository can automatically document durable Git changes as soon as they are pushed. Local edits that have never been committed or pushed do not yet exist in repository history; local tooling should still use normal Git commits frequently so the automatic ledger stays near-real-time. Generated evidence ledgers are excluded from commit-content digests so the evidence hooks cannot invalidate the commits they record.
+The repository can automatically document durable Git changes as soon as they are pushed. Local edits that have never been committed or pushed do not yet exist in repository history; local tooling should still use normal Git commits frequently so the automatic ledger stays near-real-time. Generated evidence ledgers are excluded from commit-content digests so the evidence hooks cannot invalidate the commits they record. A merge commit may reuse parent evidence only when its tree exactly matches one of its parents (a topology-only merge); merges that introduce novel conflict-resolution content remain subject to normal evidence verification.

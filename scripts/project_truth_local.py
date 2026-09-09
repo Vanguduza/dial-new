@@ -6,6 +6,8 @@ def g(*a,check=True,b=False): return subprocess.run(['git',*a],cwd=R,check=check
 def o(*a): return g(*a).stdout.strip()
 def par(s):
  c=g('rev-parse',s+'^1',check=False); return c.stdout.strip() if c.returncode==0 else None
+def parents(s): return o('rev-list','--parents','-n','1',s).split()[1:]
+def tree(s): return o('rev-parse',s+'^{tree}')
 def files_staged(): return [x for x in g('diff','--cached','--name-only','--no-renames','--','.',*X).stdout.splitlines() if x]
 def dig_staged(): return hashlib.sha256(g('diff','--cached','--binary','--no-ext-diff','--no-renames','--','.',*X,b=True).stdout).hexdigest()
 def cfiles(s):
@@ -39,6 +41,8 @@ def verify():
  if not b: print('BLOCKED: Project Truth local guard baseline missing',file=sys.stderr); return 40
  bad=[]
  for s in [x for x in o('rev-list','--reverse',f'{b}..HEAD').splitlines() if x]:
+  ps=parents(s)
+  if len(ps)>1 and any(tree(s)==tree(p) for p in ps): continue
   f=cfiles(s)
   if not f:continue
   p=par(s); d=cdig(s)
