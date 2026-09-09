@@ -65,7 +65,7 @@ npm run typecheck; pass "typecheck"
 VEKL_STATUS="$(tmp)"; npm run --silent agent:skills:check >"$VEKL_STATUS"
 jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL skill registry/policy validation is not green"; }
 VEKL_KNOWLEDGE="$(tmp)"; npm run --silent agent:knowledge:check >"$VEKL_KNOWLEDGE"
-jq -e '.status == "GREEN" and .policy_version == "vekl-2.0" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.1" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
 pass "VEKL v2 skill + federated resource registries and activation-policy validation"
 npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification including VEKL"
 npm run verify; pass "full repository verification"
@@ -212,7 +212,7 @@ jq -n \
     project_isolated_qualification:true,
     shared_host_reboot_required:false,
     vekl_framework:true,
-    vekl_policy_version:"vekl-2.0",
+    vekl_policy_version:"vekl-2.1",
     vekl_federated_resource_layer:true,
     vekl_ahead_of_work_research_scheduler:true,
     vekl_ahead_of_work_live_forecast:true,

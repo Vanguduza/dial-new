@@ -1,15 +1,17 @@
 {
   "actor": "ubuntu",
-  "branch": "fix/operator-status-canonical-parent-20260909",
+  "branch": "fix/vekl-qualification-version-20260909",
   "changed_files": [
-    "agent-system/orchestration/operator-status-publisher.mjs",
+    "deploy/oracle/hermes-codex/finalize-control-plane.sh",
+    "deploy/oracle/hermes-codex/finalize-development-readiness.sh",
+    "deploy/oracle/hermes-codex/qualify-control-plane.sh",
     "docs/orchestration/IMPLEMENTATION_STATE.md",
-    "tests/orchestration-operator-status.test.mjs"
+    "tests/orchestration-vekl-resources.test.mjs"
   ],
-  "diff_sha256": "b8bd398b449ca356787194b39efbe2ec009cebd8ec13b19cbd2f1e8e250af882",
+  "diff_sha256": "6d76e6d8bcf58e17b251b112d5c331a657d8245eeebad8f2ec19b29fec900edd",
   "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T04:50:39.456936+00:00",
+  "recorded_at_utc": "2026-09-09T05:03:29.721993+00:00",
   "schema_version": 1,
-  "source_parent": "da50190a11281f08c7b47bd74d9ce829593871dd",
+  "source_parent": "7162c2bef8a8b2b25864b9ebf46531873ca5cee3",
   "state": "PENDING_COMMIT"
 }

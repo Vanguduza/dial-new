@@ -49,7 +49,7 @@ jq -e --arg head "$HEAD_SHA" '
   and .chat_control_project == "dial"
   and .chat_control_generic_shell_exposed == false
   and .vekl_framework == true
-  and .vekl_policy_version == "vekl-2.0"
+  and .vekl_policy_version == "vekl-2.1"
   and .vekl_federated_resource_layer == true
   and .vekl_ahead_of_work_research_scheduler == true
   and .vekl_ahead_of_work_live_forecast == true
@@ -123,7 +123,7 @@ fi
 VEKL_RUNTIME="$(npm run --silent agent:skills:runtime-check)"
 jq -e '.status == "GREEN" and .policy_version == "vekl-1.0" and .vendor_snapshots_immutable == true' <<<"$VEKL_RUNTIME" >/dev/null || { echo "$VEKL_RUNTIME" >&2; fail "VEKL runtime snapshot audit is not green"; }
 VEKL_KNOWLEDGE="$(npm run --silent agent:knowledge:check)"
-jq -e '.status == "GREEN" and .policy_version == "vekl-2.0" and .resource_sources > 0 and .resource_records > 0' <<<"$VEKL_KNOWLEDGE" >/dev/null || { echo "$VEKL_KNOWLEDGE" >&2; fail "VEKL v2 federated resource audit is not green"; }
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.1" and .resource_sources > 0 and .resource_records > 0' <<<"$VEKL_KNOWLEDGE" >/dev/null || { echo "$VEKL_KNOWLEDGE" >&2; fail "VEKL v2 federated resource audit is not green"; }
 pass "VEKL approved vendor snapshots are exact-hash/read-only and federated resource governance is green"
 
 pass "persistent supervisor, external orchestrator, mission controller, Claude/Codex/WhatsApp typed operator gateway and non-authoritative operations services are active"
