@@ -7,7 +7,7 @@ This repository must never infer project truth from chat memory, the GitHub defa
 1. Read `PROJECT_CANONICAL_STATE.json` before planning, coding, merging, building, packaging, deploying, or releasing.
 2. Inspect divergent branches and source-of-truth/decision documents before declaring any implementation canonical.
 3. Preserve every locked feature and later approved change during reconciliation. Silent thinning is forbidden.
-4. Every pushed commit is automatically recorded in `docs/project-state/CHANGE_LEDGER.jsonl` by GitHub Actions, including commit SHA, parent, branch, author, timestamp, changed files, tree SHA, and diff digest.
+4. Every canonicalized commit is automatically recorded in `docs/project-state/CHANGE_LEDGER.jsonl` by GitHub Actions on the default-branch push, including commit SHA, parent, branch, author, timestamp, changed files, tree SHA, and diff digest. Feature-branch commits are guarded and ledgered locally before push, then backfilled automatically when merged; workflows must not rewrite an open PR head merely to add generated ledger state.
    Deterministically reproducible two-parent merge commits are structural integration evidence: the local guard may accept them without a separate ledger row only when `git merge-tree --write-tree` exactly reproduces the committed tree from the two parents. Any merge with additional/manual resolution content remains blocked unless separately evidenced.
 5. `docs/project-state/CURRENT_STATE.json` records the latest observed repository state. It is evidence, not permission to declare a branch canonical.
 6. Releases remain blocked while `canonical_state.release_blocked` is true.
