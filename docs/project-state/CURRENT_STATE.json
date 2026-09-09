@@ -1,23 +1,9 @@
 {
-  "actor": "ubuntu",
-  "branch": "HEAD",
-  "changed_files": [
-    "agent-system/orchestration/README.md",
-    "agent-system/orchestration/operator-text-router.mjs",
-    "agent-system/orchestration/whatsapp-hermes-operator.mjs",
-    "agent-system/orchestration/whatsapp-operator-adapter.mjs",
-    "agent-system/orchestration/whatsapp-owner-input.mjs",
-    "agent-system/registries/DECISION_LOG.json",
-    "deploy/oracle/hermes-codex/install-operator-gateway.sh",
-    "deploy/oracle/hermes-codex/qualify-control-plane.sh",
-    "docs/orchestration/DIAL_OPERATOR_GATEWAY.md",
-    "docs/orchestration/IMPLEMENTATION_STATE.md",
-    "tests/orchestration-operator-gateway.test.mjs"
-  ],
-  "diff_sha256": "3036ec117cfced7540cfe15dcee89d7bfc1bab08ed15fcb8c3c30344fed49660",
-  "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T02:56:39.590446+00:00",
+  "branch": "work/operator-gateway-20260908",
+  "observed_at_utc": "2026-09-09T02:57:31.115384+00:00",
+  "recorded_commit_count": 1,
+  "repository": "Vanguduza/dial-new",
   "schema_version": 1,
-  "source_parent": "c843a5e105074b89d9df8ca5b358815bafc9dda3",
-  "state": "PENDING_COMMIT"
+  "source_commit": "a0d2c3f1b7f8b718b925800a2ca3ab0a5f88505d",
+  "source_tree": "6882105f167db11984726d615cdd019c22b9d2d6"
 }
