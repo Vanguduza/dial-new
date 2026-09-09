@@ -364,3 +364,7 @@ Pairing uses an isolated deploy-only compatibility runtime pinned to the fix hea
 The paired Hermes owner self-chat is no longer limited to fixed command words. Recognized shortcuts still map to their existing typed tools, while other authenticated owner prose is queued only through `dial_submit_instruction`; no shell/filesystem primitive was added. `whatsapp-owner-input.mjs` now persists supported document/image uploads content-addressed under the DIAL control root after validating the Hermes cache source, file type and size, and builds a bounded owner steering instruction that preserves repository-truth and verification gates.
 
 The WhatsApp operator daemon now accepts media-only steering messages, emits attachment provenance in its audit event, and automatically pushes important mission transitions to the verified self-chat using a persisted event cursor so restarts do not replay history. Targeted operator-gateway tests cover strict-vs-owner-prose routing, attachment persistence/instruction construction and notification cursor behavior.
+
+## 2026-09-09 — Operator status mirror ancestry guard
+
+The sanitized `oracle-runtime-status` publisher now parents each status-only tree to the current canonical repository HEAD. This preserves its non-authoritative single-file payload while satisfying Project Truth's required canonical ancestry; parentless mirror commits are no longer pushable or generated. A regression test proves both the canonical parent and status-only tree shape.
