@@ -90,7 +90,7 @@ it. A criterion no test covers is not a criterion.
 To claim DOMAIN_TESTED you need all four of:
 
 1. every acceptance criterion covered by a test that runs — not one that skips;
-2. `npm run verify` green (13 steps, currently 196 tests, none skipped);
+2. `npm run verify` green on the current repository head; do not rely on a historic hard-coded test count;
 3. `node agent-system/bin/source-map.mjs` accepting the claim, which requires
    `code_paths` and `test_paths` to exist and resolve;
 4. a CI run of the commit carrying the claim, on Linux, green — recorded by run id
@@ -103,16 +103,14 @@ later by someone who cannot check it.
 
 Be sceptical of anything that sounds more finished than this:
 
-- One feature — SPARE-F004 — has ever been proven against real CI. Its contract
-  was written and proven by the same agent, and the reviewer gate on it is
-  unresolved in the record.
+- Seven Features currently carry `DOMAIN_TESTED` evidence: SPARE-F004 and GROC-F019..GROC-F024. Two Features (SPARE-F001 and SPARE-F002) are at `CODE_PRESENT`; the remaining 300 are `SPECIFIED`. These counts are a 2026-09-09 baseline and the live Feature Registry wins if they drift.
 - All eleven activation blockers (ACT-REG-001..011) are OPEN. Nothing ships to a
   real customer taking real money.
 - No catalogue has been injected. The eleven-stage readiness gate correctly
   reports zero customer-ready vehicles. That is the right answer, not a bug.
 - Identity fidelity is WAIVED at IoU 0.545-0.589 against a 0.90 threshold. It is
   not met.
-- 15 items sit at DOMAIN_TESTED, 15 at CODE_PRESENT, everything else SPECIFIED.
+- The repository bootstrap is COMPLETE (RBC-001..RBC-010). CT-6 is GREEN; CT-1/CT-2/CT-7 remain AMBER on contract specificity, so each Feature still gets its own acceptance contract before implementation.
 
 ## Never
 

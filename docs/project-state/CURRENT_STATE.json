@@ -2,12 +2,20 @@
   "actor": "ubuntu",
   "branch": "fix/canonical-readiness-20260909",
   "changed_files": [
-    "package-lock.json"
+    "PROJECT_CANONICAL_STATE.json",
+    "agent-system/bin/source-map.mjs",
+    "agent-system/registries/FEATURE_REGISTRY.json",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md",
+    "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "docs/dial/final-audit/README.md"
   ],
-  "diff_sha256": "05327e39a4719cea313ba32f92964533852b1b61ec0586720f2b6838514b00fb",
+  "diff_sha256": "b10611523f992d0d94a5c9602e31c56e1bf8011be80e42ce4d7129bdc696f169",
   "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T02:51:32.160075+00:00",
+  "recorded_at_utc": "2026-09-09T03:18:00.922089+00:00",
   "schema_version": 1,
-  "source_parent": "fdf268c4fadca23ad6e73d3cab99c3b2e942862c",
+  "source_parent": "d7ec604a4873c5c5f345f9dd70bae6f31aeeeec2",
   "state": "PENDING_COMMIT"
 }

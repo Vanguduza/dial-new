@@ -345,13 +345,7 @@ Current state is tracked in:
 
 `20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json`
 
-Seven of ten tasks are complete. Three remain, and they gate broad fan-out:
-
-```text
-RBC-007  map source/test paths to the Feature Registry     PENDING
-RBC-009  prove one pilot Feature to DOMAIN_TESTED          COMPLETE
-RBC-010  enable broad multi-worktree development           COMPLETE
-```
+All ten repository-bootstrap tasks are COMPLETE. RBC-007 maps source/test ownership and `agent:source-map` currently reports zero unclaimed product source files; RBC-009 has a CI-proven pilot at `DOMAIN_TESTED`; RBC-010 permits broad multi-worktree execution subject to the standing contract-first Feature gate. CT-7 remains independently AMBER and may not be treated as satisfied by repository alignment.
 
 The harness executes. From the repository root:
 
@@ -457,12 +451,12 @@ Registry status
 
 # 15. What remains legitimately open after v2
 
-Only two classes may remain open without making the canon incomplete:
+Two classes may remain open without making the canon incomplete:
 
-1. **repository application** — the ready-to-apply v2 bootstrap has not yet been merged;
+1. **feature implementation/certification** — work advances only through the gate ladder with feature-specific contracts and evidence;
 2. **activation blockers** — external/provider/legal/commercial evidence needed for a live branch.
 
-Those are explicit gates, not design holes.
+Repository application is no longer open: RBC-001 through RBC-010 are COMPLETE. The remaining items are explicit delivery/activation gates, not canonical-design holes.
 
 If implementation discovers a true architectural contradiction, stop only the affected change, create a targeted decision record, and continue independent work.
 
