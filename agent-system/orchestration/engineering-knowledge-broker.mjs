@@ -47,7 +47,7 @@ export function resolvePacketEngineeringKnowledge({
     } catch {}
   }
   const resourcePlan = resolveEngineeringResources({ repoDir, root, instruction, affectedPaths, featureRecord, maxResources: Number(metadata?.max_resources || 8), availableTools: metadata?.available_tools || [] });
-  const plan = { ...skillPlan, policy_version: 'vekl-2.0', selected_resources: resourcePlan.selected_resources, resource_rejected: resourcePlan.rejected, resource_task_classes: resourcePlan.task_classes, research_forecast_id: readJson('knowledge/research/current-forecast.json', null, root)?.forecast_id ?? null };
+  const plan = { ...skillPlan, policy_version: resourcePlan.policy_version || 'vekl-2.1', selected_resources: resourcePlan.selected_resources, resource_rejected: resourcePlan.rejected, resource_task_classes: resourcePlan.task_classes, research_forecast_id: readJson('knowledge/research/current-forecast.json', null, root)?.forecast_id ?? null };
   const manifest = persistSkillActivation({
     packetId,
     missionId: metadata?.mission_id ?? null,
@@ -75,7 +75,7 @@ export function resolvePacketEngineeringKnowledge({
 export function ensurePacketEngineeringKnowledge({ repoDir = DEFAULT_REPO, root = DEFAULT_CONTROL_HOME, packetId, instruction = '', metadata = {} } = {}) {
   const current = loadSkillActivationForPacket(packetId, root);
   if (current) {
-    const check = verifySkillActivation(current, root);
+    const check = verifySkillActivation(current, root, repoDir);
     if (!check.ok) throw new Error(`VEKL activation invalid for packet ${packetId}: ${check.failures.join('; ')}`);
     return current;
   }
@@ -100,7 +100,7 @@ export function engineeringKnowledgeStatus({ repoDir = DEFAULT_REPO, root = DEFA
     return missionRecord?.last_packet_id ? loadSkillActivationForPacket(missionRecord.last_packet_id, root) : null;
   })();
   return {
-    policy_version: 'vekl-2.0',
+    policy_version: 'vekl-2.1',
     authority: 'NON_AUTHORITATIVE_ENGINEERING_GUIDANCE',
     registry: {
       total: registry.length,

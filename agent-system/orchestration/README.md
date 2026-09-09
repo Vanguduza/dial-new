@@ -77,7 +77,12 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `project-registry.mjs` — strict per-project operations-state isolation.
 - `mission-control.mjs` — durable DIAL root-mission state, pause/resume, owner priority and gate decisions.
 - `mission-controller.mjs` — persistent continuation loop that dispatches the next bounded manager turn when the DIAL mission is RUNNING and idle.
-- `chat-control-bridge.mjs` — DIAL-only typed MCP/JSON-RPC operator surface so Claude chat can inspect progress and issue controls while Oracle owns execution.
+- `chat-control-bridge.mjs` — shared DIAL-only typed operator authority for Claude, Codex and authenticated owner WhatsApp while Oracle owns execution.
+- `operator-control-stdio.mjs` — local Claude/Codex MCP adapter over the shared typed tools.
+- `operator-text-router.mjs` — shortcut command grammar plus authenticated-owner full-text instruction routing into the same typed DIAL queue; prose never becomes direct shell execution.
+- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge, with full-text steering, bounded document/image ingestion and automatic important mission notifications.
+- `whatsapp-owner-input.mjs` — content-addressed owner attachment persistence, safe steering-instruction construction and deduplicated mission-event notification mapping.
+- `whatsapp-operator-adapter.mjs` — official Meta Cloud API adapter with HMAC verification, sender allowlisting and replay protection.
 
 ## Install
 
@@ -98,17 +103,17 @@ The Oracle host also runs `dial-hermes-operations.service`. It performs fixed de
 
 Secrets are stored outside Git under `/var/lib/dial-control/secrets/` and are not exported to the Hermes runtime. API use is disabled on default schedules until explicitly enabled. See `docs/orchestration/HERMES_AUXILIARY_OPERATIONS_PLANE.md`.
 
-## Claude chat control surface
+## Unified owner operator gateway
 
-DIAL development remains resident on Oracle while Claude chat can act as a thin operator console. The local MCP endpoint exposes typed DIAL-only status, progress, pause/resume, reprioritisation, approval and instruction-submission tools. It does not expose a shell. See `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
+DIAL development remains resident on Oracle while Claude, Codex and authenticated owner WhatsApp act as thin operator consoles over one typed DIAL-only control authority. The gateway exposes status, progress, pause/resume, reprioritisation, approval and instruction-submission tools and never exposes a generic shell. See `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`.
 
-Install the bridge and persistent mission controller with:
+Install the gateway, persistent mission controller, local Claude/Codex MCP enrollment and fail-closed WhatsApp services with:
 
 ```bash
-bash deploy/oracle/hermes-codex/install-chat-control-bridge.sh
+bash deploy/oracle/hermes-codex/install-operator-gateway.sh
 ```
 
-The endpoint is bound to `127.0.0.1:9130` and bearer-token protected. Remote Claude access must be placed behind an authenticated private tunnel/Access policy; the installer never opens the port publicly.
+The HTTP MCP remains bound to `127.0.0.1:9130` and bearer-token protected. The optional WhatsApp Cloud webhook adapter remains bound to `127.0.0.1:9132`. Neither port is opened publicly by the installer. Hermes owner self-chat and official Meta Cloud API activation require their normal external credential/pairing boundaries.
 
 ## Mandatory qualification sequence
 
@@ -132,7 +137,7 @@ The evidence must prove:
 - the **same externally queued job** surviving Codex process death and completing on Sonnet 5;
 - Sol regaining preference;
 - DIAL runtime-supervisor recovery without restarting the shared Hermes gateway;
-- DIAL-only service continuity across runtime/orchestrator/operations/chat-control/mission-controller restarts;
+- DIAL-only service continuity across runtime/orchestrator/operations/chat-control/mission-controller/operator-channel restarts;
 - persistent mission and chat-control credential continuity;
 - no unrelated project service or process is targeted by a DIAL soak;
 - subscription-only auth and secret/config security checks.
@@ -153,14 +158,15 @@ Do not deliberately exhaust subscription quota to manufacture provider failure e
 
 Generalized development model registries, Manager Chair controls, worker pools, DeepSeek Harness settings and DDE model-management UI are outside this DIAL Hermes implementation.
 
-## Versioned Engineering Knowledge Layer (VEKL v2 — federated resources)
+## Versioned Engineering Knowledge Layer (VEKL Rev 2 + 2.1 deterministic resolver)
 
-`DEC-020` extends the `DEC-019` immutable-skill foundation into a federated engineering knowledge/capability gate. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator persists one packet Engineering Knowledge Activation Manifest containing relevant skills plus registered docs/repos/releases/issues/advisories/tools/rules/hooks/loops/community corroboration as applicable. A zero-external-resource result remains valid.
+`DEC-020` extends the `DEC-019` immutable-Skill foundation into a federated engineering knowledge/capability gate. `DEC-024` hardens packet selection to hard-eligibility-first deterministic purpose+role minimal-coalition resolution; Skills have one exact-pin selection owner; selected resource registry identity is fingerprinted; and descriptor-only context is the default. Canon/FRC/security/current implementation evidence are resolved first. The external orchestrator persists one packet Engineering Knowledge Activation Manifest containing relevant skills plus registered docs/repos/releases/issues/advisories/tools/rules/hooks/loops/community corroboration as applicable. A zero-external-resource result remains valid.
 
 VEKL modules:
 - `skill-registry.mjs` — machine registry/approval invariants;
 - `skill-resolver.mjs` — deterministic task classification, policy filters and evidence-aware ranking;
-- `skill-activation-store.mjs` — exact-hash immutable packet activation;
+- `engineering-resource-resolver.mjs` — hard eligibility + deterministic purpose/role minimal-coalition resource selection;
+- `skill-activation-store.mjs` — exact-hash immutable Skill activation plus resource fingerprint/provenance verification;
 - `engineering-knowledge-broker.mjs` — queue/Feature resolution gate;
 - `skill-outcome-recorder.mjs` — non-authoritative observable outcome telemetry;
 - `learned-skill-curator.mjs` — proposal-only DIAL procedural learning boundary.

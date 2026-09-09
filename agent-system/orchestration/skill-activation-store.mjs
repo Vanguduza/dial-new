@@ -1,6 +1,8 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { loadEngineeringResourceRegistry, loadEngineeringResourceSources, PASSIVE_RESOURCE_STATES, EXECUTABLE_RESOURCE_CLASSES, EXECUTABLE_RESOURCE_STATES } from './engineering-resource-registry.mjs';
+import { engineeringResourceRegistryFingerprint } from './engineering-resource-resolver.mjs';
 import {
   DEFAULT_CONTROL_HOME,
   appendJsonl,
@@ -70,6 +72,9 @@ export function persistSkillActivation({
   ensureControlLayout(root);
   const packet = assertSafe(packetId, 'packet id');
   if (!plan?.policy_version || !Array.isArray(plan?.selected_skills)) throw new Error('valid skill resolution plan required');
+  if ((plan.selected_resources || []).some((resource) => resource.resource_class === 'SKILL')) {
+    throw new Error('VEKL invariant violated: Skills must be selected only by the exact-pin Skill resolver');
+  }
   const activationId = `ska_${crypto.randomUUID().replaceAll('-', '')}`;
   const rel = activationRel(activationId);
   const abs = resolveControlPath(rel, root);
@@ -150,7 +155,7 @@ export function persistSkillActivation({
     task_classes: manifest.task_classes,
     resolution_state: manifest.resolution_state,
     skills: materialized.map((s) => ({ skill_id: s.skill_id, upstream_commit: s.upstream_commit, content_hash: s.content_hash })),
-    resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, content_hash: r.content_hash, cache_ref: r.cache_ref })),
+    resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, selection_role: r.selection_role || null, selection_purpose: r.selection_purpose || null, registry_fingerprint: r.registry_fingerprint || null, content_hash: r.content_hash, cache_ref: r.cache_ref })),
     research_forecast_id: manifest.research_forecast_id,
     at: manifest.created_at,
   }, root);
@@ -168,7 +173,7 @@ export function loadSkillActivationForPacket(packetId, root = DEFAULT_CONTROL_HO
   return pointer?.activation_id ? loadSkillActivation(pointer.activation_id, root) : null;
 }
 
-export function verifySkillActivation(manifest, root = DEFAULT_CONTROL_HOME) {
+export function verifySkillActivation(manifest, root = DEFAULT_CONTROL_HOME, repoDir = null) {
   if (!manifest) return { ok: false, failures: ['activation manifest missing'] };
   const failures = [];
   if (manifest.authority !== 'NON_AUTHORITATIVE_ENGINEERING_GUIDANCE') failures.push('activation authority invalid');
@@ -180,6 +185,31 @@ export function verifySkillActivation(manifest, root = DEFAULT_CONTROL_HOME) {
       if (observed.value !== skill.content_hash) failures.push(`${skill.skill_id}: snapshot hash mismatch`);
       if (!fs.existsSync(path.join(source, 'SKILL.md'))) failures.push(`${skill.skill_id}: SKILL.md missing`);
     } catch (error) { failures.push(`${skill.skill_id}: ${String(error?.message || error)}`); }
+  }
+  for (const resource of manifest.resources || []) {
+    if (resource.resource_class === 'SKILL') failures.push(`${resource.resource_id}: duplicate Skill selection path`);
+    if (resource.cache_ref && resource.content_hash) {
+      try {
+        const cached=readJson(resource.cache_ref,null,root);
+        if (cached?.content_hash && cached.content_hash !== resource.content_hash) failures.push(`${resource.resource_id}: cached content hash mismatch`);
+      } catch (error) { failures.push(`${resource.resource_id}: cached resource unreadable`); }
+    }
+  }
+  if (repoDir) {
+    const rows=new Map(loadEngineeringResourceRegistry(repoDir).map((row)=>[row.resource_id,row]));
+    const sources=new Map(loadEngineeringResourceSources(repoDir).map((row)=>[row.source_id,row]));
+    for (const resource of manifest.resources || []) {
+      const current=rows.get(resource.resource_id);
+      if (!current) { failures.push(`${resource.resource_id}: resource no longer registered`); continue; }
+      const source=sources.get(current.source_id);
+      if (!source) { failures.push(`${resource.resource_id}: source no longer admitted`); continue; }
+      const executable=current.activation_mode === 'EXECUTABLE_CAPABILITY' || (EXECUTABLE_RESOURCE_CLASSES.has(current.resource_class) && !['REFERENCE_ONLY','CORROBORATION_ONLY','DISCOVERY_ONLY','PROCESS_RULE','READ_ONLY_TOOL'].includes(current.activation_mode));
+      const stateOk=executable ? EXECUTABLE_RESOURCE_STATES.has(current.status) : PASSIVE_RESOURCE_STATES.has(current.status);
+      if (!stateOk) failures.push(`${resource.resource_id}: resource state invalidated:${current.status}`);
+      if (!(source.resource_classes || []).includes(current.resource_class)) failures.push(`${resource.resource_id}: source class admission changed`);
+      if (resource.registry_fingerprint && resource.registry_fingerprint !== engineeringResourceRegistryFingerprint(current,source)) failures.push(`${resource.resource_id}: registry fingerprint changed`);
+      if (resource.trust_tier && resource.trust_tier !== source.trust_tier) failures.push(`${resource.resource_id}: source trust changed`);
+    }
   }
   return { ok: failures.length === 0, activation_id: manifest.activation_id, failures };
 }
@@ -206,10 +236,11 @@ export function renderResourceActivationBundle(manifest, root = DEFAULT_CONTROL_
       '', `--- RESOURCE ${resource.resource_id} ---`,
       `Class: ${resource.resource_class}`, `Source: ${resource.source_id}`, `Trust: ${resource.trust_tier}`,
       `Authority: ${resource.authority}`, `Mode: ${resource.activation_mode}`, `Locator: ${resource.locator}`,
+      `Role: ${resource.selection_role || 'LEGACY'}`, `Purpose: ${resource.selection_purpose || 'LEGACY'}`, `Context delivery: ${resource.context_delivery || 'LEGACY_EAGER'}`,
       `Freshness: ${resource.freshness || 'UNKNOWN'}`, resource.corroboration_required ? 'CORROBORATION REQUIRED: community material may not be the sole basis for a DIAL decision.' : '',
       (resource.forbidden_effects || []).length ? `Forbidden effects: ${(resource.forbidden_effects || []).join(', ')}` : '',
     ].filter(Boolean);
-    if (resource.cache_ref) {
+    if (resource.cache_ref && (!resource.context_delivery || resource.context_delivery === 'EAGER_EXCERPT')) {
       try {
         const cached = readJson(resource.cache_ref, null, root);
         if (cached?.content_excerpt) lines.push('Cached presearch evidence (non-authoritative):', bounded(cached.content_excerpt, 5000));
@@ -257,7 +288,7 @@ export function activationSummary(manifest) {
     execution_allowed: manifest.execution_allowed !== false,
     missing_mandatory_task_classes: manifest.missing_mandatory_task_classes || [],
     selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name, activation_constraints: s.activation_constraints || [], requires_independent_specialist_review: s.requires_independent_specialist_review === true })),
-    selected_resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, trust_tier: r.trust_tier, authority: r.authority, activation_mode: r.activation_mode, content_hash: r.content_hash || null, cache_ref: r.cache_ref || null, freshness: r.freshness || 'UNKNOWN', corroboration_required: r.corroboration_required === true })),
+    selected_resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, trust_tier: r.trust_tier, authority: r.authority, activation_mode: r.activation_mode, content_hash: r.content_hash || null, cache_ref: r.cache_ref || null, freshness: r.freshness || 'UNKNOWN', corroboration_required: r.corroboration_required === true, selection_role: r.selection_role || null, selection_purpose: r.selection_purpose || null, context_delivery: r.context_delivery || null, registry_fingerprint: r.registry_fingerprint || null })),
     research_forecast_id: manifest.research_forecast_id || null,
   };
 }

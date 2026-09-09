@@ -10,8 +10,10 @@ fail(){ echo "QUALIFICATION RED: $*" >&2; exit 1; }
 pass(){ echo "✓ $*"; }
 warn(){ echo "! $*" >&2; }
 section(){ echo; echo "=== $* ==="; }
-TMP_FILES=(); cleanup(){ for file in "${TMP_FILES[@]:-}"; do [[ -n "$file" ]] && rm -f "$file"; done; }; trap cleanup EXIT
-tmp(){ local file; file="$(mktemp)"; TMP_FILES+=("$file"); printf '%s' "$file"; }
+TMP_DIR="$(mktemp -d)"
+cleanup(){ rm -rf "$TMP_DIR"; return 0; }
+trap cleanup EXIT
+tmp(){ mktemp "$TMP_DIR/tmp.XXXXXX"; }
 stamp(){ date -u +%Y%m%dT%H%M%SZ; }
 now(){ date -u +%Y-%m-%dT%H:%M:%SZ; }
 cd "$DIAL_REPO_DIR"
@@ -30,6 +32,11 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -x "$HOME/.local/bin/dial-hermes-ops-config" ]] || fail "dial-hermes-ops-config is not installed; run install-operations-plane.sh"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/chat-control-bridge.mjs" ]] || fail "DIAL chat control bridge is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/mission-controller.mjs" ]] || fail "DIAL mission controller is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" ]] || fail "DIAL typed operator stdio MCP is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-text-router.mjs" ]] || fail "DIAL operator text router is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-hermes-operator.mjs" ]] || fail "DIAL Hermes WhatsApp operator adapter is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-owner-input.mjs" ]] || fail "DIAL WhatsApp owner input module is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "DIAL WhatsApp Cloud operator adapter is missing"
 [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "DIAL chat control bearer token is missing; run install-chat-control-bridge.sh"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "DIAL chat control bearer token must be mode 0600"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then fail "OPENAI_API_KEY/CODEX_API_KEY is present; Hermes primary qualification requires ChatGPT subscription OAuth"; fi
@@ -60,7 +67,7 @@ npm run typecheck; pass "typecheck"
 VEKL_STATUS="$(tmp)"; npm run --silent agent:skills:check >"$VEKL_STATUS"
 jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL skill registry/policy validation is not green"; }
 VEKL_KNOWLEDGE="$(tmp)"; npm run --silent agent:knowledge:check >"$VEKL_KNOWLEDGE"
-jq -e '.status == "GREEN" and .policy_version == "vekl-2.0" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.1" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
 pass "VEKL v2 skill + federated resource registries and activation-policy validation"
 npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification including VEKL"
 npm run verify; pass "full repository verification"
@@ -80,6 +87,8 @@ systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dia
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
 systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+systemctl --user is-active --quiet dial-hermes-whatsapp-operator.service || fail "dial-hermes-whatsapp-operator.service is not active"
+systemctl --user is-active --quiet dial-whatsapp-cloud-operator.service || fail "dial-whatsapp-cloud-operator.service is not active"
 systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
 systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
@@ -87,14 +96,22 @@ jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"
 CHAT_TOKEN="$(cat "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
 CHAT_TOOLS="$(curl -fsS -H "Authorization: Bearer $CHAT_TOKEN" -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' http://127.0.0.1:9130/mcp)"
 unset CHAT_TOKEN
-jq -e '.result.tools | length >= 15' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control MCP tools are unavailable"
+jq -e '.result.tools | length >= 19' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control MCP tools are unavailable"
 jq -e '[.result.tools[].name | test("shell|exec|filesystem"; "i")] | any == false' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control exposes a forbidden generic execution primitive"
-jq -e '[.result.tools[].name] | index("dial_skill_status") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control does not expose read-only VEKL observability"
+jq -e '[.result.tools[].name] | index("dial_skill_status") != null and index("dial_operator_channels") != null and index("dial_submit_instruction") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control is missing VEKL/status/write typed tools"
+CLOUD_WA_HEALTH="$(curl -fsS http://127.0.0.1:9132/health)"
+jq -e '.service == "dial-whatsapp-operator" and .project == "dial" and (.state == "UNCONFIGURED" or .state == "DISABLED" or .state == "READY") and (has("access_token")|not) and (has("app_secret")|not) and (has("verify_token")|not)' <<<"$CLOUD_WA_HEALTH" >/dev/null || fail "WhatsApp Cloud operator boundary/health is invalid or leaks secret fields"
+HERMES_WA_STATUS="$(node agent-system/orchestration/whatsapp-hermes-operator.mjs status)"
+jq -e '.authority == "OWNER_SELF_CHAT_TYPED_DIAL_CONTROL" and (.paired == true or .paired == false)' <<<"$HERMES_WA_STATUS" >/dev/null || fail "Hermes WhatsApp owner-control status is invalid"
+CODEX_MCP="$(codex mcp get dial-oracle-control 2>&1 || true)"
+grep -q 'operator-control-stdio.mjs' <<<"$CODEX_MCP" || fail "Codex dial-oracle-control MCP is not enrolled"
+CLAUDE_MCP="$(claude mcp get dial-oracle-control 2>&1 || true)"
+grep -q 'operator-control-stdio.mjs' <<<"$CLAUDE_MCP" || fail "Claude dial-oracle-control MCP is not enrolled"
 MISSION_STATUS="$(node agent-system/orchestration/mission-controller.mjs status)"
 jq -e '.mission_id == "dial-development-root" and .project == "dial" and (.state == "PAUSED" or .state == "BLOCKED_OWNER" or .state == "WAITING_RUNTIME")' <<<"$MISSION_STATUS" >/dev/null || fail "DIAL root mission is not safely non-running during pre-green qualification"
 OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' "$OPS_STATUS" >/dev/null || { cat "$OPS_STATUS" >&2; fail "auxiliary operations boundary is not intact"; }
-pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
+pass "persistent runtime, external orchestrator, mission controller, Claude/Codex/WhatsApp typed operator gateway, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
 
 section "PROJECT-AWARE RESEARCH + LOCKED RUNTIME IDENTITY"
 # DEC-020 permits the project-aware research manager to fall from exact Sol to
@@ -197,7 +214,7 @@ jq -n \
     project_isolated_qualification:true,
     shared_host_reboot_required:false,
     vekl_framework:true,
-    vekl_policy_version:"vekl-2.0",
+    vekl_policy_version:"vekl-2.1",
     vekl_federated_resource_layer:true,
     vekl_ahead_of_work_research_scheduler:true,
     vekl_ahead_of_work_live_forecast:true,

@@ -453,7 +453,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('executes ordinary work only when the development gate is green', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Verify TEST-F001 without changing its gate.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Verify TEST-F001 without changing its gate.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
@@ -468,7 +468,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('refreshes the external-orchestrator heartbeat while a long packet is executing', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    submitExternalWork({ root, instruction: 'Verify TEST-F001 during a long packet.' });
+    submitExternalWork({ root, repoDir: repo, instruction: 'Verify TEST-F001 during a long packet.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
@@ -487,7 +487,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('blocks ordinary development before PRODUCTION_GREEN instead of executing it', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Continue TEST-F001.' });
     let executorCalled = false;
     const processed = await processNextExternalWork({
       repoDir: repo,
@@ -535,7 +535,7 @@ describe('external Oracle orchestration queue', () => {
 
   it('persists runtime failure instead of silently advancing', async () => {
     const repo = makeRepo(), root = temp('dial-control');
-    const queued = submitExternalWork({ root, instruction: 'Continue TEST-F001.' });
+    const queued = submitExternalWork({ root, repoDir: repo, instruction: 'Continue TEST-F001.' });
     const processed = await processNextExternalWork({
       repoDir: repo,
       root,
@@ -653,5 +653,15 @@ describe('development readiness gates', () => {
     const result = evaluateDevelopmentUnblock({ repoDir, root });
     expect(result.unblocked).toBe(false);
     expect(result.checks.fallback_readiness_valid).toBe(false);
+  });
+});
+
+describe('Oracle qualification shell lifecycle', () => {
+  it('uses a parent-owned temp directory so a successful qualifier exits successfully and cleans command-substitution temporaries', () => {
+    const script = readFileSync(path.join(process.cwd(), 'deploy/oracle/hermes-codex/qualify-control-plane.sh'), 'utf8');
+    expect(script).toContain('TMP_DIR="$(mktemp -d)"');
+    expect(script).toContain('cleanup(){ rm -rf "$TMP_DIR"; return 0; }');
+    expect(script).toContain('tmp(){ mktemp "$TMP_DIR/tmp.XXXXXX"; }');
+    expect(script).not.toContain('TMP_FILES+=');
   });
 });

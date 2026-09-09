@@ -52,7 +52,7 @@
     "task": "Map existing source/test paths to Feature Registry",
     "blocking": true,
     "status": "COMPLETE",
-    "note": "3 Feature IDs and 11 supporting capabilities carry code_paths/test_paths. agent:source-map verifies every claimed path exists, refuses a gate claim without its evidence, and reports unclaimed source (currently 0, with 9 shell/tooling files declared).",
+    "note": "9 Feature IDs and 13 supporting capabilities currently carry code_paths/test_paths. agent:source-map verifies every claimed path exists, refuses a gate claim without its evidence, and reports zero unclaimed product source files; 21 application-shell/test-orchestration files are explicitly classified as shell/tooling.",
     "completed_at": "2026-08-29T21:55:37.435116+00:00"
   },
   {
@@ -76,7 +76,7 @@
     "task": "Only then enable broad multi-worktree feature development",
     "blocking": true,
     "status": "COMPLETE",
-    "note": "Broad multi-worktree development enabled. Both preconditions closed rather than waived: source-map reports 0 unclaimed source files (was 25 — the scene-engine, raster and catalogue transition-production work is now claimed by CATVIS-S005, the player hit map by CATVIS-S006, and three infrastructure/fixture files declared as shell and tooling), and agent:source-map is now step 12 of npm run verify, so the mapping cannot drift unnoticed again. CT-7 remains AMBER at 23 of 228 and is NOT a precondition that was met: fan-out proceeds against generic contracts for every feature except SPARE-F001 and SPARE-F004, and each feature entering implementation must get its own acceptance contract first (CLAUDE.md).",
+    "note": "Broad multi-worktree development enabled. Preconditions remain closed rather than waived: agent:source-map reports 0 unclaimed product source files and is part of npm run verify, so mapping drift is continuously visible. CT-7 remains AMBER and is not treated as satisfied: broad feature fan-out is still contract-first, with a dedicated acceptance contract required before each Feature enters implementation.",
     "completed_at": "2026-08-30T15:00:37.700Z"
   }
 ]

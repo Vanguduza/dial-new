@@ -105,10 +105,14 @@
     "source_doc": "docs/dial/final-audit/04_DIVISIONS/SPARE_AUDIT.md",
     "code_paths": [
       "apps/catalog-coverage/src/index.ts",
-      "packages/catalog-coverage/src/index.ts"
+      "packages/catalog-coverage/src/index.ts",
+      "packages/catalog-coverage/src/diagram-identity.ts",
+      "packages/catalog-coverage/src/injection.ts"
     ],
     "test_paths": [
-      "tests/catalog-coverage.test.ts"
+      "tests/catalog-coverage.test.ts",
+      "tests/diagram-identity.test.ts",
+      "tests/injection-conformance.test.ts"
     ],
     "evidence_refs": [
       "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
@@ -5702,10 +5706,12 @@
     "current_gate": "DOMAIN_TESTED",
     "source_doc": "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
     "code_paths": [
-      "packages/round-plan/src/plan.ts"
+      "packages/round-plan/src/plan.ts",
+      "packages/round-credit/src/credit-model.ts"
     ],
     "test_paths": [
-      "tests/round-plan.test.ts"
+      "tests/round-plan.test.ts",
+      "tests/round-credit.test.ts"
     ],
     "evidence_refs": [
       "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",

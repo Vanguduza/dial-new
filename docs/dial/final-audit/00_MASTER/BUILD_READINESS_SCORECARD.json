@@ -2,11 +2,11 @@
   "version": "2.2",
   "supersedes": "2.1",
   "overall_canon_status": "AMBER_CONTRACT_SPECIFICITY",
-  "repository_status": "BOOTSTRAP_APPLIED",
+  "repository_status": "BOOTSTRAP_COMPLETE",
   "broad_feature_fanout_authorized": false,
   "controlled_foundation_engineering_authorized": true,
   "authorization_condition": "Repository bootstrap is COMPLETE: RBC-001 through RBC-010 all closed. RBC-010 was closed on evidence, not waiver — source-map reports 0 unclaimed source files and runs in npm run verify. Broad multi-worktree development is authorised subject to feature-level gating. The standing constraint is CT-7: the registry now contains 309 features after the 2026-09-06 GMPC canon extension; newly allocated GMPC features are SPECIFIED and require dedicated acceptance contracts before implementation. No independent specialist review has been performed on the SPARE-F004 pilot.",
-  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight. On 2026-09-06 the GMPC canon extension added 65 feature anchors (244 -> 309) at SPECIFIED. This increases breadth only; it does not advance implementation gates or change the current execution priority.",
+  "status_change_note": "v2.1 reported CT-1 and CT-2 GREEN on a distinctness metric computed over command and event NAMES. Those names embed their own aggregate name, so they are distinct by construction. Re-scored on semantics (CT-7), both drop to AMBER. This is a correction to the measurement, not a regression in the work: no contract was removed or weakened. As of 2026-08-30 the module-expansion packages were adopted: 186 -> 206 features. Breadth increased; contract depth did not, so CT-1/CT-2/CT-7 remain AMBER by design rather than by oversight. On 2026-09-06 the GMPC canon extension added 65 feature anchors (244 -> 309) at SPECIFIED. This increases breadth only; it does not advance implementation gates or change the current execution priority. CT-6 is GREEN as of 2026-09-09: RBC-001 through RBC-010 are complete and source-map is restored to zero unclaimed product files; CT-1/CT-2/CT-7 remain AMBER on contract specificity.",
   "closure_tests": [
     {
       "test": "CT-1 Concrete Feature Contracts",
@@ -69,18 +69,15 @@
     },
     {
       "test": "CT-6 Canon / Actual Repository Alignment",
-      "status": "AMBER_IN_PROGRESS",
-      "previous_status": "AMBER_PENDING_APPLY",
+      "status": "GREEN",
+      "previous_status": "AMBER_IN_PROGRESS",
       "evidence": {
         "repo_bootstrap_tasks": 10,
-        "complete": 7,
-        "pending": 3,
-        "pending_ids": [
-          "RBC-007",
-          "RBC-009",
-          "RBC-010"
-        ],
+        "complete": 10,
+        "pending": 0,
+        "pending_ids": [],
         "harness_executable": true,
+        "source_map_unclaimed_product_files": 0,
         "checks_running": [
           "agent:v2-closure-check",
           "agent:drift-check",
@@ -88,10 +85,11 @@
           "agent:security-coverage",
           "agent:feature-coverage",
           "agent:manifest-check",
-          "schema:check"
+          "schema:check",
+          "agent:source-map"
         ]
       },
-      "note": "The bootstrap is applied and every harness script executes. Remaining work is mapping source/test paths to Feature IDs (RBC-007) and proving one pilot Feature end-to-end (RBC-009) before broad fan-out (RBC-010)."
+      "note": "RBC-001 through RBC-010 are COMPLETE. The repository bootstrap, bounded-context harness, source/test ownership map, pilot evidence and multi-worktree guardrails are applied and continuously checked. CT-7 remains independently AMBER and does not downgrade CT-6."
     },
     {
       "test": "CT-7 Contract Specificity",
@@ -130,9 +128,9 @@
     "feature_security_profiles": 309,
     "security_controls": 120,
     "customer_endpoint_records": 180,
-    "supporting_capabilities": 126,
+    "supporting_capabilities": 127,
     "whatsapp_flows": 59,
-    "pack_files": 236
+    "pack_files": 237
   },
   "consolidated_development_pack_version": "2.2",
   "pack_lineage_note": "v2.1 was authored as a 12-file overlay on v2.0 but packaged as a replacement pack, dropping 181 files including 33 machine registries and the ready-to-apply repository bootstrap. v2.2 restores the v2.0 substrate underneath the v2.1 decisions. agent:manifest-check now fails when a manifest is incomplete or a canon-referenced path is absent, so an overlay cannot again be mistaken for a replacement.",
@@ -159,8 +157,7 @@
     "Grocery Rounds cannot take real customer money: AML/KYC is absent (review H5), the protection broker quote is not obtained (H2, RCM-019), the procurement reserve percentage is undeclared (RCM-016), and four counsel confirmations are outstanding under ACT-REG-004, ACT-REG-001 and ACT-REG-007.",
     "The margin and pricing engine is specified and not built (26_MARGIN_AND_PRICING). Three of its five open questions are blocking, including its module and Feature ID, so it is not yet allocated in the registry.",
     "GROC-F021 (Round agreement & consent gateway) is at DOMAIN_TESTED on CI run 33334988260 against 5936216 — the first feature of the Grocery Rounds slice. No independent specialist review: it is S4 and triggers the security and money reviewers, which the implementing agent cannot self-certify.",
-    "CI was red from 0c530da to 2225302 — twelve runs — because two workspace packages were added without regenerating package-lock.json, and npm ci refuses a lock that does not match the workspace set. npm run verify does not run npm ci, so local green did not catch it. Fixed at 5936216.",
-    "The remaining fifteen Grocery Rounds features (GROC-F019, F020, F022..F034) are SPECIFIED on generic contracts. The §26 slice needs roughly five more acceptance contracts before further implementation.",
+    "The remaining ten Grocery Rounds features (GROC-F025..F034) are SPECIFIED on generic contracts. Each requires its own acceptance contract and normal evidence before implementation.",
     "GMPC Rev 2 is canonical and 65 GMPC-F feature anchors are registered at SPECIFIED with 195 atomic feature-to-page controls; no GMPC implementation is claimed. Each feature still requires its dedicated acceptance contract and normal evidence before advancing."
   ],
   "decision_log_note": "Locked product decisions are recorded in agent-system/registries/DECISION_LOG.json. DEC-001..016 are LOCKED as of the 2026-09-06 GMPC integration; later decisions must explicitly supersede an existing lock rather than silently drift it.",

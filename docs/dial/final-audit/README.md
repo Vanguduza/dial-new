@@ -7,7 +7,7 @@ anchor index below.
 
 1. `00_MASTER/V2_2_ANCHOR_INDEX.md` — where every contract lives
 2. `00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md` — the closure canon
-3. `00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md` — the active plan
+3. `00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md` — the active development plan
 4. `13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md` — the active development prompt
 5. `00_MASTER/BUILD_READINESS_SCORECARD.json` — current gate status
 
@@ -40,7 +40,7 @@ CT-2  Executable Eventualities      AMBER   re-scored on semantics
 CT-3  Donor Qualification           GREEN
 CT-4  NFR / Deployment              GREEN
 CT-5  Activation Blockers           GREEN
-CT-6  Repository Alignment          AMBER   7 of 10 tasks complete
+CT-6  Repository Alignment          GREEN   10 of 10 tasks complete
 CT-7  Contract Specificity          AMBER   new; regression-blocking
 ```
 

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { resolveEngineeringResources } from '../agent-system/orchestration/engineering-resource-resolver.mjs';
+import { deterministicMinimalCoalition, resolveEngineeringResources } from '../agent-system/orchestration/engineering-resource-resolver.mjs';
 import { refreshAheadOfWorkResearch } from '../agent-system/orchestration/engineering-presearch.mjs';
 import { runProjectAwareResearchForecast } from '../agent-system/orchestration/engineering-research-manager.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
@@ -15,6 +15,17 @@ const repoDir=process.cwd();
 function temp(name){return fs.mkdtempSync(path.join(os.tmpdir(),`${name}-`));}
 
 describe('VEKL 2 federated engineering resources',()=>{
+  it('keeps Oracle qualification and finalization pinned to the current federated-resource policy version',()=>{
+    for (const rel of [
+      'deploy/oracle/hermes-codex/qualify-control-plane.sh',
+      'deploy/oracle/hermes-codex/finalize-control-plane.sh',
+      'deploy/oracle/hermes-codex/finalize-development-readiness.sh',
+    ]) {
+      const text=fs.readFileSync(path.join(repoDir,rel),'utf8');
+      expect(text).toContain('vekl-2.1');
+      expect(text).not.toContain('vekl-2.0');
+    }
+  });
   it('prefers official stack resources for a Supabase RLS task and marks community signals as corroboration only',()=>{
     const root=temp('vekl2-resolve');ensureControlLayout(root);
     const plan=resolveEngineeringResources({repoDir,root,instruction:'Implement Supabase Postgres RLS policies and TypeScript validation for Grocery Rounds, then add Vitest coverage.',affectedPaths:['packages/rounds/src/policy.ts'],maxResources:12});
@@ -25,7 +36,7 @@ describe('VEKL 2 federated engineering resources',()=>{
     expect(ids).toContain('ref.vitest.docs');
     const communities=plan.selected_resources.filter((r)=>r.authority==='COMMUNITY_SIGNAL_ONLY');
     expect(communities.every((r)=>r.corroboration_required===true)).toBe(true);
-    expect(plan.policy_version).toBe('vekl-2.0');
+    expect(plan.policy_version).toBe('vekl-2.1');
   });
 
   it('uses a project-aware forecast to prefetch approved sources ahead of work without making them executable',async()=>{
@@ -119,7 +130,7 @@ describe('VEKL 2 federated engineering resources',()=>{
   it('persists federated resources through audited packet re-resolution when the concrete task changes',()=>{
     const root=temp('vekl2-reresolve');ensureControlLayout(root);
     const first=resolvePacketEngineeringKnowledge({repoDir,root,packetId:'packet-reresource-1',instruction:'Implement Supabase Postgres RLS policies for Grocery Rounds.',metadata:{feature_id:'GROC-F021',affected_paths:['packages/rounds/src/policy.ts']}});
-    expect(first.policy_version).toBe('vekl-2.0');
+    expect(first.policy_version).toBe('vekl-2.1');
     expect(first.resources.some((r)=>r.resource_id==='ref.supabase.docs')).toBe(true);
     const second=reResolvePacketEngineeringKnowledge({repoDir,root,packetId:'packet-reresource-1',instruction:'Implement and verify the Next.js customer surface for the same bounded Feature.',metadata:{feature_id:'GROC-F021',affected_paths:['apps/web/app/rounds/page.tsx']},reason:'concrete UI packet selected after repository inspection'});
     expect(second.previous_activation_id).toBe(first.activation_id);
@@ -160,6 +171,31 @@ describe('VEKL 2 federated engineering resources',()=>{
     const result=await refreshAheadOfWorkResearch({repoDir,root,force:true,planner,fetchImpl:async()=>new Response('ok',{status:200,headers:{'content-type':'text/plain'}}),maxResources:2});
     expect(result.state).toBe('READY');
     expect(result.items[0].feature_id).toBe(null);
+  });
+
+  it('keeps complementary VEKL roles while pruning redundant peers deterministically regardless of input order',()=>{
+    const rows=[
+      {resource:{resource_id:'react-doc-a'},purpose:'REACT',role:'AUTHORITY',score:.95,mandatory:false},
+      {resource:{resource_id:'react-doc-b'},purpose:'REACT',role:'AUTHORITY',score:.80,mandatory:false},
+      {resource:{resource_id:'react-tool'},purpose:'REACT',role:'EXECUTOR',score:.70,mandatory:false},
+      {resource:{resource_id:'a11y-oracle'},purpose:'ACCESSIBILITY',role:'VERIFIER',score:.90,mandatory:false},
+      {resource:{resource_id:'dial-policy'},purpose:'DIAL_GOVERNANCE',role:'POLICY',score:1,mandatory:true},
+    ];
+    const a=deterministicMinimalCoalition(rows,8);
+    const b=deterministicMinimalCoalition([...rows].reverse(),8);
+    expect(a.selected_resource_ids).toEqual(b.selected_resource_ids);
+    expect(a.selected_resource_ids).toEqual(['a11y-oracle','dial-policy','react-doc-a','react-tool']);
+    expect(a.rejected).toContainEqual({resource_id:'react-doc-b',reason:'REDUNDANT_PEER_PRUNED:REACT:AUTHORITY'});
+  });
+
+  it('selects PostHog official guidance only for product analytics/rollout work and never through the Skill selection path',()=>{
+    const root=temp('vekl21-posthog');ensureControlLayout(root);
+    const plan=resolveEngineeringResources({repoDir,root,instruction:'Instrument PostHog product analytics funnels, session replay policy and staff dogfood feature flags.',affectedPaths:['packages/product-telemetry/src/index.ts'],maxResources:12});
+    const posthog=plan.selected_resources.find((row)=>row.resource_id==='ref.posthog.docs');
+    expect(posthog).toMatchObject({selection_role:'AUTHORITY',selection_purpose:'POSTHOG_PRODUCT_EXPERIENCE_TELEMETRY'});
+    expect(plan.selected_resources.some((row)=>row.resource_class==='SKILL')).toBe(false);
+    expect(plan.invariants.hard_eligibility_before_ranking).toBe(true);
+    expect(plan.invariants.input_order_independent).toBe(true);
   });
 
 });

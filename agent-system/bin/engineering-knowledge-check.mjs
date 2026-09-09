@@ -16,5 +16,5 @@ for(const row of rows){
   if(source?.sensitive_data_allowed===true)failures.push(`${row.resource_id}: external research sources may not receive sensitive data`);
   if(row.status==='POLICY_APPROVED_CONDITIONAL'&&!(row.requires_tools||[]).length)failures.push(`${row.resource_id}: conditional tool resource requires declared tool dependency`);
 }
-const result={status:failures.length?'RED':'GREEN',policy_version:'vekl-2.0',skill_records:skills.skill_count,approved_skills:skills.approved_count,resource_sources:resources.source_count,resource_records:resources.resource_count,reference_or_policy_resources:rows.filter((r)=>['DISCOVERY_APPROVED','REFERENCE_APPROVED','POLICY_APPROVED_CONDITIONAL','APPROVED','ACTIVE'].includes(r.status)).length,failures};
+const result={status:failures.length?'RED':'GREEN',policy_version:'vekl-2.1',skill_records:skills.skill_count,approved_skills:skills.approved_count,resource_sources:resources.source_count,resource_records:resources.resource_count,reference_or_policy_resources:rows.filter((r)=>['DISCOVERY_APPROVED','REFERENCE_APPROVED','POLICY_APPROVED_CONDITIONAL','APPROVED','ACTIVE'].includes(r.status)).length,failures};
 console.log(JSON.stringify(result,null,2));if(failures.length)process.exitCode=1;
