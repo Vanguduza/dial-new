@@ -149,7 +149,7 @@ continuity_soak(){
   [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "chat-control token missing"
   token_hash_before="$(sha256 "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
 
-  for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service; do
+  for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service; do
     systemctl --user restart "$unit"
     wait_active "$unit"
   done
@@ -177,7 +177,7 @@ continuity_soak(){
     --arg mission_state "$state_after" \
     --arg turn_number "$turn_after" \
     --arg token_sha256 "$token_hash_after" \
-    '{schema_version:1, kind:"DIAL_PROJECT_ISOLATED_SERVICE_CONTINUITY_SOAK", status:"GREEN", observed_at:$observed_at, repo_head:$repo_head, project:"dial", project_isolated:true, shared_host_reboot_required:false, shared_hermes_gateway_disrupted:false, unrelated_project_services_touched:false, mission_id:$mission_id, mission_state:$mission_state, mission_turn_number:($turn_number|tonumber), chat_control_token_sha256:$token_sha256, dial_services_recovered:true, chat_control_recovered:true, engineering_research_scheduler_recovered:true, mission_state_survived:true}' >"$evidence"
+    '{schema_version:1, kind:"DIAL_PROJECT_ISOLATED_SERVICE_CONTINUITY_SOAK", status:"GREEN", observed_at:$observed_at, repo_head:$repo_head, project:"dial", project_isolated:true, shared_host_reboot_required:false, shared_hermes_gateway_disrupted:false, unrelated_project_services_touched:false, mission_id:$mission_id, mission_state:$mission_state, mission_turn_number:($turn_number|tonumber), chat_control_token_sha256:$token_sha256, dial_services_recovered:true, chat_control_recovered:true, operator_channels_recovered:true, engineering_research_scheduler_recovered:true, mission_state_survived:true}' >"$evidence"
   chmod 600 "$evidence"
   echo "DIAL_PROJECT_CONTINUITY_SOAK=GREEN"
   echo "SHARED_HOST_REBOOT_REQUIRED=false"
@@ -258,7 +258,9 @@ reboot_post(){
   wait_active dial-hermes-operations.service
   wait_active dial-chat-control.service
   wait_active dial-mission-controller.service
-  pass "persistent runtime, orchestration, chat-control and mission services active after reboot"
+  wait_active dial-hermes-whatsapp-operator.service
+  wait_active dial-whatsapp-cloud-operator.service
+  pass "persistent runtime, orchestration, typed operator channels and mission services active after reboot"
 
   repo_head="$(jq -r '.repo_head' "$marker")"
   [[ "$(git rev-parse HEAD)" == "$repo_head" ]] || fail "repository HEAD changed across reboot soak"

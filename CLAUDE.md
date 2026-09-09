@@ -34,21 +34,22 @@ For any `GMPC-F*` feature, read the bounded context plus the canonical GMPC sour
 `docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md`.
 Commercial retrieval consumes DKRF; pricing/margin consumes `PLAT-F014`; money consumes Finance/Ledger; external marketing services are governed adapters. Do not create a second RAG, CRM/customer authority, pricing engine, promotion money authority or ad-spend ledger. Sensitive Health data is not ordinary marketing context.
 
-## Oracle orchestration / Claude chat operator mode
+## Oracle orchestration / unified owner operator mode
 
-When the `dial-oracle-control` MCP/chat-control bridge is available, Claude chat is the owner-facing control console, not the process that keeps development alive. Use the typed `dial_*` control tools to read status/progress and to submit, pause, resume, reprioritise or approve DIAL work. Oracle owns the persistent `dial-development-root` mission, worker dispatch and recovery.
+When the `dial-oracle-control` MCP/operator gateway is available, Claude and Codex are owner-facing control consoles, not the processes that keep development alive. The authenticated owner WhatsApp adapter uses the same typed controls. Use only typed `dial_*` tools to read status/progress and to submit, pause, resume, reprioritise or approve DIAL work. Oracle owns the persistent `dial-development-root` mission, worker dispatch and recovery.
 
 - `Status`/progress questions must be answered from Oracle mission/control-plane evidence, not inferred from conversation history.
 - The project-scoped `dial-oracle-status` MCP plus SessionStart/UserPromptSubmit status hooks provide a read-only Oracle mirror even when the mutable `dial-oracle-control` MCP is not enrolled. For status questions, use that mirror first.
 - Never conclude that DIAL is idle because this device has no other Claude sessions, no local scheduled tasks, no local task-list items, a clean working tree, or no local agent process. Those facts describe only this client.
 - If neither the Oracle status mirror nor the typed control MCP is fresh/available, say that live Oracle status cannot be established from this client. Do not substitute a local-idle claim.
 - `Resume` means resume the persistent Oracle mission; it does not mean start an ad-hoc chat-local coding loop.
-- A Claude session ending or reaching its usage limit does not pause the Oracle mission.
-- Do not expose or request a generic shell through the chat bridge.
+- A Claude/Codex session ending or reaching its usage limit does not pause the Oracle mission.
+- WhatsApp control accepts only the explicit operator command grammar; arbitrary prose is never implicitly converted into a development instruction.
+- Do not expose or request a generic shell through any operator channel.
 - The bridge is DIAL-only. Never query, control or import state from other Hermes projects.
 - Direct/ad-hoc repository development is never the entrypoint. Ordinary work is allowed only when the external Oracle gate is `PRODUCTION_GREEN` or, under `DEC-021`, the development-only `DEVELOPMENT_READY_FALLBACK` gate is valid; in either case execution enters through the persistent Oracle orchestrator. The fallback gate is not production certification.
 
-Architecture: `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
+Canonical architecture: `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`. Legacy Claude-specific detail remains in `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
 
 ## VEKL engineering-knowledge lock
 

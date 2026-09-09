@@ -1,5 +1,7 @@
 # DIAL Claude Chat Control Bridge
 
+> Compatibility note (2026-09-08): this Claude-specific document remains valid for the Claude adapter, but the canonical multi-channel architecture is now `DIAL_OPERATOR_GATEWAY.md` (`DEC-025`). Claude, Codex and authenticated owner WhatsApp all consume the same typed DIAL control authority.
+
 Status: implemented control-plane architecture, subject to Oracle bootstrap/qualification before development authority is unblocked.
 
 ## Purpose

@@ -8,8 +8,8 @@
     "title": "Grocery Round subscriptions buy credits, and credits are not money",
     "decision": "A subscription payment is consideration for a supply of groceries, not a repayable sum. Credits are not money, not redeemable in money, not transactional and not transferable. Dial therefore holds an obligation to deliver groceries rather than customer money.",
     "consequence": "ACT-REG-001 is NOT ENGAGED by Grocery Rounds, and no second money-holding model is ratified. This holds only while credits settle grocery fulfilment and nothing else; a credit spendable across trades re-engages the blocker on worse facts, with real customer value already inside it.",
-    "supersedes": "GROCERY_ROUNDS_MASTER_PLAN_v1.md \u00a72, the review finding B1 conflict",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md \u00a71",
+    "supersedes": "GROCERY_ROUNDS_MASTER_PLAN_v1.md §2, the review finding B1 conflict",
+    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md §1",
     "enforced_by": [
       "RCM-001",
       "RCM-002",
@@ -52,9 +52,9 @@
     "area": "GROCERIES / FISCAL_TAX",
     "title": "VAT is accounted for when the member pays, and a Round carries one credit pool per tax character",
     "decision": "The tax point is payment, per VAT Act [Chapter 23:12] s8 (earlier of invoice or payment). Deferral to collection is available only against a written ZIMRA ruling recorded on the Round product. Each Round declares credit pools, one per tax character, each with its own catalogue; a payment splits across pools at a ratio fixed when it is taken.",
-    "consequence": "The rate is determined on the day money arrives even though the basket is chosen months later, because the pool fixes the menu rather than the shopping list. SI 248 of 2023 made the staples basket EXEMPT from 1 Jan 2024, so the flagship pool bears no output VAT and its input VAT is irrecoverable \u2014 a permanent cost that no tax-point choice touches, and the largest tax number in the product. IMTT is charged per instalment and is modelled. Rates resolve from a dated schedule; the standard rate moved 15% to 15.5% on 1 Jan 2026.",
+    "consequence": "The rate is determined on the day money arrives even though the basket is chosen months later, because the pool fixes the menu rather than the shopping list. SI 248 of 2023 made the staples basket EXEMPT from 1 Jan 2024, so the flagship pool bears no output VAT and its input VAT is irrecoverable — a permanent cost that no tax-point choice touches, and the largest tax number in the product. IMTT is charged per instalment and is modelled. Rates resolve from a dated schedule; the standard rate moved 15% to 15.5% on 1 Jan 2026.",
     "supersedes": "ROUND_CREDIT_MODEL_v1.md Rev 2 decision 1, which placed the tax point at collection",
-    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md \u00a70 and condition C3",
+    "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md §0 and condition C3",
     "enforced_by": [
       "RCM-005",
       "RCM-006",
@@ -82,7 +82,7 @@
     "area": "GROCERIES / ACCOUNTING",
     "title": "The tax point is not revenue recognition",
     "decision": "Consideration for an unsettled credit is a contract liability. Revenue is recognised when the groceries transfer, never when the money arrives.",
-    "consequence": "Booking credit sales as revenue at payment would report unearned profit, attract income tax on it, and tell management the float is spendable margin \u2014 which is review finding B2's failure mode reached through the ledger.",
+    "consequence": "Booking credit sales as revenue at payment would report unearned profit, attract income tax on it, and tell management the float is spendable margin — which is review finding B2's failure mode reached through the ledger.",
     "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C4",
     "enforced_by": [
       "RCM-008",
@@ -92,7 +92,7 @@
     "evidence_refs": [
       "tests/round-credit.test.ts"
     ],
-    "reopens_if": "never \u2014 this is an accounting standard, not a preference"
+    "reopens_if": "never — this is an accounting standard, not a preference"
   },
   {
     "decision_id": "DEC-005",
@@ -121,8 +121,8 @@
     "status": "LOCKED",
     "area": "GROCERIES / CARE_INSURANCE",
     "title": "A protection charge rides on top of credit value, flat, and is never a member premium",
-    "decision": "A charge of about 4% of credit value is collected in addition to it \u2014 5,200 buys 5,000 of credit and 200 towards cover. It does not vary with the member's pool split. Dial buys cover for Dial's own delivery obligation; the member is never the policyholder or beneficiary.",
-    "consequence": "Disclosing that part of the price funds protection is lawful and permitted, and obliges accuracy: cover must be bound before it is described, and the disclosure must state insurer, scope, limits, exclusions and eligibility \u2014 including that cover does not reach ordinary commercial shortfall. Presenting the charge as a premium the member pays an insurer would be intermediation requiring IPEC registration Dial does not hold.",
+    "decision": "A charge of about 4% of credit value is collected in addition to it — 5,200 buys 5,000 of credit and 200 towards cover. It does not vary with the member's pool split. Dial buys cover for Dial's own delivery obligation; the member is never the policyholder or beneficiary.",
+    "consequence": "Disclosing that part of the price funds protection is lawful and permitted, and obliges accuracy: cover must be bound before it is described, and the disclosure must state insurer, scope, limits, exclusions and eligibility — including that cover does not reach ordinary commercial shortfall. Presenting the charge as a premium the member pays an insurer would be intermediation requiring IPEC registration Dial does not hold.",
     "record": "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md condition C7",
     "enforced_by": [
       "RCM-014",
@@ -180,10 +180,10 @@
     "decided_by": "product owner",
     "status": "LOCKED",
     "area": "PROGRAMME",
-    "title": "The first vertical slice is Grocery Rounds \u00a726",
-    "decision": "The milestone is the Grocery Rounds vertical slice at STAGING_GREEN \u2014 the master plan's sixteen \u00a726 steps, from create Round to reconcile and complete.",
+    "title": "The first vertical slice is Grocery Rounds §26",
+    "decision": "The milestone is the Grocery Rounds vertical slice at STAGING_GREEN — the master plan's sixteen §26 steps, from create Round to reconcile and complete.",
     "consequence": "Chosen because it is buildable now: the money model is locked, the regulatory questions are closed by research, the protection rate has a defensible figure, and the sandbox EscrowAdapter exists. The Spare slice would today prove the plumbing rather than the product, because the pilot pack's hand-authored DGM ids are rejected by isProductionDgmId and the eleven-stage gate correctly reports zero ready vehicles. Spare becomes the stronger slice when a real catalogue lands.",
-    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md \u00a75",
+    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md §5",
     "reopens_if": "a real catalogue is injected before the Rounds slice completes, which would make the Spare slice the better proof"
   },
   {
@@ -193,9 +193,9 @@
     "status": "LOCKED",
     "area": "GROCERIES / MONEY",
     "title": "Round credits are not deposit-taking, on the Banking Act's own cumulative test",
-    "decision": "The Banking Act [Chapter 24:20] defines banking business cumulatively: accepting deposits withdrawable or repayable, AND employing those deposits by lending or any other means. Round credits fail both limbs independently \u2014 nothing is repayable, and consideration buys grocery stock rather than being lent.",
+    "decision": "The Banking Act [Chapter 24:20] defines banking business cumulatively: accepting deposits withdrawable or repayable, AND employing those deposits by lending or any other means. Round credits fail both limbs independently — nothing is repayable, and consideration buys grocery stock rather than being lent.",
     "consequence": "The deposit-taking question is closed for build. One gap remains and does not block: the National Payment Systems Act stored-value position was not examined, and the closed-loop non-transferable construction is the standard exclusion in such regimes rather than a checked Zimbabwean text.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md \u00a71",
+    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §1",
     "enforced_by": [
       "RCM-001",
       "RCM-002",
@@ -214,8 +214,8 @@
     "area": "GROCERIES / CARE_INSURANCE",
     "title": "Insuring Dial's own obligation and pricing it in triggers no IPEC registration",
     "decision": "The Insurance Act [Chapter 24:07] defines an agent as acting on behalf of a registered insurer, a broker as negotiating on behalf of another person, and insurance business as assuming an insurer's obligations. Dial insuring its own delivery obligation and recovering the cost inside the product price is none of the three.",
-    "consequence": "Disclosing that part of the price funds protection is lawful and obliges accuracy \u2014 cover bound before it is described, and scope, limits and exclusions stated including that cover does not reach ordinary commercial shortfall. Registration risk begins only if the member becomes the insured, which is exactly the boundary RCM-019 already enforces.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md \u00a72",
+    "consequence": "Disclosing that part of the price funds protection is lawful and obliges accuracy — cover bound before it is described, and scope, limits and exclusions stated including that cover does not reach ordinary commercial shortfall. Registration risk begins only if the member becomes the insured, which is exactly the boundary RCM-019 already enforces.",
+    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §2",
     "enforced_by": [
       "RCM-019"
     ],
@@ -232,8 +232,8 @@
     "area": "GROCERIES / PRICING",
     "title": "A researched position prices development; a broker quote prices a published tier",
     "decision": "The protection charge stands at 4% of credit value on a researched position. Published surety pricing runs 1-3% for contract bonds and to 10% at the licence-bond end, which makes 4% defensible for an unrated principal. Trade credit insurance rates are the wrong comparator: they cover a seller against a buyer, the opposite exposure.",
-    "consequence": "RCM-019 now distinguishes commercialStage DEVELOPMENT, where a documented researched position suffices, from TIERS_PUBLISHED, where a real quote is required. The open broker question is availability and collateral for an unrated principal, not rate \u2014 surety markets often decline rather than price such a principal.",
-    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md \u00a73",
+    "consequence": "RCM-019 now distinguishes commercialStage DEVELOPMENT, where a documented researched position suffices, from TIERS_PUBLISHED, where a real quote is required. The open broker question is availability and collateral for an unrated principal, not rate — surety markets often decline rather than price such a principal.",
+    "record": "docs/dial/final-audit/26_MARGIN_AND_PRICING/PROTECTION_AND_LEGAL_RESEARCH_v1.md §3",
     "enforced_by": [
       "RCM-019"
     ],
@@ -248,7 +248,7 @@
     "title": "The catalogue is a scheduled dependency, not an open blocker",
     "decision": "The catalogue and transition flow packs are produced outside this repository and injected against 24_INJECTION_STANDARDS, validated by packages/catalog-coverage/src/injection.ts. They are tracked as a delivery with a date.",
     "consequence": "v2.1 steps 7 and 8 are re-read as receive, validate, integrate. Nothing in the programme waits on the catalogue except the Spare customer-ready gates, and no readiness assessment should record it as an open risk.",
-    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md \u00a74 Track B",
+    "record": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md §4 Track B",
     "activation_blocker_refs": [
       "ACT-REG-011"
     ],
@@ -260,7 +260,7 @@
     "decided_by": "product owner",
     "status": "LOCKED",
     "area": "CORPORATE / GROWTH",
-    "title": "GMPC is DIAL\u2019s horizontal commercial growth operating layer",
+    "title": "GMPC is DIAL’s horizontal commercial growth operating layer",
     "decision": "Adopt DIAL Growth, Marketing & Promotions Control Centre Rev 2 as the canonical horizontal commercial operating architecture. Allocate its 65 GMPC-F feature anchors and retain its 195 atomic feature-to-page mappings as the implementation-visible completeness boundary beneath those anchors.",
     "consequence": "Growth, campaigns, promotions, audiences, journeys, content, social, paid media, SEO, sales growth, merchandising, experiments, attribution, budgets, supplier marketing, AI governance and commercial knowledge are no longer optional side documents. They enter the normal DIAL feature, realization, security, contract, evidence and gate machinery. External marketing SaaS remains an adapter/execution surface, never a DIAL source of truth.",
     "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md",
@@ -342,7 +342,7 @@
     "title": "GMPC commercial RAG is a DKRF domain profile, never a second retrieval authority",
     "decision": "GMPC-F200..F211 specialize and consume DKRF-F001..F022. They may define commercial namespaces, evidence traces, freshness, outcome-linked memory and retrieval policies, but they must use the horizontal DKRF ingestion/retrieval/security fabric. Current campaign, spend, price, stock, capacity, consent and money facts remain structured DIAL source-of-truth reads.",
     "consequence": "No parallel vector store, generic growth knowledge database or second RAG authority may be introduced by GMPC. Commercial learning is promoted only after outcome verification and remains lower authority than current deterministic policy/domain truth.",
-    "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md \u00a7\u00a75,36A",
+    "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md §§5,36A",
     "enforced_by": [
       "GMPC-F200",
       "GMPC-F201",
@@ -372,7 +372,7 @@
     "title": "Promotions are deterministic and GMPC consumes the canonical margin/finance authorities",
     "decision": "AI/Hermes may detect opportunities, simulate, draft and optimise within approved envelopes, but transaction eligibility, stacking, discount limits, margin floors, budgets and spend authority are enforced deterministically. PLAT-F014 remains the single margin/pricing calculation authority and the canonical Finance/Ledger remains the money authority.",
     "consequence": "GMPC cannot create a second price setter, margin engine, wallet, settlement ledger or ad-spend money authority. Promotion evaluation fails closed; campaign scale is capacity-aware; consequential spend/discount changes require the configured approval/autonomy policy.",
-    "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md \u00a7\u00a710-13,31-35",
+    "record": "docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md §§10-13,31-35",
     "enforced_by": [
       "GMPC-F010",
       "GMPC-F011",
@@ -433,7 +433,7 @@
     "decided_by": "product owner",
     "status": "LOCKED",
     "area": "DEVELOPMENT / ENGINEERING KNOWLEDGE / HERMES",
-    "title": "VEKL is DIAL\u2019s governed versioned engineering knowledge layer",
+    "title": "VEKL is DIAL’s governed versioned engineering knowledge layer",
     "decision": "DIAL adopts VEKL as the only governed path for selectively activating external Agent Skills in material Oracle development packets. External skills are ENGINEERING_GUIDANCE_ONLY: canon, Feature/FRC/security contracts, current code/evidence and gates outrank them. Every ordinary packet resolves and persists a Skill Activation Manifest; approved vendor content is exact-pin/exact-hash and immutable; learned procedural adaptations are separately versioned DIAL wrappers and cannot mutate product truth or authority.",
     "consequence": "Research-reference Google/Android revisions are not production pins and cannot activate until DIAL donor qualification, conflict review and deterministic evals pass. Hermes/Sol receives packet-scoped approved skills through DIAL_SKILL_ACTIVATION_DIR; Sonnet fallback receives the exact same pinned skill bodies from the persisted manifest. Runtime failover may not silently change skill versions. VEKL outcome memory remains non-authoritative and project-scoped; no second memory/source-of-truth authority is created.",
     "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
@@ -459,7 +459,7 @@
     "status": "LOCKED",
     "area": "DEVELOPMENT / ENGINEERING KNOWLEDGE / HERMES",
     "title": "VEKL is a federated engineering resource layer with project-aware ahead-of-work research",
-    "decision": "DIAL VEKL is not limited to Google/Android Agent Skills. Skills are one governed resource class within a federated engineering knowledge/capability layer spanning official documentation, repositories, release notes, maintainer issues/discussions, package registries, security advisories, qualified tools/plugins/MCPs, DIAL rules/hooks/workflow loops and bounded community evidence. The Oracle Hermes control plane uses exact project-aware GPT-5.6 Sol, falling back to exact Claude Sonnet 5, in read-only mode to presearch the engineering resources likely to be needed by the next 3\u20135 dependency-safe packets derived from current Project Truth, the Development Plan and mission state. Presearch is advisory and may not reprioritise the programme.",
+    "decision": "DIAL VEKL is not limited to Google/Android Agent Skills. Skills are one governed resource class within a federated engineering knowledge/capability layer spanning official documentation, repositories, release notes, maintainer issues/discussions, package registries, security advisories, qualified tools/plugins/MCPs, DIAL rules/hooks/workflow loops and bounded community evidence. The Oracle Hermes control plane uses exact project-aware GPT-5.6 Sol, falling back to exact Claude Sonnet 5, in read-only mode to presearch the engineering resources likely to be needed by the next 3–5 dependency-safe packets derived from current Project Truth, the Development Plan and mission state. Presearch is advisory and may not reprioritise the programme.",
     "consequence": "Every material packet persists one Engineering Knowledge Activation Manifest containing the minimal relevant approved skill/resource set and current research forecast provenance. Passive references are trust/freshness/provenance governed and remain non-executable. Executable resources still require donor/security/conflict/eval/manager qualification. Community/forum material is corroboration/discovery only. Sol/Sonnet failover preserves the same activation provenance. Public research may not receive secrets, customer/payment records or identifiable Health data and cannot change DIAL source-of-truth, provider, money, Health, security or gate authority.",
     "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md",
     "enforced_by": [
@@ -565,5 +565,31 @@
       "tests/product-telemetry.test.ts"
     ],
     "reopens_if": "the product owner replaces this one-authority-per-concern model, PostHog bounded role or VEKL deterministic minimal-coalition law with an equal-or-stronger mechanism preserving source-of-truth, privacy, determinism, failover and anti-overengineering guarantees"
+  },
+  {
+    "decision_id": "DEC-025",
+    "decided_on": "2026-09-08",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / ORACLE ORCHESTRATION / OWNER OPERATOR CONTROL",
+    "title": "Claude, Codex and owner WhatsApp are adapters to one typed DIAL Oracle operator gateway",
+    "decision": "DIAL owner control uses one project-isolated typed dial_* authority over the persistent Oracle mission. Claude and Codex consume that authority through local MCP adapters; authenticated owner WhatsApp consumes it through either the paired Hermes self-chat adapter or the official Meta Cloud API adapter. No operator channel exposes a generic shell/filesystem primitive or becomes a second orchestration authority. Recognized WhatsApp shortcuts retain typed command semantics, while other authenticated owner prose is converted only into dial_submit_instruction. The paired Hermes owner channel may also ingest bounded supported documents/images into a content-addressed control-root intake and queue them as steering context. Important persisted mission events are pushed automatically with cursor deduplication. All writes remain idempotent and channel-attributed, and status comes from Oracle/repository evidence rather than conversation or client-local state.",
+    "consequence": "Oracle remains responsible for mission persistence, queueing, runtime selection, recovery and continuation. Full-text WhatsApp steering is convenience at the typed instruction boundary, not direct execution authority; the locked GPT-5.6 Sol -> exact Claude Sonnet 5 runtime chain, VEKL, repository truth and development gates are unchanged. Owner uploads are source-path validated, size/type bounded, mode-0600 and content-addressed before the manager is instructed to inspect them; executable/macro formats are excluded. WhatsApp owner identity remains fail-closed, and automatic notifications return only to the verified owner channel. Customer/business WhatsApp remains separate from development operator authority.",
+    "record": "docs/orchestration/DIAL_OPERATOR_GATEWAY.md; docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md",
+    "enforced_by": [
+      "agent-system/orchestration/chat-control-bridge.mjs",
+      "agent-system/orchestration/operator-control-stdio.mjs",
+      "agent-system/orchestration/operator-text-router.mjs",
+      "agent-system/orchestration/whatsapp-hermes-operator.mjs",
+      "agent-system/orchestration/whatsapp-owner-input.mjs",
+      "agent-system/orchestration/whatsapp-operator-adapter.mjs",
+      "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "deploy/oracle/hermes-codex/qualify-control-plane.sh",
+      "deploy/oracle/hermes-codex/soak-control-plane.sh",
+      "tests/orchestration-operator-gateway.test.mjs",
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "reopens_if": "the product owner replaces the unified operator authority or channel authentication model with an equal-or-stronger mechanism preserving DIAL-only isolation, typed/no-shell control, idempotency, Oracle persistence, source-of-truth/gate authority and owner-only WhatsApp authentication"
   }
 ]

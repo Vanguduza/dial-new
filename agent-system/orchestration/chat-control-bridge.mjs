@@ -25,6 +25,7 @@ import { engineeringResearchStatus } from './engineering-presearch.mjs';
 import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
+export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
 export const CHAT_CONTROL_TOKEN_REL = 'secrets/chat-control.token';
 const DEFAULT_HOST = process.env.DIAL_CHAT_CONTROL_HOST || '127.0.0.1';
 const DEFAULT_PORT = Number(process.env.DIAL_CHAT_CONTROL_PORT || 9130);
@@ -46,6 +47,15 @@ function now() { return new Date().toISOString(); }
 function clean(value, max = 8000) { return String(value ?? '').trim().slice(0, max); }
 function sha(value) { return crypto.createHash('sha256').update(String(value ?? '')).digest('hex'); }
 function jsonText(value) { return JSON.stringify(value, null, 2); }
+function normalizeOperatorContext(value = {}) {
+  const requested = clean(value.channel || process.env.DIAL_OPERATOR_CHANNEL || 'unknown', 40).toLowerCase();
+  const channel = OPERATOR_CHANNELS.includes(requested) ? requested : 'unknown';
+  return {
+    channel,
+    actor: clean(value.actor || process.env.DIAL_OPERATOR_ACTOR || 'owner', 120) || 'owner',
+    transport: clean(value.transport || process.env.DIAL_OPERATOR_TRANSPORT || 'direct', 80) || 'direct',
+  };
+}
 function rpcError(id, code, message, data) { return { jsonrpc: '2.0', id: id ?? null, error: { code, message, ...(data === undefined ? {} : { data }) } }; }
 function rpcResult(id, result) { return { jsonrpc: '2.0', id, result }; }
 
@@ -161,10 +171,13 @@ function saveIdempotentResult(tool, args, result, root) {
   }, root);
 }
 
-function auditTool(root, tool, args, result) {
+function auditTool(root, tool, args, result, operator = {}) {
   appendJsonl('events/chat-control.jsonl', {
     event: 'CHAT_CONTROL_TOOL_CALLED', tool, mission_id: DIAL_ROOT_MISSION_ID,
     request_id: clean(args?.request_id, 120) || null,
+    operator_channel: normalizeOperatorContext(operator).channel,
+    operator_actor: normalizeOperatorContext(operator).actor,
+    operator_transport: normalizeOperatorContext(operator).transport,
     arguments_sha256: sha(JSON.stringify(args || {})),
     result_sha256: sha(JSON.stringify(result || {})), at: now(),
   }, root);
@@ -189,6 +202,7 @@ const TOOL_DEFS = Object.freeze([
   ['dial_engineering_knowledge_status', 'Read VEKL v2 skills, federated resource/source counts, current packet activation provenance and ahead-of-work research linkage.', { packet_id: { type: 'string' } }],
   ['dial_engineering_research_status', 'Read the current project-aware VEKL ahead-of-work forecast and passive resource-cache index.', {}],
   ['dial_runtime_capacity_status', 'Read Sol capacity-preservation state, exact-identity cache validity, provider cooldown and recent model-call suppression/usage evidence.', {}],
+  ['dial_operator_channels', 'Read DIAL operator-channel health for the typed control bridge and WhatsApp owner adapter without exposing credentials.', {}],
 ]);
 
 const REQUIRED_ARGS = Object.freeze({
@@ -202,8 +216,9 @@ const REQUIRED_ARGS = Object.freeze({
 });
 export const CHAT_CONTROL_TOOLS = TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } }));
 
-export async function callChatControlTool(name, args = {}, root) {
+export async function callChatControlTool(name, args = {}, root, operator = {}) {
   const project = ensureDialOnly(root); ensureDialMission({ root, repoDir: project.repo_dir });
+  const operatorContext = normalizeOperatorContext(operator);
   const replay = readIdempotentResult(name, args, root);
   if (replay) {
     appendJsonl('events/chat-control.jsonl', { event: 'CHAT_CONTROL_IDEMPOTENT_REPLAY', tool: name, request_id: args.request_id, mission_id: DIAL_ROOT_MISSION_ID, at: now() }, root);
@@ -216,29 +231,36 @@ export async function callChatControlTool(name, args = {}, root) {
     const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
     const mission = ensureDialMission({ root, repoDir: project.repo_dir });
     if (mission.state === 'COMPLETE') throw new Error('root mission is complete');
-    result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: 'claude_chat', metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE' } });
+    result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE', operator_channel: operatorContext.channel, operator_transport: operatorContext.transport } });
   }
   else if (name === 'dial_list_packets') result = { mission_id: DIAL_ROOT_MISSION_ID, packets: listMissionPackets({ root, limit: args.limit }) };
   else if (name === 'dial_packet_status') result = packetRecord(clean(args.packet_id, 160), root);
   else if (name === 'dial_progress_since') result = progressSince({ root, cursor: args.cursor, limit: args.limit });
-  else if (name === 'dial_pause_mission') result = pauseDialMission({ root, reason: args.reason || 'paused from Claude chat' });
-  else if (name === 'dial_resume_mission') result = resumeDialMission({ root, reason: args.reason || 'resumed from Claude chat' });
+  else if (name === 'dial_pause_mission') result = pauseDialMission({ root, reason: args.reason || `paused from ${operatorContext.channel}` });
+  else if (name === 'dial_resume_mission') result = resumeDialMission({ root, reason: args.reason || `resumed from ${operatorContext.channel}` });
   else if (name === 'dial_reprioritize') result = setDialMissionPriority({ root, directive: args.directive });
-  else if (name === 'dial_approve_gate') result = recordMissionApproval({ root, gateId: args.gate_id, decision: 'APPROVED', rationale: args.rationale, requestedBy: 'claude_chat' });
-  else if (name === 'dial_reject_gate') result = recordMissionApproval({ root, gateId: args.gate_id, decision: 'REJECTED', rationale: args.rationale, requestedBy: 'claude_chat' });
+  else if (name === 'dial_approve_gate') result = recordMissionApproval({ root, gateId: args.gate_id, decision: 'APPROVED', rationale: args.rationale, requestedBy: `${operatorContext.channel}:${operatorContext.actor}` });
+  else if (name === 'dial_reject_gate') result = recordMissionApproval({ root, gateId: args.gate_id, decision: 'REJECTED', rationale: args.rationale, requestedBy: `${operatorContext.channel}:${operatorContext.actor}` });
   else if (name === 'dial_verification_status') result = latestVerification(root);
   else if (name === 'dial_recent_failures') result = { failures: listMissionPackets({ root, limit: 500 }).filter((p) => p.state === 'FAILED').slice(0, Math.max(1, Math.min(100, Number(args.limit) || 20))) };
   else if (name === 'dial_evidence') result = readJson('operations/projects/dial/latest/evidence_prepare.json', { state: 'NO_EVIDENCE_PREPARED' }, root);
   else if (name === 'dial_skill_status' || name === 'dial_engineering_knowledge_status') result = engineeringKnowledgeStatus({ repoDir: project.repo_dir, root, packetId: clean(args.packet_id, 180) || null });
   else if (name === 'dial_engineering_research_status') result = engineeringResearchStatus(root);
   else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
+  else if (name === 'dial_operator_channels') result = {
+    authority: CHAT_CONTROL_AUTHORITY, project: 'dial',
+    chat_control: readJson('state/chat-control-heartbeat.json', { state: 'UNKNOWN' }, root),
+    whatsapp_cloud: readJson('state/whatsapp-operator-heartbeat.json', { state: 'NOT_INSTALLED' }, root),
+    whatsapp_hermes: readJson('state/whatsapp-hermes-operator-heartbeat.json', { state: 'NOT_INSTALLED' }, root),
+    operator_surface: { tools: CHAT_CONTROL_TOOLS.length, arbitrary_shell: false, channels: OPERATOR_CHANNELS.filter((item) => item !== 'unknown') },
+  };
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
   saveIdempotentResult(name, args, result, root);
-  auditTool(root, name, args, result);
+  auditTool(root, name, args, result, operatorContext);
   return result;
 }
 
-async function handleRpc(body, root) {
+async function handleRpc(body, root, operator = {}) {
   const id = body?.id; const method = body?.method;
   if (method === 'initialize') return rpcResult(id, { protocolVersion: body?.params?.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'dial-oracle-control', version: '1.0.0' }, instructions: 'DIAL-only operator control surface. Oracle owns execution and persistence; the chat is a thin control console.' });
   if (method === 'notifications/initialized') return null;
@@ -247,7 +269,7 @@ async function handleRpc(body, root) {
   if (method === 'tools/call') {
     const name = body?.params?.name; const args = body?.params?.arguments || {};
     try {
-      const value = await callChatControlTool(name, args, root);
+      const value = await callChatControlTool(name, args, root, operator);
       return rpcResult(id, { content: [{ type: 'text', text: jsonText(value) }], structuredContent: value, isError: false });
     } catch (error) {
       const message = clean(error?.message || error, 4000);
@@ -269,7 +291,8 @@ export function createChatControlServer({ root, host = DEFAULT_HOST, port = DEFA
     if (!timingSafeTokenEqual(provided, expected)) return sendJson(res, 401, { error: 'unauthorized' });
     if (req.method !== 'POST') return sendJson(res, 405, { error: 'POST required' });
     try {
-      const raw = await readBody(req); const body = JSON.parse(raw); const response = await handleRpc(body, root);
+      const raw = await readBody(req); const body = JSON.parse(raw);
+      const response = await handleRpc(body, root, { channel: req.headers['x-dial-operator-channel'] || 'unknown', actor: req.headers['x-dial-operator-actor'] || 'owner', transport: 'http_mcp' });
       if (response === null) { res.writeHead(202, { 'cache-control': 'no-store' }); return res.end(); }
       return sendJson(res, 200, response);
     } catch (error) { return sendJson(res, 400, rpcError(null, -32700, clean(error?.message || error, 4000))); }
@@ -286,7 +309,7 @@ async function main() {
   if (command === 'serve') { createChatControlServer({}); return; }
   if (command === 'token-init') return console.log(JSON.stringify(ensureChatControlToken(), null, 2));
   if (command === 'tools') return console.log(JSON.stringify(CHAT_CONTROL_TOOLS, null, 2));
-  if (command === 'call') { const name = process.argv[3]; const args = process.argv[4] ? JSON.parse(process.argv[4]) : {}; return console.log(JSON.stringify(await callChatControlTool(name, args), null, 2)); }
+  if (command === 'call') { const name = process.argv[3]; const args = process.argv[4] ? JSON.parse(process.argv[4]) : {}; return console.log(JSON.stringify(await callChatControlTool(name, args, undefined, { channel: 'local_cli', actor: process.env.USER || 'owner', transport: 'cli' }), null, 2)); }
   throw new Error(`unknown chat-control command: ${command}`);
 }
 if (import.meta.url === `file://${process.argv[1]}`) main().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });

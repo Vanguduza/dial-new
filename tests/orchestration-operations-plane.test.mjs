@@ -147,7 +147,7 @@ describe('deterministic auxiliary operations', () => {
     expect(updated.use_api).toBe(true);
   });
 
-  it('recovers only the fixed DIAL service allowlist and never the operations service itself', async () => {
+  it('recovers only the fixed DIAL service allowlist, including operator adapters, and never the operations service itself', async () => {
     const root = temp('ops-control');
     const repo = makeRepo('ops-recovery');
     ensureProjectRegistry(root, { dialRepoDir: repo });
@@ -164,8 +164,9 @@ describe('deterministic auxiliary operations', () => {
     const result = serviceRecovery(project, runner);
     expect(result.ok).toBe(true);
     expect(result.action_taken).toBe(true);
-    expect(restarted).toEqual(['dial-hermes-runtime.service']);
+    expect(restarted).toEqual(['dial-hermes-runtime.service', 'dial-hermes-whatsapp-operator.service', 'dial-whatsapp-cloud-operator.service']);
     expect(restarted).not.toContain('dial-hermes-operations.service');
+    expect(restarted).not.toContain('hermes-gateway.service');
     expect(result.development_authority).toBe(false);
   });
 

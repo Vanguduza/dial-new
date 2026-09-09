@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse,datetime as dt,hashlib,json,os,pathlib,subprocess,sys
-R=pathlib.Path(__file__).resolve().parents[1]; L=R/'docs/project-state/CHANGE_LEDGER.jsonl'; C=R/'docs/project-state/CURRENT_STATE.json'; X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json']
+R=pathlib.Path(__file__).resolve().parents[1]; L=R/'docs/project-state/CHANGE_LEDGER.jsonl'; C=R/'docs/project-state/CURRENT_STATE.json'; X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json',':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl']
 def g(*a,check=True,b=False): return subprocess.run(['git',*a],cwd=R,check=check,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=not b)
 def o(*a): return g(*a).stdout.strip()
 def par(s):
  c=g('rev-parse',s+'^1',check=False); return c.stdout.strip() if c.returncode==0 else None
+def parents(s): return o('rev-list','--parents','-n','1',s).split()[1:]
+def tree(s): return o('rev-parse',s+'^{tree}')
 def files_staged(): return [x for x in g('diff','--cached','--name-only','--no-renames','--','.',*X).stdout.splitlines() if x]
 def dig_staged(): return hashlib.sha256(g('diff','--cached','--binary','--no-ext-diff','--no-renames','--','.',*X,b=True).stdout).hexdigest()
 def cfiles(s):
@@ -39,6 +41,8 @@ def verify():
  if not b: print('BLOCKED: Project Truth local guard baseline missing',file=sys.stderr); return 40
  bad=[]
  for s in [x for x in o('rev-list','--reverse',f'{b}..HEAD').splitlines() if x]:
+  ps=parents(s)
+  if len(ps)>1 and any(tree(s)==tree(p) for p in ps): continue
   f=cfiles(s)
   if not f:continue
   p=par(s); d=cdig(s)
