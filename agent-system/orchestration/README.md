@@ -79,8 +79,9 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `mission-controller.mjs` — persistent continuation loop that dispatches the next bounded manager turn when the DIAL mission is RUNNING and idle.
 - `chat-control-bridge.mjs` — shared DIAL-only typed operator authority for Claude, Codex and authenticated owner WhatsApp while Oracle owns execution.
 - `operator-control-stdio.mjs` — local Claude/Codex MCP adapter over the shared typed tools.
-- `operator-text-router.mjs` — explicit owner text-command grammar; arbitrary prose never becomes a development instruction.
-- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge.
+- `operator-text-router.mjs` — shortcut command grammar plus authenticated-owner full-text instruction routing into the same typed DIAL queue; prose never becomes direct shell execution.
+- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge, with full-text steering, bounded document/image ingestion and automatic important mission notifications.
+- `whatsapp-owner-input.mjs` — content-addressed owner attachment persistence, safe steering-instruction construction and deduplicated mission-event notification mapping.
 - `whatsapp-operator-adapter.mjs` — official Meta Cloud API adapter with HMAC verification, sender allowlisting and replay protection.
 
 ## Install

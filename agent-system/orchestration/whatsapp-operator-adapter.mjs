@@ -133,7 +133,7 @@ export async function processWhatsAppMessage(message, { root, config, fetchImpl 
   const commandText = message.type === 'text' ? message.text : 'help';
   recordEvent(root, 'WHATSAPP_OPERATOR_COMMAND_RECEIVED', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), message_type: message.type });
   const routed = message.type === 'text'
-    ? await executeOperatorTextCommand(commandText, { root, channel: 'whatsapp', actor: `wa:${sender_hash}`, requestSeed: message.id, cursor: readCursor(sender, root) })
+    ? await executeOperatorTextCommand(commandText, { root, channel: 'whatsapp', actor: `wa:${sender_hash}`, requestSeed: message.id, cursor: readCursor(sender, root), allowImplicitInstruction: true, transport: 'whatsapp_cloud_api' })
     : { command: { kind: 'help' }, reply: 'DIAL operator control accepts text commands only. Send help to list commands.' };
   if (routed.next_cursor) writeCursor(sender, routed.next_cursor, root);
   const record = {

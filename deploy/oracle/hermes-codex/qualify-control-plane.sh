@@ -33,6 +33,7 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" ]] || fail "DIAL typed operator stdio MCP is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-text-router.mjs" ]] || fail "DIAL operator text router is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-hermes-operator.mjs" ]] || fail "DIAL Hermes WhatsApp operator adapter is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-owner-input.mjs" ]] || fail "DIAL WhatsApp owner input module is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "DIAL WhatsApp Cloud operator adapter is missing"
 [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "DIAL chat control bearer token is missing; run install-chat-control-bridge.sh"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "DIAL chat control bearer token must be mode 0600"

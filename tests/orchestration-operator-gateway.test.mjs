@@ -10,6 +10,7 @@ import { ensureProjectRegistry } from '../agent-system/orchestration/project-reg
 import { missionStatus } from '../agent-system/orchestration/mission-control.mjs';
 import { parseOperatorTextCommand, executeOperatorTextCommand } from '../agent-system/orchestration/operator-text-router.mjs';
 import { extractWhatsAppTextMessages, processWhatsAppMessage, verifyMetaSignature, whatsappOperatorConfigStatus } from '../agent-system/orchestration/whatsapp-operator-adapter.mjs';
+import { buildAttachmentInstruction, collectMissionEventNotifications, persistWhatsAppAttachments } from '../agent-system/orchestration/whatsapp-owner-input.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function makeRepo() {
@@ -41,6 +42,42 @@ describe('DIAL unified operator gateway', () => {
     expect(parseOperatorTextCommand('resume').kind).toBe('resume');
     expect(parseOperatorTextCommand('Please go change production now').kind).toBe('error');
     expect(parseOperatorTextCommand('shell rm -rf /').kind).toBe('error');
+  });
+
+  it('accepts normal full-text owner WhatsApp prose as a typed queued instruction only when explicitly enabled', async () => {
+    expect(parseOperatorTextCommand('Please reconcile the current checkout with the locked plan.', { allowImplicitInstruction: true })).toMatchObject({ kind: 'instruction', implicit: true });
+    const { root } = rootWithRepo();
+    const out = await executeOperatorTextCommand('Please reconcile the current checkout with the locked plan.', { root, channel: 'whatsapp', actor: 'wa:test-owner', requestSeed: 'wamid.FREE-001', allowImplicitInstruction: true, transport: 'hermes_owner_self_chat' });
+    expect(out.reply).toContain('Instruction accepted');
+    const m = missionStatus(root);
+    expect(m.packet_counts.queued).toBe(1);
+    expect(m.recent_packets[0].requested_by).toBe('whatsapp:wa:test-owner');
+  });
+
+  it('persists authenticated WhatsApp steering attachments under the DIAL control root and builds a bounded instruction', () => {
+    const root = temp('dial-whatsapp-upload-root');
+    const cache = temp('dial-whatsapp-upload-cache');
+    const source = path.join(cache, 'owner-plan.md');
+    writeFileSync(source, '# Owner plan\nImplement the locked changes.\n');
+    const message = { messageId: 'wamid.FILE-001', body: 'Use this document as the steering brief.', hasMedia: true, mediaType: 'document', mime: 'text/markdown', fileName: 'owner-plan.md', mediaUrls: [source] };
+    const attachments = persistWhatsAppAttachments(message, { root, allowedRoots: [cache] });
+    expect(attachments).toHaveLength(1);
+    expect(readFileSync(attachments[0].path, 'utf8')).toContain('Implement the locked changes');
+    const instruction = buildAttachmentInstruction(message, attachments);
+    expect(instruction).toContain('Use this document as the steering brief.');
+    expect(instruction).toContain(attachments[0].path);
+    expect(instruction).toContain('canonical DIAL source-of-truth');
+  });
+
+  it('initializes automatic WhatsApp notifications without replaying history, then surfaces new important mission events', () => {
+    const root = temp('dial-whatsapp-notify-root');
+    const eventsDir = path.join(root, 'events'); mkdirSync(eventsDir, { recursive: true });
+    const eventFile = path.join(eventsDir, 'mission-control.jsonl');
+    writeFileSync(eventFile, `${JSON.stringify({ event: 'MISSION_PACKET_RECORDED', packet_id: 'old-packet', packet_state: 'COMPLETED', at: '2026-09-09T00:00:00Z' })}\n`);
+    const state = {};
+    expect(collectMissionEventNotifications(state, { root })).toEqual([]);
+    writeFileSync(eventFile, `${JSON.stringify({ event: 'MISSION_BLOCKED_OWNER', packet_id: 'new-packet', reason: 'Owner decision required', at: '2026-09-09T00:01:00Z' })}\n`, { flag: 'a' });
+    expect(collectMissionEventNotifications(state, { root })).toEqual(['DIAL needs your input\nOwner decision required']);
   });
 
   it('attributes queued work to the WhatsApp operator channel and preserves mission gating', async () => {

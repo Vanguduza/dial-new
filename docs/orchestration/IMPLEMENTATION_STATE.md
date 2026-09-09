@@ -358,3 +358,9 @@ A real Android Linked Devices attempt reached the post-scan confirmation step bu
 `deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh` now owns enrollment. It enforces a singleton pairing lock, kills stale pair-only processes, pauses the live bridge, removes only incomplete unpaired session state, keeps QR/event material mode-0600 outside Git, and restarts the normal owner bridge only after valid paired identity credentials exist.
 
 Pairing uses an isolated deploy-only compatibility runtime pinned to the fix head for WhiskeySockets/Baileys PR #2765 plus the pre-login ACK safety change from PR #2749. This is strictly an internal owner development-control enrollment exception. DIAL customer/business WhatsApp remains locked to official Meta Cloud API + Flows and does not inherit Baileys as a product dependency.
+
+## 2026-09-09 — WhatsApp owner full-text steering, document intake and push notifications
+
+The paired Hermes owner self-chat is no longer limited to fixed command words. Recognized shortcuts still map to their existing typed tools, while other authenticated owner prose is queued only through `dial_submit_instruction`; no shell/filesystem primitive was added. `whatsapp-owner-input.mjs` now persists supported document/image uploads content-addressed under the DIAL control root after validating the Hermes cache source, file type and size, and builds a bounded owner steering instruction that preserves repository-truth and verification gates.
+
+The WhatsApp operator daemon now accepts media-only steering messages, emits attachment provenance in its audit event, and automatically pushes important mission transitions to the verified self-chat using a persisted event cursor so restarts do not replay history. Targeted operator-gateway tests cover strict-vs-owner-prose routing, attachment persistence/instruction construction and notification cursor behavior.

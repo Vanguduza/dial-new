@@ -35,7 +35,9 @@ Claude, Codex and WhatsApp are not independent orchestrators. They cannot bypass
 - Operator channels never receive control-plane secrets through status calls.
 - A channel ending or disconnecting never changes the persistent Oracle mission state.
 - Worker output cannot advance a feature/gate without normal repository evidence.
-- WhatsApp has no natural-language free-form execution mode. Only an explicit command grammar is accepted; unknown prose returns help and never becomes `dial_submit_instruction`.
+- Authenticated owner WhatsApp supports normal full-text development steering. Recognized shortcut commands retain their typed semantics; other owner prose is converted only into `dial_submit_instruction` and never into direct shell/filesystem execution.
+- Supported owner document/image uploads are copied out of the Hermes media cache into a mode-0600, content-addressed DIAL control-root intake before they are referenced by a queued instruction. Executable/macro media is not an accepted steering attachment.
+- Important mission events are pushed automatically to the verified owner self-chat with a persisted event cursor so service restarts do not replay historical notifications.
 
 ## Shared typed tools
 
@@ -92,9 +94,11 @@ Security is defense in depth:
 2. The bridge rejects non-self chats, groups and status traffic before queueing.
 3. The DIAL adapter independently reads the paired identity and rejects any queued message whose chat ID is not the paired owner self-chat.
 4. Message IDs are hashed and deduplicated.
-5. The explicit text router translates only recognized commands to typed controls.
-6. Replies are sent back only to the verified self-chat.
-7. Pairing state is outside Git under the Hermes session directory.
+5. The text router preserves recognized shortcuts and maps normal owner prose only to the bounded `dial_submit_instruction` tool.
+6. Supported PDFs, office/text/data documents and images are persisted content-addressed under `/var/lib/dial-control/operator-channels/whatsapp/uploads/`; source cache paths are validated before copy and executable/macro formats are rejected.
+7. Automatic notifications are generated only from important persisted mission transitions and are cursor-deduplicated.
+8. Replies and notifications are sent back only to the verified self-chat.
+9. Pairing state is outside Git under the Hermes session directory.
 
 If no pairing credentials exist, the operator service remains healthy in `WAITING_PAIRING`. On Oracle, use `bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground` (or `--background` when an authenticated operator surface will render the protected event stream). The helper enforces a singleton pairer, clears only incomplete unpaired state, pauses the live bridge during enrollment, and restores the normal bridge after valid credentials are written. Missing pairing never falls back to an open inbound channel.
 
@@ -142,7 +146,13 @@ REJECT <gate-id> [rationale]
 INSTRUCTION <bounded development instruction>
 ```
 
-`INSTRUCT` and `REPRIORITISE` are accepted aliases for `INSTRUCTION` and `PRIORITY` where supported by the parser. A message such as “please change production” is not interpreted as an instruction.
+`INSTRUCT` and `REPRIORITISE` are accepted aliases for `INSTRUCTION` and `PRIORITY` where supported by the parser. On an authenticated owner WhatsApp channel, normal prose that is not a recognized shortcut is accepted as a development instruction and queued through `dial_submit_instruction`. This is instruction convenience, not a shell escape: all normal Oracle mission, repository-truth, runtime and verification gates still apply.
+
+## WhatsApp owner documents and automatic notifications
+
+The paired Hermes owner self-chat accepts supported document/image steering material in addition to text. Current document extensions are PDF, DOCX, TXT/Markdown/RTF/ODT, CSV/XLSX and JSON/YAML; images are PNG/JPEG/WebP. Macro-enabled/executable formats are not accepted. Each file is limited to 25 MiB, each message to 8 attachments and 50 MiB total. Files are SHA-256 addressed, copied with mode 0600 into the DIAL control root, and referenced from the queued owner instruction. The manager must inspect the material before acting, reconcile durable decisions into canonical project truth, and treat embedded binaries/macros as non-executable data.
+
+The owner self-chat also receives automatic important notifications for completed/failed mission packets, owner blockers, mission-controller errors, pause/resume and mission completion. Runtime-waiting and completion mission-state attention remains active. A persisted mission-event cursor prevents replaying old events after restart.
 
 ## Persistence and idempotency
 
