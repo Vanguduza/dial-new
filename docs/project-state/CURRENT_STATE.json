@@ -2,13 +2,12 @@
   "actor": "ubuntu",
   "branch": "fix/canonical-readiness-20260909",
   "changed_files": [
-    ".github/workflows/project-truth-autolog.yml",
-    "PROJECT_TRUTH_PROTOCOL.md"
+    "package-lock.json"
   ],
-  "diff_sha256": "3a50601fe6da451894db37009248753aadbbb956f169421aed1103fa0f5026da",
+  "diff_sha256": "05327e39a4719cea313ba32f92964533852b1b61ec0586720f2b6838514b00fb",
   "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T02:43:31.691396+00:00",
+  "recorded_at_utc": "2026-09-09T02:51:32.160075+00:00",
   "schema_version": 1,
-  "source_parent": "f5956fc1a3242c38a75d260e62842594add50c91",
+  "source_parent": "fdf268c4fadca23ad6e73d3cab99c3b2e942862c",
   "state": "PENDING_COMMIT"
 }
