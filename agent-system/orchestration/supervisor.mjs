@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { persistNativeHermesDoctorEvidence, runNativeHermesDoctor } from './hermes-native-doctor.mjs';
 import { fileURLToPath } from 'node:url';
 import { buildCheckpoint, saveCheckpoint } from './checkpoint-store.mjs';
 import { evaluateDevelopmentUnblock } from './development-unblock.mjs';
@@ -142,13 +143,15 @@ export async function refreshRuntimeHealth({ repoDir = DEFAULT_REPO, root, force
   return results;
 }
 
-export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
+export function doctor({ repoDir = DEFAULT_REPO, root, nativeHermesDoctor = null, versionResolver = commandVersion } = {}) {
   ensureControlLayout(root);
-  const codexVersion = commandVersion('codex');
-  const hermesVersion = commandVersion('hermes');
+  const codexVersion = versionResolver('codex');
+  const hermesVersion = nativeHermesDoctor?.hermes_version
+    ? `Hermes Agent v${nativeHermesDoctor.hermes_version}`
+    : versionResolver('hermes');
   const nodeVersion = process.version;
-  const gitVersion = commandVersion('git');
-  const claudeVersion = commandVersion('claude');
+  const gitVersion = versionResolver('git');
+  const claudeVersion = versionResolver('claude');
   const checks = {
     control_home_writable: (() => {
       try {
@@ -173,8 +176,22 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
     codex_sol_capable_version: semverAtLeast(codexVersion, '0.144.0'),
     claude_present_for_fallback: Boolean(claudeVersion),
   };
+  if (nativeHermesDoctor) {
+    checks.hermes_native_doctor_completed = Boolean(nativeHermesDoctor.observed_at);
+    checks.hermes_native_doctor_non_mutating = nativeHermesDoctor.mutating_mode_requested === false
+      && nativeHermesDoctor.live_probe_requested === false;
+    checks.hermes_native_doctor_usable = nativeHermesDoctor.usable_for_dial_qualification === true;
+  }
+  const qualificationReady = Object.values(checks).every(Boolean);
+  const dialDoctorStatus = !qualificationReady
+    ? 'FAIL'
+    : nativeHermesDoctor?.status === 'DEGRADED'
+      ? 'DEGRADED'
+      : 'PASS';
   return {
-    ok_for_hermes_runtime_qualification: Object.values(checks).every(Boolean),
+    dial_doctor_status: dialDoctorStatus,
+    diagnostic_scope: nativeHermesDoctor ? 'DIAL_PLUS_SUBORDINATE_HERMES' : 'DIAL_FAST_LOCAL',
+    ok_for_hermes_runtime_qualification: qualificationReady,
     runtime_policy: {
       primary: 'codex_app_server/gpt-5.6-sol',
       fallback: 'claude_code/claude-sonnet-5',
@@ -195,6 +212,7 @@ export function doctor({ repoDir = DEFAULT_REPO, root } = {}) {
       api_can_execute_tools: false,
     },
     versions: { node: nodeVersion, git: gitVersion, hermes: hermesVersion, codex: codexVersion, claude: claudeVersion },
+    native_hermes_doctor: nativeHermesDoctor,
     checks,
     observed_at: now(),
   };
@@ -315,7 +333,10 @@ async function main() {
   const command = process.argv[2] || 'status';
   const repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO;
   if (command === 'init') return console.log(JSON.stringify(initializeSupervisor(), null, 2));
-  if (command === 'doctor') return console.log(JSON.stringify(doctor({ repoDir }), null, 2));
+  if (command === 'doctor') {
+    const nativeHermesDoctor = persistNativeHermesDoctorEvidence(runNativeHermesDoctor());
+    return console.log(JSON.stringify(doctor({ repoDir, nativeHermesDoctor }), null, 2));
+  }
   if (command === 'status') return console.log(JSON.stringify(status({ repoDir }), null, 2));
   if (command === 'capture') return console.log(JSON.stringify(capture({ repoDir }), null, 2));
   if (command === 'refresh') return console.log(JSON.stringify(await refreshRuntimeHealth({ repoDir, forceLive: process.argv.includes('--force-live') }), null, 2));

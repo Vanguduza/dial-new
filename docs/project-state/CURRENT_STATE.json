@@ -1,0 +1,23 @@
+{
+  "actor": "ubuntu",
+  "branch": "fix/canonical-readiness-20260909",
+  "changed_files": [
+    "agent-system/orchestration/README.md",
+    "agent-system/orchestration/operator-text-router.mjs",
+    "agent-system/orchestration/whatsapp-hermes-operator.mjs",
+    "agent-system/orchestration/whatsapp-operator-adapter.mjs",
+    "agent-system/orchestration/whatsapp-owner-input.mjs",
+    "agent-system/registries/DECISION_LOG.json",
+    "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+    "deploy/oracle/hermes-codex/qualify-control-plane.sh",
+    "docs/orchestration/DIAL_OPERATOR_GATEWAY.md",
+    "docs/orchestration/IMPLEMENTATION_STATE.md",
+    "tests/orchestration-operator-gateway.test.mjs"
+  ],
+  "diff_sha256": "3036ec117cfced7540cfe15dcee89d7bfc1bab08ed15fcb8c3c30344fed49660",
+  "kind": "precommit-staged-diff",
+  "recorded_at_utc": "2026-09-09T03:23:52.111583+00:00",
+  "schema_version": 1,
+  "source_parent": "ad260c6384db39f570d2243b435c34d774b060ea",
+  "state": "PENDING_COMMIT"
+}

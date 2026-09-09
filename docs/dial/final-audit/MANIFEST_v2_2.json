@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-08T16:13:29.776Z",
+  "generated_at": "2026-09-09T03:16:37.472Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -28,8 +28,8 @@
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
-      "bytes": 11234,
-      "sha256": "520565e7f42004ed82cc25e404b820a357144efa42433ea6f1fef51fd8d9d8c4"
+      "bytes": 11143,
+      "sha256": "fee6331beaf6cb22812c37951852aed982835d505231756cfbee5ed43786d5d7"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -53,8 +53,8 @@
     },
     {
       "path": "00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
-      "bytes": 14195,
-      "sha256": "d078159b6b38d9b763cf22a83c170419da8bdd5ca5094122f80b0168b67ec807"
+      "bytes": 14474,
+      "sha256": "868e4194fe914bf63cb20a66e78613cc30e15f795b90f78babb70942acb3dca7"
     },
     {
       "path": "00_MASTER/V2_1_ANCHOR_INDEX.md",
@@ -178,8 +178,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DEVELOPMENT_START_PROMPT.md",
-      "bytes": 11314,
-      "sha256": "42bb32a7cd60bb38a4e721ecf36ae5cda6613a0f405a39efbac98f951b062cbb"
+      "bytes": 11570,
+      "sha256": "7773bc4383a7268e6502c825dd99d63f60154c7ed9ca7b82db8c124f287dd19e"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md",
@@ -948,8 +948,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
-      "bytes": 4492,
-      "sha256": "207381c51f244f8d0229b8a76d15ce021703a5ef125ab95cdcb2a2072144238e"
+      "bytes": 4258,
+      "sha256": "fbaaffe1feb5b2a2a2680f8aad6639cc9707766218b67395d186e870de04a0cd"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/12_DEVELOPMENT_SYSTEM/CLAUDE_CODE_V2_OPERATING_MODEL.md",
@@ -1208,8 +1208,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 2836,
-      "sha256": "1b923ef2e640fdd67a4cbe23633080f146d33a0639ef7b54be050c9a5021b2ed"
+      "bytes": 2849,
+      "sha256": "6b1714f3d15a0c05c3b116128239b15808fb8c2dafd1f73f8f1537bf06977aee"
     }
   ]
 }

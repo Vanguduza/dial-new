@@ -118,6 +118,31 @@ exec "$(command -v node)" "${DIAL_REPO_DIR}/agent-system/orchestration/hermes-ru
 EOF
 chmod 0700 "$HOME/.local/bin/dial-hermes"
 
+cat >"$HOME/.local/bin/dial-doctor" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+export DIAL_REPO_DIR="${DIAL_REPO_DIR}"
+export DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME}"
+exec "$(command -v node)" "${DIAL_REPO_DIR}/agent-system/orchestration/supervisor.mjs" doctor "\$@"
+EOF
+chmod 0700 "$HOME/.local/bin/dial-doctor"
+
+cat >"$HOME/.local/bin/dial" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-}" in
+  doctor)
+    shift
+    exec "$HOME/.local/bin/dial-doctor" "$@"
+    ;;
+  *)
+    echo "usage: dial doctor" >&2
+    exit 2
+    ;;
+esac
+EOF
+chmod 0700 "$HOME/.local/bin/dial"
+
 mkdir -p "$DIAL_CONTROL_HOME"; chmod 700 "$DIAL_CONTROL_HOME"
 node "$DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs" init >/dev/null
 NODE_BIN="$(command -v node)"; HERMES_BIN="$(command -v hermes)"
@@ -187,7 +212,7 @@ normalize_codex_config
 
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-chat-control-bridge.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
 
