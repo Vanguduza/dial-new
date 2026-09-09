@@ -15,6 +15,17 @@ const repoDir=process.cwd();
 function temp(name){return fs.mkdtempSync(path.join(os.tmpdir(),`${name}-`));}
 
 describe('VEKL 2 federated engineering resources',()=>{
+  it('keeps Oracle qualification and finalization pinned to the current federated-resource policy version',()=>{
+    for (const rel of [
+      'deploy/oracle/hermes-codex/qualify-control-plane.sh',
+      'deploy/oracle/hermes-codex/finalize-control-plane.sh',
+      'deploy/oracle/hermes-codex/finalize-development-readiness.sh',
+    ]) {
+      const text=fs.readFileSync(path.join(repoDir,rel),'utf8');
+      expect(text).toContain('vekl-2.1');
+      expect(text).not.toContain('vekl-2.0');
+    }
+  });
   it('prefers official stack resources for a Supabase RLS task and marks community signals as corroboration only',()=>{
     const root=temp('vekl2-resolve');ensureControlLayout(root);
     const plan=resolveEngineeringResources({repoDir,root,instruction:'Implement Supabase Postgres RLS policies and TypeScript validation for Grocery Rounds, then add Vitest coverage.',affectedPaths:['packages/rounds/src/policy.ts'],maxResources:12});

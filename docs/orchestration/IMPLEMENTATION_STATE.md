@@ -368,3 +368,7 @@ The WhatsApp operator daemon now accepts media-only steering messages, emits att
 ## 2026-09-09 — Operator status mirror ancestry guard
 
 The sanitized `oracle-runtime-status` publisher now parents each status-only tree to the current canonical repository HEAD. This preserves its non-authoritative single-file payload while satisfying Project Truth's required canonical ancestry; parentless mirror commits are no longer pushable or generated. A regression test proves both the canonical parent and status-only tree shape.
+
+## 2026-09-09 — VEKL 2.1 runtime-certification reconciliation
+
+Oracle qualification and both production/development finalizers now consume the active `vekl-2.1` federated engineering-resource policy emitted by `engineering-knowledge-check.mjs`. The stale `vekl-2.0` certification assertions were removed; a regression test scans all three certification scripts so VEKL policy upgrades cannot silently strand runtime qualification again.
