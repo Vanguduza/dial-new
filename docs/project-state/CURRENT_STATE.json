@@ -1,9 +1,14 @@
 {
+  "actor": "ubuntu",
   "branch": "fix/canonical-readiness-20260909",
-  "observed_at_utc": "2026-09-09T02:37:25.350211+00:00",
-  "recorded_commit_count": 1,
-  "repository": "Vanguduza/dial-new",
+  "changed_files": [
+    "PROJECT_TRUTH_PROTOCOL.md",
+    "scripts/project_truth_local.py"
+  ],
+  "diff_sha256": "9144a91d395c0d9321b95b5b8f3a65ea308dd107af677bf340e51b1065d01963",
+  "kind": "precommit-staged-diff",
+  "recorded_at_utc": "2026-09-09T02:39:45.476184+00:00",
   "schema_version": 1,
-  "source_commit": "b00c695f3a711a179796e6c16ef1b0476fe6f935",
-  "source_tree": "61252d9fd6bbee7cdca56cc1daf61c628cf5bd27"
+  "source_parent": "0c72d2532aeaf28ebdd52d78637380cc19743007",
+  "state": "PENDING_COMMIT"
 }

@@ -4,8 +4,19 @@ import argparse,datetime as dt,hashlib,json,os,pathlib,subprocess,sys
 R=pathlib.Path(__file__).resolve().parents[1]; L=R/'docs/project-state/CHANGE_LEDGER.jsonl'; C=R/'docs/project-state/CURRENT_STATE.json'; X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json',':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl']
 def g(*a,check=True,b=False): return subprocess.run(['git',*a],cwd=R,check=check,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=not b)
 def o(*a): return g(*a).stdout.strip()
+def parents(s):
+ c=g('rev-list','--parents','-n','1',s,check=False); a=c.stdout.strip().split(); return a[1:] if c.returncode==0 and a else []
 def par(s):
- c=g('rev-parse',s+'^1',check=False); return c.stdout.strip() if c.returncode==0 else None
+ a=parents(s); return a[0] if a else None
+def reproducible_merge(s):
+ a=parents(s)
+ if len(a)!=2:return False
+ m=g('merge-tree','--write-tree',a[0],a[1],check=False)
+ if m.returncode!=0:return False
+ lines=[x.strip() for x in m.stdout.splitlines() if x.strip()]
+ if not lines:return False
+ expected=lines[0].split()[0]; actual=o('rev-parse',s+'^{tree}')
+ return expected==actual
 def files_staged(): return [x for x in g('diff','--cached','--name-only','--no-renames','--','.',*X).stdout.splitlines() if x]
 def dig_staged(): return hashlib.sha256(g('diff','--cached','--binary','--no-ext-diff','--no-renames','--','.',*X,b=True).stdout).hexdigest()
 def cfiles(s):
@@ -39,6 +50,10 @@ def verify():
  if not b: print('BLOCKED: Project Truth local guard baseline missing',file=sys.stderr); return 40
  bad=[]
  for s in [x for x in o('rev-list','--reverse',f'{b}..HEAD').splitlines() if x]:
+  ps=parents(s)
+  if len(ps)>1:
+   if reproducible_merge(s):continue
+   bad.append(s); continue
   f=cfiles(s)
   if not f:continue
   p=par(s); d=cdig(s)
