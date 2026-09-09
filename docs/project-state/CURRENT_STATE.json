@@ -1,9 +1,9 @@
 {
   "branch": "work/operator-gateway-20260908",
-  "observed_at_utc": "2026-09-09T02:39:09.273922+00:00",
+  "observed_at_utc": "2026-09-09T02:42:10.747040+00:00",
   "recorded_commit_count": 1,
   "repository": "Vanguduza/dial-new",
   "schema_version": 1,
-  "source_commit": "6c71e7fbda1baf375d8cb494eb294a1934aa52d7",
-  "source_tree": "7c3c341e22fdbd0936635b00d68d825b32752fc7"
+  "source_commit": "2bdf026adf26e6241f996e15ff26991b2ded113f",
+  "source_tree": "2300dd64345a2fb38c154045b4a8f6cf8e0f1a99"
 }
