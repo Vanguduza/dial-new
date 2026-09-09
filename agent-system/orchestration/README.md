@@ -71,12 +71,17 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `memory-maintenance.mjs` — memory compaction plus transaction-consistent Hermes `state.db` backup.
 - `context-broker.mjs` — bounded DIAL context assembly from repository authority.
 - `supervisor.mjs` — persistent runtime health, selection, checkpoints, heartbeat and qualification status.
+- `hermes-native-doctor.mjs` — bounded subordinate `hermes doctor` execution, sanitised summary/hash evidence and fail-closed diagnostic integration; it never requests `--fix` or `--live`.
 - `operations-plane.mjs` — deterministic health, bounded service recovery, queue inspection, verification, evidence preparation and scheduling.
 - `operations-api.mjs` — optional API-key-backed non-authoritative evidence summarisation; secret never enters Hermes runtime.
 - `project-registry.mjs` — strict per-project operations-state isolation.
 - `mission-control.mjs` — durable DIAL root-mission state, pause/resume, owner priority and gate decisions.
 - `mission-controller.mjs` — persistent continuation loop that dispatches the next bounded manager turn when the DIAL mission is RUNNING and idle.
-- `chat-control-bridge.mjs` — DIAL-only typed MCP/JSON-RPC operator surface so Claude chat can inspect progress and issue controls while Oracle owns execution.
+- `chat-control-bridge.mjs` — shared DIAL-only typed operator authority for Claude, Codex and authenticated owner WhatsApp while Oracle owns execution.
+- `operator-control-stdio.mjs` — local Claude/Codex MCP adapter over the shared typed tools.
+- `operator-text-router.mjs` — explicit owner text-command grammar; arbitrary prose never becomes a development instruction.
+- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge.
+- `whatsapp-operator-adapter.mjs` — official Meta Cloud API adapter with HMAC verification, sender allowlisting and replay protection.
 
 ## Install
 
@@ -88,6 +93,8 @@ bash deploy/oracle/hermes-codex/install-control-plane.sh
 
 This does **not** unlock development.
 
+The installer exposes `dial doctor` (with `dial-doctor` as its direct helper). It is the top-level DIAL diagnostic command. It runs DIAL control-plane checks and then executes native `hermes doctor` as a subordinate diagnostic provider. Hermes findings are evidence only: they cannot alter DIAL runtime/model policy, Project Truth or gates. The subordinate command is always non-mutating (`hermes doctor`, never `--fix`) and does not request the optional `--live` backend probes. Its sanitised structured summary is persisted under the DIAL control root; raw Hermes Doctor output is not persisted.
+
 
 ## Auxiliary operations plane
 
@@ -95,17 +102,17 @@ The Oracle host also runs `dial-hermes-operations.service`. It performs fixed de
 
 Secrets are stored outside Git under `/var/lib/dial-control/secrets/` and are not exported to the Hermes runtime. API use is disabled on default schedules until explicitly enabled. See `docs/orchestration/HERMES_AUXILIARY_OPERATIONS_PLANE.md`.
 
-## Claude chat control surface
+## Unified owner operator gateway
 
-DIAL development remains resident on Oracle while Claude chat can act as a thin operator console. The local MCP endpoint exposes typed DIAL-only status, progress, pause/resume, reprioritisation, approval and instruction-submission tools. It does not expose a shell. See `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
+DIAL development remains resident on Oracle while Claude, Codex and authenticated owner WhatsApp act as thin operator consoles over one typed DIAL-only control authority. The gateway exposes status, progress, pause/resume, reprioritisation, approval and instruction-submission tools and never exposes a generic shell. See `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`.
 
-Install the bridge and persistent mission controller with:
+Install the gateway, persistent mission controller, local Claude/Codex MCP enrollment and fail-closed WhatsApp services with:
 
 ```bash
-bash deploy/oracle/hermes-codex/install-chat-control-bridge.sh
+bash deploy/oracle/hermes-codex/install-operator-gateway.sh
 ```
 
-The endpoint is bound to `127.0.0.1:9130` and bearer-token protected. Remote Claude access must be placed behind an authenticated private tunnel/Access policy; the installer never opens the port publicly.
+The HTTP MCP remains bound to `127.0.0.1:9130` and bearer-token protected. The optional WhatsApp Cloud webhook adapter remains bound to `127.0.0.1:9132`. Neither port is opened publicly by the installer. Hermes owner self-chat and official Meta Cloud API activation require their normal external credential/pairing boundaries.
 
 ## Mandatory qualification sequence
 
@@ -129,7 +136,7 @@ The evidence must prove:
 - the **same externally queued job** surviving Codex process death and completing on Sonnet 5;
 - Sol regaining preference;
 - DIAL runtime-supervisor recovery without restarting the shared Hermes gateway;
-- DIAL-only service continuity across runtime/orchestrator/operations/chat-control/mission-controller restarts;
+- DIAL-only service continuity across runtime/orchestrator/operations/chat-control/mission-controller/operator-channel restarts;
 - persistent mission and chat-control credential continuity;
 - no unrelated project service or process is targeted by a DIAL soak;
 - subscription-only auth and secret/config security checks.

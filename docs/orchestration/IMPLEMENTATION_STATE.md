@@ -328,6 +328,10 @@ A project-scoped read-only MCP server, `dial-oracle-status`, exposes the same mi
 
 Live Oracle evidence during implementation proved the mirror branch could be fetched from a separate Git worktree using private-repository credentials, the snapshot was fresh and DIAL-scoped, and `dial-operator-status-publisher.timer` was active. The service writes no development worktree/index state and publishes immediately on semantic mission/gate/runtime changes with bounded liveness refreshes when state is otherwise unchanged.
 
+## 2026-09-08 — Federated DIAL doctor / subordinate Hermes Doctor
+
+The DIAL control-plane doctor now owns the diagnostic hierarchy. Installed `dial doctor` (backed by `dial-doctor`) runs the existing DIAL host/runtime checks and invokes native `hermes doctor` strictly as `DIAGNOSTIC_EVIDENCE_ONLY`. The subprocess is bounded, captures output instead of streaming it into the machine-readable DIAL report, never requests `--fix` or `--live`, stores only a sanitised summary/hash under `evidence-cache/diagnostics/hermes-native-doctor.json`, and marks native warnings/issues as `DEGRADED` without allowing Hermes to decide DIAL readiness. Invocation failure, timeout or unavailability fails the DIAL qualification check. Installed-runtime qualification records the subordinate status/hash/evidence pointer. The supervisor heartbeat keeps its fast local doctor path and does not rerun native Hermes diagnostics every minute.
+
 ## 2026-09-08 — Hermes xKiro Auxiliary Intelligence Fabric (`DEC-023`)
 
 DIAL now has a fail-closed xKiro HAIF implementation under `agent-system/orchestration/auxiliary/` and `agent-system/orchestration/providers/xkiro/`. It preserves the Sol→Sonnet manager boundary, hard-enforces `FREE_ONLY`, performs deterministic pre-serialization classification plus final egress DLP, persists restart/idempotency state, maintains project-account-local quota ledgers, emits provenance-carrying evidence packets, and routes disagreements only through typed premium-adjudication candidates.
@@ -339,3 +343,18 @@ HAIF now also enforces account-local RPM/TPM/concurrency ceilings, deterministic
 DIAL and DDE are separate HAIF tenants and separate xKiro accounts. The shared Oracle deployment installs one versioned runtime implementation while denying each service access to the other project's control root. DDE's separate repository consumes HAIF through a localhost/token-authenticated auxiliary-evidence bridge; no xKiro API key enters DDE Core.
 
 Live qualification evidence on 2026-09-08 proved the DDE account's `/v1/usage` authentication and a real free-model inference through `minimax/minimax-m3:free`. DIAL account qualification remains a deployment proof and must not be inferred from DDE evidence. Provider-side spend ceilings remain an account-console control in addition to the client `FREE_ONLY` guard.
+
+## 2026-09-08 — Unified Claude / Codex / owner WhatsApp operator gateway
+
+`DEC-025` replaces the Claude-only operator framing with one DIAL-only typed operator gateway. `chat-control-bridge.mjs` remains the shared control authority and now records operator-channel provenance. `operator-control-stdio.mjs` exposes the same typed tools to local Claude and Codex MCP clients without copying the bearer credential into either client. Root `AGENTS.md` gives Codex the same Oracle-status/mission rules as Claude.
+
+WhatsApp has two fail-closed adapters over the same typed tool layer. `whatsapp-hermes-operator.mjs` consumes the existing Hermes Baileys bridge only in owner self-chat mode and independently verifies the paired self identity before dispatch. `whatsapp-operator-adapter.mjs` provides an official Meta Cloud API path with raw-body HMAC verification, exact owner allowlisting, webhook replay protection, per-sender progress cursors and mode-0600 out-of-repository secrets. `operator-text-router.mjs` implements an explicit command grammar; arbitrary prose is not implicitly submitted as development work.
+
+The Oracle installer now owns the WhatsApp services and enrolls `dial-oracle-control` for both Claude and Codex. Qualification/continuity gates include both operator services, while real WhatsApp transport activation remains credential-bound. An unpaired Hermes channel reports `WAITING_PAIRING`; an unconfigured Cloud channel reports `UNCONFIGURED`. Neither state creates an open inbound route or weakens DIAL development authority.
+## 2026-09-09 — Owner WhatsApp pairing reliability hardening
+
+A real Android Linked Devices attempt reached the post-scan confirmation step but failed before credentials were committed. Oracle evidence showed two stale `--pair-only` processes concurrently sharing the same Hermes session directory and repeated disconnect reason `408`. The installed Hermes bridge was on `@whiskeysockets/baileys` 7.0.0-rc13, matching the upstream QR enrollment failure fixed by companion-registration refresh handling.
+
+`deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh` now owns enrollment. It enforces a singleton pairing lock, kills stale pair-only processes, pauses the live bridge, removes only incomplete unpaired session state, keeps QR/event material mode-0600 outside Git, and restarts the normal owner bridge only after valid paired identity credentials exist.
+
+Pairing uses an isolated deploy-only compatibility runtime pinned to the fix head for WhiskeySockets/Baileys PR #2765 plus the pre-login ACK safety change from PR #2749. This is strictly an internal owner development-control enrollment exception. DIAL customer/business WhatsApp remains locked to official Meta Cloud API + Flows and does not inherit Baileys as a product dependency.

@@ -7,7 +7,7 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 export const PROJECT_REGISTRY_REL = 'operations/project-registry.json';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
-const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service'];
+const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service', 'dial-hermes-whatsapp-operator.service', 'dial-whatsapp-cloud-operator.service'];
 
 function now() { return new Date().toISOString(); }
 function validateSlug(slug) {
@@ -39,7 +39,18 @@ export function defaultDialProject(repoDir = process.env.DIAL_REPO_DIR || DEFAUL
 export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO } = {}) {
   ensureControlLayout(root);
   const existing = readJson(PROJECT_REGISTRY_REL, null, root);
-  if (existing?.schema_version === 1 && Array.isArray(existing.projects)) return existing;
+  if (existing?.schema_version === 1 && Array.isArray(existing.projects)) {
+    const dial = existing.projects.find((item) => item.slug === 'dial');
+    if (!dial) return existing;
+    const priorServices = Array.isArray(dial.services) ? dial.services : [];
+    const services = [...new Set([...priorServices, ...DIAL_SERVICES])];
+    if (services.length === priorServices.length && services.every((item, index) => item === priorServices[index])) return existing;
+    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, updated_at: now() } : item);
+    const next = { ...existing, projects, updated_at: now() };
+    writeJsonAtomic(PROJECT_REGISTRY_REL, next, root);
+    appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_RECONCILED', project: 'dial', added_services: services.filter((item) => !priorServices.includes(item)), at: now() }, root);
+    return next;
+  }
   const registry = { schema_version: 1, isolation: 'STRICT_PER_PROJECT_OPERATIONS_STATE', projects: [defaultDialProject(dialRepoDir)], updated_at: now() };
   writeJsonAtomic(PROJECT_REGISTRY_REL, registry, root);
   appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_CREATED', projects: ['dial'], at: now() }, root);

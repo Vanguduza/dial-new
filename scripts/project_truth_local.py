@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse,datetime as dt,hashlib,json,os,pathlib,subprocess,sys
-R=pathlib.Path(__file__).resolve().parents[1]; L=R/'docs/project-state/CHANGE_LEDGER.jsonl'; C=R/'docs/project-state/CURRENT_STATE.json'; X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json']
+R=pathlib.Path(__file__).resolve().parents[1]; L=R/'docs/project-state/CHANGE_LEDGER.jsonl'; C=R/'docs/project-state/CURRENT_STATE.json'; X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json',':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl']
 def g(*a,check=True,b=False): return subprocess.run(['git',*a],cwd=R,check=check,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=not b)
 def o(*a): return g(*a).stdout.strip()
 def par(s):

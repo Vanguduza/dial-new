@@ -29,13 +29,20 @@ npm run verify >/dev/null
 pass "full repository verification is green at $HEAD_SHA"
 
 bash deploy/oracle/hermes-codex/install-engineering-research.sh >/dev/null
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service; do
   systemctl --user restart "$unit"
   systemctl --user is-active --quiet "$unit" || fail "$unit did not restart"
 done
 systemctl --user is-active --quiet dial-engineering-research.timer || fail "engineering research timer inactive"
 systemctl --user is-active --quiet dial-engineering-research.path || fail "engineering research path inactive"
 pass "DIAL-only control services are running current committed code"
+
+[[ -x "$HOME/.local/bin/dial-doctor" && -x "$HOME/.local/bin/dial" ]] || fail "dial doctor is not installed; run install-control-plane.sh"
+DOCTOR="$(tmp)"; "$HOME/.local/bin/dial" doctor >"$DOCTOR"
+jq -e '.ok_for_hermes_runtime_qualification == true and .diagnostic_scope == "DIAL_PLUS_SUBORDINATE_HERMES" and .native_hermes_doctor.kind == "DIAL_SUBORDINATE_HERMES_DOCTOR" and .native_hermes_doctor.authority == "DIAGNOSTIC_EVIDENCE_ONLY" and .native_hermes_doctor.usable_for_dial_qualification == true and .native_hermes_doctor.mutating_mode_requested == false and .native_hermes_doctor.live_probe_requested == false' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "federated DIAL/Hermes doctor is not usable"; }
+HERMES_NATIVE_DOCTOR_STATUS="$(jq -r '.native_hermes_doctor.status' "$DOCTOR")"
+HERMES_NATIVE_DOCTOR_HASH="$(jq -r '.native_hermes_doctor.report_sha256' "$DOCTOR")"
+pass "DIAL doctor with subordinate native Hermes doctor ($HERMES_NATIVE_DOCTOR_STATUS)"
 
 CODEX="$(tmp)"; node agent-system/orchestration/codex-app-server-probe.mjs >"$CODEX" || true
 jq -e '.requested_model=="gpt-5.6-sol" and .resolved_model=="gpt-5.6-sol" and .identity_proven==true and (.state=="ACCOUNT_LIMITED" or .state=="RATE_LIMITED" or .state=="MODEL_LIMITED")' "$CODEX" >/dev/null || { cat "$CODEX" >&2; fail "fallback readiness requires exact Sol identity with a temporary provider limitation; if Sol is healthy run full production qualification instead"; }
@@ -74,7 +81,7 @@ pass "external Oracle queue executes a real fallback canary through exact Sonnet
 bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity >/dev/null
 CONTINUITY="$(ls -1t "$DIAL_CONTROL_HOME"/evidence-cache/soak/continuity-*.json 2>/dev/null | head -n1)"
 [[ -n "$CONTINUITY" && -f "$CONTINUITY" ]] || fail "continuity evidence missing"
-jq -e --arg head "$HEAD_SHA" '.status=="GREEN" and .repo_head==$head and .project_isolated==true and .dial_services_recovered==true and .chat_control_recovered==true and .engineering_research_scheduler_recovered==true and .mission_state_survived==true and .shared_hermes_gateway_disrupted==false and .unrelated_project_services_touched==false' "$CONTINUITY" >/dev/null || { cat "$CONTINUITY" >&2; fail "DIAL-only continuity soak is not green for current HEAD"; }
+jq -e --arg head "$HEAD_SHA" '.status=="GREEN" and .repo_head==$head and .project_isolated==true and .dial_services_recovered==true and .chat_control_recovered==true and .operator_channels_recovered==true and .engineering_research_scheduler_recovered==true and .mission_state_survived==true and .shared_hermes_gateway_disrupted==false and .unrelated_project_services_touched==false' "$CONTINUITY" >/dev/null || { cat "$CONTINUITY" >&2; fail "DIAL-only continuity soak is not green for current HEAD"; }
 pass "DIAL-only mission/control/research continuity is green"
 
 # Continuity restarts the orchestrator; require its fresh heartbeat before issuing the gate.
@@ -96,9 +103,11 @@ jq -n \
   --arg observed_at "$(now)" --arg repo_head "$HEAD_SHA" \
   --argjson control_plane_fingerprint "$FINGERPRINT_JSON" \
   --arg primary_state "$PRIMARY_STATE" --arg canary_job_id "$CANARY_ID" \
+  --arg hermes_native_doctor_status "$HERMES_NATIVE_DOCTOR_STATUS" \
+  --arg hermes_native_doctor_hash "$HERMES_NATIVE_DOCTOR_HASH" \
   --arg forecast_id "$FORECAST_ID" --arg vekl_activation "$VEKL_ACTIVATION" \
   --arg vekl_evidence "$VEKL_EVIDENCE" --arg continuity_evidence "$CONTINUITY_REL" \
-  '{schema_version:3,status:"DEVELOPMENT_READY_FALLBACK",development_only:true,production_certified:false,execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",runtime_policy:"gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",development_entrypoint:"dial-hermes-submit",direct_project_session_development_allowed:false,qualified_repo_head:$repo_head,control_plane_fingerprint:$control_plane_fingerprint,primary:{runtime:"codex_app_server",requested_model:"gpt-5.6-sol",resolved_model:"gpt-5.6-sol",identity_proven:true,state:$primary_state},fallback:{runtime:"claude_code",requested_model:"claude-sonnet-5",resolved_model:"claude-sonnet-5",identity_proven:true,state:"HEALTHY"},external_fallback_canary:{completed:true,execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",job_id:$canary_job_id,resolved_model:"claude-sonnet-5"},vekl:{policy_version:"vekl-2.0",live_fallback_canary:true,activation_id:$vekl_activation,evidence:$vekl_evidence,exact_hashes_preserved:true,federated_resource_provenance_preserved:true,ahead_of_work_forecast_ready:true,forecast_id:$forecast_id,forecast_runtime:"claude_code",forecast_resolved_model:"claude-sonnet-5"},continuity:{green:true,evidence:$continuity_evidence},repository_verification:{green:true},upgrade_required:{target:"PRODUCTION_GREEN",when:"exact GPT-5.6 Sol becomes healthy again",steps:["bash deploy/oracle/hermes-codex/qualify-control-plane.sh","bash deploy/oracle/hermes-codex/soak-control-plane.sh process","bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh","bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity","bash deploy/oracle/hermes-codex/finalize-control-plane.sh"]},observed_at:$observed_at}' >"$EVIDENCE"
+  '{schema_version:3,status:"DEVELOPMENT_READY_FALLBACK",development_only:true,production_certified:false,execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",runtime_policy:"gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",development_entrypoint:"dial-hermes-submit",direct_project_session_development_allowed:false,qualified_repo_head:$repo_head,control_plane_fingerprint:$control_plane_fingerprint,dial_doctor:{federated:true,hermes_native_subordinate:true,authority:"DIAGNOSTIC_EVIDENCE_ONLY",status:$hermes_native_doctor_status,report_sha256:$hermes_native_doctor_hash},primary:{runtime:"codex_app_server",requested_model:"gpt-5.6-sol",resolved_model:"gpt-5.6-sol",identity_proven:true,state:$primary_state},fallback:{runtime:"claude_code",requested_model:"claude-sonnet-5",resolved_model:"claude-sonnet-5",identity_proven:true,state:"HEALTHY"},external_fallback_canary:{completed:true,execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",job_id:$canary_job_id,resolved_model:"claude-sonnet-5"},vekl:{policy_version:"vekl-2.0",live_fallback_canary:true,activation_id:$vekl_activation,evidence:$vekl_evidence,exact_hashes_preserved:true,federated_resource_provenance_preserved:true,ahead_of_work_forecast_ready:true,forecast_id:$forecast_id,forecast_runtime:"claude_code",forecast_resolved_model:"claude-sonnet-5"},continuity:{green:true,evidence:$continuity_evidence},repository_verification:{green:true},upgrade_required:{target:"PRODUCTION_GREEN",when:"exact GPT-5.6 Sol becomes healthy again",steps:["bash deploy/oracle/hermes-codex/qualify-control-plane.sh","bash deploy/oracle/hermes-codex/soak-control-plane.sh process","bash deploy/oracle/hermes-codex/soak-external-orchestrator.sh","bash deploy/oracle/hermes-codex/soak-control-plane.sh continuity","bash deploy/oracle/hermes-codex/finalize-control-plane.sh"]},observed_at:$observed_at}' >"$EVIDENCE"
 chmod 600 "$EVIDENCE"
 cp "$EVIDENCE" "$GATE"; chmod 600 "$GATE"
 

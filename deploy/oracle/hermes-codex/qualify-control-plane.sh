@@ -22,12 +22,18 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -x "$HOME/.hermes/agent-hooks/dial-pre-turn-context.sh" ]] || fail "pre-turn hook not installed"
 [[ -x "$HOME/.hermes/agent-hooks/dial-post-turn-checkpoint.sh" ]] || fail "post-turn hook not installed"
 [[ -x "$HOME/.local/bin/dial-hermes" ]] || fail "dial-hermes operational runtime entrypoint is not installed"
+[[ -x "$HOME/.local/bin/dial-doctor" ]] || fail "dial-doctor is not installed; run install-control-plane.sh"
+[[ -x "$HOME/.local/bin/dial" ]] || fail "dial CLI is not installed; run install-control-plane.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-submit" ]] || fail "dial-hermes-submit is not installed; run install-external-orchestrator.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-job" ]] || fail "dial-hermes-job is not installed; run install-external-orchestrator.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-ops" ]] || fail "dial-hermes-ops is not installed; run install-operations-plane.sh"
 [[ -x "$HOME/.local/bin/dial-hermes-ops-config" ]] || fail "dial-hermes-ops-config is not installed; run install-operations-plane.sh"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/chat-control-bridge.mjs" ]] || fail "DIAL chat control bridge is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/mission-controller.mjs" ]] || fail "DIAL mission controller is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" ]] || fail "DIAL typed operator stdio MCP is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operator-text-router.mjs" ]] || fail "DIAL operator text router is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-hermes-operator.mjs" ]] || fail "DIAL Hermes WhatsApp operator adapter is missing"
+[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "DIAL WhatsApp Cloud operator adapter is missing"
 [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "DIAL chat control bearer token is missing; run install-chat-control-bridge.sh"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "DIAL chat control bearer token must be mode 0600"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then fail "OPENAI_API_KEY/CODEX_API_KEY is present; Hermes primary qualification requires ChatGPT subscription OAuth"; fi
@@ -66,14 +72,20 @@ find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --chec
 bash -n deploy/oracle/hermes-codex/*.sh deploy/oracle/hermes-codex/hermes-hooks/*.sh; pass "Oracle shell syntax"
 git diff --check; pass "git diff --check"
 npm run agent:orchestration:init >/dev/null
-DOCTOR="$(tmp)"; npm run --silent agent:orchestration:doctor >"$DOCTOR"
-jq -e '.ok_for_hermes_runtime_qualification == true and .runtime_policy.primary == "codex_app_server/gpt-5.6-sol" and .runtime_policy.fallback == "claude_code/claude-sonnet-5" and .runtime_policy.no_runtime == "NO_HERMES_RUNTIME_AVAILABLE"' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "host/runtime doctor is not green"; }; pass "host/runtime doctor"
+DOCTOR="$(tmp)"; "$HOME/.local/bin/dial" doctor >"$DOCTOR"
+jq -e '.ok_for_hermes_runtime_qualification == true and .diagnostic_scope == "DIAL_PLUS_SUBORDINATE_HERMES" and .runtime_policy.primary == "codex_app_server/gpt-5.6-sol" and .runtime_policy.fallback == "claude_code/claude-sonnet-5" and .runtime_policy.no_runtime == "NO_HERMES_RUNTIME_AVAILABLE" and .native_hermes_doctor.kind == "DIAL_SUBORDINATE_HERMES_DOCTOR" and .native_hermes_doctor.authority == "DIAGNOSTIC_EVIDENCE_ONLY" and .native_hermes_doctor.usable_for_dial_qualification == true and .native_hermes_doctor.mutating_mode_requested == false and .native_hermes_doctor.live_probe_requested == false and .native_hermes_doctor.raw_report_persisted == false' "$DOCTOR" >/dev/null || { cat "$DOCTOR" >&2; fail "federated DIAL/Hermes doctor is not usable"; }
+HERMES_NATIVE_DOCTOR_STATUS="$(jq -r '.native_hermes_doctor.status' "$DOCTOR")"
+HERMES_NATIVE_DOCTOR_HASH="$(jq -r '.native_hermes_doctor.report_sha256' "$DOCTOR")"
+HERMES_NATIVE_DOCTOR_EVIDENCE="$(jq -r '.native_hermes_doctor.evidence_relative_path' "$DOCTOR")"
+pass "DIAL doctor with subordinate native Hermes doctor ($HERMES_NATIVE_DOCTOR_STATUS)"
 hermes hooks doctor; pass "Hermes shell hooks doctor"
 systemctl --user is-active --quiet dial-hermes-runtime.service || fail "dial-hermes-runtime.service is not active"
 systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service is not active"
 systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service is not active"
 systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-control.service is not active"
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
+systemctl --user is-active --quiet dial-hermes-whatsapp-operator.service || fail "dial-hermes-whatsapp-operator.service is not active"
+systemctl --user is-active --quiet dial-whatsapp-cloud-operator.service || fail "dial-whatsapp-cloud-operator.service is not active"
 systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
 systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
@@ -81,14 +93,22 @@ jq -e '.service == "dial-chat-control" and .project == "dial" and .state == "UP"
 CHAT_TOKEN="$(cat "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
 CHAT_TOOLS="$(curl -fsS -H "Authorization: Bearer $CHAT_TOKEN" -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' http://127.0.0.1:9130/mcp)"
 unset CHAT_TOKEN
-jq -e '.result.tools | length >= 15' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control MCP tools are unavailable"
+jq -e '.result.tools | length >= 19' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control MCP tools are unavailable"
 jq -e '[.result.tools[].name | test("shell|exec|filesystem"; "i")] | any == false' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control exposes a forbidden generic execution primitive"
-jq -e '[.result.tools[].name] | index("dial_skill_status") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control does not expose read-only VEKL observability"
+jq -e '[.result.tools[].name] | index("dial_skill_status") != null and index("dial_operator_channels") != null and index("dial_submit_instruction") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control is missing VEKL/status/write typed tools"
+CLOUD_WA_HEALTH="$(curl -fsS http://127.0.0.1:9132/health)"
+jq -e '.service == "dial-whatsapp-operator" and .project == "dial" and (.state == "UNCONFIGURED" or .state == "DISABLED" or .state == "READY") and (has("access_token")|not) and (has("app_secret")|not) and (has("verify_token")|not)' <<<"$CLOUD_WA_HEALTH" >/dev/null || fail "WhatsApp Cloud operator boundary/health is invalid or leaks secret fields"
+HERMES_WA_STATUS="$(node agent-system/orchestration/whatsapp-hermes-operator.mjs status)"
+jq -e '.authority == "OWNER_SELF_CHAT_TYPED_DIAL_CONTROL" and (.paired == true or .paired == false)' <<<"$HERMES_WA_STATUS" >/dev/null || fail "Hermes WhatsApp owner-control status is invalid"
+CODEX_MCP="$(codex mcp get dial-oracle-control 2>&1 || true)"
+grep -q 'operator-control-stdio.mjs' <<<"$CODEX_MCP" || fail "Codex dial-oracle-control MCP is not enrolled"
+CLAUDE_MCP="$(claude mcp get dial-oracle-control 2>&1 || true)"
+grep -q 'operator-control-stdio.mjs' <<<"$CLAUDE_MCP" || fail "Claude dial-oracle-control MCP is not enrolled"
 MISSION_STATUS="$(node agent-system/orchestration/mission-controller.mjs status)"
 jq -e '.mission_id == "dial-development-root" and .project == "dial" and (.state == "PAUSED" or .state == "BLOCKED_OWNER" or .state == "WAITING_RUNTIME")' <<<"$MISSION_STATUS" >/dev/null || fail "DIAL root mission is not safely non-running during pre-green qualification"
 OPS_STATUS="$(tmp)"; "$HOME/.local/bin/dial-hermes-ops" status >"$OPS_STATUS"
 jq -e '.authority == "NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS" and .development_authority == false and .api.key_material_exposed == false' "$OPS_STATUS" >/dev/null || { cat "$OPS_STATUS" >&2; fail "auxiliary operations boundary is not intact"; }
-pass "persistent runtime, external orchestrator, mission controller, DIAL-only chat control, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
+pass "persistent runtime, external orchestrator, mission controller, Claude/Codex/WhatsApp typed operator gateway, VEKL ahead-of-work research scheduler and non-authoritative operations services are active"
 
 section "PROJECT-AWARE RESEARCH + LOCKED RUNTIME IDENTITY"
 # DEC-020 permits the project-aware research manager to fall from exact Sol to
@@ -160,6 +180,9 @@ jq -n \
   --arg vekl_research_forecast_id "$RESEARCH_FORECAST_ID" \
   --arg vekl_research_forecast_runtime "$RESEARCH_FORECAST_RUNTIME" \
   --arg vekl_research_forecast_model "$RESEARCH_FORECAST_MODEL" \
+  --arg hermes_native_doctor_status "$HERMES_NATIVE_DOCTOR_STATUS" \
+  --arg hermes_native_doctor_hash "$HERMES_NATIVE_DOCTOR_HASH" \
+  --arg hermes_native_doctor_evidence "$HERMES_NATIVE_DOCTOR_EVIDENCE" \
   '{
     schema_version:1,
     kind:"DIAL_HERMES_INSTALLED_RUNTIME_QUALIFICATION",
@@ -173,6 +196,12 @@ jq -n \
     external_orchestration_canary_job_id:$canary_job_id,
     subscription_auth_proven:true,
     built_in_anthropic_fallback_disabled:true,
+    dial_doctor_federated:true,
+    hermes_native_doctor_subordinate:true,
+    hermes_native_doctor_authority:"DIAGNOSTIC_EVIDENCE_ONLY",
+    hermes_native_doctor_status:$hermes_native_doctor_status,
+    hermes_native_doctor_report_sha256:$hermes_native_doctor_hash,
+    hermes_native_doctor_evidence:$hermes_native_doctor_evidence,
     auxiliary_operations_plane:true,
     auxiliary_operations_authority:"NON_AUTHORITATIVE_CONTROL_PLANE_OPERATIONS",
     persistent_mission_controller:true,
