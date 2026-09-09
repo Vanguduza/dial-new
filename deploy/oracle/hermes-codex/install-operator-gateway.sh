@@ -13,6 +13,7 @@ if [[ "${1:-}" == "--no-start" ]]; then START_SERVICES=0; fi
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ -f "$REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" ]] || fail "operator-control-stdio.mjs missing"
 [[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-hermes-operator.mjs" ]] || fail "whatsapp-hermes-operator.mjs missing"
+[[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-owner-input.mjs" ]] || fail "whatsapp-owner-input.mjs missing"
 [[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "whatsapp-operator-adapter.mjs missing"
 [[ -f "$HERMES_DIR/scripts/whatsapp-bridge/bridge.js" ]] || fail "Hermes WhatsApp bridge missing"
 mkdir -p "$USER_UNIT_DIR" "$CONTROL_HOME/operator-channels/whatsapp" "$HERMES_WA_SESSION"
