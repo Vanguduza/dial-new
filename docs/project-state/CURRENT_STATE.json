@@ -1,21 +1,9 @@
 {
-  "actor": "ubuntu",
   "branch": "fix/canonical-readiness-20260909",
-  "changed_files": [
-    "agent-system/orchestration/README.md",
-    "agent-system/orchestration/hermes-native-doctor.mjs",
-    "agent-system/orchestration/supervisor.mjs",
-    "deploy/oracle/hermes-codex/finalize-control-plane.sh",
-    "deploy/oracle/hermes-codex/finalize-development-readiness.sh",
-    "deploy/oracle/hermes-codex/install-control-plane.sh",
-    "deploy/oracle/hermes-codex/qualify-control-plane.sh",
-    "docs/orchestration/IMPLEMENTATION_STATE.md",
-    "tests/orchestration-control-plane.test.mjs"
-  ],
-  "diff_sha256": "e8b872b9b3f813b1e651764ac63a8f126a98479e87552f170114e252efe7e006",
-  "kind": "precommit-staged-diff",
-  "recorded_at_utc": "2026-09-09T02:36:03.755587+00:00",
+  "observed_at_utc": "2026-09-09T02:37:25.350211+00:00",
+  "recorded_commit_count": 1,
+  "repository": "Vanguduza/dial-new",
   "schema_version": 1,
-  "source_parent": "6647b1a4e695e64c5d6a35decabceeb058ec7932",
-  "state": "PENDING_COMMIT"
+  "source_commit": "b00c695f3a711a179796e6c16ef1b0476fe6f935",
+  "source_tree": "61252d9fd6bbee7cdca56cc1daf61c628cf5bd27"
 }
