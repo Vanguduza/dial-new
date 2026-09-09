@@ -1,7 +1,8 @@
 import fs from 'node:fs';
-import { mkdtempSync } from 'node:fs';
+import fs, { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import {
   OPERATOR_STATUS_AUTHORITY,
@@ -12,6 +13,7 @@ import {
   ORACLE_STATUS_PROMPT,
   formatOracleStatusContext,
 } from '../agent-system/hooks/oracle-status-context.mjs';
+import { createStatusCommit } from '../agent-system/orchestration/operator-status-publisher.mjs';
 
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 function snapshot(observedAt = new Date().toISOString()) {
@@ -52,6 +54,24 @@ describe('Oracle operator status mirror', () => {
     expect(result.available).toBe(true);
     expect(result.fresh).toBe(false);
     expect(result.status.mission.state).toBe('RUNNING');
+  });
+
+  it('parents sanitized status-only commits to canonical HEAD so Project Truth ancestry is preserved', () => {
+    const repo = temp('dial-status-parent');
+    const run = (args, input) => execFileSync('git', args, { cwd: repo, encoding: 'utf8', input }).trim();
+    run(['init', '-q']);
+    run(['config', 'user.name', 'Test']);
+    run(['config', 'user.email', 'test@example.invalid']);
+    fs.writeFileSync(path.join(repo, 'baseline.txt'), 'canonical\n');
+    run(['add', 'baseline.txt']);
+    run(['commit', '-qm', 'canonical baseline']);
+    const parent = run(['rev-parse', 'HEAD']);
+    const blob = run(['hash-object', '-w', '--stdin'], '{"authority":"ORACLE_DIAL_RUNTIME_STATUS"}\n');
+    const tree = run(['mktree'], `100644 blob ${blob}\toracle-runtime-status.json\n`);
+    const observedAt = '2026-09-09T04:00:00Z';
+    const commit = createStatusCommit(repo, { tree, parent, observedAt });
+    expect(run(['rev-parse', `${commit}^`])).toBe(parent);
+    expect(run(['ls-tree', '--name-only', commit])).toBe('oracle-runtime-status.json');
   });
 
   it('keeps semantic status stable when only publication timestamps advance', () => {
