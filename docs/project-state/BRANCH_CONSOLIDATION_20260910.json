@@ -90,9 +90,10 @@
     },
     {
       "name": "oracle-runtime-status",
-      "tip": "f197b873ce1986e2c934d1b469f1c82f4a796f6f",
+      "tip": "91e5dd4112f9395fd11145a21ead1b0244e61256",
       "classification": "OPERATIONAL_STATUS_MIRROR",
-      "disposition": "ANCESTRY_MERGE_SNAPSHOT_KEEP_LIVE_BRANCH"
+      "disposition": "ANCESTRY_MERGE_SNAPSHOT_KEEP_LIVE_BRANCH",
+      "captured_at_utc": "2026-09-10T14:15:52.167005+00:00"
     },
     {
       "name": "work/dial-hermes-doctor-20260908",
@@ -124,5 +125,10 @@
       "classification": "CURRENT_CANONICAL_ADOPTION_SOURCE",
       "disposition": "MERGE_TO_MASTER_AFTER_CONSOLIDATION"
     }
-  ]
+  ],
+  "operational_status_snapshot_refresh": {
+    "previous_tip": "f197b873ce1986e2c934d1b469f1c82f4a796f6f",
+    "final_premerge_tip": "91e5dd4112f9395fd11145a21ead1b0244e61256",
+    "refreshed_at_utc": "2026-09-10T14:15:52.167005+00:00"
+  }
 }
