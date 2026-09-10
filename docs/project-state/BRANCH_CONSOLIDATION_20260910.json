@@ -11,7 +11,7 @@
     "stale_branch_history_preserved_without_tree_reintroduction": true,
     "method": "OURS_ANCESTRY_MERGE",
     "delete_retired_development_branches_after_protected_master_merge": true,
-    "oracle_runtime_status_exception": "Operational read-only status mirror required by current orchestration; merge its current snapshot ancestry but keep the live branch because the publisher intentionally advances it."
+    "oracle_runtime_status_exception": "Operational Oracle status branch is explicitly excluded from truth/development consolidation and remains untouched as a non-authoritative runtime transport."
   },
   "special_reconciliations": [
     {
@@ -91,8 +91,8 @@
     {
       "name": "oracle-runtime-status",
       "tip": "91e5dd4112f9395fd11145a21ead1b0244e61256",
-      "classification": "OPERATIONAL_STATUS_MIRROR",
-      "disposition": "ANCESTRY_MERGE_SNAPSHOT_KEEP_LIVE_BRANCH",
+      "classification": "OPERATIONAL_STATUS_MIRROR_EXCLUDED",
+      "disposition": "KEEP_UNCHANGED_EXCLUDE_FROM_CANONICAL_ANCESTRY",
       "captured_at_utc": "2026-09-10T14:15:52.167005+00:00"
     },
     {
@@ -129,6 +129,7 @@
   "operational_status_snapshot_refresh": {
     "previous_tip": "f197b873ce1986e2c934d1b469f1c82f4a796f6f",
     "final_premerge_tip": "91e5dd4112f9395fd11145a21ead1b0244e61256",
-    "refreshed_at_utc": "2026-09-10T14:15:52.167005+00:00"
+    "refreshed_at_utc": "2026-09-10T14:15:52.167005+00:00",
+    "note": "Historical observation only; oracle-runtime-status is excluded from the consolidation merge and remains live/untouched."
   }
 }
