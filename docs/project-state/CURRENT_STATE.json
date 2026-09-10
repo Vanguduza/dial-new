@@ -8,12 +8,12 @@
   "branch": "feat/adaptive-execution-fabric-rev2-20260910",
   "changed_files": [
     "docs/project-state/BRANCH_CONSOLIDATION_20260910.json",
-    "docs/project-state/authorizations/auth-20260910-owner-branch-consolidation-oracle-exclusion.json"
+    "docs/project-state/authorizations/auth-20260910-owner-branch-consolidation-no-stale-ancestry.json"
   ],
-  "content_diff_sha256": "14f6dbabef48927051f99f02257324dfaaaf557e8ae01b7de745da090cdff9cc",
-  "observed_at_utc": "2026-09-10T14:37:37.736160+00:00",
+  "content_diff_sha256": "4f0cc3f2f2523663b894a17f51f74aea56599683d6c19e0c3ee79f78d51f97c9",
+  "observed_at_utc": "2026-09-10T14:43:12.930572+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "0b9373b0e4fbbb2c9b72be29f2e15e34ce27c41e",
+  "source_parent": "abbc1ca1e21f48fef0855d3d70c9855bf732ee76",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
