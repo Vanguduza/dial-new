@@ -145,6 +145,7 @@ describe('VEKL 2.2 explicit exemption and Decision evolution',()=>{
   expect(checkLockedDecisionEvolution({baseRows:base,currentRows:[]}).failures).toContainEqual({decision_id:'DEC-X',reason:'LOCKED_DECISION_DELETED'});
   const live=verifyLockedDecisionEvolution({repoDir:REPO,baseRef:'origin/master'});
   expect(live.ok).toBe(true);
-  expect(live.new_decision_ids).toContain('DEC-026');
+  expect(live.failures).toEqual([]);
+  expect(live.locked_base_count).toBeGreaterThan(0);
  });
 });
