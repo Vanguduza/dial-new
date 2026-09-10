@@ -16,6 +16,10 @@ stamp(){ date -u +%Y%m%dT%H%M%SZ; }
 sha256(){ sha256sum "$1" | awk '{print $1}'; }
 boot_id(){ cat /proc/sys/kernel/random/boot_id; }
 
+# Process-death soak ownership must be scoped to descendants of the probe.
+# Never use global pgrep matching here: multiple projects share this host.
+source "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/process-tree.sh"
+
 require_host(){
   [[ -f "$DIAL_REPO_DIR/package.json" ]] || fail "DIAL repository missing at $DIAL_REPO_DIR"
   for cmd in node jq git systemctl sha256sum codex claude hermes; do command -v "$cmd" >/dev/null || fail "$cmd is required"; done
@@ -89,11 +93,15 @@ process_soak(){
   killed_codex_pid=""
   local deadline=$((SECONDS + 20))
   while (( SECONDS < deadline )); do
-    killed_codex_pid="$(pgrep -P "$codex_probe_pid" -f 'codex.*app-server' | head -n1 || true)"
+    killed_codex_pid="$(dial_find_probe_owned_codex_app_server "$codex_probe_pid" || true)"
     [[ -n "$killed_codex_pid" ]] && break
     sleep 0.2
   done
-  [[ "$killed_codex_pid" =~ ^[1-9][0-9]*$ ]] || { kill "$codex_probe_pid" 2>/dev/null || true; fail "could not identify the DIAL probe-owned Codex App Server child for kill soak"; }
+  if ! [[ "$killed_codex_pid" =~ ^[1-9][0-9]*$ ]]; then
+    kill "$codex_probe_pid" 2>/dev/null || true
+    wait "$codex_probe_pid" 2>/dev/null || true
+    fail "could not identify the DIAL probe-owned Codex App Server descendant for kill soak"
+  fi
   kill -KILL "$killed_codex_pid"
   wait "$codex_probe_pid" || probe_rc=$?
   [[ "$probe_rc" -ne 0 ]] || fail "Codex probe unexpectedly succeeded after app-server SIGKILL"
@@ -127,7 +135,7 @@ process_soak(){
     --arg repo_head "$(git rev-parse HEAD)" \
     --arg killed_codex_pid "$killed_codex_pid" \
     --arg supervisor_restart "$supervisor_restart" \
-    '{schema_version:2, kind:"DIAL_HERMES_PROCESS_SOAK", status:"GREEN", observed_at:$observed_at, boot_id:$boot_id, repo_head:$repo_head, project_isolated:true, shared_hermes_gateway_disrupted:false, actual_dial_owned_codex_app_server_sigkill:true, killed_codex_pid:$killed_codex_pid, sonnet_fallback_identity_proven:true, sol_recovery_proven:true, supervisor_restart:$supervisor_restart, real_quota_soak:"PENDING"}' \
+    '{schema_version:3, kind:"DIAL_HERMES_PROCESS_SOAK", status:"GREEN", observed_at:$observed_at, boot_id:$boot_id, repo_head:$repo_head, project_isolated:true, shared_hermes_gateway_disrupted:false, actual_dial_owned_codex_app_server_sigkill:true, process_ownership_discovery:"RECURSIVE_PROC_DESCENDANT_WALK", killed_codex_pid:$killed_codex_pid, sonnet_fallback_identity_proven:true, sol_recovery_proven:true, supervisor_restart:$supervisor_restart, real_quota_soak:"PENDING"}' \
     >"$evidence"
   chmod 600 "$evidence"
   echo "PROCESS_SOAK=GREEN"
