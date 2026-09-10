@@ -1,19 +1,45 @@
 {
   "authority_classes": [
-    "OWNER_EXPLICIT"
+    "OWNER_DELEGATED_AUTONOMY"
   ],
   "authorization_ids": [
-    "auth-20260910-owner-branch-consolidation"
+    "auth-20260910-owner-vekl-n8n-corpus-rev2"
   ],
-  "branch": "feat/adaptive-execution-fabric-rev2-20260910",
+  "branch": "feat/vekl-n8n-corpus-rev2",
   "changed_files": [
-    "docs/project-state/BRANCH_CONSOLIDATION_20260910.json",
-    "docs/project-state/authorizations/auth-20260910-owner-branch-consolidation-no-stale-ancestry.json"
+    "agent-system/canon/PROJECT_TRUTH.md",
+    "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json",
+    "agent-system/engineering-knowledge/automation/n8n-node-capability-map.json",
+    "agent-system/engineering-knowledge/automation/n8n-pattern-archetypes.json",
+    "agent-system/engineering-knowledge/automation/n8n-security-rules.json",
+    "agent-system/engineering-knowledge/automation/n8n-workflow-pattern.schema.json",
+    "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json",
+    "agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json",
+    "agent-system/orchestration/context-capsule-builder.mjs",
+    "agent-system/orchestration/engineering-resource-resolver.mjs",
+    "agent-system/orchestration/graph-retrieval-router.mjs",
+    "agent-system/orchestration/knowledge-resolution-trace.mjs",
+    "agent-system/orchestration/n8n-corpus-check.mjs",
+    "agent-system/orchestration/n8n-corpus-ingest.mjs",
+    "agent-system/orchestration/n8n-corpus-promote.mjs",
+    "agent-system/orchestration/n8n-pattern-extractor.mjs",
+    "agent-system/orchestration/n8n-workflow-analyzer.mjs",
+    "agent-system/orchestration/n8n-workflow-sanitizer.mjs",
+    "agent-system/orchestration/skill-activation-store.mjs",
+    "agent-system/registries/DECISION_LOG.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_ZIE619_N8N_WORKFLOW_CORPUS_REV2_CANONICAL.md",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "docs/project-state/authorizations/auth-20260910-owner-vekl-n8n-corpus-rev2.json",
+    "package.json",
+    "tests/orchestration-vekl-n8n-corpus.test.mjs",
+    "vitest.config.ts"
   ],
-  "content_diff_sha256": "4f0cc3f2f2523663b894a17f51f74aea56599683d6c19e0c3ee79f78d51f97c9",
-  "observed_at_utc": "2026-09-10T14:43:12.930572+00:00",
+  "content_diff_sha256": "4b8b4158ab4c644163dc34ed9c16327436d47d315d0c0565eac9e8ea1b2619bb",
+  "observed_at_utc": "2026-09-10T18:03:57.347491+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "abbc1ca1e21f48fef0855d3d70c9855bf732ee76",
+  "source_parent": "d96d740507f3da17711b4094756f7cd5c63e6f13",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

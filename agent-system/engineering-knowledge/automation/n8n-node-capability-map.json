@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "official_prefixes": [
+    "n8n-nodes-base.",
+    "@n8n/n8n-nodes-langchain.",
+    "n8n-nodes-langchain."
+  ],
+  "rules": [
+    {
+      "match": "webhook",
+      "capabilities": [
+        "HTTP_RECEIVE"
+      ],
+      "trigger": "WEBHOOK",
+      "controls": [
+        "AUTHENTICATED_WEBHOOK",
+        "SCHEMA_VALIDATION",
+        "IDEMPOTENCY"
+      ]
+    },
+    {
+      "match": "schedule",
+      "capabilities": [
+        "SCHEDULE"
+      ],
+      "trigger": "SCHEDULE",
+      "controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ]
+    },
+    {
+      "match": "cron",
+      "capabilities": [
+        "SCHEDULE"
+      ],
+      "trigger": "SCHEDULE",
+      "controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ]
+    },
+    {
+      "match": "manualtrigger",
+      "capabilities": [
+        "MANUAL_TRIGGER"
+      ],
+      "trigger": "MANUAL"
+    },
+    {
+      "match": "httprequest",
+      "capabilities": [
+        "HTTP_CALL"
+      ],
+      "controls": [
+        "EGRESS_ALLOWLIST",
+        "TIMEOUT",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ]
+    },
+    {
+      "match": "respondtowebhook",
+      "capabilities": [
+        "HTTP_RESPOND"
+      ]
+    },
+    {
+      "match": "if",
+      "capabilities": [
+        "CONDITION"
+      ]
+    },
+    {
+      "match": "switch",
+      "capabilities": [
+        "ROUTE"
+      ]
+    },
+    {
+      "match": "merge",
+      "capabilities": [
+        "MERGE"
+      ]
+    },
+    {
+      "match": "wait",
+      "capabilities": [
+        "WAIT"
+      ],
+      "controls": [
+        "BOUNDED_WAIT",
+        "EXPIRY"
+      ]
+    },
+    {
+      "match": "form",
+      "capabilities": [
+        "HUMAN_INPUT"
+      ],
+      "controls": [
+        "AUTHORIZATION",
+        "INPUT_VALIDATION"
+      ]
+    },
+    {
+      "match": "email",
+      "capabilities": [
+        "NOTIFY"
+      ],
+      "controls": [
+        "DESTINATION_ALLOWLIST"
+      ]
+    },
+    {
+      "match": "slack",
+      "capabilities": [
+        "NOTIFY"
+      ],
+      "controls": [
+        "DESTINATION_ALLOWLIST"
+      ]
+    },
+    {
+      "match": "telegram",
+      "capabilities": [
+        "NOTIFY"
+      ],
+      "controls": [
+        "DESTINATION_ALLOWLIST"
+      ]
+    },
+    {
+      "match": "github",
+      "capabilities": [
+        "GITHUB_INTEGRATION"
+      ]
+    },
+    {
+      "match": "postgres",
+      "capabilities": [
+        "DATABASE"
+      ],
+      "controls": [
+        "PARAMETERIZED_QUERY",
+        "LEAST_PRIVILEGE"
+      ]
+    },
+    {
+      "match": "mysql",
+      "capabilities": [
+        "DATABASE"
+      ],
+      "controls": [
+        "PARAMETERIZED_QUERY",
+        "LEAST_PRIVILEGE"
+      ]
+    },
+    {
+      "match": "mssql",
+      "capabilities": [
+        "DATABASE"
+      ],
+      "controls": [
+        "PARAMETERIZED_QUERY",
+        "LEAST_PRIVILEGE"
+      ]
+    },
+    {
+      "match": "code",
+      "capabilities": [
+        "CODE_EXECUTION"
+      ],
+      "risk": "HIGH"
+    },
+    {
+      "match": "function",
+      "capabilities": [
+        "CODE_EXECUTION"
+      ],
+      "risk": "HIGH"
+    },
+    {
+      "match": "executecommand",
+      "capabilities": [
+        "SHELL_EXECUTION"
+      ],
+      "risk": "CRITICAL"
+    },
+    {
+      "match": "readwritefile",
+      "capabilities": [
+        "FILESYSTEM"
+      ],
+      "risk": "HIGH"
+    },
+    {
+      "match": "ssh",
+      "capabilities": [
+        "SSH"
+      ],
+      "risk": "CRITICAL"
+    },
+    {
+      "match": "agent",
+      "capabilities": [
+        "AI_AGENT"
+      ],
+      "risk": "HIGH"
+    },
+    {
+      "match": "mcp",
+      "capabilities": [
+        "MCP_CLIENT"
+      ],
+      "risk": "HIGH"
+    }
+  ]
+}

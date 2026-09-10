@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "severity_order": [
+    "INFO",
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "CRITICAL"
+  ],
+  "secret_key_patterns": [
+    "credential",
+    "api_key",
+    "apikey",
+    "access_token",
+    "refresh_token",
+    "bearer",
+    "password",
+    "passwd",
+    "secret",
+    "private_key",
+    "client_secret",
+    "authorization",
+    "cookie"
+  ],
+  "secret_value_patterns": [
+    "(?i)bearer\\s+[A-Za-z0-9._~+/-]{16,}",
+    "(?i)(sk|pk|ghp|github_pat|xox[baprs])-?[A-Za-z0-9_=-]{12,}",
+    "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----"
+  ],
+  "prompt_injection_patterns": [
+    "(?i)ignore (all |any )?(previous|project|system) instructions",
+    "(?i)ignore project truth",
+    "(?i)system prompt",
+    "(?i)you are chatgpt"
+  ],
+  "destructive_sql_patterns": [
+    "(?i)\\b(drop|truncate)\\s+(table|database|schema)\\b",
+    "(?i)\\bdelete\\s+from\\b"
+  ],
+  "dynamic_expression_markers": [
+    "={{",
+    "$json",
+    "$env",
+    "$node",
+    "$evaluateExpression"
+  ],
+  "blocked_schemes": [
+    "file:",
+    "ftp:",
+    "gopher:",
+    "ssh:"
+  ],
+  "blocked_hostnames": [
+    "localhost",
+    "metadata.google.internal"
+  ],
+  "blocked_ip_literals": [
+    "169.254.169.254",
+    "100.100.100.200"
+  ]
+}

@@ -102,10 +102,11 @@ export function engineeringResourceRegistryFingerprint(resource, source){
     task_classes:resource.task_classes || [],technologies:resource.technologies || [],keywords:resource.keywords || [],
     content_hash:resource.content_hash || null,forbidden_effects:resource.forbidden_effects || [],requires_tools:resource.requires_tools || [],
     selection_role:resource.selection_role || null,selection_purpose:resource.selection_purpose || null,always_bind:resource.always_bind === true,
+    resource_lineage:resource.resource_lineage || null,workflow_pattern:resource.workflow_pattern || null,
     source_trust:source?.trust_tier || null,source_kind:source?.source_kind || null,
   })));
 }
-export function evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools=[]}) {
+export function evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools=[],featureRecord=null}) {
   if (!source) return {eligible:false,reason:'SOURCE_NOT_ADMITTED'};
   if (!(source.resource_classes || []).includes(resource.resource_class)) return {eligible:false,reason:'SOURCE_CLASS_NOT_ADMITTED'};
   if (!stateAllowed(resource)) return {eligible:false,reason:`NOT_ACTIVATABLE:${resource.status}`};
@@ -114,6 +115,9 @@ export function evaluateEngineeringResourceHardEligibility({resource,source,task
   const required=resource.requires_tools || [];
   if (required.some((tool)=>!availableTools.includes(tool))) return {eligible:false,reason:'REQUIRED_TOOL_UNAVAILABLE'};
   const community=resource.authority==='COMMUNITY_SIGNAL_ONLY';
+  const zie619=resource.derived_from_corpus==='community.zie619.n8n_workflows' || resource.resource_id==='community.zie619.n8n_workflows.corpus';
+  const healthSpecialist=String(featureRecord?.module||'').toUpperCase()==='HEALTH' || String(featureRecord?.feature_id||'').startsWith('HEALTH-') || (!featureRecord && taskClasses.includes('HEALTH_SENSITIVE'));
+  if (zie619 && healthSpecialist) return {eligible:false,reason:'HEALTH_SENSITIVE_COMMUNITY_CORPUS_BLOCKED'};
   const lexical=keywordMatch(resource,text) || techMatch(resource,text);
   if (community && !lexical) return {eligible:false,reason:'COMMUNITY_NOT_TASK_SPECIFIC'};
   const task=matchAny(resource.task_classes, taskClasses);
@@ -169,7 +173,7 @@ export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instru
     if (resource.resource_class === 'SKILL') continue;
     if (eligibleSet && !eligibleSet.has(resource.resource_id)) { rejected.push({resource_id:resource.resource_id,reason:'OUTSIDE_GRAPH_NEIGHBOURHOOD'}); continue; }
     const source=sources.get(resource.source_id);
-    const eligibility=evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools});
+    const eligibility=evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools,featureRecord});
     if (!eligibility.eligible) {
       if (eligibility.reason !== 'NOT_RELEVANT' && eligibility.reason !== 'COMMUNITY_NOT_TASK_SPECIFIC') rejected.push({resource_id:resource.resource_id,reason:eligibility.reason});
       continue;
@@ -196,6 +200,8 @@ export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instru
     selection_reason: mandatory ? 'MANDATORY_EXPLICIT_POLICY_BINDING' : `WINNER:${purpose}:${role}`,
     context_delivery: (resourceBindingHints?.[resource.resource_id]?.context_delivery) || (role==='AUTHORITY' && eligibility.lexical ? 'EAGER_EXCERPT' : 'DESCRIPTOR_ONLY'),
     registry_fingerprint:engineeringResourceRegistryFingerprint(resource,source),
+    resource_lineage:resource.resource_lineage || null,workflow_pattern:resource.workflow_pattern || null,
+    untrusted_external_reference:resource.derived_from_corpus==='community.zie619.n8n_workflows',
   }));
   return {
     policy_version:'vekl-2.1',resolver_version:'purpose-role-minimal-coalition-v1',task_classes:taskClasses,

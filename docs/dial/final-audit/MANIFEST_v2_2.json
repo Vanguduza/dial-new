@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-10T13:27:04.063Z",
+  "generated_at": "2026-09-10T18:03:57.074Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 239,
+  "file_count": 240,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "19d4db2cb3d44bcf98dadb0f39ef6423f145b5033486cca1a75a8d2eeb6313d3"
+      "sha256": "eaf3ccb2c675908ce276a5d214c2bd60e0558990307947c10f60cd47383a3307"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -195,6 +195,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_2_2_REV2_CANONICAL_IMPLEMENTATION_ADDENDUM.md",
       "bytes": 3954,
       "sha256": "73b82802a9e27be4eccda5a34eb368b1b430396ad5dbb929782d99cb53f8a14d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_ZIE619_N8N_WORKFLOW_CORPUS_REV2_CANONICAL.md",
+      "bytes": 13633,
+      "sha256": "edf5f9f1bbcb9bfc9140235ea0591c2e498f98951cfcd8024285e8b75b872fe9"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md",
