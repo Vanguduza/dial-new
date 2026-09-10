@@ -183,3 +183,10 @@ The primary Hermes/Sol process receives `DIAL_SKILL_ACTIVATION_DIR` and may use 
 Ahead-of-work research is handled by `engineering-research-manager.mjs` + `engineering-presearch.mjs`. Exact project-aware Sol (Codex App Server) is primary and exact Sonnet 5 is fallback. It reads current Project Truth, Development Plan and DIAL mission/checkpoint context in read-only mode, forecasts the next 3–5 dependency-safe packets, and pre-caches registered allowlisted references. `dial-engineering-research.timer` provides periodic refresh and `dial-engineering-research.path` reacts to truth/plan/mission/checkpoint changes. Research cannot reprioritise DIAL or carry sensitive production data.
 
 Research-reference Google/Android versions are not executable pins. No vendor skill may activate until its registry record is `APPROVED`/`ACTIVE` with exact production pin, content hash, immutable snapshot and completed donor/security/conflict/eval qualification.
+
+
+## Adaptive Execution Fabric Rev 2
+
+`DEC-028` adds a worker-only execution fabric below VEKL 2.2. `task-triage.mjs` classifies risk deterministically; `task-execution-envelope.mjs` binds material worker execution to the current Unit/KRT/activation; `harness-capability-exchange.mjs` hard-filters qualified execution workers and cannot select the Hermes manager runtime; `compute-governor.mjs` reserves/settles inference capacity; `execution-topology.mjs` chooses the minimum safe topology; `role-context-projector.mjs` projects the existing VEKL capsules; `worker-lease-manager.mjs` enforces repository-wide write scopes and fencing; and `execution-receipt.mjs` records immutable admitted-execution evidence.
+
+Durable AEF state lives under `$DIAL_CONTROL_HOME/execution`. Authenticated material owner steer through the typed operator gateway supersedes active AEF envelopes and revokes their leases before the new instruction is queued. Provider/design output remains non-authoritative and is quarantined before admission. Stitch is optional development tooling and is disabled unless its explicit provider policy/credentials/health gates are satisfied.
