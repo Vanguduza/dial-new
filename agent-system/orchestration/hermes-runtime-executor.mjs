@@ -17,6 +17,9 @@ import { cachedCodexIdentity, recordCodexIdentityProof } from './runtime-identit
 import { parseProviderRetryAfter, primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 import { appendJsonl } from './state-store.mjs';
 import { activationSummary, loadSkillActivationForPacket, renderSkillActivationBundle, verifySkillActivation } from './skill-activation-store.mjs';
+import { assertFreshKnowledgeBinding } from './knowledge-admission-guard.mjs';
+import { loadKnowledgeResolutionTrace } from './knowledge-resolution-trace.mjs';
+import { buildWorkerKnowledgeDelivery } from './knowledge-worker-delivery.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -115,6 +118,9 @@ export async function runPrimaryHermes({
   const requestedModel = String(model || PRIMARY_MODEL);
   if (requestedModel !== PRIMARY_MODEL) {
     throw new Error(`DIAL Hermes primary model is hard-pinned to ${PRIMARY_MODEL}; requested ${requestedModel}`);
+  }
+  if (packetId && skillActivation?.knowledge_context?.unit_lineage_id) {
+    assertFreshKnowledgeBinding({ repoDir, root, packetId, boundary: 'HARNESS_PREFLIGHT' });
   }
 
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dial-hermes-primary-'));
@@ -276,17 +282,25 @@ export async function executeHermesInstruction({
     }
   }
   const skillSummary = activationSummary(activation);
-  const instructionWithKnowledge = activation ? [
-    'DIAL VEKL ACTIVATION',
-    `Activation ID: ${activation.activation_id}`,
-    `Manifest SHA-256: ${activation.manifest_sha256}`,
-    `Resolution: ${activation.resolution_state}`,
-    `Selected approved skills: ${(activation.skills || []).map((s) => `${s.skill_id}@${s.upstream_commit}`).join(', ') || 'none'}`,
-    'Only the listed approved skill versions may be treated as activated engineering guidance for this packet. They are non-authoritative: DIAL canon/FRC/security/current code/evidence win.',
-    'When a selected skill has a runtime_name, use Hermes skill_view for that exact activated skill before relying on it.',
-    '',
-    instruction,
-  ].join('\n') : instruction;
+  let instructionWithKnowledge = instruction;
+  if (activation?.knowledge_context?.unit_lineage_id) {
+    assertFreshKnowledgeBinding({ repoDir, root, packetId, boundary: 'WORKER_START' });
+    const delivery = buildWorkerKnowledgeDelivery({ packetId, manifest: activation, instruction, root });
+    const trace = loadKnowledgeResolutionTrace(packetId, root);
+    if (!trace) throw new Error(`KnowledgeResolutionTrace missing for scoped packet ${packetId}`);
+    if (trace.worker_delivery_hash !== delivery.worker_delivery_hash) throw new Error(`KnowledgeResolutionTrace worker delivery mismatch for packet ${packetId}`);
+    instructionWithKnowledge = delivery.text;
+  } else if (activation) {
+    instructionWithKnowledge = [
+      'DIAL VEKL ACTIVATION',
+      `Activation ID: ${activation.activation_id}`,
+      `Manifest SHA-256: ${activation.manifest_sha256}`,
+      `Resolution: ${activation.resolution_state}`,
+      `Selected approved skills: ${(activation.skills || []).map((s) => `${s.skill_id}@${s.upstream_commit}`).join(', ') || 'none'}`,
+      'This is an unscoped planning activation. Resolve a concrete Feature and re-resolve VEKL before material implementation.',
+      '', instruction,
+    ].join('\n');
+  }
   const priorPrimaryHealth = loadRuntimeHealth(root)?.runtimes?.codex_app_server ?? null;
   const primaryDecision = primaryAttemptDecision(priorPrimaryHealth);
   let primary;
@@ -396,6 +410,13 @@ export async function executeHermesInstruction({
       activation = latestActivation;
     }
   }
+  let fallbackScopedDelivery = null;
+  if (activation?.knowledge_context?.unit_lineage_id) {
+    assertFreshKnowledgeBinding({ repoDir, root, packetId, boundary: 'FALLBACK_WORKER_START' });
+    fallbackScopedDelivery = buildWorkerKnowledgeDelivery({ packetId, manifest: activation, instruction, root });
+    const trace = loadKnowledgeResolutionTrace(packetId, root);
+    if (!trace || trace.worker_delivery_hash !== fallbackScopedDelivery.worker_delivery_hash) throw new Error(`KnowledgeResolutionTrace fallback delivery mismatch for packet ${packetId}`);
+  }
   const fallbackSkillBundle = activation ? renderSkillActivationBundle(activation, root) : '';
   const packet = await contextBuilder({
     repoDir,
@@ -418,8 +439,8 @@ export async function executeHermesInstruction({
     'Do not advance a gate merely because previous runtime prose or memory says work is complete.',
     `The only permitted fallback runtime is official Claude Code with exact ${FALLBACK_MODEL}.`,
     '',
-    'ORIGINAL INSTRUCTION',
-    instruction,
+    fallbackScopedDelivery ? 'ORIGINAL SCOPED KNOWLEDGE DELIVERY' : 'ORIGINAL INSTRUCTION',
+    fallbackScopedDelivery?.text || instruction,
   ].join('\n');
 
   try {

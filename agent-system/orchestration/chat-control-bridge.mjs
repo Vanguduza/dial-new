@@ -16,6 +16,7 @@ import {
   missionStatus,
   pauseDialMission,
   recordMissionApproval,
+  recordDialOwnerAuthorityRoot,
   resumeDialMission,
   setDialMissionPriority,
 } from './mission-control.mjs';
@@ -23,6 +24,7 @@ import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJs
 import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 import { engineeringResearchStatus } from './engineering-presearch.mjs';
 import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
+import { ownerInstructionProvenance } from './project-truth-authority.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
@@ -231,7 +233,9 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
     const mission = ensureDialMission({ root, repoDir: project.repo_dir });
     if (mission.state === 'COMPLETE') throw new Error('root mission is complete');
-    result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE', operator_channel: operatorContext.channel, operator_transport: operatorContext.transport } });
+    const ownerProvenance = ownerInstructionProvenance({ instruction, requestId: normalizeRequestId(args.request_id), ...operatorContext });
+    result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE', operator_channel: operatorContext.channel, operator_transport: operatorContext.transport, owner_instruction_provenance: ownerProvenance } });
+    if (ownerProvenance.authority !== 'NO_AUTHORITY') recordDialOwnerAuthorityRoot({ root, provenance: ownerProvenance, sourceJobId: result.job_id });
   }
   else if (name === 'dial_list_packets') result = { mission_id: DIAL_ROOT_MISSION_ID, packets: listMissionPackets({ root, limit: args.limit }) };
   else if (name === 'dial_packet_status') result = packetRecord(clean(args.packet_id, 160), root);

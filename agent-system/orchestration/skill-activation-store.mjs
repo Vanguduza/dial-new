@@ -126,6 +126,7 @@ export function persistSkillActivation({
     resource_rejected: Array.isArray(plan.resource_rejected) ? plan.resource_rejected : [],
     resource_task_classes: Array.isArray(plan.resource_task_classes) ? plan.resource_task_classes : [],
     research_forecast_id: plan.research_forecast_id || null,
+    knowledge_context: plan.knowledge_context || null,
     rejected: plan.rejected || [],
     dial_guard_capsule: guard,
     runtime_skill_dir: skillDir,
@@ -290,5 +291,6 @@ export function activationSummary(manifest) {
     selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name, activation_constraints: s.activation_constraints || [], requires_independent_specialist_review: s.requires_independent_specialist_review === true })),
     selected_resources: (manifest.resources || []).map((r) => ({ resource_id: r.resource_id, resource_class: r.resource_class, source_id: r.source_id, trust_tier: r.trust_tier, authority: r.authority, activation_mode: r.activation_mode, content_hash: r.content_hash || null, cache_ref: r.cache_ref || null, freshness: r.freshness || 'UNKNOWN', corroboration_required: r.corroboration_required === true, selection_role: r.selection_role || null, selection_purpose: r.selection_purpose || null, context_delivery: r.context_delivery || null, registry_fingerprint: r.registry_fingerprint || null })),
     research_forecast_id: manifest.research_forecast_id || null,
+    knowledge_context: manifest.knowledge_context || null,
   };
 }

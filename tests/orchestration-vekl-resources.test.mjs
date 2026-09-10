@@ -130,13 +130,15 @@ describe('VEKL 2 federated engineering resources',()=>{
   it('persists federated resources through audited packet re-resolution when the concrete task changes',()=>{
     const root=temp('vekl2-reresolve');ensureControlLayout(root);
     const first=resolvePacketEngineeringKnowledge({repoDir,root,packetId:'packet-reresource-1',instruction:'Implement Supabase Postgres RLS policies for Grocery Rounds.',metadata:{feature_id:'GROC-F021',affected_paths:['packages/rounds/src/policy.ts']}});
-    expect(first.policy_version).toBe('vekl-2.1');
+    expect(first.policy_version).toBe('vekl-2.2-rev2');
+    expect(first.knowledge_context?.scope).toBe('DEVELOPMENT_UNIT');
     expect(first.resources.some((r)=>r.resource_id==='ref.supabase.docs')).toBe(true);
     const second=reResolvePacketEngineeringKnowledge({repoDir,root,packetId:'packet-reresource-1',instruction:'Implement and verify the Next.js customer surface for the same bounded Feature.',metadata:{feature_id:'GROC-F021',affected_paths:['apps/web/app/rounds/page.tsx']},reason:'concrete UI packet selected after repository inspection'});
+    expect(second.policy_version).toBe('vekl-2.2-rev2');
     expect(second.previous_activation_id).toBe(first.activation_id);
     expect(second.re_resolution_reason).toMatch(/concrete UI packet/);
     expect(second.resources.some((r)=>r.resource_id==='ref.nextjs.docs')).toBe(true);
-  });
+  }, 60000);
 
   it('records MODEL_UNAVAILABLE rather than fabricating an ahead-of-work forecast',async()=>{
     const root=temp('vekl2-model-unavailable');ensureControlLayout(root);

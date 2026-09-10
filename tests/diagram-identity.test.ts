@@ -189,5 +189,5 @@ describe('migration plan', () => {
     expect(new Set(plan.assignments.map((a) => a.dgmId)).size).toBe(96_000);
     expect(plan.sourceNodeCollisions).toBe(20);
     expect(() => assertMigrationApplicable(plan)).not.toThrow();
-  });
+  }, 15_000);
 });

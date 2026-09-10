@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "repository": "Vanguduza/dial-new",
   "policy": {
     "default_branch_is_not_authority": true,
@@ -8,7 +8,15 @@
     "silent_feature_thinning_forbidden": true,
     "release_requires_provenance": true,
     "canonicalized_commits_are_logged": true,
-    "feature_branch_commits_are_locally_guarded": true
+    "feature_branch_commits_are_locally_guarded": true,
+    "owner_instruction_is_project_truth_authority": true,
+    "agent_self_authorization_forbidden": true,
+    "recommended_blocker_fix_is_derived_owner_authority": true,
+    "delegated_autonomy_can_reconcile_truth_without_material_scope_expansion": true,
+    "project_truth_generation_is_pr_native": true,
+    "default_branch_project_truth_automation_is_read_only": true,
+    "ci_is_not_project_truth_authority": true,
+    "authorization_records_are_append_only": true
   },
   "canonical_state": {
     "status": "DIAL_CANONICAL_LINEAGE_VERIFIED",
@@ -46,6 +54,9 @@
     "ledger": "docs/project-state/CHANGE_LEDGER.jsonl",
     "current_snapshot": "docs/project-state/CURRENT_STATE.json",
     "protocol": "PROJECT_TRUTH_PROTOCOL.md",
-    "workflow": ".github/workflows/project-truth-autolog.yml"
+    "workflow": ".github/workflows/project-truth-autolog.yml",
+    "owner_authority_policy": "docs/project-state/OWNER_AUTHORITY_POLICY.json",
+    "authorization_records": "docs/project-state/authorizations/",
+    "workflow_mode": "PR_NATIVE_GENERATION_POST_MERGE_READ_ONLY_VERIFY"
   }
 }

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "project": "dial",
+  "principle": "Project Truth write authority originates with the owner; agents, CI, tools, branches, timestamps and model recommendations are never authority sources by themselves.",
+  "authority_classes": {
+    "OWNER_EXPLICIT": {
+      "description": "The owner directly instructs a bounded change. Necessary truth reconciliation inside that bounded scope is authorized.",
+      "material_scope_expansion_allowed": true
+    },
+    "OWNER_DERIVED": {
+      "description": "The owner orders blocker/gap/failure resolution using the best or recommended solution. Technical implementation and truth reconciliation necessary to preserve the authorized intent are allowed.",
+      "material_scope_expansion_allowed": false
+    },
+    "OWNER_DELEGATED_AUTONOMY": {
+      "description": "The owner explicitly delegates continued/autonomous execution within an existing mission, for example continue until green. Necessary implementation and truth reconciliation are allowed without redefining product intent.",
+      "material_scope_expansion_allowed": false
+    },
+    "NO_AUTHORITY": {
+      "description": "Read-only requests, agent preference, tool output, CI output, research, discovery, or an unrequested recommendation do not authorize Project Truth writes.",
+      "material_scope_expansion_allowed": false
+    }
+  },
+  "material_change_flags": [
+    "feature_removal",
+    "business_model_change",
+    "security_authority_change",
+    "owner_control_boundary_change",
+    "legal_position_change",
+    "money_or_custody_model_change",
+    "locked_provider_change"
+  ],
+  "rules": {
+    "owner_instruction_required": true,
+    "agent_self_authorization_forbidden": true,
+    "ci_is_not_authority": true,
+    "tool_output_is_not_authority": true,
+    "read_only_instruction_grants_write_authority": false,
+    "blocker_fix_using_recommended_solution_counts_as_derived_authority": true,
+    "delegated_autonomy_may_reconcile_truth": true,
+    "derived_or_delegated_material_scope_expansion_forbidden": true,
+    "authorization_records_append_only": true,
+    "default_branch_post_merge_is_read_only": true,
+    "project_truth_generation_happens_on_authorized_pr_branch": true
+  },
+  "generated_evidence_paths": [
+    "docs/project-state/CHANGE_LEDGER.jsonl",
+    "docs/project-state/CURRENT_STATE.json",
+    "docs/project-state/LOCAL_CHANGE_LEDGER.jsonl"
+  ],
+  "authorization_record_glob": "docs/project-state/authorizations/*.json",
+  "owner_instruction_sources": [
+    "oracle_owner_instruction",
+    "owner_session_instruction"
+  ],
+  "oracle_owner_channels": [
+    "claude",
+    "codex",
+    "whatsapp"
+  ],
+  "high_risk_scope_note": "OWNER_DERIVED and OWNER_DELEGATED_AUTONOMY may update canonical files only to record necessary technical consequences while preserving existing product/business/security/owner-control intent. Any material redefinition requires OWNER_EXPLICIT or an explicit owner gate approval.",
+  "legacy_history_verified_through": "5c1156eecc0b88228ec133fbc1676fa47327cc58",
+  "legacy_history_boundary_reason": "This SHA was the certified master before OWNER_AUTHORITY_POLICY enforcement was introduced; prior history is grandfathered, while all later substantive commits require owner-authorized evidence."
+}

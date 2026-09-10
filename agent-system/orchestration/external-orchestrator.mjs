@@ -9,6 +9,7 @@ import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
 import { ensurePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from './engineering-knowledge-broker.mjs';
 import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
 import { recordSkillOutcome } from './skill-outcome-recorder.mjs';
+import { assertFreshKnowledgeBinding } from './knowledge-admission-guard.mjs';
 import {
   appendJsonl,
   ensureControlLayout,
@@ -272,10 +273,13 @@ export async function processNextExternalWork({
         resolved_model: null,
         fallback_used: false,
         failure_state: 'ENGINEERING_KNOWLEDGE_BLOCKED',
-        reason: `VEKL mandatory approved skill unavailable for: ${(skillActivation.missing_mandatory_task_classes || []).join(', ')}`,
+        reason: `VEKL execution blocked: ${skillActivation.resolution_state}; missing mandatory classes: ${(skillActivation.missing_mandatory_task_classes || []).join(', ') || 'none'}`,
         skill_activation_id: skillActivation.activation_id,
       };
     } else {
+      if (skillActivation?.knowledge_context?.unit_lineage_id) {
+        assertFreshKnowledgeBinding({ repoDir, root, packetId: job.job_id, boundary: 'DISPATCH_ADMISSION' });
+      }
       result = await executor({
         repoDir,
         root,

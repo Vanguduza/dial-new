@@ -1,0 +1,59 @@
+{
+  "allowed_outcomes": [
+    "ACCEPT",
+    "DEFER",
+    "REJECT"
+  ],
+  "canon_delta_classes": [
+    "PROJECT_TRUTH_REVISION",
+    "DECISION_ADD",
+    "DECISION_SUPERSEDE",
+    "FEATURE_CONTRACT_REVISION",
+    "FRC_REVISION",
+    "SECURITY_AUTHORITY_REVISION",
+    "DESIGN_AUTHORITY_REVISION"
+  ],
+  "classes": [
+    "SECURITY_CHALLENGE",
+    "COMPATIBILITY_CHALLENGE",
+    "ARCHITECTURE_CHALLENGE",
+    "PRODUCT_EXPERIENCE_CHALLENGE",
+    "REGULATORY_CHALLENGE",
+    "PERFORMANCE_CHALLENGE",
+    "OPERABILITY_CHALLENGE",
+    "COST_CHALLENGE",
+    "OPPORTUNITY_CHALLENGE"
+  ],
+  "community_alone_max_severity": "INFO",
+  "critical_allowed_reasons": [
+    "safety",
+    "security",
+    "legal",
+    "financial",
+    "privacy",
+    "data_loss",
+    "production_integrity"
+  ],
+  "forbidden_delta_classes": [
+    "DECISION_EDIT"
+  ],
+  "owner_decision_class": "DIAL_CANON_CHALLENGE_DECISION",
+  "policy_version": "1.0.0",
+  "prefilter_required": [
+    "provenance_valid",
+    "admitted_source",
+    "minimum_source_trust_met",
+    "fresh_enough_for_claim",
+    "affected_truth_refs_present",
+    "contradiction_specific",
+    "materiality_threshold_met"
+  ],
+  "schema_version": 1,
+  "severities": [
+    "INFO",
+    "MATERIAL",
+    "HIGH",
+    "CRITICAL"
+  ],
+  "standing_or_batch_approval_forbidden": true
+}

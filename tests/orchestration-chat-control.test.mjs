@@ -64,6 +64,18 @@ describe('DIAL Claude chat control surface', () => {
     expect(processed.state).toBe('COMPLETED');
   });
 
+  it('persists owner instruction provenance without converting read-only work into authority', async () => {
+    const repo = makeRepo(), root = temp('dial-chat-control');
+    ensureProjectRegistry(root, { dialRepoDir: repo });
+    ensureDialMission({ root, repoDir: repo });
+    const readOnly = await callChatControlTool('dial_submit_instruction', { instruction: 'Audit the current state and report back.', request_id: 'req-authority-read-0001' }, root, { channel: 'codex', actor: 'owner', transport: 'test' });
+    expect(readOnly.metadata.owner_instruction_provenance.authority).toBe('NO_AUTHORITY');
+    expect(missionStatus(root).owner_authority_roots).toHaveLength(0);
+    const derived = await callChatControlTool('dial_submit_instruction', { instruction: 'Fix the remaining blockers using your recommended solution.', request_id: 'req-authority-fix-0001' }, root, { channel: 'codex', actor: 'owner', transport: 'test' });
+    expect(derived.metadata.owner_instruction_provenance.authority).toBe('OWNER_DERIVED');
+    expect(missionStatus(root).owner_authority_roots.at(-1).authority).toBe('OWNER_DERIVED');
+  });
+
   it('mission controller dispatches a fresh manager packet only when the mission is running and idle', () => {
     const repo = makeRepo(), root = temp('dial-chat-control');
     ensureProjectRegistry(root, { dialRepoDir: repo });

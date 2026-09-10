@@ -83,11 +83,12 @@ function latestCacheFor(resourceId, root){
   const index = readJson('knowledge/research/cache-index.json', { resources:{} }, root);
   return index?.resources?.[resourceId] || null;
 }
-function selectionRole(resource){
-  const role=resource.selection_role || ROLE_BY_CLASS[resource.resource_class] || 'REFERENCE';
+function selectionRole(resource,hint={}){
+  const role=hint.selection_role || resource.selection_role || ROLE_BY_CLASS[resource.resource_class] || 'REFERENCE';
   return ENGINEERING_RESOURCE_ROLES.has(role) ? role : 'REFERENCE';
 }
-function selectionPurpose(resource, taskClasses){
+function selectionPurpose(resource, taskClasses, hint={}){
+  if (hint.selection_purpose) return normalizePurpose(hint.selection_purpose);
   if (resource.selection_purpose) return normalizePurpose(resource.selection_purpose);
   if ((resource.technologies || []).length) return normalizePurpose(resource.technologies[0]);
   const exact=(resource.task_classes || []).filter((x)=>x!=='*' && taskClasses.includes(x)).sort()[0];
@@ -104,7 +105,7 @@ export function engineeringResourceRegistryFingerprint(resource, source){
     source_trust:source?.trust_tier || null,source_kind:source?.source_kind || null,
   })));
 }
-function hardEligibility({resource,source,taskClasses,text,availableTools}) {
+export function evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools=[]}) {
   if (!source) return {eligible:false,reason:'SOURCE_NOT_ADMITTED'};
   if (!(source.resource_classes || []).includes(resource.resource_class)) return {eligible:false,reason:'SOURCE_CLASS_NOT_ADMITTED'};
   if (!stateAllowed(resource)) return {eligible:false,reason:`NOT_ACTIVATABLE:${resource.status}`};
@@ -156,25 +157,27 @@ export function deterministicMinimalCoalition(candidates,maxResources=8) {
  * 4) complementary roles/purposes survive together until the explicit context budget applies;
  * 5) input order never changes the selected identities.
  */
-export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instruction='', affectedPaths=[], featureRecord=null, maxResources=8, availableTools=[] }={}) {
+export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instruction='', affectedPaths=[], featureRecord=null, maxResources=8, availableTools=[], eligibleResourceIds=null, resourceBindingHints={} }={}) {
   const resources = loadAllEngineeringResources(repoDir);
   const sources = new Map(loadEngineeringResourceSources(repoDir).map((s)=>[s.source_id,s]));
   const taskClasses = classifyEngineeringResourcesTask({ instruction, affectedPaths, featureRecord });
   const text = [instruction, ...(affectedPaths || []), featureRecord ? JSON.stringify(featureRecord) : ''].join('\n');
-  const candidates=[]; const rejected=[];
+  const candidates=[]; const rejected=[]; const eligibleSet=Array.isArray(eligibleResourceIds)?new Set(eligibleResourceIds):null;
   for (const resource of resources) {
     // Skills have one owner: resolveEngineeringSkills(). Keeping them out of this
     // generic resource pass prevents duplicate activation and split provenance.
     if (resource.resource_class === 'SKILL') continue;
+    if (eligibleSet && !eligibleSet.has(resource.resource_id)) { rejected.push({resource_id:resource.resource_id,reason:'OUTSIDE_GRAPH_NEIGHBOURHOOD'}); continue; }
     const source=sources.get(resource.source_id);
-    const eligibility=hardEligibility({resource,source,taskClasses,text,availableTools});
+    const eligibility=evaluateEngineeringResourceHardEligibility({resource,source,taskClasses,text,availableTools});
     if (!eligibility.eligible) {
       if (eligibility.reason !== 'NOT_RELEVANT' && eligibility.reason !== 'COMMUNITY_NOT_TASK_SPECIFIC') rejected.push({resource_id:resource.resource_id,reason:eligibility.reason});
       continue;
     }
     const cache=latestCacheFor(resource.resource_id, root);
-    const role=selectionRole(resource);
-    const purpose=selectionPurpose(resource,taskClasses);
+    const hint=resourceBindingHints?.[resource.resource_id] || {};
+    const role=selectionRole(resource,hint);
+    const purpose=selectionPurpose(resource,taskClasses,hint);
     const score = (eligibility.alwaysBind?.25:0) + (eligibility.task?.45:0) + (eligibility.lexical?.2:0) + trustWeight(source)*.15 + (cache?.fresh===true?.08:0) - (eligibility.community?.08:0);
     const mandatory=eligibility.alwaysBind;
     candidates.push({resource,source,cache,role,purpose,mandatory,score,eligibility});
@@ -191,13 +194,13 @@ export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instru
     corroboration_required:resource.authority==='COMMUNITY_SIGNAL_ONLY',selection_score:Number(score.toFixed(4)),
     selection_role:role,selection_purpose:purpose,mandatory,
     selection_reason: mandatory ? 'MANDATORY_EXPLICIT_POLICY_BINDING' : `WINNER:${purpose}:${role}`,
-    context_delivery: role==='AUTHORITY' && eligibility.lexical ? 'EAGER_EXCERPT' : 'DESCRIPTOR_ONLY',
+    context_delivery: (resourceBindingHints?.[resource.resource_id]?.context_delivery) || (role==='AUTHORITY' && eligibility.lexical ? 'EAGER_EXCERPT' : 'DESCRIPTOR_ONLY'),
     registry_fingerprint:engineeringResourceRegistryFingerprint(resource,source),
   }));
   return {
     policy_version:'vekl-2.1',resolver_version:'purpose-role-minimal-coalition-v1',task_classes:taskClasses,
-    selected_resources:selected,rejected,
+    selected_resources:selected,rejected,ranked_candidates:candidates.map((c)=>({resource_id:c.resource.resource_id,score:Number(c.score.toFixed(4)),selection_role:c.role,selection_purpose:c.purpose,mandatory:c.mandatory})).sort((a,b)=>b.score-a.score||a.resource_id.localeCompare(b.resource_id)),
     authority:'NON_AUTHORITATIVE_ENGINEERING_KNOWLEDGE_EXCEPT_PROJECT_LOCAL_POLICY',
-    invariants:{hard_eligibility_before_ranking:true,skill_single_selection_owner:true,competition_key:['selection_purpose','selection_role'],input_order_independent:true,context_size_is_not_quality_score:true},
+    invariants:{hard_eligibility_before_ranking:true,graph_neighbourhood_before_ranking:Boolean(eligibleSet),skill_single_selection_owner:true,selection_role_and_purpose_are_contextual:true,competition_key:['selection_purpose','selection_role'],input_order_independent:true,context_size_is_not_quality_score:true},
   };
 }
