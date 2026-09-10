@@ -7,6 +7,11 @@ import { describe, expect, it } from 'vitest';
 function temp(name) { return mkdtempSync(path.join(tmpdir(), `${name}-`)); }
 
 describe('project-isolated Codex app-server process ownership', () => {
+  it('forces a live Codex probe before attempting the SIGKILL soak', () => {
+    const soak = execFileSync('bash', ['-c', "cat deploy/oracle/hermes-codex/soak-control-plane.sh"], { encoding: 'utf8' });
+    expect(soak).toMatch(/codex-app-server-probe\.mjs --force-live >\"\$probe_out\"/);
+  });
+
   it('finds a nested probe descendant and ignores an unrelated matching process', async () => {
     if (!existsSync(`/proc/${process.pid}/task/${process.pid}/children`)) return;
     const helper = path.resolve('deploy/oracle/hermes-codex/process-tree.sh');

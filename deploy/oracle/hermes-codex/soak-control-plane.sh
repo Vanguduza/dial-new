@@ -88,7 +88,7 @@ process_soak(){
   pass "fresh runtime identity proves Sol preferred before project-isolated process-death soak"
 
   local probe_out="$EVIDENCE_DIR/codex-kill-probe-$(stamp).json"
-  node agent-system/orchestration/codex-app-server-probe.mjs >"$probe_out" 2>"$probe_out.err" &
+  node agent-system/orchestration/codex-app-server-probe.mjs --force-live >"$probe_out" 2>"$probe_out.err" &
   codex_probe_pid=$!
   killed_codex_pid=""
   local deadline=$((SECONDS + 20))
