@@ -892,5 +892,83 @@
     "executable_content_allowed": false,
     "freshness_ttl_hours": 72,
     "notes": "Marketplace discovery only. Each installed plugin/MCP/software component remains a separate donor and qualification unit."
+  },
+  {
+    "source_id": "official.n8n",
+    "name": "n8n official documentation, repository and security sources",
+    "trust_tier": "T1_OFFICIAL",
+    "source_kind": "OFFICIAL_DOCS_REPO",
+    "domains": [
+      "docs.n8n.io",
+      "n8n.io",
+      "github.com"
+    ],
+    "repositories": [
+      "n8n-io/n8n"
+    ],
+    "retrieval_adapters": [
+      "HTTPS_READ_ONLY",
+      "GITHUB_PUBLIC"
+    ],
+    "resource_classes": [
+      "OFFICIAL_DOC",
+      "REPOSITORY",
+      "RELEASE_NOTES",
+      "SECURITY_ADVISORY",
+      "ISSUE_DISCUSSION"
+    ],
+    "task_classes": [
+      "WEBHOOK_SECURITY",
+      "RELIABILITY",
+      "MESSAGING",
+      "SECURITY",
+      "EXTERNAL_RESEARCH"
+    ],
+    "sensitive_data_allowed": false,
+    "executable_content_allowed": false,
+    "freshness_ttl_hours": 24,
+    "notes": "Authoritative external source family for current n8n platform/API/runtime/security facts. Does not override DIAL Project Truth or Technical Cohesion.",
+    "license": {
+      "follow_upstream_component_terms": true
+    }
+  },
+  {
+    "source_id": "community.zie619.n8n_workflows",
+    "name": "Zie619 n8n workflow corpus",
+    "trust_tier": "T3_COMMUNITY_CORROBORATION",
+    "source_kind": "COMMUNITY_REPOSITORY",
+    "domains": [
+      "github.com"
+    ],
+    "repositories": [
+      "Zie619/n8n-workflows"
+    ],
+    "retrieval_adapters": [
+      "GITHUB_PUBLIC"
+    ],
+    "resource_classes": [
+      "REPOSITORY",
+      "EXAMPLE_REFERENCE"
+    ],
+    "task_classes": [
+      "WEBHOOK_SECURITY",
+      "RELIABILITY",
+      "MESSAGING",
+      "SECURITY",
+      "EXTERNAL_RESEARCH"
+    ],
+    "sensitive_data_allowed": false,
+    "executable_content_allowed": false,
+    "freshness_ttl_hours": 168,
+    "production_pin": "94007c1445d9258a7da116646b79473e7c7c3282",
+    "refresh_semantics": "CHECK_FOR_NEW_GENERATION_ONLY",
+    "automatic_invalidation_on_ttl": false,
+    "raw_workflow_persistence": "EPHEMERAL_QUARANTINE_ONLY",
+    "notes": "Exact-pinned community corpus. Reference/pattern evidence only. Raw workflow execution, credential reuse, automatic node install, MCP connection and production import are prohibited.",
+    "license": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    }
   }
 ]

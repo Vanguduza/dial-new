@@ -661,5 +661,28 @@
       "agent-system/hooks/pre-tool-guard.mjs"
     ],
     "reopens_if": "the product owner explicitly supersedes this adaptive execution model with an equal-or-stronger mechanism preserving VEKL authority, manager isolation, stale refusal, write fencing, provider non-authority and evidence-accounted admission"
+  },
+  {
+    "decision_id": "DEC-029",
+    "decided_on": "2026-09-10",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / VEKL / EXTERNAL AUTOMATION KNOWLEDGE",
+    "title": "VEKL may use an exact-pinned sanitized Zie619 n8n workflow corpus as non-executable engineering reference knowledge",
+    "decision": "Adopt the reconciled VEKL x Zie619/n8n-workflows Corpus Integration Rev 2. The exact-pinned community corpus is ingested only through ephemeral quarantine and deterministic sanitization/security analysis, compressed into bounded positive/anti-pattern EXAMPLE_REFERENCE resources, and resolved only through the existing graph-first VEKL minimal-coalition, Activation Manifest, KnowledgeResolutionTrace, worker-delivery and AEF envelope path. official.n8n remains a distinct T1 official source. Unknown n8n/node compatibility is fail-closed and never represented as runtime-compatible.",
+    "consequence": "No raw workflow execution, raw searchable corpus, new graph ontology, synthetic task taxonomy, second automation database, second VEKL, second Hermes plane or runtime-owner override is created. Temporal/BullMQ/n8n/domain-service ownership, official WhatsApp authority, money authority, manager-runtime policy and specialist Dial Health boundaries remain unchanged. Generic Zie619 community patterns are blocked for specialist Health Units. Corpus refreshes are candidate generations until explicitly promoted.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_ZIE619_N8N_WORKFLOW_CORPUS_REV2_CANONICAL.md",
+    "enforced_by": [
+      "agent-system/orchestration/n8n-corpus-ingest.mjs",
+      "agent-system/orchestration/n8n-workflow-sanitizer.mjs",
+      "agent-system/orchestration/n8n-workflow-analyzer.mjs",
+      "agent-system/orchestration/n8n-pattern-extractor.mjs",
+      "agent-system/orchestration/n8n-corpus-promote.mjs",
+      "agent-system/orchestration/n8n-corpus-check.mjs",
+      "agent-system/orchestration/engineering-resource-resolver.mjs",
+      "agent-system/orchestration/graph-retrieval-router.mjs",
+      "tests/orchestration-vekl-n8n-corpus.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly supersedes the external automation-knowledge model while preserving Project Truth superiority, non-execution, deterministic provenance, hard eligibility, runtime ownership, privacy/security and stale-context refusal"
   }
 ]

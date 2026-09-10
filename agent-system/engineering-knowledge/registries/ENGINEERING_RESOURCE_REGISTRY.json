@@ -992,5 +992,5148 @@
       "REPLACE_LANGFUSE_PROMPTFOO",
       "REPLACE_OPENTELEMETRY_OBSERVABILITY"
     ]
+  },
+  {
+    "resource_id": "ref.n8n.docs",
+    "name": "n8n official documentation",
+    "source_id": "official.n8n",
+    "resource_class": "OFFICIAL_DOC",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://docs.n8n.io/",
+    "task_classes": [
+      "WEBHOOK_SECURITY",
+      "RELIABILITY",
+      "MESSAGING",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "workflow automation",
+      "webhook",
+      "credentials",
+      "retry",
+      "error workflow"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "BIND_PRODUCTION_CREDENTIAL"
+    ],
+    "requires_tools": [],
+    "seed_urls": [
+      "https://docs.n8n.io/"
+    ],
+    "selection_role": "AUTHORITY",
+    "selection_purpose": "N8N_PLATFORM_FACTS"
+  },
+  {
+    "resource_id": "ref.n8n.repository",
+    "name": "n8n official repository",
+    "source_id": "official.n8n",
+    "resource_class": "REPOSITORY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://github.com/n8n-io/n8n",
+    "repository": "n8n-io/n8n",
+    "task_classes": [
+      "DEPENDENCY_RESEARCH",
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "workflow node",
+      "node version",
+      "n8n source"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "BIND_PRODUCTION_CREDENTIAL"
+    ],
+    "requires_tools": [],
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_IMPLEMENTATION_REFERENCE"
+  },
+  {
+    "resource_id": "ref.n8n.security",
+    "name": "n8n official security guidance and advisories",
+    "source_id": "official.n8n",
+    "resource_class": "SECURITY_ADVISORY",
+    "authority": "ENGINEERING_GUIDANCE_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "REFERENCE_ONLY",
+    "locator": "https://github.com/n8n-io/n8n/security",
+    "repository": "n8n-io/n8n",
+    "task_classes": [
+      "WEBHOOK_SECURITY",
+      "SECURITY",
+      "DEPENDENCY_SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n security",
+      "credential",
+      "webhook security",
+      "n8n vulnerability"
+    ],
+    "forbidden_effects": [
+      "CREATE_SECOND_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "BIND_PRODUCTION_CREDENTIAL"
+    ],
+    "requires_tools": [],
+    "selection_role": "AUTHORITY",
+    "selection_purpose": "N8N_SECURITY_FACTS"
+  },
+  {
+    "resource_id": "community.zie619.n8n_workflows.corpus",
+    "name": "Zie619 n8n workflow pattern corpus",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "REPOSITORY",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "https://github.com/Zie619/n8n-workflows/tree/94007c1445d9258a7da116646b79473e7c7c3282",
+    "repository": "Zie619/n8n-workflows",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n workflow",
+      "workflow automation",
+      "automation example",
+      "webhook workflow",
+      "approval workflow",
+      "retry workflow"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "AUTO_INSTALL_COMMUNITY_NODE",
+      "AUTO_CONNECT_MCP",
+      "DIRECT_PRODUCTION_IMPORT",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "5e5931990a13d88f0d36717b3e52b2e71343b829f67c0d9fbdaef5f9a4ba5238",
+    "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+    "raw_workflow_persisted": false,
+    "runtime_compatible": false,
+    "compatibility_state": "UNKNOWN_SOURCE_N8N_VERSION",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_CORPUS_DISCOVERY",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.0697eb7a90b70626fe8104f8fab6721f",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-0697eb7a90b70626fe8104f8fab6721f:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "c02db6f5ce3d7eeb15d3d636f05630fd438cf6be8db15c2134278e5a4cf95d49",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-0697eb7a90b70626fe8104f8fab6721f",
+      "pattern_revision_hash": "c02db6f5ce3d7eeb15d3d636f05630fd438cf6be8db15c2134278e5a4cf95d49",
+      "source_support_hash": "1e159dbc399516a5ec2a75e8fc192d111ad8a5724dc4d72cdbd8560fb525d40f"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-0697eb7a90b70626fe8104f8fab6721f",
+      "pattern_revision_hash": "c02db6f5ce3d7eeb15d3d636f05630fd438cf6be8db15c2134278e5a4cf95d49",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.0a277145e3985c40e9d6fa13023e1d6e",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-0a277145e3985c40e9d6fa13023e1d6e:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "retry escalation",
+      "route",
+      "wait",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "58f8273b9e4673169433e8d2af0519e23b5e1ff27e41ddb9b29d0e047644f46f",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-0a277145e3985c40e9d6fa13023e1d6e",
+      "pattern_revision_hash": "58f8273b9e4673169433e8d2af0519e23b5e1ff27e41ddb9b29d0e047644f46f",
+      "source_support_hash": "579a7ab04b4549f927ed75d6c22be7da31bf4d20377450ebf7840bb21266ba4e"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-0a277145e3985c40e9d6fa13023e1d6e",
+      "pattern_revision_hash": "58f8273b9e4673169433e8d2af0519e23b5e1ff27e41ddb9b29d0e047644f46f",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY",
+        "ROUTE",
+        "WAIT"
+      ],
+      "required_controls": [
+        "BOUNDED_WAIT",
+        "DESTINATION_ALLOWLIST",
+        "EXPIRY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.0f255ddbe4494fc480ea69cb214a0962",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-0f255ddbe4494fc480ea69cb214a0962:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "77faca79aaf60ee72f63e4041f4e262daef230087c1aaf45d63b37fb6814c0d1",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-0f255ddbe4494fc480ea69cb214a0962",
+      "pattern_revision_hash": "77faca79aaf60ee72f63e4041f4e262daef230087c1aaf45d63b37fb6814c0d1",
+      "source_support_hash": "e9e225a66e868e5d8d07ab89ef7c01b80502ad30cbc077e2cd45a2d207fbe031"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-0f255ddbe4494fc480ea69cb214a0962",
+      "pattern_revision_hash": "77faca79aaf60ee72f63e4041f4e262daef230087c1aaf45d63b37fb6814c0d1",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.0f83781d2edf37ae5d4ba676f1740ff7",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-0f83781d2edf37ae5d4ba676f1740ff7:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "human input",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "88d27f9941ce4774181ec5daccb57bbea877311c083872114d3312cb4664b86d",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-0f83781d2edf37ae5d4ba676f1740ff7",
+      "pattern_revision_hash": "88d27f9941ce4774181ec5daccb57bbea877311c083872114d3312cb4664b86d",
+      "source_support_hash": "a6fda9d2dc0bb9c04f53220fdf25fb55370989ffe70924e89616fe27c3f8f77e"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-0f83781d2edf37ae5d4ba676f1740ff7",
+      "pattern_revision_hash": "88d27f9941ce4774181ec5daccb57bbea877311c083872114d3312cb4664b86d",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "HUMAN_INPUT"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "INPUT_VALIDATION"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.1032d92c7e4cf9bde9b595709b6a50ea",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-1032d92c7e4cf9bde9b595709b6a50ea:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "manual trigger",
+      "merge",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "1493de6d373538ea6725f72da5a7213d0e12b90b40863584e5cb3b534b21394b",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-1032d92c7e4cf9bde9b595709b6a50ea",
+      "pattern_revision_hash": "1493de6d373538ea6725f72da5a7213d0e12b90b40863584e5cb3b534b21394b",
+      "source_support_hash": "0147bc80199eaee62e24643e4fb3cb47a61eef2df54eb5b6d5edadd1b2c6e015"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-1032d92c7e4cf9bde9b595709b6a50ea",
+      "pattern_revision_hash": "1493de6d373538ea6725f72da5a7213d0e12b90b40863584e5cb3b534b21394b",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER",
+        "MERGE",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "INFO",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.1c44eb9b7b1ce398e824aee5d1235969",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-1c44eb9b7b1ce398e824aee5d1235969:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "general automation",
+      "merge",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "587348c0bfcdb2d2ef2c05883bb70775c9ab2fecf20d91377b05ec30a436f9d7",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-1c44eb9b7b1ce398e824aee5d1235969",
+      "pattern_revision_hash": "587348c0bfcdb2d2ef2c05883bb70775c9ab2fecf20d91377b05ec30a436f9d7",
+      "source_support_hash": "7c072ff416db697b11fc72c3089fad315072538151dcfb2d102e169c9bcd9b38"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-1c44eb9b7b1ce398e824aee5d1235969",
+      "pattern_revision_hash": "587348c0bfcdb2d2ef2c05883bb70775c9ab2fecf20d91377b05ec30a436f9d7",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MERGE"
+      ],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.246dedbf7b74df4254e7d244a74ca3d0",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-246dedbf7b74df4254e7d244a74ca3d0:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "manual trigger",
+      "merge",
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "0043c44b42d669b02dcd3de92857d82bf26efb1a7de0d23153f668de2682f080",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-246dedbf7b74df4254e7d244a74ca3d0",
+      "pattern_revision_hash": "0043c44b42d669b02dcd3de92857d82bf26efb1a7de0d23153f668de2682f080",
+      "source_support_hash": "b85d215593f1c83c480dfac596822f026bc245179c39b593ba9c8a1787ef47f2"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-246dedbf7b74df4254e7d244a74ca3d0",
+      "pattern_revision_hash": "0043c44b42d669b02dcd3de92857d82bf26efb1a7de0d23153f668de2682f080",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER",
+        "MERGE",
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.28406f42ad201ff7e3153b9844c53588",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-28406f42ad201ff7e3153b9844c53588:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "human input",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "cc96194f2a9f70b8c1a00c7084f775519c2012d92b8b222dbd088d9fd1e1042a",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-28406f42ad201ff7e3153b9844c53588",
+      "pattern_revision_hash": "cc96194f2a9f70b8c1a00c7084f775519c2012d92b8b222dbd088d9fd1e1042a",
+      "source_support_hash": "454895f90d66cc6dd93e04ec0f906d878356701b2b56285d1a88606be477a411"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-28406f42ad201ff7e3153b9844c53588",
+      "pattern_revision_hash": "cc96194f2a9f70b8c1a00c7084f775519c2012d92b8b222dbd088d9fd1e1042a",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "HUMAN_INPUT"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "INPUT_VALIDATION"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 9,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.2d6e1b9edd6a37f1c620275f85c9d98e",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-2d6e1b9edd6a37f1c620275f85c9d98e:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "merge",
+      "n8n",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "082b90d1f9ad2a414f67080f80880682d2786d6108298790910911f7e8288b82",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-2d6e1b9edd6a37f1c620275f85c9d98e",
+      "pattern_revision_hash": "082b90d1f9ad2a414f67080f80880682d2786d6108298790910911f7e8288b82",
+      "source_support_hash": "49558502208715cd31ae979ab186aa7d07cddc526aa46a3244b64f89dd018f54"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-2d6e1b9edd6a37f1c620275f85c9d98e",
+      "pattern_revision_hash": "082b90d1f9ad2a414f67080f80880682d2786d6108298790910911f7e8288b82",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MERGE",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.2ff82e49fcf5e70a58828062c32275a0",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-2ff82e49fcf5e70a58828062c32275a0:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "manual trigger",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "e5cf59d2c422993514774ef305e87bb1f5800d97d903cc013351bbbeb97b1f59",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-2ff82e49fcf5e70a58828062c32275a0",
+      "pattern_revision_hash": "e5cf59d2c422993514774ef305e87bb1f5800d97d903cc013351bbbeb97b1f59",
+      "source_support_hash": "dcc56e4b21c28238431c599c9b4e5ea4963648d07a9dcd47b5f93b1d27e8d557"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-2ff82e49fcf5e70a58828062c32275a0",
+      "pattern_revision_hash": "e5cf59d2c422993514774ef305e87bb1f5800d97d903cc013351bbbeb97b1f59",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 7,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.31729d2bc0f51ebebe262adde8acc3e2.antipattern",
+    "name": "Zie619 integration sync anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-31729d2bc0f51ebebe262adde8acc3e2:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "code execution",
+      "http call",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "3e17407f948ab8a9e97f257591dfdbb7123e3a742336198e672f80a2c6e23540",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-31729d2bc0f51ebebe262adde8acc3e2",
+      "pattern_revision_hash": "3e17407f948ab8a9e97f257591dfdbb7123e3a742336198e672f80a2c6e23540",
+      "source_support_hash": "5bb6b7a4e30024b6076210bde614c720db387d8e906d178382a412391bee620a"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-31729d2bc0f51ebebe262adde8acc3e2",
+      "pattern_revision_hash": "3e17407f948ab8a9e97f257591dfdbb7123e3a742336198e672f80a2c6e23540",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CODE_EXECUTION",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 41,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.3303290b321847173fc9ef02184800ca.antipattern",
+    "name": "Zie619 retry escalation anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-3303290b321847173fc9ef02184800ca:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http call",
+      "manual trigger",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "c882a9238b246767b97f2dc4563ef8210609e8caa09e21a9c1a9e459f2cdae93",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-3303290b321847173fc9ef02184800ca",
+      "pattern_revision_hash": "c882a9238b246767b97f2dc4563ef8210609e8caa09e21a9c1a9e459f2cdae93",
+      "source_support_hash": "75ca326b7bb41c0404cd6ee2ad3e7d7c8dbf0cb98988f498757d2c89f676c08f"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-3303290b321847173fc9ef02184800ca",
+      "pattern_revision_hash": "c882a9238b246767b97f2dc4563ef8210609e8caa09e21a9c1a9e459f2cdae93",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "HTTP_CALL",
+        "MANUAL_TRIGGER",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 12,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.348e5f5d27ea309c47949968988ab1ec",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-348e5f5d27ea309c47949968988ab1ec:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "general automation",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "d5705278bff80d6d104d2c57c7f4a7bc1f18083bcef3a8556b7fd0b042ca8aae",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-348e5f5d27ea309c47949968988ab1ec",
+      "pattern_revision_hash": "d5705278bff80d6d104d2c57c7f4a7bc1f18083bcef3a8556b7fd0b042ca8aae",
+      "source_support_hash": "a4883b0abc6e2cdaf88f0e82527abc74a58d47285e0bac2e270658c54dcdfdb3"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-348e5f5d27ea309c47949968988ab1ec",
+      "pattern_revision_hash": "d5705278bff80d6d104d2c57c7f4a7bc1f18083bcef3a8556b7fd0b042ca8aae",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.38bd91692c4239d2cb6af5c4d0594a21",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "6944fd15679cde2a5981a57260dc30e3ed1307db41d0d9139e5b85478e340dc9",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21",
+      "pattern_revision_hash": "6944fd15679cde2a5981a57260dc30e3ed1307db41d0d9139e5b85478e340dc9",
+      "source_support_hash": "8ddb5d7199a46d83f15c39eaf0498a89ce8f3a41989a2073454cf9df4f6e79b6"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21",
+      "pattern_revision_hash": "6944fd15679cde2a5981a57260dc30e3ed1307db41d0d9139e5b85478e340dc9",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [],
+      "required_controls": [],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "INFO",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.38bd91692c4239d2cb6af5c4d0594a21.antipattern",
+    "name": "Zie619 general automation anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "26cc2e08e264f88ddb0f04c581bbb0183c8db6cfb9de9c0b912a67dd0801fbcf",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21",
+      "pattern_revision_hash": "26cc2e08e264f88ddb0f04c581bbb0183c8db6cfb9de9c0b912a67dd0801fbcf",
+      "source_support_hash": "f2d25b0f655d5d809c452ef39e1f13cdae26136f7fadab65d1b2f64dcb2f8781"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-38bd91692c4239d2cb6af5c4d0594a21",
+      "pattern_revision_hash": "26cc2e08e264f88ddb0f04c581bbb0183c8db6cfb9de9c0b912a67dd0801fbcf",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [],
+      "required_controls": [],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 22,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.39e26fbf85e4af79e573b1c5f3952a5b",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-39e26fbf85e4af79e573b1c5f3952a5b:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "database",
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "df3723967c1a69b7f42d8cef5ac9644dba329d4d465d2e3742c27f01850397aa",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-39e26fbf85e4af79e573b1c5f3952a5b",
+      "pattern_revision_hash": "df3723967c1a69b7f42d8cef5ac9644dba329d4d465d2e3742c27f01850397aa",
+      "source_support_hash": "03d3adefdac57e671cc1fc4b09fa57f43f1878fc88c6fc8f331c9b18aa90aa74"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-39e26fbf85e4af79e573b1c5f3952a5b",
+      "pattern_revision_hash": "df3723967c1a69b7f42d8cef5ac9644dba329d4d465d2e3742c27f01850397aa",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "DATABASE",
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "OVERLAP_GUARD",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.40c23456fdd03485ec431314c66a89e7",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-40c23456fdd03485ec431314c66a89e7:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "d7416bce5849df0252cde4f06c878d306495137c1270a4a5130fe18fb7969772",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-40c23456fdd03485ec431314c66a89e7",
+      "pattern_revision_hash": "d7416bce5849df0252cde4f06c878d306495137c1270a4a5130fe18fb7969772",
+      "source_support_hash": "59384b2391933838caec75974a997a285411f2eb48dc4201d40228f5fe4218e4"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-40c23456fdd03485ec431314c66a89e7",
+      "pattern_revision_hash": "d7416bce5849df0252cde4f06c878d306495137c1270a4a5130fe18fb7969772",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 65,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.45613069fc960dc2aade515e356694c9",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-45613069fc960dc2aade515e356694c9:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "efba5b5ec8e8fd790b0ef63f93d234969543e900541a6af549bea9aa2a6a7b78",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-45613069fc960dc2aade515e356694c9",
+      "pattern_revision_hash": "efba5b5ec8e8fd790b0ef63f93d234969543e900541a6af549bea9aa2a6a7b78",
+      "source_support_hash": "fdfbe55cc884179d36262c6981ff6dd421ace7c952146c775fbc7e1c6f95bf4a"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-45613069fc960dc2aade515e356694c9",
+      "pattern_revision_hash": "efba5b5ec8e8fd790b0ef63f93d234969543e900541a6af549bea9aa2a6a7b78",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "MANUAL_TRIGGER",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "OVERLAP_GUARD",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.48853c639274e62584e1e6dec2cb9168",
+    "name": "Zie619 webhook intake pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-48853c639274e62584e1e6dec2cb9168:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "WEBHOOK_SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http receive",
+      "n8n",
+      "webhook intake",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "37d1e89695cabdd84e7f33a6689be3ca6b701816a4191222dc7533d84e603f3a",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_WEBHOOK_INTAKE",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-48853c639274e62584e1e6dec2cb9168",
+      "pattern_revision_hash": "37d1e89695cabdd84e7f33a6689be3ca6b701816a4191222dc7533d84e603f3a",
+      "source_support_hash": "de89e3d25739df3e362e37dd516a4e468b034bb88cbe2907b86cbd0fd0d10a8b"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-48853c639274e62584e1e6dec2cb9168",
+      "pattern_revision_hash": "37d1e89695cabdd84e7f33a6689be3ca6b701816a4191222dc7533d84e603f3a",
+      "archetype": "WEBHOOK_INTAKE",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "HTTP_RECEIVE"
+      ],
+      "required_controls": [
+        "AUTHENTICATED_WEBHOOK",
+        "IDEMPOTENCY",
+        "REPLAY_PROTECTION",
+        "SCHEMA_VALIDATION"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.48853c639274e62584e1e6dec2cb9168.antipattern",
+    "name": "Zie619 webhook intake anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-48853c639274e62584e1e6dec2cb9168:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY",
+      "WEBHOOK_SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http receive",
+      "n8n",
+      "webhook intake",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "852d6098d43cc244ea93573c8da9f6f4f4f421e3d186449fba2a41b5a96a3593",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_WEBHOOK_INTAKE",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-48853c639274e62584e1e6dec2cb9168",
+      "pattern_revision_hash": "852d6098d43cc244ea93573c8da9f6f4f4f421e3d186449fba2a41b5a96a3593",
+      "source_support_hash": "e9deeb183584b51df09da5d7f5b8c93a04029bcb05a0a5a1cad987e30c8921ed"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-48853c639274e62584e1e6dec2cb9168",
+      "pattern_revision_hash": "852d6098d43cc244ea93573c8da9f6f4f4f421e3d186449fba2a41b5a96a3593",
+      "archetype": "WEBHOOK_INTAKE",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "HTTP_RECEIVE"
+      ],
+      "required_controls": [
+        "AUTHENTICATED_WEBHOOK",
+        "IDEMPOTENCY",
+        "REPLAY_PROTECTION",
+        "SCHEMA_VALIDATION"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "HIGH",
+      "support_count": 14,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.4abd7c5e1b7d4fe8dd017b9145cf2ffe",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-4abd7c5e1b7d4fe8dd017b9145cf2ffe:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "http call",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "route",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "8e1cf50bb18b01c7459140847756a892a80d3e9feff918ce13421e12c239a957",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-4abd7c5e1b7d4fe8dd017b9145cf2ffe",
+      "pattern_revision_hash": "8e1cf50bb18b01c7459140847756a892a80d3e9feff918ce13421e12c239a957",
+      "source_support_hash": "118e67144da47b749326a376e9371a922eaef92f7755967284d9fdfb2d6cb271"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-4abd7c5e1b7d4fe8dd017b9145cf2ffe",
+      "pattern_revision_hash": "8e1cf50bb18b01c7459140847756a892a80d3e9feff918ce13421e12c239a957",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER",
+        "ROUTE"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.4e7d018acf34399cd4c22a41acd5adc9",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-4e7d018acf34399cd4c22a41acd5adc9:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "merge",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "19a9cf27e8ad07249de8a4f1979b57fb55ff5559ac6f8c5f127b3deb4c6ab16b",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-4e7d018acf34399cd4c22a41acd5adc9",
+      "pattern_revision_hash": "19a9cf27e8ad07249de8a4f1979b57fb55ff5559ac6f8c5f127b3deb4c6ab16b",
+      "source_support_hash": "45863901022944e93642af10a7c1dfbfa80e68dec0d28cb44b4043fe3c29cb3a"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-4e7d018acf34399cd4c22a41acd5adc9",
+      "pattern_revision_hash": "19a9cf27e8ad07249de8a4f1979b57fb55ff5559ac6f8c5f127b3deb4c6ab16b",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MERGE",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.4fea6c59f0288f68b96e5cc6968a9847",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-4fea6c59f0288f68b96e5cc6968a9847:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "merge",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "a8ec87610d02c4d514e0c7b78ce1f403971aee1546373de32baeff108f76df2a",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-4fea6c59f0288f68b96e5cc6968a9847",
+      "pattern_revision_hash": "a8ec87610d02c4d514e0c7b78ce1f403971aee1546373de32baeff108f76df2a",
+      "source_support_hash": "50bcba27956485fb9a372f239f3349fdd6e3feef363d16a4a0b319a539a65cea"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-4fea6c59f0288f68b96e5cc6968a9847",
+      "pattern_revision_hash": "a8ec87610d02c4d514e0c7b78ce1f403971aee1546373de32baeff108f76df2a",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MERGE",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.511cfe4f8ff3309a156647d7b30dbc73",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-511cfe4f8ff3309a156647d7b30dbc73:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "merge",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "route",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "1e043fa5d99342ad1ef82ed412e9f7dffd55e7de263c7e520314536bb7c562d3",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-511cfe4f8ff3309a156647d7b30dbc73",
+      "pattern_revision_hash": "1e043fa5d99342ad1ef82ed412e9f7dffd55e7de263c7e520314536bb7c562d3",
+      "source_support_hash": "bd565888a9bf86a7c80a415c7664c41ab18fc4961b4b5f9aea4c35eb30c58390"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-511cfe4f8ff3309a156647d7b30dbc73",
+      "pattern_revision_hash": "1e043fa5d99342ad1ef82ed412e9f7dffd55e7de263c7e520314536bb7c562d3",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MERGE",
+        "NOTIFY",
+        "ROUTE"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.6535e6d634c77e57d8f0c53d8f2efe09",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-6535e6d634c77e57d8f0c53d8f2efe09:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "24a6f69d5445c1942c187ea825ff85045e47e3079de31748cb85ac0feb15239a",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-6535e6d634c77e57d8f0c53d8f2efe09",
+      "pattern_revision_hash": "24a6f69d5445c1942c187ea825ff85045e47e3079de31748cb85ac0feb15239a",
+      "source_support_hash": "49f263c9d96b1cf9bb6a432ddc24ad76fb01c1253aefe90335e029fc6dd545c1"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-6535e6d634c77e57d8f0c53d8f2efe09",
+      "pattern_revision_hash": "24a6f69d5445c1942c187ea825ff85045e47e3079de31748cb85ac0feb15239a",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 10,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.6df6177f4fdb72e7c4672232979056ba",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-6df6177f4fdb72e7c4672232979056ba:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "3ab0b1554c6878f3742c9c5971996d7c85ca9111e8fa8c8ca4c02cbaafb24558",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-6df6177f4fdb72e7c4672232979056ba",
+      "pattern_revision_hash": "3ab0b1554c6878f3742c9c5971996d7c85ca9111e8fa8c8ca4c02cbaafb24558",
+      "source_support_hash": "698e8aa7cdf05e604770d2f135ff43d9b9100bc2a6d2f36b26ad428804efccc4"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-6df6177f4fdb72e7c4672232979056ba",
+      "pattern_revision_hash": "3ab0b1554c6878f3742c9c5971996d7c85ca9111e8fa8c8ca4c02cbaafb24558",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 4,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.6f02b216b0c103af20b141a7f523c817",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-6f02b216b0c103af20b141a7f523c817:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "general automation",
+      "human input",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "a3209d2bfc7393ab8c7090c54764d1137dcfac2c6eca3927c485b3de9cb1e50d",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-6f02b216b0c103af20b141a7f523c817",
+      "pattern_revision_hash": "a3209d2bfc7393ab8c7090c54764d1137dcfac2c6eca3927c485b3de9cb1e50d",
+      "source_support_hash": "c078af5959424a32f570ea982f29bc8edd4f29cf4229f394b348855d6e786ffa"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-6f02b216b0c103af20b141a7f523c817",
+      "pattern_revision_hash": "a3209d2bfc7393ab8c7090c54764d1137dcfac2c6eca3927c485b3de9cb1e50d",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HUMAN_INPUT"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "INPUT_VALIDATION"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 11,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.6f5fba90850252e0c764e257a4a8be6f.antipattern",
+    "name": "Zie619 human approval anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-6f5fba90850252e0c764e257a4a8be6f:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "code execution",
+      "http call",
+      "human approval",
+      "human input",
+      "n8n",
+      "wait",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "6c40d327dca0a5927c2842f3551cbbd3c41a62bc33f7f0bc4ce513faf70ac0f4",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_HUMAN_APPROVAL",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-6f5fba90850252e0c764e257a4a8be6f",
+      "pattern_revision_hash": "6c40d327dca0a5927c2842f3551cbbd3c41a62bc33f7f0bc4ce513faf70ac0f4",
+      "source_support_hash": "cb2abff195c5fa0602cabfdfd1fb01489b087ff9b3519a127ec2f1083a618dff"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-6f5fba90850252e0c764e257a4a8be6f",
+      "pattern_revision_hash": "6c40d327dca0a5927c2842f3551cbbd3c41a62bc33f7f0bc4ce513faf70ac0f4",
+      "archetype": "HUMAN_APPROVAL",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CODE_EXECUTION",
+        "HTTP_CALL",
+        "HUMAN_INPUT",
+        "WAIT"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "BOUNDED_WAIT",
+        "EGRESS_ALLOWLIST",
+        "EXPIRY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "INPUT_VALIDATION",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7691231387dda05e7a88b78eca747548",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7691231387dda05e7a88b78eca747548:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "n8n",
+      "route",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "eaf2c10b4890fb118f97cbd24fc4270f1ac2cbe667d532922e589812a5918361",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7691231387dda05e7a88b78eca747548",
+      "pattern_revision_hash": "eaf2c10b4890fb118f97cbd24fc4270f1ac2cbe667d532922e589812a5918361",
+      "source_support_hash": "b220cde01f54da398756f54c04fcd5357561390f4bc04293c5fdadc003e13d1f"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7691231387dda05e7a88b78eca747548",
+      "pattern_revision_hash": "eaf2c10b4890fb118f97cbd24fc4270f1ac2cbe667d532922e589812a5918361",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "ROUTE",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "OVERLAP_GUARD",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "INFO",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.77aa0d59b8a436152d3831aba18215d7",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-77aa0d59b8a436152d3831aba18215d7:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "merge",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "d2fe032eec5d44a08e88e0575ce742cd2a7fc7887a18f4300a9631c0277f1575",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-77aa0d59b8a436152d3831aba18215d7",
+      "pattern_revision_hash": "d2fe032eec5d44a08e88e0575ce742cd2a7fc7887a18f4300a9631c0277f1575",
+      "source_support_hash": "cd2e843b2902581d5bc7922dc3201cf921b02427343cad3e95157f34929841be"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-77aa0d59b8a436152d3831aba18215d7",
+      "pattern_revision_hash": "d2fe032eec5d44a08e88e0575ce742cd2a7fc7887a18f4300a9631c0277f1575",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MERGE",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.78d846eee89fd7f58086657576293837",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-78d846eee89fd7f58086657576293837:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "n8n",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "19bece944c989e3bd9ffc77018563336abb9259141b9f1f99aaae73e051193e5",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-78d846eee89fd7f58086657576293837",
+      "pattern_revision_hash": "19bece944c989e3bd9ffc77018563336abb9259141b9f1f99aaae73e051193e5",
+      "source_support_hash": "2e9c73277f722e6f68b8ea55096275229ac10d210c9f0bb6872cacfb0ade202d"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-78d846eee89fd7f58086657576293837",
+      "pattern_revision_hash": "19bece944c989e3bd9ffc77018563336abb9259141b9f1f99aaae73e051193e5",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 7,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7952e19c84b47b03bb8de542380494db",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7952e19c84b47b03bb8de542380494db:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "n8n",
+      "route",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "04269e31fb40bd09e4dff7f06d61ba96cff5ab604c84726f714a8caa72f1df01",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7952e19c84b47b03bb8de542380494db",
+      "pattern_revision_hash": "04269e31fb40bd09e4dff7f06d61ba96cff5ab604c84726f714a8caa72f1df01",
+      "source_support_hash": "6b29e6533f86213242ac3319e1d8c9396f3f47115befb7a5f6824663d86d9386"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7952e19c84b47b03bb8de542380494db",
+      "pattern_revision_hash": "04269e31fb40bd09e4dff7f06d61ba96cff5ab604c84726f714a8caa72f1df01",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "ROUTE"
+      ],
+      "required_controls": [
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7c27e26cbb557bd4b86714df5af7b6c7",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "2239ca4892f1ed1e35157050a561846f331cf3fca1b0f38b0048792cd3b53e57",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7",
+      "pattern_revision_hash": "2239ca4892f1ed1e35157050a561846f331cf3fca1b0f38b0048792cd3b53e57",
+      "source_support_hash": "c87dc96935f401cab6e65dac4b264b225dbdc364a358ba43c7f4db3f74cdc1c9"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7",
+      "pattern_revision_hash": "2239ca4892f1ed1e35157050a561846f331cf3fca1b0f38b0048792cd3b53e57",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 44,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7c27e26cbb557bd4b86714df5af7b6c7.antipattern",
+    "name": "Zie619 general automation anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "4c2d530c8d98bd493af0764fd13ed01795f42b7a24a99ea0afabe49d842a1d0f",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7",
+      "pattern_revision_hash": "4c2d530c8d98bd493af0764fd13ed01795f42b7a24a99ea0afabe49d842a1d0f",
+      "source_support_hash": "693ceb86fac63343bce067df1f64fe785a40dcf04d4222dcfdc4e27d09b276ca"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7c27e26cbb557bd4b86714df5af7b6c7",
+      "pattern_revision_hash": "4c2d530c8d98bd493af0764fd13ed01795f42b7a24a99ea0afabe49d842a1d0f",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 33,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7cfada8280b4eb1b1f13e23c52ab8028",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7cfada8280b4eb1b1f13e23c52ab8028:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "91b85dcc92457910bda51ad2db06275454411873761415fed26f152d28763c75",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7cfada8280b4eb1b1f13e23c52ab8028",
+      "pattern_revision_hash": "91b85dcc92457910bda51ad2db06275454411873761415fed26f152d28763c75",
+      "source_support_hash": "86931aee345332af7877af3bbcec4029d031eaa3c444a1330012079a4bd310c3"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7cfada8280b4eb1b1f13e23c52ab8028",
+      "pattern_revision_hash": "91b85dcc92457910bda51ad2db06275454411873761415fed26f152d28763c75",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 6,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.7ded6f27f4dc32e31217d780b2b0521a",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-7ded6f27f4dc32e31217d780b2b0521a:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "retry escalation",
+      "route",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "91d74b65ff2f82763b4005adfb6fc91eab99a017fc90be5aefbae72bc8ca27c4",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-7ded6f27f4dc32e31217d780b2b0521a",
+      "pattern_revision_hash": "91d74b65ff2f82763b4005adfb6fc91eab99a017fc90be5aefbae72bc8ca27c4",
+      "source_support_hash": "3d92047c9f09b08d7a539861e1d2a685fc9a60ec364fb5d41e3820d41dcfd35d"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-7ded6f27f4dc32e31217d780b2b0521a",
+      "pattern_revision_hash": "91d74b65ff2f82763b4005adfb6fc91eab99a017fc90be5aefbae72bc8ca27c4",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY",
+        "ROUTE"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.8034db39505b067911a8056aa4a4f6cb.antipattern",
+    "name": "Zie619 retry escalation anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-8034db39505b067911a8056aa4a4f6cb:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "http call",
+      "manual trigger",
+      "n8n",
+      "retry escalation",
+      "wait",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "731cfe23a2c68eeba6aa6eb74fff24f46d2d34755bba065380b0418f1cc760af",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-8034db39505b067911a8056aa4a4f6cb",
+      "pattern_revision_hash": "731cfe23a2c68eeba6aa6eb74fff24f46d2d34755bba065380b0418f1cc760af",
+      "source_support_hash": "a063ee03363809067cce71ca7fbf5a37bc5cded44a621974a9da1b642011cbc1"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-8034db39505b067911a8056aa4a4f6cb",
+      "pattern_revision_hash": "731cfe23a2c68eeba6aa6eb74fff24f46d2d34755bba065380b0418f1cc760af",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER",
+        "WAIT"
+      ],
+      "required_controls": [
+        "BOUNDED_WAIT",
+        "EGRESS_ALLOWLIST",
+        "EXPIRY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.83ea7d76f7cc7c020cfb012f29e93103",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-83ea7d76f7cc7c020cfb012f29e93103:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "merge",
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "8cecf34ce5848a1aad188538880211e030f47d0d2a33bcfc6f8c43e3bba1e171",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-83ea7d76f7cc7c020cfb012f29e93103",
+      "pattern_revision_hash": "8cecf34ce5848a1aad188538880211e030f47d0d2a33bcfc6f8c43e3bba1e171",
+      "source_support_hash": "43f214d2e6f28c18c1365c084761f960a2b4ad11b4f33023aef90bcf3f21c88c"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-83ea7d76f7cc7c020cfb012f29e93103",
+      "pattern_revision_hash": "8cecf34ce5848a1aad188538880211e030f47d0d2a33bcfc6f8c43e3bba1e171",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MERGE",
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.851c0315c3c7b120a429854f19d3d49f",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-851c0315c3c7b120a429854f19d3d49f:POSITIVE_PATTERN",
+    "task_classes": [
+      "DATABASE",
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "database",
+      "integration sync",
+      "n8n",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "f50c44d0284fd755fc286573b15f5262b4f22b1683e4c7ce3d42b5287de342cf",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-851c0315c3c7b120a429854f19d3d49f",
+      "pattern_revision_hash": "f50c44d0284fd755fc286573b15f5262b4f22b1683e4c7ce3d42b5287de342cf",
+      "source_support_hash": "82cd6fad46be5d7386b358c9e5ae04ccd972ad92e4ef09cd885a76bcbd8b6460"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-851c0315c3c7b120a429854f19d3d49f",
+      "pattern_revision_hash": "f50c44d0284fd755fc286573b15f5262b4f22b1683e4c7ce3d42b5287de342cf",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "DATABASE",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "OVERLAP_GUARD",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.862e64b09b80749527db441beb439677.antipattern",
+    "name": "Zie619 scheduled watch anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-862e64b09b80749527db441beb439677:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http call",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "816d0a5bae9f287015e8ea26f708047a77bd60719a739f7b9d15d79409783439",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-862e64b09b80749527db441beb439677",
+      "pattern_revision_hash": "816d0a5bae9f287015e8ea26f708047a77bd60719a739f7b9d15d79409783439",
+      "source_support_hash": "417527ea1ec4ff1284ccdc03f02193e818ba82d7da882410df39e5bacc6ecd27"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-862e64b09b80749527db441beb439677",
+      "pattern_revision_hash": "816d0a5bae9f287015e8ea26f708047a77bd60719a739f7b9d15d79409783439",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "HTTP_CALL",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 22,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.8924b725aa21403ce9e21626a5bb4a24",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-8924b725aa21403ce9e21626a5bb4a24:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "fee01f8eea470ec3d6e3889e6fe5e4f49781c37ba50b6e692f36b573a3958944",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-8924b725aa21403ce9e21626a5bb4a24",
+      "pattern_revision_hash": "fee01f8eea470ec3d6e3889e6fe5e4f49781c37ba50b6e692f36b573a3958944",
+      "source_support_hash": "53f1dba6c3d4c26f314c521524eac7a5d35895a4c61de3e80d89e912043da87f"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-8924b725aa21403ce9e21626a5bb4a24",
+      "pattern_revision_hash": "fee01f8eea470ec3d6e3889e6fe5e4f49781c37ba50b6e692f36b573a3958944",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 4,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.92383b5bea4ffdfddd9e7e60f3ba4457.antipattern",
+    "name": "Zie619 general automation anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-92383b5bea4ffdfddd9e7e60f3ba4457:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "code execution",
+      "general automation",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "0c884a07a097839e6a9261a4cb590935e7a0bd1019c71a6b213360940e3ee5a0",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-92383b5bea4ffdfddd9e7e60f3ba4457",
+      "pattern_revision_hash": "0c884a07a097839e6a9261a4cb590935e7a0bd1019c71a6b213360940e3ee5a0",
+      "source_support_hash": "ebee6b2a9e8a6b99c74b085220a6fef542c17bf410ac7286ccc105dd639f8886"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-92383b5bea4ffdfddd9e7e60f3ba4457",
+      "pattern_revision_hash": "0c884a07a097839e6a9261a4cb590935e7a0bd1019c71a6b213360940e3ee5a0",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CODE_EXECUTION",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "HIGH",
+      "support_count": 22,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.a28bf4960bea37984e0b3b5f99175e24",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-a28bf4960bea37984e0b3b5f99175e24:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "human input",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "44529d80fe921b834bf3a62543dd3ee2ad76dd470020f9dad525a0b79dcabff5",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-a28bf4960bea37984e0b3b5f99175e24",
+      "pattern_revision_hash": "44529d80fe921b834bf3a62543dd3ee2ad76dd470020f9dad525a0b79dcabff5",
+      "source_support_hash": "20a116f0045602438227e29fef56e5ce2bc465af2aec1b4db83101ac4d14ab50"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-a28bf4960bea37984e0b3b5f99175e24",
+      "pattern_revision_hash": "44529d80fe921b834bf3a62543dd3ee2ad76dd470020f9dad525a0b79dcabff5",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HUMAN_INPUT",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "INPUT_VALIDATION"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.a30a00b9c0308642e07a7f87b81ab2a4",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-a30a00b9c0308642e07a7f87b81ab2a4:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http call",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "aa5b97186557ff1c7a87b2151137a3c745282bc551b1dc2447f8ff5e88732e2d",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-a30a00b9c0308642e07a7f87b81ab2a4",
+      "pattern_revision_hash": "aa5b97186557ff1c7a87b2151137a3c745282bc551b1dc2447f8ff5e88732e2d",
+      "source_support_hash": "1a77265d475b95b97a704b27a5b7b92bb30eaa56ba6e29c3ad292c516f08887c"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-a30a00b9c0308642e07a7f87b81ab2a4",
+      "pattern_revision_hash": "aa5b97186557ff1c7a87b2151137a3c745282bc551b1dc2447f8ff5e88732e2d",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.a587bd0d864c3b6b13b603a3c7f65de0.antipattern",
+    "name": "Zie619 human approval anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-a587bd0d864c3b6b13b603a3c7f65de0:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "http call",
+      "human approval",
+      "human input",
+      "n8n",
+      "wait",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "5d60d163c0ab434802cea1fea66c536b0ca0f914de7547ce7ae62f38d55a60ae",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_HUMAN_APPROVAL",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-a587bd0d864c3b6b13b603a3c7f65de0",
+      "pattern_revision_hash": "5d60d163c0ab434802cea1fea66c536b0ca0f914de7547ce7ae62f38d55a60ae",
+      "source_support_hash": "db43ccc3dba238d24549f0b65b5470cde21986482a1bce7ecd88ac5bf12b7902"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-a587bd0d864c3b6b13b603a3c7f65de0",
+      "pattern_revision_hash": "5d60d163c0ab434802cea1fea66c536b0ca0f914de7547ce7ae62f38d55a60ae",
+      "archetype": "HUMAN_APPROVAL",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HTTP_CALL",
+        "HUMAN_INPUT",
+        "WAIT"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "BOUNDED_WAIT",
+        "EGRESS_ALLOWLIST",
+        "EXPIRY",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "INPUT_VALIDATION",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 4,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.ac7a35b1a1bdfdc17de726ef697bc56b.antipattern",
+    "name": "Zie619 scheduled watch anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-ac7a35b1a1bdfdc17de726ef697bc56b:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "code execution",
+      "http call",
+      "manual trigger",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "89779b2ee4cf0cfa77815e18aad52de2bf30ae59a18f7b0b9d8e34972df232c0",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-ac7a35b1a1bdfdc17de726ef697bc56b",
+      "pattern_revision_hash": "89779b2ee4cf0cfa77815e18aad52de2bf30ae59a18f7b0b9d8e34972df232c0",
+      "source_support_hash": "391b3e08fc80f97fba6ed1585326c8cd2cda3d0b0e7d4c3c5cd75dfd0fa42b35"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-ac7a35b1a1bdfdc17de726ef697bc56b",
+      "pattern_revision_hash": "89779b2ee4cf0cfa77815e18aad52de2bf30ae59a18f7b0b9d8e34972df232c0",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CODE_EXECUTION",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 14,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.b0a4b8729e4f9700d442b446980eb97e",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-b0a4b8729e4f9700d442b446980eb97e:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "1f28a1a7effef7c5bb08b09111765bca181fda658c7806afbdd320408de4fb81",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-b0a4b8729e4f9700d442b446980eb97e",
+      "pattern_revision_hash": "1f28a1a7effef7c5bb08b09111765bca181fda658c7806afbdd320408de4fb81",
+      "source_support_hash": "82afb39cb31a78abef2814ed70f9a974476259e003166beb657d904789c4aaa2"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-b0a4b8729e4f9700d442b446980eb97e",
+      "pattern_revision_hash": "1f28a1a7effef7c5bb08b09111765bca181fda658c7806afbdd320408de4fb81",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "INFO",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.bbc3b5efdfd38dd8594d043813a970da",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-bbc3b5efdfd38dd8594d043813a970da:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "0c5538c3b6e14c8aea278b1d12aee9e70c19b09adf879ea9dc981059c9204222",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-bbc3b5efdfd38dd8594d043813a970da",
+      "pattern_revision_hash": "0c5538c3b6e14c8aea278b1d12aee9e70c19b09adf879ea9dc981059c9204222",
+      "source_support_hash": "f820582b8ed7dd8b3110544cd5b8d6bd222ca5093d1d90334b2d50ac033d5341"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-bbc3b5efdfd38dd8594d043813a970da",
+      "pattern_revision_hash": "0c5538c3b6e14c8aea278b1d12aee9e70c19b09adf879ea9dc981059c9204222",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 4,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.c3ca1da5dbb8c4de7e1c3b44d322e833",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-c3ca1da5dbb8c4de7e1c3b44d322e833:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "4d964c244e08ea58f06f970a763bd6b0e39b2d138c61819194537dc88cd3e730",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-c3ca1da5dbb8c4de7e1c3b44d322e833",
+      "pattern_revision_hash": "4d964c244e08ea58f06f970a763bd6b0e39b2d138c61819194537dc88cd3e730",
+      "source_support_hash": "56233714b002f2a13439bbf3ddcf8752374a0a9ec89521e62fc643abcb2ed07e"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-c3ca1da5dbb8c4de7e1c3b44d322e833",
+      "pattern_revision_hash": "4d964c244e08ea58f06f970a763bd6b0e39b2d138c61819194537dc88cd3e730",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 6,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.cb5ad04abcc8351c7946c79273dd1c7b",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-cb5ad04abcc8351c7946c79273dd1c7b:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "manual trigger",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "e38933d18b1267de7d298f8684cd6a4c1186c8255879f4c187c3143f396fea43",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-cb5ad04abcc8351c7946c79273dd1c7b",
+      "pattern_revision_hash": "e38933d18b1267de7d298f8684cd6a4c1186c8255879f4c187c3143f396fea43",
+      "source_support_hash": "dea818c9c8b5fcd68d435240fc3336040c97032167ed8b71282c42f916a1fee2"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-cb5ad04abcc8351c7946c79273dd1c7b",
+      "pattern_revision_hash": "e38933d18b1267de7d298f8684cd6a4c1186c8255879f4c187c3143f396fea43",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 6,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.d3e0d7c59779aa78ac99dc4171224df3.antipattern",
+    "name": "Zie619 document processing anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-d3e0d7c59779aa78ac99dc4171224df3:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "DATABASE",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "database",
+      "document processing",
+      "filesystem",
+      "manual trigger",
+      "merge",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "2045c4e9cbf1eb1b73cf6ffd073843c82d02bef554a1b8c930a14378f3f0905a",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_DOCUMENT_PROCESSING",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-d3e0d7c59779aa78ac99dc4171224df3",
+      "pattern_revision_hash": "2045c4e9cbf1eb1b73cf6ffd073843c82d02bef554a1b8c930a14378f3f0905a",
+      "source_support_hash": "8e297c6c7893047e4804778490a46e3ca1d024ea683f9837c515983ee3dba09d"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-d3e0d7c59779aa78ac99dc4171224df3",
+      "pattern_revision_hash": "2045c4e9cbf1eb1b73cf6ffd073843c82d02bef554a1b8c930a14378f3f0905a",
+      "archetype": "DOCUMENT_PROCESSING",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "DATABASE",
+        "FILESYSTEM",
+        "MANUAL_TRIGGER",
+        "MERGE"
+      ],
+      "required_controls": [
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "LEAST_PRIVILEGE",
+        "PARAMETERIZED_QUERY"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.d6c26dc1f6e7f3495c5f12f4efc39c8b",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-d6c26dc1f6e7f3495c5f12f4efc39c8b:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "human input",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "ff003ad463eeb80cdc455d9ae86d9d4f01a7a9f0a4e240506c91b2fa7a19a9c0",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-d6c26dc1f6e7f3495c5f12f4efc39c8b",
+      "pattern_revision_hash": "ff003ad463eeb80cdc455d9ae86d9d4f01a7a9f0a4e240506c91b2fa7a19a9c0",
+      "source_support_hash": "3767ae50e05890d23162f33c06b9d10918427d153019bbb29fa54861b43646e7"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-d6c26dc1f6e7f3495c5f12f4efc39c8b",
+      "pattern_revision_hash": "ff003ad463eeb80cdc455d9ae86d9d4f01a7a9f0a4e240506c91b2fa7a19a9c0",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "HUMAN_INPUT",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "AUTHORIZATION",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "INPUT_VALIDATION"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 3,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.d7a7a559ea7199862ff1226c5f333f2f.antipattern",
+    "name": "Zie619 webhook intake anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-d7a7a559ea7199862ff1226c5f333f2f:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY",
+      "WEBHOOK_SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http receive",
+      "http respond",
+      "n8n",
+      "webhook intake",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "1595504bc462258d9709e7aac476a2f90f54f64a06f37947b522f2dff20ce1ce",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_WEBHOOK_INTAKE",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-d7a7a559ea7199862ff1226c5f333f2f",
+      "pattern_revision_hash": "1595504bc462258d9709e7aac476a2f90f54f64a06f37947b522f2dff20ce1ce",
+      "source_support_hash": "59bfb01ed7fdd6a07bc4461460a11f1cca086a2fa91d17eb0dcd031a36a2e512"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-d7a7a559ea7199862ff1226c5f333f2f",
+      "pattern_revision_hash": "1595504bc462258d9709e7aac476a2f90f54f64a06f37947b522f2dff20ce1ce",
+      "archetype": "WEBHOOK_INTAKE",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "HTTP_RECEIVE",
+        "HTTP_RESPOND"
+      ],
+      "required_controls": [
+        "AUTHENTICATED_WEBHOOK",
+        "IDEMPOTENCY",
+        "REPLAY_PROTECTION",
+        "SCHEMA_VALIDATION"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 22,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.db1d47fe2fab4d0073702120363681f1",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-db1d47fe2fab4d0073702120363681f1:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "manual trigger",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "aa41ecb2bb072c56dcf278127481ccae7a9c622d1c8d32a5f8f3949d5a7747c4",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-db1d47fe2fab4d0073702120363681f1",
+      "pattern_revision_hash": "aa41ecb2bb072c56dcf278127481ccae7a9c622d1c8d32a5f8f3949d5a7747c4",
+      "source_support_hash": "0792dbfe46c56642954ca8c7ee9fe6d75a3e870b33fb1d2bcd4e3bfa6fd5af4e"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-db1d47fe2fab4d0073702120363681f1",
+      "pattern_revision_hash": "aa41ecb2bb072c56dcf278127481ccae7a9c622d1c8d32a5f8f3949d5a7747c4",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MANUAL_TRIGGER",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 6,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.dcb07a36dd960ab35bb1e4487fac9538.antipattern",
+    "name": "Zie619 document processing anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-dcb07a36dd960ab35bb1e4487fac9538:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "code execution",
+      "document processing",
+      "filesystem",
+      "http call",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "26a2b89eab0b9da5bec0ae2bf9626c6db5c9f9c4df58fd432e0e0d10924c33c8",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_DOCUMENT_PROCESSING",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-dcb07a36dd960ab35bb1e4487fac9538",
+      "pattern_revision_hash": "26a2b89eab0b9da5bec0ae2bf9626c6db5c9f9c4df58fd432e0e0d10924c33c8",
+      "source_support_hash": "f615ff1029559ffaa2ea3ddcf299dac47c0c45db8405d3b9cb890a51700e94e5"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-dcb07a36dd960ab35bb1e4487fac9538",
+      "pattern_revision_hash": "26a2b89eab0b9da5bec0ae2bf9626c6db5c9f9c4df58fd432e0e0d10924c33c8",
+      "archetype": "DOCUMENT_PROCESSING",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "CODE_EXECUTION",
+        "FILESYSTEM",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 6,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.dd04d34c3be5414e4c24bc3e03160003.antipattern",
+    "name": "Zie619 document processing anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-dd04d34c3be5414e4c24bc3e03160003:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "document processing",
+      "filesystem",
+      "http call",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "6fc5d368aa32081a1756646e5132ca0a4da9621b21e9793f246bbd6ed6b388b3",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_DOCUMENT_PROCESSING",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-dd04d34c3be5414e4c24bc3e03160003",
+      "pattern_revision_hash": "6fc5d368aa32081a1756646e5132ca0a4da9621b21e9793f246bbd6ed6b388b3",
+      "source_support_hash": "916fe203837df0ee7c8388f6bdebbf4f0747e30f6c04de78c6f0fee9564bb6fe"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-dd04d34c3be5414e4c24bc3e03160003",
+      "pattern_revision_hash": "6fc5d368aa32081a1756646e5132ca0a4da9621b21e9793f246bbd6ed6b388b3",
+      "archetype": "DOCUMENT_PROCESSING",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "FILESYSTEM",
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.dd508177a82ff89af03b3e9d594bdb43",
+    "name": "Zie619 integration sync pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-dd508177a82ff89af03b3e9d594bdb43:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http call",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "073cc0608b9a94ac1d421ad9028558399e240326fac7b6e4f08374655944e1b7",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-dd508177a82ff89af03b3e9d594bdb43",
+      "pattern_revision_hash": "073cc0608b9a94ac1d421ad9028558399e240326fac7b6e4f08374655944e1b7",
+      "source_support_hash": "fb1b0863beb9230e11d306ada784ba04b7686a0c866868bd8d02f21d95e00a3f"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-dd508177a82ff89af03b3e9d594bdb43",
+      "pattern_revision_hash": "073cc0608b9a94ac1d421ad9028558399e240326fac7b6e4f08374655944e1b7",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 1,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.dd508177a82ff89af03b3e9d594bdb43.antipattern",
+    "name": "Zie619 integration sync anti-pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-dd508177a82ff89af03b3e9d594bdb43:ANTI_PATTERN",
+    "task_classes": [
+      "AI_SECURITY",
+      "EXTERNAL_RESEARCH",
+      "SECURITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "http call",
+      "integration sync",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER",
+      "POSITIVE_IMPLEMENTATION_GUIDANCE"
+    ],
+    "requires_tools": [],
+    "content_hash": "3aa149587f6d456e9bf3ba06ea4c483913c594fc8a04bc0f5bf13bdb960f3247",
+    "selection_role": "DIAGNOSTIC",
+    "selection_purpose": "N8N_ANTIPATTERN_INTEGRATION_SYNC",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-dd508177a82ff89af03b3e9d594bdb43",
+      "pattern_revision_hash": "3aa149587f6d456e9bf3ba06ea4c483913c594fc8a04bc0f5bf13bdb960f3247",
+      "source_support_hash": "d6ca74f1c0a0a0150fdc87d59f96578f97a9cc568401194a46d8b54e664221f3"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-dd508177a82ff89af03b3e9d594bdb43",
+      "pattern_revision_hash": "3aa149587f6d456e9bf3ba06ea4c483913c594fc8a04bc0f5bf13bdb960f3247",
+      "archetype": "INTEGRATION_SYNC",
+      "knowledge_polarity": "ANTI_PATTERN",
+      "capabilities": [
+        "HTTP_CALL",
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [
+        "EGRESS_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "TIMEOUT"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "HIGH",
+      "support_count": 76,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.deb4757be5a30a921813fa8579e17724",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-deb4757be5a30a921813fa8579e17724:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "manual trigger",
+      "n8n",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "aee62aaea122578f0a92869c54e90eb94b86891c837e6d3e1b15cf1febd3d73e",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-deb4757be5a30a921813fa8579e17724",
+      "pattern_revision_hash": "aee62aaea122578f0a92869c54e90eb94b86891c837e6d3e1b15cf1febd3d73e",
+      "source_support_hash": "26f4afdd94ebad339d1dbc13067934a2ab057cb25b39d80e29157d724183429a"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-deb4757be5a30a921813fa8579e17724",
+      "pattern_revision_hash": "aee62aaea122578f0a92869c54e90eb94b86891c837e6d3e1b15cf1febd3d73e",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "MANUAL_TRIGGER",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 2,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.e12ce6ca446d4aa4861b215317148822",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-e12ce6ca446d4aa4861b215317148822:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "n8n",
+      "schedule",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "9428698388e5e79335bc5ad6bd63fc870cb4b28132a574164eb9a5472dc22145",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-e12ce6ca446d4aa4861b215317148822",
+      "pattern_revision_hash": "9428698388e5e79335bc5ad6bd63fc870cb4b28132a574164eb9a5472dc22145",
+      "source_support_hash": "0b56962096c9e55e59f081aad935f90a09d639a93be5d20c26988790978a8404"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-e12ce6ca446d4aa4861b215317148822",
+      "pattern_revision_hash": "9428698388e5e79335bc5ad6bd63fc870cb4b28132a574164eb9a5472dc22145",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "INFO",
+      "support_count": 14,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.ee4052c178d5c9b294b5b1f05643c079",
+    "name": "Zie619 retry escalation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-ee4052c178d5c9b294b5b1f05643c079:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "n8n",
+      "notify",
+      "retry escalation",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "36fd7a1daa3e5192a94bd0aefa30bcd4fc3160bf9d4fa925be8dbfc8228fc5d4",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_RETRY_ESCALATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-ee4052c178d5c9b294b5b1f05643c079",
+      "pattern_revision_hash": "36fd7a1daa3e5192a94bd0aefa30bcd4fc3160bf9d4fa925be8dbfc8228fc5d4",
+      "source_support_hash": "c40ce2a1f2a4047f3b281b55522a612653781fdc9e17df587c5456a445518201"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-ee4052c178d5c9b294b5b1f05643c079",
+      "pattern_revision_hash": "36fd7a1daa3e5192a94bd0aefa30bcd4fc3160bf9d4fa925be8dbfc8228fc5d4",
+      "archetype": "RETRY_ESCALATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION",
+        "NOTIFY"
+      ],
+      "required_controls": [
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING"
+      ],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 10,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.efa61e3e980d3a39856873c2de7ff021",
+    "name": "Zie619 scheduled watch pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-efa61e3e980d3a39856873c2de7ff021:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH",
+      "MESSAGING",
+      "RELIABILITY"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "n8n",
+      "notify",
+      "schedule",
+      "scheduled watch",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "48ae20063830c963576ce6fc098e818d357e038bdc639dab5ca48a8cdc1ea6ab",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_SCHEDULED_WATCH",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-efa61e3e980d3a39856873c2de7ff021",
+      "pattern_revision_hash": "48ae20063830c963576ce6fc098e818d357e038bdc639dab5ca48a8cdc1ea6ab",
+      "source_support_hash": "cde41addc17ae5878692e9713292683cfa2d93798c0488f27ea72fc724873651"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-efa61e3e980d3a39856873c2de7ff021",
+      "pattern_revision_hash": "48ae20063830c963576ce6fc098e818d357e038bdc639dab5ca48a8cdc1ea6ab",
+      "archetype": "SCHEDULED_WATCH",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "NOTIFY",
+        "SCHEDULE"
+      ],
+      "required_controls": [
+        "BOUNDED_FREQUENCY",
+        "DESTINATION_ALLOWLIST",
+        "IDEMPOTENCY_WHERE_SIDE_EFFECTING",
+        "OVERLAP_GUARD"
+      ],
+      "normalized_flow": [
+        "UNKNOWN->UNKNOWN"
+      ],
+      "risk_severity": "MEDIUM",
+      "support_count": 9,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.f8b818158c54139987472d0cb1efb164",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-f8b818158c54139987472d0cb1efb164:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "general automation",
+      "manual trigger",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "90ec919af4b913ae8cece1479717df5c60bbc1d8b123bd1ded22e245b690c913",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-f8b818158c54139987472d0cb1efb164",
+      "pattern_revision_hash": "90ec919af4b913ae8cece1479717df5c60bbc1d8b123bd1ded22e245b690c913",
+      "source_support_hash": "b189457ba7d2898ddb2ea67261ca23abc2eb548db2a4644595b1af3400facda7"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-f8b818158c54139987472d0cb1efb164",
+      "pattern_revision_hash": "90ec919af4b913ae8cece1479717df5c60bbc1d8b123bd1ded22e245b690c913",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "MANUAL_TRIGGER"
+      ],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 192,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
+  },
+  {
+    "resource_id": "community.zie619.pattern.fdf932563c9fa919ccd48fd443a9a0b3",
+    "name": "Zie619 general automation pattern",
+    "source_id": "community.zie619.n8n_workflows",
+    "resource_class": "EXAMPLE_REFERENCE",
+    "authority": "COMMUNITY_SIGNAL_ONLY",
+    "status": "REFERENCE_APPROVED",
+    "activation_mode": "CORROBORATION_ONLY",
+    "locator": "agent-system/engineering-knowledge/automation/N8N_WORKFLOW_PATTERN_REGISTRY.json#n8n-pattern-fdf932563c9fa919ccd48fd443a9a0b3:POSITIVE_PATTERN",
+    "task_classes": [
+      "EXTERNAL_RESEARCH"
+    ],
+    "technologies": [
+      "n8n"
+    ],
+    "keywords": [
+      "condition",
+      "general automation",
+      "n8n",
+      "workflow automation"
+    ],
+    "forbidden_effects": [
+      "EXECUTE_RAW_WORKFLOW",
+      "BIND_CORPUS_CREDENTIAL",
+      "CREATE_DOMAIN_SOURCE_OF_TRUTH",
+      "OVERRIDE_PROJECT_TRUTH",
+      "SELECT_RUNTIME_OWNER"
+    ],
+    "requires_tools": [],
+    "content_hash": "d7b9d3e41dc9cfa24849ca026a0a11a0249d18fe238224fdd988f05a8264611e",
+    "selection_role": "REFERENCE",
+    "selection_purpose": "N8N_PATTERN_GENERAL_AUTOMATION",
+    "context_delivery": "DESCRIPTOR_ONLY",
+    "derived_from_corpus": "community.zie619.n8n_workflows",
+    "license_posture": {
+      "repository_level": "MIT",
+      "per_workflow_provenance": "NOT_ASSUMED",
+      "reuse_default": "PATTERN_LEARNING_REFERENCE"
+    },
+    "resource_lineage": {
+      "source_id": "community.zie619.n8n_workflows",
+      "source_commit": "94007c1445d9258a7da116646b79473e7c7c3282",
+      "corpus_generation_id": "n8n-corpus-eb1cfa909d790017bc3c24bccb371fd0",
+      "pattern_lineage_id": "n8n-pattern-fdf932563c9fa919ccd48fd443a9a0b3",
+      "pattern_revision_hash": "d7b9d3e41dc9cfa24849ca026a0a11a0249d18fe238224fdd988f05a8264611e",
+      "source_support_hash": "c812d5f57474df22962edd134866c0093f55e779fd3e3ad24ee6f6ffe7aae432"
+    },
+    "workflow_pattern": {
+      "pattern_lineage_id": "n8n-pattern-fdf932563c9fa919ccd48fd443a9a0b3",
+      "pattern_revision_hash": "d7b9d3e41dc9cfa24849ca026a0a11a0249d18fe238224fdd988f05a8264611e",
+      "archetype": "GENERAL_AUTOMATION",
+      "knowledge_polarity": "POSITIVE_PATTERN",
+      "capabilities": [
+        "CONDITION"
+      ],
+      "required_controls": [],
+      "normalized_flow": [],
+      "risk_severity": "MEDIUM",
+      "support_count": 13,
+      "compatibility": {
+        "source_n8n_version": null,
+        "state": "UNKNOWN_SOURCE_N8N_VERSION",
+        "runtime_compatible": false,
+        "unknown_or_community_node_count": 0
+      },
+      "runtime_compatible": false,
+      "raw_workflow_persisted": false
+    }
   }
 ]
