@@ -1,0 +1,62 @@
+{
+  "candidate_limits": {
+    "final_k": 12,
+    "lexical_k": 40,
+    "rerank_k": 24,
+    "semantic_k": 40
+  },
+  "chunking": {
+    "max_chars": 2400,
+    "overlap_chars": 240,
+    "profile_id": "dial-dev-line-paragraph",
+    "profile_version": "1.0.0"
+  },
+  "concern_classifier": {
+    "implementation": "deterministic_rules",
+    "model_id": null,
+    "model_revision": null,
+    "policy_id": "dial-graphrag-concern-rules",
+    "policy_version": "1.0.0"
+  },
+  "determinism_envelope_version": "vekl-graphrag-1",
+  "embedding": {
+    "dimension": 256,
+    "model_id": "dial-hash-embedding",
+    "model_revision": "1",
+    "normalization": "l2"
+  },
+  "fusion": {
+    "algorithm": "weighted-normalized-sum",
+    "weights": {
+      "lexical": 0.45,
+      "metadata": 0.25,
+      "semantic": 0.3
+    }
+  },
+  "graph": {
+    "schema_version": "vekl-graph-1"
+  },
+  "lexical_index": {
+    "index_id": "dial-vekl-dev-lexical",
+    "index_version": "1"
+  },
+  "replayability": "REPLAYABLE_INPUTS_AND_BITWISE_DETERMINISTIC_OUTPUT",
+  "reranker": {
+    "algorithm_id": "deterministic-weighted-rerank-v1",
+    "model_id": null,
+    "model_revision": null
+  },
+  "schema_version": 1,
+  "semantic_index": {
+    "index_id": "dial-vekl-dev-semantic",
+    "index_version": "1"
+  },
+  "tie_break": {
+    "primary": "score",
+    "stable_secondary": "canonical_resource_id"
+  },
+  "vekl": {
+    "policy_version": "vekl-2.2",
+    "resolver_version": "purpose-role-minimal-coalition-v1"
+  }
+}

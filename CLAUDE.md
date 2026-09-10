@@ -51,6 +51,12 @@ When the `dial-oracle-control` MCP/operator gateway is available, Claude and Cod
 
 Canonical architecture: `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`. Legacy Claude-specific detail remains in `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
 
+## Project Truth owner-authority lock
+
+Project Truth write authority comes only from the owner. Agents, CI, tools, research and model recommendations cannot authorize themselves. `OWNER_EXPLICIT` covers a bounded owner-ordered change; `OWNER_DERIVED` covers necessary consequences of owner-ordered blocker/gap resolution using the best or recommended solution; `OWNER_DELEGATED_AUTONOMY` covers owner-delegated continuation within existing intent. Derived/delegated authority may reconcile canon but may not materially redefine product, business, security, legal, money/custody, locked-provider or owner-control intent. Read-only instructions are `NO_AUTHORITY`.
+
+Every substantive commit must carry an append-only authorization record and PR-native ledger evidence. Protected `master` is read-only to Project Truth automation. See `PROJECT_TRUTH_PROTOCOL.md` and `docs/project-state/OWNER_AUTHORITY_POLICY.json`.
+
 ## VEKL engineering-knowledge lock
 
 Canonical VEKL v2: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` (`DEC-020`). Rev 1 remains provenance for the qualified immutable-skill substrate.

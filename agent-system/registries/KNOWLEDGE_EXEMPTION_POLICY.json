@@ -1,0 +1,27 @@
+{
+  "allowed_archetypes": [
+    {
+      "archetype": "DOC_FORMAT_ONLY",
+      "reason": "format-only non-authoritative documentation change"
+    },
+    {
+      "archetype": "COMMENT_ONLY",
+      "reason": "source comment-only change with no behavior/authority effect"
+    },
+    {
+      "archetype": "TEST_DESCRIPTION_ONLY",
+      "reason": "test prose rename without assertion/behavior change"
+    }
+  ],
+  "default": "MATERIAL_MAPPING_REQUIRED",
+  "forbidden_for": [
+    "PROJECT_TRUTH_CHANGE",
+    "LOCKED_DECISION_CHANGE",
+    "SECURITY_AUTHORITY_CHANGE",
+    "UI_BEARING_FEATURE",
+    "MONEY_OR_HEALTH_FEATURE",
+    "PRODUCTION_EXTERNAL_EFFECT"
+  ],
+  "policy_version": "1.0.0",
+  "schema_version": 1
+}

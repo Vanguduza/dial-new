@@ -115,6 +115,12 @@ bash deploy/oracle/hermes-codex/install-operator-gateway.sh
 
 The HTTP MCP remains bound to `127.0.0.1:9130` and bearer-token protected. The optional WhatsApp Cloud webhook adapter remains bound to `127.0.0.1:9132`. Neither port is opened publicly by the installer. Hermes owner self-chat and official Meta Cloud API activation require their normal external credential/pairing boundaries.
 
+## Owner-authorized Project Truth
+
+The Oracle control plane persists owner-instruction provenance on submitted work. `project-truth-authority.mjs` can issue a bounded repository authorization only from an authenticated owner-originated instruction (or a manager packet inheriting a valid derived/delegated owner root). It does not accept a generic manual/self-authorization path. Project Truth is generated on the authorized PR branch and verified after merge without mutating protected `master`.
+
+Recommended blocker/gap fixes are `OWNER_DERIVED`; explicit autonomous/until-green steering is `OWNER_DELEGATED_AUTONOMY`; read-only/audit/research requests are `NO_AUTHORITY`. Material scope expansion always requires explicit owner authority.
+
 ## Mandatory qualification sequence
 
 When real subscription capacity is available, run in order:

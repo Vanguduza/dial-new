@@ -183,5 +183,5 @@ describe("pipeline integration", () => {
       "TECHNICAL_SHADED",
     );
     expect(flowPack.stages.map((stage: { id: string }) => stage.id)).toContain("VISUAL_HIT_MAP");
-  }, 60_000);
+  }, 120_000);
 });

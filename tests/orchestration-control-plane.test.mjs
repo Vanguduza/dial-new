@@ -1,4 +1,4 @@
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -28,6 +28,7 @@ import { listCodexPlanModels } from '../agent-system/orchestration/codex-app-ser
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
 import { controlPlaneFingerprint, evaluateDevelopmentUnblock } from '../agent-system/orchestration/development-unblock.mjs';
+import { writeDevelopmentUnitRegistry } from '../agent-system/orchestration/development-unit-planner.mjs';
 import {
   QUALIFICATION_CANARY_INSTRUCTION,
   externalWorkStatus,
@@ -43,8 +44,15 @@ function makeRepo() {
   writeFileSync(path.join(repo, 'agent-system/registries/FEATURE_REGISTRY.json'), JSON.stringify([{ feature_id: 'TEST-F001' }]));
   writeFileSync(path.join(repo, 'agent-system/registries/ACTIVE_WORK.json'), JSON.stringify({ feature_id: 'TEST-F001', worktree: null, target_gate: 'DOMAIN_TESTED' }));
   writeFileSync(path.join(repo, 'agent-system/registries/DECISION_LOG.json'), '[]');
+  for (const name of ['UNIT_BOUNDARY_POLICY.json','KNOWLEDGE_ROUTE_REGISTRY.json','KNOWLEDGE_NODE_TYPE_REGISTRY.json','KNOWLEDGE_EDGE_TYPE_REGISTRY.json','GRAPHRAG_DETERMINISM_POLICY.json']) {
+    copyFileSync(path.join(process.cwd(), 'agent-system/registries', name), path.join(repo, 'agent-system/registries', name));
+  }
+  const contractDir = path.join(repo, 'docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS');
+  mkdirSync(contractDir, { recursive: true });
+  writeFileSync(path.join(contractDir, 'FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json'), JSON.stringify([{ feature_id: 'TEST-F001', acceptance_contract: [] }]));
   writeFileSync(path.join(repo, 'agent-system/bin/context-get.mjs'), "console.log('CANONICAL FEATURE CONTEXT TEST-F001 GATE DOMAIN_TESTED');\n");
   writeFileSync(path.join(repo, 'package.json'), '{}');
+  writeDevelopmentUnitRegistry(repo);
   execFileSync('git', ['init'], { cwd: repo });
   execFileSync('git', ['config', 'user.email', 'ci@example.invalid'], { cwd: repo });
   execFileSync('git', ['config', 'user.name', 'CI'], { cwd: repo });

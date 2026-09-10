@@ -36,6 +36,7 @@ export function defaultDialMission({ repoDir, objective } = {}) {
     last_packet_state: null,
     last_progress_at: null,
     owner_blocker: null,
+    owner_authority_roots: [],
     created_at: now(),
     updated_at: now(),
   };
@@ -80,6 +81,30 @@ export function setDialMissionPriority({ root, directive } = {}) {
   const value = clean(directive, 4000);
   if (!value) throw new Error('priority directive is required');
   return saveMission({ ...mission, priority_directive: value }, root, 'MISSION_PRIORITY_UPDATED', { directive_sha256: hash(value) });
+}
+
+export function recordDialOwnerAuthorityRoot({ root, provenance, sourceJobId = null } = {}) {
+  const mission = ensureDialMission({ root });
+  const authority = clean(provenance?.authority, 80);
+  if (!['OWNER_EXPLICIT', 'OWNER_DERIVED', 'OWNER_DELEGATED_AUTONOMY'].includes(authority)) return mission;
+  const record = {
+    schema_version: 1,
+    authority,
+    instruction_sha256: clean(provenance?.instruction_sha256, 64),
+    instruction_excerpt: clean(provenance?.instruction_excerpt, 240),
+    request_id: clean(provenance?.request_id, 128) || null,
+    channel: clean(provenance?.channel, 40),
+    actor: clean(provenance?.actor, 120) || 'owner',
+    transport: clean(provenance?.transport, 80) || 'direct',
+    source_job_id: clean(sourceJobId, 160) || null,
+    recorded_at: now(),
+  };
+  const roots = Array.isArray(mission.owner_authority_roots) ? [...mission.owner_authority_roots] : [];
+  const dedupe = roots.filter((item) => !(record.request_id && item.request_id === record.request_id) && item.instruction_sha256 !== record.instruction_sha256);
+  dedupe.push(record);
+  return saveMission({ ...mission, owner_authority_roots: dedupe.slice(-25) }, root, 'MISSION_OWNER_AUTHORITY_ROOT_RECORDED', {
+    authority, request_id: record.request_id, instruction_sha256: record.instruction_sha256, source_job_id: record.source_job_id,
+  });
 }
 
 export function markDialMissionBlocked({ root, reason, blockerType = 'OWNER_DECISION' } = {}) {

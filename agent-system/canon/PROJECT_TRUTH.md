@@ -143,3 +143,8 @@ Request/approve/release/custody authority derives from Position/FinancialAuthori
 CompanyPosition is versioned and includes role-based contract template, permission bundles, financial authority, job description, compensation defaults, SHEQ/training/assets/PPE requirements.
 Onboarding captures employee photo via image picker/camera and processes it through private secure upload.
 Signed employment contracts are immutable snapshots; position template changes do not rewrite history.
+
+
+### VEKL 2.2 knowledge-graph and truth-evolution lock
+
+DIAL VEKL 2.2 REV 2 (`DEC-026`) is the canonical development-knowledge topology over VEKL 2.1. The graph is a rebuildable projection, not authority; Development Units have stable lineage plus immutable revisions; graph-first retrieval and a pinned determinism envelope bound all material knowledge resolution; every material dispatch emits immutable `KnowledgeResolutionTrace` evidence; UI-bearing units require the Product Experience route; stale execution-knowledge bindings fail closed; research conflicts may enter deterministic challenge review but remain withheld from ordinary execution; and canon evolution is owner-only, exact-delta, supersession/revision based.
