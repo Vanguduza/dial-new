@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260910-owner-branch-consolidation-no-stale-ancestry",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "2c53b6e955452090014a6a78ae28225a7ecf6916aa4bccc1d43eabd0b99fa547",
+  "owner_instruction_excerpt": "Consolidate all truth and development branches into the deterministic canonical master branch, while leaving Oracle operational branches as they are.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260910-branch-consolidation-no-stale-ancestry",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-10T14:43:12.112914+00:00",
+  "base_sha": "abbc1ca1e21f48fef0855d3d70c9855bf732ee76",
+  "branch_scope": "feat/adaptive-execution-fabric-rev2-20260910",
+  "authorized_paths": [
+    "docs/project-state/BRANCH_CONSOLIDATION_20260910.json"
+  ],
+  "change_classes": [
+    "branch_consolidation",
+    "blocker_recovery",
+    "project_truth_hygiene",
+    "verification"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

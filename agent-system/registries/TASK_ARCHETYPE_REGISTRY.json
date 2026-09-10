@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "registry_version": "dial-aef-1",
+  "archetypes": [
+    "ROUTINE_CODE_CHANGE",
+    "BUG_LOCALIZATION",
+    "ARCHITECTURE_CHANGE",
+    "MONEY_PATH_CHANGE",
+    "AUTHORIZATION_CHANGE",
+    "DONOR_ASSIMILATION",
+    "DONOR_ADAPTATION",
+    "LOCKED_DESIGN_ENHANCEMENT",
+    "VISUAL_REGRESSION",
+    "NEW_FRONTEND_DESIGN",
+    "DATABASE_MIGRATION",
+    "SECURITY_REVIEW",
+    "INFRASTRUCTURE_CHANGE",
+    "DEPENDENCY_UPGRADE",
+    "TEST_REPAIR",
+    "EVIDENCE_RECONCILIATION",
+    "RESEARCH",
+    "DOCUMENTATION",
+    "AMBIGUOUS"
+  ],
+  "risk_classes": [
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "CRITICAL"
+  ]
+}

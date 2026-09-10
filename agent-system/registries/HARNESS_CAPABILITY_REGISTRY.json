@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "registry_version": "dial-aef-hcx-1",
+  "authority": "EXECUTION_WORKER_REGISTRY",
+  "manager_runtime_selection_forbidden": true,
+  "workers": [
+    {
+      "harness_id": "codex-sol-worker",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "provider": "openai",
+      "harness_family": "codex-app-server",
+      "harness_version": "current-qualified",
+      "model": {
+        "model_id": "gpt-5.6-sol",
+        "provider_family": "openai",
+        "model_lineage_id": "gpt-5.6"
+      },
+      "identity": {
+        "worker_identity_hash": "codex-sol-worker-current",
+        "independence_class": "OPENAI_CODEX",
+        "toolchain_fingerprint": "RUNTIME_BOUND"
+      },
+      "capabilities": {
+        "coding": true,
+        "repositoryRead": true,
+        "repositoryWrite": true,
+        "browser": false,
+        "visualReasoning": true,
+        "designGeneration": false,
+        "designTransformation": false,
+        "longContext": true,
+        "toolUse": true,
+        "structuredOutput": true
+      },
+      "safety": {
+        "allowed_risk_classes": [
+          "LOW",
+          "MEDIUM",
+          "HIGH",
+          "CRITICAL"
+        ],
+        "allowed_data_classes": [
+          "PUBLIC",
+          "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"
+        ]
+      },
+      "allowed_roles": [
+        "ARCHITECT",
+        "BUILDER",
+        "FRONTEND_BUILDER",
+        "TESTER",
+        "SECURITY_REVIEWER",
+        "VISUAL_REVIEWER",
+        "DONOR_REVIEWER",
+        "INTEGRATOR"
+      ],
+      "qualification": {
+        "state": "QUALIFIED",
+        "evidence_hash": "BOUND_TO_EXISTING_RUNTIME_QUALIFICATION"
+      },
+      "operational": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN"
+      },
+      "performance": {
+        "sample_count": 0
+      }
+    },
+    {
+      "harness_id": "claude-sonnet-worker",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "provider": "anthropic",
+      "harness_family": "claude-code",
+      "harness_version": "current-qualified",
+      "model": {
+        "model_id": "claude-sonnet-5",
+        "provider_family": "anthropic",
+        "model_lineage_id": "claude-sonnet"
+      },
+      "identity": {
+        "worker_identity_hash": "claude-sonnet-worker-current",
+        "independence_class": "ANTHROPIC_CLAUDE",
+        "toolchain_fingerprint": "RUNTIME_BOUND"
+      },
+      "capabilities": {
+        "coding": true,
+        "repositoryRead": true,
+        "repositoryWrite": true,
+        "browser": false,
+        "visualReasoning": true,
+        "designGeneration": false,
+        "designTransformation": false,
+        "longContext": true,
+        "toolUse": true,
+        "structuredOutput": true
+      },
+      "safety": {
+        "allowed_risk_classes": [
+          "LOW",
+          "MEDIUM",
+          "HIGH",
+          "CRITICAL"
+        ],
+        "allowed_data_classes": [
+          "PUBLIC",
+          "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"
+        ]
+      },
+      "allowed_roles": [
+        "ARCHITECT",
+        "BUILDER",
+        "FRONTEND_BUILDER",
+        "TESTER",
+        "SECURITY_REVIEWER",
+        "VISUAL_REVIEWER",
+        "DONOR_REVIEWER",
+        "INTEGRATOR"
+      ],
+      "qualification": {
+        "state": "QUALIFIED",
+        "evidence_hash": "BOUND_TO_EXISTING_RUNTIME_QUALIFICATION"
+      },
+      "operational": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN"
+      },
+      "performance": {
+        "sample_count": 0
+      }
+    },
+    {
+      "harness_id": "stitch-design-provider",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "provider": "google",
+      "harness_family": "stitch",
+      "harness_version": "provider-current",
+      "model": {
+        "model_id": "provider-managed",
+        "provider_family": "google",
+        "model_lineage_id": "stitch"
+      },
+      "identity": {
+        "worker_identity_hash": "stitch-design-provider-current",
+        "independence_class": "GOOGLE_STITCH",
+        "toolchain_fingerprint": "PROVIDER_BOUND"
+      },
+      "capabilities": {
+        "coding": false,
+        "repositoryRead": false,
+        "repositoryWrite": false,
+        "browser": false,
+        "visualReasoning": true,
+        "designGeneration": true,
+        "designTransformation": true,
+        "longContext": false,
+        "toolUse": false,
+        "structuredOutput": true
+      },
+      "safety": {
+        "allowed_risk_classes": [
+          "LOW",
+          "MEDIUM"
+        ],
+        "allowed_data_classes": [
+          "PUBLIC",
+          "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"
+        ]
+      },
+      "allowed_roles": [
+        "DESIGNER"
+      ],
+      "qualification": {
+        "state": "DISCOVERED"
+      },
+      "operational": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN"
+      },
+      "performance": {
+        "sample_count": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260910-owner-branch-consolidation-status-refresh",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "e4188ca069f395ad9b9e99af04306e7469253f4850c87f8e481afbfc27492f0c",
+  "owner_instruction_excerpt": "Resume and in the end make sure all branches are consolidated and merged into main with the most recent changes reflecting the project truth",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260910-branch-consolidation-status-refresh",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-10T14:15:52.167005+00:00",
+  "base_sha": "c8dcd9e2a719db2d1fc9a46d596af3ef99da2419",
+  "branch_scope": "feat/adaptive-execution-fabric-rev2-20260910",
+  "authorized_paths": [
+    "docs/project-state/BRANCH_CONSOLIDATION_20260910.json",
+    "docs/project-state/authorizations/auth-20260910-owner-branch-consolidation-status-refresh.json"
+  ],
+  "change_classes": [
+    "branch_consolidation",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

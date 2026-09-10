@@ -1,19 +1,19 @@
 {
   "authority_classes": [
-    "OWNER_DELEGATED_AUTONOMY"
+    "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260910-owner-vekl-2-2-postmerge-ci-fix"
+    "auth-20260910-owner-branch-consolidation"
   ],
-  "branch": "chore/project-truth-owner-authority-20260910",
+  "branch": "feat/adaptive-execution-fabric-rev2-20260910",
   "changed_files": [
-    "docs/project-state/authorizations/auth-20260910-owner-vekl-2-2-postmerge-ci-fix.json",
-    "tests/orchestration-vekl-graph-v2.test.mjs"
+    "docs/project-state/BRANCH_CONSOLIDATION_20260910.json",
+    "docs/project-state/authorizations/auth-20260910-owner-branch-consolidation-no-stale-ancestry.json"
   ],
-  "content_diff_sha256": "1f37a9ec2c482f7fc40dc37ae814886bf20f1d9bb1478c0233882d6fbad5f071",
-  "observed_at_utc": "2026-09-10T10:26:04.678169+00:00",
+  "content_diff_sha256": "4f0cc3f2f2523663b894a17f51f74aea56599683d6c19e0c3ee79f78d51f97c9",
+  "observed_at_utc": "2026-09-10T14:43:12.930572+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "e672c156f567e91124a47b7e22223f91d85c9736",
+  "source_parent": "abbc1ca1e21f48fef0855d3d70c9855bf732ee76",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

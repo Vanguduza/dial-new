@@ -1,6 +1,9 @@
 import { loadSkillActivationForPacket } from '../orchestration/skill-activation-store.mjs';
 import { checkKnowledgeBinding } from '../orchestration/knowledge-admission-guard.mjs';
 import { checkKnowledgeExemption } from '../orchestration/knowledge-exemption.mjs';
+import { checkTaskExecutionEnvelope } from '../orchestration/task-execution-envelope.mjs';
+import { assertWorktreeLease } from '../orchestration/worker-lease-manager.mjs';
+import { readJson } from '../orchestration/state-store.mjs';
 
 let input=""; for await (const c of process.stdin) input+=c;
 let j={}; try{j=JSON.parse(input)}catch{}
@@ -9,6 +12,11 @@ let d=null, reason="";
 const packetId=process.env.DIAL_PACKET_ID||null;
 const repoDir=process.env.DIAL_REPO_DIR||process.cwd();
 const root=process.env.DIAL_CONTROL_HOME||undefined;
+const taskId=process.env.DIAL_TASK_ID||null;
+const workerId=process.env.DIAL_WORKER_ID||null;
+const envelopeHash=process.env.DIAL_EXECUTION_ENVELOPE_HASH||null;
+const leaseId=process.env.DIAL_WORKTREE_LEASE_ID||null;
+const fencingToken=process.env.DIAL_FENCING_TOKEN||null;
 const readOnlyShell=/^(?:\s*(?:pwd|ls|find|grep|rg|cat|head|tail|wc|jq)\b|\s*git\s+(?:status|diff|log|show|branch|rev-parse|merge-base)\b|\s*sed\s+-n\b)/i;
 const explicitReresolution=/engineering-knowledge-resolve\.mjs\b.*--packet-id/i;
 const consequential=(tool==="Edit"||tool==="Write"||((tool==="Bash"||tool==="PowerShell")&&!readOnlyShell.test(String(ti.command||""))&&!explicitReresolution.test(String(ti.command||""))));
@@ -19,6 +27,17 @@ if(packetId&&consequential){
  else if(activation.knowledge_context?.scope==="POLICY_EXEMPTION"){const check=checkKnowledgeExemption({repoDir,root,packetId});if(!check.ok){d="deny";reason=`DIAL VEKL 2.2 guard: stale knowledge exemption (${check.reasons.join(', ')}).`;}}
  else{d="deny";reason="DIAL VEKL 2.2 guard: unscoped planning may inspect only; resolve a Feature/Unit or explicit allowed exemption before material tool use.";}
 }
+
+if(taskId&&consequential&&!d){
+ const envelope=readJson(`execution/tasks/${taskId}/envelope.json`,null,root);
+ if(!envelope||!envelopeHash||envelope.envelope_hash!==envelopeHash){d='deny';reason='DIAL AEF guard: material HCX worker use requires the current Task Execution Envelope.';}
+ else{const current=checkTaskExecutionEnvelope({repoDir,root,envelope});if(!current.ok){d='deny';reason=`DIAL AEF guard: stale execution envelope (${current.reasons.join(', ')}).`;}}
+ if(!d&&(tool==='Edit'||tool==='Write'||((tool==='Bash'||tool==='PowerShell')&&!readOnlyShell.test(String(ti.command||''))))){
+  if(!leaseId||!fencingToken||!workerId){d='deny';reason='DIAL AEF guard: repository-writing HCX worker requires worktree lease and fencing token.';}
+  else{try{assertWorktreeLease({root,leaseId,workerId,fencingToken,path:ti.file_path||null});}catch(e){d='deny';reason=`DIAL AEF guard: ${e.message}`;}}
+ }
+}
+
 if(tool==="Bash"||tool==="PowerShell"){
  const cmd=String(ti.command||"");
  const deny=[

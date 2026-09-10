@@ -622,5 +622,44 @@
       "agent-system/orchestration/knowledge-resolution-trace.mjs"
     ],
     "reopens_if": "the product owner explicitly supersedes VEKL 2.2 with an equal-or-stronger architecture preserving authority safety, deterministic/replayable retrieval, stale-admission refusal, immutable evidence and owner-only canon change"
+  },
+  {
+    "decision_id": "DEC-027",
+    "decided_on": "2026-09-10",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / HERMES / XKIRO HAIF AUTHORITY HYGIENE",
+    "title": "xKiro HAIF remains a non-authoritative auxiliary fabric under a dedicated locked Decision identity",
+    "decision": "Repair the compact Project Truth Decision reference for Hermes xKiro HAIF without renumbering or mutating any existing locked Decision. HAIF remains FREE_ONLY, non-authoritative, no-tools, no-repository-writes, not a DIAL manager runtime and not a Project Truth, money, Health or deployment authority.",
+    "consequence": "Project Truth references DEC-027 for the HAIF lock. DEC-023 remains unchanged as the locked SEO/indexability Decision. This is identifier/authority hygiene only and does not broaden xKiro authority.",
+    "record": "docs/orchestration/HERMES_XKIRO_HAIF.md; agent-system/canon/PROJECT_TRUTH.md",
+    "enforced_by": [
+      "agent-system/orchestration/auxiliary/authority-gate.mjs",
+      "agent-system/orchestration/auxiliary/task-gateway.mjs"
+    ],
+    "reopens_if": "the product owner explicitly changes HAIF authority or provider policy"
+  },
+  {
+    "decision_id": "DEC-028",
+    "decided_on": "2026-09-10",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / VEKL / ADAPTIVE EXECUTION FABRIC",
+    "title": "VEKL 2.2 remains the knowledge authority while DIAL adds a worker-only adaptive execution fabric",
+    "decision": "Adopt the reconciled Adaptive Multi-Harness Execution Fabric Rev 2 beneath VEKL 2.2. Material work is deterministically triaged into an immutable Task Execution Envelope bound to current VEKL evidence; HCX hard-filters worker-only capabilities before empirical routing; compute is transactionally reserved; the minimum safe topology is selected; workers receive role projections from existing VEKL capsules; repository writers require repository-wide path leases and fencing; donor/design providers remain non-authoritative candidates; acceptance remains with deterministic verification, Product Experience/security/FRC/Unit gates; admitted work emits an immutable Development Execution Receipt.",
+    "consequence": "No second VEKL, Project Truth, mission controller, manager-runtime policy, design authority or donor SoR is created. GPT-5.6 Sol -> exact Claude Sonnet 5 remains the manager-runtime chain. HAIF remains auxiliary. Budget/provider outages may block or reroute but cannot waive mandatory review. Superseded/fenced worker results are non-admissible. Stitch is optional development tooling only. A2A and Temporal remain deferred pending a separately authorized need.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
+    "enforced_by": [
+      "agent-system/orchestration/task-triage.mjs",
+      "agent-system/orchestration/task-execution-envelope.mjs",
+      "agent-system/orchestration/harness-capability-exchange.mjs",
+      "agent-system/orchestration/compute-governor.mjs",
+      "agent-system/orchestration/execution-topology.mjs",
+      "agent-system/orchestration/role-context-projector.mjs",
+      "agent-system/orchestration/worker-lease-manager.mjs",
+      "agent-system/orchestration/execution-receipt.mjs",
+      "agent-system/hooks/pre-tool-guard.mjs"
+    ],
+    "reopens_if": "the product owner explicitly supersedes this adaptive execution model with an equal-or-stronger mechanism preserving VEKL authority, manager isolation, stale refusal, write fencing, provider non-authority and evidence-accounted admission"
   }
 ]
