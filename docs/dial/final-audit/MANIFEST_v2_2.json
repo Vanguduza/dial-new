@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-11T05:50:15.808Z",
+  "generated_at": "2026-09-11T16:56:28.125Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 241,
+  "file_count": 242,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "314921009ae8a39af121fee268c654a04a2eb9594befa34e1e19b1ebdd4c3244"
+      "sha256": "be36df9f278bc8d8075697f73e096ea7a34d6a17e5b4e0e694b00d645e845fed"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -90,11 +90,6 @@
       "path": "01_AUDIT/HEALTH_PORTFOLIO_SCOPE_FINDING.md",
       "bytes": 1809,
       "sha256": "61c709c9403f30c7a1a1ad9fa3ca2952aaacebb3b06b3bda3d76424b4e48f817"
-    },
-    {
-      "path": "02_FEATURE_REALIZATION/WORKFLOW_EVENTUALITY_STANDARD.md",
-      "bytes": 1635,
-      "sha256": "d375b0e9c62298579083f4e1e964f8faa6431a31dfe88fbb1168fd1299b20ff2"
     },
     {
       "path": "03_DONORS/GLOBAL_DONOR_ASSIMILATION_REGISTRY.md",
@@ -462,6 +457,11 @@
       "sha256": "bfd751c79726797f8300e9db9a5fbb1a9297f8a8d9e1a378c0824e97e598d1a7"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/README.md",
+      "bytes": 2220,
+      "sha256": "a74b183133d394257ea90f4848684e55e18b414e9fcc17affad53d0137f9a7cd"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/REPOSITORY_APPLY_PLAN.md",
       "bytes": 2003,
       "sha256": "3352821aea001369bad97dadf9dafff5852c9db41cdf769dd7288ed7e22e50cb"
@@ -558,8 +558,13 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 66425,
-      "sha256": "c60bfe8c78bf1ad32d49984ab8cebcdfa4f20308b695ca00953f73c5ffdc9796"
+      "bytes": 66543,
+      "sha256": "3cff084b81c71eecdbea123944794b5d2c4239e1b9881489ca55a039561aa187"
+    },
+    {
+      "path": "11_FEATURE_REALIZATION/WORKFLOW_EVENTUALITY_STANDARD.md",
+      "bytes": 1635,
+      "sha256": "d375b0e9c62298579083f4e1e964f8faa6431a31dfe88fbb1168fd1299b20ff2"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",

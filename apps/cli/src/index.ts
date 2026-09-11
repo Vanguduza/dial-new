@@ -4,12 +4,12 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { buildAssetManifest } from '../../../packages/packaging/src/index.js';
 import { getPackRoot, runPipeline, validateJobFile } from '../../../packages/pipeline-core/src/index.js';
-import { readJson } from '../../../packages/pipeline-core/src/fs.js';
-import { generateVehicle } from '../../../packages/pipeline-core/src/generate.js';
+import { readJson } from '../../../packages/pipeline-core/src/index.js';
+import { generateVehicle } from '../../../packages/pipeline-core/src/index.js';
 import { validateSceneJob } from '../../../packages/scene-engine/src/index.js';
-import { produceBatch } from '../../../packages/scene-engine/src/factory.js';
-import { loadReconstructionWorkers } from '../../../packages/scene-engine/src/providers.js';
-import { prepareRasterSource } from '../../../packages/scene-engine/src/raster-source.js';
+import { produceBatch } from '../../../packages/scene-engine/src/index.js';
+import { loadReconstructionWorkers } from '../../../packages/scene-engine/src/index.js';
+import { prepareRasterSource } from '../../../packages/scene-engine/src/index.js';
 import { runGuardedTransition } from '../../../packages/scene-engine/src/index.js';
 
 const HELP = `Dial Visual Transformation Generator

@@ -148,10 +148,6 @@ const directlyGoverned = [
     path: 'catalog-data/generated/visual-transition-source-queue.json',
     schema: 'visual-transition-source-queue.schema.json',
   },
-  {
-    path: 'apps/preview-player/public/catalog/visual-transition-source-queue.json',
-    schema: 'visual-transition-source-queue.schema.json',
-  },
 ];
 
 function findPacks(base) {

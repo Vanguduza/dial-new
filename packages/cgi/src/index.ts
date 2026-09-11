@@ -1,6 +1,6 @@
 import { renderSvg } from '../../image-processing/src/index.js';
 import type { VisualGenerationJob } from '../../contracts/src/index.js';
-import { vehicleSceneSvg } from '../../technical-render/src/scene.js';
+import { vehicleSceneSvg } from '../../technical-render/src/index.js';
 
 export interface CgiGenerationInput { job: VisualGenerationJob; outputPath: string }
 export interface CgiGenerationResult { provider: string; model: string; modelVersion: string; seed: number; promptProfile: string; outputPath: string }

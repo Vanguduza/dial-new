@@ -1,7 +1,7 @@
 import { access, cp, lstat, mkdir, readdir, rm, stat } from 'node:fs/promises';
 import { join, relative, resolve, sep } from 'node:path';
-import { hashFile } from '../../pipeline-core/src/hash.js';
-import { writeJsonAtomic } from '../../pipeline-core/src/fs.js';
+import { hashFile } from '../../pipeline-core/src/index.js';
+import { writeJsonAtomic } from '../../pipeline-core/src/index.js';
 
 /**
  * Walks a pack root, skipping symlinks.

@@ -1,8 +1,8 @@
 import { join } from 'node:path';
 import { MOTION_PROFILES } from '../../contracts/src/index.js';
-import { ensureDir, writeJsonAtomic } from '../../pipeline-core/src/fs.js';
+import { ensureDir, writeJsonAtomic } from '../../pipeline-core/src/index.js';
 import { renderSvg } from '../../image-processing/src/index.js';
-import { vehicleSceneSvg } from '../../technical-render/src/scene.js';
+import { vehicleSceneSvg } from '../../technical-render/src/index.js';
 
 export async function generateFrameProfile(root: string, profile: 'desktop' | 'mobile', motionProfile = 'premium-v1') {
   const config = MOTION_PROFILES[motionProfile as keyof typeof MOTION_PROFILES];
