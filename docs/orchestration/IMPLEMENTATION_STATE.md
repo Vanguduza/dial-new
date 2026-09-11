@@ -104,10 +104,14 @@ Direct ad-hoc project-session development is not the canonical production path.
 
 ## Durable qualification boundary
 
-The production gate is not tied to every future DIAL product commit. It is tied to a cryptographic fingerprint of:
+The production gate is not tied to every future DIAL product commit. It is tied to a cryptographic fingerprint of the **actual execution bytes** (including uncommitted/untracked admitted files) across:
 
 - `agent-system/orchestration`
+- `agent-system/engineering-knowledge`
+- `agent-system/registries`
 - `deploy/oracle/hermes-codex`
+- `package.json`
+- `package-lock.json`
 
 Therefore:
 
@@ -165,7 +169,7 @@ Claude / Sonnet 5 weekly reset:    not before 2026-09-07 03:00 UTC
 
 Those were naturally observed limits, not manufactured test states. Current live capacity must be re-probed when qualification is executed; do not assume either provider is healthy before the probe and do not deliberately exhaust subscriptions to create quota evidence.
 
-Because the current date is 2026-09-04, the recorded reset times are still in the future. Live exact-runtime qualification therefore remains potentially quota-blocked until those reset windows unless provider state changes independently.
+Those historical reset observations are now stale. Current live capacity must be determined only by fresh provider probes; historical reset timestamps are not admissible runtime-health evidence.
 
 ## Mandatory live qualification sequence
 
@@ -383,3 +387,12 @@ Oracle qualification and both production/development finalizers now consume the 
 `DEC-030` supersedes only the queue-only normal-owner-action semantics of `DEC-025`. The previously live-but-uncommitted `owner-steering-broker.mjs` and `owner-live-control.mjs` behavior is reconciled into canonical Project Truth: authenticated owner actions are acknowledged immediately, block later autonomous claims, allow an existing repository writer to reach a safe boundary, then execute before autonomous development resumes. Read-only owner questions remain non-serializing live turns and explicit background work remains `dial_submit_instruction`.
 
 The recovered implementation is reconciled with AEF Rev 2 and Project Truth authority. At the safe execution boundary, authenticated material owner steering records its owner authority root and supersedes/revokes affected AEF envelopes and leases before repository mutation. xKiro receives only coarse PUBLIC steering metadata and remains non-authoritative. No generic shell/filesystem proxy, second manager, second mission controller, customer/business WhatsApp authority, or runtime-policy change is introduced.
+## 2026-09-11 VEKL 2.2 / AEF / n8n runtime closure
+
+DEC-026 (VEKL 2.2 Rev 2) and DEC-029 (sanitized Zie619/n8n workflow corpus) are implemented in the repository and materially deployed to the Oracle DIAL control root. The live production knowledge root at `/var/lib/dial-control/knowledge` has been materialized and independently reconstructed as GREEN with 309/309 Development Units READY, 184 reverse-dependency consumer edges, and three durable n8n pilot chains.
+
+The runtime closure adds `vekl-runtime-materialize.mjs` and `vekl-runtime-check.mjs`. Evidence-only pilot Task Execution Envelopes are closed as `EVIDENCED_CLOSED` after their admission proof so they cannot be mistaken for pending development work. The VEKL architecture checker now includes production-materialization/bootstrap criteria in addition to the original architecture gates.
+
+The control root uses a hardened ownership model: `/var/lib/dial-control` remains `root:root` mode `0755`, while service-owned state subtrees are `ubuntu:ubuntu` mode `0700`. Bootstrap and installer logic preserve this model. DIAL Doctor probes a canonical writable runtime-health subtree rather than requiring the protected parent to be writable.
+
+Production/development-readiness certification must be issued from a clean Git worktree and is bound to `sha256-execution-bytes-v2`, which hashes the actual execution files rather than only committed Git tree objects. This prevents a dirty working tree from being falsely certified as unchanged.

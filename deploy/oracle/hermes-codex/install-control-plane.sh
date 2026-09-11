@@ -10,6 +10,9 @@ CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME HERMES_HOME CODEX_HOME
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 warn(){ echo "WARNING: $*" >&2; }
+PROVISION_ONLY=0
+if [[ "${1:-}" == "--provision-only" ]]; then PROVISION_ONLY=1; shift; fi
+[[ $# -eq 0 ]] || fail "usage: install-control-plane.sh [--provision-only]"
 
 [[ -f "$DIAL_REPO_DIR/package.json" ]] || fail "DIAL repository not found at $DIAL_REPO_DIR"
 for cmd in node codex hermes claude python3; do command -v "$cmd" >/dev/null || fail "$cmd is required"; done
@@ -29,8 +32,12 @@ if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then fail "Unset ANTHROPIC_API_KEY before 
 if [[ -f "$HERMES_HOME/.env" ]] && grep -Eq '^[[:space:]]*(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)[[:space:]]*=[[:space:]]*[^[:space:]#]+' "$HERMES_HOME/.env"; then fail "$HERMES_HOME/.env contains an API-key assignment for a subscription-only runtime."; fi
 
 codex_status="$(codex login status 2>&1 || true)"
-[[ "$codex_status" == *"Logged in using ChatGPT"* ]] || fail "Codex must use ChatGPT subscription OAuth. Current status: $codex_status"
-claude auth status >/dev/null 2>&1 || fail "Claude Code must be authenticated through the supported Claude subscription route."
+if [[ "$PROVISION_ONLY" -eq 0 ]]; then
+  [[ "$codex_status" == *"Logged in using ChatGPT"* ]] || fail "Codex must use ChatGPT subscription OAuth. Current status: $codex_status"
+  claude auth status >/dev/null 2>&1 || fail "Claude Code must be authenticated through the supported Claude subscription route."
+else
+  warn "Provision-only mode: installing fail-closed runtime configuration and units before subscription OAuth; qualification remains blocked."
+fi
 
 mkdir -p "$HERMES_HOME/agent-hooks" "$HOME/.config/systemd/user" "$CODEX_HOME" "$HOME/.local/bin"
 chmod 700 "$HERMES_HOME" "$HERMES_HOME/agent-hooks" "$CODEX_HOME" "$HOME/.local/bin" 2>/dev/null || true
@@ -143,7 +150,7 @@ esac
 EOF
 chmod 0700 "$HOME/.local/bin/dial"
 
-mkdir -p "$DIAL_CONTROL_HOME"; chmod 700 "$DIAL_CONTROL_HOME"
+[[ -d "$DIAL_CONTROL_HOME" ]] || fail "$DIAL_CONTROL_HOME must be provisioned by bootstrap-host.sh"
 node "$DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs" init >/dev/null
 NODE_BIN="$(command -v node)"; HERMES_BIN="$(command -v hermes)"
 cat >"$HOME/.config/systemd/user/dial-hermes-runtime.service" <<EOF
@@ -188,33 +195,43 @@ NoNewPrivileges=true
 WantedBy=default.target
 EOF
 systemctl --user daemon-reload
-systemctl --user enable --now dial-hermes-runtime.service
-if "$HERMES_BIN" dashboard --help >/dev/null 2>&1; then systemctl --user enable --now hermes-dial-dashboard.service || warn "Hermes dashboard could not start; session search remains degraded."; fi
+systemctl --user enable dial-hermes-runtime.service
+if [[ "$PROVISION_ONLY" -eq 0 ]]; then systemctl --user restart dial-hermes-runtime.service; fi
+if "$HERMES_BIN" dashboard --help >/dev/null 2>&1; then
+  systemctl --user enable hermes-dial-dashboard.service
+  if [[ "$PROVISION_ONLY" -eq 0 ]]; then systemctl --user restart hermes-dial-dashboard.service || warn "Hermes dashboard could not start; session search remains degraded."; fi
+fi
 
-hermes gateway install || warn "Hermes gateway install did not complete; run it manually after authentication."
-GATEWAY_UNIT="$(systemctl --user list-unit-files --type=service --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
-if [[ -n "$GATEWAY_UNIT" ]]; then
-  mkdir -p "$HOME/.config/systemd/user/${GATEWAY_UNIT}.d"
-  cat >"$HOME/.config/systemd/user/${GATEWAY_UNIT}.d/dial-recovery.conf" <<'EOF'
+if [[ "$PROVISION_ONLY" -eq 0 ]]; then
+  hermes gateway install || warn "Hermes gateway install did not complete; run it manually after authentication."
+  GATEWAY_UNIT="$(systemctl --user list-unit-files --type=service --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
+  if [[ -n "$GATEWAY_UNIT" ]]; then
+    mkdir -p "$HOME/.config/systemd/user/${GATEWAY_UNIT}.d"
+    cat >"$HOME/.config/systemd/user/${GATEWAY_UNIT}.d/dial-recovery.conf" <<'EOF'
 [Unit]
 StartLimitIntervalSec=0
 [Service]
 Restart=on-failure
 RestartSec=5
 EOF
-  systemctl --user daemon-reload
-  systemctl --user enable --now "$GATEWAY_UNIT" || warn "Hermes gateway unit $GATEWAY_UNIT could not be enabled yet."
+    systemctl --user daemon-reload
+    systemctl --user enable --now "$GATEWAY_UNIT" || warn "Hermes gateway unit $GATEWAY_UNIT could not be enabled yet."
+  else
+    warn "Hermes gateway systemd unit was not discovered; process-recovery soak will remain blocked until it exists."
+    hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
+  fi
 else
-  warn "Hermes gateway systemd unit was not discovered; process-recovery soak will remain blocked until it exists."
-  hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
+  warn "Provision-only mode: Hermes gateway activation deferred until OAuth."
 fi
 normalize_codex_config
 
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
+if [[ "$PROVISION_ONLY" -eq 0 ]]; then
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
+fi
 
 cat <<'EOF'
 

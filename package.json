@@ -109,7 +109,7 @@
     "agent:vekl:graph-check": "node agent-system/orchestration/canon-graph-compiler.mjs",
     "agent:decision-evolution:check": "node agent-system/orchestration/decision-evolution-guard.mjs --base origin/master",
     "agent:vekl:architecture-check": "node agent-system/orchestration/vekl-architecture-check.mjs",
-    "test:vekl-graph": "vitest run tests/orchestration-vekl-graph-v2.test.mjs -t \"VEKL 2.2 Development Unit identity|VEKL 2.2 canonical graph and GraphRAG\" && vitest run tests/orchestration-vekl-graph-v2.test.mjs -t \"VEKL 2.2 packet binding, capsules, trace and stale refusal\" && vitest run tests/orchestration-vekl-graph-v2.test.mjs -t \"VEKL 2.2 canon challenge governance|VEKL 2.2 explicit exemption and Decision evolution\"",
+    "test:vekl-graph": "vitest run tests/orchestration-vekl-graph-v2.test.mjs --maxWorkers=1 --minWorkers=1 -t \"VEKL 2.2 Development Unit identity|VEKL 2.2 canonical graph and GraphRAG\" && vitest run tests/orchestration-vekl-graph-v2.test.mjs --maxWorkers=1 --minWorkers=1 -t \"VEKL 2.2 packet binding, capsules, trace and stale refusal\" && vitest run tests/orchestration-vekl-graph-v2.test.mjs --maxWorkers=1 --minWorkers=1 -t \"VEKL 2.2 canon challenge governance|VEKL 2.2 explicit exemption and Decision evolution\"",
     "agent:aef:architecture-check": "node agent-system/orchestration/adaptive-execution-architecture-check.mjs",
     "agent:aef:donor-check": "node agent-system/orchestration/donor-applicability.mjs",
     "test:aef": "vitest run tests/orchestration-adaptive-execution.test.mjs",
@@ -122,7 +122,9 @@
     "agent:google-capabilities:live-check": "node agent-system/orchestration/google-capability-program-check.mjs --require-live",
     "agent:google-capabilities": "node agent-system/orchestration/google-capability-cli.mjs",
     "test:google-capabilities": "vitest run tests/orchestration-google-capabilities.test.mjs tests/gmpc-pomelli-integration.test.ts",
-    "agent:aef:execute-worker": "node agent-system/orchestration/hcx-worker-executor.mjs"
+    "agent:aef:execute-worker": "node agent-system/orchestration/hcx-worker-executor.mjs",
+    "agent:vekl:materialize": "node agent-system/orchestration/vekl-runtime-materialize.mjs",
+    "agent:vekl:runtime-check": "node agent-system/orchestration/vekl-runtime-check.mjs"
   },
   "dependencies": {
     "@google/stitch-sdk": "0.3.5",

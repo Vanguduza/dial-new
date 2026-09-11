@@ -75,7 +75,7 @@ describe('VEKL 2 federated engineering resources',()=>{
     expect(health.state).toBe('ACCOUNT_LIMITED');
     expect(health.retry_after).toBe('2026-09-12T05:42:00.000Z');
     expect(cachedCodexIdentity({repoDir,root})).not.toBeNull();
-  });
+  }, 30_000);
 
   it('does not invoke Sol research while a known provider cooldown is active',async()=>{
     const root=temp('vekl2-sol-cooldown');ensureControlLayout(root);

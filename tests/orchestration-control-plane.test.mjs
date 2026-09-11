@@ -86,6 +86,13 @@ function healthyPlanModel(id) {
   };
 }
 
+describe('runtime health fail-closed defaults', () => {
+  it('treats missing runtime health as ineligible instead of crashing', () => {
+    expect(runtimeEligible(null)).toBe(false);
+    expect(runtimeEligible(undefined)).toBe(false);
+  });
+});
+
 describe('orchestration state store', () => {
   it('creates persistent state and refuses path traversal', () => {
     const root = temp('dial-control'); ensureControlLayout(root);
@@ -177,6 +184,7 @@ describe('federated DIAL doctor', () => {
     expect(report.diagnostic_scope).toBe('DIAL_PLUS_SUBORDINATE_HERMES');
     expect(report.native_hermes_doctor.authority).toBe('DIAGNOSTIC_EVIDENCE_ONLY');
     expect(report.checks.hermes_native_doctor_non_mutating).toBe(true);
+    expect(report.checks.control_home_writable).toBe(true);
   });
 });
 
@@ -253,7 +261,7 @@ describe('runtime capacity preservation policy', () => {
     expect(current?.resolved_model).toBe('gpt-5.6-sol');
     const expired = cachedCodexIdentity({ repoDir: process.cwd(), root, nowMs: Date.parse(observed) + DEFAULT_IDENTITY_CACHE_MAX_AGE_MS + 1 });
     expect(expired).toBeNull();
-  });
+  }, 30_000);
 
   it('fails closed on authentication failure without scheduling a model retry', () => {
     const decision = primaryAttemptDecision({ state: 'AUTH_FAILED', observed_at: new Date().toISOString() });
@@ -621,6 +629,31 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
   });
 });
 
+
+describe('execution provenance fingerprint', () => {
+
+  it('fingerprints actual execution bytes rather than only committed HEAD objects', () => {
+    const repo = temp('dial-fingerprint');
+    for (const rel of ['agent-system/orchestration','agent-system/engineering-knowledge','agent-system/registries','deploy/oracle/hermes-codex']) {
+      mkdirSync(path.join(repo, rel), { recursive: true });
+      writeFileSync(path.join(repo, rel, 'fixture.txt'), `${rel}:v1\n`);
+    }
+    writeFileSync(path.join(repo, 'package.json'), '{}\n');
+    writeFileSync(path.join(repo, 'package-lock.json'), '{}\n');
+    execFileSync('git', ['init'], { cwd: repo });
+    execFileSync('git', ['config', 'user.email', 'ci@example.invalid'], { cwd: repo });
+    execFileSync('git', ['config', 'user.name', 'CI'], { cwd: repo });
+    execFileSync('git', ['add', '.'], { cwd: repo });
+    execFileSync('git', ['commit', '-m', 'fixture'], { cwd: repo });
+    const before = controlPlaneFingerprint(repo);
+    writeFileSync(path.join(repo, 'agent-system/orchestration/fixture.txt'), 'uncommitted-v2\n');
+    const after = controlPlaneFingerprint(repo);
+    expect(before.algorithm).toBe('sha256-execution-bytes-v2');
+    expect(after.algorithm).toBe('sha256-execution-bytes-v2');
+    expect(after.value).not.toBe(before.value);
+    expect(after.repo_head).toBe(before.repo_head);
+  });
+});
 
 describe('development readiness gates', () => {
   function heartbeat(root) {

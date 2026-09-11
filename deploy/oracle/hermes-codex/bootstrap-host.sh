@@ -45,12 +45,17 @@ if command -v uv >/dev/null 2>&1 && [[ -d "$SVC_HOME/.hermes/hermes-agent" ]]; t
   (cd "$SVC_HOME/.hermes/hermes-agent" && uv pip install -e '.[web,pty]' || true)
 fi
 
-sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control
+sudo install -d -m 0755 -o root -g root /var/lib/dial-control
 for rel in \
   state checkpoints/active checkpoints/archive capsules/active capsules/archive \
   memory/hot memory/warm memory/cold memory/features sessions/hermes sessions/codex sessions/claude \
   retrieval/index retrieval/cache evidence-cache evidence-cache/qualification evidence-cache/soak \
-  runtime-health events knowledge/vendor knowledge/activation knowledge/activation/by-packet \
+  runtime-health events operator-channels operator-channels/whatsapp operator-steering operator-steering/pending operator-steering/processing operator-steering/completed operator-steering/failed knowledge/vendor knowledge/activation knowledge/activation/by-packet \
+  knowledge/graph/generations knowledge/graph/nodes knowledge/graph/edges knowledge/graph/units \
+  knowledge/graph/routes knowledge/graph/indexes knowledge/graph/invalidation knowledge/graph/tombstones \
+  knowledge/research knowledge/research/cache knowledge/research/forecasts knowledge/research/findings knowledge/research/challenges \
+  knowledge/activation/manifests knowledge/activation/traces knowledge/capsules knowledge/admission \
+  knowledge/sources/community.zie619.n8n_workflows/snapshots \
   knowledge/learned/staged knowledge/learned/approved knowledge/evidence/qualification \
   knowledge/evidence/outcomes knowledge/evidence/outcomes/latest \
   work-queue/inbox work-queue/processing work-queue/completed work-queue/failed; do

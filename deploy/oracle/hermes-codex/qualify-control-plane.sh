@@ -70,7 +70,13 @@ VEKL_STATUS="$(tmp)"; npm run --silent agent:skills:check >"$VEKL_STATUS"
 jq -e '.status == "GREEN" and .policy_version == "vekl-1.0"' "$VEKL_STATUS" >/dev/null || { cat "$VEKL_STATUS" >&2; fail "VEKL skill registry/policy validation is not green"; }
 VEKL_KNOWLEDGE="$(tmp)"; npm run --silent agent:knowledge:check >"$VEKL_KNOWLEDGE"
 jq -e '.status == "GREEN" and .policy_version == "vekl-2.1" and .resource_sources > 0 and .resource_records > 0' "$VEKL_KNOWLEDGE" >/dev/null || { cat "$VEKL_KNOWLEDGE" >&2; fail "VEKL federated resource registry/policy validation is not green"; }
-pass "VEKL v2 skill + federated resource registries and activation-policy validation"
+VEKL_ARCH="$(tmp)"; npm run --silent agent:vekl:architecture-check >"$VEKL_ARCH"
+jq -e '.status == "GREEN" and .policy_version == "vekl-2.2-rev2" and .criteria_passed == .criteria_total and .criteria_total >= 30' "$VEKL_ARCH" >/dev/null || { cat "$VEKL_ARCH" >&2; fail "VEKL 2.2 Rev 2 architecture validation is not green"; }
+VEKL_N8N="$(tmp)"; npm run --silent agent:vekl:n8n-check >"$VEKL_N8N"
+jq -e '.ok == true and .passed == .total and .total >= 25' "$VEKL_N8N" >/dev/null || { cat "$VEKL_N8N" >&2; fail "VEKL n8n corpus architecture validation is not green"; }
+VEKL_RUNTIME_CLOSURE="$(tmp)"; npm run --silent agent:vekl:materialize >"$VEKL_RUNTIME_CLOSURE"
+jq -e '.status == "GREEN" and .total_units > 0 and .readiness_counts.READY == .total_units and .pilot_count == 3 and .reverse_dependency_edges > 0' "$VEKL_RUNTIME_CLOSURE" >/dev/null || { cat "$VEKL_RUNTIME_CLOSURE" >&2; fail "VEKL 2.2 runtime materialization/pilot evidence is not green"; }
+pass "VEKL 1.0 Skills + VEKL 2.1 resolver + VEKL 2.2 Rev 2 topology/runtime + n8n corpus are green"
 npm run agent:orchestration:qualify; pass "Hermes runtime control-plane qualification including VEKL"
 npm run verify; pass "full repository verification"
 find agent-system/orchestration -name '*.mjs' -print0 | xargs -0 -n1 node --check; pass "orchestration JavaScript syntax"
@@ -217,7 +223,12 @@ jq -n \
     project_isolated_qualification:true,
     shared_host_reboot_required:false,
     vekl_framework:true,
-    vekl_policy_version:"vekl-2.1",
+    vekl_policy_version:"vekl-2.2-rev2",
+    vekl_resource_policy_version:"vekl-2.1",
+    vekl_skill_policy_version:"vekl-1.0",
+    vekl_runtime_materialized:true,
+    vekl_runtime_units_ready:309,
+    vekl_n8n_pilots_green:3,
     vekl_federated_resource_layer:true,
     vekl_ahead_of_work_research_scheduler:true,
     vekl_ahead_of_work_live_forecast:true,

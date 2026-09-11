@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +12,10 @@ const HEARTBEAT_MAX_AGE_MS = 2 * 60 * 1000;
 const FINGERPRINT_PATHS = Object.freeze([
   'agent-system/orchestration',
   'agent-system/engineering-knowledge',
+  'agent-system/registries',
   'deploy/oracle/hermes-codex',
+  'package.json',
+  'package-lock.json',
 ]);
 
 function gitRevParse(repoDir, spec) {
@@ -19,17 +23,36 @@ function gitRevParse(repoDir, spec) {
   catch { return null; }
 }
 
+function fingerprintFiles(repoDir) {
+  const files = [];
+  const walk = (abs, rel) => {
+    const st = fs.lstatSync(abs);
+    if (st.isSymbolicLink()) { files.push({ path: rel, kind: 'symlink', content: fs.readlinkSync(abs) }); return; }
+    if (st.isFile()) { files.push({ path: rel, kind: 'file', content: fs.readFileSync(abs) }); return; }
+    if (!st.isDirectory()) return;
+    for (const name of fs.readdirSync(abs).sort()) walk(path.join(abs, name), path.posix.join(rel, name));
+  };
+  for (const rel of FINGERPRINT_PATHS) {
+    const abs = path.join(repoDir, rel);
+    if (!fs.existsSync(abs)) return null;
+    walk(abs, rel);
+  }
+  return files.sort((a,b)=>a.path.localeCompare(b.path));
+}
+
 export function controlPlaneFingerprint(repoDir = DEFAULT_REPO) {
-  const objects = FINGERPRINT_PATHS.map((target) => ({
-    path: target,
-    object: gitRevParse(repoDir, `HEAD:${target}`),
-  }));
-  if (objects.some((entry) => !entry.object)) return null;
-  const canonical = objects.map((entry) => `${entry.path}:${entry.object}`).join('\n');
+  const files = fingerprintFiles(repoDir);
+  if (!files) return null;
+  const h = crypto.createHash('sha256');
+  for (const file of files) {
+    h.update(file.path); h.update('\0'); h.update(file.kind); h.update('\0'); h.update(file.content); h.update('\0');
+  }
   return {
-    algorithm: 'sha256-git-tree-v1',
-    value: crypto.createHash('sha256').update(canonical).digest('hex'),
-    objects,
+    algorithm: 'sha256-execution-bytes-v2',
+    value: h.digest('hex'),
+    repo_head: gitRevParse(repoDir, 'HEAD'),
+    file_count: files.length,
+    paths: [...FINGERPRINT_PATHS],
   };
 }
 

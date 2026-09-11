@@ -155,7 +155,7 @@ export function doctor({ repoDir = DEFAULT_REPO, root, nativeHermesDoctor = null
   const checks = {
     control_home_writable: (() => {
       try {
-        const target = path.join(root || process.env.DIAL_CONTROL_HOME || '/var/lib/dial-control', '.doctor');
+        const target = path.join(root || process.env.DIAL_CONTROL_HOME || '/var/lib/dial-control', 'runtime-health', '.doctor');
         fs.writeFileSync(target, 'ok', { mode: 0o600 }); fs.unlinkSync(target); return true;
       } catch { return false; }
     })(),

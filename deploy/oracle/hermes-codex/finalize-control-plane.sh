@@ -15,6 +15,7 @@ pass(){ echo "✓ $*"; }
 latest(){ ls -1t "$@" 2>/dev/null | head -n1 || true; }
 
 cd "$DIAL_REPO_DIR"
+[[ -z "$(git status --porcelain --untracked-files=all)" ]] || fail "repository must be clean before production evidence is issued"
 HEAD_SHA="$(git rev-parse HEAD)"
 FINGERPRINT_JSON="$(node agent-system/orchestration/development-unblock.mjs --fingerprint)"
 FINGERPRINT_VALUE="$(jq -r '.value // empty' <<<"$FINGERPRINT_JSON")"
@@ -49,7 +50,11 @@ jq -e --arg head "$HEAD_SHA" '
   and .chat_control_project == "dial"
   and .chat_control_generic_shell_exposed == false
   and .vekl_framework == true
-  and .vekl_policy_version == "vekl-2.1"
+  and .vekl_policy_version == "vekl-2.2-rev2"
+  and .vekl_resource_policy_version == "vekl-2.1"
+  and .vekl_skill_policy_version == "vekl-1.0"
+  and .vekl_runtime_materialized == true
+  and .vekl_n8n_pilots_green == 3
   and .vekl_federated_resource_layer == true
   and .vekl_ahead_of_work_research_scheduler == true
   and .vekl_ahead_of_work_live_forecast == true
@@ -206,7 +211,11 @@ jq -n \
     chat_control_project:"dial",
     chat_control_generic_shell_exposed:false,
     vekl_framework:true,
-    vekl_policy_version:"vekl-1.0",
+    vekl_policy_version:"vekl-2.2-rev2",
+    vekl_resource_policy_version:"vekl-2.1",
+    vekl_skill_policy_version:"vekl-1.0",
+    vekl_runtime_materialized:true,
+    vekl_n8n_pilots_green:3,
     vekl_packet_manifest_required:true,
     vekl_vendor_snapshots_immutable:true,
     vekl_unqualified_vendor_activation_allowed:false,

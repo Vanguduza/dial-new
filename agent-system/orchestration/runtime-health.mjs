@@ -27,6 +27,7 @@ export function isRuntimeState(value) {
 }
 
 export function normalizeRuntimeHealth(input = {}) {
+  input = input ?? {};
   const state = isRuntimeState(input.state) ? input.state : 'UNKNOWN';
   return {
     state,

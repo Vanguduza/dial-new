@@ -95,6 +95,13 @@ export function runVeklArchitectureCheck({repoDir=process.cwd()}={}){
   const tracePointer=readJson('knowledge/activation/traces/by-packet/vekl-architecture-check.json',null,root);
   results.push(row(29,'immutable content-addressed KnowledgeResolutionTrace',digest(trace.trace_hash)&&digest(tracePointer?.trace_hash)&&String(tracePointer?.trace_rel||'').includes(tracePointer.trace_hash),{trace_hash:trace.trace_hash,content_addressed_hash:tracePointer?.trace_hash}));
   results.push(row(30,'trace reconstructs inclusion/exclusion and exact worker delivery',trace.traversal.start_nodes.length>0&&Array.isArray(trace.traversal.visited_node_refs)&&Array.isArray(trace.candidates.eligible)&&Array.isArray(trace.candidates.excluded)&&trace.candidates.excluded.every((x)=>x.reason_codes?.length>0)&&trace.worker_delivery_hash===delivery.worker_delivery_hash&&digest(trace.instruction_hash),{eligible:trace.candidates.eligible.length,excluded:trace.candidates.excluded.length,worker_delivery_hash:trace.worker_delivery_hash}));
+  const materializerSource=readSource(repoDir,'agent-system/orchestration/vekl-runtime-materialize.mjs');
+  const qualifierSource=readSource(repoDir,'deploy/oracle/hermes-codex/qualify-control-plane.sh');
+  const finalizerSource=readSource(repoDir,'deploy/oracle/hermes-codex/finalize-control-plane.sh');
+  const bootstrapSource=readSource(repoDir,'deploy/oracle/hermes-codex/bootstrap-host.sh');
+  results.push(row(31,'runtime materializer covers every Unit plus reverse dependencies and pilot evidence',materializerSource.includes('materializeUnits')&&materializerSource.includes('unit-readiness-index.json')&&materializerSource.includes('dependency-reverse-index.json')&&materializerSource.includes('vekl-n8n-pilots.json')&&materializerSource.includes("['GROC-F013'")&&materializerSource.includes("['TECH-F008'")&&materializerSource.includes("['PLAT-F013'"),{materializer:'agent-system/orchestration/vekl-runtime-materialize.mjs'}));
+  results.push(row(32,'production qualification certifies VEKL 2.2 topology while preserving 2.1 resolver and 1.0 Skill layers',qualifierSource.includes('vekl_policy_version:"vekl-2.2-rev2"')&&qualifierSource.includes('vekl_resource_policy_version:"vekl-2.1"')&&qualifierSource.includes('vekl_skill_policy_version:"vekl-1.0"')&&qualifierSource.includes('agent:vekl:materialize')&&finalizerSource.includes('.vekl_policy_version == "vekl-2.2-rev2"'),{topology:'vekl-2.2-rev2',resource_resolver:'vekl-2.1',skill_layer:'vekl-1.0'}));
+  results.push(row(33,'Oracle bootstrap materializes the complete VEKL knowledge-state layout',bootstrapSource.includes('knowledge/graph/generations')&&bootstrapSource.includes('knowledge/research/challenges')&&bootstrapSource.includes('knowledge/activation/traces')&&bootstrapSource.includes('knowledge/sources/community.zie619.n8n_workflows/snapshots'),{bootstrap:'deploy/oracle/hermes-codex/bootstrap-host.sh'}));
   const failures=results.filter((x)=>x.status!=='PASS');return{status:failures.length?'RED':'GREEN',policy_version:'vekl-2.2-rev2',criteria_passed:results.length-failures.length,criteria_total:results.length,criteria:results,failures};
  }finally{fs.rmSync(root,{recursive:true,force:true});fs.rmSync(rejectRoot,{recursive:true,force:true});}
 }
@@ -103,5 +110,5 @@ if(import.meta.url===`file://${process.argv[1]}`){
  const result=runVeklArchitectureCheck({repoDir:process.env.DIAL_REPO_DIR||process.cwd()});
  const writeIndex=process.argv.indexOf('--write-evidence');
  if(writeIndex>=0){const target=process.argv[writeIndex+1]||'docs/project-state/VEKL_2_2_ARCHITECTURE_GREEN.json';fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,`${JSON.stringify({...result,evidence_hash:hashObject({policy_version:result.policy_version,criteria:result.criteria})},null,2)}\n`);}
- console.log(JSON.stringify(result,null,2));if(result.status!=='GREEN'||result.criteria_total!==30)process.exitCode=42;
+ console.log(JSON.stringify(result,null,2));if(result.status!=='GREEN'||result.criteria_total!==33)process.exitCode=42;
 }
