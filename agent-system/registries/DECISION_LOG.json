@@ -684,5 +684,30 @@
       "tests/orchestration-vekl-n8n-corpus.test.mjs"
     ],
     "reopens_if": "the product owner explicitly supersedes the external automation-knowledge model while preserving Project Truth superiority, non-execution, deterministic provenance, hard eligibility, runtime ownership, privacy/security and stale-context refusal"
+  },
+  {
+    "decision_id": "DEC-030",
+    "decided_on": "2026-09-10",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / ORACLE ORCHESTRATION / HYBRID OWNER STEERING",
+    "title": "Current owner direction uses a hybrid safe-boundary Hermes steering lane",
+    "decision": "Supersede only the queue-only normal-owner-action semantics of DEC-025. Claude, Codex and authenticated owner WhatsApp remain adapters to one DIAL-only typed Oracle authority, but normal owner actions use dial_owner_steer: acknowledge immediately, block subsequent autonomous dispatch, allow any current repository writer to reach a safe boundary, then execute the steer through the locked GPT-5.6 Sol -> exact Claude Sonnet 5 runtime before autonomous work resumes. Read-only questions use dial_owner_live_turn without serializing writers; dial_submit_instruction is deliberate background queueing only. Supported owner uploads enter the same steer lane.",
+    "consequence": "The owner is not buried behind the autonomous queue and active repository writes are not killed or raced. Owner-steer execution carries authenticated owner provenance into Project Truth authority roots and supersedes/revokes affected AEF envelopes and leases at the safe execution boundary. xKiro may advise only from coarse PUBLIC metadata and is non-authoritative. No generic shell/filesystem authority, second orchestrator, new manager runtime, or customer/business WhatsApp authority is created.",
+    "supersedes": "DEC-025 normal-owner-action queueing semantics only; DEC-025 DIAL-only typed gateway, channel authentication, idempotency, Oracle persistence and no-shell boundaries remain in force",
+    "record": "docs/orchestration/DIAL_OPERATOR_GATEWAY.md; docs/orchestration/IMPLEMENTATION_STATE.md; agent-system/canon/PROJECT_TRUTH.md",
+    "enforced_by": [
+      "agent-system/orchestration/owner-steering-broker.mjs",
+      "agent-system/orchestration/owner-live-control.mjs",
+      "agent-system/orchestration/chat-control-bridge.mjs",
+      "agent-system/orchestration/external-orchestrator.mjs",
+      "agent-system/orchestration/mission-controller.mjs",
+      "agent-system/orchestration/whatsapp-hermes-operator.mjs",
+      "agent-system/orchestration/whatsapp-operator-adapter.mjs",
+      "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "deploy/oracle/hermes-codex/qualify-control-plane.sh",
+      "tests/orchestration-operator-gateway.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly replaces the hybrid steering model with an equal-or-stronger mechanism preserving DIAL-only isolation, owner precedence, safe-boundary serialization, owner provenance, AEF supersession/fencing, read-only query immediacy, no-shell control, Oracle persistence and owner-only WhatsApp authentication"
   }
 ]

@@ -20,7 +20,7 @@ async function handle(message) {
       protocolVersion: message?.params?.protocolVersion || '2025-06-18',
       capabilities: { tools: { listChanged: false } },
       serverInfo: SERVER,
-      instructions: `DIAL-only ${channel} operator surface. Use typed dial_* controls only. Oracle owns persistence, dispatch and execution; this MCP server exposes no shell or arbitrary filesystem access.`,
+      instructions: `DIAL-only ${channel} operator surface. Use dial_owner_steer for current owner actions, dial_owner_live_turn for read-only questions, and dial_submit_instruction only when the owner explicitly wants background queued work. Action-mode live-turn requests are redirected through the steering broker. Oracle remains the execution authority and this MCP server exposes no generic shell or arbitrary filesystem proxy.`,
     });
   }
   if (message?.method === 'notifications/initialized') return null;

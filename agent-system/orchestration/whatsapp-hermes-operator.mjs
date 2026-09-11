@@ -2,8 +2,10 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './state-store.mjs';
-import { executeOperatorTextCommand } from './operator-text-router.mjs';
-import { buildAttachmentInstruction, collectMissionEventNotifications, persistWhatsAppAttachments } from './whatsapp-owner-input.mjs';
+import { executeOperatorTextCommand, parseOperatorTextCommand } from './operator-text-router.mjs';
+import { callChatControlTool } from './chat-control-bridge.mjs';
+import { classifyOwnerLiveMode } from './owner-live-control.mjs';
+import { buildAttachmentInstruction, collectMissionEventNotifications, collectOwnerSteeringNotifications, persistWhatsAppAttachments } from './whatsapp-owner-input.mjs';
 
 export const HERMES_WHATSAPP_OPERATOR_AUTHORITY = 'OWNER_SELF_CHAT_TYPED_DIAL_CONTROL';
 const BRIDGE = process.env.DIAL_HERMES_WHATSAPP_BRIDGE_URL || 'http://127.0.0.1:3011';
@@ -30,10 +32,10 @@ function identity() {
   return { paired: ids.length > 0, ids: [...new Set(ids)], fingerprint: ids.length ? hash(ids.sort().join('|')).slice(0, 16) : null };
 }
 function loadState(root) {
-  return readJson(STATE_REL, { schema_version: 2, connected_notice_fingerprint: null, progress_cursor: null, processed: [], last_mission_state: null, last_blocker_hash: null, notification_event_cursor: null, chat_id: null }, root);
+  return readJson(STATE_REL, { schema_version: 3, connected_notice_fingerprint: null, progress_cursor: null, processed: [], last_mission_state: null, last_blocker_hash: null, notification_event_cursor: null, steering_event_cursor: null, chat_id: null }, root);
 }
 function saveState(state, root) {
-  writeJsonAtomic(STATE_REL, { ...state, schema_version: 2, processed: (state.processed || []).slice(-MAX_PROCESSED), updated_at: now() }, root);
+  writeJsonAtomic(STATE_REL, { ...state, schema_version: 3, processed: (state.processed || []).slice(-MAX_PROCESSED), updated_at: now() }, root);
 }
 function seen(state, messageId) { const h = hash(messageId); return (state.processed || []).includes(h); }
 function remember(state, messageId) { const h = hash(messageId); state.processed = [...(state.processed || []).filter((v) => v !== h), h].slice(-MAX_PROCESSED); }
@@ -53,6 +55,16 @@ async function bridgeSend(chatId, message, fetchImpl = fetch) {
   if (!r.ok) throw new Error(`Hermes WhatsApp send HTTP ${r.status}`);
   return true;
 }
+function naturalReadShortcut(text) {
+  if (classifyOwnerLiveMode(text) !== 'query') return null;
+  const t = clean(text, 4000).toLowerCase();
+  if (/owner.{0,30}block|block(age|er|ed)|why.{0,20}blocked/.test(t)) return 'mission';
+  if (/(status|state)/.test(t) && /(project|dial|current|what|how)/.test(t)) return 'status';
+  if (/(progress|latest|happened|changed)/.test(t)) return 'progress';
+  if (/(verif(y|ication|ied)|tests?|green)/.test(t)) return 'verify';
+  return null;
+}
+
 function missionAttentionText(m) {
   const counts = m?.packet_counts || {};
   const lines = [`DIAL attention required`, `Mission: ${m?.state || 'UNKNOWN'}`, `Turn: ${m?.turn_number ?? '-'}`, `Packets: ${counts.queued || 0} queued, ${counts.processing || 0} processing, ${counts.completed || 0} completed, ${counts.failed || 0} failed`];
@@ -86,20 +98,44 @@ export async function hermesWhatsAppOperatorTick({ root, fetchImpl = fetch, stat
     try {
       let routed;
       let attachmentCount = 0;
+      const operator = { channel: 'whatsapp', actor: `self:${id.fingerprint}`, transport: 'hermes_owner_self_chat' };
+      const ownerRequestId = `wa-owner-${hash(messageId).slice(0,40)}`;
       if (hasMedia) {
         const attachments = persistWhatsAppAttachments(msg, { root });
         attachmentCount = attachments.length;
         if (!attachments.length) throw new Error('No supported steering attachment was available after WhatsApp media download');
         const instruction = buildAttachmentInstruction(msg, attachments);
-        routed = await executeOperatorTextCommand(`instruction ${instruction}`, { root, channel: 'whatsapp', actor: `self:${id.fingerprint}`, requestSeed: messageId, cursor: state.progress_cursor, transport: 'hermes_owner_self_chat' });
+        const steer = await callChatControlTool('dial_owner_steer', { instruction, attachment_count: attachmentCount, request_id: ownerRequestId }, root, operator);
+        routed = { command: { kind: 'owner_steer', mode: 'instruction' }, reply: steer.reply || `Owner steer ${steer.sequence || ''} registered.` };
       } else {
-        routed = await executeOperatorTextCommand(body, { root, channel: 'whatsapp', actor: `self:${id.fingerprint}`, requestSeed: messageId, cursor: state.progress_cursor, allowImplicitInstruction: true, transport: 'hermes_owner_self_chat' });
+        const parsed = parseOperatorTextCommand(body);
+        if (parsed.kind === 'instruction') {
+          const steer = await callChatControlTool('dial_owner_steer', { instruction: parsed.instruction, request_id: ownerRequestId }, root, operator);
+          routed = { command: { kind: 'owner_steer', mode: 'instruction' }, reply: steer.reply || `Owner steer ${steer.sequence || ''} registered.` };
+        } else if (parsed.kind !== 'error') {
+          routed = await executeOperatorTextCommand(body, { root, channel: 'whatsapp', actor: `self:${id.fingerprint}`, requestSeed: messageId, cursor: state.progress_cursor, transport: 'hermes_owner_self_chat' });
+        } else {
+          const semanticShortcut = naturalReadShortcut(body);
+          if (semanticShortcut) {
+            routed = await executeOperatorTextCommand(semanticShortcut, { root, channel: 'whatsapp', actor: `self:${id.fingerprint}`, requestSeed: messageId, cursor: state.progress_cursor, transport: 'hermes_owner_self_chat' });
+          } else {
+            const mode = classifyOwnerLiveMode(body);
+            if (mode === 'query') {
+              await bridgeSend(chatId, 'Checking the live DIAL repository/control plane now.', fetchImpl);
+              const live = await callChatControlTool('dial_owner_live_turn', { instruction: body, mode: 'query', request_id: ownerRequestId }, root, operator);
+              routed = { command: { kind: 'owner_live', mode: 'query' }, reply: live.state === 'COMPLETED' ? (live.response || 'Owner query completed.') : `Owner query failed: ${clean(live.reason || live.failure_state, 1200)}` };
+            } else {
+              const steer = await callChatControlTool('dial_owner_steer', { instruction: body, request_id: ownerRequestId }, root, operator);
+              routed = { command: { kind: 'owner_steer', mode: 'instruction' }, reply: steer.reply || `Owner steer ${steer.sequence || ''} registered.` };
+            }
+          }
+        }
       }
       if (routed.next_cursor) state.progress_cursor = routed.next_cursor;
       remember(state, messageId);
       saveState(state, root);
       await bridgeSend(chatId, routed.reply, fetchImpl);
-      event(root, 'HERMES_WHATSAPP_OPERATOR_COMMAND_COMPLETED', { command: routed.command?.kind || 'unknown', implicit_instruction: routed.command?.implicit === true, attachment_count: attachmentCount, message_id_hash: hash(messageId).slice(0, 24), identity_fingerprint: id.fingerprint });
+      event(root, 'HERMES_WHATSAPP_OPERATOR_COMMAND_COMPLETED', { command: routed.command?.kind || 'unknown', owner_live: routed.command?.kind === 'owner_live', owner_steer: routed.command?.kind === 'owner_steer', attachment_count: attachmentCount, message_id_hash: hash(messageId).slice(0, 24), identity_fingerprint: id.fingerprint });
     } catch (err) {
       event(root, 'HERMES_WHATSAPP_OPERATOR_COMMAND_FAILED', { error_sha256: hash(clean(err?.message || err, 2000)), message_id_hash: hash(messageId).slice(0, 24) });
       try { await bridgeSend(chatId, `DIAL control error: ${clean(err?.message || err, 1000)}`, fetchImpl); } catch {}
@@ -120,6 +156,7 @@ export async function hermesWhatsAppOperatorTick({ root, fetchImpl = fetch, stat
   }
   if (chatId) {
     for (const notice of collectMissionEventNotifications(state, { root })) await bridgeSend(chatId, notice, fetchImpl);
+    for (const notice of collectOwnerSteeringNotifications(state, { root })) await bridgeSend(chatId, notice, fetchImpl);
   }
   saveState(state, root);
   return { state, action: 'READY', processed_messages: Array.isArray(messages) ? messages.length : 0 };

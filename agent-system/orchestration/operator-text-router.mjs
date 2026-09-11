@@ -13,11 +13,11 @@ function help() {
     'priority <directive>',
     'approve <gate-id> [rationale] | reject <gate-id> [rationale]',
     'instruction <development instruction>',
-    'Authenticated WhatsApp owner channels may also send a normal full-text development instruction without the instruction prefix.',
+    'INSTRUCTION is explicit background queueing. Authenticated owner channels route normal action prose through the separate hybrid owner-steer path.',
   ].join('\n');
 }
 
-export function parseOperatorTextCommand(input, { allowImplicitInstruction = false } = {}) {
+export function parseOperatorTextCommand(input) {
   let text = clean(input, 30000);
   if (/^dial\s+/i.test(text)) text = text.replace(/^dial\s+/i, '');
   text = text.replace(/^\/+/, '');
@@ -36,7 +36,6 @@ export function parseOperatorTextCommand(input, { allowImplicitInstruction = fal
     const [gateId = '', ...why] = rest.split(/\s+/);
     return gateId ? { kind: command, gate_id: gateId, rationale: clean(why.join(' '), 4000) } : { kind: 'error', message: `${command} requires a gate id` };
   }
-  if (allowImplicitInstruction && text) return { kind: 'instruction', instruction: text, implicit: true };
   return { kind: 'error', message: `Unknown command: ${headRaw || text}` };
 }
 
@@ -56,8 +55,8 @@ function fmtPackets(v, label='Packets') {
   return rows.slice(0, 12).map((p) => `${p.state || 'UNKNOWN'} ${String(p.packet_id || '').slice(0,12)} ${oneLine(p.instruction_preview || p.result_state || '', 120)}`).join('\n');
 }
 
-export async function executeOperatorTextCommand(input, { root, channel = 'whatsapp', actor = 'owner', requestSeed = '', cursor = null, allowImplicitInstruction = false, transport = null } = {}) {
-  const parsed = parseOperatorTextCommand(input, { allowImplicitInstruction });
+export async function executeOperatorTextCommand(input, { root, channel = 'whatsapp', actor = 'owner', requestSeed = '', cursor = null, transport = null } = {}) {
+  const parsed = parseOperatorTextCommand(input);
   const ctx = { channel, actor, transport: transport || (channel === 'whatsapp' ? 'whatsapp_cloud_api' : 'text_router') };
   const call = (name, args = {}) => callChatControlTool(name, args, root, ctx);
   const request_id = rid(channel, requestSeed || input);

@@ -26,13 +26,16 @@ import { engineeringResearchStatus } from './engineering-presearch.mjs';
 import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
 import { ownerInstructionProvenance } from './project-truth-authority.mjs';
 import { supersedeActiveExecutionTasks } from './task-execution-envelope.mjs';
+import { executeOwnerLiveTurn } from './owner-live-control.mjs';
+import { ownerSteeringStatus, submitOwnerSteer } from './owner-steering-broker.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
 export const CHAT_CONTROL_TOKEN_REL = 'secrets/chat-control.token';
 const DEFAULT_HOST = process.env.DIAL_CHAT_CONTROL_HOST || '127.0.0.1';
 const DEFAULT_PORT = Number(process.env.DIAL_CHAT_CONTROL_PORT || 9130);
-const WRITE_TOOLS = new Set(['dial_submit_instruction', 'dial_pause_mission', 'dial_resume_mission', 'dial_reprioritize', 'dial_approve_gate', 'dial_reject_gate']);
+const WRITE_TOOLS = new Set(['dial_submit_instruction', 'dial_owner_steer', 'dial_owner_live_turn', 'dial_pause_mission', 'dial_resume_mission', 'dial_reprioritize', 'dial_approve_gate', 'dial_reject_gate']);
+const OWNER_AUTHORITY_CHANNELS = new Set(['claude', 'codex', 'whatsapp']);
 const EVENT_FILES = [
   'events/mission-control.jsonl',
   'events/external-orchestrator.jsonl',
@@ -43,6 +46,8 @@ const EVENT_FILES = [
   'events/runtime-probes.jsonl',
   'events/runtime-identity.jsonl',
   'events/hermes-operational-turns.jsonl',
+  'events/owner-live.jsonl',
+  'events/owner-steering.jsonl',
   'events/engineering-research.jsonl',
 ];
 
@@ -58,6 +63,12 @@ function normalizeOperatorContext(value = {}) {
     actor: clean(value.actor || process.env.DIAL_OPERATOR_ACTOR || 'owner', 120) || 'owner',
     transport: clean(value.transport || process.env.DIAL_OPERATOR_TRANSPORT || 'direct', 80) || 'direct',
   };
+}
+function ownerChannelProvenance({ instruction, requestId, operatorContext, forceAction = false }) {
+  const provenance = ownerInstructionProvenance({ instruction, requestId, ...operatorContext });
+  if (!OWNER_AUTHORITY_CHANNELS.has(operatorContext.channel)) return { ...provenance, authority: 'NO_AUTHORITY' };
+  if (forceAction && provenance.authority === 'NO_AUTHORITY') return { ...provenance, authority: 'OWNER_EXPLICIT' };
+  return provenance;
 }
 function rpcError(id, code, message, data) { return { jsonrpc: '2.0', id: id ?? null, error: { code, message, ...(data === undefined ? {} : { data }) } }; }
 function rpcResult(id, result) { return { jsonrpc: '2.0', id, result }; }
@@ -189,7 +200,9 @@ function auditTool(root, tool, args, result, operator = {}) {
 const TOOL_DEFS = Object.freeze([
   ['dial_project_status', 'Read the live DIAL repository, control-plane, queue and project binding status.', {}],
   ['dial_mission_status', 'Read the persistent Oracle DIAL root mission and current packet summary.', {}],
-  ['dial_submit_instruction', 'Submit a bounded DIAL development instruction to the persistent Oracle queue. This does not execute in Claude chat.', { instruction: { type: 'string' }, priority: { type: 'integer', minimum: 0, maximum: 100 }, request_id: { type: 'string' } }],
+  ['dial_submit_instruction', 'Submit deliberately background DIAL work to the persistent Oracle queue. Use dial_owner_steer for current owner direction.', { instruction: { type: 'string' }, priority: { type: 'integer', minimum: 0, maximum: 100 }, request_id: { type: 'string' } }],
+  ['dial_owner_steer', 'Register current product-owner direction with the hybrid Hermes steering broker. It acknowledges immediately, preserves an active writer until a safe boundary, blocks later autonomous packets, and then executes the steer before autonomous work resumes.', { instruction: { type: 'string' }, attachment_count: { type: 'integer', minimum: 0, maximum: 8 }, request_id: { type: 'string' } }],
+  ['dial_owner_live_turn', 'Immediate read-only owner query. If an authenticated owner explicitly sends mode=instruction, the request is redirected into dial_owner_steer so writable execution still uses the safe-boundary broker.', { instruction: { type: 'string' }, mode: { type: 'string', enum: ['query','instruction'] }, request_id: { type: 'string' } }],
   ['dial_list_packets', 'List DIAL root-mission packets and their states without exposing unrelated projects.', { limit: { type: 'integer', minimum: 1, maximum: 500 } }],
   ['dial_packet_status', 'Read one persisted DIAL packet, result and runtime provenance.', { packet_id: { type: 'string' } }],
   ['dial_progress_since', 'Read a cursor-based progress/event feed. Pass the returned next_cursor on the next call.', { cursor: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 500 } }],
@@ -210,6 +223,8 @@ const TOOL_DEFS = Object.freeze([
 
 const REQUIRED_ARGS = Object.freeze({
   dial_submit_instruction: ['instruction', 'request_id'],
+  dial_owner_steer: ['instruction', 'request_id'],
+  dial_owner_live_turn: ['instruction', 'request_id'],
   dial_packet_status: ['packet_id'],
   dial_pause_mission: ['request_id'],
   dial_resume_mission: ['request_id'],
@@ -234,11 +249,30 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
     const mission = ensureDialMission({ root, repoDir: project.repo_dir });
     if (mission.state === 'COMPLETE') throw new Error('root mission is complete');
-    const ownerProvenance = ownerInstructionProvenance({ instruction, requestId: normalizeRequestId(args.request_id), ...operatorContext });
+    const ownerProvenance = ownerChannelProvenance({ instruction, requestId: normalizeRequestId(args.request_id), operatorContext });
     const superseded = ownerProvenance.authority !== 'NO_AUTHORITY' ? supersedeActiveExecutionTasks({ root, reason: `OWNER_STEER:${ownerProvenance.instruction_sha256}` }) : [];
     result = submitExternalWork({ root, repoDir: project.repo_dir, instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, metadata: { mission_id: mission.mission_id, priority: Math.max(0, Math.min(100, Number(args.priority ?? 60))), request_id: normalizeRequestId(args.request_id), submitted_via: 'CHAT_CONTROL_BRIDGE', operator_channel: operatorContext.channel, operator_transport: operatorContext.transport, owner_instruction_provenance: ownerProvenance } });
     if (ownerProvenance.authority !== 'NO_AUTHORITY') recordDialOwnerAuthorityRoot({ root, provenance: ownerProvenance, sourceJobId: result.job_id });
     if (superseded.length) result = { ...result, adaptive_execution_superseded_tasks: superseded.map((x) => x.task_id) };
+  }
+  else if (name === 'dial_owner_steer') {
+    const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
+    const requestId = normalizeRequestId(args.request_id);
+    const ownerProvenance = ownerChannelProvenance({ instruction, requestId, operatorContext, forceAction: true });
+    if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner steer requires an authenticated Claude, Codex or WhatsApp owner channel');
+    result = submitOwnerSteer({ instruction, attachmentCount: Number(args.attachment_count || 0), requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance, root });
+  }
+  else if (name === 'dial_owner_live_turn') {
+    const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
+    const requestId = normalizeRequestId(args.request_id);
+    const mode = args.mode || null;
+    const ownerProvenance = ownerChannelProvenance({ instruction, requestId, operatorContext, forceAction: mode === 'instruction' });
+    if (mode === 'instruction') {
+      if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner action requires an authenticated Claude, Codex or WhatsApp owner channel');
+      result = submitOwnerSteer({ instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance, root });
+    } else {
+      result = await executeOwnerLiveTurn({ instruction, mode: 'query', root, repoDir: project.repo_dir, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance });
+    }
   }
   else if (name === 'dial_list_packets') result = { mission_id: DIAL_ROOT_MISSION_ID, packets: listMissionPackets({ root, limit: args.limit }) };
   else if (name === 'dial_packet_status') result = packetRecord(clean(args.packet_id, 160), root);
@@ -259,6 +293,8 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     chat_control: readJson('state/chat-control-heartbeat.json', { state: 'UNKNOWN' }, root),
     whatsapp_cloud: readJson('state/whatsapp-operator-heartbeat.json', { state: 'NOT_INSTALLED' }, root),
     whatsapp_hermes: readJson('state/whatsapp-hermes-operator-heartbeat.json', { state: 'NOT_INSTALLED' }, root),
+    owner_steering: ownerSteeringStatus(root),
+    owner_live: readJson('state/owner-live-interrupt.json', { state: 'IDLE' }, root),
     operator_surface: { tools: CHAT_CONTROL_TOOLS.length, arbitrary_shell: false, channels: OPERATOR_CHANNELS.filter((item) => item !== 'unknown') },
   };
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
@@ -269,7 +305,7 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
 
 async function handleRpc(body, root, operator = {}) {
   const id = body?.id; const method = body?.method;
-  if (method === 'initialize') return rpcResult(id, { protocolVersion: body?.params?.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'dial-oracle-control', version: '1.0.0' }, instructions: 'DIAL-only operator control surface. Oracle owns execution and persistence; the chat is a thin control console.' });
+  if (method === 'initialize') return rpcResult(id, { protocolVersion: body?.params?.protocolVersion || '2025-06-18', capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'dial-oracle-control', version: '1.0.0' }, instructions: 'DIAL-only owner control. For normal current owner direction use dial_owner_steer: Hermes acknowledges immediately, preserves any active repository writer to a safe boundary, then executes the steer before autonomous work resumes. Use dial_owner_live_turn for read-only queries; action-mode requests are redirected to dial_owner_steer. dial_submit_instruction is deliberate background queueing only. No generic shell/filesystem proxy is exposed.' });
   if (method === 'notifications/initialized') return null;
   if (method === 'ping') return rpcResult(id, {});
   if (method === 'tools/list') return rpcResult(id, { tools: CHAT_CONTROL_TOOLS });

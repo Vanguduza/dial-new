@@ -10,8 +10,8 @@ When `dial-oracle-control` is enrolled, use its typed `dial_*` tools for DIAL st
 - Ordinary development enters through the persistent Oracle orchestrator and remains subject to the repository development gate.
 - Never request, add or emulate a generic shell/filesystem primitive through the DIAL operator gateway.
 - The gateway is DIAL-only and cannot control unrelated Hermes projects.
-- WhatsApp owner control is another adapter to these same typed operations, not a separate authority.
-- Arbitrary WhatsApp prose is not a development instruction; only the explicit operator command grammar may create a typed control request.
+- WhatsApp owner control is another adapter to the same owner-control authority, not a separate orchestrator. Normal owner directions use `dial_owner_steer`: Hermes acknowledges immediately, preserves any active repository writer to a safe boundary, then executes the steer before autonomous work resumes. Read-only questions may use `dial_owner_live_turn`; `dial_submit_instruction` is deliberate background queueing only.
+- Authenticated owner WhatsApp prose and supported uploads may create typed owner-steer requests, but they never expose a generic shell/filesystem primitive or bypass repository truth/security/verification boundaries.
 
 ## Project Truth authority
 
