@@ -74,7 +74,72 @@
       "evidence_refs": {
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "ACCEPTANCE_CONTRACT",
+                "TEST",
+                "DOC",
+                "CI_RUN",
+                "LOCAL_RUN_NOTE"
+              ]
+            },
+            "ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "ACCEPTANCE_CONTRACT",
+                      "TEST",
+                      "DOC",
+                      "CI_RUN"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "kind",
+                  "ref"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "LOCAL_RUN_NOTE"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "kind",
+                  "note"
+                ],
+                "not": {
+                  "required": [
+                    "ref"
+                  ]
+                }
+              }
+            }
+          ]
         }
       },
       "realization_ref": {

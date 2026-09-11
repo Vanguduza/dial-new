@@ -1,7 +1,7 @@
 import type { ExplosionGroup, VisualCategoryId } from '../../contracts/src/index.js';
 import { MOTION_PROFILES, categoryMotion } from '../../contracts/src/index.js';
 import { renderSvg } from '../../image-processing/src/index.js';
-import { vehicleSceneSvg } from '../../technical-render/src/scene.js';
+import { vehicleSceneSvg } from '../../technical-render/src/index.js';
 
 /**
  * Blueprint 4.3 minimum explosion-plan record.

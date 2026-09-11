@@ -115,9 +115,18 @@
       "tests/injection-conformance.test.ts"
     ],
     "evidence_refs": [
-      "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md",
-      "tests/catalog-coverage.test.ts",
-      "https://github.com/Vanguduza/dial-new/actions/runs/33314202480"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/SPARE-F004_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/catalog-coverage.test.ts"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33314202480"
+      }
     ],
     "donor_refs": [
       "DONOR-MERCUR-STOREFRONT",
@@ -5714,11 +5723,28 @@
       "tests/round-credit.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md",
-      "29 tests covering all 14 acceptance criteria: tests/round-plan.test.ts",
-      "npm run verify green — 13 gates, 329 tests, none skipped",
-      "source-map accepts the gate claim; code_paths and test_paths resolve",
-      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-plan.test.ts",
+        "note": "29 tests covering all 14 acceptance criteria"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green \u2014 13 gates, 329 tests, none skipped"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "source-map accepts the gate claim; code_paths and test_paths resolve"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33347939136",
+        "note": "green on Linux against commit 6372df4 (all three jobs)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5733,7 +5759,7 @@
     ],
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
-    "implementation_note": "Second feature of the Grocery Rounds slice. Per-feature acceptance contract written before implementation per CT-7. A Round configuration is a choice inside a plan's bounds, never a free-form document — which makes RCM-026 (creators do not author tax), review finding M4 (voting thresholds need central bounds) and §5.4's repeated 'within Dial-approved' one rule rather than three. A configuration is invalid unless the credit product it composes to is conformant, which is how DEC-001..007 reach a real Round. NOT included: publishing plans, name moderation, persistence, the public Round Marketplace, and human validation of public Rounds. No independent specialist review.",
+    "implementation_note": "Second feature of the Grocery Rounds slice. Per-feature acceptance contract written before implementation per CT-7. A Round configuration is a choice inside a plan's bounds, never a free-form document \u2014 which makes RCM-026 (creators do not author tax), review finding M4 (voting thresholds need central bounds) and \u00a75.4's repeated 'within Dial-approved' one rule rather than three. A configuration is invalid unless the credit product it composes to is conformant, which is how DEC-001..007 reach a real Round. NOT included: publishing plans, name moderation, persistence, the public Round Marketplace, and human validation of public Rounds. No independent specialist review.",
     "security_tier": "S2",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F019_ACCEPTANCE_CONTRACT.md"
   },
@@ -5753,11 +5779,28 @@
       "tests/round-lifecycle.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md",
-      "27 tests covering all 16 acceptance criteria: tests/round-lifecycle.test.ts",
-      "npm run verify green — 13 gates, 329 tests, none skipped",
-      "source-map accepts the gate claim; code_paths and test_paths resolve",
-      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-lifecycle.test.ts",
+        "note": "27 tests covering all 16 acceptance criteria"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green \u2014 13 gates, 329 tests, none skipped"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "source-map accepts the gate claim; code_paths and test_paths resolve"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33347939136",
+        "note": "green on Linux against commit 6372df4 (all three jobs)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5772,7 +5815,7 @@
     ],
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
-    "implementation_note": "Third feature of the Grocery Rounds slice. §7 draws the seventeen main-line states and lists nine exception states with no arrows; the feature is the arrows nobody drew. Transitions are auditable (a record is returned, the input is never mutated) and idempotent on re-entry, both per §7. Surfaced a finding: §7's REFUNDING state conflicts with DEC-001/DEC-005 in name but not in substance, so entering it requires a declared in-kind outcome and a cash outcome is refused (RLC-009). The name itself is left as an open question — renaming a state in a locked plan is a product decision. NOT included: what happens inside a state, persistence, events, time, authorisation. No independent specialist review; S4 triggers the security and money reviewers.",
+    "implementation_note": "Third feature of the Grocery Rounds slice. \u00a77 draws the seventeen main-line states and lists nine exception states with no arrows; the feature is the arrows nobody drew. Transitions are auditable (a record is returned, the input is never mutated) and idempotent on re-entry, both per \u00a77. Surfaced a finding: \u00a77's REFUNDING state conflicts with DEC-001/DEC-005 in name but not in substance, so entering it requires a declared in-kind outcome and a cash outcome is refused (RLC-009). The name itself is left as an open question \u2014 renaming a state in a locked plan is a product decision. NOT included: what happens inside a state, persistence, events, time, authorisation. No independent specialist review; S4 triggers the security and money reviewers.",
     "security_tier": "S4",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F020_ACCEPTANCE_CONTRACT.md"
   },
@@ -5792,11 +5835,28 @@
       "tests/round-agreement.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md",
-      "29 tests covering all 14 acceptance criteria: tests/round-agreement.test.ts",
-      "npm run verify green — 13 gates, 227 tests, none skipped",
-      "source-map accepts the gate claim; code_paths and test_paths resolve",
-      "CI run 33334988260 green on Linux against commit 5936216 (all three jobs)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-agreement.test.ts",
+        "note": "29 tests covering all 14 acceptance criteria"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green \u2014 13 gates, 227 tests, none skipped"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "source-map accepts the gate claim; code_paths and test_paths resolve"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33334988260",
+        "note": "green on Linux against commit 5936216 (all three jobs)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5813,7 +5873,7 @@
     "activation_blocker_refs": [
       "ACT-REG-001"
     ],
-    "implementation_note": "First feature of the Grocery Rounds vertical slice (DEC-009). Per-feature acceptance contract written before implementation per CT-7. The domain is the consent gate: an immutable content-addressed agreement version, a complete §6.2 acceptance record bound to it by hash, refusal of CREATE_ROUND / JOIN_ROUND / FIRST_PURCHASE without one, and fresh consent on material change. Carries DEC-002, DEC-005 and DEC-006 as required disclosures. NOT included: the UI, identity (customerId is taken as given), persistence, and any claim that the agreement wording is legally adequate. No independent specialist review; S4 triggers the security and money reviewers, which the implementing agent cannot self-certify. ACT-REG-001 remains open, so this may not gate a real customer's first payment.",
+    "implementation_note": "First feature of the Grocery Rounds vertical slice (DEC-009). Per-feature acceptance contract written before implementation per CT-7. The domain is the consent gate: an immutable content-addressed agreement version, a complete \u00a76.2 acceptance record bound to it by hash, refusal of CREATE_ROUND / JOIN_ROUND / FIRST_PURCHASE without one, and fresh consent on material change. Carries DEC-002, DEC-005 and DEC-006 as required disclosures. NOT included: the UI, identity (customerId is taken as given), persistence, and any claim that the agreement wording is legally adequate. No independent specialist review; S4 triggers the security and money reviewers, which the implementing agent cannot self-certify. ACT-REG-001 remains open, so this may not gate a real customer's first payment.",
     "security_tier": "S4",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F021_ACCEPTANCE_CONTRACT.md"
   },
@@ -5833,11 +5893,28 @@
       "tests/round-membership.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md",
-      "25 tests covering all 16 acceptance criteria: tests/round-membership.test.ts",
-      "npm run verify green — 13 gates, 329 tests, none skipped",
-      "source-map accepts the gate claim; code_paths and test_paths resolve",
-      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-membership.test.ts",
+        "note": "25 tests covering all 16 acceptance criteria"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green \u2014 13 gates, 329 tests, none skipped"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "source-map accepts the gate claim; code_paths and test_paths resolve"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33347939136",
+        "note": "green on Linux against commit 6372df4 (all three jobs)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5852,7 +5929,7 @@
     ],
     "support_profile": "SUPPORT-GROCERIES",
     "activation_blocker_refs": [],
-    "implementation_note": "Fourth feature of the Grocery Rounds slice. Joining is eight conditions holding at once, each naming itself on failure. The load-bearing reading: §4's ban on a creator redirecting pooled value is also about membership, so a creator may moderate and may never end a membership — removing a member holding credits redirects pooled value by another route (RMB-009). §10's guarantee that one member's default never reduces another's is made structural: recordLapse cannot reach validPurchasesMinor. NOT included: entitlement arithmetic, invitations as artefacts, identity, eligibility assessment, AML/KYC (review H5, still required by ACT-REG-001), notifications. No independent specialist review.",
+    "implementation_note": "Fourth feature of the Grocery Rounds slice. Joining is eight conditions holding at once, each naming itself on failure. The load-bearing reading: \u00a74's ban on a creator redirecting pooled value is also about membership, so a creator may moderate and may never end a membership \u2014 removing a member holding credits redirects pooled value by another route (RMB-009). \u00a710's guarantee that one member's default never reduces another's is made structural: recordLapse cannot reach validPurchasesMinor. NOT included: entitlement arithmetic, invitations as artefacts, identity, eligibility assessment, AML/KYC (review H5, still required by ACT-REG-001), notifications. No independent specialist review.",
     "security_tier": "S4",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F022_ACCEPTANCE_CONTRACT.md"
   },
@@ -5872,10 +5949,23 @@
       "tests/round-purchase-schedule.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F023_ACCEPTANCE_CONTRACT.md",
-      "tests: tests/round-purchase-schedule.test.ts (31 tests, all 16 acceptance criteria covered plus money-integrity, idempotency, strict calendar-date and month-end regression coverage), npm run test green",
-      "typecheck: npm run typecheck green",
-      "npm run verify green (all 13 gates, 417/417 tests)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F023_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-purchase-schedule.test.ts",
+        "note": "(31 tests, all 16 acceptance criteria covered plus money-integrity, idempotency, strict calendar-date and month-end regression coverage), npm run test green"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "typecheck: npm run typecheck green"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green (all 13 gates, 417/417 tests)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5892,7 +5982,7 @@
     "activation_blocker_refs": [
       "ACT-REG-004"
     ],
-    "implementation_note": "Sixth feature of the Grocery Rounds slice. DOMAIN_TESTED: packages/round-purchase-schedule implements generateSchedule/deriveStatus/recordAttempt/classifyForLedger exactly against all 16 acceptance criteria (tests/round-purchase-schedule.test.ts, 31 tests, npm run test and npm run typecheck green). Fills the gap left by GROC-F024: round-ledger already declares purchase_due/purchase_processing/purchase_failed/partial_purchase/late_purchase as event kinds and posts zero movements for the timeline ones, but nothing decided when an instalment is due or classified a recorded payment against it. This feature is the pure schedule-generation and classification layer that sits in front of it and reuses round-ledger's own LedgerEventKind type rather than redeclaring it. Late-join instalment policy remains an open product question — generateSchedule refuses rather than guesses (R3), per contract. LATE has no grace window pending unbuilt §15 reminders. Not yet wired: round-ledger's recordPayment still posts every payment as purchase_paid unconditionally — wiring it to this feature's classifyForLedger is P1 fast-follow work per the contract, not part of this gate. ACT-REG-002/ACT-REG-003 (payment capture) remain open; this feature is exercised against recorded attempts supplied by tests until they exist. The canonical Feature Security Profile classifies GROC-F023 as S2; no independent specialist review is included in this DOMAIN_TESTED claim. Defence-in-depth regressions cover late-payment classification, attempt idempotency, amount validation, impossible calendar dates, month-end dates and internally derived ledger classification. Deferred, not blocking: (1) classifyForLedger's return shape (kind + amountMinor only) cannot carry the per-pool split or vatMinor that round-ledger's recordPayment needs, so the P1 wiring from this feature into recordPayment requires widening the interface first, not just calling it; (2) no reversal/chargeback path exists once an instalment reaches PAID — a provider-reported chargeback on a settled instalment cannot be represented; (3) whether a FAILED status should be reachable after the due date (currently masked by LATE taking precedence) is contract-ambiguous and undecided, not just untested. Composes with round-plan/round-membership/round-ledger, all DOMAIN_TESTED.",
+    "implementation_note": "Sixth feature of the Grocery Rounds slice. DOMAIN_TESTED: packages/round-purchase-schedule implements generateSchedule/deriveStatus/recordAttempt/classifyForLedger exactly against all 16 acceptance criteria (tests/round-purchase-schedule.test.ts, 31 tests, npm run test and npm run typecheck green). Fills the gap left by GROC-F024: round-ledger already declares purchase_due/purchase_processing/purchase_failed/partial_purchase/late_purchase as event kinds and posts zero movements for the timeline ones, but nothing decided when an instalment is due or classified a recorded payment against it. This feature is the pure schedule-generation and classification layer that sits in front of it and reuses round-ledger's own LedgerEventKind type rather than redeclaring it. Late-join instalment policy remains an open product question \u2014 generateSchedule refuses rather than guesses (R3), per contract. LATE has no grace window pending unbuilt \u00a715 reminders. Not yet wired: round-ledger's recordPayment still posts every payment as purchase_paid unconditionally \u2014 wiring it to this feature's classifyForLedger is P1 fast-follow work per the contract, not part of this gate. ACT-REG-002/ACT-REG-003 (payment capture) remain open; this feature is exercised against recorded attempts supplied by tests until they exist. The canonical Feature Security Profile classifies GROC-F023 as S2; no independent specialist review is included in this DOMAIN_TESTED claim. Defence-in-depth regressions cover late-payment classification, attempt idempotency, amount validation, impossible calendar dates, month-end dates and internally derived ledger classification. Deferred, not blocking: (1) classifyForLedger's return shape (kind + amountMinor only) cannot carry the per-pool split or vatMinor that round-ledger's recordPayment needs, so the P1 wiring from this feature into recordPayment requires widening the interface first, not just calling it; (2) no reversal/chargeback path exists once an instalment reaches PAID \u2014 a provider-reported chargeback on a settled instalment cannot be represented; (3) whether a FAILED status should be reachable after the due date (currently masked by LATE taking precedence) is contract-ambiguous and undecided, not just untested. Composes with round-plan/round-membership/round-ledger, all DOMAIN_TESTED.",
     "security_tier": "S2",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F023_ACCEPTANCE_CONTRACT.md"
   },
@@ -5912,11 +6002,28 @@
       "tests/round-ledger.test.ts"
     ],
     "evidence_refs": [
-      "acceptance contract: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md",
-      "21 tests covering all 16 acceptance criteria: tests/round-ledger.test.ts",
-      "npm run verify green — 13 gates, 329 tests, none skipped",
-      "source-map accepts the gate claim; code_paths and test_paths resolve",
-      "CI run 33347939136 green on Linux against commit 6372df4 (all three jobs)"
+      {
+        "kind": "ACCEPTANCE_CONTRACT",
+        "ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md"
+      },
+      {
+        "kind": "TEST",
+        "ref": "tests/round-ledger.test.ts",
+        "note": "21 tests covering all 16 acceptance criteria"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "npm run verify green \u2014 13 gates, 329 tests, none skipped"
+      },
+      {
+        "kind": "LOCAL_RUN_NOTE",
+        "note": "source-map accepts the gate claim; code_paths and test_paths resolve"
+      },
+      {
+        "kind": "CI_RUN",
+        "ref": "33347939136",
+        "note": "green on Linux against commit 6372df4 (all three jobs)"
+      }
     ],
     "donor_refs": [
       "REF-INSTACART",
@@ -5934,7 +6041,7 @@
       "ACT-REG-001",
       "ACT-REG-004"
     ],
-    "implementation_note": "Fifth feature of the Grocery Rounds slice, and the one DEC-003/DEC-004 land in. A projection over §9's fourteen events, not a second ledger — §9 requires reuse of the canonical kernel and CLAUDE.md forbids a second money authority, so this computes postings and owns none of them. purchase_paid moves nothing into revenue; goods_delivered is the only event that earns. Payments split per pool with VAT extracted from the price rather than added to it. RCM-010's invariant is checked from two independent derivations. Surfaced a finding: §9.2 lists a `refund` event that DEC-005 forbids, so it is refused with a remedy pointing at in-kind settlement — the same contradiction as the lifecycle's REFUNDING state. NOT included: the canonical ledger interface (unbuilt), payments, entitlement, allocation, the VAT return, persistence, and residual treatment (review H3 has no owner yet). No independent specialist review — this is the clearest money-reviewer trigger in the slice.",
+    "implementation_note": "Fifth feature of the Grocery Rounds slice, and the one DEC-003/DEC-004 land in. A projection over \u00a79's fourteen events, not a second ledger \u2014 \u00a79 requires reuse of the canonical kernel and CLAUDE.md forbids a second money authority, so this computes postings and owns none of them. purchase_paid moves nothing into revenue; goods_delivered is the only event that earns. Payments split per pool with VAT extracted from the price rather than added to it. RCM-010's invariant is checked from two independent derivations. Surfaced a finding: \u00a79.2 lists a `refund` event that DEC-005 forbids, so it is refused with a remedy pointing at in-kind settlement \u2014 the same contradiction as the lifecycle's REFUNDING state. NOT included: the canonical ledger interface (unbuilt), payments, entitlement, allocation, the VAT return, persistence, and residual treatment (review H3 has no owner yet). No independent specialist review \u2014 this is the clearest money-reviewer trigger in the slice.",
     "security_tier": "S4",
     "acceptance_contract_ref": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GROC-F024_ACCEPTANCE_CONTRACT.md"
   },
@@ -6816,7 +6923,7 @@
   {
     "feature_id": "GMPC-F071",
     "module": "GMPC",
-    "outcome": "Dial campaign ↔ ad platform IDs",
+    "outcome": "Dial campaign \u2194 ad platform IDs",
     "owner": "paid-media",
     "aggregate": "DialCampaignAdPlatformIDs",
     "status": "SPECIFIED",

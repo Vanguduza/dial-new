@@ -36,6 +36,12 @@ import { vehicleSceneSvg } from "../../technical-render/src/scene.js";
 import { ensureDir, readJson, writeJsonAtomic } from "./fs.js";
 import { hashFile, sha256, stableStringify } from "./hash.js";
 
+// Entry-point facade: cross-package consumers import these from the package
+// root, never from its internal modules. agent:boundary-check enforces that.
+export { ensureDir, readJson, writeJsonAtomic } from './fs.js';
+export { hashFile } from './hash.js';
+export { generateVehicle } from './generate.js';
+
 export const PIPELINE_VERSION = "0.6.0";
 const STAGE_VERSION = "6.0.0";
 

@@ -616,7 +616,9 @@
     "code_paths": [
       "packages/packaging/src/index.ts"
     ],
-    "test_paths": [],
+    "test_paths": [
+      "tests/media-packages.test.ts"
+    ],
     "current_gate": "CODE_PRESENT",
     "implementation_note": "Asset manifest with per-file SHA-256 written at 16_PACKAGE. Versioned registry across visual families is not yet built."
   },
@@ -664,6 +666,7 @@
       "apps/catalog-coverage/src/visual-source-discovery.ts"
     ],
     "test_paths": [
+      "tests/media-packages.test.ts",
       "tests/pipeline.integration.test.ts",
       "tests/visual-source.test.ts"
     ],
@@ -723,11 +726,12 @@
       "apps/preview-player/components/raster-journey.tsx"
     ],
     "test_paths": [
+      "tests/media-packages.test.ts",
       "tests/pipeline.integration.test.ts",
+      "tests/raster-source.test.ts",
       "tests/scene-engine.test.ts",
       "tests/scene-production.test.ts",
-      "tests/transition-production.test.ts",
-      "tests/raster-source.test.ts"
+      "tests/transition-production.test.ts"
     ],
     "current_gate": "CODE_PRESENT",
     "implementation_note": "Explosion planning now meets Blueprint 4.3's minimum record: packages/explosion emits per-group layerAssetId, origin, destination, vector, depth, startProgress, endProgress and easing, staggered so groups overlap. Delivery does not. The pipeline still renders flattened whole-scene frames rather than compositing the named layers, and apps/preview-player/components/dvtg-preview.tsx animates 23 hardcoded CSS clip-path polygons over a single already-exploded still - the exact production method 4.3 prohibits. Nothing emits or asserts the shared display matrix 4.3 requires between artwork and hit map. This capability cannot advance past CODE_PRESENT until the blockers below clear.",

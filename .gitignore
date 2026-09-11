@@ -64,3 +64,11 @@ examples/raster-hilux-strategy/assets/
 *.pem
 *.key
 *.p12
+
+# Derived preview assets. public/packs/<family>/ is the publishable subset of
+# artifacts/<family>/ produced by publishPreviewPack, and the catalog queue is a
+# byte copy of catalog-data/generated/. Both were committed as second copies and
+# the pack manifest had already drifted - it declared hashes that no longer
+# matched the assets beside it. Rebuild with `npm run preview:sync`.
+apps/preview-player/public/packs/
+apps/preview-player/public/catalog/visual-transition-source-queue.json

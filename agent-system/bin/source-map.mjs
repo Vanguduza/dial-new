@@ -25,6 +25,8 @@ const CAPABILITIES = `${pack}/11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGIS
 // out of step with the canon and made the guard reject canonical states.
 import { GATE_LADDER as GATES, GATE_ALIASES } from '../lib/gate-ladder.mjs';
 
+const REPO_PATH_EVIDENCE = new Set(['ACCEPTANCE_CONTRACT', 'TEST', 'DOC']);
+
 const failures = [];
 const warnings = [];
 
@@ -40,6 +42,28 @@ function check(records, label, idKey, gateKey) {
 
     for (const p of [...codePaths, ...testPaths]) {
       if (!exists(p)) failures.push(`${label} ${id}: claims a path that does not exist — ${p}`);
+    }
+
+    // Evidence used to be free prose with a path buried inside a sentence, so
+    // nothing could check it and the graph stored it with no content hash.
+    // A repo-path kind must resolve; a CI run must name its run id; a local
+    // note is explicitly not a re-derivable reference and may not claim one.
+    for (const ev of record.evidence_refs ?? []) {
+      if (typeof ev === 'string') {
+        failures.push(`${label} ${id}: evidence_refs must be structured records, not prose — ${ev}`);
+        continue;
+      }
+      if (REPO_PATH_EVIDENCE.has(ev.kind)) {
+        if (!ev.ref) failures.push(`${label} ${id}: ${ev.kind} evidence has no ref`);
+        else if (!exists(ev.ref)) failures.push(`${label} ${id}: ${ev.kind} evidence does not resolve — ${ev.ref}`);
+      } else if (ev.kind === 'CI_RUN') {
+        if (!/^\d+$/.test(String(ev.ref ?? ''))) failures.push(`${label} ${id}: CI_RUN evidence needs a numeric run id — ${ev.ref}`);
+      } else if (ev.kind === 'LOCAL_RUN_NOTE') {
+        if (ev.ref) failures.push(`${label} ${id}: LOCAL_RUN_NOTE is not a reference and may not carry a ref — ${ev.ref}`);
+        if (!ev.note) failures.push(`${label} ${id}: LOCAL_RUN_NOTE needs a note`);
+      } else {
+        failures.push(`${label} ${id}: unknown evidence kind "${ev.kind}"`);
+      }
     }
     if (codePaths.length || testPaths.length) mapped += 1;
 

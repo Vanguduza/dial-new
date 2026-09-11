@@ -1,8 +1,0 @@
-{
-  "provider": "deterministic-development",
-  "model": "dial-vector-fixture",
-  "modelVersion": "1.0.0",
-  "seed": 1302020,
-  "promptProfile": "cgi-identity-lock-v1",
-  "outputPath": "C:\\Users\\Admin\\Documents\\dial new\\artifacts\\VF-TOYOTA-HILUX-AN130-DC-FL\\v1\\cgi\\cgi-master.avif"
-}

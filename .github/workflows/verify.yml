@@ -79,6 +79,36 @@ jobs:
       - name: readiness scorecard is current
         run: node agent-system/bin/scorecard-refresh.mjs --check
 
+  build:
+    name: production build and full typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # apps/preview-player is excluded from the root tsconfig and installs from
+      # its own lockfile (see the e2e job for why the trees cannot be merged).
+      # Without this step 10k lines of the customer-facing app - the only part a
+      # customer ever sees - were never typechecked by anything.
+      - name: install preview player
+        working-directory: apps/preview-player
+        run: npm ci --workspaces=false
+
+      - name: typecheck preview player
+        run: npm run typecheck:preview
+
+      # `npm run build` was in package.json but in no workflow. The e2e job
+      # proves the DEV server renders; nothing proved the production build
+      # compiled at all, so shipping could have been broken indefinitely while
+      # every check stayed green.
+      - name: production build
+        run: npm run build
+
   pack:
     name: pipeline produces a conforming pack
     runs-on: ubuntu-latest
@@ -137,6 +167,12 @@ jobs:
 
       - name: install browsers
         run: npx playwright install --with-deps chromium
+
+      # public/packs and the catalog queue are derived, not committed. The
+      # webServer command syncs them too, but doing it here fails fast instead
+      # of eating the 180s server-start budget.
+      - name: derive preview assets
+        run: npm run preview:sync
 
       # playwright.config.ts starts the preview server itself and waits for it.
       # All three projects run: desktop, mobile (§5.1 forgiving hit regions) and

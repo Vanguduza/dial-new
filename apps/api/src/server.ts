@@ -2,9 +2,9 @@ import { appendFile, readFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { join, relative, resolve, isAbsolute } from 'node:path';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
-import { ensureDir, readJson, writeJsonAtomic } from '../../../packages/pipeline-core/src/fs.js';
+import { ensureDir, readJson, writeJsonAtomic } from '../../../packages/pipeline-core/src/index.js';
 import { getPackRoot, runPipeline } from '../../../packages/pipeline-core/src/index.js';
-import { generateVehicle } from '../../../packages/pipeline-core/src/generate.js';
+import { generateVehicle } from '../../../packages/pipeline-core/src/index.js';
 
 // ── configuration ──────────────────────────────────────────────────────────
 // Every one of these was previously implicit. jobPath was accepted from the

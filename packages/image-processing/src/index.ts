@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 import { copyFile, open, readFile, stat } from 'node:fs/promises';
 import { dirname, extname } from 'node:path';
-import { ensureDir } from '../../pipeline-core/src/fs.js';
+import { ensureDir } from '../../pipeline-core/src/index.js';
 
 export interface RenderOptions {
   width?: number;

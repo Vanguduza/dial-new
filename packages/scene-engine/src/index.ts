@@ -11,6 +11,12 @@ import { archiveScene, emitFlowPack, navigationRegions, sealPack } from "./packa
 import { displayProbeChecks } from "./display.js";
 import { frameCache } from "./frame-cache.js";
 
+// Entry-point facade: cross-package consumers import these from the package
+// root, never from its internal modules. agent:boundary-check enforces that.
+export { produceBatch } from './factory.js';
+export { loadReconstructionWorkers } from './providers.js';
+export { prepareRasterSource } from './raster-source.js';
+
 const json = (path: string, value: unknown) => writeFile(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 const webp = (frame: Frame) => sharp(frame.raster.pixels, { raw: { width: frame.raster.width, height: frame.raster.height, channels: 4 } }).webp({ lossless: true }).toBuffer();
 
