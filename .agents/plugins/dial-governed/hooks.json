@@ -1,0 +1,38 @@
+{
+  "dial-pretool": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$DIAL_REPO_DIR/agent-system/orchestration/providers/google/antigravity-hook.mjs\" pretool",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "dial-posttool": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$DIAL_REPO_DIR/agent-system/orchestration/providers/google/antigravity-hook.mjs\" posttool",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },  "dial-stop": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node \"$DIAL_REPO_DIR/agent-system/orchestration/providers/google/antigravity-hook.mjs\" stop",
+        "timeout": 15
+      }
+    ]
+  }
+}

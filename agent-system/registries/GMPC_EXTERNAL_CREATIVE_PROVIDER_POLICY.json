@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "policy_id": "GMPC-EXTERNAL-CREATIVE-PROVIDERS-1",
+  "canonical_owner": "GMPC",
+  "provider": "google-pomelli",
+  "capability_id": "CREATIVE-POMELLI",
+  "provider_authority": "NON_AUTHORITATIVE_CREATIVE_PROVIDER",
+  "provider_admission_registry": "agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json",
+  "production_runtime_dependency": false,
+  "production_content_role": "APPROVED_CREATIVE_INPUT_ONLY",
+  "provider_session_storage": "FORBIDDEN",
+  "browser_cookie_automation": "FORBIDDEN",
+  "ui_scraping_as_api": "FORBIDDEN",
+  "future_api_requires_separate_admission": true,
+  "feature_bindings": {
+    "creative_generation": "GMPC-F050",
+    "asset_library": "GMPC-F051",
+    "brand_rules": "GMPC-F052",
+    "creative_approval": "GMPC-F053",
+    "social_control": "GMPC-F060",
+    "social_scheduling": "GMPC-F061",
+    "social_connector": "GMPC-F062",
+    "approval_inbox": "GMPC-F140",
+    "marketing_policy": "GMPC-F170",
+    "audit": "GMPC-F180",
+    "provider_health": "GMPC-F181",
+    "commercial_memory": ["GMPC-F202", "GMPC-F209"]
+  },
+  "allowed_context": [
+    "sanitized brand identity",
+    "approved business-unit brand rules",
+    "public product/category facts",
+    "approved campaign brief",
+    "approved promotion/product snapshot",
+    "non-customer audience archetypes"
+  ],
+  "forbidden_context": [
+    "customer PII",
+    "health data",
+    "payment or card data",
+    "authentication secrets",
+    "private provider credentials",
+    "raw customer segmentation rows",
+    "unapproved prices or offers",
+    "supplier confidential terms unless separately authorized"
+  ],
+  "required_reviews": [
+    "product_fidelity",
+    "brand_conformance",
+    "claims",
+    "rights",
+    "commercial_binding"
+  ],
+  "publication_rule": "All applicable reviews must be ACCEPTED or NOT_APPLICABLE, any commercial claim must bind an immutable GMPC product/promotion snapshot, the asset must not be expired or revoked, and GMPC approval/audit evidence must exist.",
+  "revocation_rule": "GMPC can revoke an asset at any time; revoked assets are not publishable even if prior review evidence remains valid.",
+  "invariants": [
+    "Pomelli cannot create or alter price, promotion, discount, entitlement or budget authority.",
+    "Pomelli cannot become DIAL's campaign, asset, catalogue, identity or customer-data source of truth.",
+    "Provider-generated assets enter GMPC quarantine before review.",
+    "Provider availability and capability maturity are external-capability state; creative truth and lifecycle are GMPC state.",
+    "No production customer request depends on Pomelli availability.",
+    "No browser session token or cookie is persisted by DIAL."
+  ],
+  "staging_acceptance": [
+    "sanitized Business DNA pack generated",
+    "forbidden-data fixture denied",
+    "manual Pomelli export ingested with immutable content hash",
+    "all required review gates exercised",
+    "commercial claim refuses publication without snapshot binding",
+    "approved non-price asset can publish to staging only",
+    "revocation removes publishability",
+    "audit/provenance evidence remains readable after revocation"
+  ]
+}

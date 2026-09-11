@@ -1,10 +1,16 @@
 {
   "schema_version": 1,
-  "policy_version": "dial-aef-design-provider-1",
+  "policy_version": "dial-aef-design-provider-2",
   "authority": "DEVELOPMENT_PROVIDER_POLICY",
   "stitch_optional": true,
   "runtime_dependency_forbidden": true,
   "provider_output_requires_quarantine": true,
   "reverse_authority_flow_forbidden": true,
-  "default_enabled": false
+  "default_enabled": false,
+  "stitch_capability_id": "DESIGN-STITCH",
+  "qualification_evidence": "operations/external-capabilities/design-stitch/latest.json",
+  "live_qualification_required": true,
+  "fixed_mcp_host": "https://stitch.googleapis.com/mcp",
+  "arbitrary_host_override_forbidden": true,
+  "real_screen_acceptance_required_for_integrated_claim": true
 }

@@ -182,6 +182,68 @@
       "performance": {
         "sample_count": 0
       }
+    },
+    {
+      "harness_id": "antigravity-worker",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "provider": "google",
+      "harness_family": "antigravity-cli",
+      "harness_version": "1.2.0",
+      "model": {
+        "model_id": "provider-managed",
+        "provider_family": "google",
+        "model_lineage_id": "antigravity"
+      },
+      "identity": {
+        "worker_identity_hash": "antigravity-worker-current",
+        "independence_class": "GOOGLE_ANTIGRAVITY",
+        "toolchain_fingerprint": "agy-1.2.0-platform-sha256-pinned"
+      },
+      "capabilities": {
+        "coding": true,
+        "repositoryRead": true,
+        "repositoryWrite": true,
+        "browser": true,
+        "visualReasoning": true,
+        "designGeneration": false,
+        "designTransformation": false,
+        "longContext": true,
+        "toolUse": true,
+        "structuredOutput": true
+      },
+      "safety": {
+        "allowed_risk_classes": [
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ],
+        "allowed_data_classes": [
+          "PUBLIC",
+          "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"
+        ]
+      },
+      "allowed_roles": [
+        "ARCHITECT",
+        "BUILDER",
+        "FRONTEND_BUILDER",
+        "TESTER",
+        "SECURITY_REVIEWER",
+        "VISUAL_REVIEWER",
+        "DONOR_REVIEWER",
+        "INTEGRATOR"
+      ],
+      "qualification": {
+        "state": "DISCOVERED",
+        "evidence_source": "operations/external-capabilities/dev-antigravity/latest.json"
+      },
+      "operational": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN"
+      },
+      "performance": {
+        "sample_count": 0
+      }
     }
   ]
 }

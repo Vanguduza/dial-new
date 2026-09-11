@@ -2211,5 +2211,27 @@
     ],
     "current_gate": "DOMAIN_TESTED",
     "implementation_note": "DEC-024 enforcement projection. The registry explicitly is not an independent source of truth. It binds PostHog, Formbricks, OTel/Grafana, Langfuse, Promptfoo, Metabase, Command Centre, Chatwoot, Meilisearch and core money/pricing/DKRF authorities to non-overlapping roles; CI validates required concern coverage and critical PostHog refusals."
+  },
+  {
+    "capability_id": "GMPC-S001",
+    "area": "GMPC",
+    "name": "Governed external creative-provider admission and Pomelli asset lifecycle",
+    "owner": "gmpc-content-assets",
+    "app_families": [
+      "DIAL_WEB"
+    ],
+    "purpose": "Admit non-authoritative external creative providers into GMPC while keeping Business DNA, creative asset truth, reviews, commercial binding, approval, publication, expiry and revocation under GMPC authority.",
+    "eventualities": [],
+    "status": "CODE_PRESENT",
+    "current_gate": "CODE_PRESENT",
+    "code_paths": [
+      "packages/gmpc-creative-providers/src/pomelli.ts",
+      "agent-system/orchestration/providers/google/pomelli-workstation.mjs",
+      "agent-system/registries/GMPC_EXTERNAL_CREATIVE_PROVIDER_POLICY.json"
+    ],
+    "test_paths": [
+      "tests/gmpc-pomelli-integration.test.ts",
+      "tests/orchestration-google-capabilities.test.mjs"
+    ]
   }
 ]
