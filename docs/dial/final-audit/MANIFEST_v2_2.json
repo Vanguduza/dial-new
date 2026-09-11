@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-10T20:11:56.711Z",
+  "generated_at": "2026-09-11T05:50:15.808Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 240,
+  "file_count": 241,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "eaf3ccb2c675908ce276a5d214c2bd60e0558990307947c10f60cd47383a3307"
+      "sha256": "314921009ae8a39af121fee268c654a04a2eb9594befa34e1e19b1ebdd4c3244"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -185,6 +185,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
       "bytes": 100566,
       "sha256": "a16181ae561ce0c275806e3a57a573ce32d02142fb4b8f8358cfb46acbaa79c1"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",
+      "bytes": 22285,
+      "sha256": "0b366cee0a894ce584f02100e432ae5facf4aac30d0b92e444a0f9aeaa224002"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md",
@@ -553,8 +558,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json",
-      "bytes": 65506,
-      "sha256": "d40301c9a4b19bdfdb5b55a22e64ae389811ee3506b65473ed4c440c2ee1113a"
+      "bytes": 66425,
+      "sha256": "c60bfe8c78bf1ad32d49984ab8cebcdfa4f20308b695ca00953f73c5ffdc9796"
     },
     {
       "path": "12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json",

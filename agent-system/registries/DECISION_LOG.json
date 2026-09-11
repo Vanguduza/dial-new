@@ -709,5 +709,34 @@
       "tests/orchestration-operator-gateway.test.mjs"
     ],
     "reopens_if": "the product owner explicitly replaces the hybrid steering model with an equal-or-stronger mechanism preserving DIAL-only isolation, owner precedence, safe-boundary serialization, owner provenance, AEF supersession/fencing, read-only query immediacy, no-shell control, Oracle persistence and owner-only WhatsApp authentication"
+  },
+  {
+    "decision_id": "DEC-031",
+    "decided_on": "2026-09-11",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / DESIGN / GMPC / GOOGLE EXTERNAL CAPABILITIES",
+    "title": "Antigravity, Stitch and Pomelli use one governed external-capability admission model with Pomelli owned by GMPC",
+    "decision": "Adopt DIAL Google External Capabilities Rev 3 as the canonical reconciliation of the Antigravity/Stitch/Pomelli blueprint, the multi-harness/Stitch engineering specification and AEF Rev 2. Antigravity is a worker-only engineering harness beneath VEKL/AEF; Stitch is a non-authoritative design-generation provider beneath DIAL Design Authority; Pomelli is a GMPC external creative provider whose connection/admission state may be shared but whose Business DNA, asset lifecycle, reviews, commercial binding, approval, publication, expiry and revocation remain GMPC-owned. External capability maturity is explicit and no provider may be called INTEGRATED or the programme PRODUCTION_GREEN without provider-specific live and orchestrated evidence.",
+    "consequence": "The prior false-green condition is prohibited. Provider absence/fallback safety does not prove integration. Antigravity/Stitch credentials remain tooling-only; Pomelli browser sessions are human-operated and never stored/automated by DIAL. Provider outputs are candidates until admitted by existing DIAL authority. No provider becomes manager runtime, Project Truth, design authority, GMPC commercial truth, pricing/promotion/money authority or customer transactional runtime. Existing GPT-5.6 Sol -> Claude Sonnet 5 manager policy, VEKL, AEF, Design Authority, GMPC and domain SoRs remain superior.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",
+    "enforced_by": [
+      "agent-system/orchestration/adaptive-execution-planner.mjs",
+      "agent-system/orchestration/google-capability-cli.mjs",
+      "agent-system/orchestration/google-capability-program-check.mjs",
+      "agent-system/orchestration/hcx-worker-executor.mjs",
+      "agent-system/orchestration/providers/google/antigravity-adapter.mjs",
+      "agent-system/orchestration/providers/google/pomelli-workstation.mjs",
+      "agent-system/orchestration/providers/google/stitch-adapter.mjs",
+      "agent-system/registries/DESIGN_PROVIDER_POLICY.json",
+      "agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json",
+      "agent-system/registries/GMPC_EXTERNAL_CREATIVE_PROVIDER_POLICY.json",
+      "agent-system/registries/HARNESS_CAPABILITY_REGISTRY.json",
+      "deploy/oracle/hermes-codex/install-google-antigravity.sh",
+      "packages/gmpc-creative-providers/src/pomelli.ts",
+      "tests/gmpc-pomelli-integration.test.ts",
+      "tests/orchestration-google-capabilities.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly supersedes this external-capability model with an equal-or-stronger mechanism preserving Project Truth/VEKL/AEF/design/GMPC authority, provider non-authority, secret isolation, live qualification, evidence-accounted maturity, rollback and no-false-green guarantees"
   }
 ]
