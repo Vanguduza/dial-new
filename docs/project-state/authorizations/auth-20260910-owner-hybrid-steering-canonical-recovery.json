@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260910-owner-hybrid-steering-canonical-recovery",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "6646e34ed1f572060c5c7104b4f1f138a439699150a68d60f16c46257946271e",
+  "owner_instruction_excerpt": "Is it not better for my instructions to go through hermes(powered by xkiro models) so that my directions do not abruptly disrupt ongoing work needlessly but processed and actioned when its appropriate while I still get a real time response ",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260910-hybrid-owner-steering-canonical-recovery",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-10T19:54:10.053922+00:00",
+  "base_sha": "f6e57f19d36122574f76a6dd1f55326139df31eb",
+  "branch_scope": "fix/owner-steering-canonical-recovery-20260910",
+  "authorized_paths": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "agent-system/canon/PROJECT_TRUTH.md",
+    "agent-system/orchestration/**",
+    "agent-system/registries/DECISION_LOG.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "deploy/oracle/hermes-codex/**",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "docs/orchestration/**",
+    "docs/project-state/PROJECT_TRUTH_LEDGER.jsonl",
+    "docs/project-state/authorizations/**",
+    "tests/orchestration-operator-gateway.test.mjs"
+  ],
+  "change_classes": [
+    "owner_control_recovery",
+    "project_truth_reconciliation",
+    "technical_implementation",
+    "feature_preservation",
+    "verification"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": true,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

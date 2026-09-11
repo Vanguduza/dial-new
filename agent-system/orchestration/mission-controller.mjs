@@ -3,6 +3,7 @@ import { submitExternalWork } from './external-orchestrator.mjs';
 import { evaluateDevelopmentUnblock } from './development-unblock.mjs';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
 import { DIAL_ROOT_MISSION_ID, ensureDialMission, listMissionApprovals, listMissionPackets, missionStatus, recordMissionPacketResult } from './mission-control.mjs';
+import { ownerSteeringBlocksAutonomous } from './owner-steering-broker.mjs';
 
 const DEFAULT_POLL_MS = 5000;
 const DEFAULT_RETRY_MS = 60000;
@@ -56,6 +57,7 @@ export function missionControllerTick({ root, developmentGate = evaluateDevelopm
   const packets = listMissionPackets({ root, limit: 500 });
   const active = packets.filter((p) => ['QUEUED', 'PROCESSING'].includes(p.state));
   if (mission.state !== 'RUNNING' || active.length) return { action: 'NOOP', mission_state: mission.state, active_packets: active.length };
+  if (ownerSteeringBlocksAutonomous(root)) return { action: 'OWNER_STEER_PENDING', mission_state: mission.state, active_packets: 0 };
 
   const gate = developmentGate({ repoDir: mission.repo_dir || process.env.DIAL_REPO_DIR, root });
   if (!gate.unblocked) return { action: 'DEVELOPMENT_BLOCKED', mission_state: mission.state, reason: gate.reason, checks: gate.checks };

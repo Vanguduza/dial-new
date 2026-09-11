@@ -3,7 +3,9 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
-import { executeOperatorTextCommand } from './operator-text-router.mjs';
+import { executeOperatorTextCommand, parseOperatorTextCommand } from './operator-text-router.mjs';
+import { callChatControlTool } from './chat-control-bridge.mjs';
+import { classifyOwnerLiveMode } from './owner-live-control.mjs';
 
 export const WHATSAPP_OPERATOR_AUTHORITY = 'OWNER_ONLY_TYPED_DIAL_CONTROL';
 export const WHATSAPP_OPERATOR_CONFIG_REL = 'secrets/whatsapp-operator.json';
@@ -132,9 +134,31 @@ export async function processWhatsAppMessage(message, { root, config, fetchImpl 
 
   const commandText = message.type === 'text' ? message.text : 'help';
   recordEvent(root, 'WHATSAPP_OPERATOR_COMMAND_RECEIVED', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), message_type: message.type });
-  const routed = message.type === 'text'
-    ? await executeOperatorTextCommand(commandText, { root, channel: 'whatsapp', actor: `wa:${sender_hash}`, requestSeed: message.id, cursor: readCursor(sender, root), allowImplicitInstruction: true, transport: 'whatsapp_cloud_api' })
-    : { command: { kind: 'help' }, reply: 'DIAL operator control accepts text commands only. Send help to list commands.' };
+  let routed;
+  if (message.type !== 'text') {
+    routed = { command: { kind: 'help' }, reply: 'DIAL operator control accepts text commands only on the Cloud API adapter. Send help to list commands.' };
+  } else {
+    const parsed = parseOperatorTextCommand(commandText);
+    if (parsed.kind === 'instruction') {
+      const requestId = `wa-cloud-${hash(message.id).slice(0, 40)}`;
+      const operator = { channel: 'whatsapp', actor: `wa:${sender_hash}`, transport: 'whatsapp_cloud_api' };
+      const steer = await callChatControlTool('dial_owner_steer', { instruction: parsed.instruction, request_id: requestId }, root, operator);
+      routed = { command: { kind: 'owner_steer', mode: 'instruction' }, reply: steer.reply || `Owner steer ${steer.sequence || ''} registered.` };
+    } else if (parsed.kind !== 'error') {
+      routed = await executeOperatorTextCommand(commandText, { root, channel: 'whatsapp', actor: `wa:${sender_hash}`, requestSeed: message.id, cursor: readCursor(sender, root), transport: 'whatsapp_cloud_api' });
+    } else {
+      const mode = classifyOwnerLiveMode(commandText);
+      const requestId = `wa-cloud-${hash(message.id).slice(0, 40)}`;
+      const operator = { channel: 'whatsapp', actor: `wa:${sender_hash}`, transport: 'whatsapp_cloud_api' };
+      if (mode === 'query') {
+        const live = await callChatControlTool('dial_owner_live_turn', { instruction: commandText, mode: 'query', request_id: requestId }, root, operator);
+        routed = { command: { kind: 'owner_live', mode: 'query' }, reply: live.state === 'COMPLETED' ? (live.response || 'Owner query completed.') : `Owner query failed: ${clean(live.reason || live.failure_state, 1200)}` };
+      } else {
+        const steer = await callChatControlTool('dial_owner_steer', { instruction: commandText, request_id: requestId }, root, operator);
+        routed = { command: { kind: 'owner_steer', mode: 'instruction' }, reply: steer.reply || `Owner steer ${steer.sequence || ''} registered.` };
+      }
+    }
+  }
   if (routed.next_cursor) writeCursor(sender, routed.next_cursor, root);
   const record = {
     schema_version: 1, message_id_hash: hash(message.id), sender_hash, command: routed.command?.kind || 'unknown',

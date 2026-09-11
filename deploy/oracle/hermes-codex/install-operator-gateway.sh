@@ -4,7 +4,9 @@ set -euo pipefail
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 USER_UNIT_DIR="${HOME}/.config/systemd/user"
-HERMES_DIR="${HERMES_HOME:-${HOME}/.hermes/hermes-agent}"
+HERMES_HOME="${HERMES_HOME:-${HOME}/.hermes}"
+HERMES_DIR="${HERMES_AGENT_DIR:-${HERMES_HOME}/hermes-agent}"
+CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
 HERMES_WA_SESSION="${HERMES_WHATSAPP_SESSION:-${HOME}/.hermes/whatsapp/session}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 START_SERVICES=1
@@ -13,6 +15,8 @@ if [[ "${1:-}" == "--no-start" ]]; then START_SERVICES=0; fi
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ -f "$REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" ]] || fail "operator-control-stdio.mjs missing"
 [[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-hermes-operator.mjs" ]] || fail "whatsapp-hermes-operator.mjs missing"
+[[ -f "$REPO_DIR/agent-system/orchestration/owner-live-control.mjs" ]] || fail "owner-live-control.mjs missing"
+[[ -f "$REPO_DIR/agent-system/orchestration/owner-steering-broker.mjs" ]] || fail "owner-steering-broker.mjs missing"
 [[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-owner-input.mjs" ]] || fail "whatsapp-owner-input.mjs missing"
 [[ -f "$REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "whatsapp-operator-adapter.mjs missing"
 [[ -f "$HERMES_DIR/scripts/whatsapp-bridge/bridge.js" ]] || fail "Hermes WhatsApp bridge missing"
@@ -26,6 +30,33 @@ if [[ "$START_SERVICES" == 1 ]]; then
 else
   bash "$REPO_DIR/deploy/oracle/hermes-codex/install-chat-control-bridge.sh" --no-start
 fi
+
+cat >"$USER_UNIT_DIR/dial-owner-steering.service" <<UNIT
+[Unit]
+Description=DIAL hybrid owner steering broker
+After=network-online.target dial-chat-control.service dial-hermes-orchestrator.service
+Wants=network-online.target dial-chat-control.service dial-hermes-orchestrator.service
+
+[Service]
+Type=simple
+WorkingDirectory=${REPO_DIR}
+Environment=DIAL_REPO_DIR=${REPO_DIR}
+Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
+Environment=HERMES_HOME=${HERMES_HOME}
+Environment=CODEX_HOME=${CODEX_HOME}
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
+ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/owner-steering-broker.mjs daemon
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=${CONTROL_HOME} ${REPO_DIR} ${HERMES_HOME} ${CODEX_HOME} -${HOME}/.claude -${HOME}/.config/claude
+
+[Install]
+WantedBy=default.target
+UNIT
 
 cat >"$USER_UNIT_DIR/dial-hermes-whatsapp-bridge.service" <<UNIT
 [Unit]
@@ -66,8 +97,8 @@ UNIT
 cat >"$USER_UNIT_DIR/dial-hermes-whatsapp-operator.service" <<UNIT
 [Unit]
 Description=DIAL owner-only WhatsApp typed operator control through Hermes self-chat
-After=network-online.target dial-chat-control.service
-Wants=network-online.target dial-chat-control.service
+After=network-online.target dial-chat-control.service dial-owner-steering.service
+Wants=network-online.target dial-chat-control.service dial-owner-steering.service
 
 [Service]
 Type=simple
@@ -76,6 +107,9 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=DIAL_HERMES_WHATSAPP_BRIDGE_URL=http://127.0.0.1:3011
 Environment=DIAL_HERMES_WHATSAPP_CREDS=${HERMES_WA_SESSION}/creds.json
+Environment=HERMES_HOME=${HERMES_HOME}
+Environment=CODEX_HOME=${CODEX_HOME}
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-hermes-operator.mjs daemon
 Restart=always
 RestartSec=5
@@ -84,7 +118,7 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
 ReadOnlyPaths=${REPO_DIR} ${HERMES_DIR}
-ReadWritePaths=${CONTROL_HOME} ${HERMES_WA_SESSION}
+ReadWritePaths=${CONTROL_HOME} ${HERMES_WA_SESSION} ${HERMES_HOME} ${CODEX_HOME} -${HOME}/.claude -${HOME}/.config/claude
 
 [Install]
 WantedBy=default.target
@@ -93,8 +127,8 @@ UNIT
 cat >"$USER_UNIT_DIR/dial-whatsapp-cloud-operator.service" <<UNIT
 [Unit]
 Description=DIAL owner-only WhatsApp Cloud API typed operator adapter
-After=network-online.target dial-chat-control.service
-Wants=network-online.target dial-chat-control.service
+After=network-online.target dial-chat-control.service dial-owner-steering.service
+Wants=network-online.target dial-chat-control.service dial-owner-steering.service
 
 [Service]
 Type=simple
@@ -103,6 +137,9 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=DIAL_WHATSAPP_OPERATOR_HOST=127.0.0.1
 Environment=DIAL_WHATSAPP_OPERATOR_PORT=9132
+Environment=HERMES_HOME=${HERMES_HOME}
+Environment=CODEX_HOME=${CODEX_HOME}
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-operator-adapter.mjs serve
 Restart=always
 RestartSec=5
@@ -111,16 +148,16 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
 ReadOnlyPaths=${REPO_DIR}
-ReadWritePaths=${CONTROL_HOME}
+ReadWritePaths=${CONTROL_HOME} ${HERMES_HOME} ${CODEX_HOME} -${HOME}/.claude -${HOME}/.config/claude
 
 [Install]
 WantedBy=default.target
 UNIT
 
 systemctl --user daemon-reload
-systemctl --user enable dial-hermes-whatsapp-bridge.path dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service >/dev/null
+systemctl --user enable dial-owner-steering.service dial-hermes-whatsapp-bridge.path dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service >/dev/null
 if [[ "$START_SERVICES" == 1 ]]; then
-  systemctl --user restart dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service
+  systemctl --user restart dial-owner-steering.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service
   if [[ -f "$HERMES_WA_SESSION/creds.json" ]]; then systemctl --user restart dial-hermes-whatsapp-bridge.service; fi
 fi
 

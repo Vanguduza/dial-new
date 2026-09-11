@@ -3,6 +3,8 @@ set -euo pipefail
 
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
+HERMES_HOME="${HERMES_HOME:-${HOME}/.hermes}"
+CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
 USER_UNIT_DIR="${HOME}/.config/systemd/user"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 START_SERVICES=1
@@ -24,6 +26,9 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=DIAL_CHAT_CONTROL_HOST=127.0.0.1
 Environment=DIAL_CHAT_CONTROL_PORT=9130
+Environment=HERMES_HOME=${HERMES_HOME}
+Environment=CODEX_HOME=${CODEX_HOME}
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/chat-control-bridge.mjs serve
 Restart=always
 RestartSec=3
@@ -32,7 +37,7 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
 ReadOnlyPaths=${REPO_DIR}
-ReadWritePaths=${CONTROL_HOME}
+ReadWritePaths=${CONTROL_HOME} ${HERMES_HOME} ${CODEX_HOME} -${HOME}/.claude -${HOME}/.config/claude
 
 [Install]
 WantedBy=default.target

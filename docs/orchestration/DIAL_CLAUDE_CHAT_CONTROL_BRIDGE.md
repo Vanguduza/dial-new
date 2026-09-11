@@ -1,6 +1,6 @@
 # DIAL Claude Chat Control Bridge
 
-> Compatibility note (2026-09-08): this Claude-specific document remains valid for the Claude adapter, but the canonical multi-channel architecture is now `DIAL_OPERATOR_GATEWAY.md` (`DEC-025`). Claude, Codex and authenticated owner WhatsApp all consume the same typed DIAL control authority.
+> Compatibility note (updated 2026-09-09): this Claude-specific document is subordinate to the canonical multi-channel `DIAL_OPERATOR_GATEWAY.md` (`DEC-025`, superseded for normal owner-action queueing semantics by `DEC-030`). Claude, Codex and authenticated paired-owner WhatsApp share one typed owner-control authority: normal owner actions use `dial_owner_steer`, read-only questions use `dial_owner_live_turn`, and explicit background work remains persistent and queued.
 
 Status: implemented control-plane architecture, subject to Oracle bootstrap/qualification before development authority is unblocked.
 
@@ -70,7 +70,8 @@ The bridge exposes:
 
 - `dial_project_status`
 - `dial_mission_status`
-- `dial_submit_instruction`
+- `dial_owner_live_turn` — immediate read-only owner query; explicit action-mode calls are redirected to the hybrid `dial_owner_steer` lane
+- `dial_submit_instruction` — explicit background queue submission only
 - `dial_list_packets`
 - `dial_packet_status`
 - `dial_progress_since`
@@ -147,7 +148,7 @@ Repeated failed packets move the mission to `WAITING_RUNTIME` after the configur
 
 ## Queue semantics
 
-All chat-submitted work uses the existing persistent Oracle queue.
+Interactive owner work does not automatically use the ordinary Oracle inbox. Normal owner **actions** use `dial_owner_steer`: the hybrid broker acknowledges immediately, blocks later autonomous claims, lets an already-running repository writer reach its safe boundary, and then executes the steer through the locked Hermes runtime. Read-only owner questions may use `dial_owner_live_turn` without acquiring the repository-write interrupt. `dial_submit_instruction` remains available only when the owner explicitly wants work backgrounded into the persistent queue.
 
 Chat control does not execute repository work directly.
 

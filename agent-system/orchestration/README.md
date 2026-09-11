@@ -30,7 +30,7 @@ The production development path is a persistent Oracle-side service:
 
 A submitted instruction is persisted outside the Git worktree, atomically claimed by the external service, executed against DIAL through the locked Hermes runtime chain, and finalized with runtime/model provenance.
 
-Ordinary queued development is rejected until `/var/lib/dial-control/state/external-orchestration-gate.json` is `PRODUCTION_GREEN`. Before that gate exists, the only permitted queue bypass is one fixed read-only/no-tools qualification canary.
+Ordinary autonomous/queued development is rejected until `/var/lib/dial-control/state/external-orchestration-gate.json` is `PRODUCTION_GREEN`. Before that gate exists, the only normal queue bypass is one fixed read-only/no-tools qualification canary. Separately, an authenticated current-owner live turn may run outside the queue to answer a question, repair a blocked/degraded state, or apply new owner direction; it remains bound by runtime identity, VEKL where material, security/credential boundaries and truthful verification.
 
 The development gate is pinned to a cryptographic fingerprint of:
 
@@ -79,9 +79,11 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `mission-controller.mjs` — persistent continuation loop that dispatches the next bounded manager turn when the DIAL mission is RUNNING and idle.
 - `chat-control-bridge.mjs` — shared DIAL-only typed operator authority for Claude, Codex and authenticated owner WhatsApp while Oracle owns execution.
 - `operator-control-stdio.mjs` — local Claude/Codex MCP adapter over the shared typed tools.
-- `operator-text-router.mjs` — shortcut command grammar plus authenticated-owner full-text instruction routing into the same typed DIAL queue; prose never becomes direct shell execution.
-- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge, with full-text steering, bounded document/image ingestion and automatic important mission notifications.
-- `whatsapp-owner-input.mjs` — content-addressed owner attachment persistence, safe steering-instruction construction and deduplicated mission-event notification mapping.
+- `operator-text-router.mjs` — deterministic shortcut grammar for status/mission/pause/resume/priority/approval/background submission controls.
+- `owner-steering-broker.mjs` — canonical hybrid owner-action lane. It acknowledges owner direction immediately, persists it outside the autonomous inbox, blocks later autonomous claims, lets any current repository writer finish safely, then executes the steer before autonomous work resumes; optional xKiro advice is limited to coarse PUBLIC metadata and is non-authoritative.
+- `owner-live-control.mjs` — direct Hermes owner-turn executor used by the steering broker plus read-only/exceptional live turns; read-only questions do not serialize repository writers.
+- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge, with natural-language hybrid steering, immediate status/questions, bounded document/image ingestion and automatic mission/steer lifecycle notifications.
+- `whatsapp-owner-input.mjs` — content-addressed owner attachment persistence, safe steering-instruction construction and deduplicated mission/owner-steering event notification mapping.
 - `whatsapp-operator-adapter.mjs` — official Meta Cloud API adapter with HMAC verification, sender allowlisting and replay protection.
 
 ## Install
@@ -105,7 +107,7 @@ Secrets are stored outside Git under `/var/lib/dial-control/secrets/` and are no
 
 ## Unified owner operator gateway
 
-DIAL development remains resident on Oracle while Claude, Codex and authenticated owner WhatsApp act as thin operator consoles over one typed DIAL-only control authority. The gateway exposes status, progress, pause/resume, reprioritisation, approval and instruction-submission tools and never exposes a generic shell. See `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`.
+DIAL development remains resident on Oracle while Claude, Codex and authenticated owner WhatsApp act as thin operator consoles over one DIAL-only control authority. Current owner actions use `dial_owner_steer`; read-only questions use `dial_owner_live_turn`; deliberately backgrounded work may still use `dial_submit_instruction`. The gateway also exposes status, progress, pause/resume, reprioritisation and approval tools, and never exposes a generic shell/filesystem proxy. See `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`.
 
 Install the gateway, persistent mission controller, local Claude/Codex MCP enrollment and fail-closed WhatsApp services with:
 
@@ -189,4 +191,4 @@ Research-reference Google/Android versions are not executable pins. No vendor sk
 
 `DEC-028` adds a worker-only execution fabric below VEKL 2.2. `task-triage.mjs` classifies risk deterministically; `task-execution-envelope.mjs` binds material worker execution to the current Unit/KRT/activation; `harness-capability-exchange.mjs` hard-filters qualified execution workers and cannot select the Hermes manager runtime; `compute-governor.mjs` reserves/settles inference capacity; `execution-topology.mjs` chooses the minimum safe topology; `role-context-projector.mjs` projects the existing VEKL capsules; `worker-lease-manager.mjs` enforces repository-wide write scopes and fencing; and `execution-receipt.mjs` records immutable admitted-execution evidence.
 
-Durable AEF state lives under `$DIAL_CONTROL_HOME/execution`. Authenticated material owner steer through the typed operator gateway supersedes active AEF envelopes and revokes their leases before the new instruction is queued. Provider/design output remains non-authoritative and is quarantined before admission. Stitch is optional development tooling and is disabled unless its explicit provider policy/credentials/health gates are satisfied.
+Durable AEF state lives under `$DIAL_CONTROL_HOME/execution`. Authenticated material owner steer through the typed operator gateway waits for any current repository writer to reach its safe boundary, then supersedes affected AEF envelopes and revokes their leases immediately before the direct owner turn executes; normal owner steering is not placed in the autonomous inbox. Provider/design output remains non-authoritative and is quarantined before admission. Stitch is optional development tooling and is disabled unless its explicit provider policy/credentials/health gates are satisfied.

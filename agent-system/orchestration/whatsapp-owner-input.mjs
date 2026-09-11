@@ -125,3 +125,43 @@ export function collectMissionEventNotifications(state, { root } = {}) {
   state.notification_event_cursor = fingerprints.at(-1);
   return fresh.map(formatMissionEventNotification).filter(Boolean).slice(-6);
 }
+
+export function formatOwnerSteeringEventNotification(event) {
+  if (!event?.event) return null;
+  const seq = event.sequence ? ` ${event.sequence}` : '';
+  if (event.event === 'OWNER_STEER_WAITING_SAFE_BOUNDARY') {
+    return `Owner steer${seq} is registered and waiting for ${event.active_writer_count || 1} active repository writer${Number(event.active_writer_count || 1) === 1 ? '' : 's'} to reach a safe boundary. No later autonomous packet will start first.`;
+  }
+  if (event.event === 'OWNER_STEER_EXECUTION_STARTED') {
+    return `Owner steer${seq} is now being applied before autonomous development continues.`;
+  }
+  if (event.event === 'OWNER_STEER_COMPLETED') {
+    const result = clean(event.response_preview, 900);
+    return `Owner steer${seq} completed${event.resolved_model ? ` via ${event.resolved_model}` : ''}.${result ? `\n${result}` : ''}`;
+  }
+  if (event.event === 'OWNER_STEER_FAILED') return `Owner steer${seq} needs attention. Execution failed${event.failure_state ? `: ${event.failure_state}` : '.'}`;
+  if (event.event === 'OWNER_STEER_UNCERTAIN_OUTCOME') return `Owner steer${seq} has an uncertain outcome after a steering-broker restart. It was not automatically repeated to avoid duplicate repository changes.`;
+  if (event.event === 'OWNER_STEER_SUPERSEDED') return `Owner steer${seq} was superseded by your newer explicit correction/replacement.`;
+  return null;
+}
+
+export function collectOwnerSteeringNotifications(state, { root } = {}) {
+  const target = resolveControlPath('events/owner-steering.jsonl', root);
+  let events = [];
+  try { events = fs.readFileSync(target, 'utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line)); }
+  catch (err) { if (err?.code !== 'ENOENT') throw err; }
+  if (!events.length) return [];
+  const fingerprints = events.map(eventFingerprint);
+  if (!state.steering_event_cursor) {
+    state.steering_event_cursor = fingerprints.at(-1);
+    return [];
+  }
+  const prior = fingerprints.lastIndexOf(state.steering_event_cursor);
+  if (prior < 0) {
+    state.steering_event_cursor = fingerprints.at(-1);
+    return [];
+  }
+  const fresh = events.slice(prior + 1);
+  state.steering_event_cursor = fingerprints.at(-1);
+  return fresh.map(formatOwnerSteeringEventNotification).filter(Boolean).slice(-8);
+}

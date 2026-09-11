@@ -377,3 +377,9 @@ Oracle qualification and both production/development finalizers now consume the 
 - Replaced the command-substitution-local `TMP_FILES` array in `qualify-control-plane.sh` with one parent-owned temporary directory.
 - The EXIT cleanup now always returns success after removing that directory, so a fully GREEN qualification cannot be reported as process exit 1 merely because the temp tracker was empty in the parent shell.
 - This also removes the leaked `/tmp` files created by qualifier command substitutions.
+
+## 2026-09-10 — Hybrid owner-steering canonical recovery
+
+`DEC-030` supersedes only the queue-only normal-owner-action semantics of `DEC-025`. The previously live-but-uncommitted `owner-steering-broker.mjs` and `owner-live-control.mjs` behavior is reconciled into canonical Project Truth: authenticated owner actions are acknowledged immediately, block later autonomous claims, allow an existing repository writer to reach a safe boundary, then execute before autonomous development resumes. Read-only owner questions remain non-serializing live turns and explicit background work remains `dial_submit_instruction`.
+
+The recovered implementation is reconciled with AEF Rev 2 and Project Truth authority. At the safe execution boundary, authenticated material owner steering records its owner authority root and supersedes/revokes affected AEF envelopes and leases before repository mutation. xKiro receives only coarse PUBLIC steering metadata and remains non-authoritative. No generic shell/filesystem proxy, second manager, second mission controller, customer/business WhatsApp authority, or runtime-policy change is introduced.

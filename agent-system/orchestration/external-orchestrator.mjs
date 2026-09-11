@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { assertDevelopmentUnblocked } from './development-unblock.mjs';
 import { missionExecutionAllowed } from './mission-control.mjs';
 import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
+import { ownerLiveInterruptActive } from './owner-live-control.mjs';
+import { ownerSteeringBlocksAutonomous } from './owner-steering-broker.mjs';
 import { ensurePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from './engineering-knowledge-broker.mjs';
 import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
 import { recordSkillOutcome } from './skill-outcome-recorder.mjs';
@@ -112,6 +114,7 @@ function listInbox(root) {
 }
 
 function claimNext(root) {
+  if (ownerLiveInterruptActive(root) || ownerSteeringBlocksAutonomous(root)) return null;
   for (const entry of listInbox(root)) {
     if (!missionExecutionAllowed(entry.job, root)) continue;
     const name = entry.name;
