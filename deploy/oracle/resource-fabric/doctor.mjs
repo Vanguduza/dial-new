@@ -36,18 +36,18 @@ export function serviceHealth(unit) {
  * Each criterion needs a real probe; unconfigured probes make the whole result
  * UNVERIFIED so the scheduler refuses the host rather than trusting it.
  */
-export function probeDesktopCommander({ unit = 'desktop-commander.service', probeCmd = process.env.DIAL_COMMANDER_PROBE } = {}) {
+export function probeDesktopCommander({ probeCmd = process.env.DIAL_COMMANDER_PROBE } = {}) {
   const required = POLICY.desktop_commander_green_requires;
   const criteria = {};
 
-  const svc = serviceHealth(unit);
-  criteria.PROCESS_UP = svc.state === STATE.GREEN ? STATE.GREEN : STATE.RED;
-
+  // Desktop Commander is an MCP stdio server: the client spawns it per session
+  // over stdin/stdout, so there is no persistent host-side process to inspect and
+  // `systemctl is-active` is not the health signal. Every criterion, PROCESS_UP
+  // included, comes from the configured functional probe.
   if (!probeCmd) {
-    for (const c of required) if (c !== 'PROCESS_UP') criteria[c] = STATE.UNVERIFIED;
+    for (const c of required) criteria[c] = STATE.UNVERIFIED;
     return {
-      state: criteria.PROCESS_UP === STATE.RED ? STATE.RED : STATE.UNVERIFIED,
-      unit, criteria,
+      state: STATE.UNVERIFIED, criteria,
       reason: 'DIAL_COMMANDER_PROBE is not configured; functional criteria cannot be established',
     };
   }
@@ -58,12 +58,12 @@ export function probeDesktopCommander({ unit = 'desktop-commander.service', prob
     .map((l) => l.trim().split('='))
     .filter((p) => p.length === 2)
     .map(([k, v]) => [k.toUpperCase(), v.toUpperCase() === 'GREEN' ? STATE.GREEN : STATE.RED]));
-  for (const c of required) if (c !== 'PROCESS_UP') criteria[c] = reported[c] ?? STATE.UNVERIFIED;
+  for (const c of required) criteria[c] = reported[c] ?? STATE.UNVERIFIED;
 
   const values = required.map((c) => criteria[c]);
   const state = values.every((v) => v === STATE.GREEN) ? STATE.GREEN
     : values.includes(STATE.RED) ? STATE.RED : STATE.UNVERIFIED;
-  return { state, unit, criteria, probe_ok: probe.ok };
+  return { state, criteria, probe_ok: probe.ok };
 }
 
 export function hostDoctor({ units = [] } = {}) {
