@@ -118,7 +118,11 @@ _try_collect() {
   # reported failure, so a connection that returned exit 0 with an empty body was
   # accepted without any check at all: it wrote an empty host-certification.json,
   # the step-chooser saw the artefact still missing, and re-queued the step forever.
-  if jq -e '.certification.state' "$tmp" >/dev/null 2>&1; then
+  # Test the file is non-empty BEFORE asking jq. jq's exit status for "no output at
+  # all" is version-dependent: jq 1.7 exits 4, older builds exit 0. Cloud Shell ships
+  # an older one, so the guard passed on an empty body and the failure surfaced much
+  # later as a mysterious zero-byte write. A direct test needs no such assumption.
+  if [[ -s "$tmp" ]] && jq -e '.certification.state' "$tmp" >/dev/null 2>&1; then
     # Report success only if the artefact is actually on disk afterwards. Returning
     # 0 on the strength of having parsed the body meant a failed `mv` still counted
     # as collected, and the step was then re-queued forever against an empty file.
@@ -137,7 +141,11 @@ _try_collect() {
 
   LAST_SSH_RC="$rc"
   LAST_SSH_ERR="$(head -c 400 "$err")"
-  LAST_BODY="$(head -c 300 "$tmp")"
+  if [[ -s "$tmp" ]]; then
+    LAST_BODY="$(head -c 300 "$tmp")"
+  else
+    LAST_BODY="(empty response — dial-host-certify produced no output on the host)"
+  fi
   rm -f "$tmp" "$err"
   return 1
 }
