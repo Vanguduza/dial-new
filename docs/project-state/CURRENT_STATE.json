@@ -3,18 +3,36 @@
     "OWNER_DERIVED"
   ],
   "authorization_ids": [
-    "auth-20260911-owner-repo-audit-remediation"
+    "auth-20260912-owner-vekl-unattended-s0-s3"
   ],
-  "branch": "claude/dial-repo-audit-adoption-k8neax",
+  "branch": "claude/unattended-dial-v2",
   "changed_files": [
+    ".claude/rules/verification-discipline.md",
+    "CLAUDE.md",
+    "agent-system/bin/graph-orphan-check.mjs",
+    "agent-system/bin/retrieval-eval.mjs",
+    "agent-system/bin/signal-calibration-check.mjs",
+    "agent-system/bin/task-class-coherence-check.mjs",
+    "agent-system/engineering-knowledge/evals/retrieval-golden-set.json",
+    "agent-system/orchestration/canon-graph-compiler.mjs",
+    "agent-system/orchestration/engineering-resource-resolver.mjs",
+    "agent-system/orchestration/graph-retrieval-router.mjs",
+    "agent-system/orchestration/knowledge-resolution-trace.mjs",
+    "agent-system/orchestration/skill-resolver.mjs",
+    "agent-system/orchestration/vekl-architecture-check.mjs",
     "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "agent-system/registries/KNOWLEDGE_EDGE_TYPE_REGISTRY.json",
+    "agent-system/registries/KNOWLEDGE_NODE_TYPE_REGISTRY.json",
+    "agent-system/registries/KNOWLEDGE_ROUTE_REGISTRY.json",
+    "agent-system/registries/TASK_CLASS_SIGNAL_POLICY.json",
     "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "docs/project-state/authorizations/auth-20260912-owner-vekl-unattended-s0-s3.json",
     "package.json"
   ],
-  "content_diff_sha256": "e1b0571498c985bc25f9e0a28275ee5066d51563a9253c59205716b000204e84",
-  "observed_at_utc": "2026-09-11T17:02:27.991058+00:00",
+  "content_diff_sha256": "70d533c869c66da10592c84e929ac683a80540544194bb82b892245b5af58ba0",
+  "observed_at_utc": "2026-09-12T03:24:03.789240+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "2429350577d5143ea1a4ab169bbcda01c6f3b7e7",
+  "source_parent": "ba43c1b5d3bbc71404d5dfde9660974982334812",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

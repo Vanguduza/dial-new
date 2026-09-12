@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "eval_id": "dial-vekl-retrieval-v1",
+  "purpose": "Measure whether GraphRAG returns the right engineering resources for a task. DIAL measures whether the system rejects bad instructions (harness-evals.json) but has never measured retrieval itself. Under supervision a human notices bad context; under autonomy nothing does.",
+  "ground_truth_rule": "Expectations are derived from DECLARED SEMANTICS - the feature's own registry record (module, outcome, client_exposure, app_families, code_paths) matched against each resource's own declared task_classes - never from observed behaviour. A case that fails is a finding about the system, not a broken expectation.",
+  "scoring": {
+    "recall": "fraction of must_include returned in eligible_resource_ids",
+    "precision_proxy": "fraction of must_exclude correctly absent",
+    "note": "Exhaustive relevance labels do not exist, so precision is measured against explicit must_exclude rather than over the whole corpus.",
+    "must_differ_from": "Two cases naming each other must not return the same resource set. This is the only way to assert that the concrete task - not the Feature record - shapes retrieval."
+  },
+  "floors": {
+    "regression_floor": {
+      "min_recall": 1.0,
+      "min_precision_proxy": 1.0,
+      "max_candidate_set": 12
+    },
+    "target": {
+      "min_recall": 1.0,
+      "min_precision_proxy": 1.0
+    },
+    "policy": "Ratchet raised on 2026-09-12 to the measured value. Baseline 0.7292 recall / 0.875 precision; after structural task-class signals, typed-field classification and word-boundary keyword matching 0.875 / 1.0; after ENGINEERING_CONCERN nodes let the concrete task enter the graph, registry-owned prose rules for the 25 declared task classes no rule could emit, inflection-tolerant term matching and the terminal resource layer: 1.0 / 1.0 over 10 cases. A floor at the measured value means a new case that fails is a finding to fix, not a reason to lower the floor. Lowering it requires an owner decision.",
+    "known_gaps": [
+      "Fixed since baseline: prose-keyword classification over records carrying only structural facts; whole-record JSON stringification (a grocery feature classified HEALTH_SENSITIVE from an evidence note reading \"accepts the gate claim\"); substring keyword matching (ref.maplibre.docs keyword \"layer\" matched \"preview-player\"); the mirror-image false negative where keyword \"schedule\" failed against \"a scheduled ... monitor\"; 25 of 62 declared task classes having no rule that could emit them; contract surfaces entering the prose classifier and firing WHATSAPP on 46.9% of Features; bare `health` and `claim` classifying non-clinical Features as HEALTH_SENSITIVE.",
+      "Precision is measured against explicit must_exclude, not over the whole 102-resource corpus. A resource that is irrelevant but unlisted is not counted against the score. Adding cases is how that improves; the floor is not evidence of exhaustive relevance labelling."
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "RE-001",
+      "feature_id": "SPARE-F001",
+      "instruction": "Implement the vehicle selection and garage screens in the customer web app",
+      "affected_paths": [
+        "apps/preview-player/app/garage/page.tsx"
+      ],
+      "rationale": "client_exposure CUSTOMER, app_families DIAL_WEB, code_paths are .tsx under a Next-style app router. Web UI resources declare WEB_UI_IMPLEMENTATION.",
+      "must_include": [
+        "ref.nextjs.docs",
+        "ref.react.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.osrm.repo",
+        "ref.vroom.repo",
+        "ref.nominatim.docs"
+      ]
+    },
+    {
+      "case_id": "RE-002",
+      "feature_id": "SPARE-F001",
+      "instruction": "Harden the garage screen against unsafe deep links and verify the routing security",
+      "affected_paths": [
+        "apps/preview-player/app/garage/page.tsx"
+      ],
+      "rationale": "Same UI feature under a security concern. Next.js docs declare WEB_SECURITY; the advisory feed declares SECURITY.",
+      "must_include": [
+        "ref.nextjs.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.maplibre.docs",
+        "ref.chatwoot.docs"
+      ]
+    },
+    {
+      "case_id": "RE-003",
+      "feature_id": "SPARE-F004",
+      "instruction": "Add failing-first unit tests for catalogue coverage and diagram identity",
+      "affected_paths": [
+        "packages/catalog-coverage/src/index.ts"
+      ],
+      "rationale": "DOMAIN_TESTED feature whose test_paths are vitest suites. ref.vitest.docs declares UNIT_TESTING and TYPESCRIPT_TESTING.",
+      "must_include": [
+        "ref.vitest.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.osrm.repo",
+        "ref.meta.whatsapp.docs"
+      ]
+    },
+    {
+      "case_id": "RE-004",
+      "feature_id": "GROC-F019",
+      "instruction": "Implement the grocery round purchase plan and credit model in TypeScript",
+      "affected_paths": [
+        "packages/round-plan/src/plan.ts"
+      ],
+      "rationale": "Pure domain TypeScript package with no UI, no maps and no messaging surface.",
+      "must_include": [
+        "ref.typescript.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.maplibre.docs",
+        "ref.osrm.repo",
+        "ref.playwright.docs"
+      ]
+    },
+    {
+      "case_id": "RE-005",
+      "feature_id": "TECH-F008",
+      "instruction": "Implement the quote approval flow including the WhatsApp approval message",
+      "affected_paths": [],
+      "rationale": "app_families includes WHATSAPP and the contract exposes RequestApprovalQuote / ApproveQuote. ref.meta.whatsapp.docs declares WHATSAPP and MESSAGING.",
+      "must_include": [
+        "ref.meta.whatsapp.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.maplibre.docs",
+        "ref.vroom.repo"
+      ]
+    },
+    {
+      "case_id": "RE-006",
+      "feature_id": "TECH-F008",
+      "instruction": "For TECH-F008 design a human approval flow with authenticated decision, nonce expiry, denial path and audit.",
+      "affected_paths": [],
+      "rationale": "The documented n8n Pilot 2 instruction verbatim, so the eval measures the canonical expectation rather than a paraphrase of it. The declared route is the anti-pattern resources' own keyword 'human approval' plus task class SECURITY, which this instruction carries. An earlier paraphrase ('review the approval workflow for reliability anti-patterns') carried neither and could never have been satisfied from declared facts - a bad expectation, not a system defect.",
+      "must_include": [
+        "ref.n8n.docs"
+      ],
+      "must_exclude": [
+        "ref.osrm.repo"
+      ],
+      "expect_community_anti_patterns": true
+    },
+    {
+      "case_id": "RE-007",
+      "feature_id": "HEALTH-F014",
+      "instruction": "Implement claims adjudication and funder clearance for the health division",
+      "affected_paths": [],
+      "rationale": "Health-sensitive unit. PROJECT_TRUTH excludes sensitive health data from ordinary community corpora; the corpus must fail closed here. Asserted by the passing specialist-health case in the n8n corpus suite.",
+      "must_include": [
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [],
+      "forbid_community_corpus": true
+    },
+    {
+      "case_id": "RE-008",
+      "feature_id": "GROC-F024",
+      "instruction": "Implement the round ledger postings and reconcile them against the credit model",
+      "affected_paths": [
+        "packages/round-ledger/src/ledger.ts"
+      ],
+      "rationale": "Money-path domain code. Should not reach UI, map or browser-automation resources.",
+      "must_include": [
+        "ref.typescript.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.maplibre.docs",
+        "ref.playwright.docs",
+        "ref.chatwoot.docs"
+      ]
+    },
+    {
+      "case_id": "RE-009",
+      "feature_id": "GROC-F021",
+      "instruction": "Implement Supabase Postgres RLS policies for Grocery Rounds.",
+      "affected_paths": [
+        "packages/rounds/src/policy.ts"
+      ],
+      "rationale": "The concrete task, not the Feature record, decides what is retrievable. GROC-F021's record says 'Round agreement & consent gateway' and mentions no database, so the compile-time projection alone could never reach Supabase. Paired with RE-010 on the same Feature.",
+      "must_include": [
+        "ref.supabase.docs",
+        "ref.postgresql.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.nextjs.docs",
+        "ref.react.docs",
+        "ref.maplibre.docs"
+      ],
+      "must_differ_from": "RE-010"
+    },
+    {
+      "case_id": "RE-010",
+      "feature_id": "GROC-F021",
+      "instruction": "Implement and verify the Next.js customer surface for the same bounded Feature.",
+      "affected_paths": [
+        "apps/web/app/rounds/page.tsx"
+      ],
+      "rationale": "Same Feature and same Unit as RE-009, different concrete task. Asserted by tests/orchestration-vekl-resources.test.mjs 'persists federated resources through audited packet re-resolution when the concrete task changes'. If both cases return the same set the graph neighbourhood is a function of the record alone, which is the defect this pair exists to catch.",
+      "must_include": [
+        "ref.nextjs.docs",
+        "ref.react.docs",
+        "dial.rules.tooling-policy"
+      ],
+      "must_exclude": [
+        "ref.supabase.docs",
+        "ref.postgresql.docs"
+      ],
+      "must_differ_from": "RE-009"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "registry_version": "vekl-2.2-rev3",
+  "policy_id": "dial.task-class-signals.structural-v1",
+  "why": "The classifier matched prose keywords against registry records that carry only structural facts. SPARE-F001 declares app_families DIAL_WEB and code_paths apps/preview-player/app/garage/page.tsx - unmistakably a web UI feature - but the record contains the word 'react' or 'next' nowhere, so WEB_UI_IMPLEMENTATION could never fire. Across all 309 features only 13 of the 62 task classes resources declare were ever emitted, which stranded the entire curated reference corpus at the graph-projection layer. These signals classify from facts the records actually carry.",
+  "precedence": "Structural signals are additive to the existing prose rules; they never remove a class a prose rule matched. A free-text instruction still classifies as it always did.",
+  "surface_signals": {
+    "WHATSAPP": [
+      "WHATSAPP",
+      "MESSAGING"
+    ],
+    "DELIVERY": [
+      "DELIVERY_MAPS"
+    ]
+  },
+  "surface_signal_requires_code_evidence": {
+    "_comment": "Every surface signal now requires code corroboration. WHATSAPP fired on SPARE-F004 - a backend catalogue package - purely because app_families listed it.",
+    "classes": [
+      "WHATSAPP",
+      "MESSAGING",
+      "DELIVERY_MAPS"
+    ]
+  },
+  "path_signals": {
+    "_comment": "Matched against feature.code_paths and contract code references. Ordered; all matches apply.",
+    "rules": [
+      {
+        "pattern": "\\.tsx$",
+        "classes": [
+          "WEB_UI_IMPLEMENTATION",
+          "TYPESCRIPT_IMPLEMENTATION"
+        ],
+        "why": "A .tsx file is a React component by definition."
+      },
+      {
+        "pattern": "^apps/preview-player/app/",
+        "classes": [
+          "WEB_ROUTING",
+          "WEB_UI_IMPLEMENTATION"
+        ],
+        "why": "App-router directory in the customer web app."
+      },
+      {
+        "pattern": "^apps/preview-player/",
+        "classes": [
+          "WEB_UI_IMPLEMENTATION"
+        ],
+        "why": "The customer-facing web application."
+      },
+      {
+        "pattern": "^apps/api/",
+        "classes": [
+          "WEB_ROUTING"
+        ],
+        "why": "HTTP surface."
+      },
+      {
+        "pattern": "\\.ts$",
+        "classes": [
+          "TYPESCRIPT_IMPLEMENTATION"
+        ]
+      },
+      {
+        "pattern": "\\.mjs$",
+        "classes": [
+          "TYPESCRIPT_IMPLEMENTATION"
+        ]
+      },
+      {
+        "pattern": "/schemas?/|\\.schema\\.json$",
+        "classes": [
+          "SCHEMA_VALIDATION"
+        ]
+      },
+      {
+        "pattern": "^supabase/migrations/",
+        "classes": [
+          "DATABASE",
+          "POSTGRES"
+        ]
+      }
+    ]
+  },
+  "test_path_signals": {
+    "_comment": "Matched against feature.test_paths and capability test_paths.",
+    "rules": [
+      {
+        "pattern": "^tests/e2e/|playwright",
+        "classes": [
+          "E2E_TESTING",
+          "WEB_UI_VERIFICATION"
+        ]
+      },
+      {
+        "pattern": "\\.test\\.(ts|tsx|mjs|js)$",
+        "classes": [
+          "UNIT_TESTING",
+          "TYPESCRIPT_TESTING"
+        ]
+      }
+    ]
+  },
+  "contract_signals": {
+    "_comment": "Empty by measurement: security_profile, events and api_contract are each present on 309/309 features, so none of them discriminates."
+  },
+  "module_signals": {
+    "_comment": "From feature.module. Domain classes, not implementation classes.",
+    "HEALTH": [
+      "HEALTH_SENSITIVE"
+    ],
+    "DKRF": [
+      "SEARCH",
+      "DKRF",
+      "AI_GATEWAY"
+    ],
+    "FLEET": [
+      "DELIVERY_MAPS"
+    ],
+    "GMPC": [
+      "PRODUCT_ANALYTICS"
+    ]
+  },
+  "blob_stringify_feature_record": false,
+  "blob_stringify_note": "Previously the whole feature record was JSON-stringified into the classifier text, so any literal appearing anywhere in the record fired its rule. That is how a backend catalogue package classified as WHATSAPP. Typed field extraction replaces it.",
+  "calibration": {
+    "measured_on": "2026-09-12 over all 309 features, after contract surfaces stopped entering the prose classifier",
+    "max_feature_fraction": 0.4,
+    "rule": "A signal firing on more than max_feature_fraction of features carries no information and is rejected by agent:vekl:signal-calibration.",
+    "rejected_signals": [
+      {
+        "signal": "contract.security_profile present",
+        "fires_on": "309/309 (100%)",
+        "verdict": "every contract declares one"
+      },
+      {
+        "signal": "contract.events non-empty",
+        "fires_on": "309/309 (100%)",
+        "verdict": "every contract declares events"
+      },
+      {
+        "signal": "contract.api_contract present",
+        "fires_on": "309/309 (100%)",
+        "verdict": "every contract declares one"
+      },
+      {
+        "signal": "app_families contains DIAL_WEB",
+        "fires_on": "236/309 (76.4%)",
+        "verdict": "exposure surface, not implementation evidence"
+      },
+      {
+        "signal": "app_families contains DIAL_CONSUMER",
+        "fires_on": "147/309 (47.6%)",
+        "verdict": "same"
+      },
+      {
+        "signal": "contract.surfaces joined into the prose classifier text",
+        "fires_on": "WHATSAPP on 145/309 (46.9%)",
+        "verdict": "exposure declarations bypassed the corroboration requirement; surfaces now reach the classifier only through the structural path"
+      }
+    ],
+    "retained_signals": [
+      {
+        "signal": "code_path matches a path rule",
+        "fires_on": "9/309 (2.9%)"
+      },
+      {
+        "signal": "test_path matches a test rule",
+        "fires_on": "8/309 (2.6%)"
+      },
+      {
+        "signal": "module signal",
+        "fires_on": "18/309 for HEALTH (5.8%)"
+      },
+      {
+        "signal": "app_families WHATSAPP with code corroboration",
+        "fires_on": "103/309 declared (33.3%), far fewer after corroboration"
+      }
+    ],
+    "exempt_classes": [
+      "GENERAL_DEVELOPMENT"
+    ],
+    "exempt_why": "GENERAL_DEVELOPMENT is the no-signal sentinel. A high rate means the records carry little the rules can read - a fact about the registry, not a bad rule."
+  },
+  "prose_signals": {
+    "_comment": "Registry-owned prose rules for task classes the code-resident rule tables never emitted. Measured 2026-09-12: resources declared 62 task classes; the classifier could emit only 37 of them, so 25 declared classes - 86 resource declarations including RELIABILITY (22), SECURITY (20) and AI_SECURITY (17) - were dead vocabulary. A resource whose only declared class is unreachable can never be retrieved, and under graph-first bounding unreachable means unretrievable. agent:vekl:task-class-coherence now fails the build if the two vocabularies drift apart again.",
+    "applies_to": "instruction, affected paths, feature.outcome, feature.implementation_note, contract.archetype",
+    "rules": [
+      {
+        "class": "SECURITY",
+        "pattern": "\\b(security|secure|harden|hardening|authenticat\\w*|authoris\\w*|authoriz\\w*|permission|secret|credential|nonce|audit trail|\\baudit\\b|threat|vulnerab\\w*|abuse|tamper)\\b"
+      },
+      {
+        "class": "RELIABILITY",
+        "pattern": "\\b(reliabilit\\w*|retry|retries|idempoten\\w*|backoff|dead letter|circuit breaker|resilien\\w*|failover|dedupe|deduplicat\\w*|escalat\\w*|anti[- ]pattern|error workflow|timeout)\\b"
+      },
+      {
+        "class": "AI_SECURITY",
+        "pattern": "\\b(prompt injection|jailbreak|llm security|ai security|model abuse|agent security|tool[- ]use safety|untrusted (model|llm) output)\\b"
+      },
+      {
+        "class": "WEBHOOK_SECURITY",
+        "pattern": "\\bwebhook\\b[\\s\\S]{0,60}\\b(security|signature|verif\\w*|hmac|replay|secret)\\b|\\b(signature verification|hmac|replay protection)\\b"
+      },
+      {
+        "class": "EDGE_SECURITY",
+        "pattern": "\\b(edge security|waf|web application firewall|bot protection|edge rate limit\\w*|cloudflare (security|access))\\b"
+      },
+      {
+        "class": "SECURITY_RESEARCH",
+        "pattern": "\\b(security research|threat intel\\w*|cve research|advisory research|exploit research)\\b"
+      },
+      {
+        "class": "INFRASTRUCTURE",
+        "pattern": "\\b(infrastructure|provision\\w*|terraform|systemd|server setup|deployment topology|host(ing)? layout)\\b"
+      },
+      {
+        "class": "BUILD_TOOLING",
+        "pattern": "\\b(build tool\\w*|bundler|vite|esbuild|tsup|turborepo|monorepo build|compile pipeline|build pipeline)\\b"
+      },
+      {
+        "class": "TRACING",
+        "pattern": "\\b(tracing|trace span|distributed trac\\w*|otel|opentelemetry)\\b"
+      },
+      {
+        "class": "NFR",
+        "pattern": "\\b(non[- ]functional|nfr|performance budget|availability target|\\bslo\\b|\\bsla\\b|capacity target)\\b"
+      },
+      {
+        "class": "STORAGE",
+        "pattern": "\\b(object storage|bucket|blob storage|file upload|presigned|storage bucket)\\b"
+      },
+      {
+        "class": "R2",
+        "pattern": "\\bcloudflare r2\\b|\\br2 bucket\\b"
+      },
+      {
+        "class": "SQL",
+        "pattern": "\\b(sql|query plan|ddl|dml|index tuning)\\b"
+      },
+      {
+        "class": "WEB_STATE_MANAGEMENT",
+        "pattern": "\\b(state management|zustand|redux|tanstack query|react query|client cache)\\b"
+      },
+      {
+        "class": "BROWSER_AUTOMATION",
+        "pattern": "\\b(browser automation|headless browser|puppeteer|browser driver)\\b"
+      },
+      {
+        "class": "MODEL_ROUTING",
+        "pattern": "\\b(model routing|model fallback|provider routing|llm gateway)\\b"
+      },
+      {
+        "class": "MISSION_CONTROL",
+        "pattern": "\\b(mission control|mission state|packet dispatch|mission loop)\\b"
+      },
+      {
+        "class": "ORCHESTRATION_CONTROL",
+        "pattern": "\\b(orchestration|control plane|supervisor|worker dispatch|scheduler control)\\b"
+      },
+      {
+        "class": "MCP_DISCOVERY",
+        "pattern": "\\bmcp (server|discovery|catalog\\w*|qualification)\\b|\\bmodel context protocol\\b"
+      },
+      {
+        "class": "PLUGIN_DISCOVERY",
+        "pattern": "\\bplugin (discovery|catalog\\w*|registry|marketplace|qualification)\\b"
+      },
+      {
+        "class": "TOOL_DISCOVERY",
+        "pattern": "\\btool (discovery|catalog\\w*|qualification)\\b"
+      },
+      {
+        "class": "API_RESEARCH",
+        "pattern": "\\b(api reference|api research|endpoint contract|openapi|api surface)\\b"
+      },
+      {
+        "class": "CATALOG_SEARCH",
+        "pattern": "\\b(catalogue search|catalog search|part lookup|fitment (search|lookup))\\b"
+      },
+      {
+        "class": "CHATWOOT_INTEGRATION",
+        "pattern": "\\bchatwoot\\b"
+      },
+      {
+        "class": "CHAT_CONTROL",
+        "pattern": "\\b(chat control|conversation routing|agent handover|inbox routing)\\b"
+      }
+    ]
+  }
+}

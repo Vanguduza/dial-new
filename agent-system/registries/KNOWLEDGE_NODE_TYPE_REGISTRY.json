@@ -92,8 +92,26 @@
     },
     {
       "node_type": "CHANGESET"
+    },
+    {
+      "node_type": "ENGINEERING_CONCERN",
+      "why": "A declared engineering task class. Resources declare the concerns they address; the concrete packet task classifies into concerns. Without this node type the only path from work to a resource was a compile-time projection over the Feature record, which is identical for every task performed on that Feature - so the concrete task could never change what was retrievable, which DEC-026 step 2 and the canonical re-resolution tests require.",
+      "canonical_id": "the task class literal, e.g. RLS_SECURITY",
+      "authority": "NON_AUTHORITATIVE_INDEX"
     }
   ],
-  "registry_version": "vekl-2.2-rev2",
-  "schema_version": 1
+  "registry_version": "vekl-2.2-rev3",
+  "schema_version": 1,
+  "orphan_policy": {
+    "max_isolated_fraction": 0.02,
+    "type_rule": "A node type with zero connected instances has no edge vocabulary; connect it or stop compiling it.",
+    "type_rule_exempt": [
+      "SCREEN",
+      "USER_JOURNEY",
+      "CHANGESET",
+      "RESEARCH_FINDING",
+      "CANON_CHALLENGE"
+    ],
+    "note": "SCREEN/USER_JOURNEY are declared but not yet compiled; CHANGESET, RESEARCH_FINDING and CANON_CHALLENGE are empty in a clean repository by design."
+  }
 }

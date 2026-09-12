@@ -14,6 +14,7 @@ import { evaluateKnowledgeExemption } from './knowledge-exemption.mjs';
 import { verifyLockedDecisionEvolution } from './decision-evolution-guard.mjs';
 import { checkUnitDownstreamCoherence, evaluateUnitCompletionGate } from './unit-completion-gate.mjs';
 import { hashObject, loadRegistry } from './knowledge-graph-core.mjs';
+import { emittableTaskClasses } from './engineering-resource-resolver.mjs';
 import { readJson } from './state-store.mjs';
 
 const FEATURE='SPARE-F001';
@@ -95,6 +96,29 @@ export function runVeklArchitectureCheck({repoDir=process.cwd()}={}){
   const tracePointer=readJson('knowledge/activation/traces/by-packet/vekl-architecture-check.json',null,root);
   results.push(row(29,'immutable content-addressed KnowledgeResolutionTrace',digest(trace.trace_hash)&&digest(tracePointer?.trace_hash)&&String(tracePointer?.trace_rel||'').includes(tracePointer.trace_hash),{trace_hash:trace.trace_hash,content_addressed_hash:tracePointer?.trace_hash}));
   results.push(row(30,'trace reconstructs inclusion/exclusion and exact worker delivery',trace.traversal.start_nodes.length>0&&Array.isArray(trace.traversal.visited_node_refs)&&Array.isArray(trace.candidates.eligible)&&Array.isArray(trace.candidates.excluded)&&trace.candidates.excluded.every((x)=>x.reason_codes?.length>0)&&trace.worker_delivery_hash===delivery.worker_delivery_hash&&digest(trace.instruction_hash),{eligible:trace.candidates.eligible.length,excluded:trace.candidates.excluded.length,worker_delivery_hash:trace.worker_delivery_hash}));
+  // S0: the bound must be asserted, not observed. Before bounded traversal a
+  // single-feature retrieval visited 1606 of 5330 nodes (30.1%); with directed
+  // per-route traversal 302 (5.7%); with the resource layer terminal, 123 (2.3%).
+  results.push(row(31,'graph neighbourhood is quantitatively bounded',Number(trace.traversal.bound?.visited_fraction ?? 1)<0.05&&Number(trace.traversal.bound?.hub_degree_threshold ?? Infinity)<Infinity,{visited_nodes:trace.traversal.bound?.visited_nodes,graph_nodes:trace.traversal.bound?.graph_nodes,visited_fraction:trace.traversal.bound?.visited_fraction,hubs_held:trace.traversal.bound?.hubs_held}));
+  results.push(row(32,'every edge type declares a route class and reverse policy',(edgeReg.edge_types||[]).every((x)=>typeof x.route_class==='string'&&typeof x.reverse_traversable==='boolean')&&edgeReg.traversal_policy?.hub_rule==='REACHABLE_NOT_EXPANDABLE',{edge_types:(edgeReg.edge_types||[]).length,policy:edgeReg.traversal_policy||null}));
+  // S1: Project Truth sits at the top of the authority order; if no unit can
+  // reach it, graph-first retrieval cannot actually retrieve canon.
+  results.push(row(33,'a material Unit reaches Project Truth within its authority budget',trace.traversal.visited_node_refs.some((x)=>x.startsWith('PROJECT_TRUTH_SLICE:')),{slices_reached:trace.traversal.visited_node_refs.filter((x)=>x.startsWith('PROJECT_TRUTH_SLICE:')).length}));
+  // The concrete task must be able to change what is retrievable. Canon rules that
+  // semantic ranking happens only inside an already eligible graph neighbourhood, so if
+  // that neighbourhood is a function of the Feature record alone, every task performed on
+  // a Feature sees the same resources for ever. Two different concrete tasks on the SAME
+  // Unit must resolve differently.
+  const uiTask=resolvePacketEngineeringKnowledge({repoDir,root,packetId:'vekl-architecture-check-concrete-ui',instruction:'Implement and verify the SPARE-F001 customer web surface.',metadata:{feature_id:FEATURE,affected_paths:['apps/preview-player/app/garage/page.tsx'],max_resources:24}});
+  const dbTask=resolvePacketEngineeringKnowledge({repoDir,root,packetId:'vekl-architecture-check-concrete-db',instruction:'Implement Supabase Postgres row level security policies for SPARE-F001.',metadata:{feature_id:FEATURE,affected_paths:['supabase/migrations/0001_spare.sql'],max_resources:24}});
+  const uiIds=sorted((uiTask.resources||[]).map((x)=>x.resource_id)),dbIds=sorted((dbTask.resources||[]).map((x)=>x.resource_id));
+  results.push(row(34,'the concrete task, not only the Feature record, shapes the neighbourhood',uiIds.length>0&&dbIds.length>0&&JSON.stringify(uiIds)!==JSON.stringify(dbIds)&&(uiTask.knowledge_context?.unit_lineage_id===dbTask.knowledge_context?.unit_lineage_id),{unit_lineage_id:uiTask.knowledge_context?.unit_lineage_id,ui_resources:uiIds,db_resources:dbIds}));
+  // Vocabulary coherence: a task class some resource declares that no rule can emit makes
+  // that resource permanently unretrievable while it still looks available in the registry.
+  const emittable=emittableTaskClasses(repoDir);
+  const declared=new Set(resources.flatMap((r)=>(r.task_classes||[]).filter((c)=>c!=='*')));
+  const unreachable=[...declared].filter((c)=>!emittable.has(c)).sort();
+  results.push(row(35,'every declared resource task class is emittable by the classifier',unreachable.length===0,{declared_classes:declared.size,emittable_classes:emittable.size,unreachable_declared:unreachable}));
   const failures=results.filter((x)=>x.status!=='PASS');return{status:failures.length?'RED':'GREEN',policy_version:'vekl-2.2-rev2',criteria_passed:results.length-failures.length,criteria_total:results.length,criteria:results,failures};
  }finally{fs.rmSync(root,{recursive:true,force:true});fs.rmSync(rejectRoot,{recursive:true,force:true});}
 }
@@ -103,5 +127,5 @@ if(import.meta.url===`file://${process.argv[1]}`){
  const result=runVeklArchitectureCheck({repoDir:process.env.DIAL_REPO_DIR||process.cwd()});
  const writeIndex=process.argv.indexOf('--write-evidence');
  if(writeIndex>=0){const target=process.argv[writeIndex+1]||'docs/project-state/VEKL_2_2_ARCHITECTURE_GREEN.json';fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,`${JSON.stringify({...result,evidence_hash:hashObject({policy_version:result.policy_version,criteria:result.criteria})},null,2)}\n`);}
- console.log(JSON.stringify(result,null,2));if(result.status!=='GREEN'||result.criteria_total!==30)process.exitCode=42;
+ console.log(JSON.stringify(result,null,2));if(result.status!=='GREEN'||result.criteria_total!==35)process.exitCode=42;
 }

@@ -44,9 +44,17 @@ CLASSIFIERS.push(
   ['CLOUD_PERFORMANCE_REVIEW', /\b(cloud|oracle|infrastructure|platform).{0,100}\b(performance|latency|throughput|capacity)\b/i],
   ['CLOUD_OPERATIONAL_REVIEW', /\b(cloud|oracle|infrastructure|platform).{0,100}\b(operational excellence|runbook|incident|observability|operations review)\b/i],
   ['INFRA_MIGRATION', /\b(migrate|migration|move|replace).{0,80}\b(oracle|cloudflare|supabase|gcp|google cloud|cloud run|gke|firebase)\b/i],
-  ['HEALTH_SENSITIVE', /\b(health|patient|clinical|claim|diagnos|pharmacy|funder|medical|phi)\b/i],
+  // Bare `health` and bare `claim` are ordinary engineering English. `health` matched
+  // "operational health exception monitor" on a compliance Feature and `claim` matched an
+  // implementation note reading "any claim that the agreement wording is legally adequate",
+  // so a grocery consent Feature classified HEALTH_SENSITIVE. Clinical context is required.
+  ['HEALTH_SENSITIVE', /\b(patient|clinical|diagnos|pharmacy|medical|phi|prescription|icd-?10)\b|\bhealth (record|data|information|claim|scheme|plan|funder|benefit)s?\b|\bclaims? adjudication\b|\bfunder (clearance|remittance|claim)\b|\bdial health\b/i],
   ['SKILL_LIFECYCLE_RESEARCH', /\b(skill registry|agent skill|skills lifecycle|skill revision|skill discovery)\b/i],
 );
+
+// The task classes these rules can emit. Exported so the task-class coherence gate compares
+// the live rule table against what resources declare instead of a hand-kept copy.
+export const CLASSIFIER_TASK_CLASSES = Object.freeze(CLASSIFIERS.map(([id]) => id));
 
 function uniq(values) { return [...new Set(values.filter(Boolean))]; }
 function textOf(value) { return String(value ?? '').trim(); }
@@ -66,7 +74,12 @@ function wildcardMatch(pattern, value) {
 }
 
 export function classifyEngineeringTask({ instruction = '', affectedPaths = [], featureRecord = null } = {}) {
-  const haystack = [instruction, ...(affectedPaths || []), featureRecord ? JSON.stringify(featureRecord) : ''].join('\n');
+  const recordText = featureRecord
+    ? [featureRecord.outcome, featureRecord.implementation_note, featureRecord.aggregate, featureRecord.module, featureRecord.owner]
+        .filter(Boolean)
+        .join('\n')
+    : '';
+  const haystack = [instruction, ...(affectedPaths || []), recordText].join('\n');
   const classes = [];
   for (const [taskClass, pattern] of CLASSIFIERS) if (pattern.test(haystack)) classes.push(taskClass);
   if (!classes.length) classes.push('GENERAL_DEVELOPMENT');

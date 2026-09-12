@@ -2,169 +2,315 @@
   "closed_vocabulary": true,
   "edge_types": [
     {
-      "relationship": "governed_by",
-      "source_type": "FEATURE",
-      "target_type": "DECISION"
+      "relationship": "affects",
+      "source_type": "CANON_CHALLENGE",
+      "target_type": "CONTRACT",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": true
     },
     {
-      "relationship": "realizes",
-      "source_type": "DEVELOPMENT_UNIT",
-      "target_type": "FEATURE"
+      "relationship": "affects",
+      "source_type": "CANON_CHALLENGE",
+      "target_type": "DEVELOPMENT_UNIT",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": true
     },
     {
-      "relationship": "implements",
-      "source_type": "DEVELOPMENT_UNIT",
-      "target_type": "REALIZATION_FACET"
+      "relationship": "challenges",
+      "source_type": "CANON_CHALLENGE",
+      "target_type": "DECISION",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": false
     },
     {
-      "relationship": "consumes",
-      "source_type": "DEVELOPMENT_UNIT",
-      "target_type": "CONTRACT"
+      "relationship": "challenges",
+      "source_type": "CANON_CHALLENGE",
+      "target_type": "PROJECT_TRUTH_SLICE",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": false
     },
     {
-      "relationship": "produces",
-      "source_type": "DEVELOPMENT_UNIT",
-      "target_type": "CONTRACT"
+      "relationship": "invalidates",
+      "source_type": "CHANGESET",
+      "target_type": "CONTRACT",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": true
     },
     {
-      "relationship": "depends_on",
-      "source_type": "DEVELOPMENT_UNIT",
-      "target_type": "DEVELOPMENT_UNIT"
+      "relationship": "invalidates",
+      "source_type": "CHANGESET",
+      "target_type": "DEVELOPMENT_UNIT",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": true
     },
     {
-      "relationship": "owned_by",
-      "source_type": "CONTRACT",
-      "target_type": "DOMAIN_AUTHORITY"
-    },
-    {
-      "relationship": "implemented_by",
-      "source_type": "CONTRACT",
-      "target_type": "CODE_MODULE"
-    },
-    {
-      "relationship": "governed_by",
-      "source_type": "SCREEN",
-      "target_type": "DESIGN_AUTHORITY"
-    },
-    {
-      "relationship": "realizes",
-      "source_type": "SCREEN",
-      "target_type": "USER_JOURNEY"
-    },
-    {
-      "relationship": "supports",
-      "source_type": "ENGINEERING_RESOURCE",
-      "target_type": "DEVELOPMENT_UNIT"
-    },
-    {
-      "relationship": "supports",
-      "source_type": "ENGINEERING_RESOURCE",
-      "target_type": "REALIZATION_FACET"
-    },
-    {
-      "relationship": "verifies",
-      "source_type": "ENGINEERING_RESOURCE",
-      "target_type": "REALIZATION_FACET"
-    },
-    {
-      "relationship": "supersedes",
-      "source_type": "ENGINEERING_RESOURCE",
-      "target_type": "ENGINEERING_RESOURCE"
-    },
-    {
-      "relationship": "conflicts_with",
-      "source_type": "ENGINEERING_RESOURCE",
-      "target_type": "ENGINEERING_RESOURCE"
-    },
-    {
-      "relationship": "verifies",
-      "source_type": "TEST",
-      "target_type": "REALIZATION_FACET"
-    },
-    {
-      "relationship": "verifies",
-      "source_type": "TEST",
-      "target_type": "CONTRACT"
-    },
-    {
-      "relationship": "proves",
-      "source_type": "EVIDENCE",
-      "target_type": "VERIFICATION_GATE"
-    },
-    {
-      "relationship": "applies_to",
-      "source_type": "EVENTUALITY",
-      "target_type": "FEATURE"
-    },
-    {
-      "relationship": "transformed_for",
-      "source_type": "DONOR",
-      "target_type": "FEATURE"
+      "relationship": "invalidates",
+      "source_type": "CHANGESET",
+      "target_type": "ENGINEERING_RESOURCE",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": true
     },
     {
       "relationship": "implements",
       "source_type": "CODE_MODULE",
-      "target_type": "CONTRACT"
+      "target_type": "CONTRACT",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "emits",
+      "source_type": "CONTRACT",
+      "target_type": "EVENT",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "exposes",
+      "source_type": "CONTRACT",
+      "target_type": "API",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "governed_by",
+      "source_type": "CONTRACT",
+      "target_type": "SECURITY_CONTROL",
+      "route_class": "AUTHORITY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "implemented_by",
+      "source_type": "CONTRACT",
+      "target_type": "CODE_MODULE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "owned_by",
+      "source_type": "CONTRACT",
+      "target_type": "DOMAIN_AUTHORITY",
+      "route_class": "AUTHORITY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "consumes",
+      "source_type": "DEVELOPMENT_UNIT",
+      "target_type": "CONTRACT",
+      "route_class": "DEPENDENCY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "depends_on",
+      "source_type": "DEVELOPMENT_UNIT",
+      "target_type": "DEVELOPMENT_UNIT",
+      "route_class": "DEPENDENCY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "implements",
+      "source_type": "DEVELOPMENT_UNIT",
+      "target_type": "REALIZATION_FACET",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "produces",
+      "source_type": "DEVELOPMENT_UNIT",
+      "target_type": "CONTRACT",
+      "route_class": "DEPENDENCY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "realizes",
+      "source_type": "DEVELOPMENT_UNIT",
+      "target_type": "FEATURE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "transformed_for",
+      "source_type": "DONOR",
+      "target_type": "FEATURE",
+      "route_class": "DEPENDENCY",
+      "reverse_traversable": true
+    },
+    {
+      "source_type": "ENGINEERING_RESOURCE",
+      "relationship": "addresses",
+      "target_type": "ENGINEERING_CONCERN",
+      "route_class": "CONCRETE_TASK",
+      "reverse_traversable": true,
+      "why": "Compiled from the resource's own declared task_classes - a declared fact, never an inference. Reverse-traversable because retrieval enters from the concrete task's concern, not from the resource."
+    },
+    {
+      "relationship": "conflicts_with",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "ENGINEERING_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "specialised_as",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "MCP_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "specialised_as",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "PLUGIN_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "specialised_as",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "SKILL_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "specialised_as",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "TOOL_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "supersedes",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "ENGINEERING_RESOURCE",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "supports",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "DEVELOPMENT_UNIT",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": true
+    },
+    {
+      "relationship": "supports",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "REALIZATION_FACET",
+      "route_class": "IMPLEMENTATION",
+      "reverse_traversable": true
+    },
+    {
+      "relationship": "verifies",
+      "source_type": "ENGINEERING_RESOURCE",
+      "target_type": "REALIZATION_FACET",
+      "route_class": "VERIFICATION",
+      "reverse_traversable": true
+    },
+    {
+      "relationship": "applies_to",
+      "source_type": "EVENTUALITY",
+      "target_type": "FEATURE",
+      "route_class": "VERIFICATION",
+      "reverse_traversable": true
+    },
+    {
+      "relationship": "proves",
+      "source_type": "EVIDENCE",
+      "target_type": "VERIFICATION_GATE",
+      "route_class": "VERIFICATION",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "governed_by",
+      "source_type": "FEATURE",
+      "target_type": "DECISION",
+      "route_class": "AUTHORITY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "governed_by",
+      "source_type": "FEATURE",
+      "target_type": "PROJECT_TRUTH_SLICE",
+      "route_class": "AUTHORITY",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "challenges",
+      "source_type": "RESEARCH_FINDING",
+      "target_type": "DECISION",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": false
+    },
+    {
+      "relationship": "challenges",
+      "source_type": "RESEARCH_FINDING",
+      "target_type": "PROJECT_TRUTH_SLICE",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": false
     },
     {
       "relationship": "supports",
       "source_type": "RESEARCH_FINDING",
-      "target_type": "ENGINEERING_RESOURCE"
+      "target_type": "ENGINEERING_RESOURCE",
+      "route_class": "RESEARCH_CHALLENGE",
+      "reverse_traversable": false
     },
     {
-      "relationship": "challenges",
-      "source_type": "RESEARCH_FINDING",
-      "target_type": "PROJECT_TRUTH_SLICE"
+      "relationship": "governed_by",
+      "source_type": "SCREEN",
+      "target_type": "DESIGN_AUTHORITY",
+      "route_class": "PRODUCT_EXPERIENCE",
+      "reverse_traversable": false
     },
     {
-      "relationship": "challenges",
-      "source_type": "RESEARCH_FINDING",
-      "target_type": "DECISION"
+      "relationship": "realizes",
+      "source_type": "SCREEN",
+      "target_type": "USER_JOURNEY",
+      "route_class": "PRODUCT_EXPERIENCE",
+      "reverse_traversable": false
     },
     {
-      "relationship": "challenges",
-      "source_type": "CANON_CHALLENGE",
-      "target_type": "PROJECT_TRUTH_SLICE"
+      "relationship": "verifies",
+      "source_type": "TEST",
+      "target_type": "CONTRACT",
+      "route_class": "VERIFICATION",
+      "reverse_traversable": true
     },
     {
-      "relationship": "challenges",
-      "source_type": "CANON_CHALLENGE",
-      "target_type": "DECISION"
-    },
-    {
-      "relationship": "affects",
-      "source_type": "CANON_CHALLENGE",
-      "target_type": "DEVELOPMENT_UNIT"
-    },
-    {
-      "relationship": "affects",
-      "source_type": "CANON_CHALLENGE",
-      "target_type": "CONTRACT"
-    },
-    {
-      "relationship": "invalidates",
-      "source_type": "CHANGESET",
-      "target_type": "DEVELOPMENT_UNIT"
-    },
-    {
-      "relationship": "invalidates",
-      "source_type": "CHANGESET",
-      "target_type": "CONTRACT"
-    },
-    {
-      "relationship": "invalidates",
-      "source_type": "CHANGESET",
-      "target_type": "ENGINEERING_RESOURCE"
+      "relationship": "verifies",
+      "source_type": "TEST",
+      "target_type": "REALIZATION_FACET",
+      "route_class": "VERIFICATION",
+      "reverse_traversable": true
     }
   ],
-  "registry_version": "vekl-2.2-rev2",
+  "registry_version": "vekl-2.2-rev5",
   "required_edge_fields": [
-    "source_ref",
-    "source_content_hash",
-    "graph_schema_version",
-    "derivation_class",
     "creation_graph_generation",
+    "derivation_class",
+    "graph_schema_version",
+    "route_class",
+    "source_content_hash",
+    "source_ref",
     "tombstoned"
   ],
-  "schema_version": 1
+  "schema_version": 1,
+  "traversal_policy": {
+    "directed_by_default": true,
+    "reverse_twin_requires_declaration": true,
+    "hub_degree_threshold": 100,
+    "hub_rule": "REACHABLE_NOT_EXPANDABLE",
+    "budget_source": "KNOWLEDGE_ROUTE_REGISTRY.max_hops, selected per edge route_class",
+    "unmatched_route_class": "NOT_TRAVERSED",
+    "resource_layer_is_terminal": {
+      "node_types": [
+        "ENGINEERING_RESOURCE",
+        "SKILL_RESOURCE",
+        "TOOL_RESOURCE",
+        "MCP_RESOURCE",
+        "PLUGIN_RESOURCE"
+      ],
+      "rule": "EXPAND_ONLY_WITHIN_RESOURCE_LAYER",
+      "why": "Retrieval reads only resource nodes out of the neighbourhood; every other visited node is provenance. Walking out of a resource along `supports` into the Units it serves reached other Units' contracts, features and tests and added nothing retrievable - the cross-unit leakage the hub rule only partly contained, and it reappeared the moment the concrete task began entering the graph at a concern. Resource-to-resource edges (supersedes, conflicts_with, specialised_as) stay traversable so a superseding resource is still discoverable."
+    }
+  }
 }

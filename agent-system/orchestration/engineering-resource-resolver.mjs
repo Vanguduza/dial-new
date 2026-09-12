@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
-import { classifyEngineeringTask } from './skill-resolver.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { CLASSIFIER_TASK_CLASSES, classifyEngineeringTask } from './skill-resolver.mjs';
 import { DEFAULT_REPO } from './skill-registry.mjs';
 import { EXECUTABLE_RESOURCE_CLASSES, EXECUTABLE_RESOURCE_STATES, PASSIVE_RESOURCE_STATES, loadAllEngineeringResources, loadEngineeringResourceSources } from './engineering-resource-registry.mjs';
 import { readJson } from './state-store.mjs';
@@ -64,16 +66,162 @@ function canonical(value) {
 function sha256(value){ return crypto.createHash('sha256').update(value).digest('hex'); }
 function normalizePurpose(value){ return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,96) || 'GENERAL'; }
 
-export function classifyEngineeringResourcesTask({ instruction='', affectedPaths=[], featureRecord=null }={}) {
+let SIGNAL_POLICY = null;
+function signalPolicy(repoDir) {
+  if (SIGNAL_POLICY) return SIGNAL_POLICY;
+  try {
+    SIGNAL_POLICY = JSON.parse(
+      fs.readFileSync(path.join(repoDir || DEFAULT_REPO, 'agent-system/registries/TASK_CLASS_SIGNAL_POLICY.json'), 'utf8'),
+    );
+  } catch {
+    SIGNAL_POLICY = { surface_signals: {}, path_signals: { rules: [] }, test_path_signals: { rules: [] }, module_signals: {}, contract_signals: {} };
+  }
+  return SIGNAL_POLICY;
+}
+
+// Structural task-class signals.
+//
+// The prose rules in EXTRA match keywords. Registry records carry facts, not prose:
+// SPARE-F001 declares app_families DIAL_WEB and code_paths
+// apps/preview-player/app/garage/page.tsx - a React app-router page - yet contains the
+// word "react" or "next" nowhere, so WEB_UI_IMPLEMENTATION could never fire. Across all
+// 309 features only 13 of the 62 classes resources declare were ever emitted, stranding
+// the curated reference corpus at the graph-projection layer.
+//
+// These signals are additive: a prose match is never removed, so a free-text instruction
+// classifies exactly as it did before.
+export function structuralTaskClasses({ featureRecord = null, contractRecord = null, affectedPaths = [], repoDir = null } = {}) {
+  const policy = signalPolicy(repoDir);
+  const out = new Set();
+  const corroborated = new Set();
+
+  const paths = [
+    ...(affectedPaths || []),
+    ...((featureRecord?.code_paths) || []),
+  ].map(String);
+  const testPaths = [...((featureRecord?.test_paths) || [])].map(String);
+
+  const applyRules = (rules, values, sink) => {
+    for (const rule of rules || []) {
+      let re;
+      try { re = new RegExp(rule.pattern, 'i'); } catch { continue; }
+      if (values.some((v) => re.test(v))) for (const c of rule.classes || []) sink.add(c);
+    }
+  };
+  applyRules(policy.path_signals?.rules, paths, out);
+  applyRules(policy.test_path_signals?.rules, testPaths, out);
+
+  // Code evidence corroborates the weaker surface declarations.
+  applyRules(policy.path_signals?.rules, paths, corroborated);
+  const codeText = paths.join('\n').toLowerCase();
+  const needsCode = new Set(policy.surface_signal_requires_code_evidence?.classes || []);
+
+  const surfaces = [
+    ...((featureRecord?.app_families) || []),
+    ...((contractRecord?.surfaces) || []),
+  ].map(String);
+  for (const surface of surfaces) {
+    for (const c of policy.surface_signals?.[surface] || []) {
+      if (needsCode.has(c)) {
+        // WHATSAPP fired on a backend catalogue package purely because app_families
+        // listed it. An exposure declaration alone is not implementation evidence.
+        if (codeText.includes(surface.toLowerCase()) || codeText.includes(c.toLowerCase())) out.add(c);
+        continue;
+      }
+      out.add(c);
+    }
+  }
+
+  for (const c of policy.module_signals?.[String(featureRecord?.module || '')] || []) out.add(c);
+
+  const cs = policy.contract_signals || {};
+  if (contractRecord?.security_profile) for (const c of cs.security_profile_present || []) out.add(c);
+  if (contractRecord?.api_contract) for (const c of cs.api_contract_present || []) out.add(c);
+  if ((contractRecord?.events || []).length) for (const c of cs.events_present || []) out.add(c);
+
+  return [...out].sort();
+}
+
+let PROSE_RULES = null;
+function proseRules(repoDir) {
+  if (PROSE_RULES) return PROSE_RULES;
+  PROSE_RULES = [];
+  for (const rule of signalPolicy(repoDir).prose_signals?.rules || []) {
+    try { PROSE_RULES.push([rule.class, new RegExp(rule.pattern, 'i')]); } catch { /* an unparseable pattern is caught by agent:vekl:task-class-coherence */ }
+  }
+  return PROSE_RULES;
+}
+function proseSignalClasses(text, repoDir) {
+  return proseRules(repoDir).filter(([,re]) => re.test(text)).map(([id]) => id);
+}
+
+// The full set of task classes this classifier can ever emit. Derived from the live rule
+// tables rather than restated, so agent:vekl:task-class-coherence compares the real
+// vocabulary against what resources declare instead of a copy that can drift.
+export function emittableTaskClasses(repoDir = null) {
+  const policy = signalPolicy(repoDir);
+  const out = new Set(['GENERAL_DEVELOPMENT', ...CLASSIFIER_TASK_CLASSES, ...EXTRA.map(([id]) => id)]);
+  for (const rule of policy.prose_signals?.rules || []) out.add(rule.class);
+  for (const list of Object.values(policy.surface_signals || {})) for (const c of list || []) out.add(c);
+  for (const rule of policy.path_signals?.rules || []) for (const c of rule.classes || []) out.add(c);
+  for (const rule of policy.test_path_signals?.rules || []) for (const c of rule.classes || []) out.add(c);
+  for (const list of Object.values(policy.module_signals || {})) if (Array.isArray(list)) for (const c of list) out.add(c);
+  return out;
+}
+
+export function classifyEngineeringResourcesTask({ instruction='', affectedPaths=[], featureRecord=null, contractRecord=null, repoDir=null }={}) {
   const base = classifyEngineeringTask({ instruction, affectedPaths, featureRecord });
-  const text = [instruction, ...(affectedPaths || []), featureRecord ? JSON.stringify(featureRecord) : ''].join('\n');
-  const extra = EXTRA.filter(([,re]) => re.test(text)).map(([id]) => id);
-  return uniq([...base.filter((x)=>x!=='GENERAL_DEVELOPMENT'), ...extra, ...(base.includes('GENERAL_DEVELOPMENT') && !extra.length ? ['GENERAL_DEVELOPMENT'] : [])]);
+  // Typed fields only. Stringifying the whole record made any literal anywhere in it fire
+  // its rule, which is how a backend catalogue package classified as WHATSAPP.
+  const proseText = [
+    instruction,
+    ...(affectedPaths || []),
+    featureRecord?.outcome || '',
+    featureRecord?.implementation_note || '',
+    contractRecord?.archetype || '',
+  ].join('\n');
+  const extra = EXTRA.filter(([,re]) => re.test(proseText)).map(([id]) => id);
+  // Registry-owned prose rules. 25 of the 62 task classes resources declare had no rule
+  // anywhere in code, so they were dead vocabulary: RELIABILITY, SECURITY, AI_SECURITY and
+  // WEBHOOK_SECURITY among them. A class nothing can emit makes every resource whose only
+  // declaration is that class permanently unreachable.
+  const registryProse = proseSignalClasses(proseText, repoDir);
+  const structural = structuralTaskClasses({ featureRecord, contractRecord, affectedPaths, repoDir });
+  const matched = [...extra, ...registryProse, ...structural];
+  return uniq([
+    ...base.filter((x)=>x!=='GENERAL_DEVELOPMENT'),
+    ...matched,
+    ...(base.includes('GENERAL_DEVELOPMENT') && !matched.length ? ['GENERAL_DEVELOPMENT'] : []),
+  ]);
 }
 
 function matchAny(values, classes){ return (values || []).includes('*') || (values || []).some((v)=>classes.includes(v)); }
-function keywordMatch(resource, text){ return (resource.keywords || []).some((k)=>text.toLowerCase().includes(String(k).toLowerCase())); }
-function techMatch(resource, text){ return (resource.technologies || []).some((k)=>text.toLowerCase().includes(String(k).toLowerCase())); }
+// Word-boundary matching, not substring containment.
+//
+// ref.maplibre.docs declares the keyword "layer". "layer" is a substring of
+// "preview-player", so a map-rendering library was projected onto the customer web
+// application because its directory is called player. Raw includes() makes every short
+// keyword a liability.
+const TERM_RE = new Map();
+export function termMatches(term, text) {
+  const t = String(term || '').trim();
+  if (!t) return false;
+  let re = TERM_RE.get(t);
+  if (!re) {
+    const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Multi-word terms keep their internal spacing flexible. The LEADING boundary is what
+    // stops "layer" matching inside "player", so the trailing side can accept a plain
+    // inflection without reopening that hole. It has to: the keyword "schedule" failed
+    // against the instruction "a scheduled operational health exception monitor", which
+    // silently withdrew the whole scheduled-watch pattern set from a Unit whose task is
+    // exactly that. A false negative here is as damaging as the false positive.
+    re = new RegExp(`(^|[^\\p{L}\\p{N}])${escaped.replace(/\s+/g, '[\\s_-]+')}(?:e?s|e?d|ing)?([^\\p{L}\\p{N}]|$)`, 'iu');
+    TERM_RE.set(t, re);
+  }
+  return re.test(String(text || ''));
+}
+function keywordMatch(resource, text){ return (resource.keywords || []).some((k)=>termMatches(k, text)); }
+function techMatch(resource, text){ return (resource.technologies || []).some((k)=>termMatches(k, text)); }
 function trustWeight(source){ return ({T0_DIAL_PROJECT:1,T1_OFFICIAL:.95,T2_MAINTAINER_COMMUNITY:.75,T3_COMMUNITY_CORROBORATION:.45,T4_COMMUNITY_SIGNAL:.2})[source?.trust_tier] ?? .1; }
 function stateAllowed(resource){
   if (resource.activation_mode === 'EXECUTABLE_CAPABILITY' || EXECUTABLE_RESOURCE_CLASSES.has(resource.resource_class) && !['REFERENCE_ONLY','CORROBORATION_ONLY','DISCOVERY_ONLY','PROCESS_RULE','READ_ONLY_TOOL'].includes(resource.activation_mode)) return EXECUTABLE_RESOURCE_STATES.has(resource.status);
@@ -164,8 +312,10 @@ export function deterministicMinimalCoalition(candidates,maxResources=8) {
 export function resolveEngineeringResources({ repoDir=DEFAULT_REPO, root, instruction='', affectedPaths=[], featureRecord=null, maxResources=8, availableTools=[], eligibleResourceIds=null, resourceBindingHints={} }={}) {
   const resources = loadAllEngineeringResources(repoDir);
   const sources = new Map(loadEngineeringResourceSources(repoDir).map((s)=>[s.source_id,s]));
-  const taskClasses = classifyEngineeringResourcesTask({ instruction, affectedPaths, featureRecord });
-  const text = [instruction, ...(affectedPaths || []), featureRecord ? JSON.stringify(featureRecord) : ''].join('\n');
+  const taskClasses = classifyEngineeringResourcesTask({ instruction, affectedPaths, featureRecord, repoDir });
+  // Typed fields, never the stringified record: a keyword matching any literal anywhere in
+  // a record made unrelated resources look lexically relevant.
+  const text = [instruction, ...(affectedPaths || []), featureRecord?.outcome || '', featureRecord?.implementation_note || '', featureRecord?.module || ''].join('\n');
   const candidates=[]; const rejected=[]; const eligibleSet=Array.isArray(eligibleResourceIds)?new Set(eligibleResourceIds):null;
   for (const resource of resources) {
     // Skills have one owner: resolveEngineeringSkills(). Keeping them out of this
