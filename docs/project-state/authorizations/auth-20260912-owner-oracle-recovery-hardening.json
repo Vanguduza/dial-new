@@ -1,0 +1,45 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260912-owner-oracle-recovery-hardening",
+  "authorized_paths": [
+    "docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md",
+    "deploy/oracle/provisioning/",
+    "deploy/oracle/resource-fabric/role-guard.mjs",
+    "tests/oracle-script-hardening.test.mjs",
+    "tests/oracle-role-guard.test.mjs",
+    "vitest.config.ts",
+    "CLAUDE.md",
+    "docs/project-state/authorizations/auth-20260912-owner-oracle-recovery-hardening.json"
+  ],
+  "base_sha": "d59589b74970fc4c5014408dcdd60e074ecfa564",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "recovery_plane",
+    "resource_governance",
+    "documentation",
+    "technical_implementation"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-12T15:11:27.010405+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner ordered the recovery methods recorded, the outage investigated, guardrails hardened, data-loss-free recovery ensured and task separation completed. Two distinct outages are separated: the control-plane OAuth/gate failure already documented in the runbook and still unresolved, and the recovery-plane failure whose proximate cause is unrecoverable because the host was terminated with its logs. The document states that rather than guessing, and records instead the eight systemic causes demonstrated on live infrastructure during the rebuild. Guardrails are executable: a linter fails the build on each cause. Boot-volume backup is implemented and reports non-zero while any host lacks a policy; protected hosts require an explicit --include-hermes flag because assigning a policy is still a modification of dial-hermes-control. Task separation was enforced only in the scheduler, so work arriving by SSH, Desktop Commander, cron or by hand bypassed it; role-guard.mjs adds fail-closed host-side enforcement. No change to product, money, security authority or owner-control intent.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "Save this recovery methods in the repo and in memory. Now investigate what caused this outage in the first place, harden guardrails, make sure each of the vms is able to recover without losing data then ensure the vm task seperation is implemented fully",
+  "owner_instruction_sha256": "00192f314488d2ffa18b185dc4e900ba00567d248ffbe6375f085844ea41ca13",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260912-oracle-recovery-hardening"
+  }
+}

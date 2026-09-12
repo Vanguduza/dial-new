@@ -49,6 +49,23 @@ When the `dial-oracle-control` MCP/operator gateway is available, Claude and Cod
 - The bridge is DIAL-only. Never query, control or import state from other Hermes projects.
 - Direct/ad-hoc repository development is never the entrypoint. Ordinary work is allowed only when the external Oracle gate is `PRODUCTION_GREEN` or, under `DEC-021`, the development-only `DEVELOPMENT_READY_FALLBACK` gate is valid; in either case execution enters through the persistent Oracle orchestrator. The fallback gate is not production certification.
 
+## Oracle host recovery
+
+Getting back into the Oracle estate — access paths in escalation order, the
+`~/p/run.sh` tooling, the 2026-09-12 outage analysis, the guardrails that now fail the
+build on each cause, boot-volume backup, and host-side task separation:
+`docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md`.
+
+Three facts worth knowing before touching Oracle infrastructure:
+
+- All three hosts share one VCN and one `10.0.0.0/24` subnet, so any change to the
+  VCN, subnet, gateway, route table or default security list is a change to
+  `dial-hermes-control`. Per-host ingress goes on a VNIC-scoped NSG instead.
+- OCI Run Command is the out-of-band path that survives a broken SSH. It is part of
+  certification, not a nicety.
+- `AMBER` certification is an honest resting point: host and out-of-band recovery
+  proven, Commander not yet. Never manufacture `GREEN`.
+
 Canonical architecture: `docs/orchestration/DIAL_OPERATOR_GATEWAY.md`. Legacy Claude-specific detail remains in `docs/orchestration/DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md`.
 
 ## Project Truth owner-authority lock

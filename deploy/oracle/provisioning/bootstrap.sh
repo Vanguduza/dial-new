@@ -69,9 +69,9 @@ fact kernel         "$(uname -r)"
 fact architecture   "$(uname -m)"
 # IMDSv2: authorization header required. Never log the token.
 IMDS_HDR=(-H "Authorization: Bearer Oracle" -s -m 5)
-fact private_ip "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/vnics/ 2>/dev/null | jq -r '.[0].privateIp // ""' 2>/dev/null || echo '')"
-fact public_ip  "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/vnics/ 2>/dev/null | jq -r '.[0].publicIp  // ""' 2>/dev/null || echo '')"
-fact instance_ocid "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/instance/ 2>/dev/null | jq -r '.id // ""' 2>/dev/null || echo '')"
+fact private_ip "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/vnics/ 2>/dev/null | jq -r '.[0].privateIp // ""' 2>/dev/null)"
+fact public_ip  "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/vnics/ 2>/dev/null | jq -r '.[0].publicIp  // ""' 2>/dev/null)"
+fact instance_ocid "$(curl "${IMDS_HDR[@]}" http://169.254.169.254/opc/v2/instance/ 2>/dev/null | jq -r '.id // ""' 2>/dev/null)"
 # If v1 answers without the header, metadata is not hardened. Report it; do not
 # "fix" it here — that is an instance property set at launch.
 if curl -s -m 5 http://169.254.169.254/opc/v1/instance/ >/dev/null 2>&1; then
@@ -269,6 +269,16 @@ CONF
   # peers with StrictHostKeyChecking=yes, so it must not run until known_hosts is
   # seeded and the peer allowlist is verified — install-recovery-peer.sh says the
   # same. Starting it blind would fail closed and generate noise, not recovery.
+  # Host-side task separation. placement.mjs only binds work that arrives through the
+  # scheduler; this lets the host refuse out-of-role work however it arrived.
+  if [[ -f $fab/role-guard.mjs ]]; then
+    printf '#!/usr/bin/env bash\nexec node %s "$@"\n' "$fab/role-guard.mjs" > /usr/local/bin/dial-role-guard
+    chmod 755 /usr/local/bin/dial-role-guard
+    fact role_guard_installed "$(sudo -u $ADMIN_USER dial-role-guard --self 2>/dev/null | jq -c '{roles,development_permitted,heavy_work_permitted}' 2>/dev/null)"
+  else
+    fact role_guard_installed false
+  fi
+
   fact recovery_agent_activation "staged, not started: requires seeded known_hosts for peers"
   fact fabric_staged true
   return 0
