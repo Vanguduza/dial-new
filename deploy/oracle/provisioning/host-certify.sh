@@ -23,7 +23,9 @@ FABRIC=$REPO_DIR/deploy/oracle/resource-fabric
 STATE=/var/lib/dial-recovery/bootstrap-state.json
 CRED=/home/$ADMIN_USER/.desktop-commander-device/device.json
 UID_ADMIN="$(id -u $ADMIN_USER 2>/dev/null || echo 0)"
-uctl() { sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN systemctl --user "$@" 2>/dev/null; }
+# Bounded: `systemctl --user` blocks when the user manager is not reachable, and a
+# certification tool must never be the thing that hangs.
+uctl() { timeout 10 sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN systemctl --user "$@" 2>/dev/null; }
 
 ssh_active=$(systemctl is-active ssh 2>/dev/null || systemctl is-active sshd 2>/dev/null || echo inactive)
 ssh_listening=$(ss -lnt 2>/dev/null | awk '$4 ~ /:22$/ {found=1} END{print (found?"true":"false")}')
@@ -68,13 +70,13 @@ commander_unit=$(uctl is-active dial-commander-remote.service || echo inactive)
 
 # Does the fabric actually run here? Exercise it rather than trusting the checkout.
 if [[ -f $FABRIC/recovery-agent.mjs ]]; then
-  fabric_loads=$(node -e "import('file://$FABRIC/recovery-agent.mjs').then(()=>console.log('true')).catch(()=>console.log('false'))" 2>/dev/null || echo false)
+  fabric_loads=$(timeout 20 node -e "import('file://$FABRIC/recovery-agent.mjs').then(()=>console.log('true')).catch(()=>console.log('false'))" 2>/dev/null || echo false)
 else
   fabric_loads=false
 fi
 # Fail-closed check: stale telemetry must make a host ineligible, not "probably fine".
 if [[ -f $FABRIC/placement.mjs ]]; then
-  fail_closed=$(node -e "
+  fail_closed=$(timeout 20 node -e "
 import('file://$FABRIC/placement.mjs').then(m=>{
   const r=m.evaluatePlacement({task:{task_id:'certify',project:'dial',predicted_memory_mb:64},telemetry:{},nowMs:Date.now()});
   console.log(r.selected?'false':'true');
@@ -84,9 +86,14 @@ else
 fi
 
 commander_paired=$([[ -f $CRED ]] && echo true || echo false)
-commander_version=$(/opt/dial-recovery/commander/node_modules/.bin/desktop-commander --version 2>/dev/null | head -1 || echo unverified)
+# Read the version from package.json — never by executing the binary. There is no
+# --version flag: an unrecognised argument falls through to the MCP stdio server,
+# which waits on stdin forever. In a command substitution over SSH that hangs the
+# whole certification, with no output and no timeout.
+commander_version=$(jq -r '.version // "unverified"' \
+  /opt/dial-recovery/commander/node_modules/@wonderwhy-er/desktop-commander/package.json 2>/dev/null || echo unverified)
 if [[ -x /usr/local/bin/dial-commander-probe ]]; then
-  commander_criteria=$(sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN \
+  commander_criteria=$(timeout 25 sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN \
       /usr/local/bin/dial-commander-probe 2>/dev/null \
     | awk -F= '/^[A-Z_]+=/{printf "%s\"%s\":\"%s\"", (n++?",":""), $1, $2} END{}' )
   commander_criteria="{${commander_criteria:-}}"

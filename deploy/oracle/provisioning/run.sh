@@ -31,9 +31,18 @@ ssh_host() {
     echo "No readable SSH private key. Set DIAL_SSH_PRIVATE_KEY_FILE and re-source env.sh." >&2
     return 78
   fi
-  ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" \
-      -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
-      "ubuntu@$(instance_ip)" "$@"
+  # ConnectTimeout bounds only the handshake, not the REMOTE COMMAND. A remote
+  # program that never exits (dial-host-certify used to, by executing a binary with
+  # no --version flag and landing in an stdin-waiting MCP server) would otherwise
+  # stall this script silently and indefinitely. Bound the whole call.
+  timeout "${DIAL_SSH_TIMEOUT:-120}" \
+    ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" \
+        -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+        -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+        "ubuntu@$(instance_ip)" "$@"
+  local rc=$?
+  [[ $rc -eq 124 ]] && echo "ssh timed out after ${DIAL_SSH_TIMEOUT:-120}s (remote command did not finish)" >&2
+  return $rc
 }
 
 diagnose() {
@@ -71,6 +80,7 @@ repair() {
   # Stream the phase headings live. Piping the remote output through `tail` shows
   # nothing at all until bootstrap finishes several minutes later, which is
   # indistinguishable from a hang.
+  DIAL_SSH_TIMEOUT="${DIAL_SSH_TIMEOUT:-900}" \
   ssh_host "sudo DIAL_REPO_REF='$ref' /opt/dial-recovery/bin/bootstrap.sh 2>&1" \
     | grep --line-buffered -E '=== \[|PHASE|FAILED|NOT installed|BOOTSTRAP COMPLETE'
   return "${PIPESTATUS[0]}"
@@ -140,7 +150,12 @@ collect_certification() {
       return 0
     fi
     # Say why, every time. Silence here is what made the last failure unreadable.
-    echo "  no certification yet (ssh exit ${LAST_SSH_RC:-?})"
+    if [[ "${LAST_SSH_RC:-}" == "124" ]]; then
+      echo "  TIMED OUT — the host accepted the connection but dial-host-certify did not finish."
+      echo "  Run  ~/p/run.sh repair  to install the current certification tool."
+    else
+      echo "  no certification yet (ssh exit ${LAST_SSH_RC:-?})"
+    fi
     [[ -n "$LAST_SSH_ERR" ]] && echo "  stderr: ${LAST_SSH_ERR%%$'\n'*}"
     [[ -n "$LAST_BODY"    ]] && echo "  body:   ${LAST_BODY%%$'\n'*}"
     [[ $i -lt $attempts ]] && sleep 60
