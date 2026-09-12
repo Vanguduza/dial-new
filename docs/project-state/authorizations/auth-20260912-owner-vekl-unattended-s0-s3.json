@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260912-owner-vekl-unattended-s0-s3",
+  "project": "dial",
+  "authority": "OWNER_DERIVED",
+  "owner_instruction_sha256": "f3b62ed90d86cdf3b6991e7c5d39942e14962b2b7588ede4af5d0b83159cd3ef",
+  "owner_instruction_excerpt": "fully probe the problem and implement the solution that achieves the full desired functionality and results",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260912-vekl-unattended-s0-s3",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-12T03:23:58.558315+00:00",
+  "base_sha": "ba43c1b5d3bbc71404d5dfde9660974982334812",
+  "branch_scope": "claude/unattended-dial-v2",
+  "authorized_paths": [
+    "CLAUDE.md",
+    ".claude/rules/verification-discipline.md",
+    "package.json",
+    "agent-system/bin/*.mjs",
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/*.json",
+    "agent-system/engineering-knowledge/evals/*.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json"
+  ],
+  "change_classes": [
+    "retrieval_determinism_bound",
+    "graph_vocabulary_closure",
+    "task_classification_correctness",
+    "retrieval_quality_evaluation",
+    "autonomous_guardrail_addition",
+    "technical_implementation"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

@@ -1,5 +1,5 @@
 {
-  "registry_version": "vekl-2.2-rev2",
+  "registry_version": "vekl-2.2-rev3",
   "routes": [
     {
       "concerns": [
@@ -111,6 +111,13 @@
       ],
       "max_hops": 3,
       "route_id": "RESEARCH_CHALLENGE"
+    },
+    {
+      "route_id": "CONCRETE_TASK",
+      "max_hops": 1,
+      "concerns": [],
+      "always_active": true,
+      "why": "The concrete packet task is classified before enumeration (VEKL 2.1 law step 2), so its concerns are always in scope. max_hops 1 means a concern start reaches the resources that declare it and stops: it opens a declared edge, it does not widen the neighbourhood."
     }
   ],
   "schema_version": 1,

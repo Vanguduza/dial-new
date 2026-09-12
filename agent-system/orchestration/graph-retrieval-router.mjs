@@ -8,6 +8,7 @@ import { classifyEngineeringResourcesTask, evaluateEngineeringResourceHardEligib
 
 const here=path.dirname(fileURLToPath(import.meta.url)); export const DEFAULT_REPO=path.resolve(here,'../..');
 const ROUTE_REL='agent-system/registries/KNOWLEDGE_ROUTE_REGISTRY.json';
+const EDGE_REL='agent-system/registries/KNOWLEDGE_EDGE_TYPE_REGISTRY.json';
 const DETERMINISM_REL='agent-system/registries/GRAPHRAG_DETERMINISM_POLICY.json';
 const RESOURCE_REL='agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_REGISTRY.json';
 const SOURCE_REL='agent-system/engineering-knowledge/registries/ENGINEERING_RESOURCE_SOURCE_REGISTRY.json';
@@ -21,9 +22,12 @@ function cosine(a,b){let s=0;for(let i=0;i<Math.min(a.length,b.length);i++)s+=a[
 function overlap(a,b){const A=new Set(tokens(a)),B=new Set(tokens(b));if(!A.size||!B.size)return 0;let n=0;for(const x of A)if(B.has(x))n++;return n/Math.max(A.size,B.size);}
 function normalize(scores){const vals=scores.filter(Number.isFinite);const min=vals.length?Math.min(...vals):0,max=vals.length?Math.max(...vals):0;if(max===min)return scores.map((x)=>x>0?1:0);return scores.map((x)=>(x-min)/(max-min));}
 function genericResourceId(ref){return ref.startsWith('ENGINEERING_RESOURCE:')?ref.slice('ENGINEERING_RESOURCE:'.length):null;}
-function concernRoutes({instruction,affectedPaths,unit,routeRegistry,featureRecord}){
- const task=classifyEngineeringResourcesTask({instruction,affectedPaths,featureRecord}); const text=[instruction,...affectedPaths,...task].join(' ').toUpperCase(); const set=new Set(unit?.knowledge_route_ids||[]);
- for(const r of routeRegistry.routes||[]){if((r.concerns||[]).some((c)=>text.includes(String(c).toUpperCase())))set.add(r.route_id);} if(unit?.design_authorities?.length)set.add('PRODUCT_EXPERIENCE'); return [...set].sort();
+function concernRoutes({instruction,affectedPaths,unit,routeRegistry,taskClasses}){
+ const text=[instruction,...affectedPaths,...taskClasses].join(' ').toUpperCase(); const set=new Set(unit?.knowledge_route_ids||[]);
+ // A route declaring always_active is in scope for every query. CONCRETE_TASK is
+ // one: the concrete task is classified before enumeration (VEKL 2.1 law step 2),
+ // so the edges carrying its declared concerns are never out of scope.
+ for(const r of routeRegistry.routes||[]){if(r.always_active===true||(r.concerns||[]).some((c)=>text.includes(String(c).toUpperCase())))set.add(r.route_id);} if(unit?.design_authorities?.length)set.add('PRODUCT_EXPERIENCE'); return [...set].sort();
 }
 function buildEnvelope(repoDir,graph,policy,routeRegistry){
  const sourceHash=registryHash(repoDir,SOURCE_REL),resourceHash=registryHash(repoDir,RESOURCE_REL); const routeHash=hashObject(routeRegistry); const p=JSON.parse(JSON.stringify(policy));
@@ -31,17 +35,98 @@ function buildEnvelope(repoDir,graph,policy,routeRegistry){
  p.chunking.profile_hash=hashObject(p.chunking); p.embedding.embedding_profile_hash=hashObject(p.embedding); p.semantic_index.corpus_generation=graph.graph_generation_id;p.semantic_index.corpus_hash=graph.graph_revision_hash;p.semantic_index.activation_state_hash=hashObject({generation:graph.graph_generation_id});p.lexical_index.corpus_generation=graph.graph_generation_id;p.reranker.profile_hash=hashObject(p.reranker);p.fusion.profile_hash=hashObject(p.fusion);
  p.vekl={...p.vekl,source_registry_hash:sourceHash,resource_registry_hash:resourceHash,workflow_pattern_corpus:{pattern_registry_hash:registryHash(repoDir,N8N_PATTERN_REL),capability_map_hash:registryHash(repoDir,N8N_CAP_REL),security_rules_hash:registryHash(repoDir,N8N_SEC_REL),representation:'ENGINEERING_RESOURCE_EXAMPLE_REFERENCE',raw_workflow_execution:false}};p.graph={schema_version:graph.graph_schema_version,graph_revision_hash:graph.graph_revision_hash}; return {...p,envelope_hash:hashObject(p)};
 }
+// Bounded traversal (S0).
+//
+// Three properties, all registry-driven so they are policy rather than code:
+//
+//   1. DIRECTED. A reverse twin exists only for edge types that declare
+//      reverse_traversable. Walking every edge both ways turned `supports`
+//      into a path from any resource into all 309 units.
+//   2. PER-CLASS BUDGETS. Each edge is walked under the hop budget of ITS
+//      route_class, and only when the query matched that route. Previously the
+//      loosest matched route governed every edge via Math.max.
+//   3. HUB RULE. A node whose degree exceeds the declared threshold is
+//      REACHABLE but NOT EXPANDABLE: traversal may land on it - candidates
+//      must still be reachable - but may not continue through it. Six
+//      ENGINEERING_RESOURCE nodes connect to all 309 units; one hop through
+//      any of them previously reached the whole graph.
+export function boundedTraversal({graph,unit,edgeRegistry,routeBudgets,extraStarts=[]}){
+ const policy=edgeRegistry.traversal_policy||{};
+ const hubThreshold=Number(policy.hub_degree_threshold||Infinity);
+ const resourceLayer=new Set(policy.resource_layer_is_terminal?.node_types||[]);
+ const spec=new Map((edgeRegistry.edge_types||[]).map((x)=>[`${x.source_type}|${x.relationship}|${x.target_type}`,x]));
+ const byNode=new Map(graph.nodes.map((n)=>[n.node_ref,n]));
+ const key=(e)=>`${byNode.get(e.source_ref)?.node_type}|${e.relationship}|${byNode.get(e.target_ref)?.node_type}`;
+
+ const degree=new Map();
+ for(const e of graph.edges){ if(e.tombstoned) continue;
+  degree.set(e.source_ref,(degree.get(e.source_ref)||0)+1); degree.set(e.target_ref,(degree.get(e.target_ref)||0)+1); }
+
+ const out=new Map();
+ const push=(from,edge)=>{ if(!out.has(from)) out.set(from,[]); out.get(from).push(edge); };
+ for(const e of graph.edges){
+  if(e.tombstoned) continue;
+  const row=spec.get(key(e)); if(!row) continue;
+  const rc=row.route_class||null;
+  push(e.source_ref,{...e,route_class:rc,reverse:false});
+  if(row.reverse_traversable===true) push(e.target_ref,{...e,source_ref:e.target_ref,target_ref:e.source_ref,route_class:rc,reverse:true});
+ }
+
+ const unitStarts=[`DEVELOPMENT_UNIT:${unit.unit_lineage_id}`,...unit.feature_ids.map((x)=>`FEATURE:${x}`),...unit.realization_facets.map((x)=>`REALIZATION_FACET:${x}`)].filter((x)=>byNode.has(x));
+ const concernStarts=[...new Set(extraStarts)].filter((x)=>byNode.has(x)).sort();
+ const starts=[...unitStarts,...concernStarts];
+ const visited=new Set(starts),edgeRefs=new Set(),hubsHeld=new Set();
+ const q=starts.map((x)=>[x,0]);
+ while(q.length){
+  const [cur,d]=q.shift();
+  // A hub is reachable but never expanded through.
+  if(!starts.includes(cur)&&(degree.get(cur)||0)>hubThreshold){ hubsHeld.add(cur); continue; }
+  const curInResourceLayer=resourceLayer.has(byNode.get(cur)?.node_type);
+  for(const e of (out.get(cur)||[]).sort((a,b)=>a.edge_ref.localeCompare(b.edge_ref))){
+   const budget=routeBudgets[e.route_class];
+   if(budget===undefined) continue;          // query did not match this edge's route
+   if(d>=budget) continue;                   // beyond that route's hop budget
+   // A resource is a destination, not a waypoint: expansion stays inside the resource layer.
+   if(curInResourceLayer&&!resourceLayer.has(byNode.get(e.target_ref)?.node_type)) continue;
+   edgeRefs.add(e.edge_ref);
+   if(!visited.has(e.target_ref)){ visited.add(e.target_ref); q.push([e.target_ref,d+1]); }
+  }
+ }
+ return {byNode,visited,edgeRefs,starts,unit_starts:unitStarts,concern_starts:concernStarts,hubs_held:[...hubsHeld].sort(),hub_degree_threshold:hubThreshold};
+}
 export function resolveGraphRag({repoDir=DEFAULT_REPO,root=DEFAULT_CONTROL_HOME,featureId=null,unitId=null,instruction='',affectedPaths=[],availableTools=[]}={}){
  let graph=loadActiveGraph(root); const expected=activateCompiledGraph({repoDir,root}); if(!graph||graph.graph_revision_hash!==expected.graph_revision_hash)graph=expected;
  const unit=findUnit(repoDir,unitId||featureId); if(!unit) throw new Error(`no Development Unit for ${unitId||featureId||'<unspecified>'}`);
- const routeRegistry=loadRegistry(repoDir,ROUTE_REL,{}),policy=loadRegistry(repoDir,DETERMINISM_REL,{}),features=loadRegistry(repoDir,'agent-system/registries/FEATURE_REGISTRY.json',[]),featureRecord=features.find((x)=>(unit.feature_ids||[]).includes(x.feature_id))||null;
- const routes=concernRoutes({instruction,affectedPaths,unit,routeRegistry,featureRecord}); const routeRows=(routeRegistry.routes||[]).filter((r)=>routes.includes(r.route_id)); const maxHops=Math.max(1,...routeRows.map((r)=>Number(r.max_hops||1)));
- const byNode=new Map(graph.nodes.map((n)=>[n.node_ref,n])),out=new Map(); for(const e of graph.edges){if(e.tombstoned)continue;(out.get(e.source_ref)||out.set(e.source_ref,[]).get(e.source_ref)).push(e);(out.get(e.target_ref)||out.set(e.target_ref,[]).get(e.target_ref)).push({...e,source_ref:e.target_ref,target_ref:e.source_ref,reverse:true});}
- const starts=[`DEVELOPMENT_UNIT:${unit.unit_lineage_id}`,...unit.feature_ids.map((x)=>`FEATURE:${x}`),...unit.realization_facets.map((x)=>`REALIZATION_FACET:${x}`)].filter((x)=>byNode.has(x)); const visited=new Set(starts),edgeRefs=new Set(),q=starts.map((x)=>[x,0]); while(q.length){const [cur,d]=q.shift();if(d>=maxHops)continue;for(const e of (out.get(cur)||[]).sort((a,b)=>a.edge_ref.localeCompare(b.edge_ref))){edgeRefs.add(e.edge_ref);if(!visited.has(e.target_ref)){visited.add(e.target_ref);q.push([e.target_ref,d+1]);}}}
+ const edgeRegistry=loadRegistry(repoDir,EDGE_REL,{}); const routeRegistry=loadRegistry(repoDir,ROUTE_REL,{}),policy=loadRegistry(repoDir,DETERMINISM_REL,{}),features=loadRegistry(repoDir,'agent-system/registries/FEATURE_REGISTRY.json',[]),featureRecord=features.find((x)=>(unit.feature_ids||[]).includes(x.feature_id))||null;
+ // VEKL 2.1 law step 2: classify the concrete engineering task and affected paths
+ // BEFORE enumerating resources. The classification does two jobs - it selects the
+ // route budgets, and it names the ENGINEERING_CONCERN nodes the traversal enters
+ // from. Without the second, the neighbourhood was a function of the Feature record
+ // alone and identical for every task ever performed on that Feature.
+ const taskClasses=classifyEngineeringResourcesTask({instruction,affectedPaths,featureRecord,repoDir});
+ const routes=concernRoutes({instruction,affectedPaths,unit,routeRegistry,taskClasses}); const routeRows=(routeRegistry.routes||[]).filter((r)=>routes.includes(r.route_id)); const routeBudgets=Object.fromEntries(routeRows.map((r)=>[r.route_id,Math.max(1,Number(r.max_hops||1))]));
+ const traversal=boundedTraversal({graph,unit,edgeRegistry,routeBudgets,extraStarts:taskClasses.map((x)=>`ENGINEERING_CONCERN:${x}`)});
+ const byNode=traversal.byNode,visited=traversal.visited,edgeRefs=traversal.edgeRefs,starts=traversal.starts;
  const resources=loadRegistry(repoDir,RESOURCE_REL,[]); const sources=new Map(loadRegistry(repoDir,SOURCE_REL,[]).map((s)=>[s.source_id,s])); const challengeIndex=readJson('knowledge/research/challenges/index.json',{challenges:[]},root); const withheld=new Set((challengeIndex.challenges||[]).filter((c)=>['REVIEW_REQUIRED','CANON_DELTA_AUTHORIZED'].includes(c.status)).flatMap((c)=>c.withheld_resource_ids||[])); const graphIds=new Set([...visited].map(genericResourceId).filter(Boolean)); const query=[instruction,...affectedPaths,featureRecord?.outcome||'',...(unit.knowledge_route_ids||[])].join(' '); const qv=hashVector(query,Number(policy.embedding?.dimension||256));
- const taskClasses=classifyEngineeringResourcesTask({instruction,affectedPaths,featureRecord}); const candidateRows=[]; const hardRejected=[]; for(const r of resources){ if(r.resource_class==='SKILL')continue; const source=sources.get(r.source_id); if(!source)continue; const text=[r.name,r.resource_class,r.locator,...(r.task_classes||[]),...(r.technologies||[]),...(r.keywords||[])].join(' '); const graphEligible=graphIds.has(r.resource_id)||r.always_bind===true; if(!graphEligible||withheld.has(r.resource_id))continue; const eligibility=evaluateEngineeringResourceHardEligibility({resource:r,source,taskClasses,text:query,availableTools,featureRecord}); if(!eligibility.eligible){hardRejected.push({resource_id:r.resource_id,reason:eligibility.reason});continue;} const lexical=overlap(query,text),semantic=cosine(qv,hashVector(text,qv.length)),metadata=(r.always_bind?1:0)+((r.task_classes||[]).includes('*')?.5:0)+((r.task_classes||[]).some((x)=>taskClasses.includes(x))?1:0); candidateRows.push({resource_id:r.resource_id,resource_class:r.resource_class,source_id:r.source_id,raw:{lexical,semantic,metadata},always_bind:r.always_bind===true}); }
+ const candidateRows=[]; const hardRejected=[];
+ // Health corpus block is evaluated independently of graph reachability.
+ //
+ // Bounded traversal stopped the community corpus reaching health Units at all, so the
+ // health guard downstream never ran and the audit record that HEALTH decided the
+ // exclusion disappeared. The outcome was unchanged; the evidence was not. Defence in
+ // depth requires each layer to record its own decision, not to fall silent because an
+ // earlier layer happened to act first.
+ const healthSpecialist=String(featureRecord?.module||'').toUpperCase()==='HEALTH'
+   || String(featureRecord?.feature_id||'').startsWith('HEALTH-')
+   || (!featureRecord && taskClasses.includes('HEALTH_SENSITIVE'));
+ if(healthSpecialist){
+  for(const r of resources){
+   const isCorpus=r.derived_from_corpus==='community.zie619.n8n_workflows' || r.resource_id==='community.zie619.n8n_workflows.corpus';
+   if(isCorpus) hardRejected.push({resource_id:r.resource_id,reason:'HEALTH_SENSITIVE_COMMUNITY_CORPUS_BLOCKED'});
+  }
+ } for(const r of resources){ if(r.resource_class==='SKILL')continue; const source=sources.get(r.source_id); if(!source)continue; const text=[r.name,r.resource_class,r.locator,...(r.task_classes||[]),...(r.technologies||[]),...(r.keywords||[])].join(' '); const graphEligible=graphIds.has(r.resource_id)||r.always_bind===true; if(!graphEligible||withheld.has(r.resource_id))continue; if(healthSpecialist&&(r.derived_from_corpus==='community.zie619.n8n_workflows'||r.resource_id==='community.zie619.n8n_workflows.corpus'))continue; const eligibility=evaluateEngineeringResourceHardEligibility({resource:r,source,taskClasses,text:query,availableTools,featureRecord}); if(!eligibility.eligible){hardRejected.push({resource_id:r.resource_id,reason:eligibility.reason});continue;} const lexical=overlap(query,text),semantic=cosine(qv,hashVector(text,qv.length)),metadata=(r.always_bind?1:0)+((r.task_classes||[]).includes('*')?.5:0)+((r.task_classes||[]).some((x)=>taskClasses.includes(x))?1:0); candidateRows.push({resource_id:r.resource_id,resource_class:r.resource_class,source_id:r.source_id,raw:{lexical,semantic,metadata},always_bind:r.always_bind===true}); }
  const lex=normalize(candidateRows.map((x)=>x.raw.lexical)),sem=normalize(candidateRows.map((x)=>x.raw.semantic)),meta=normalize(candidateRows.map((x)=>x.raw.metadata)); const weights=policy.fusion?.weights||{lexical:.45,metadata:.25,semantic:.30}; candidateRows.forEach((x,i)=>{x.scores={lexical:lex[i],semantic:sem[i],metadata:meta[i]};x.fused_score=Number((lex[i]*weights.lexical+meta[i]*weights.metadata+sem[i]*weights.semantic).toFixed(8));}); candidateRows.sort((a,b)=>b.fused_score-a.fused_score||a.resource_id.localeCompare(b.resource_id)); const finalK=Number(policy.candidate_limits?.final_k||12); const selected=candidateRows.filter((x)=>x.always_bind).concat(candidateRows.filter((x)=>!x.always_bind).slice(0,finalK)); const unique=[...new Map(selected.map((x)=>[x.resource_id,x])).values()].sort((a,b)=>b.fused_score-a.fused_score||a.resource_id.localeCompare(b.resource_id));
  const hints={};for(const c of unique){ const r=resources.find((x)=>x.resource_id===c.resource_id); let role=r.selection_role||null,purpose=r.selection_purpose||null; if(routes.includes('SECURITY')&&['OFFICIAL_DOC','SECURITY_ADVISORY'].includes(r.resource_class)){role='AUTHORITY';purpose=purpose||(r.technologies||[])[0]||(r.task_classes||[]).filter((x)=>x!=='*'&&taskClasses.includes(x)).sort()[0]||'SECURITY_IMPLEMENTATION';} if(routes.includes('VERIFICATION')&&/test|eval|audit/i.test([r.name,...(r.keywords||[])].join(' '))){role='VERIFIER';purpose=purpose||'UNIT_VERIFICATION';} if(routes.includes('PRODUCT_EXPERIENCE')&&/design|ui|ux|frontend|accessibility/i.test([r.name,...(r.keywords||[])].join(' '))){role='GUIDANCE';purpose=purpose||'PRODUCT_EXPERIENCE';} hints[c.resource_id]={selection_role:role,selection_purpose:purpose,context_delivery:role==='AUTHORITY'?'EAGER_EXCERPT':'DESCRIPTOR_ONLY'}; }
- const envelope=buildEnvelope(repoDir,graph,policy,routeRegistry); const result={schema_version:1,excluded:[...withheld].sort().map((resource_id)=>({resource_id,reason:'OPEN_PROJECT_TRUTH_CHALLENGE_WITHHELD'})).concat(hardRejected.sort((a,b)=>a.resource_id.localeCompare(b.resource_id))),unit_lineage_id:unit.unit_lineage_id,unit_revision_hash:unit.unit_revision_hash,graph_generation_id:graph.graph_generation_id,graph_revision_hash:graph.graph_revision_hash,knowledge_route_ids:routes,knowledge_route_policy_hash:hashObject(routeRegistry),start_nodes:starts,visited_node_refs:[...visited].sort(),traversed_edge_refs:[...edgeRefs].sort(),graph_neighbourhood_hash:hashObject({visited:[...visited].sort(),edges:[...edgeRefs].sort()}),candidates:unique,eligible_resource_ids:unique.map((x)=>x.resource_id).sort(),resource_binding_hints:hints,determinism_envelope:envelope,determinism_envelope_hash:envelope.envelope_hash}; return result;
+ const envelope=buildEnvelope(repoDir,graph,policy,routeRegistry); const result={schema_version:1,excluded:[...withheld].sort().map((resource_id)=>({resource_id,reason:'OPEN_PROJECT_TRUTH_CHALLENGE_WITHHELD'})).concat(hardRejected.sort((a,b)=>a.resource_id.localeCompare(b.resource_id))),unit_lineage_id:unit.unit_lineage_id,unit_revision_hash:unit.unit_revision_hash,graph_generation_id:graph.graph_generation_id,graph_revision_hash:graph.graph_revision_hash,knowledge_route_ids:routes,knowledge_route_policy_hash:hashObject(routeRegistry),start_nodes:starts,visited_node_refs:[...visited].sort(),traversed_edge_refs:[...edgeRefs].sort(),graph_neighbourhood_hash:hashObject({visited:[...visited].sort(),edges:[...edgeRefs].sort()}),traversal_bound:{visited_nodes:visited.size,graph_nodes:graph.nodes.length,visited_fraction:Number((visited.size/graph.nodes.length).toFixed(6)),hubs_held:traversal.hubs_held.length,hub_degree_threshold:traversal.hub_degree_threshold,route_budgets:routeBudgets,unit_start_nodes:traversal.unit_starts,concrete_task_start_nodes:traversal.concern_starts},task_classes:taskClasses,candidates:unique,eligible_resource_ids:unique.map((x)=>x.resource_id).sort(),resource_binding_hints:hints,determinism_envelope:envelope,determinism_envelope_hash:envelope.envelope_hash}; return result;
 }
 if(import.meta.url===`file://${process.argv[1]}`){const id=process.argv[2];console.log(JSON.stringify(resolveGraphRag({featureId:id,instruction:process.argv.slice(3).join(' ')}),null,2));}

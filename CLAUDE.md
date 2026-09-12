@@ -14,6 +14,25 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 8. Preserve DIAL source-of-truth boundaries.
 9. After Feature/JIT context, resolve/confirm the VEKL v2 Engineering Knowledge Activation Manifest before material implementation. Skills are one governed resource class among official docs/repos/releases/issues/advisories/tools/rules/hooks/loops and bounded community corroboration; a valid result may contain no external executable skill.
 
+## Verify before concluding
+
+A conclusion reached without running something is a hypothesis. Name the claim, run the
+cheapest thing that could disprove it, and do that *before* writing the fix.
+
+- Never report a root cause you have not reproduced. Never call something a regression
+  without running it on the base commit first.
+- Measure both sides of a change through the same instrument and print both numbers.
+  "Better" is a comparison, not an impression.
+- Check the instrument before trusting it. If two things that cannot both be true agree,
+  the instrument is measuring the wrong layer.
+- A gate whose failure you have not induced is not known to work. Break it deliberately
+  and watch it fail.
+- When the probe contradicts you, say so plainly. The correction is the deliverable.
+
+Report the command and its output beside the claim, so a reader who does not trust you can
+re-derive it. Full method and the worked examples that produced this rule:
+`.claude/rules/verification-discipline.md`.
+
 ## Never
 
 - invent a hidden product decision;
