@@ -1,0 +1,10 @@
+# Runtime artefacts from provisioning runs. These carry public IP addresses, OCIDs
+# and account identifiers, which docs/orchestration/IMPLEMENTATION_STATE.md records
+# as sensitive operational detail that must not live in the repository.
+network.json
+instance.json
+cloud-init.yaml
+certification-report.json
+host-certification.json
+hermes-before.json
+hermes-after.json
