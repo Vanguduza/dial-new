@@ -27,6 +27,20 @@ UID_ADMIN="$(id -u $ADMIN_USER 2>/dev/null || echo 0)"
 # certification tool must never be the thing that hangs.
 uctl() { timeout 10 sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN systemctl --user "$@" 2>/dev/null; }
 
+# Build a JSON array from stdin lines. Never emits nothing, never emits twice.
+#
+# The previous idiom was `… | jq -R . | jq -sc . || echo '[]'`. `grep` exits 1 when
+# it matches nothing; `set -o pipefail` turns that into a failed pipeline even though
+# jq had already printed a perfectly good `[]`; the `|| echo '[]'` then APPENDED a
+# second value. The variable held "[]\n[]", which is a valid jq *stream* but not a
+# single value, so `--argjson` rejected it and the entire report failed to build,
+# leaving stdout empty. The failing case was a HEALTHY host: grep matched nothing
+# precisely because no stray DIAL workload was running.
+to_json_array() {
+  local out; out="$(jq -R . 2>/dev/null | jq -sc . 2>/dev/null)"
+  if [[ -n "$out" ]]; then printf '%s' "$out"; else printf '[]'; fi
+}
+
 ssh_active=$(systemctl is-active ssh 2>/dev/null || systemctl is-active sshd 2>/dev/null || echo inactive)
 ssh_listening=$(ss -lnt 2>/dev/null | awk '$4 ~ /:22$/ {found=1} END{print (found?"true":"false")}')
 pw_auth=$(sshd -T 2>/dev/null | awk '/^passwordauthentication /{print $2}')
@@ -43,7 +57,7 @@ for u in "${OCA_UNITS[@]}"; do
   if [[ "$(systemctl is-active "$u" 2>/dev/null)" == "active" ]]; then oca=active; oca_unit="$u"; break; fi
 done
 ocarun=$(id ocarun >/dev/null 2>&1 && echo true || echo false)
-plugins=$(ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | jq -R . | jq -sc . || echo '[]')
+plugins=$(ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | to_json_array)
 # The Run Command plugin's directory is `runcommand`, not `oci-tools-plugin`.
 runcmd_plugin=$(jq -e 'any(.[]; test("runcommand"; "i"))' <<<"$plugins" >/dev/null 2>&1 && echo true || echo false)
 
@@ -100,11 +114,12 @@ if [[ -x /usr/local/bin/dial-commander-probe ]]; then
 else
   commander_criteria='{}'
 fi
+jq -e . >/dev/null 2>&1 <<<"$commander_criteria" || commander_criteria='{}'
 commander_green=$(jq -e 'to_entries | length == 5 and all(.[]; .value=="GREEN")' <<<"$commander_criteria" >/dev/null 2>&1 && echo true || echo false)
 
 # DIAL application workload must NOT be running here (section 11).
 stray=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null \
-  | awk '{print $1}' | grep -E 'dial-hermes|dial-mission|dial-chat-control' | jq -R . | jq -sc . || echo '[]')
+  | awk '{print $1}' | { grep -E 'dial-hermes|dial-mission|dial-chat-control' || true; } | to_json_array)
 
 mem_total=$(free -m | awk '/^Mem:/{print $2}')
 mem_avail=$(free -m | awk '/^Mem:/{print $7}')
@@ -112,9 +127,9 @@ swap_total=$(free -m | awk '/^Swap:/{print $2}')
 swap_used=$(free -m | awk '/^Swap:/{print $3}')
 disk_used_pct=$(df -P / | awk 'NR==2{gsub("%","",$5); print $5}')
 loadavg=$(awk '{print $1}' /proc/loadavg)
-ports=$(ss -lntuH 2>/dev/null | awk '{print $1" "$5}' | sort -u | jq -R . | jq -sc . || echo '[]')
+ports=$(ss -lntuH 2>/dev/null | awk '{print $1" "$5}' | sort -u | to_json_array)
 units=$(systemctl list-unit-files --state=enabled --no-legend 2>/dev/null | awk '{print $1}' \
-  | grep -E 'ssh|oracle-cloud-agent' | jq -R . | jq -sc . || echo '[]')
+  | { grep -E 'ssh|oracle-cloud-agent' || true; } | to_json_array)
 
 # ---- verdict ---------------------------------------------------------------
 ssh_ok=false
@@ -132,7 +147,11 @@ else
   verdict=RED;   reason="No reliable remote recovery path: SSH and/or OCI emergency access not proven"
 fi
 
-jq -n \
+# Capture rather than stream straight out. An empty stdout is indistinguishable from
+# a transport failure at the collecting end, and that ambiguity cost hours: the real
+# cause (one malformed --argjson value) was invisible because jq wrote its complaint
+# to stderr and produced nothing at all on stdout.
+report="$(jq -n \
   --arg verdict "$verdict" --arg reason "$reason" \
   --arg hostname "$(hostname)" --arg at "$(date -u +%FT%TZ)" \
   --argjson ssh "$(jq -n --arg a "$ssh_active" --arg l "$ssh_listening" --arg p "$pw_auth" --arg r "$root_login" --arg k "$pubkey_auth" --arg f "${ssh_fp:-unverified}" --argjson ok "$ssh_ok" \
@@ -151,6 +170,18 @@ jq -n \
   '{schema_version:1, report:"oracle-admin host certification", hostname:$hostname, observed_at:$at,
     certification:{state:$verdict, reason:$reason},
     ssh:$ssh, oci:$oci, network:$net, recovery_plane:$recovery, desktop_commander:$commander,
-    resources:$resources, bootstrap:$bootstrap}'
+    resources:$resources, bootstrap:$bootstrap}' 2>&1)"
+
+if [[ -n "$report" ]] && jq -e 'type == "object"' >/dev/null 2>&1 <<<"$report"; then
+  printf '%s\n' "$report"
+else
+  # Still say something structured. A RED verdict carrying the builder's own error is
+  # actionable; silence is not.
+  jq -n --arg err "${report:-jq produced no output}" \
+    '{schema_version:1, report:"oracle-admin host certification",
+      certification:{state:"RED", reason:"host-certify could not build its report"},
+      builder_error:$err}'
+  exit 1
+fi
 
 [[ "$verdict" == "GREEN" ]] || exit 1
