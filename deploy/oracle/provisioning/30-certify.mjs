@@ -17,6 +17,7 @@
 
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -35,7 +36,15 @@ const BEFORE = arg('--hermes-before', path.join(HERE, 'hermes-before.json'));
 const AFTER = arg('--hermes-after', path.join(HERE, 'hermes-after.json'));
 
 const region = process.env.DIAL_OCI_REGION || 'af-johannesburg-1';
-const profile = process.env.OCI_CLI_PROFILE || 'DEFAULT';
+
+// Same detection as lib.sh: Cloud Shell has no ~/.oci/config and authenticates with
+// a delegation token, so `--profile DEFAULT` would fail every call before it is sent.
+const configFile = process.env.OCI_CLI_CONFIG_FILE || path.join(os.homedir(), '.oci', 'config');
+const hasConfig = fs.existsSync(configFile);
+const authArgs = [];
+if (process.env.OCI_CLI_PROFILE) authArgs.push('--profile', process.env.OCI_CLI_PROFILE);
+else if (hasConfig) authArgs.push('--profile', 'DEFAULT');
+if (!hasConfig && fs.existsSync('/etc/oci/delegation_token')) authArgs.push('--auth', 'instance_obo_user');
 
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; }
@@ -43,7 +52,7 @@ function readJson(file) {
 
 function oci(argv) {
   try {
-    const out = execFileSync('oci', ['--profile', profile, '--region', region, ...argv],
+    const out = execFileSync('oci', [...authArgs, '--region', region, ...argv],
       { encoding: 'utf8', timeout: 60_000, stdio: ['ignore', 'pipe', 'pipe'] });
     return JSON.parse(out).data;
   } catch {

@@ -124,9 +124,20 @@ Stale proofs expire. This is the difference between "the package is installed" a
 
 ## Operator prerequisites
 
-The OCI CLI must be installed and configured with a profile that can create compute
-and network resources in the target compartment. Nothing in this directory reads,
-writes, transports or prints a private key.
+These scripts run either on a workstation or in **OCI Cloud Shell**, and detect
+which: a workstation authenticates with a `~/.oci/config` profile, while Cloud Shell
+has no config file at all and authenticates with a delegation token as the signed-in
+user. Passing `--profile DEFAULT` in Cloud Shell fails every call before it is sent,
+so the profile flag is added only when a config file (or an explicit
+`OCI_CLI_PROFILE`) is actually present. `require_cli` reports the detected mode and
+makes one cheap authenticated call, so a misdetection surfaces immediately with a
+readable message instead of part-way through provisioning. `DIAL_OCI_NO_AUTH_FLAGS=1`
+passes nothing and lets the CLI decide.
+
+In Cloud Shell the tenancy OCID is already in `$OCI_TENANCY`, and the SSH private
+key must be uploaded first (Cloud Shell menu -> Upload) and `chmod 600`.
+
+Nothing in this directory reads, writes, transports or prints a private key.
 
 ```bash
 export DIAL_OCI_COMPARTMENT=ocid1.compartment.oc1..xxxx

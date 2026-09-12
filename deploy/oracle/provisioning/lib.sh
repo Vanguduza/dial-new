@@ -15,18 +15,50 @@ set -euo pipefail
 PROTECTED_HOSTS=("dial-hermes-control" "oracle-admin-v2")
 TARGET_INSTANCE="oracle-admin"
 
-: "${OCI_CLI_PROFILE:=DEFAULT}"
 : "${DIAL_OCI_REGION:=af-johannesburg-1}"
+OCI_CONFIG_FILE="${OCI_CLI_CONFIG_FILE:-$HOME/.oci/config}"
 
 log()  { printf '[%s] %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" >&2; }
 die()  { printf '[FATAL] %s\n' "$*" >&2; exit 1; }
 
-oci_() { oci --profile "$OCI_CLI_PROFILE" --region "$DIAL_OCI_REGION" "$@"; }
+# Authentication differs by environment and must be detected, not assumed.
+#
+# A workstation has ~/.oci/config with a named profile. OCI Cloud Shell has NO
+# config file at all — it authenticates with a delegation token as the signed-in
+# user — so passing `--profile DEFAULT` there makes every call fail before it is
+# sent. Build the flags once from what is actually present.
+OCI_AUTH_ARGS=()
+if [[ -n "${OCI_CLI_PROFILE:-}" ]]; then
+  OCI_AUTH_ARGS+=(--profile "$OCI_CLI_PROFILE")
+elif [[ -f "$OCI_CONFIG_FILE" ]]; then
+  OCI_AUTH_ARGS+=(--profile DEFAULT)
+fi
+# Only when the CLI has not already been told how to authenticate. Set
+# DIAL_OCI_NO_AUTH_FLAGS=1 to pass nothing at all and let the CLI decide.
+if [[ ! -f "$OCI_CONFIG_FILE" && -r /etc/oci/delegation_token && -z "${OCI_CLI_AUTH:-}" ]]; then
+  OCI_AUTH_ARGS+=(--auth instance_obo_user)
+fi
+[[ "${DIAL_OCI_NO_AUTH_FLAGS:-0}" == "1" ]] && OCI_AUTH_ARGS=()
+export DIAL_OCI_AUTH_MODE
+if [[ ${#OCI_AUTH_ARGS[@]} -eq 0 ]]; then DIAL_OCI_AUTH_MODE="cli-default"
+elif [[ " ${OCI_AUTH_ARGS[*]} " == *instance_obo_user* ]]; then DIAL_OCI_AUTH_MODE="cloud-shell-delegation-token"
+else DIAL_OCI_AUTH_MODE="config-profile"; fi
+
+# ${arr[@]+...} keeps an empty array from tripping `set -u` on older bash.
+oci_() { oci ${OCI_AUTH_ARGS[@]+"${OCI_AUTH_ARGS[@]}"} --region "$DIAL_OCI_REGION" "$@"; }
 
 require_cli() {
   command -v oci  >/dev/null 2>&1 || die "OCI CLI not installed. See README.md section 'Operator prerequisites'."
   command -v jq   >/dev/null 2>&1 || die "jq not installed."
-  [[ -n "${DIAL_OCI_COMPARTMENT:-}" ]] || die "DIAL_OCI_COMPARTMENT must be set to the target compartment OCID."
+  if [[ -z "${DIAL_OCI_COMPARTMENT:-}" ]]; then
+    local hint=""
+    [[ -n "${OCI_TENANCY:-}" ]] && hint=$'\n       In Cloud Shell your tenancy OCID is already in $OCI_TENANCY; export DIAL_OCI_COMPARTMENT="$OCI_TENANCY" to use the root compartment.'
+    die "DIAL_OCI_COMPARTMENT must be set to the target compartment OCID.${hint}"
+  fi
+  log "OCI auth mode: $DIAL_OCI_AUTH_MODE (region $DIAL_OCI_REGION)"
+  # Fail here, with a readable message, rather than inside a resource call.
+  oci_ iam region list >/dev/null 2>&1 \
+    || die "OCI CLI cannot authenticate. On a workstation run 'oci setup config'; in Cloud Shell check the region selector and that your session has not expired."
 }
 
 # Refuse any display name that is a protected host. Called at every boundary that
