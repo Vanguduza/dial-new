@@ -4,6 +4,7 @@
 #   ~/p/run.sh            do everything that can be done unattended
 #   ~/p/run.sh recheck    re-collect certification after Commander pairing
 #   ~/p/run.sh diagnose   probe the host directly and show what is wrong
+#   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
 #   ~/p/run.sh status     show state, change nothing
 #   ~/p/run.sh log        show the last run's output
 #
@@ -60,8 +61,19 @@ diagnose() {
             echo "--stderr (last 20 lines)--";  tail -20 /tmp/dhc.err'
 }
 
+repair() {
+  local ref="${DIAL_REPO_REF:-claude/oracle-e2-recovery-rebuild-3yotjc}"
+  echo "The host was built from a ref without deploy/oracle/provisioning, so"
+  echo "dial-host-certify and the Commander scripts were never installed."
+  echo "Repointing the host checkout at $ref and re-running bootstrap."
+  echo "This is idempotent and leaves SSH and the Oracle agent untouched."
+  echo
+  ssh_host "sudo DIAL_REPO_REF='$ref' /opt/dial-recovery/bin/bootstrap.sh 2>&1 | tail -40"
+}
+
 case "$mode" in
   status) exit 0 ;;
+  repair) repair; exit $? ;;
   log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;
   diagnose) diagnose; exit 0 ;;
   recheck)

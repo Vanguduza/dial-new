@@ -22,7 +22,12 @@ LOG_DIR=/var/log/dial-recovery
 FABRIC_STATE=/var/lib/dial-recovery/fabric
 
 DIAL_REPO_URL="${DIAL_REPO_URL:-https://github.com/Vanguduza/dial-new.git}"
-DIAL_REPO_REF="${DIAL_REPO_REF:-claude/oracle-problem-review-rmhdse}"
+# Must be a ref that carries BOTH the recovery fabric and this provisioning
+# directory. claude/oracle-problem-review-rmhdse has the fabric but no
+# deploy/oracle/provisioning, so phases 6 and 7 installed nothing from it and the
+# host ended up without dial-host-certify or the Commander scripts. This branch is
+# a superset of that one. Repoint it once the work merges.
+DIAL_REPO_REF="${DIAL_REPO_REF:-claude/oracle-e2-recovery-rebuild-3yotjc}"
 COMMANDER_PKG="${COMMANDER_PKG:-@wonderwhy-er/desktop-commander@0.2.50}"
 NODE_MAJOR="${NODE_MAJOR:-22}"
 ADMIN_USER=ubuntu
@@ -318,7 +323,14 @@ soft 6 phase6
 # ======================================== PHASE 7 functional certification
 phase7() {
   install -d -m 755 "$RECOVERY_ROOT/bin"
-  install -m 755 "$REPO_DIR/deploy/oracle/provisioning/host-certify.sh" /usr/local/bin/dial-host-certify 2>/dev/null || true
+  # Record whether this actually happened. Swallowing the error here is what let a
+  # host run for an hour with no certification tool and no indication why.
+  if install -m 755 "$REPO_DIR/deploy/oracle/provisioning/host-certify.sh" /usr/local/bin/dial-host-certify 2>>"$LOG"; then
+    fact host_certify_installed true
+  else
+    fact host_certify_installed "false: $REPO_DIR/deploy/oracle/provisioning/host-certify.sh missing on ref $DIAL_REPO_REF"
+    say "PHASE 7: dial-host-certify NOT installed — the checked-out ref has no provisioning directory"
+  fi
   install -m 755 "$REPO_DIR/deploy/oracle/provisioning/bootstrap.sh" "$RECOVERY_ROOT/bin/bootstrap.sh" 2>/dev/null || true
   fact outbound_https  "$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://github.com 2>/dev/null || echo failed)"
   fact dns_resolution  "$(getent hosts registry.npmjs.org >/dev/null 2>&1 && echo ok || echo failed)"
