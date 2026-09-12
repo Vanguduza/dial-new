@@ -79,7 +79,7 @@ instance_ocid_by_name() {
     --compartment-id "$DIAL_OCI_COMPARTMENT" \
     --display-name "$name" \
     --all 2>/dev/null \
-  | jq -r '[.data[]? | select(."lifecycle-state" != "TERMINATED")] | (.[0].id // "")'
+  | jq -r '[.data[]? | select(."lifecycle-state" | IN("TERMINATED","TERMINATING") | not)] | (.[0].id // "")'
 }
 
 # Snapshot every Hermes-owned object this provisioning could conceivably touch.

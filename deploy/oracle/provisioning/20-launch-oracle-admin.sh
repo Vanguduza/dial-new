@@ -31,8 +31,40 @@ private_ip="$(jq -r '.private_ip' "$NETWORK")"
 [[ $subnet_id == ocid1.subnet.* ]] || die "network.json has no usable subnet_id"
 
 # Refuse to proceed if an oracle-admin already exists — never clobber a live host.
+# Record an instance we own into instance.json. Shared by the launch path and the
+# adoption path below so both produce identical evidence.
+write_instance_json() {
+  local id="$1" img="${2:-}" adom="${3:-}"
+  local vnics; vnics="$(oci_ compute instance list-vnics --instance-id "$id")"
+  local pub priv
+  pub="$(jq -r '.data[0]."public-ip"  // ""' <<<"$vnics")"
+  priv="$(jq -r '.data[0]."private-ip" // ""' <<<"$vnics")"
+  jq -n --arg id "$id" --arg pub "$pub" --arg priv "$priv" \
+        --arg img "$img" --arg ad "$adom" --arg shape "$SHAPE" \
+    '{instance_id:$id, public_ip:$pub, private_ip:$priv, image_id:$img,
+      availability_domain:$ad, shape:$shape}' > "$HERE/instance.json"
+  log "Public IP:  $pub"
+  log "Private IP: $priv"
+  log "Wrote $HERE/instance.json"
+}
+
+# If an oracle-admin already exists, adopt it instead of launching a second one.
+# A run that created the instance and then died before writing instance.json is a
+# real outcome on a flaky connection, and the safe response is to record what exists
+# rather than to refuse (which strands the run) or to relaunch (which duplicates a
+# host and burns the pinned private IP).
 existing="$(instance_ocid_by_name "$NAME")"
-[[ -z "$existing" ]] || die "An instance named $NAME already exists ($existing). Terminate it deliberately first, or work with the existing host."
+if [[ -n "$existing" ]]; then
+  state="$(oci_ compute instance get --instance-id "$existing" | jq -r '.data."lifecycle-state" // "UNKNOWN"')"
+  log "An instance named $NAME already exists: $existing ($state)."
+  log "Adopting it rather than launching another — an earlier run created it."
+  write_instance_json "$existing" \
+    "$(oci_ compute instance get --instance-id "$existing" | jq -r '.data."image-id" // ""')" \
+    "$(oci_ compute instance get --instance-id "$existing" | jq -r '.data."availability-domain" // ""')"
+  log ""
+  log "Nothing was launched. Re-run ~/p/run.sh for the next step."
+  exit 0
+fi
 
 # ---------------------------------------------------------------- image
 # Resolve by OS + version + shape so the pinned OCID cannot drift or belong to the
@@ -151,31 +183,36 @@ if [[ ${#MISSING[@]} -gt 0 ]]; then
 fi
 
 log "Launching $NAME ($SHAPE, private IP $private_ip) …"
-launch_out="$(oci_ compute instance launch "${ARGS[@]}" \
-  --wait-for-state RUNNING --max-wait-seconds 900 2>&1)" || {
-    # Section 20: surface the real API error and request id instead of retrying blind.
-    echo "$launch_out" >&2
-    echo >&2
-    echo "LAUNCH FAILED. Do not re-run blindly — read the error above." >&2
-    grep -oE 'opc-request-id[^ ,"]*' <<<"$launch_out" >&2 || true
-    die "instance launch rejected by OCI"
-  }
 
-instance_id="$(jq -r '.data.id // empty' <<<"$launch_out")"
-[[ -n "$instance_id" ]] || die "launch returned no instance OCID; raw output: $launch_out"
+# Capture stdout ONLY. `--wait-for-state` writes its progress commentary to stderr,
+# and folding that into stdout with `2>&1` corrupts the JSON that the instance OCID
+# is parsed from — which fails *after* Oracle has already built the machine.
+ERR="$(mktemp)"; trap 'rm -f "$USER_DATA" "$USER_DATA_GZ" "$ERR"' EXIT
+
+if ! launch_out="$(oci_ compute instance launch "${ARGS[@]}" \
+      --wait-for-state RUNNING --max-wait-seconds 900 2>"$ERR")"; then
+  # Section 20: surface the real API error and request id instead of retrying blind.
+  cat "$ERR" >&2
+  echo >&2
+  echo "LAUNCH FAILED. Do not re-run blindly — read the error above." >&2
+  grep -oE 'opc-request-id[^ ,"]*' "$ERR" >&2 || true
+  die "instance launch rejected by OCI"
+fi
+
+instance_id="$(jq -r '.data.id // empty' <<<"$launch_out" 2>/dev/null || true)"
+if [[ -z "$instance_id" ]]; then
+  # The call succeeded, so an instance may well exist even though its OCID could not
+  # be read. Say so plainly: re-running is safe, because the adoption path above will
+  # find it rather than build a second one.
+  echo "--- launch stdout ---" >&2; head -40 <<<"$launch_out" >&2
+  echo "--- launch stderr ---" >&2; head -20 "$ERR" >&2
+  die "Launch reported success but no instance OCID could be parsed.
+       The instance may exist. Re-run ~/p/run.sh — it will adopt an existing
+       $NAME rather than launch a second one."
+fi
 log "Instance RUNNING: $instance_id"
 
-public_ip="$(oci_ compute instance list-vnics --instance-id "$instance_id" | jq -r '.data[0]."public-ip" // ""')"
-priv_ip="$(oci_ compute instance list-vnics --instance-id "$instance_id" | jq -r '.data[0]."private-ip" // ""')"
-
-jq -n --arg id "$instance_id" --arg pub "$public_ip" --arg priv "$priv_ip" \
-      --arg img "$image_id" --arg ad "$ad" --arg shape "$SHAPE" \
-  '{instance_id:$id, public_ip:$pub, private_ip:$priv, image_id:$img, availability_domain:$ad, shape:$shape}' \
-  > "$HERE/instance.json"
-
-log "Public IP:  $public_ip"
-log "Private IP: $priv_ip"
-log "Wrote $HERE/instance.json"
+write_instance_json "$instance_id" "$image_id" "$ad"
 log ""
 log "Next: wait for cloud-init, then"
 log "  ssh -i <private-key> ubuntu@$public_ip 'sudo dial-host-certify'"
