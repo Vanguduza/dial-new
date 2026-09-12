@@ -68,7 +68,12 @@ repair() {
   echo "Repointing the host checkout at $ref and re-running bootstrap."
   echo "This is idempotent and leaves SSH and the Oracle agent untouched."
   echo
-  ssh_host "sudo DIAL_REPO_REF='$ref' /opt/dial-recovery/bin/bootstrap.sh 2>&1 | tail -40"
+  # Stream the phase headings live. Piping the remote output through `tail` shows
+  # nothing at all until bootstrap finishes several minutes later, which is
+  # indistinguishable from a hang.
+  ssh_host "sudo DIAL_REPO_REF='$ref' /opt/dial-recovery/bin/bootstrap.sh 2>&1" \
+    | grep --line-buffered -E '=== \[|PHASE|FAILED|NOT installed|BOOTSTRAP COMPLETE'
+  return "${PIPESTATUS[0]}"
 }
 
 case "$mode" in
