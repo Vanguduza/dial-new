@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "registry_id": "MODEL_REGISTRY",
+  "registry_version": "1.0.0",
+  "decision_ref": "DEC-032",
+  "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
+
+  "authority_note": "A model describes a REASONING/CODING capability, independent of the execution environment that hosts it. Entries here are SEEDS and qualification records, never a permanent hard-coding: live availability is discovered per §37 from authenticated subscriptions and normalised into this registry. An entry that discovery cannot confirm is not routable regardless of what is written here.",
+
+  "eligibility_default": {
+    "policy": "DISCOVERABLE_BY_DEFAULT_QUALIFIED_BEFORE_ROUTABLE",
+    "deviation_from_document": "§6 states every model in an authorised subscription is 'worker-eligible by default, unless explicitly disqualified'. Taken literally that is allow-by-default and contradicts §38 (routing uses only models meeting qualification policy) and §65 (DISCOVERED → QUALIFYING → SHADOW_TESTED → LIMITED_TRAFFIC → QUALIFIED). DIAL fails closed everywhere else, so the deny-until-qualified reading wins: discovery WIDENS the candidate pool, only qualification GRANTS eligibility. §6's intent — do not hand-encode one Claude model and one Codex model — is fully preserved, because discovery is what populates the pool.",
+    "resolved_by": "owner review 2026-09-12"
+  },
+
+  "manager_eligibility_never_excludes_worker_eligibility": true,
+
+  "qualification_states": ["DISCOVERED", "QUALIFYING", "SHADOW_TESTED", "LIMITED_TRAFFIC", "QUALIFIED", "APPROVED", "DEGRADED", "BLOCKED", "UNAVAILABLE"],
+  "routable_states": ["LIMITED_TRAFFIC", "QUALIFIED", "APPROVED"],
+  "high_risk_routable_states": ["QUALIFIED", "APPROVED"],
+
+  "models": [
+    {
+      "model_id": "claude-sonnet-5",
+      "provider": "anthropic",
+      "family": "claude",
+      "lineage": "claude-sonnet",
+      "subscription_source": "anthropic-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": true,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+      },
+      "cost_profile": "STANDARD",
+      "latency_profile": "STANDARD",
+      "reliability_profile": "PROVEN",
+      "context_window": 200000,
+      "known_strengths": ["balanced implementation and reasoning", "sustained tool use"],
+      "known_failure_modes": [],
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 1
+      },
+      "qualification": {
+        "state": "QUALIFIED",
+        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:claude-sonnet-worker",
+        "basis": "Existing DEC-028 worker card claude-sonnet-worker was already QUALIFIED as a pre-bound pair. Qualification is inherited for the pair it covered, not for the model on every harness."
+      },
+      "seed": false
+    },
+    {
+      "model_id": "gpt-5.6-sol",
+      "provider": "openai",
+      "family": "openai-codex",
+      "lineage": "gpt-5.6",
+      "subscription_source": "chatgpt-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": true,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+      },
+      "cost_profile": "PREMIUM",
+      "latency_profile": "STANDARD",
+      "reliability_profile": "PROVEN",
+      "context_window": 400000,
+      "known_strengths": ["strong implementation", "bounded task execution"],
+      "known_failure_modes": ["benefits from explicit postcondition testing"],
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 1
+      },
+      "qualification": {
+        "state": "QUALIFIED",
+        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:codex-sol-worker",
+        "basis": "Existing DEC-028 worker card codex-sol-worker was already QUALIFIED as a pre-bound pair."
+      },
+      "seed": false
+    },
+    {
+      "model_id": "claude-opus-5",
+      "provider": "anthropic",
+      "family": "claude",
+      "lineage": "claude-opus",
+      "subscription_source": "anthropic-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": true,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+      },
+      "cost_profile": "PREMIUM",
+      "latency_profile": "SLOWER",
+      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "context_window": 200000,
+      "known_strengths": ["architecture", "multi-system reasoning", "ambiguity resolution"],
+      "known_failure_modes": ["can overthink", "may act prematurely on plausible assumptions"],
+      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
+      "qualification": {
+        "state": "DISCOVERED",
+        "evidence_hash": null,
+        "basis": "Seed entry. No DIAL execution evidence exists. Must pass §65 cold-start before routable, and high-risk work may not be its first test."
+      },
+      "seed": true
+    },
+    {
+      "model_id": "claude-fable-5-1",
+      "provider": "anthropic",
+      "family": "claude",
+      "lineage": "claude-fable",
+      "subscription_source": "anthropic-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": true,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+      },
+      "cost_profile": "PREMIUM",
+      "latency_profile": "SLOWER",
+      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "context_window": 200000,
+      "known_strengths": ["architecture", "ambiguity resolution"],
+      "known_failure_modes": [],
+      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
+      "qualification": { "state": "DISCOVERED", "evidence_hash": null, "basis": "Seed entry. No DIAL execution evidence." },
+      "seed": true
+    },
+    {
+      "model_id": "claude-haiku-4-5-20251001",
+      "provider": "anthropic",
+      "family": "claude",
+      "lineage": "claude-haiku",
+      "subscription_source": "anthropic-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": false,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": false, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": false, "debugging": true, "review": false
+      },
+      "cost_profile": "ECONOMICAL",
+      "latency_profile": "FAST",
+      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "context_window": 200000,
+      "known_strengths": ["mechanical refactor", "bounded edits", "low latency"],
+      "known_failure_modes": ["not suitable for architecture or ambiguity resolution"],
+      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
+      "qualification": { "state": "DISCOVERED", "evidence_hash": null, "basis": "Seed entry. Candidate for the economical tier in §13 escalation once qualified." },
+      "seed": true
+    },
+    {
+      "model_id": "antigravity-native",
+      "provider": "google",
+      "family": "provider_native",
+      "lineage": "antigravity-native",
+      "subscription_source": "google-subscription",
+      "availability": "UNKNOWN",
+      "worker_eligible": true,
+      "manager_eligible": false,
+      "capabilities": {
+        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
+        "structured_output": true, "tool_reasoning": true, "architecture": false, "debugging": true, "review": false
+      },
+      "cost_profile": "STANDARD",
+      "latency_profile": "STANDARD",
+      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "context_window": null,
+      "known_strengths": ["browser execution", "visual and interactive workflows"],
+      "known_failure_modes": [],
+      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 1 },
+      "qualification": {
+        "state": "QUALIFIED",
+        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:antigravity-worker",
+        "basis": "Bound to DEC-031 external-capability evidence via the existing antigravity-worker card."
+      },
+      "seed": false
+    }
+  ],
+
+  "discovery": {
+    "required": true,
+    "sources": ["anthropic-subscription", "chatgpt-subscription", "google-subscription"],
+    "normalises_into": "models[]",
+    "stale_discovery_behaviour": "FAIL_CLOSED",
+    "stale_discovery_note": "§37 requires discovery but never says what happens when it fails or returns a truncated list. DIAL already answers this shape of question for host telemetry: stale evidence makes a target ineligible for normal work rather than silently trusted. The same rule applies here — discovery older than max_discovery_age_ms makes every model whose availability it would confirm ineligible for new routing, while work already in flight is unaffected.",
+    "max_discovery_age_ms": 3600000
+  }
+}

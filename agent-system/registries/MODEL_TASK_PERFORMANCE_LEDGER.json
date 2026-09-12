@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "registry_id": "MODEL_TASK_PERFORMANCE_LEDGER",
+  "registry_version": "1.0.0",
+  "decision_ref": "DEC-032",
+  "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
+
+  "authority_note": "§64. Worker self-reported success is NEVER an authoritative performance signal. Every entry must name the trusted outcome it derives from and the confidence of that source. An entry without an evidence source is inadmissible.",
+
+  "trusted_evidence_sources": ["DETERMINISTIC_TEST", "CI", "ACCEPTANCE_GATE", "INDEPENDENT_REVIEW", "DEPLOYMENT_VERIFICATION", "OWNER_ACCEPTANCE", "POSTCONDITION_EVIDENCE", "DEFECT_ESCAPE_EVIDENCE"],
+  "inadmissible_sources": ["WORKER_SELF_REPORT", "WORKER_CONFIDENCE", "MODEL_PROSE"],
+
+  "granularities": ["global", "project", "stack", "task_archetype", "role", "risk_class", "harness", "model_version", "skill_profile"],
+  "preference_order": "MOST_SPECIFIC_RELEVANT_EVIDENCE_WINS",
+
+  "tracked_metrics": [
+    "first_pass_accept_rate", "final_accept_rate", "escaped_defect_rate", "median_total_tokens",
+    "p95_latency_ms", "median_rework_ratio", "retry_count", "wrong_target_incidents",
+    "speculative_repair_incidents", "premature_success_incidents", "postcondition_failures", "reviewer_rejection_rate"
+  ],
+  "first_pass_tracked_separately_from_final": true,
+  "first_pass_note": "§99. First-pass acceptance is weighted separately because a cheap model needing repeated correction can cost more than an expensive one that succeeds once.",
+
+  "owner_override_handling": {
+    "record_overridden_executions": true,
+    "evidence_source_tag": "OWNER_OVERRIDE",
+    "excluded_from_routing_scores": true,
+    "note": "§74 requires that overrides not silently rewrite learned routing performance, but is silent on whether overridden runs are recorded at all. Recording them while excluding them from scores preserves the audit trail without biasing the ledger."
+  },
+
+  "cold_start": {
+    "prior": 0.75,
+    "prior_weight": 8,
+    "note": "Matches the posterior smoothing already implemented in harness-capability-exchange.mjs so pair scores and legacy card scores remain comparable during the Phase 1/2 overlap.",
+    "unproven_models_excluded_from_high_risk": true
+  },
+
+  "entries": [],
+  "entries_note": "Empty by construction. DIAL has no harness x model execution evidence yet; the legacy worker cards also carry sample_count 0. Populated only from trusted outcomes at execution-receipt time."
+}
