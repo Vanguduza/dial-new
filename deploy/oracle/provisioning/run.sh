@@ -92,9 +92,16 @@ _try_collect() {
   # accepted without any check at all: it wrote an empty host-certification.json,
   # the step-chooser saw the artefact still missing, and re-queued the step forever.
   if jq -e '.certification.state' "$tmp" >/dev/null 2>&1; then
-    mv "$tmp" host-certification.json
-    rm -f "$err"
-    return 0
+    # Report success only if the artefact is actually on disk afterwards. Returning
+    # 0 on the strength of having parsed the body meant a failed `mv` still counted
+    # as collected, and the step was then re-queued forever against an empty file.
+    local mverr; mverr="$(mv "$tmp" host-certification.json 2>&1)"
+    if [[ -s host-certification.json ]]; then rm -f "$err"; return 0; fi
+    LAST_SSH_RC="$rc"
+    LAST_SSH_ERR="could not write host-certification.json: ${mverr:-unknown error}"
+    LAST_BODY=""
+    rm -f "$tmp" "$err"
+    return 1
   fi
 
   LAST_SSH_RC="$rc"
@@ -136,6 +143,18 @@ final_report() {
 }
 
 : > "$LOG"
+# An earlier bug could leave a zero-byte artefact behind. It is not evidence of
+# anything, and keeping it only confuses the step-chooser and the reader.
+# Deliberately only the certification artefacts: clearing an empty network.json or
+# instance.json would re-run the preflight or the launch, and infrastructure steps
+# must never be re-triggered by a tidy-up.
+for stale in host-certification.json certification-report.json; do
+  if [[ -f "$stale" && ! -s "$stale" ]]; then
+    echo "Removing empty $stale left by an earlier failed run."
+    rm -f "$stale"
+  fi
+done
+
 last_step=""; repeats=0
 
 while :; do
