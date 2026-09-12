@@ -51,6 +51,13 @@ diagnose() {
   echo
   echo "--- last 25 lines of the bootstrap log ---"
   ssh_host 'sudo tail -25 /var/log/oracle-admin-bootstrap.log 2>&1'
+  echo
+  echo "--- run dial-host-certify and show BOTH streams ---"
+  # An empty body is exactly what stalled collection, so capture the streams apart
+  # rather than reading an empty stdout as "nothing wrong".
+  ssh_host 'sudo dial-host-certify >/tmp/dhc.out 2>/tmp/dhc.err; echo "exit=$?";
+            echo "--stdout (first 400 bytes)--"; head -c 400 /tmp/dhc.out; echo;
+            echo "--stderr (last 20 lines)--";  tail -20 /tmp/dhc.err'
 }
 
 case "$mode" in

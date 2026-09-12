@@ -133,21 +133,30 @@ if phase1; then phase 1 OK; else phase 1 FAILED "SSH floor degraded"; fi
 # ================================================ PHASE 2 Oracle Cloud Agent
 say "PHASE 2 — Oracle Cloud Agent / Run Command"
 phase2() {
-  systemctl is-active --quiet oracle-cloud-agent || systemctl start oracle-cloud-agent 2>/dev/null || true
-  fact oracle_cloud_agent_state "$(systemctl is-active oracle-cloud-agent 2>/dev/null || echo unknown)"
-  fact oracle_cloud_agent_updater_state "$(systemctl is-active oracle-cloud-agent-updater 2>/dev/null || echo unknown)"
+  # Two unit names: Oracle Linux uses oracle-cloud-agent.service, Ubuntu images run
+  # it as a snap unit. Try both before concluding the emergency path is down.
+  local oca_unit="" u
+  for u in oracle-cloud-agent.service snap.oracle-cloud-agent.oracle-cloud-agent.service; do
+    if systemctl list-unit-files "$u" >/dev/null 2>&1 && systemctl status "$u" >/dev/null 2>&1; then oca_unit="$u"; break; fi
+    [[ "$(systemctl is-active "$u" 2>/dev/null)" == "active" ]] && { oca_unit="$u"; break; }
+  done
+  [[ -n "$oca_unit" ]] || oca_unit=oracle-cloud-agent.service
+  systemctl is-active --quiet "$oca_unit" || systemctl start "$oca_unit" 2>/dev/null || true
+  fact oracle_cloud_agent_unit  "$oca_unit"
+  fact oracle_cloud_agent_state "$(systemctl is-active "$oca_unit" 2>/dev/null || echo unknown)"
   # The Run Command plugin executes work as the `ocarun` user; its presence is the
   # observable host-side readiness signal. Plugin enablement itself is an instance
   # property set at launch and verified from the control plane.
   if id ocarun >/dev/null 2>&1; then fact ocarun_present true; else fact ocarun_present false; fi
   [[ -d /var/lib/oracle-cloud-agent/plugins ]] && \
     fact oca_plugins "$(ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | tr '\n' ',')"
-  if [[ -d /var/lib/oracle-cloud-agent/plugins/oci-tools-plugin ]]; then
+  # The Run Command plugin directory is `runcommand`, not `oci-tools-plugin`.
+  if ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | grep -qi runcommand; then
     fact run_command_plugin_dir true
   else
     fact run_command_plugin_dir false
   fi
-  systemctl is-active --quiet oracle-cloud-agent
+  systemctl is-active --quiet "$oca_unit"
 }
 if phase2; then phase 2 OK; else phase 2 DEGRADED "Oracle Cloud Agent not active"; fi
 
@@ -205,7 +214,9 @@ phase4() {
     retry sudo -u $ADMIN_USER git clone --depth 1 --branch "$DIAL_REPO_REF" "$DIAL_REPO_URL" "$REPO_DIR" || return 1
   fi
   fact dial_repo_ref "$DIAL_REPO_REF"
-  fact dial_repo_sha "$(git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || echo unknown)"
+  # Run as the owner: git refuses a repo owned by another user ("dubious ownership"),
+  # so asking as root silently yielded "unknown" for a perfectly good checkout.
+  fact dial_repo_sha "$(sudo -u $ADMIN_USER git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || echo unknown)"
   # The recovery fabric is dependency-free by design (no imports from agent-system),
   # so no npm install is required and none is run. The full DIAL workload is never
   # installed on this host.

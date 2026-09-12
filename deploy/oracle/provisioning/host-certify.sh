@@ -32,9 +32,18 @@ root_login=$(sshd -T 2>/dev/null | awk '/^permitrootlogin /{print $2}')
 pubkey_auth=$(sshd -T 2>/dev/null | awk '/^pubkeyauthentication /{print $2}')
 ssh_fp=$(ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub 2>/dev/null | awk '{print $2}')
 
-oca=$(systemctl is-active oracle-cloud-agent 2>/dev/null || echo inactive)
+# Oracle Cloud Agent has two unit names: `oracle-cloud-agent.service` on Oracle
+# Linux, and a snap unit on Ubuntu images. Checking only the first reports the
+# emergency recovery path as dead on a host where it is running perfectly.
+OCA_UNITS=(oracle-cloud-agent.service snap.oracle-cloud-agent.oracle-cloud-agent.service)
+oca=inactive; oca_unit=""
+for u in "${OCA_UNITS[@]}"; do
+  if [[ "$(systemctl is-active "$u" 2>/dev/null)" == "active" ]]; then oca=active; oca_unit="$u"; break; fi
+done
 ocarun=$(id ocarun >/dev/null 2>&1 && echo true || echo false)
 plugins=$(ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | jq -R . | jq -sc . || echo '[]')
+# The Run Command plugin's directory is `runcommand`, not `oci-tools-plugin`.
+runcmd_plugin=$(jq -e 'any(.[]; test("runcommand"; "i"))' <<<"$plugins" >/dev/null 2>&1 && echo true || echo false)
 
 # IMDSv2 must work; IMDSv1 must not.
 imds_v2=$(curl -s -m 5 -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer Oracle' \
@@ -46,8 +55,10 @@ https_gh=$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://github.com 2>/de
 https_npm=$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://registry.npmjs.org 2>/dev/null || echo 000)
 dns_ok=$(getent hosts registry.npmjs.org >/dev/null 2>&1 && echo true || echo false)
 
-repo_sha=$(git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || echo unverified)
-repo_ref=$(git -C "$REPO_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unverified)
+# Ask as the owner: git refuses a repo owned by another user ("dubious ownership"),
+# so querying as root reports a healthy checkout as unverified.
+repo_sha=$(sudo -u $ADMIN_USER git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || echo unverified)
+repo_ref=$(sudo -u $ADMIN_USER git -C "$REPO_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unverified)
 
 host_agent_timer=$(uctl is-active dial-host-agent.timer || echo inactive)
 recovery_agent=$(uctl is-active dial-recovery-agent.service || echo inactive)
@@ -102,7 +113,7 @@ units=$(systemctl list-unit-files --state=enabled --no-legend 2>/dev/null | awk 
 ssh_ok=false
 [[ "$ssh_active" == "active" && "$ssh_listening" == "true" && "$pw_auth" == "no" && "$pubkey_auth" == "yes" ]] && ssh_ok=true
 oci_ok=false
-[[ "$oca" == "active" && "$ocarun" == "true" ]] && oci_ok=true
+[[ "$oca" == "active" && "$ocarun" == "true" && "$runcmd_plugin" == "true" ]] && oci_ok=true
 recovery_ok=false
 [[ "$fabric_loads" == "true" && "$fail_closed" == "true" && "$stray" == "[]" ]] && recovery_ok=true
 
@@ -119,8 +130,8 @@ jq -n \
   --arg hostname "$(hostname)" --arg at "$(date -u +%FT%TZ)" \
   --argjson ssh "$(jq -n --arg a "$ssh_active" --arg l "$ssh_listening" --arg p "$pw_auth" --arg r "$root_login" --arg k "$pubkey_auth" --arg f "${ssh_fp:-unverified}" --argjson ok "$ssh_ok" \
       '{service:$a, listening_22:($l=="true"), password_auth:$p, permit_root_login:$r, pubkey_auth:$k, host_key_fingerprint:$f, healthy:$ok}')" \
-  --argjson oci "$(jq -n --arg a "$oca" --arg o "$ocarun" --argjson p "$plugins" --arg v2 "$imds_v2" --arg v1 "$imds_v1" --argjson im "$imds_ok" --argjson ok "$oci_ok" \
-      '{cloud_agent:$a, ocarun_present:($o=="true"), plugins:$p, imdsv2_status:$v2, imdsv1_status:$v1, imds_hardened:$im, run_command_capable:$ok}')" \
+  --argjson oci "$(jq -n --arg a "$oca" --arg u "${oca_unit:-none}" --arg o "$ocarun" --argjson p "$plugins" --argjson rc "$runcmd_plugin" --arg v2 "$imds_v2" --arg v1 "$imds_v1" --argjson im "$imds_ok" --argjson ok "$oci_ok" \
+      '{cloud_agent:$a, cloud_agent_unit:$u, ocarun_present:($o=="true"), plugins:$p, run_command_plugin:$rc, imdsv2_status:$v2, imdsv1_status:$v1, imds_hardened:$im, run_command_capable:$ok}')" \
   --argjson net "$(jq -n --arg g "$https_gh" --arg n "$https_npm" --arg d "$dns_ok" \
       '{github_https:$g, npm_https:$n, dns:($d=="true")}')" \
   --argjson recovery "$(jq -n --arg s "$repo_sha" --arg r "$repo_ref" --arg t "$host_agent_timer" --arg a "$recovery_agent" --arg e "$recovery_agent_enabled" --arg sc "$scheduler" --arg fl "$fabric_loads" --arg fc "$fail_closed" --argjson stray "$stray" --argjson ok "$recovery_ok" \
