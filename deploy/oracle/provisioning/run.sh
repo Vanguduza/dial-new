@@ -3,6 +3,7 @@
 #
 #   ~/p/run.sh            do everything that can be done unattended
 #   ~/p/run.sh recheck    re-collect certification after Commander pairing
+#   ~/p/run.sh diagnose   probe the host directly and show what is wrong
 #   ~/p/run.sh status     show state, change nothing
 #   ~/p/run.sh log        show the last run's output
 #
@@ -22,9 +23,40 @@ mode="${1:-next}"
 # shellcheck source=/dev/null
 source ./env.sh
 
+instance_ip() { jq -r '.public_ip // ""' instance.json 2>/dev/null; }
+
+ssh_host() {
+  if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" || ! -r "$DIAL_SSH_PRIVATE_KEY_FILE" ]]; then
+    echo "No readable SSH private key. Set DIAL_SSH_PRIVATE_KEY_FILE and re-source env.sh." >&2
+    return 78
+  fi
+  ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" \
+      -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+      "ubuntu@$(instance_ip)" "$@"
+}
+
+diagnose() {
+  local ip; ip="$(instance_ip)"
+  echo "Probing $ip directly."
+  echo
+  echo "--- can we open an SSH session at all? ---"
+  ssh_host 'echo SSH_OK; id -un; uptime -p'
+  echo "ssh exit: $?"
+  echo
+  echo "--- is the certification tool installed? ---"
+  ssh_host 'ls -l /usr/local/bin/dial-host-certify 2>&1; ls -l /opt/dial-recovery 2>&1 | head'
+  echo
+  echo "--- did cloud-init finish, and what did bootstrap do? ---"
+  ssh_host 'cloud-init status 2>&1; sudo jq -c ".phases" /var/lib/dial-recovery/bootstrap-state.json 2>&1'
+  echo
+  echo "--- last 25 lines of the bootstrap log ---"
+  ssh_host 'sudo tail -25 /var/log/oracle-admin-bootstrap.log 2>&1'
+}
+
 case "$mode" in
   status) exit 0 ;;
   log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;
+  diagnose) diagnose; exit 0 ;;
   recheck)
     # Commander pairing changes the host's state, so the old evidence is stale.
     rm -f host-certification.json certification-report.json
@@ -32,27 +64,37 @@ case "$mode" in
     ;;
 esac
 
-instance_ip() { jq -r '.public_ip // ""' instance.json 2>/dev/null; }
-
-ssh_host() {
-  ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" \
-      -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
-      "ubuntu@$(instance_ip)" "$@"
-}
-
 # Section 19 evidence. Kept as a file so the verdict is recorded, not just printed.
 hermes_diff() {
   ./00-hermes-fingerprint.sh diff hermes-before.json hermes-after.json | tee hermes-diff.txt
 }
 
+LAST_SSH_RC=""; LAST_SSH_ERR=""; LAST_BODY=""
+
 _try_collect() {
-  local tmp; tmp="$(mktemp)"
-  if ! ssh_host 'sudo dial-host-certify' > "$tmp" 2>/dev/null; then
-    # dial-host-certify exits non-zero for any verdict below GREEN, which is a
-    # result, not a transport failure. Only an unparseable body means SSH failed.
-    if ! jq -e . "$tmp" >/dev/null 2>&1; then rm -f "$tmp"; return 1; fi
+  local tmp err; tmp="$(mktemp)"; err="$(mktemp)"
+  ssh_host 'sudo dial-host-certify' > "$tmp" 2>"$err"
+  local rc=$?
+
+  # The exit code cannot decide this: dial-host-certify exits non-zero for any
+  # verdict below GREEN, which is a result, not a failure. So the BODY decides, and
+  # it must contain a certification state.
+  #
+  # Validate it UNCONDITIONALLY. The previous version only validated when ssh
+  # reported failure, so a connection that returned exit 0 with an empty body was
+  # accepted without any check at all: it wrote an empty host-certification.json,
+  # the step-chooser saw the artefact still missing, and re-queued the step forever.
+  if jq -e '.certification.state' "$tmp" >/dev/null 2>&1; then
+    mv "$tmp" host-certification.json
+    rm -f "$err"
+    return 0
   fi
-  mv "$tmp" host-certification.json
+
+  LAST_SSH_RC="$rc"
+  LAST_SSH_ERR="$(head -c 400 "$err")"
+  LAST_BODY="$(head -c 300 "$tmp")"
+  rm -f "$tmp" "$err"
+  return 1
 }
 
 # First boot installs Node, clones the repository and stages the recovery plane on a
@@ -66,14 +108,15 @@ collect_certification() {
       jq -r '"host verdict: \(.certification.state) — \(.certification.reason)"' host-certification.json
       return 0
     fi
-    if [[ $i -lt $attempts ]]; then
-      echo "  not reachable yet — still in first boot. Waiting 60s."
-      sleep 60
-    fi
+    # Say why, every time. Silence here is what made the last failure unreadable.
+    echo "  no certification yet (ssh exit ${LAST_SSH_RC:-?})"
+    [[ -n "$LAST_SSH_ERR" ]] && echo "  stderr: ${LAST_SSH_ERR%%$'\n'*}"
+    [[ -n "$LAST_BODY"    ]] && echo "  body:   ${LAST_BODY%%$'\n'*}"
+    [[ $i -lt $attempts ]] && sleep 60
   done
   echo >&2
   echo "Could not collect certification after $attempts attempts." >&2
-  echo "Check the instance is RUNNING in the console, then run ~/p/run.sh again." >&2
+  echo "Run  ~/p/run.sh diagnose  to see what the host is actually doing." >&2
   return 1
 }
 
@@ -86,6 +129,7 @@ final_report() {
 }
 
 : > "$LOG"
+last_step=""; repeats=0
 
 while :; do
   if   [[ ! -f hermes-before.json ]]; then step=(./00-hermes-fingerprint.sh snapshot hermes-before.json)
@@ -93,10 +137,24 @@ while :; do
   elif [[ ! -f instance.json      ]]; then step=(./20-launch-oracle-admin.sh)
   elif [[ ! -f hermes-after.json  ]]; then step=(./00-hermes-fingerprint.sh snapshot hermes-after.json)
   elif [[ ! -f hermes-diff.txt    ]]; then step=(hermes_diff)
-  elif [[ ! -s host-certification.json  ]]; then step=(collect_certification)
+  elif [[ ! -s host-certification.json   ]]; then step=(collect_certification)
   elif [[ ! -s certification-report.json ]]; then step=(final_report)
   else break
   fi
+
+  # Structural safety net: a step that reports success without producing its
+  # artefact would otherwise be re-queued forever. Never spin.
+  if [[ "${step[*]}" == "$last_step" ]]; then
+    repeats=$((repeats + 1))
+    if [[ $repeats -ge 2 ]]; then
+      printf '\nABORTING: step "%s" reported success but produced no artefact.\n' "${step[*]}"
+      printf 'Run  ~/p/run.sh diagnose  for the host-side detail.\n\n'
+      exit 1
+    fi
+  else
+    repeats=0
+  fi
+  last_step="${step[*]}"
 
   printf '\n>>> %s\n\n' "${step[*]}"
   "${step[@]}" 2>&1 | tee -a "$LOG"

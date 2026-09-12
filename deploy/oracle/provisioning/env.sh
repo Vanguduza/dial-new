@@ -25,6 +25,10 @@ if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" ]]; then
   done
 fi
 
+# Always define it, even when no key was found: `export` on an unset name leaves it
+# unset, and a consumer running under `set -u` then dies on an unbound variable
+# instead of reporting a missing key.
+DIAL_SSH_PRIVATE_KEY_FILE="${DIAL_SSH_PRIVATE_KEY_FILE:-}"
 export DIAL_OCI_REGION DIAL_OCI_COMPARTMENT DIAL_SSH_INGRESS_CIDR DIAL_SSH_PRIVATE_KEY_FILE
 
 # SSH refuses a key other users can read, and a fresh upload is usually 0644.
