@@ -4,6 +4,7 @@
 #   ~/p/run.sh            do everything that can be done unattended
 #   ~/p/run.sh recheck    re-collect certification after Commander pairing
 #   ~/p/run.sh diagnose   probe the host directly and show what is wrong
+#   ~/p/run.sh pair       authorize the Desktop Commander device (needs a browser)
 #   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
 #   ~/p/run.sh status     show state, change nothing
 #   ~/p/run.sh log        show the last run's output
@@ -70,6 +71,30 @@ diagnose() {
             echo "--stderr (last 20 lines)--";  tail -20 /tmp/dhc.err'
 }
 
+pair() {
+  local ip; ip="$(instance_ip)"
+  if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" || ! -r "$DIAL_SSH_PRIVATE_KEY_FILE" ]]; then
+    echo "No readable SSH private key. Re-source env.sh first." >&2; return 78
+  fi
+  cat <<'INTRO'
+Desktop Commander device authorization.
+
+This prints a URL and a short code. Approve them in a browser that is signed in to
+the SAME Desktop Commander account your ChatGPT connector uses — pairing under a
+different account registers the device where ChatGPT cannot see it.
+
+Nothing secret is typed into the host, cloud-init or the repository: the host only
+receives the resulting device credential. It is one time; the session persists.
+
+INTRO
+  # Interactive, so a TTY is required and the call is deliberately NOT wrapped in
+  # `timeout` — it lasts as long as the owner takes. commander-pair.sh imposes its
+  # own 10-minute bound.
+  ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" -t \
+      -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+      "ubuntu@$ip" 'sudo -u ubuntu dial-commander-pair'
+}
+
 repair() {
   local ref="${DIAL_REPO_REF:-claude/oracle-e2-recovery-rebuild-3yotjc}"
   echo "The host was built from a ref without deploy/oracle/provisioning, so"
@@ -88,6 +113,7 @@ repair() {
 
 case "$mode" in
   status) exit 0 ;;
+  pair)   pair;   exit $? ;;
   repair) repair; exit $? ;;
   log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;
   diagnose) diagnose; exit 0 ;;
@@ -265,7 +291,7 @@ Of those, only the Commander step needs you; it needs a browser:
 
   1. Pair Desktop Commander (one time):
 
-     ssh -i "\$DIAL_SSH_PRIVATE_KEY_FILE" -t ubuntu@$ip 'sudo -u ubuntu dial-commander-pair'
+     ~/p/run.sh pair
 
      It prints a URL and a short code. Approve it in your browser.
 
