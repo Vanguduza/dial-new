@@ -1,7 +1,0 @@
-{
-  "name": "@dial/gmpc-creative-providers",
-  "version": "0.1.0",
-  "type": "module",
-  "private": true,
-  "main": "src/pomelli.ts"
-}

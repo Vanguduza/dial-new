@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "authority": "ORACLE_DIAL_RUNTIME_STATUS",
+  "project": "dial",
+  "observed_at": "2026-09-12T22:30:55.956Z",
+  "repository": {
+    "head": "25f45f72129938b2f2ecd5663b5d9d731b99bc67",
+    "branch": "feat/adaptive-execution-fabric-rev2-20260910"
+  },
+  "mission": {
+    "mission_id": "dial-development-root",
+    "state": "PAUSED",
+    "turn_number": 0,
+    "last_packet_id": null,
+    "last_packet_state": null,
+    "packet_counts": {
+      "queued": 0,
+      "processing": 0,
+      "completed": 0,
+      "failed": 0
+    },
+    "active_packets": [],
+    "owner_blocker": null
+  },
+  "orchestration": {
+    "queue_state": "STOPPED",
+    "active_job_id": null,
+    "queued": 0,
+    "heartbeat_observed_at": "2026-09-11T06:32:28.790Z",
+    "execution_origin": "EXTERNAL_ORACLE_ORCHESTRATOR"
+  },
+  "development": {
+    "unblocked": false,
+    "state": "DEVELOPMENT_BLOCKED",
+    "gate_status": null,
+    "failed_checks": [
+      "gate_present",
+      "accepted_runtime_gate",
+      "fallback_readiness_valid",
+      "external_origin",
+      "locked_policy",
+      "qualified_control_plane_unchanged",
+      "external_orchestrator_heartbeat_fresh"
+    ]
+  },
+  "runtime": {
+    "policy": "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",
+    "primary": {
+      "state": "AUTH_FAILED",
+      "requested_model": "gpt-5.6-sol",
+      "resolved_model": null,
+      "retry_after": null,
+      "attempt_allowed": false,
+      "attempt_reason": "AUTH_FAILED_REQUIRES_EXTERNAL_CHANGE"
+    },
+    "fallback": {
+      "state": "AUTH_FAILED",
+      "requested_model": "claude-sonnet-5",
+      "resolved_model": null
+    },
+    "identity_cache_valid": false
+  },
+  "research": {
+    "state": "MODEL_UNAVAILABLE",
+    "forecast_id": "erf_e2c1ccbec04546c8bbaeab014101ca90",
+    "created_at": "2026-09-12T18:39:26.213Z",
+    "runtime": null,
+    "resolved_model": null
+  }
+}

@@ -1,6 +1,0 @@
-{
-  "depthMap": "analysis/depth-map.png",
-  "foregroundMask": "analysis/segmentation/body.png",
-  "backgroundMask": "analysis/segmentation/background.png",
-  "provider": "deterministic-development"
-}
