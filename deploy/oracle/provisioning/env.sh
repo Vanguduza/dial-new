@@ -34,6 +34,10 @@ fi
 
 cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null || true
 
+# A short path for phone use: ~/p points at this directory, so the whole flow
+# becomes `~/p/run.sh` instead of a path long enough to mistype.
+[[ -e "$HOME/p" ]] || ln -s "$PWD" "$HOME/p" 2>/dev/null || true
+
 printf '\nDIAL provisioning environment\n'
 printf '  region      %s\n' "${DIAL_OCI_REGION}"
 printf '  compartment %s\n' "${DIAL_OCI_COMPARTMENT:-NOT SET -- export DIAL_OCI_COMPARTMENT=<ocid>}"
