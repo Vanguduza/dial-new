@@ -8,22 +8,61 @@
   },
   "heavy_classification": {
     "predicted_memory_mb_gt": 512,
-    "disk_io_class_in": ["heavy"],
+    "disk_io_class_in": [
+      "heavy"
+    ],
     "cpu_heavy_duration_seconds_gt": 120
   },
   "authority_routing": {
     "recovery_plane_only": [
-      "OCI_RECOVERY", "SSH_REPAIR", "DESKTOP_COMMANDER_REPAIR", "HOST_SYSTEMD_REPAIR",
-      "NETWORK_FIREWALL_CORRECTION", "CREDENTIAL_SESSION_REPAIR", "RECOVERY_KEY_ROTATION",
+      "OCI_RECOVERY",
+      "SSH_REPAIR",
+      "DESKTOP_COMMANDER_REPAIR",
+      "HOST_SYSTEMD_REPAIR",
+      "NETWORK_FIREWALL_CORRECTION",
+      "CREDENTIAL_SESSION_REPAIR",
+      "RECOVERY_KEY_ROTATION",
       "HOST_LEVEL_CLEANUP"
     ],
-    "control_slice_only": ["OWNER_STEER", "OWNER_CONTROL", "WHATSAPP_CONTROL"]
+    "control_slice_only": [
+      "OWNER_STEER",
+      "OWNER_CONTROL",
+      "WHATSAPP_CONTROL"
+    ]
+  },
+  "recovery_action_classes": {
+    "source_authority": "docs/orchestration/DIAL_ORACLE_RESILIENT_3_NODE_CLUSTER_REV3.md section 5.3",
+    "note": "Normative mapping between Rev 2's R0-R3 recovery action classes and this file's authority_class vocabulary. R0 is read-only observation and carries no authority_class. An authority_class that reaches the recovery plane without a mapping here is REFUSED, not defaulted.",
+    "order": [
+      "R0",
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "classes": {
+      "R0": [],
+      "R1": [
+        "SSH_REPAIR",
+        "DESKTOP_COMMANDER_REPAIR",
+        "HOST_SYSTEMD_REPAIR",
+        "HOST_LEVEL_CLEANUP"
+      ],
+      "R2": [
+        "NETWORK_FIREWALL_CORRECTION",
+        "CREDENTIAL_SESSION_REPAIR",
+        "RECOVERY_KEY_ROTATION"
+      ],
+      "R3": [
+        "OCI_RECOVERY"
+      ]
+    },
+    "owner_authorization_required_at_or_above": "R2"
   },
   "e2_admission": {
     "min_available_memory_mb": 350,
     "max_swap_use_ratio": 0.25,
     "max_load_average": 1.5,
-    "max_iowait_ratio": 0.20,
+    "max_iowait_ratio": 0.2,
     "max_active_heavy_jobs": 0,
     "heavy_exception_max_jobs": 1,
     "refuse_when_recovery_peer_degraded": true,
@@ -37,8 +76,19 @@
     "max_concurrent_heavy_jobs": 2
   },
   "memory_pressure": {
-    "a1": { "normal_gt_mb": 8192, "stop_new_heavy_mb": 8192, "pause_background_mb": 5120, "terminate_low_priority_mb": 3072, "recovery_mode_mb": 2048 },
-    "e2": { "normal_gt_mb": 450, "admin_only_mb": 450, "recovery_only_mb": 300, "kill_disposable_mb": 200 }
+    "a1": {
+      "normal_gt_mb": 8192,
+      "stop_new_heavy_mb": 8192,
+      "pause_background_mb": 5120,
+      "terminate_low_priority_mb": 3072,
+      "recovery_mode_mb": 2048
+    },
+    "e2": {
+      "normal_gt_mb": 450,
+      "admin_only_mb": 450,
+      "recovery_only_mb": 300,
+      "kill_disposable_mb": 200
+    }
   },
   "pressure_weights": {
     "memory": 1.0,
@@ -48,8 +98,14 @@
     "heavy_job_penalty": 0.5
   },
   "priority_classes": [
-    "P0_OWNER_CONTROL", "P1_RECOVERY", "P2_HERMES_RUNTIME", "P3_PRODUCTION_INCIDENT",
-    "P4_INTERACTIVE_DEVELOPMENT", "P5_CI_VERIFICATION", "P6_RESEARCH_INDEXING", "P7_SPECULATIVE"
+    "P0_OWNER_CONTROL",
+    "P1_RECOVERY",
+    "P2_HERMES_RUNTIME",
+    "P3_PRODUCTION_INCIDENT",
+    "P4_INTERACTIVE_DEVELOPMENT",
+    "P5_CI_VERIFICATION",
+    "P6_RESEARCH_INDEXING",
+    "P7_SPECULATIVE"
   ],
   "recovery_hysteresis": {
     "probe_interval_seconds": 30,
@@ -57,10 +113,28 @@
     "unhealthy_after_failures": 4,
     "restart_cooldown_seconds": 60,
     "max_rapid_restarts": 3,
-    "backoff_seconds": [120, 300, 900],
+    "backoff_seconds": [
+      120,
+      300,
+      900
+    ],
     "green_before_promotion_seconds": 300
   },
-  "recovery_lease": { "ttl_seconds": 120, "max_concurrent_remediators_per_target": 1 },
-  "disk_policy": { "normal_lt": 0.60, "background_cleanup_lt": 0.75, "aggressive_cleanup_lt": 0.85, "block_nonessential_gte": 0.85 },
-  "desktop_commander_green_requires": ["PROCESS_UP", "SESSION_VALID", "REMOTE_REGISTERED", "PING_RESPONDS", "COMMAND_EXECUTES"]
+  "recovery_lease": {
+    "ttl_seconds": 120,
+    "max_concurrent_remediators_per_target": 1
+  },
+  "disk_policy": {
+    "normal_lt": 0.6,
+    "background_cleanup_lt": 0.75,
+    "aggressive_cleanup_lt": 0.85,
+    "block_nonessential_gte": 0.85
+  },
+  "desktop_commander_green_requires": [
+    "PROCESS_UP",
+    "SESSION_VALID",
+    "REMOTE_REGISTERED",
+    "PING_RESPONDS",
+    "COMMAND_EXECUTES"
+  ]
 }

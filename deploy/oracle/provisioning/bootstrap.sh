@@ -279,6 +279,22 @@ CONF
     fact role_guard_installed false
   fi
 
+  # Rev 3 section 5.2: the inbound half of two-way recovery. Installing the RESTRICTION is
+  # safe and unconditional; AUTHORIZING the control host's key is a separate owner action
+  # (install-bounded-recovery-identity.sh), because it grants a capability. Order matters:
+  # the forced command must exist before any key is bound to it, or there is a window in
+  # which that key has an unrestricted shell.
+  if [[ -f $fab/bounded-recovery-command.sh ]]; then
+    install -m 755 -o root -g root "$fab/bounded-recovery-command.sh" /usr/local/bin/dial-bounded-recovery
+    install -m 640 -o root -g $ADMIN_USER /dev/null /var/log/dial-bounded-recovery.log
+    fact bounded_recovery_command_installed true
+    fact bounded_recovery_key_authorized \
+      "$(sudo -u $ADMIN_USER bash "$fab/install-bounded-recovery-identity.sh" --verify >/dev/null 2>&1 \
+         && echo yes || echo "no: owner must authorize the control host's public key")"
+  else
+    fact bounded_recovery_command_installed false
+  fi
+
   fact recovery_agent_activation "staged, not started: requires seeded known_hosts for peers"
   fact fabric_staged true
   return 0
@@ -342,6 +358,34 @@ phase7() {
     say "PHASE 7: dial-host-certify NOT installed — the checked-out ref has no provisioning directory"
   fi
   install -m 755 "$REPO_DIR/deploy/oracle/provisioning/bootstrap.sh" "$RECOVERY_ROOT/bin/bootstrap.sh" 2>/dev/null || true
+
+  # Offsite evidence backup. A terminated host takes its audit history with it, and an OCI
+  # volume backup restores that too slowly to be useful during an outage. Install the tools
+  # and the timer; the timer's ConditionPathExists keeps it inert until the owner has
+  # authorized Drive once, so it does not fail noisily every day and train people to
+  # ignore it. Authorizing Drive is an owner step, never a bootstrap step.
+  local prov="$REPO_DIR/deploy/oracle/provisioning"
+  if [[ -f $prov/evidence-bundle.sh && -f $prov/offsite-push.sh ]]; then
+    install -m 755 -o root -g root "$prov/evidence-bundle.sh" /usr/local/bin/dial-evidence-bundle
+    install -m 755 -o root -g root "$prov/offsite-push.sh"    /usr/local/bin/dial-offsite-push
+    # $ETC_DIR already exists and stays 755 — fabric.env inside it is read by the admin
+    # user. rclone.conf is protected by its own 600 mode, which offsite-push.sh enforces
+    # before it will upload anything; tightening the directory here would instead break
+    # the recovery agent's ability to read its own configuration.
+    local u
+    for u in dial-offsite-backup.service dial-offsite-backup.timer; do
+      [[ -f $prov/systemd/$u ]] && install -m 644 -o root -g root "$prov/systemd/$u" "/etc/systemd/system/$u"
+    done
+    systemctl daemon-reload 2>/dev/null || true
+    systemctl enable --now dial-offsite-backup.timer 2>/dev/null || true
+    # Prove the allowlist and the credential scan pass on this host's real content before
+    # claiming the backup path works. --verify writes nothing and uploads nothing.
+    fact offsite_backup_verify "$(dial-evidence-bundle --verify 2>&1 | tail -1)"
+    fact offsite_drive_authorized \
+      "$([[ -r /etc/dial-recovery/rclone.conf ]] && echo yes || echo "no: owner must authorize Drive once")"
+  else
+    fact offsite_backup_installed false
+  fi
   fact outbound_https  "$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://github.com 2>/dev/null || echo failed)"
   fact dns_resolution  "$(getent hosts registry.npmjs.org >/dev/null 2>&1 && echo ok || echo failed)"
   fact listening_ports "$(ss -lntu 2>/dev/null | awk 'NR>1{print $1" "$5}' | sort -u | tr '\n' ',')"

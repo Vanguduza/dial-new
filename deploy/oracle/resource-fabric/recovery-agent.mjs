@@ -19,6 +19,28 @@ const APPROVED_SERVICES = new Set([
   'dial-resource-scheduler.service','dial-host-agent.timer','dial-recovery-agent.service',
 ]);
 
+// Rev 3 section 5.2. Two-way recovery is bidirectional in capability and asymmetric in
+// privilege. A peer with the RECOVERY role may restart anything in APPROVED_SERVICES on a
+// target; a BOUNDED_RECOVERY host (dial-hermes-control) may restart only the units its
+// hosts.json entry names - in practice the target's own recovery agent, which is exactly
+// what is needed to bring a stuck E2 back and nothing more.
+//
+// Fail closed in both directions: a host with no allowlist gets none, and a name in the
+// allowlist that is not also in APPROVED_SERVICES is dropped rather than honoured.
+export function permittedServices(self) {
+  if (!self) return new Set();
+  const allow = self.recovery_service_allowlist;
+  if (!Array.isArray(allow)) return new Set();
+  if (allow.includes('*')) {
+    return self.roles?.includes('RECOVERY') ? new Set(APPROVED_SERVICES) : new Set();
+  }
+  return new Set(allow.filter((s) => APPROVED_SERVICES.has(s)));
+}
+
+export function isRecoveryCapable(self) {
+  return Boolean(self) && (self.roles.includes('RECOVERY') || self.roles.includes('BOUNDED_RECOVERY'));
+}
+
 function atomicJson(target, value) {
   fs.mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
   const tmp = `${target}.${process.pid}.tmp`;
@@ -59,20 +81,27 @@ export function probeTarget(target) {
   try { ssh(target, ['systemctl','--user','is-system-running','--wait']); checks.systemd = true; } catch { /* degraded user manager is recoverable */ }
   return { state: checks.ssh ? (checks.systemd ? 'GREEN' : 'DEGRADED') : 'RED', checks };
 }
-export function restartApprovedService(target, service) {
+export function restartApprovedService(target, service, { hostId = os.hostname() } = {}) {
   if (!APPROVED_SERVICES.has(service)) throw new Error(`service not allowlisted: ${service}`);
+  const self = HOSTS.hosts.find((h) => h.host_id === hostId);
+  if (!permittedServices(self).has(service)) {
+    throw new Error(`${hostId} may not restart ${service} on ${target}`);
+  }
   ssh(target, ['systemctl','--user','restart',service], 20000);
   return probeTarget(target);
 }
-export function repairTarget(target, { stateDir = STATE_DIR, service = 'dial-recovery-agent.service', nowMs = Date.now() } = {}) {
+export function repairTarget(target, { stateDir = STATE_DIR, service = 'dial-recovery-agent.service', nowMs = Date.now(), hostId = os.hostname() } = {}) {
+  const self = HOSTS.hosts.find((h) => h.host_id === hostId);
+  if (!permittedServices(self).has(service)) {
+    return { target, action: 'REFUSED_SERVICE_NOT_PERMITTED_FOR_HOST', service, host: hostId };
+  }
   const lease = acquireLease(target, { stateDir, nowMs });
   if (!lease) return { target, action: 'SKIP_LEASE_HELD' };
   try {
     const before = probeTarget(target);
     if (before.state === 'GREEN') return { target, action: 'NONE', before, after: before };
-    if (!APPROVED_SERVICES.has(service)) throw new Error('repair service not allowlisted');
     let after;
-    try { after = restartApprovedService(target, service); }
+    try { after = restartApprovedService(target, service, { hostId }); }
     catch (error) { after = { state: 'RED', error: error.message }; }
     const result = { target, action: 'RESTART_SERVICE', service, before, after, at: new Date(nowMs).toISOString() };
     atomicJson(path.join(stateDir, 'recovery-evidence', `${target}.${nowMs}.json`), result);
@@ -80,7 +109,7 @@ export function repairTarget(target, { stateDir = STATE_DIR, service = 'dial-rec
   } finally { releaseLease(lease, stateDir); }
 }
 function stateFile(stateDir, target) { return path.join(stateDir, 'recovery-state', `${target}.json`); }
-export function superviseTarget(target, { stateDir = STATE_DIR, nowMs = Date.now() } = {}) {
+export function superviseTarget(target, { stateDir = STATE_DIR, nowMs = Date.now(), hostId = os.hostname() } = {}) {
   const probe = probeTarget(target);
   let prior = { consecutive_failures: 0, last_restart_at: null };
   try { prior = { ...prior, ...JSON.parse(fs.readFileSync(stateFile(stateDir, target), 'utf8')) }; } catch {}
@@ -90,7 +119,7 @@ export function superviseTarget(target, { stateDir = STATE_DIR, nowMs = Date.now
   if (failures >= POLICY.recovery_hysteresis.unhealthy_after_failures) {
     const last = prior.last_restart_at ? Date.parse(prior.last_restart_at) : 0;
     if (nowMs - last >= POLICY.recovery_hysteresis.restart_cooldown_seconds * 1000) {
-      recovery = repairTarget(target, { stateDir, nowMs });
+      recovery = repairTarget(target, { stateDir, nowMs, hostId });
       next.last_restart_at = new Date(nowMs).toISOString();
     }
   }
@@ -99,8 +128,14 @@ export function superviseTarget(target, { stateDir = STATE_DIR, nowMs = Date.now
 }
 export function runOnce({ stateDir = STATE_DIR, nowMs = Date.now(), hostId = os.hostname() } = {}) {
   const self = HOSTS.hosts.find((h) => h.host_id === hostId);
-  if (!self || !self.roles.includes('RECOVERY')) return { host: hostId, state: 'NOT_RECOVERY_HOST', targets: [] };
-  return { host: hostId, state: 'ACTIVE', targets: self.recovers.map((target) => superviseTarget(target, { stateDir, nowMs })) };
+  if (!isRecoveryCapable(self)) return { host: hostId, state: 'NOT_RECOVERY_HOST', targets: [] };
+  return {
+    host: hostId,
+    state: 'ACTIVE',
+    recovery_authority_max: self.recovery_authority_max ?? null,
+    bounded: !self.roles.includes('RECOVERY'),
+    targets: self.recovers.map((target) => superviseTarget(target, { stateDir, nowMs, hostId })),
+  };
 }
 export async function daemon({ stateDir = STATE_DIR } = {}) {
   const interval = POLICY.recovery_hysteresis.probe_interval_seconds * 1000;

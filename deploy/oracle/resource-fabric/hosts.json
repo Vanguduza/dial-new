@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "policy_id": "dial-resource-fabric-v1",
-  "note": "Public IP addresses are intentionally omitted. docs/orchestration/IMPLEMENTATION_STATE.md records that public IPs and account identifiers are sensitive operational detail and must not live in the repository. Operators supply them at install time via DIAL_FABRIC_<HOST>_SSH_HOST. Private OCI addresses are the primary peer-recovery path per the architecture (section 21).",
+  "note": "Public IP addresses are intentionally omitted. docs/orchestration/IMPLEMENTATION_STATE.md records that public IPs and account identifiers are sensitive operational detail and must not live in the repository. Operators supply them at install time via DIAL_FABRIC_<HOST>_SSH_HOST. Private OCI addresses are the primary peer-recovery path per the architecture (section 21). recovery_authority_max bounds what a host may execute in the recovery plane at all (Rev 3 section 5.2); recovery_service_allowlist bounds which units it may restart on a peer, where [\"*\"] means the full APPROVED_SERVICES set.",
   "hosts": [
     {
       "host_id": "dial-hermes-control",
@@ -10,14 +10,31 @@
       "cpu_total": 4,
       "memory_total_mb": 24576,
       "private_ip": "10.0.0.184",
-      "roles": ["HERMES_CONTROL", "HEAVY_COMPUTE"],
-      "recovery_role": "RECOVERABLE_BY_PEERS",
-      "recovers": [],
+      "roles": [
+        "HERMES_CONTROL",
+        "HEAVY_COMPUTE",
+        "BOUNDED_RECOVERY"
+      ],
+      "recovery_role": "RECOVERABLE_BY_PEERS_AND_BOUNDED_RECOVERER",
+      "recovers": [
+        "oracle-admin",
+        "oracle-admin-v2"
+      ],
+      "recovery_authority_max": "R1",
+      "recovery_service_allowlist": [
+        "dial-recovery-agent.service",
+        "dial-host-agent.timer"
+      ],
       "control_reservation_mb": 8192,
       "development_pool_mb": 14336,
       "emergency_headroom_mb": 2048,
       "max_concurrent_heavy_jobs": 2,
-      "toolchains": ["node22", "npm10", "python3", "git"]
+      "toolchains": [
+        "node22",
+        "npm10",
+        "python3",
+        "git"
+      ]
     },
     {
       "host_id": "oracle-admin-v2",
@@ -26,14 +43,30 @@
       "cpu_total": 1,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.245",
-      "roles": ["ADMIN", "RECOVERY", "LIGHT_X86"],
+      "roles": [
+        "ADMIN",
+        "RECOVERY",
+        "LIGHT_X86"
+      ],
       "recovery_role": "PRIMARY",
-      "recovers": ["oracle-admin", "dial-hermes-control"],
+      "recovers": [
+        "oracle-admin",
+        "dial-hermes-control"
+      ],
+      "recovery_authority_max": "R3",
+      "recovery_service_allowlist": [
+        "*"
+      ],
       "control_reservation_mb": 0,
       "development_pool_mb": 0,
       "emergency_headroom_mb": 200,
       "max_concurrent_heavy_jobs": 0,
-      "toolchains": ["node22", "npm10", "python3", "git"]
+      "toolchains": [
+        "node22",
+        "npm10",
+        "python3",
+        "git"
+      ]
     },
     {
       "host_id": "oracle-admin",
@@ -42,14 +75,30 @@
       "cpu_total": 1,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.123",
-      "roles": ["ADMIN", "RECOVERY", "LIGHT_X86"],
+      "roles": [
+        "ADMIN",
+        "RECOVERY",
+        "LIGHT_X86"
+      ],
       "recovery_role": "SECONDARY",
-      "recovers": ["oracle-admin-v2", "dial-hermes-control"],
+      "recovers": [
+        "oracle-admin-v2",
+        "dial-hermes-control"
+      ],
+      "recovery_authority_max": "R3",
+      "recovery_service_allowlist": [
+        "*"
+      ],
       "control_reservation_mb": 0,
       "development_pool_mb": 0,
       "emergency_headroom_mb": 200,
       "max_concurrent_heavy_jobs": 0,
-      "toolchains": ["node22", "npm10", "python3", "git"]
+      "toolchains": [
+        "node22",
+        "npm10",
+        "python3",
+        "git"
+      ]
     }
   ]
 }

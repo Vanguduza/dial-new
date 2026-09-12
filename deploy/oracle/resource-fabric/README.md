@@ -22,6 +22,38 @@ Honest accounting. Do not enable a unit whose target file is listed as not imple
 | `recovery-agent.mjs` | **implemented** — leases, hysteresis, allowlisted restarts, fail-closed | `tests/oracle-resource-fabric-runtime.test.mjs` |
 | `resource-scheduler.mjs` | **implemented** — deterministic decisions, dispatch envelopes, refuses command payloads | same |
 | `install-host.sh`, `install-recovery-peer.sh`, `install-hermes-resource-guards.sh`, `cleanup.mjs` | **implemented** — staging only; activation stays a separate authenticated step | same |
+| `role-guard.mjs` | **implemented** — host-side task separation and the R0–R3 recovery ceiling | `tests/oracle-role-guard.test.mjs` |
+| `bounded-recovery-command.sh` | **implemented** — the forced command behind the control host's key into an E2 | `tests/oracle-two-way-recovery.test.mjs` |
+| `install-bounded-recovery-identity.sh` | **implemented** — installs / verifies / revokes that `authorized_keys` entry | same |
+
+## Two-way recovery (Rev 3 §5)
+
+`dial-hermes-control` used to have `recovers: []`. If both E2 admin hosts were down at
+once — the actual situation on 2026-09-12 — nothing in the estate could recover them.
+
+It now recovers both, under a deliberate asymmetry: **bidirectional in capability,
+asymmetric in privilege.**
+
+| Field in `hosts.json` | Means |
+|---|---|
+| `recovery_authority_max` | the highest R-class this host may execute at all. `R1` for the control host, `R3` for the E2 pair |
+| `recovery_service_allowlist` | which units it may restart on a peer. `["*"]` is honoured only for a full `RECOVERY` host |
+| `BOUNDED_RECOVERY` role | may act in the recovery plane, up to its ceiling, without being a recovery peer |
+
+R2 and above need owner authorization on the task in **either** direction, so nothing
+production-affecting is ever automatic.
+
+The control host's key into an E2 reaches `bounded-recovery-command.sh` and nothing else:
+a liveness probe, a short read-only diagnostic set, and restart of that host's own
+recovery units. No shell, no chaining, no substitution, no credential reads — every
+attempt is audited to `/var/log/dial-bounded-recovery.log`.
+
+`bootstrap.sh` phase 5 installs that forced command on every E2 unconditionally. It does
+**not** authorize the key: that is an owner step
+(`install-bounded-recovery-identity.sh <hermes.pub>`), because it grants a capability
+rather than installing a restriction.
+
+**Not yet proven.** The mechanism is unit-tested; it has never run between two live hosts.
 
 `tests/oracle-resource-fabric-runtime.test.mjs` existed but was absent from
 `vitest.config.ts`, so it was collected by nothing and ran never. It is now in the

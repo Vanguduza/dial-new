@@ -72,3 +72,6 @@ examples/raster-hilux-strategy/assets/
 # matched the assets beside it. Rebuild with `npm run preview:sync`.
 apps/preview-player/public/packs/
 apps/preview-player/public/catalog/visual-transition-source-queue.json
+
+# Transient pre-compact checkpoints written by the DIAL session hook.
+.claude/state/

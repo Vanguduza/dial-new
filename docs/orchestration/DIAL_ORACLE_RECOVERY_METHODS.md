@@ -15,7 +15,7 @@ Companion documents:
 
 | Host | Shape | Private IP | Roles | Recovers |
 |---|---|---|---|---|
-| `dial-hermes-control` | A1.Flex, 4 OCPU / 24 GB, arm64 | 10.0.0.184 | HERMES_CONTROL, HEAVY_COMPUTE | — (recovered *by* peers) |
+| `dial-hermes-control` | A1.Flex, 4 OCPU / 24 GB, arm64 | 10.0.0.184 | HERMES_CONTROL, HEAVY_COMPUTE, BOUNDED_RECOVERY | `oracle-admin`, `oracle-admin-v2` — **bounded at R1** (§7) |
 | `oracle-admin-v2` | E2.1.Micro, 1 OCPU / 1 GB, x86_64 | 10.0.0.245 | ADMIN, RECOVERY, LIGHT_X86 | `oracle-admin`, `dial-hermes-control` |
 | `oracle-admin` | E2.1.Micro, 1 OCPU / 1 GB, x86_64 | 10.0.0.123 | ADMIN, RECOVERY, LIGHT_X86 | `oracle-admin-v2`, `dial-hermes-control` |
 
@@ -44,7 +44,10 @@ nicety — it is the out-of-band path that makes an SSH mistake survivable.
 network stack at all.
 
 **4. Peer recovery.** Either E2 can repair the other and the control host, over the
-private addresses in `hosts.json`, without touching the internet.
+private addresses in `hosts.json`, without touching the internet. Since Rev 3 the control
+host can also observe either E2 and restart its recovery units — bounded at R1, so it
+covers "both E2s down at once" without becoming a fourth way to own the recovery tier
+(§7).
 
 **5. Desktop Commander.** Owner host administration from an authorized client. An
 outbound device session, no inbound port. Convenience, never the only way in — it
@@ -225,6 +228,51 @@ audit history rather than operational state. Nothing on an E2 is load-bearing fo
 DIAL itself, which is the intended design: these hosts recover the estate, they do not
 hold it.
 
+### Offsite copy of the irreplaceable part
+
+A boot-volume backup restores a host. It does not help while the host is gone, and if the
+instance is *terminated* — which is what happened to the original `oracle-admin` — the
+volume goes with it. So the two not-re-derivable categories above also go offsite daily.
+
+```bash
+dial-evidence-bundle --verify    # build, scan, discard. Uploads nothing. Safe anywhere.
+dial-evidence-bundle             # build; prints the path
+dial-offsite-push --dry-run      # verify only
+dial-offsite-push                # build, scan, upload, then prove it landed
+```
+
+It is an **allowlist**, not a deny-list: nothing leaves the host unless it is named in
+`ALLOW` in `evidence-bundle.sh`. A deny-list is the wrong shape here — it fails open on
+anything nobody thought of, and these hosts hold the Desktop Commander device credential,
+SSH private material, Codex and Claude OAuth sessions and an API key under
+`~/.dde-control/secrets/`.
+
+Three checks run before a bundle is allowed to exist, and any one of them refuses it
+outright rather than uploading a trimmed version:
+
+| Check | Refuses |
+|---|---|
+| Allowlist entry vs deny pattern | an allowlist edit that would include a secret path |
+| Path scrub | a secret-shaped path written *into* an allowed directory |
+| Content scan | private keys, `access`/`refresh`/`id` tokens, Bearer headers, `sk-`, `ghp_`, `AIza`, `ya29.` |
+| Symlink check | any link, which would resolve on the far side |
+
+`tests/oracle-offsite-backup.test.mjs` plants each of those credential shapes in a place a
+bundle could plausibly pick it up and asserts the build is refused and nothing is written.
+A scanner that has only ever run on a clean host is an assertion, not a control.
+
+**Transport.** rclone, configured at `/etc/dial-recovery/rclone.conf`, mode 600, outside
+the git checkout. Configure the Drive remote with `scope = drive.file`, **not** the default
+full scope: `drive.file` limits the token to files this job itself created, so it cannot
+read, list or delete anything else in the owner's Drive. A token on a recovery host is a
+token that can be stolen from a recovery host. `offsite-push.sh` warns loudly if the config
+uses full `drive` scope and refuses outright if the file is group- or world-readable.
+
+**Authorizing it is an owner step.** `bootstrap.sh` installs the tools and the timer, but
+`dial-offsite-backup.service` carries `ConditionPathExists=/etc/dial-recovery/rclone.conf`,
+so it stays inert until the owner runs `rclone config` once and places the result. A daily
+job that fails for want of credentials just trains people to ignore it.
+
 ---
 
 ## 7. Task separation
@@ -260,6 +308,54 @@ The E2 pair exist to recover the estate. A recovery node busy building is not on
 however much memory happens to be free at that moment — which is why the development
 refusal is by role, not by available memory.
 
+### Two-way recovery
+
+`dial-hermes-control` used to have `recovers: []`. If both E2 admin hosts were down at
+once, nothing in the estate could recover them — and on 2026-09-12 that was the actual
+situation, not a thought experiment.
+
+It now recovers both, under a deliberate asymmetry: **bidirectional in capability,
+asymmetric in privilege.** Full design in
+`DIAL_ORACLE_RESILIENT_3_NODE_CLUSTER_REV3.md` §5.
+
+| Direction | Ceiling | What it can do |
+|---|---|---|
+| E2 → anything | R3 | the full allowlisted recovery set; R2 and above need owner authorization |
+| Hermes → E2 | **R1** | observe, and restart that E2's own recovery units. Nothing else, ever |
+
+`role-guard.mjs` enforces the ceiling on the host. The forced command
+(`/usr/local/bin/dial-bounded-recovery`) enforces it again at the SSH boundary — and that
+second one is the layer that matters, because it runs on the *target* under the target's
+authority. If Hermes were compromised, an attacker would simply not run the host-side
+guard; they cannot avoid the forced command.
+
+```bash
+# On each E2, once, as the owner:
+install-bounded-recovery-identity.sh /path/to/hermes-bounded-recovery.pub
+install-bounded-recovery-identity.sh --verify     # report, change nothing
+install-bounded-recovery-identity.sh --remove     # revoke; E2 -> Hermes is unaffected
+```
+
+Generate the keypair **on** `dial-hermes-control` and move only the `.pub`. It must be a
+different key from the E2 → Hermes key: reusing one makes the mesh symmetric again by
+accident, and a symmetric mesh turns compromise of any one host into compromise of the
+cluster. The installer refuses a key that is already authorized under a different entry,
+refuses a private key, refuses to run on the control host itself, and refuses to authorize
+anything before the forced command exists.
+
+The entry it writes is source-restricted to Hermes's private address and closes every
+forwarding channel:
+
+```
+command="/usr/local/bin/dial-bounded-recovery",from="10.0.0.184",restrict,
+no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty ssh-ed25519 AAAA...
+```
+
+Every attempt, permitted or refused, is audited to `/var/log/dial-bounded-recovery.log`.
+
+**Not yet proven.** The mechanism is unit-tested in `tests/oracle-two-way-recovery.test.mjs`
+but has never run between two live hosts. Per Rev 3 §7.1 that is not proof.
+
 ---
 
 ## 8. Open items
@@ -276,7 +372,12 @@ Named rather than quietly omitted.
    recovery between the two E2 hosts is therefore declared but unproven end to end.
 5. **No backup policy has been applied yet** — `40-backup-policy.sh` exists and is
    tested, but until it is run with `--apply` every host is still rebuild-only.
-6. **SSH ingress is `0.0.0.0/0`** on `oracle-admin`, deliberately: Cloud Shell's egress
+6. **Two-way recovery is unexercised end to end.** No bounded-recovery key has been
+   generated or authorized, and `dial-hermes-control` has never restarted an E2's
+   recovery agent. Tested code, not a proven recovery path.
+7. **Offsite backup is installed but unauthorized.** `rclone config` has not been run,
+   so `/etc/dial-recovery/rclone.conf` does not exist and the timer is inert by design.
+8. **SSH ingress is `0.0.0.0/0`** on `oracle-admin`, deliberately: Cloud Shell's egress
    address is unstable and a pinned CIDR is how the previous host became unreachable.
    Key-only authentication is the real control. Narrow it once a stable admin source
    exists.

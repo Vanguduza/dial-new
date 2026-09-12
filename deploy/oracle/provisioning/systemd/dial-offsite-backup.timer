@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily DIAL offsite evidence backup
+
+[Timer]
+OnCalendar=daily
+# Spread across the hour so three hosts do not all upload at once.
+RandomizedDelaySec=45m
+Persistent=true
+Unit=dial-offsite-backup.service
+
+[Install]
+WantedBy=timers.target

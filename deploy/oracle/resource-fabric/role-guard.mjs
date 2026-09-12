@@ -32,6 +32,10 @@ export const REASON = Object.freeze({
   UNKNOWN_HOST: 'UNKNOWN_HOST',
   AUTHORITY_REQUIRES_RECOVERY_ROLE: 'AUTHORITY_REQUIRES_RECOVERY_ROLE',
   AUTHORITY_REQUIRES_CONTROL_ROLE: 'AUTHORITY_REQUIRES_CONTROL_ROLE',
+  UNMAPPED_RECOVERY_AUTHORITY: 'UNMAPPED_RECOVERY_AUTHORITY',
+  HOST_HAS_NO_RECOVERY_AUTHORITY_MAX: 'HOST_HAS_NO_RECOVERY_AUTHORITY_MAX',
+  AUTHORITY_EXCEEDS_HOST_RECOVERY_MAX: 'AUTHORITY_EXCEEDS_HOST_RECOVERY_MAX',
+  OWNER_AUTHORIZATION_REQUIRED: 'OWNER_AUTHORIZATION_REQUIRED',
   NO_DEVELOPMENT_POOL_ON_THIS_HOST: 'NO_DEVELOPMENT_POOL_ON_THIS_HOST',
   HEAVY_WORK_NOT_PERMITTED: 'HEAVY_WORK_NOT_PERMITTED',
   ARCHITECTURE_MISMATCH: 'ARCHITECTURE_MISMATCH',
@@ -44,6 +48,27 @@ export function hostEntry(hostId = os.hostname()) {
 
 const isRecovery = (h) => h.roles.includes('RECOVERY');
 const isControl = (h) => h.roles.includes('HERMES_CONTROL');
+
+// Rev 3 section 5.2. A bounded recoverer may act in the recovery plane but only up to the
+// class its hosts.json entry allows. dial-hermes-control is one: it may observe an E2 and
+// restart that E2's recovery agent, and nothing else. Recovery is bidirectional in
+// capability and asymmetric in privilege, and this predicate is where the asymmetry lives.
+const isBoundedRecoverer = (h) => h.roles.includes('BOUNDED_RECOVERY');
+
+/** Which R-class does this authority_class belong to? null when unmapped. */
+export function recoveryClassOf(authority, policy = POLICY) {
+  const map = policy.recovery_action_classes?.classes ?? {};
+  for (const [rclass, members] of Object.entries(map)) {
+    if (members.includes(authority)) return rclass;
+  }
+  return null;
+}
+
+/** Rank an R-class against policy order. -1 when the class is not in the order. */
+export function recoveryClassRank(rclass, policy = POLICY) {
+  const order = policy.recovery_action_classes?.order ?? [];
+  return order.indexOf(rclass);
+}
 
 /** Is this task heavy, by the same thresholds the scheduler uses? */
 export function isHeavy(task, policy = POLICY) {
@@ -70,8 +95,49 @@ export function evaluate(task, { hostId = os.hostname(), hosts = HOSTS, policy =
 
   // Gate A, locally. Recovery authorities belong on a recovery peer; owner-control
   // authorities belong on the control host. Neither may drift to the other.
-  if (policy.authority_routing.recovery_plane_only.includes(authority) && !isRecovery(self)) {
+  const isRecoveryPlane = policy.authority_routing.recovery_plane_only.includes(authority);
+  let permittedClass = null;
+  if (isRecoveryPlane && !isRecovery(self) && !isBoundedRecoverer(self)) {
     return { ...base, decision: DECISION.REFUSE, reason: REASON.AUTHORITY_REQUIRES_RECOVERY_ROLE };
+  }
+
+  // Rev 3 section 5.2/5.3: cap recovery-plane work at the host's declared maximum class.
+  // Every branch here fails closed - an unmapped authority, a host with no declared
+  // maximum, or a maximum that is not in the policy order all refuse rather than default.
+  if (isRecoveryPlane) {
+    const rclass = recoveryClassOf(authority, policy);
+    if (rclass === null) {
+      return { ...base, decision: DECISION.REFUSE, reason: REASON.UNMAPPED_RECOVERY_AUTHORITY };
+    }
+    const max = self.recovery_authority_max ?? null;
+    const maxRank = recoveryClassRank(max, policy);
+    if (max === null || maxRank < 0) {
+      return {
+        ...base, decision: DECISION.REFUSE,
+        reason: REASON.HOST_HAS_NO_RECOVERY_AUTHORITY_MAX, recovery_class: rclass,
+      };
+    }
+    const rank = recoveryClassRank(rclass, policy);
+    if (rank < 0 || rank > maxRank) {
+      return {
+        ...base, decision: DECISION.REFUSE,
+        reason: REASON.AUTHORITY_EXCEEDS_HOST_RECOVERY_MAX,
+        recovery_class: rclass, recovery_authority_max: max,
+      };
+    }
+    // R2 and above are production-affecting or irreversible. They are never automatic in
+    // either direction; the owner authorizes each one.
+    const gate = policy.recovery_action_classes?.owner_authorization_required_at_or_above ?? null;
+    const gateRank = recoveryClassRank(gate, policy);
+    if (gateRank >= 0 && rank >= gateRank && !task?.owner_authorization) {
+      return {
+        ...base, decision: DECISION.REFUSE,
+        reason: REASON.OWNER_AUTHORIZATION_REQUIRED, recovery_class: rclass,
+      };
+    }
+    // Record what was actually permitted. An ALLOW that does not say which class it
+    // allowed is not evidence, and recovery decisions are audited after the fact.
+    permittedClass = rclass;
   }
   if (policy.authority_routing.control_slice_only.includes(authority) && !isControl(self)) {
     return { ...base, decision: DECISION.REFUSE, reason: REASON.AUTHORITY_REQUIRES_CONTROL_ROLE };
@@ -84,8 +150,7 @@ export function evaluate(task, { hostId = os.hostname(), hosts = HOSTS, policy =
   // A host with no development pool is an admin/recovery node. Development work on it
   // is a separation breach regardless of how much memory happens to be free: the E2
   // pair exist to recover the estate, and a recovery node busy building is not one.
-  const isRecoveryAuthority = policy.authority_routing.recovery_plane_only.includes(authority);
-  if (!isRecoveryAuthority && self.development_pool_mb === 0) {
+  if (!isRecoveryPlane && self.development_pool_mb === 0) {
     return { ...base, decision: DECISION.REFUSE, reason: REASON.NO_DEVELOPMENT_POOL_ON_THIS_HOST };
   }
 
@@ -93,7 +158,10 @@ export function evaluate(task, { hostId = os.hostname(), hosts = HOSTS, policy =
     return { ...base, decision: DECISION.REFUSE, reason: REASON.HEAVY_WORK_NOT_PERMITTED };
   }
 
-  return { ...base, decision: DECISION.ALLOW, reason: REASON.ALLOWED_BY_ROLE };
+  return {
+    ...base, decision: DECISION.ALLOW, reason: REASON.ALLOWED_BY_ROLE,
+    ...(permittedClass ? { recovery_class: permittedClass, recovery_authority_max: self.recovery_authority_max } : {}),
+  };
 }
 
 /** What may this host run at all? Useful in certification and on an operator's screen. */
@@ -106,10 +174,16 @@ export function describeSelf(hostId = os.hostname(), hosts = HOSTS, policy = POL
     roles: self.roles,
     recovery_role: self.recovery_role,
     recovers: self.recovers,
+    recovery_authority_max: self.recovery_authority_max ?? null,
+    recovery_service_allowlist: self.recovery_service_allowlist ?? [],
     development_permitted: self.development_pool_mb > 0,
     heavy_work_permitted: self.max_concurrent_heavy_jobs > 0,
     authority_classes_permitted: [
-      ...(isRecovery(self) ? policy.authority_routing.recovery_plane_only : []),
+      ...(isRecovery(self) || isBoundedRecoverer(self)
+        ? policy.authority_routing.recovery_plane_only.filter(
+            (a) => evaluate({ authority_class: a, owner_authorization: 'PROBE' },
+              { hostId, hosts, policy }).decision === DECISION.ALLOW)
+        : []),
       ...(isControl(self) ? policy.authority_routing.control_slice_only : []),
     ],
   };

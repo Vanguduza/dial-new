@@ -1,0 +1,21 @@
+[Unit]
+Description=DIAL offsite evidence backup (allowlisted, credential-scanned)
+Documentation=file:///opt/dial-recovery/dial-new/docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md
+After=network-online.target
+Wants=network-online.target
+# Inert until the owner has authorized Drive once. A backup job that runs without
+# credentials just fails noisily every day and trains people to ignore it.
+ConditionPathExists=/etc/dial-recovery/rclone.conf
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/dial-offsite-push
+Slice=dial-recovery.slice
+# A small job on a 1 GB host. It must never compete with the recovery plane.
+MemoryMax=128M
+CPUWeight=10
+Nice=10
+OOMScoreAdjust=500
+TimeoutStartSec=600
+NoNewPrivileges=true
+PrivateTmp=true
