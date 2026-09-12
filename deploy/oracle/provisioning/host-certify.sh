@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+# Host-side half of the section 24 certification report.
+#
+#   sudo dial-host-certify              # JSON to stdout
+#
+# Emits facts and a certification verdict. Every value is measured, not assumed;
+# anything that cannot be measured is reported as "unverified", never as healthy.
+#
+# Verdict (section 24):
+#   GREEN — SSH + OCI emergency access + recovery plane + Commander all functionally proven
+#   AMBER — VM and SSH healthy, Commander still needs owner device authorization
+#   RED   — no reliable remote recovery path
+#
+# The control-plane half (instance OCID, shape, image, public IP, VCN/subnet, plugin
+# state, Hermes-unchanged proof) comes from 30-certify.mjs, which merges this file's
+# output with OCI API facts.
+
+set -uo pipefail
+
+ADMIN_USER=ubuntu
+REPO_DIR=/opt/dial-recovery/dial-new
+FABRIC=$REPO_DIR/deploy/oracle/resource-fabric
+STATE=/var/lib/dial-recovery/bootstrap-state.json
+CRED=/home/$ADMIN_USER/.desktop-commander-device/device.json
+UID_ADMIN="$(id -u $ADMIN_USER 2>/dev/null || echo 0)"
+uctl() { sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN systemctl --user "$@" 2>/dev/null; }
+
+ssh_active=$(systemctl is-active ssh 2>/dev/null || systemctl is-active sshd 2>/dev/null || echo inactive)
+ssh_listening=$(ss -lnt 2>/dev/null | awk '$4 ~ /:22$/ {found=1} END{print (found?"true":"false")}')
+pw_auth=$(sshd -T 2>/dev/null | awk '/^passwordauthentication /{print $2}')
+root_login=$(sshd -T 2>/dev/null | awk '/^permitrootlogin /{print $2}')
+pubkey_auth=$(sshd -T 2>/dev/null | awk '/^pubkeyauthentication /{print $2}')
+ssh_fp=$(ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub 2>/dev/null | awk '{print $2}')
+
+oca=$(systemctl is-active oracle-cloud-agent 2>/dev/null || echo inactive)
+ocarun=$(id ocarun >/dev/null 2>&1 && echo true || echo false)
+plugins=$(ls /var/lib/oracle-cloud-agent/plugins 2>/dev/null | jq -R . | jq -sc . || echo '[]')
+
+# IMDSv2 must work; IMDSv1 must not.
+imds_v2=$(curl -s -m 5 -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer Oracle' \
+  http://169.254.169.254/opc/v2/instance/ 2>/dev/null || echo 000)
+imds_v1=$(curl -s -m 5 -o /dev/null -w '%{http_code}' http://169.254.169.254/opc/v1/instance/ 2>/dev/null || echo 000)
+imds_ok=$([[ "$imds_v2" == "200" && "$imds_v1" != "200" ]] && echo true || echo false)
+
+https_gh=$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://github.com 2>/dev/null || echo 000)
+https_npm=$(curl -s -o /dev/null -m 10 -w '%{http_code}' https://registry.npmjs.org 2>/dev/null || echo 000)
+dns_ok=$(getent hosts registry.npmjs.org >/dev/null 2>&1 && echo true || echo false)
+
+repo_sha=$(git -C "$REPO_DIR" rev-parse HEAD 2>/dev/null || echo unverified)
+repo_ref=$(git -C "$REPO_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unverified)
+
+host_agent_timer=$(uctl is-active dial-host-agent.timer || echo inactive)
+recovery_agent=$(uctl is-active dial-recovery-agent.service || echo inactive)
+recovery_agent_enabled=$(uctl is-enabled dial-recovery-agent.service || echo disabled)
+scheduler=$(uctl is-active dial-resource-scheduler.service || echo inactive)
+commander_unit=$(uctl is-active dial-commander-remote.service || echo inactive)
+
+# Does the fabric actually run here? Exercise it rather than trusting the checkout.
+if [[ -f $FABRIC/recovery-agent.mjs ]]; then
+  fabric_loads=$(node -e "import('file://$FABRIC/recovery-agent.mjs').then(()=>console.log('true')).catch(()=>console.log('false'))" 2>/dev/null || echo false)
+else
+  fabric_loads=false
+fi
+# Fail-closed check: stale telemetry must make a host ineligible, not "probably fine".
+if [[ -f $FABRIC/placement.mjs ]]; then
+  fail_closed=$(node -e "
+import('file://$FABRIC/placement.mjs').then(m=>{
+  const r=m.evaluatePlacement({task:{task_id:'certify',project:'dial',predicted_memory_mb:64},telemetry:{},nowMs:Date.now()});
+  console.log(r.selected?'false':'true');
+}).catch(()=>console.log('unverified'))" 2>/dev/null || echo unverified)
+else
+  fail_closed=unverified
+fi
+
+commander_paired=$([[ -f $CRED ]] && echo true || echo false)
+commander_version=$(/opt/dial-recovery/commander/node_modules/.bin/desktop-commander --version 2>/dev/null | head -1 || echo unverified)
+if [[ -x /usr/local/bin/dial-commander-probe ]]; then
+  commander_criteria=$(sudo -u $ADMIN_USER XDG_RUNTIME_DIR=/run/user/$UID_ADMIN \
+      /usr/local/bin/dial-commander-probe 2>/dev/null \
+    | awk -F= '/^[A-Z_]+=/{printf "%s\"%s\":\"%s\"", (n++?",":""), $1, $2} END{}' )
+  commander_criteria="{${commander_criteria:-}}"
+else
+  commander_criteria='{}'
+fi
+commander_green=$(jq -e 'to_entries | length == 5 and all(.[]; .value=="GREEN")' <<<"$commander_criteria" >/dev/null 2>&1 && echo true || echo false)
+
+# DIAL application workload must NOT be running here (section 11).
+stray=$(systemctl list-units --type=service --state=running --no-legend 2>/dev/null \
+  | awk '{print $1}' | grep -E 'dial-hermes|dial-mission|dial-chat-control' | jq -R . | jq -sc . || echo '[]')
+
+mem_total=$(free -m | awk '/^Mem:/{print $2}')
+mem_avail=$(free -m | awk '/^Mem:/{print $7}')
+swap_total=$(free -m | awk '/^Swap:/{print $2}')
+swap_used=$(free -m | awk '/^Swap:/{print $3}')
+disk_used_pct=$(df -P / | awk 'NR==2{gsub("%","",$5); print $5}')
+loadavg=$(awk '{print $1}' /proc/loadavg)
+ports=$(ss -lntuH 2>/dev/null | awk '{print $1" "$5}' | sort -u | jq -R . | jq -sc . || echo '[]')
+units=$(systemctl list-unit-files --state=enabled --no-legend 2>/dev/null | awk '{print $1}' \
+  | grep -E 'ssh|oracle-cloud-agent' | jq -R . | jq -sc . || echo '[]')
+
+# ---- verdict ---------------------------------------------------------------
+ssh_ok=false
+[[ "$ssh_active" == "active" && "$ssh_listening" == "true" && "$pw_auth" == "no" && "$pubkey_auth" == "yes" ]] && ssh_ok=true
+oci_ok=false
+[[ "$oca" == "active" && "$ocarun" == "true" ]] && oci_ok=true
+recovery_ok=false
+[[ "$fabric_loads" == "true" && "$fail_closed" == "true" && "$stray" == "[]" ]] && recovery_ok=true
+
+if [[ "$ssh_ok" == "true" && "$oci_ok" == "true" && "$recovery_ok" == "true" && "$commander_green" == "true" ]]; then
+  verdict=GREEN; reason="SSH, OCI emergency access, recovery plane and Commander all functionally proven"
+elif [[ "$ssh_ok" == "true" && "$oci_ok" == "true" ]]; then
+  verdict=AMBER; reason="Host and emergency access healthy; Commander not yet functionally proven end to end"
+else
+  verdict=RED;   reason="No reliable remote recovery path: SSH and/or OCI emergency access not proven"
+fi
+
+jq -n \
+  --arg verdict "$verdict" --arg reason "$reason" \
+  --arg hostname "$(hostname)" --arg at "$(date -u +%FT%TZ)" \
+  --argjson ssh "$(jq -n --arg a "$ssh_active" --arg l "$ssh_listening" --arg p "$pw_auth" --arg r "$root_login" --arg k "$pubkey_auth" --arg f "${ssh_fp:-unverified}" --argjson ok "$ssh_ok" \
+      '{service:$a, listening_22:($l=="true"), password_auth:$p, permit_root_login:$r, pubkey_auth:$k, host_key_fingerprint:$f, healthy:$ok}')" \
+  --argjson oci "$(jq -n --arg a "$oca" --arg o "$ocarun" --argjson p "$plugins" --arg v2 "$imds_v2" --arg v1 "$imds_v1" --argjson im "$imds_ok" --argjson ok "$oci_ok" \
+      '{cloud_agent:$a, ocarun_present:($o=="true"), plugins:$p, imdsv2_status:$v2, imdsv1_status:$v1, imds_hardened:$im, run_command_capable:$ok}')" \
+  --argjson net "$(jq -n --arg g "$https_gh" --arg n "$https_npm" --arg d "$dns_ok" \
+      '{github_https:$g, npm_https:$n, dns:($d=="true")}')" \
+  --argjson recovery "$(jq -n --arg s "$repo_sha" --arg r "$repo_ref" --arg t "$host_agent_timer" --arg a "$recovery_agent" --arg e "$recovery_agent_enabled" --arg sc "$scheduler" --arg fl "$fabric_loads" --arg fc "$fail_closed" --argjson stray "$stray" --argjson ok "$recovery_ok" \
+      '{repo_sha:$s, repo_ref:$r, host_agent_timer:$t, recovery_agent:$a, recovery_agent_enabled:$e, scheduler:$sc, fabric_module_loads:($fl=="true"), stale_telemetry_fails_closed:$fc, dial_application_workload:$stray, healthy:$ok}')" \
+  --argjson commander "$(jq -n --arg v "$commander_version" --arg p "$commander_paired" --arg u "$commander_unit" --argjson c "$commander_criteria" --argjson g "$commander_green" \
+      '{package:"@wonderwhy-er/desktop-commander@0.2.50", version:$v, transport:"outbound persistent remote device (no inbound port)", paired:($p=="true"), unit:$u, criteria:$c, functionally_proven:$g}')" \
+  --argjson resources "$(jq -n --arg mt "$mem_total" --arg ma "$mem_avail" --arg st "$swap_total" --arg su "$swap_used" --arg d "$disk_used_pct" --arg l "$loadavg" --argjson p "$ports" --argjson u "$units" \
+      '{memory_total_mb:($mt|tonumber?), memory_available_mb:($ma|tonumber?), swap_total_mb:($st|tonumber?), swap_used_mb:($su|tonumber?), disk_used_pct:($d|tonumber?), load_1m:($l|tonumber?), listening_ports:$p, enabled_units:$u}')" \
+  --argjson bootstrap "$(jq '{phases, rerun, started_at, completed_at}' "$STATE" 2>/dev/null || echo 'null')" \
+  '{schema_version:1, report:"oracle-admin host certification", hostname:$hostname, observed_at:$at,
+    certification:{state:$verdict, reason:$reason},
+    ssh:$ssh, oci:$oci, network:$net, recovery_plane:$recovery, desktop_commander:$commander,
+    resources:$resources, bootstrap:$bootstrap}'
+
+[[ "$verdict" == "GREEN" ]] || exit 1

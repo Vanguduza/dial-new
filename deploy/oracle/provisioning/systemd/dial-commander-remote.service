@@ -1,0 +1,45 @@
+[Unit]
+Description=DIAL Desktop Commander remote device (outbound session, oracle-admin recovery plane)
+Documentation=https://github.com/wonderwhy-er/DesktopCommanderMCP
+After=network-online.target
+Wants=network-online.target
+
+# This unit is legitimate only because `desktop-commander remote` genuinely is a
+# long-running process: it holds an outbound device session to the Commander
+# service. The earlier `desktop-commander.service` was removed because it ran the
+# MCP *stdio* server, which has no stdin peer under systemd and proved nothing.
+# Task brief section 17 forbids a unit that exists only to make `is-active` green;
+# this one supervises real work.
+#
+# It stays inert until the owner completes the one-time device authorization, so
+# an unpaired host never shows a spuriously running Commander.
+ConditionPathExists=%h/.desktop-commander-device/device.json
+
+[Service]
+Type=simple
+# Non-root: this is owner admin tooling on the recovery plane, not a system daemon.
+ExecStart=/opt/dial-recovery/commander/node_modules/.bin/desktop-commander remote
+Restart=always
+RestartSec=10s
+StartLimitIntervalSec=0
+TimeoutStartSec=90
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+# 1 GB host. Commander must never be the reason SSH or the Oracle agent starves.
+Slice=dial-recovery.slice
+MemoryHigh=180M
+MemoryMax=256M
+CPUWeight=20
+OOMScoreAdjust=300
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+RestrictSUIDSGID=true
+
+Environment=NODE_OPTIONS=--max-old-space-size=192
+
+[Install]
+WantedBy=default.target

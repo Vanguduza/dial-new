@@ -19,9 +19,15 @@ Honest accounting. Do not enable a unit whose target file is listed as not imple
 | `doctor.mjs` | **implemented** — functional health; unconfigured probes return `UNVERIFIED` | manual run |
 | `systemd/*.slice` | **implemented** — control / development / recovery cgroup policy | — |
 | `systemd/dial-host-agent.{service,timer}` | **implemented** | — |
-| `recovery-agent.mjs` | **not implemented** — `dial-recovery-agent.service` references it | — |
-| `resource-scheduler.mjs` | **not implemented** — `dial-resource-scheduler.service` references it | — |
-| `install-host.sh`, `install-recovery-peer.sh`, `install-hermes-resource-guards.sh`, `cleanup.mjs` | **not implemented** | — |
+| `recovery-agent.mjs` | **implemented** — leases, hysteresis, allowlisted restarts, fail-closed | `tests/oracle-resource-fabric-runtime.test.mjs` |
+| `resource-scheduler.mjs` | **implemented** — deterministic decisions, dispatch envelopes, refuses command payloads | same |
+| `install-host.sh`, `install-recovery-peer.sh`, `install-hermes-resource-guards.sh`, `cleanup.mjs` | **implemented** — staging only; activation stays a separate authenticated step | same |
+
+`tests/oracle-resource-fabric-runtime.test.mjs` existed but was absent from
+`vitest.config.ts`, so it was collected by nothing and ran never. It is now in the
+include list along with the provisioning suite.
+
+Provisioning a host that runs this fabric is `deploy/oracle/provisioning/`.
 
 ## Desktop Commander
 
@@ -53,11 +59,29 @@ Because it is client-spawned, `PROCESS_UP` is not a `systemctl is-active` check.
 `doctor.mjs` derives every criterion — `PROCESS_UP` included — from the configured
 `DIAL_COMMANDER_PROBE`, and returns `UNVERIFIED` when no probe is configured.
 
-Architecture §17 calls for an active/standby pair where the standby stays registered and
-answers heartbeats. Under the stdio model there is no standing registration to keep warm,
-so §17 needs either a probe the scheduler runs on a timer against both peers, or a
-transport decision that gives Commander a real listening endpoint. That is an open design
-question, not something this increment resolves.
+### The stdio model is not the only transport — §17 is resolved
+
+The paragraph above is correct for the stdio transport, but incomplete for the pinned
+version. `@wonderwhy-er/desktop-commander@0.2.50` also ships a `remote` subcommand backed by
+a `remote-device/` subsystem: a **long-lived outbound device session** to
+`https://mcp.desktopcommander.app`, authenticated with an OAuth 2.0 device-authorization
+flow and kept alive by a heartbeat. It registers under `os.hostname()`.
+
+That closes architecture §17's open question. The standing registration it asks for does
+exist under this transport, and it needs **no inbound port and no listening endpoint** — the
+session is outbound, so it introduces no generic shell service and no second ungoverned path
+into DIAL. `REMOTE_REGISTERED` in `policy.json` was written for this model and is meaningful
+again.
+
+A supervised systemd unit is therefore legitimate for `remote` — it supervises a genuinely
+long-running process, unlike the stdio server whose unit was removed. See
+`deploy/oracle/provisioning/systemd/dial-commander-remote.service`, which stays inert via
+`ConditionPathExists` until the owner has authorized the device.
+
+`PROCESS_UP` is a real signal again under this transport, but `doctor.mjs` still derives
+every criterion from the configured probe: the client-observable criteria
+(`PING_RESPONDS`, `COMMAND_EXECUTES`) cannot be established from the host at all, and the
+probe omits rather than invents them.
 
 ### Boundary
 
