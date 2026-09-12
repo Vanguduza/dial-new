@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260912-owner-adaptive-harness-model-routing",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "d41497ef8832f049b5f951cb5c16ac5e6292b1251134578af7c85b75257f0c2a",
+  "owner_instruction_excerpt": "review the attached document and implement it fully without thinning features to achieve a deterministic, coherent and symbiotic development system that aligns with the project truth and get the development system ready for building",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260912-adaptive-harness-model-routing",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-12T20:27:58+00:00",
+  "base_sha": "cd1e10ed10a37794af75f1c56ef7c04bc655d40c",
+  "branch_scope": "claude/kill-file-usage-1gyb0y",
+  "authorized_paths": [
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
+    "agent-system/registries/DECISION_LOG.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "agent-system/registries/HARNESS_MODEL_COMPATIBILITY.json",
+    "agent-system/registries/HARNESS_REGISTRY.json",
+    "agent-system/registries/MODEL_BEHAVIOR_RESOURCE_REGISTRY.json",
+    "agent-system/registries/MODEL_REGISTRY.json",
+    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
+    "agent-system/registries/SPECIALIST_CAPABILITY_REGISTRY.json",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "tests/orchestration-adaptive-routing.test.mjs",
+    "tests/orchestration-vekl-resources.test.mjs",
+    "package.json"
+  ],
+  "change_classes": [
+    "adaptive_harness_model_routing_adoption",
+    "harness_model_separation",
+    "subscription_aware_worker_eligibility",
+    "model_specific_execution_projection",
+    "runtime_prompt_compilation",
+    "technical_implementation",
+    "project_truth_reconciliation",
+    "test_determinism_repair"
+  ],
+  "notes": [
+    "DEC-032 evolves DEC-028 rather than replacing it. Existing pre-bound worker cards in HARNESS_CAPABILITY_REGISTRY.json are retained as Phase 1 compatibility shims and are not deleted.",
+    "DEVELOPMENT_UNIT_REGISTRY.json is regenerated, not hand-edited: DECISION_LOG.json is a VEKL authority path, so adding a decision changes every derived unit revision hash. Regeneration was verified to be hash-only churn (309 units before and after, identical lineage ids and feature sets).",
+    "tests/orchestration-vekl-resources.test.mjs carried a pre-existing wall-clock dependency unrelated to this change: it asserted a fixed retry-after while calling through real Date.now(), so it passed only when the suite ran before 05:42Z on 2026-09-12. The clock is now pinned; the assertion is unchanged and no test was skipped or weakened."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { deterministicMinimalCoalition, resolveEngineeringResources } from '../agent-system/orchestration/engineering-resource-resolver.mjs';
 import { refreshAheadOfWorkResearch } from '../agent-system/orchestration/engineering-presearch.mjs';
 import { runProjectAwareResearchForecast } from '../agent-system/orchestration/engineering-research-manager.mjs';
@@ -15,6 +15,7 @@ const repoDir=process.cwd();
 function temp(name){return fs.mkdtempSync(path.join(os.tmpdir(),`${name}-`));}
 
 describe('VEKL 2 federated engineering resources',()=>{
+  afterEach(()=>{ vi.useRealTimers(); });
   it('keeps Oracle qualification and finalization pinned to the current federated-resource policy version',()=>{
     for (const rel of [
       'deploy/oracle/hermes-codex/qualify-control-plane.sh',
@@ -59,6 +60,13 @@ describe('VEKL 2 federated engineering resources',()=>{
   });
 
   it('turns an exact Sol research quota response into reusable identity plus cooldown before falling back',async()=>{
+    // The provider message carries an absolute retry-at. parseProviderRetryAfter
+    // deliberately returns null once that instant has passed, because a cooldown
+    // in the past is not a cooldown. Without pinning the clock this assertion
+    // therefore passes only when the suite runs before 05:42Z on 2026-09-12.
+    // Only Date is faked, so the async runners still use real timers.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-12T04:00:00.000Z'));
     const root=temp('vekl2-sol-boundary');ensureControlLayout(root);
     const forecast={schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
       {feature_id:'GROC-F021',objective:'A',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},

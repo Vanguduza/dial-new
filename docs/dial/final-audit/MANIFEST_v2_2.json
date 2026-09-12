@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-11T19:49:24.837Z",
+  "generated_at": "2026-09-12T20:28:23.263Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 242,
+  "file_count": 243,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -180,6 +180,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
       "bytes": 100566,
       "sha256": "a16181ae561ce0c275806e3a57a573ce32d02142fb4b8f8358cfb46acbaa79c1"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
+      "bytes": 66615,
+      "sha256": "9e750410687a365c11ced72a0ce98aa2c7774928bc325e14bc9978e58d83a435"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",

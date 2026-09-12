@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "registry_id": "HARNESS_REGISTRY",
+  "registry_version": "1.0.0",
+  "decision_ref": "DEC-032",
+  "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
+  "authority_note": "A harness describes what an EXECUTION ENVIRONMENT can do. It must not bind itself permanently to one model. Harness capability and model capability are independent routing dimensions (DEC-032 §43). HCX selects workers, never the manager runtime (DEC-028 §14).",
+  "manager_runtime_selection_forbidden": true,
+
+  "harnesses": [
+    {
+      "harness_id": "claude-code",
+      "family": "CLAUDE_CODE",
+      "version": "current-qualified",
+      "provider": "anthropic",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "capabilities": {
+        "repository_read": true,
+        "repository_write": true,
+        "browser": false,
+        "visual_reasoning": true,
+        "shell": true,
+        "structured_output": true,
+        "long_context": true,
+        "tool_use": true,
+        "mcp": true
+      },
+      "security": {
+        "supported_data_classes": ["PUBLIC", "INTERNAL", "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"],
+        "max_risk_class": "CRITICAL"
+      },
+      "runtime": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN",
+        "authenticated": null,
+        "observed_at": null
+      },
+      "compatibility": {
+        "supported_model_families": ["claude"],
+        "supported_provider_routes": ["anthropic-subscription"]
+      },
+      "qualification": { "state": "QUALIFIED", "evidence_hash": "BOUND_TO_EXISTING_RUNTIME_QUALIFICATION", "qualification_epoch": 1 },
+      "independence_class": "ANTHROPIC_CLAUDE_CODE",
+      "session_continuity_supported": true
+    },
+    {
+      "harness_id": "codex-app-server",
+      "family": "CODEX",
+      "version": "current-qualified",
+      "provider": "openai",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "capabilities": {
+        "repository_read": true,
+        "repository_write": true,
+        "browser": false,
+        "visual_reasoning": true,
+        "shell": true,
+        "structured_output": true,
+        "long_context": true,
+        "tool_use": true,
+        "mcp": true
+      },
+      "security": {
+        "supported_data_classes": ["PUBLIC", "INTERNAL", "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"],
+        "max_risk_class": "CRITICAL"
+      },
+      "runtime": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN",
+        "authenticated": null,
+        "observed_at": null
+      },
+      "compatibility": {
+        "supported_model_families": ["openai-codex", "gpt"],
+        "supported_provider_routes": ["chatgpt-subscription"]
+      },
+      "qualification": { "state": "QUALIFIED", "evidence_hash": "BOUND_TO_EXISTING_RUNTIME_QUALIFICATION", "qualification_epoch": 1 },
+      "independence_class": "OPENAI_CODEX",
+      "session_continuity_supported": true
+    },
+    {
+      "harness_id": "antigravity",
+      "family": "ANTIGRAVITY",
+      "version": "current-qualified",
+      "provider": "google",
+      "authority_class": "EXECUTION_WORKER",
+      "manager_runtime_eligible": false,
+      "capabilities": {
+        "repository_read": true,
+        "repository_write": true,
+        "browser": true,
+        "visual_reasoning": true,
+        "shell": true,
+        "structured_output": true,
+        "long_context": true,
+        "tool_use": true,
+        "mcp": true
+      },
+      "security": {
+        "supported_data_classes": ["PUBLIC", "INTERNAL_SAFE_FOR_APPROVED_PROVIDER"],
+        "max_risk_class": "HIGH"
+      },
+      "runtime": {
+        "health_state": "UNKNOWN",
+        "quota_state": "UNKNOWN",
+        "authenticated": null,
+        "observed_at": null
+      },
+      "compatibility": {
+        "supported_model_families": ["provider_native"],
+        "supported_provider_routes": ["google-subscription"],
+        "note": "External model families are permitted only where an official or approved integration route is proven. DEC-032 §9 forbids fabricated pairings; where a model cannot literally run inside Antigravity, compose it into a multi-worker topology instead."
+      },
+      "qualification": { "state": "QUALIFIED", "evidence_hash": "BOUND_TO_DEC031_EXTERNAL_CAPABILITY_EVIDENCE", "qualification_epoch": 1 },
+      "independence_class": "GOOGLE_ANTIGRAVITY",
+      "session_continuity_supported": false
+    }
+  ],
+
+  "compatibility_shims": {
+    "note": "DEC-032 §45 Phase 1. The pre-bound worker cards in HARNESS_CAPABILITY_REGISTRY.json remain supported while dynamic pair routing is validated. They are retired only once dynamic routing demonstrates equal or better reliability (Phase 6), never by deletion ahead of that evidence.",
+    "source_registry": "agent-system/registries/HARNESS_CAPABILITY_REGISTRY.json",
+    "retired": false,
+    "card_to_pair": {
+      "codex-sol-worker": { "harness_id": "codex-app-server", "model_id": "gpt-5.6-sol" },
+      "claude-sonnet-worker": { "harness_id": "claude-code", "model_id": "claude-sonnet-5" },
+      "antigravity-worker": { "harness_id": "antigravity", "model_id": "antigravity-native" },
+      "stitch-design-provider": { "specialist_capability_id": "stitch", "note": "Not a harness. Relocated to SPECIALIST_CAPABILITY_REGISTRY.json per DEC-032 §32." }
+    }
+  }
+}
