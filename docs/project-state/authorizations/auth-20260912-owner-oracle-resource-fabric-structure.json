@@ -1,0 +1,41 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260912-owner-oracle-resource-fabric-structure",
+  "authorized_paths": [
+    "deploy/oracle/resource-fabric/",
+    "tests/oracle-resource-fabric.test.mjs",
+    "vitest.config.ts",
+    "docs/orchestration/DIAL_ORACLE_TASK_AWARE_RESOURCE_FABRIC_RECIPROCAL_RECOVERY_ARCHITECTURE.md",
+    "docs/project-state/authorizations/auth-20260912-owner-oracle-resource-fabric-structure.json"
+  ],
+  "base_sha": "0ebb64b4d6689694bb8223fc430bf390c4d2f0e6",
+  "branch_scope": "claude/oracle-problem-review-rmhdse",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "resource_governance",
+    "recovery_plane",
+    "technical_implementation"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-12T03:16:51.734191+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner supplied the architecture document and ordered the structure built. Desktop Commander is scoped to the E2 admin/recovery plane as owner host tooling; it is not the DIAL operator gateway and introduces no generic shell on the DIAL control bridge. Scheduler and recovery agents are scaffolded, not implemented, and README records that explicitly.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "the connection with desktop commander is one i want to establish. and set up this structure",
+  "owner_instruction_sha256": "c287fa3f5b3059d6c7a5bd27a4b5f4549ac183a3469aff20bf66e5d6b8182b6a",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260912-oracle-resource-fabric-structure"
+  }
+}
