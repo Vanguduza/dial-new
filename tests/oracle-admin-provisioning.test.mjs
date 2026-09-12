@@ -167,7 +167,7 @@ describe('Hermes safety boundary', () => {
     const preflight = read('10-network-preflight.sh');
     expect(preflight).toMatch(/nsg create/);
     expect(preflight).toMatch(/nsg rules add/);
-    expect(read('20-launch-oracle-admin.sh')).toMatch(/nsgIds/);
+    expect(read('20-launch-oracle-admin.sh')).toMatch(/--nsg-ids/);
   });
 
   it('stops rather than editing a shared route table that lacks a default route', () => {

@@ -101,32 +101,57 @@ AGENT_CONFIG="$(jq -nc '{
     {name:"Compute RDMA GPU Monitoring",         desiredState:"DISABLED"}
   ]}')"
 
-# Section 5/6: the VNIC carries the isolated NSG. No security-list edit anywhere.
-VNIC_DETAILS="$(jq -nc --arg s "$subnet_id" --arg n "$nsg_id" --arg ip "$private_ip" '{
-  displayName:"oracle-admin-vnic",
-  hostnameLabel:"oracle-admin",
-  subnetId:$s,
-  assignPublicIp:true,
-  assignPrivateDnsRecord:true,
-  privateIp:$ip,
-  nsgIds:[$n]}')"
-
 # Section 9: IMDSv1 off — instance metadata requires the v2 authorization header.
 INSTANCE_OPTIONS='{"areLegacyImdsEndpointsDisabled": true}'
+METADATA="$(jq -nc --rawfile k "$HERE/authorized_key.pub" --arg u "$(base64 -w0 < "$USER_DATA_GZ")" \
+    '{ssh_authorized_keys:$k, user_data:$u}')"
+
+# There is no --create-vnic-details option: the CLI flattens
+# LaunchInstanceDetails.createVnicDetails into individual flags, and their names have
+# moved between CLI versions. So every flag is checked against this CLI's own help
+# before the call. Discovering unsupported options one rejected launch at a time is
+# slow and, worse, invites dropping whichever flag was blamed — and these flags carry
+# the SSH ingress, the metadata hardening and the address the recovery agent uses.
+#
+# Section 5/6: the VNIC carries the isolated NSG. No security-list edit anywhere.
+LAUNCH_HELP="$(oci compute instance launch --help 2>/dev/null || true)"
+supported() { [[ -z "$LAUNCH_HELP" ]] || grep -qF -- "$1" <<<"$LAUNCH_HELP"; }
+
+declare -a ARGS=() MISSING=()
+add() { # add required|optional <flag> <value>
+  if supported "$2"; then ARGS+=("$2" "$3")
+  elif [[ "$1" == required ]]; then MISSING+=("$2")
+  else log "NOTE: this OCI CLI has no $2; continuing without it (cosmetic only)."; fi
+}
+
+add required --compartment-id      "$DIAL_OCI_COMPARTMENT"
+add required --availability-domain "$ad"
+add required --display-name        "$NAME"
+add required --shape               "$SHAPE"
+add required --image-id            "$image_id"
+add required --subnet-id           "$subnet_id"
+add required --metadata            "$METADATA"
+add required --assign-public-ip    true
+add required --private-ip          "$private_ip"
+add required --hostname-label      oracle-admin
+add required --nsg-ids             "$(jq -nc --arg n "$nsg_id" '[$n]')"
+add required --agent-config        "$AGENT_CONFIG"
+add required --instance-options    "$INSTANCE_OPTIONS"
+add required --is-pv-encryption-in-transit-enabled true
+add optional --vnic-display-name   oracle-admin-vnic
+add optional --assign-private-dns-record true
+
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+  echo >&2
+  die "This OCI CLI does not support: ${MISSING[*]}
+       These are not droppable: they carry SSH ingress (--nsg-ids), IMDSv2 hardening
+       (--instance-options), Run Command (--agent-config) and the private address the
+       recovery agent resolves peers by (--private-ip).
+       Run 'oci compute instance launch --help' and send the option list."
+fi
 
 log "Launching $NAME ($SHAPE, private IP $private_ip) …"
-launch_out="$(oci_ compute instance launch \
-  --compartment-id "$DIAL_OCI_COMPARTMENT" \
-  --availability-domain "$ad" \
-  --display-name "$NAME" \
-  --shape "$SHAPE" \
-  --image-id "$image_id" \
-  --create-vnic-details "$VNIC_DETAILS" \
-  --agent-config "$AGENT_CONFIG" \
-  --instance-options "$INSTANCE_OPTIONS" \
-  --is-pv-encryption-in-transit-enabled true \
-  --metadata "$(jq -nc --rawfile k "$HERE/authorized_key.pub" --arg u "$(base64 -w0 < "$USER_DATA_GZ")" \
-      '{ssh_authorized_keys:$k, user_data:$u}')" \
+launch_out="$(oci_ compute instance launch "${ARGS[@]}" \
   --wait-for-state RUNNING --max-wait-seconds 900 2>&1)" || {
     # Section 20: surface the real API error and request id instead of retrying blind.
     echo "$launch_out" >&2
