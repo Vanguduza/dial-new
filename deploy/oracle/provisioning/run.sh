@@ -6,6 +6,8 @@
 #   ~/p/run.sh diagnose   probe the host directly and show what is wrong
 #   ~/p/run.sh pair       authorize the Desktop Commander device (needs a browser)
 #   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
+#   ~/p/run.sh twoway     report the two-way recovery state on the host
+#   ~/p/run.sh seed       seed peer host keys and start the recovery agent
 #   ~/p/run.sh status     show state, change nothing
 #   ~/p/run.sh log        show the last run's output
 #
@@ -111,8 +113,61 @@ repair() {
   return "${PIPESTATUS[0]}"
 }
 
+# ---- two-way recovery (Rev 3 section 5) --------------------------------------------
+# The host is the TARGET of the bounded direction, so what it can report is whether the
+# restriction is installed, whether a peer key is bound to it, and what its own audit log
+# has seen. Proof that the direction WORKS is produced on dial-hermes-control by
+# dial-verify-two-way-recovery; this is the E2-side half, and it says which it is.
+twoway() {
+  echo "=== two-way recovery, as oracle-admin sees it ==="
+  echo
+  ssh_host 'set +e
+    printf "forced command  : "; [ -x /usr/local/bin/dial-bounded-recovery ] && echo installed || echo ABSENT
+    printf "peer key        : "; sudo -u ubuntu dial-authorize-bounded-recovery --verify 2>&1 | head -2
+    printf "audit log       : "
+    if [ -r /var/log/dial-bounded-recovery.log ]; then
+      a=$( { grep -c "verdict=ALLOW" /var/log/dial-bounded-recovery.log || true; } | head -1)
+      r=$( { grep -c "verdict=REFUSED" /var/log/dial-bounded-recovery.log || true; } | head -1)
+      echo "${a:-0} allowed, ${r:-0} refused, last $(tail -1 /var/log/dial-bounded-recovery.log 2>/dev/null | awk "{print \$1}")"
+    else
+      echo "none yet — the control host has never connected"
+    fi
+    printf "peer host keys  : "; sudo -u ubuntu dial-seed-known-hosts --verify 2>&1 | tr "\n" "; "
+    echo
+    printf "recovery agent  : "; sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) systemctl --user is-active dial-recovery-agent.service 2>&1'
+  local rc=$?
+  echo
+  echo "To PROVE the direction end to end, run this ON dial-hermes-control:"
+  echo "  dial-install-bounded-recovery-peer     # once: generate the key, print the .pub"
+  echo "  dial-verify-two-way-recovery           # non-destructive; refusal probes included"
+  echo
+  echo "Nothing here is proof on its own. A forced command that has never been"
+  echo "connected to is an untested restriction."
+  return $rc
+}
+
+# Seeding is what stands between a staged recovery plane and a running one.
+seed() {
+  echo "Seeding peer host keys on the host, then starting the recovery agent if any landed."
+  echo
+  ssh_host 'set +e
+    sudo -u ubuntu dial-seed-known-hosts 2>&1
+    echo
+    n=$(sudo -u ubuntu dial-seed-known-hosts --verify 2>&1 | { grep -c "^SEEDED" || true; } | head -1)
+    if [ "${n:-0}" -gt 0 ]; then
+      sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) \
+        systemctl --user enable --now dial-recovery-agent.service 2>&1
+      echo "recovery agent: $(sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) systemctl --user is-active dial-recovery-agent.service 2>&1)"
+    else
+      echo "No peer host key could be seeded; the recovery agent stays stopped."
+      echo "That is correct: it SSHes with StrictHostKeyChecking=yes and would only fail closed."
+    fi'
+}
+
 case "$mode" in
   status) exit 0 ;;
+  twoway) twoway; exit $? ;;
+  seed)   seed;   exit $? ;;
   pair)   pair;   exit $? ;;
   repair) repair; exit $? ;;
   log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;

@@ -267,10 +267,31 @@ describe('fabric inventory agreement', () => {
     expect(read('bootstrap.sh')).toMatch(/install-recovery-peer\.sh/);
   });
 
-  it('does not start the recovery agent before peer known_hosts are seeded', () => {
+  it('starts the recovery agent only after known_hosts seeding produced something', () => {
+    // The invariant is not "never start it" — a recovery plane that is permanently
+    // staged recovers nothing. It is "never start it unseeded": the agent SSHes with
+    // StrictHostKeyChecking=yes, so an unseeded peer fails closed and generates noise.
     const s = read('bootstrap.sh');
-    expect(s).toMatch(/staged, not started/);
-    expect(s).not.toMatch(/enable --now dial-recovery-agent\.service/);
+    const enable = s.indexOf('enable --now dial-recovery-agent.service');
+    expect(enable, 'bootstrap should start the recovery agent').toBeGreaterThan(-1);
+
+    const guard = s.lastIndexOf('dial-seed-known-hosts --verify', enable);
+    expect(guard, 'the start must come after the seeding check').toBeGreaterThan(-1);
+    const between = s.slice(guard, enable);
+    expect(between).toMatch(/\[\[ "\$\{seeded:-0\}" -gt 0 \]\]/);
+
+    // And it must still say so honestly when it could not seed anything.
+    expect(s).toMatch(/staged, not started: no peer host key could be seeded/);
+  });
+
+  it('never claims a first-use host key was verified', () => {
+    // ssh-keyscan believes whatever answers on port 22. During an outage — exactly when
+    // this runs — that is the wrong moment to be credulous, so the fact it records must
+    // say the keys are unverified until checked against each peer's certification.
+    expect(read('bootstrap.sh')).toMatch(/accepted on first use are UNVERIFIED/);
+    const seed = fs.readFileSync(path.join(FABRIC, 'seed-known-hosts.sh'), 'utf8');
+    expect(seed).toMatch(/--expect/);
+    expect(seed).toMatch(/host_key_fingerprint/);
   });
 });
 

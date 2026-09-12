@@ -330,11 +330,32 @@ authority. If Hermes were compromised, an attacker would simply not run the host
 guard; they cannot avoid the forced command.
 
 ```bash
-# On each E2, once, as the owner:
+# 1. On dial-hermes-control, once — generates the key, wires ssh, prints the .pub:
+install-bounded-recovery-peer.sh
+
+# 2. On each E2, once, with that public key:
 install-bounded-recovery-identity.sh /path/to/hermes-bounded-recovery.pub
 install-bounded-recovery-identity.sh --verify     # report, change nothing
 install-bounded-recovery-identity.sh --remove     # revoke; E2 -> Hermes is unaffected
+
+# 3. Back on dial-hermes-control — this is what makes it PROVEN rather than installed:
+verify-two-way-recovery.sh                        # non-destructive
+verify-two-way-recovery.sh --include-repair       # also exercises the R1 restart
 ```
+
+From the owner's phone, against `oracle-admin`:
+
+```
+~/p/run.sh twoway     what the E2 side can see: restriction, key, audit log, agent
+~/p/run.sh seed       seed peer host keys, then start the recovery agent if any landed
+```
+
+`verify-two-way-recovery.sh` is deliberately half refusal-testing. Only trying permitted
+verbs would prove the channel is *open*, not that it is *bounded* — so every run also
+attempts a shell, a reboot, a non-recovery restart, command chaining, an OCI call and
+three credential reads, and a refusal probe that **succeeds** fails the whole run. Its
+verdicts are `PROVEN`, `PARTIAL`, `UNPROVEN` (could not reach a target — never a pass)
+and `FAILED`.
 
 Generate the keypair **on** `dial-hermes-control` and move only the `.pub`. It must be a
 different key from the E2 → Hermes key: reusing one makes the mesh symmetric again by
@@ -353,8 +374,33 @@ no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-pty ssh-ed25519 AAAA
 
 Every attempt, permitted or refused, is audited to `/var/log/dial-bounded-recovery.log`.
 
-**Not yet proven.** The mechanism is unit-tested in `tests/oracle-two-way-recovery.test.mjs`
-but has never run between two live hosts. Per Rev 3 §7.1 that is not proof.
+**Not yet proven.** The mechanism and its verifier are both tested — the verifier against
+a correctly bounded target, an unbounded one and a dead one — but it has never run between
+two live hosts. Per Rev 3 §7.1 that is not proof. The three commands above are what closes
+the gap.
+
+### known_hosts: why the recovery agent was never running
+
+`recovery-agent.mjs` SSHes with `StrictHostKeyChecking=yes`. Correct — and also why
+`dial-recovery-agent.service` had never been started anywhere: with no `known_hosts` entry
+every probe fails closed, generating noise rather than recovery. A permanently staged
+recovery plane recovers nothing.
+
+```bash
+dial-seed-known-hosts                                       # seed this host's targets
+dial-seed-known-hosts --expect oracle-admin-v2=SHA256:...   # bind it to a known key
+dial-seed-known-hosts --verify                              # report, change nothing
+```
+
+`ssh-keyscan` believes whatever answers on port 22, and during an outage — exactly when
+this gets run — that is the wrong moment to be credulous. Each peer's key should be checked
+against the `ssh.host_key_fingerprint` its own certification recorded, which reaches you
+over a *different* channel: Run Command, or the offsite evidence bundle. Without `--expect`
+the seeding happens on first use and says loudly that it did; with it, a mismatch refuses
+and writes nothing.
+
+Bootstrap now seeds and then starts the agent — but only if seeding produced something,
+and it records that the keys were accepted unverified when they were.
 
 ---
 
@@ -372,9 +418,17 @@ Named rather than quietly omitted.
    recovery between the two E2 hosts is therefore declared but unproven end to end.
 5. **No backup policy has been applied yet** — `40-backup-policy.sh` exists and is
    tested, but until it is run with `--apply` every host is still rebuild-only.
-6. **Two-way recovery is unexercised end to end.** No bounded-recovery key has been
-   generated or authorized, and `dial-hermes-control` has never restarted an E2's
-   recovery agent. Tested code, not a proven recovery path.
+6. **Two-way recovery is unexercised end to end.** The tooling to prove it exists and is
+   itself tested; no bounded-recovery key has been generated or authorized, and
+   `dial-hermes-control` has never restarted an E2's recovery agent. Three owner commands
+   away (§7).
+6a. **The estate exceeds the Always Free Arm allowance.** Oracle halved it to
+   2 OCPU / 12 GB on 2026-06-15 and terminates over-limit instances;
+   `dial-hermes-control` is declared at 4 OCPU / 24 GB. Run
+   `./50-free-tier-check.sh --declared`. This does **not** explain the 2026-09-12 outage —
+   that host was an E2 and the AMD allowance did not change — but it is a live termination
+   risk to the control host, and item 5 above (no backup policy) is what makes it
+   dangerous rather than merely expensive.
 7. **Offsite backup is installed but unauthorized.** `rclone config` has not been run,
    so `/etc/dial-recovery/rclone.conf` does not exist and the timer is inert by design.
 8. **SSH ingress is `0.0.0.0/0`** on `oracle-admin`, deliberately: Cloud Shell's egress

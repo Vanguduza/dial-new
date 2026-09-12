@@ -25,6 +25,9 @@ Honest accounting. Do not enable a unit whose target file is listed as not imple
 | `role-guard.mjs` | **implemented** — host-side task separation and the R0–R3 recovery ceiling | `tests/oracle-role-guard.test.mjs` |
 | `bounded-recovery-command.sh` | **implemented** — the forced command behind the control host's key into an E2 | `tests/oracle-two-way-recovery.test.mjs` |
 | `install-bounded-recovery-identity.sh` | **implemented** — installs / verifies / revokes that `authorized_keys` entry | same |
+| `install-bounded-recovery-peer.sh` | **implemented** — the outbound half on the control host | `tests/oracle-two-way-verification.test.mjs` |
+| `seed-known-hosts.sh` | **implemented** — seeds peer host keys, optionally fingerprint-bound | same |
+| `verify-two-way-recovery.sh` | **implemented** — proves the direction works *and* is still bounded | same |
 
 ## Two-way recovery (Rev 3 §5)
 
@@ -53,7 +56,34 @@ attempt is audited to `/var/log/dial-bounded-recovery.log`.
 (`install-bounded-recovery-identity.sh <hermes.pub>`), because it grants a capability
 rather than installing a restriction.
 
-**Not yet proven.** The mechanism is unit-tested; it has never run between two live hosts.
+### Proving it
+
+```bash
+install-bounded-recovery-peer.sh     # on dial-hermes-control: key + ssh wiring + .pub
+install-bounded-recovery-identity.sh <that.pub>   # on each E2: bind it to the forced command
+verify-two-way-recovery.sh           # back on the control host
+```
+
+`verify-two-way-recovery.sh` is half refusal-testing on purpose. Trying only permitted
+verbs would prove the channel is open, not that it is bounded — so it also attempts a
+shell, a reboot, a non-recovery restart, command chaining, an OCI call and three
+credential reads, and a refusal probe that succeeds fails the run. Credential probes keep
+the exit status and discard the output, so a regressed refusal cannot write the credential
+into the evidence file.
+
+Verdicts: `PROVEN`, `PARTIAL` (bound proven, R1 repair not attempted), `UNPROVEN` (a
+target could not be reached — never a pass), `FAILED`.
+
+### known_hosts
+
+`recovery-agent.mjs` uses `StrictHostKeyChecking=yes`, which is why
+`dial-recovery-agent.service` had never started anywhere: unseeded peers fail closed.
+`seed-known-hosts.sh` fixes that, and `--expect <host>=SHA256:...` makes the check binding
+against the fingerprint that host's own certification recorded. Without it, keys are
+accepted on first use and the tool says so.
+
+**Not yet proven.** The mechanism and its verifier are both tested; it has never run
+between two live hosts.
 
 `tests/oracle-resource-fabric-runtime.test.mjs` existed but was absent from
 `vitest.config.ts`, so it was collected by nothing and ran never. It is now in the

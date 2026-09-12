@@ -75,18 +75,58 @@ is not the current estate and must not be assumed by any script.
 
 ### 2.1 The capacity envelope
 
+> **The estate is over the line.** Oracle halved the Always Free Ampere A1 allowance from
+> 4 OCPU / 24 GB to **2 OCPU / 12 GB**, effective **2026-06-15**, and began terminating
+> over-limit instances on **2026-08-18**. There was no blog post and no advance
+> notification: the documentation was edited, and an "Action Required" email followed on
+> 2026-08-05. `dial-hermes-control` is declared at 4 OCPU / 24 GB — **double the current
+> allowance**, and therefore subject to termination.
+
 Always Free provides, per tenancy:
 
-| Resource | Allowance | Committed by this estate | Remaining |
+| Resource | Allowance (confirmed 2026-09-12) | Committed by this estate | Remaining |
 |---|---|---|---|
-| AMD compute | 2 × `VM.Standard.E2.1.Micro` | `oracle-admin` + `oracle-admin-v2` | **0** |
-| Arm compute | `VM.Standard.A1.Flex`, 4 OCPU / 24 GB total, divisible across up to 4 instances | `dial-hermes-control` takes all 4 / 24 | **0 as currently allocated** |
-| Block storage | 200 GB total across boot and block volumes | 3 boot volumes | see §2.3 |
+| AMD compute | 2 × `VM.Standard.E2.1.Micro` — *unchanged in 2026* | `oracle-admin` + `oracle-admin-v2` | **0** |
+| Arm compute | `VM.Standard.A1.Flex`, **2 OCPU / 12 GB** total, divisible across up to 4 instances | `dial-hermes-control` declares 4 / 24 | **−2 OCPU / −12 GB — OVER** |
+| Block storage | 200 GB across boot and block volumes — *unchanged in 2026* | 3 boot volumes | see §2.3 |
 | Volume backups | limited; **confirm the current figure before assigning policies** | none assigned | see §6.2 |
 
-> Confirm every figure above against current Oracle Always Free documentation before
-> relying on it. These allowances have changed before and will change again. Rev 3
-> states them so the design can be reasoned about, not as a substitute for checking.
+The figures are not restated here as fact. They live, dated and sourced, in
+`deploy/oracle/free-tier-allowance.json`, and `deploy/oracle/provisioning/50-free-tier-check.sh`
+measures the estate against them:
+
+```bash
+./50-free-tier-check.sh --declared   # hosts.json only; no OCI credentials needed
+./50-free-tier-check.sh              # live, against the control plane
+```
+
+A stale confirmation or an unread canonical page reports `UNVERIFIED`, never `WITHIN`.
+"We last checked in March" is not the same as "we are inside", and the penalty for the
+difference is instance termination.
+
+### 2.1.1 What this means, and what it does not
+
+**It does not explain the 2026-09-12 outage.** The host lost was `oracle-admin`, an
+E2.1.Micro, and the AMD allowance did not change. The correlation is worth checking
+against the tenancy's audit log, but it is not a cause and this document will not
+promote it into one.
+
+**It does mean requirement 1 is currently unmet.** The owner has two honest options, and
+neither is for an agent to choose:
+
+1. **Resize** `dial-hermes-control` to 2 OCPU / 12 GB in the OCI Console. This halves the
+   development pool, so `hosts.json` and `policy.json` must be updated together
+   (`development_pool_mb` is presently 14336, which would no longer exist) or the
+   scheduler will place work on memory that is not there.
+2. **Accept the cost deliberately** and run the A1 host as a paid instance.
+
+Either way, **apply the backup policy first**. An over-limit host with no boot-volume
+backup is the 2026-09-12 loss queued up to happen again, on the control host this time.
+
+This is also the clearest possible argument for §2.5's rules and for this check existing
+at all: the previous revision asserted the estate was inside Always Free using figures
+that had been superseded three months earlier, and nothing in the system was in a
+position to notice.
 
 ### 2.2 The consequence Rev 2 missed
 
@@ -114,23 +154,28 @@ ability to recover for disk nobody asked for.
 
 ### 2.4 Headroom: subdividing the Arm allowance
 
-The A1 allowance is 4 OCPU / 24 GB **divisible across up to four instances**. It is not
-obliged to be one machine.
+The A1 allowance is **divisible across up to four instances**. It is not obliged to be
+one machine. That property survived the 2026 reduction; the size did not.
 
 If a standby or a third recovery node is ever needed, the only free-tier route is to
-split the Arm allowance rather than to add an E2:
+split the Arm allowance rather than to add an E2. At the current 2 OCPU / 12 GB:
 
 ```
-Today:     dial-hermes-control   4 OCPU / 24 GB          (whole allowance)
+Declared today:  dial-hermes-control   4 OCPU / 24 GB     (OVER — see §2.1)
 
-Option:    dial-hermes-control   3 OCPU / 18 GB
-           recovery-c (arm64)    1 OCPU /  6 GB          (still free)
+Compliant:       dial-hermes-control   2 OCPU / 12 GB     (whole allowance)
+
+Compliant split: dial-hermes-control   1 OCPU /  8 GB
+                 recovery-c (arm64)    1 OCPU /  4 GB     (still free)
 ```
 
-This is a **deliberate, owner-authorized change**, not an automatic one: it reduces
-Hermes' development pool, and `policy.json` sizes that pool at 14336 MB. Any such split
-must update `hosts.json` and `policy.json` together, or the scheduler will place work on
-memory that no longer exists.
+The headroom this section was written to describe is now much thinner: a compliant split
+leaves Hermes with 8 GB, against a `development_pool_mb` of 14336. **A third recovery node
+and the current development pool are no longer simultaneously affordable on Always Free.**
+
+Any such split is a **deliberate, owner-authorized change**, and must update `hosts.json`
+and `policy.json` together, or the scheduler will place work on memory that no longer
+exists.
 
 Note also that a third recovery node would be **arm64**, so `role-guard.mjs`'s
 architecture gate correctly refuses x86-only work to it. That gate already exists.
@@ -143,6 +188,9 @@ architecture gate correctly refuses x86-only work to it. That gate already exist
   exactly 100% has no room for a mistake.
 - Reclaim before you allocate: terminate the old host before launching its replacement,
   and only when a backup exists.
+- **Re-confirm the allowance on a schedule, not on suspicion.** Oracle changed it in 2026
+  without an announcement and enforced it by termination. `free-tier-allowance.json`
+  expires on its own for this reason; let it, and re-run `50-free-tier-check.sh`.
 
 ---
 
@@ -367,7 +415,10 @@ Sections 5.2–5.5 are built, not only specified. What enforces what:
 | `resource-fabric/recovery-agent.mjs` | `permittedServices()` narrows what a bounded recoverer may restart on a peer; `repairTarget()` refuses before it opens SSH |
 | `resource-fabric/bounded-recovery-command.sh` | the forced command: the complete verb set the Hermes key can reach on an E2 |
 | `resource-fabric/install-bounded-recovery-identity.sh` | installs, verifies and revokes that `authorized_keys` entry, refusing every unsafe shape |
-| `tests/oracle-two-way-recovery.test.mjs` | 36 tests; `tests/oracle-role-guard.test.mjs` carries 46 more |
+| `resource-fabric/install-bounded-recovery-peer.sh` | the outbound half on Hermes: a dedicated keypair, `IdentitiesOnly` wiring, no private key ever leaves |
+| `resource-fabric/seed-known-hosts.sh` | seeds peer host keys, optionally bound to each peer's certified fingerprint |
+| `resource-fabric/verify-two-way-recovery.sh` | proves the direction on the live estate — and proves it is still bounded |
+| `tests/oracle-two-way-recovery.test.mjs` | 36 tests; `oracle-role-guard` 46, `oracle-two-way-verification` 26 more |
 
 The bound is enforced at three independent layers, deliberately:
 
@@ -384,17 +435,60 @@ does not depend on the attacker's cooperation.
 `role-guard.mjs` records the permitted class on every allow, so a recovery action leaves
 evidence of the authority it ran under rather than only that it ran.
 
-#### What is still a manual owner step
+#### Proving it, and what is still a manual owner step
 
-Two, on purpose, because each one grants a capability rather than installing a restriction:
+`verify-two-way-recovery.sh` is what turns this from tested code into a proven path. It is
+deliberately half refusal-testing: a verification that only tries permitted verbs proves
+the channel is *open*, not that it is *bounded*, and an unbounded channel from the control
+host into the recovery tier is worse than no channel at all. So each run also attempts a
+shell, a reboot, a non-recovery unit restart, command chaining, an OCI control-plane call
+and three credential reads — and a refusal probe that succeeds fails the whole run.
 
-- generating the dedicated bounded-recovery keypair on `dial-hermes-control`;
-- running `install-bounded-recovery-identity.sh <hermes.pub>` on each E2.
+Its verdicts are `PROVEN`, `PARTIAL` (reachability and the bound proven, R1 repair not
+attempted), `UNPROVEN` (could not reach a target — never a pass) and `FAILED`.
+
+The credential probes keep only the exit status and discard the output. If one of those
+refusals ever regressed, recording the result would write the credential into the
+evidence file.
+
+Two steps remain manual, on purpose, because each grants a capability rather than
+installing a restriction:
+
+```bash
+# on dial-hermes-control, once
+install-bounded-recovery-peer.sh          # generate the key, wire ssh, print the .pub
+
+# on each E2, once, with that .pub
+install-bounded-recovery-identity.sh /path/to/hermes.pub
+
+# back on dial-hermes-control
+verify-two-way-recovery.sh                # non-destructive
+verify-two-way-recovery.sh --include-repair
+```
 
 `bootstrap.sh` phase 5 installs the forced command unconditionally and then *reports*
 whether the key has been authorized. Installing the restriction before the capability is
 the correct order: binding a key to a forced command that does not yet exist would grant
 an unrestricted shell for the length of that window.
+
+#### known_hosts, and why the recovery agent was never running
+
+`recovery-agent.mjs` SSHes with `StrictHostKeyChecking=yes`. That is correct, and it is
+also why `dial-recovery-agent.service` had never been started on any host: with no
+`known_hosts` entry every probe fails closed, producing noise rather than recovery. A
+permanently staged recovery plane recovers nothing.
+
+`seed-known-hosts.sh` closes that, and bootstrap now seeds and then starts the agent —
+only if seeding produced something. Plain `ssh-keyscan` is trust-on-first-use, so each
+peer's key SHOULD be checked against the `ssh.host_key_fingerprint` its own certification
+recorded, which reaches you over a different channel (Run Command, or the offsite bundle):
+
+```bash
+seed-known-hosts.sh --expect oracle-admin-v2=SHA256:...
+```
+
+Without `--expect` it seeds on first use and says loudly that it did. With it, a mismatch
+refuses and writes nothing.
 
 ---
 
@@ -544,9 +638,11 @@ Named rather than omitted.
 These are the honest remainder. Note what §9.1 does *not* claim: the mechanism is built and
 unit-tested, but it has never run between two live hosts. Per §7.1 that is not proof.
 
-1. **Two-way recovery is unexercised end to end.** No bounded-recovery key has been
-   generated or authorized, and Hermes has never restarted an E2's recovery agent. Until
-   it has, this is tested code, not a proven recovery path.
+1. **Two-way recovery is unexercised end to end.** The tooling to prove it now exists and
+   is itself tested against a bounded, an unbounded and a dead target — but no
+   bounded-recovery key has been generated or authorized, and Hermes has never restarted
+   an E2's recovery agent. Three owner commands stand between here and proof (§5.7). Until
+   they are run, this is tested code, not a proven recovery path.
 2. **No backup policy has been applied.** The script is written and tested; it has never
    been run with `--apply`.
 3. **`oracle-admin-v2` is down.** Two-way recovery cannot be certified until it returns.
@@ -554,7 +650,12 @@ unit-tested, but it has never run between two live hosts. Per §7.1 that is not 
    certification stands at AMBER.
 5. **The control-plane outage is unresolved** — Sol and Sonnet `AUTH_FAILED`, gate
    `DEVELOPMENT_BLOCKED`. Independent of everything above; no host recovery fixes it.
-6. **Always Free allowances in §2.1 need re-confirming** against current Oracle
-   documentation before any capacity decision rests on them.
+6. **The estate exceeds the Always Free Arm allowance.** Re-confirmed 2026-09-12 and
+   corrected in §2.1: the A1 allowance halved to 2 OCPU / 12 GB on 2026-06-15 and
+   `dial-hermes-control` is declared at double that. `50-free-tier-check.sh` reports
+   `EXCEEDS`. The owner decides between resizing and paying; apply the backup policy
+   first either way. The canonical Oracle page could not be read from this environment
+   (egress-blocked), so the figures are corroborated rather than canonical and the check
+   reports `UNVERIFIED` rather than `WITHIN` until that is fixed.
 7. **Rev 2's two-subnet design is not implemented** and the estate is single-subnet. If a
    production/management split is wanted it is a planned migration, not an assumption.

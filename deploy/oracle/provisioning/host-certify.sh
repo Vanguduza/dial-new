@@ -99,6 +99,37 @@ else
   fail_closed=unverified
 fi
 
+# ---- two-way recovery, inbound half (Rev 3 section 5) -------------------------------
+# This host is the TARGET of the bounded direction. What it can establish locally:
+# whether the restriction is installed, whether a peer key is bound to it, and — from
+# its own audit log — whether that channel has ever actually been used. The last is the
+# only one that is evidence in the section 7.1 sense: a log line the forced command
+# wrote cannot exist unless a peer really connected and really was adjudicated.
+BR_CMD=/usr/local/bin/dial-bounded-recovery
+BR_LOG=/var/log/dial-bounded-recovery.log
+br_installed=$([[ -x $BR_CMD ]] && echo true || echo false)
+br_authorized=false; br_restricted=false
+if [[ -x $FABRIC/install-bounded-recovery-identity.sh ]]; then
+  br_verify="$(timeout 15 sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID="$(hostname)" \
+    bash "$FABRIC/install-bounded-recovery-identity.sh" --verify 2>&1)"
+  case "$br_verify" in
+    PRESENT*)  br_authorized=true; br_restricted=true ;;
+    DEGRADED*) br_authorized=true; br_restricted=false ;;
+  esac
+else
+  br_verify="installer not present on this ref"
+fi
+# Counting refusals matters as much as counting allows. A channel that has only ever
+# been allowed has not demonstrated that it refuses anything.
+# `{ grep || true; }`, never `grep || echo 0`: grep -c exits 1 on zero matches AFTER
+# printing "0", so the fallback would append a second value and the count would read
+# "0\n0". That is cause #7 from the 2026-09-12 outage, in miniature.
+br_allows=$({ grep -c 'verdict=ALLOW' $BR_LOG 2>/dev/null || true; } | head -1)
+br_refusals=$({ grep -c 'verdict=REFUSED' $BR_LOG 2>/dev/null || true; } | head -1)
+br_allows=${br_allows:-0}; br_refusals=${br_refusals:-0}
+br_last=$(tail -1 $BR_LOG 2>/dev/null | awk '{print $1}')
+br_exercised=$([[ "${br_allows:-0}" -gt 0 ]] && echo true || echo false)
+
 commander_paired=$([[ -f $CRED ]] && echo true || echo false)
 # Read the version from package.json — never by executing the binary. There is no
 # --version flag: an unrecognised argument falls through to the MCP stdio server,
@@ -137,7 +168,12 @@ ssh_ok=false
 oci_ok=false
 [[ "$oca" == "active" && "$ocarun" == "true" && "$runcmd_plugin" == "true" ]] && oci_ok=true
 recovery_ok=false
-[[ "$fabric_loads" == "true" && "$fail_closed" == "true" && "$stray" == "[]" ]] && recovery_ok=true
+# Rev 3 section 8 makes the purpose-bound forced-command identity part of GREEN. This
+# tightens GREEN only: AMBER still needs just SSH and OCI access, so an honest resting
+# point stays reachable while the owner's one manual step is outstanding.
+[[ "$fabric_loads" == "true" && "$fail_closed" == "true" && "$stray" == "[]" \
+   && "$br_installed" == "true" && "$br_authorized" == "true" && "$br_restricted" == "true" ]] \
+  && recovery_ok=true
 
 if [[ "$ssh_ok" == "true" && "$oci_ok" == "true" && "$recovery_ok" == "true" && "$commander_green" == "true" ]]; then
   verdict=GREEN; reason="SSH, OCI emergency access, recovery plane and Commander all functionally proven"
@@ -161,7 +197,14 @@ report="$(jq -n \
   --argjson net "$(jq -n --arg g "$https_gh" --arg n "$https_npm" --arg d "$dns_ok" \
       '{github_https:$g, npm_https:$n, dns:($d=="true")}')" \
   --argjson recovery "$(jq -n --arg s "$repo_sha" --arg r "$repo_ref" --arg t "$host_agent_timer" --arg a "$recovery_agent" --arg e "$recovery_agent_enabled" --arg sc "$scheduler" --arg fl "$fabric_loads" --arg fc "$fail_closed" --argjson stray "$stray" --argjson ok "$recovery_ok" \
-      '{repo_sha:$s, repo_ref:$r, host_agent_timer:$t, recovery_agent:$a, recovery_agent_enabled:$e, scheduler:$sc, fabric_module_loads:($fl=="true"), stale_telemetry_fails_closed:$fc, dial_application_workload:$stray, healthy:$ok}')" \
+      --argjson tw "$(jq -n --argjson i "$br_installed" --argjson a "$br_authorized" --argjson r "$br_restricted" \
+          --arg v "${br_verify:-unverified}" --arg al "${br_allows:-0}" --arg rf "${br_refusals:-0}" \
+          --arg last "${br_last:-none}" --argjson ex "$br_exercised" \
+          '{inbound_forced_command_installed:$i, peer_key_authorized:$a, entry_correctly_restricted:$r,
+            verify_line:$v, audited_allows:($al|tonumber?), audited_refusals:($rf|tonumber?),
+            last_audited_attempt:$last, channel_exercised:$ex,
+            note:"This host is the TARGET of the bounded direction. Proof that the direction WORKS is written by verify-two-way-recovery.sh on the recovering host; channel_exercised is this host'"'"'s own corroboration."}')" \
+      '{repo_sha:$s, repo_ref:$r, host_agent_timer:$t, recovery_agent:$a, recovery_agent_enabled:$e, scheduler:$sc, fabric_module_loads:($fl=="true"), stale_telemetry_fails_closed:$fc, dial_application_workload:$stray, two_way_recovery:$tw, healthy:$ok}')" \
   --argjson commander "$(jq -n --arg v "$commander_version" --arg p "$commander_paired" --arg u "$commander_unit" --argjson c "$commander_criteria" --argjson g "$commander_green" \
       '{package:"@wonderwhy-er/desktop-commander@0.2.50", version:$v, transport:"outbound persistent remote device (no inbound port)", paired:($p=="true"), unit:$u, criteria:$c, functionally_proven:$g}')" \
   --argjson resources "$(jq -n --arg mt "$mem_total" --arg ma "$mem_avail" --arg st "$swap_total" --arg su "$swap_used" --arg d "$disk_used_pct" --arg l "$loadavg" --argjson p "$ports" --argjson u "$units" \

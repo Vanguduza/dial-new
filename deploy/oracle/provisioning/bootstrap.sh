@@ -265,10 +265,9 @@ CONF
   # Telemetry publication is safe to enable immediately; it only reads /proc.
   sudo -u $ADMIN_USER XDG_RUNTIME_DIR=$rt systemctl --user enable --now dial-host-agent.timer 2>/dev/null || true
 
-  # dial-recovery-agent.service is deliberately NOT started here. It SSHes into
-  # peers with StrictHostKeyChecking=yes, so it must not run until known_hosts is
-  # seeded and the peer allowlist is verified — install-recovery-peer.sh says the
-  # same. Starting it blind would fail closed and generate noise, not recovery.
+  # dial-recovery-agent.service is started below, but only after known_hosts has been
+  # seeded: it SSHes into peers with StrictHostKeyChecking=yes, so starting it blind
+  # fails closed and generates noise rather than recovery.
   # Host-side task separation. placement.mjs only binds work that arrives through the
   # scheduler; this lets the host refuse out-of-role work however it arrived.
   if [[ -f $fab/role-guard.mjs ]]; then
@@ -295,7 +294,42 @@ CONF
     fact bounded_recovery_command_installed false
   fi
 
-  fact recovery_agent_activation "staged, not started: requires seeded known_hosts for peers"
+  # Recovery-plane tooling. All three are inert until invoked; installing them is what
+  # makes the owner's remaining steps short enough to type on a phone during an outage.
+  local t
+  for t in seed-known-hosts:dial-seed-known-hosts \
+           verify-two-way-recovery:dial-verify-two-way-recovery \
+           install-bounded-recovery-identity:dial-authorize-bounded-recovery \
+           install-bounded-recovery-peer:dial-install-bounded-recovery-peer; do
+    if [[ -f $fab/${t%%:*}.sh ]]; then
+      install -m 755 -o root -g root "$fab/${t%%:*}.sh" "/usr/local/bin/${t##*:}"
+    fi
+  done
+
+  # Seed known_hosts and, if that produced anything, actually start the recovery agent.
+  # It SSHes with StrictHostKeyChecking=yes, so an unseeded peer fails closed — which is
+  # why this unit has never run. Seeding is the last thing between a staged recovery
+  # plane and a running one, and a staged recovery plane recovers nothing.
+  if [[ -x /usr/local/bin/dial-seed-known-hosts ]]; then
+    local seed_out
+    seed_out="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID=oracle-admin \
+      DIAL_REPO_DIR="$REPO_DIR" bash /usr/local/bin/dial-seed-known-hosts 2>&1 | tr '\n' ' ')"
+    fact known_hosts_seeding "$seed_out"
+    local seeded
+    seeded="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID=oracle-admin \
+      bash /usr/local/bin/dial-seed-known-hosts --verify 2>&1 | { grep -c '^SEEDED' || true; } | head -1)"
+    if [[ "${seeded:-0}" -gt 0 ]]; then
+      sudo -u $ADMIN_USER XDG_RUNTIME_DIR=$rt systemctl --user enable --now dial-recovery-agent.service 2>/dev/null || true
+      fact recovery_agent_activation \
+        "started: ${seeded} peer host key(s) seeded. Host keys accepted on first use are UNVERIFIED until re-run with --expect against each peer's certified fingerprint."
+    else
+      fact recovery_agent_activation \
+        "staged, not started: no peer host key could be seeded (peers unreachable?). Re-run dial-seed-known-hosts once a peer answers."
+    fi
+  else
+    fact recovery_agent_activation "staged, not started: seeding tool not present on this ref"
+  fi
+
   fact fabric_staged true
   return 0
 }

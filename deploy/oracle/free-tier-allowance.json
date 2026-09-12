@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "note": "The Always Free allowance as confirmed on `confirmed_at_utc`, with its sources. This file exists because Rev 3 section 2.1 hardcoded figures that were already out of date when they were written: Oracle halved the Ampere A1 allowance on 2026-06-15 and terminated over-limit instances from 2026-08-18, with no blog post and no advance notification. A capacity figure with no confirmation date is an assumption wearing a number's clothes, so this one carries a date and goes stale on its own.",
+  "confirmed_at_utc": "2026-09-12T16:20:00Z",
+  "confirmed_by": "claude-20260912-oracle-cluster-rev3, corroborated across three independent secondary sources",
+  "stale_after_days": 90,
+  "canonical_source": "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm",
+  "provenance": {
+    "canonical_source_read": false,
+    "why": "docs.oracle.com is blocked by this environment's egress proxy. The figures below were corroborated across three independent secondary sources that agree on the numbers, the effective date and the enforcement date. Re-confirm against the canonical page from a host that can reach it before any capacity decision rests on them.",
+    "corroborating_sources": [
+      "https://www.infoq.com/news/2026/07/oracle-cloud-free-tier-limits/",
+      "https://linuxiac.com/oracle-quietly-cuts-free-tier-ampere-a1-resources-in-half/",
+      "https://terminalbytes.com/oracle-cloud-free-tier-changes-2026/"
+    ]
+  },
+  "compute": {
+    "VM.Standard.E2.1.Micro": {
+      "max_instances": 2,
+      "ocpu_each": 0.125,
+      "memory_mb_each": 1024,
+      "changed_in_2026": false
+    },
+    "VM.Standard.A1.Flex": {
+      "max_ocpu_total": 2,
+      "max_memory_mb_total": 12288,
+      "max_instances": 4,
+      "divisible": true,
+      "changed_in_2026": true,
+      "previous_max_ocpu_total": 4,
+      "previous_max_memory_mb_total": 24576,
+      "change_effective_utc": "2026-06-15",
+      "over_limit_termination_from_utc": "2026-08-18",
+      "how_it_was_announced": "It was not. The documentation was edited; an 'Action Required: OCI Always Free Update' email followed on 2026-08-05. Users found out when instances stopped."
+    }
+  },
+  "storage": {
+    "block_and_boot_volume_gb_total": 200,
+    "changed_in_2026": false
+  }
+}
