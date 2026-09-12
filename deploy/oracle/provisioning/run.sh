@@ -122,11 +122,15 @@ _try_collect() {
     # Report success only if the artefact is actually on disk afterwards. Returning
     # 0 on the strength of having parsed the body meant a failed `mv` still counted
     # as collected, and the step was then re-queued forever against an empty file.
-    local mverr; mverr="$(mv "$tmp" host-certification.json 2>&1)"
-    if [[ -s host-certification.json ]]; then rm -f "$err"; return 0; fi
+    # `cp` rather than `mv`: mv across filesystems can fail in ways that report
+    # nothing useful, and the temp file is in /tmp while the artefact belongs in the
+    # working directory. Verify the result, and if it did not land say exactly why —
+    # "unknown error" is not a diagnosis.
+    local cperr; cperr="$(cp -f "$tmp" host-certification.json 2>&1)"
+    if [[ -s host-certification.json ]]; then rm -f "$err" "$tmp"; return 0; fi
     LAST_SSH_RC="$rc"
-    LAST_SSH_ERR="could not write host-certification.json: ${mverr:-unknown error}"
-    LAST_BODY=""
+    LAST_SSH_ERR="write to $PWD/host-certification.json failed: ${cperr:-cp reported nothing}"
+    LAST_BODY="dir=$(ls -ld . 2>&1 | head -1) | disk=$(df -h . 2>/dev/null | tail -1) | src=$(ls -l "$tmp" 2>&1 | head -1)"
     rm -f "$tmp" "$err"
     return 1
   fi
