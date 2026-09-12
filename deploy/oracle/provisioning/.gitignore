@@ -10,3 +10,4 @@ hermes-before.json
 hermes-after.json
 launch.log
 run.log
+hermes-diff.txt
