@@ -249,8 +249,19 @@ if [[ "$state" == "GREEN" ]]; then
   exit 0
 fi
 
+# Print the blockers the report actually recorded. Saying "one step left" while the
+# evidence lists two is the tool flattering itself, which is exactly what this
+# certification exists to prevent.
+echo "Outstanding, per certification-report.json:"
+jq -r '.certification.blockers[]? | "  - " + .' certification-report.json 2>/dev/null
+echo
+echo "Recovery-plane detail (why it is not yet proven):"
+jq -r '.recovery_plane | "  fabric module loads:            \(.fabric_module_loads)\n  stale telemetry fails closed:  \(.stale_telemetry_fails_closed)\n  DIAL workload present:         \(.dial_application_workload)\n  repo:                          \(.repo_sha) (\(.repo_ref))"' \
+  host-certification.json 2>/dev/null
+echo
+
 cat <<EOF
-Everything that can be automated is done. One step left, and it needs a browser:
+Of those, only the Commander step needs you; it needs a browser:
 
   1. Pair Desktop Commander (one time):
 
