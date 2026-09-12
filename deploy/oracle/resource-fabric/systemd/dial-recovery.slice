@@ -1,0 +1,8 @@
+[Unit]
+Description=DIAL recovery slice — peer recovery agents (architecture section 6.3)
+Before=slices.target
+
+[Slice]
+MemoryMin=512M
+CPUWeight=1000
+IOWeight=1000

@@ -1,0 +1,20 @@
+[Unit]
+Description=DIAL resource fabric placement scheduler (architecture section 31)
+After=network-online.target
+
+[Service]
+Type=simple
+Slice=dial-control.slice
+Environment=DIAL_FABRIC_STATE=%h/.local/state/dial-fabric
+ExecStart=/usr/bin/env node %h/dial-new/deploy/oracle/resource-fabric/resource-scheduler.mjs daemon
+Restart=always
+RestartSec=5s
+StartLimitIntervalSec=0
+TimeoutStartSec=60
+TimeoutStopSec=30
+KillSignal=SIGTERM
+OOMScoreAdjust=-900
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

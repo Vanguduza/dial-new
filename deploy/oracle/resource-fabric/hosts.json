@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "policy_id": "dial-resource-fabric-v1",
+  "note": "Public IP addresses are intentionally omitted. docs/orchestration/IMPLEMENTATION_STATE.md records that public IPs and account identifiers are sensitive operational detail and must not live in the repository. Operators supply them at install time via DIAL_FABRIC_<HOST>_SSH_HOST. Private OCI addresses are the primary peer-recovery path per the architecture (section 21).",
+  "hosts": [
+    {
+      "host_id": "dial-hermes-control",
+      "oci_shape": "VM.Standard.A1.Flex",
+      "architecture": "arm64",
+      "cpu_total": 4,
+      "memory_total_mb": 24576,
+      "private_ip": "10.0.0.184",
+      "roles": ["HERMES_CONTROL", "HEAVY_COMPUTE"],
+      "recovery_role": "RECOVERABLE_BY_PEERS",
+      "recovers": [],
+      "control_reservation_mb": 8192,
+      "development_pool_mb": 14336,
+      "emergency_headroom_mb": 2048,
+      "max_concurrent_heavy_jobs": 2,
+      "toolchains": ["node22", "npm10", "python3", "git"]
+    },
+    {
+      "host_id": "oracle-admin-v2",
+      "oci_shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "cpu_total": 1,
+      "memory_total_mb": 1024,
+      "private_ip": "10.0.0.245",
+      "roles": ["ADMIN", "RECOVERY", "LIGHT_X86"],
+      "recovery_role": "PRIMARY",
+      "recovers": ["oracle-admin", "dial-hermes-control"],
+      "control_reservation_mb": 0,
+      "development_pool_mb": 0,
+      "emergency_headroom_mb": 200,
+      "max_concurrent_heavy_jobs": 0,
+      "toolchains": ["node22", "npm10", "python3", "git"]
+    },
+    {
+      "host_id": "oracle-admin",
+      "oci_shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "cpu_total": 1,
+      "memory_total_mb": 1024,
+      "private_ip": "10.0.0.123",
+      "roles": ["ADMIN", "RECOVERY", "LIGHT_X86"],
+      "recovery_role": "SECONDARY",
+      "recovers": ["oracle-admin-v2", "dial-hermes-control"],
+      "control_reservation_mb": 0,
+      "development_pool_mb": 0,
+      "emergency_headroom_mb": 200,
+      "max_concurrent_heavy_jobs": 0,
+      "toolchains": ["node22", "npm10", "python3", "git"]
+    }
+  ]
+}

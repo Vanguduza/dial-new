@@ -1,0 +1,11 @@
+[Unit]
+Description=DIAL control slice — Hermes and owner control (architecture section 6.1)
+Before=slices.target
+
+[Slice]
+MemoryLow=8G
+MemoryMin=6G
+MemoryHigh=10G
+CPUWeight=900
+IOWeight=900
+ManagedOOMMemoryPressure=kill
