@@ -12,7 +12,7 @@
     "docs/project-state/authorizations/auth-20260913-owner-hybrid-mcp-ssh-control-plane.json"
   ],
   "content_diff_sha256": "19ed70415ac786163c7429af5b1f541dc66beaabd7507aa04692cc967cd2a5f5",
-  "observed_at_utc": "2026-09-13T06:46:15.095085+00:00",
+  "observed_at_utc": "2026-09-13T06:48:00+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
   "source_parent": "825730237805157412028cec73ddbad8a867dd97",
