@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260913-owner-calibrated-prior-hybrid",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "85a39ab345d672ff8ca9b9c6876f3adcacf45ee7c1e2dbd2408fd338bd55e07e",
+  "owner_instruction_excerpt": "Yes — approving the hybrid proposed in answer to 'Is there a hybrid option': calibrate the prior from DIAL's own outcomes, use the posterior smoothing weight as the confidence dial rather than a hard threshold, add a sample-count tie-break, and delete the unread below_threshold_behaviour field.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260913-calibrated-prior-hybrid",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-13T03:18:00+00:00",
+  "base_sha": "773b3b98e643fef65d06154269168bd79cd78f86",
+  "branch_scope": "claude/adaptive-harness-model-routing-dec032",
+  "authorized_paths": [
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "tests/orchestration-adaptive-routing.test.mjs"
+  ],
+  "change_classes": [
+    "calibrated_performance_prior",
+    "confidence_weighted_blending",
+    "dead_config_removal",
+    "technical_implementation",
+    "project_truth_reconciliation"
+  ],
+  "decision": {
+    "question": "A pair with a measured record below the cold-start prior ranked below a pair with no record at all. Correct Bayesian behaviour only if the prior is calibrated, and it was an inherited constant.",
+    "resolution": "Calibrate the prior from DIAL's own rating-bearing outcomes; use the posterior smoothing weight as a continuous confidence dial instead of a hard threshold; break exact ties toward the better-evidenced pair; delete the unread below_threshold_behaviour field.",
+    "rejected_alternatives": [
+      "Lowering the prior to a pessimistic constant, which is the same unprincipled guess pointing the other way and penalises the untried.",
+      "UCB or Thompson sampling, which is the textbook answer to explore/exploit but brings tuning constants and machinery that a fleet of this size will not repay."
+    ]
+  },
+  "notes": [
+    "The prior is now computed: per-archetype once an archetype has 30 of its own rating-bearing samples, global once 30 pooled exist, seeded at 0.75 until then. Only rating-bearing samples calibrate, so resource-caused failures cannot drag the population mean down either.",
+    "prior_weight raised from 8 to 12. This is the confidence dial: a pair's own record carries samples/(weight+samples) of its score, blending continuously so nothing jumps in the ordering as a pair crosses a sample count. Chosen because DIAL's jobs are substantial and infrequent, so over-reacting to a few bad runs costs more than reacting slowly. It remains a judgment and should be revisited from real data.",
+    "below_threshold_behaviour is deleted. It declared a RANK_ON_DECLARED_CAPABILITY_AND_COST mode that no routing code read. An earlier statement that policy and code were 'different systems' was too strong: the code satisfied it structurally, because an unmeasured pair's quality is a constant across all unmeasured pairs, so ordering among them already fell to fit and cost. It was dead config rather than a contradiction, and dead config that looks load-bearing is worse than none.",
+    "min_samples_for_evidenced_placement is retained for reporting only: it drives the below_reference flag in the trace so a reader can see where DIAL does not really know yet. It gates visibility, never ranking or eligibility.",
+    "A probe caught a real bug during implementation: measured and unmeasured pairs were being scored on DIFFERENT scales -- an unmeasured pair returned the bare prior while a measured one returned a weighted blend including a defect term, so a below-average pair scored ABOVE an unknown. Both branches now use the identical blend. AR-26 asserts the comparison in both directions and was verified to go RED when the unification is reverted.",
+    "AR-12 was rewritten to assert behaviour rather than read config. Its previous form asserted the value of below_threshold_behaviour -- the field that turned out to be unread -- so it was passing for the same class of reason AR-06 originally did."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

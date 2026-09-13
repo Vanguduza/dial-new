@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { deterministicMinimalCoalition, resolveEngineeringResources } from '../agent-system/orchestration/engineering-resource-resolver.mjs';
 import { refreshAheadOfWorkResearch } from '../agent-system/orchestration/engineering-presearch.mjs';
 import { runProjectAwareResearchForecast } from '../agent-system/orchestration/engineering-research-manager.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
+import { parseProviderRetryAfter } from '../agent-system/orchestration/runtime-capacity-policy.mjs';
 import { cachedCodexIdentity } from '../agent-system/orchestration/runtime-identity-cache.mjs';
 import { persistSkillActivation, activationSummary, renderSkillActivationBundle } from '../agent-system/orchestration/skill-activation-store.mjs';
 import { reResolvePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from '../agent-system/orchestration/engineering-knowledge-broker.mjs';
@@ -15,6 +16,7 @@ const repoDir=process.cwd();
 function temp(name){return fs.mkdtempSync(path.join(os.tmpdir(),`${name}-`));}
 
 describe('VEKL 2 federated engineering resources',()=>{
+  afterEach(()=>{ vi.useRealTimers(); });
   it('keeps Oracle qualification and finalization pinned to the current federated-resource policy version',()=>{
     for (const rel of [
       'deploy/oracle/hermes-codex/qualify-control-plane.sh',
@@ -59,6 +61,13 @@ describe('VEKL 2 federated engineering resources',()=>{
   });
 
   it('turns an exact Sol research quota response into reusable identity plus cooldown before falling back',async()=>{
+    // The provider message carries an absolute retry-at. parseProviderRetryAfter
+    // deliberately returns null once that instant has passed, because a cooldown
+    // in the past is not a cooldown. Without pinning the clock this assertion
+    // therefore passes only when the suite runs before 05:42Z on 2026-09-12.
+    // Only Date is faked, so the async runners still use real timers.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-12T04:00:00.000Z'));
     const root=temp('vekl2-sol-boundary');ensureControlLayout(root);
     const forecast={schema_version:1,forecast_horizon:'next_3_to_5_dependency_safe_packets',items:[
       {feature_id:'GROC-F021',objective:'A',task_classes:[],technologies:[],research_questions:[],preferred_source_ids:[],search_queries:[],risks:[]},
@@ -75,6 +84,17 @@ describe('VEKL 2 federated engineering resources',()=>{
     expect(health.state).toBe('ACCOUNT_LIMITED');
     expect(health.retry_after).toBe('2026-09-12T05:42:00.000Z');
     expect(cachedCodexIdentity({repoDir,root})).not.toBeNull();
+  });
+
+  it('treats an absolute retry-at that has already passed as no cooldown at all',()=>{
+    // Pinning the clock in the test above must not hide the other branch.
+    // parseProviderRetryAfter deliberately yields null once the instant has
+    // passed, because a cooldown in the past is not a cooldown -- and
+    // providerCooldownUntil then falls back to observed_at + duration. Only
+    // the future branch was covered anywhere before this.
+    const msg="You've hit your usage limit; try again at Sep 12th, 2026 5:42 AM. usageLimitExceeded";
+    expect(parseProviderRetryAfter(msg,{nowMs:Date.parse('2026-09-12T04:00:00Z')})).toBe('2026-09-12T05:42:00.000Z');
+    expect(parseProviderRetryAfter(msg,{nowMs:Date.parse('2026-09-12T20:00:00Z')})).toBeNull();
   });
 
   it('does not invoke Sol research while a known provider cooldown is active',async()=>{

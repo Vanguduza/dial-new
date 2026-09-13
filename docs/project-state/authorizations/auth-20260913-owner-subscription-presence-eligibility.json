@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260913-owner-subscription-presence-eligibility",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "6bb58a3d825443e9b9a61b4627ec82644d13b122e0bf0d750be77cee606adbdc",
+  "owner_instruction_excerpt": "Model capabilities are known already so there is no need for dial to prove again. All models should qualify if they exist on a subscription plan and our development system should learn from assigned jobs how each model performs for future assignments.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260913-subscription-presence-eligibility",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-13T02:27:41+00:00",
+  "base_sha": "5e66bcd0050359e4af626f9635a329452edd6b67",
+  "branch_scope": "claude/adaptive-harness-model-routing-dec032",
+  "authorized_paths": [
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
+    "agent-system/registries/DECISION_LOG.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "agent-system/registries/MODEL_REGISTRY.json",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "tests/orchestration-adaptive-routing.test.mjs"
+  ],
+  "change_classes": [
+    "owner_override_of_agent_judgment",
+    "subscription_presence_eligibility",
+    "probation_removal",
+    "performance_learned_from_assigned_jobs",
+    "technical_implementation",
+    "project_truth_reconciliation"
+  ],
+  "owner_overrides": [
+    {
+      "overridden": "Agent's deny-until-qualified reading of the source document's section 6.",
+      "ruling": "All models present on an authorised subscription qualify. DIAL does not re-prove capabilities the provider already establishes.",
+      "effect": "Eligibility is conferred by subscription presence plus harness compatibility, declared capability, health/quota and the task's security and data-class policy. The maturity ladder is removed."
+    },
+    {
+      "overridden": "Agent's low-risk exploration carve-out, which admitted an unproven pair only at LOW risk so it could accumulate evidence.",
+      "ruling": "Invalidated. There is no use in giving a model light work to prove itself to DIAL.",
+      "effect": "No probation and no first-test restriction. A model DIAL has never used is eligible for CRITICAL work. Performance is learned from real assigned jobs."
+    }
+  ],
+  "notes": [
+    "The DEC-032 decision record already stated subscription-wide worker eligibility, faithful to the source document. The probation ladder existed only in the agent's implementation of the registries, so this change reconciles code to canon rather than changing canon. One clause in the decision's consequence text that asserted 'discovery never confers qualification' is corrected to match.",
+    "The quality floor is retained but is now evidence-gated: it applies only once the ledger holds at least the configured sample count for a pair, and it exists to retire a pair that has demonstrably underperformed rather than to gate a new one. It still runs ahead of cost ranking so a cheap pair with a bad record cannot win a high-risk task on price.",
+    "Weak telemetry now changes ranking only and may never exclude a pair. reliability_profile records what the provider establishes, not how much DIAL has used a model, so no model is ranked down for being new here.",
+    "Discovery freshness remains fail-closed. That is unchanged in spirit by this ruling: eligibility depends on the model actually being present on a subscription, and discovery is what establishes presence."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

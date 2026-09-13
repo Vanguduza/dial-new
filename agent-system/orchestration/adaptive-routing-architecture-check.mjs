@@ -1,0 +1,352 @@
+#!/usr/bin/env node
+// DEC-032 §102 production hardening gate.
+//
+// The §102 properties that must be ENFORCED IN CODE, not merely described. The
+// check exercises each one against a temporary control home rather than
+// asserting a file exists, because "the module is present" and "the rule
+// fires" are different claims and only the second one matters.
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadRoutingRegistries } from './adaptive-routing-core.mjs';
+import { expectedQuality, selectExecutionPair } from './execution-pair-router.mjs';
+import { runVeklPass2 } from './vekl-pass2.mjs';
+import { compileRuntimePrompt } from './runtime-prompt-compiler.mjs';
+import { decideEscalation, failureFingerprint } from './escalation-policy.mjs';
+import { calibratedPrior, calibratedSmoothingWeight, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
+import { attributeOutcome } from './outcome-attribution.mjs';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const repo = path.resolve(here, '../..');
+
+function crit(id, ok, detail = '') { return { id, ok: Boolean(ok), detail }; }
+
+const FRESH = { last_observed_at: new Date().toISOString() };
+
+/** Registries with discovery marked fresh, so freshness is tested separately. */
+function freshRegistries() {
+  const reg = loadRoutingRegistries(repo);
+  reg.models = { ...reg.models, discovery: { ...reg.models.discovery, ...FRESH } };
+  return reg;
+}
+
+const LOW = { risk_class: 'LOW', task_archetype: 'ROUTINE_CODE_CHANGE', required_capabilities: ['coding'], acceptance: ['tests pass'] };
+const CRITICAL = { risk_class: 'CRITICAL', task_archetype: 'ARCHITECTURE_CHANGE', required_capabilities: ['coding'], acceptance: ['tests pass'] };
+
+export function checkAdaptiveRoutingArchitecture() {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'dial-routing-'));
+  const reg = freshRegistries();
+  const checks = [];
+
+  // 1. runtime prompt compiler exists and compiles
+  const seg = (slot, cls, source, text) => ({ slot, context_class: cls, source, text });
+  const basic = compileRuntimePrompt({
+    repoDir: repo, taskId: 't1', harnessId: 'claude-code', modelId: 'claude-sonnet-5', modelFamily: 'claude',
+    contextWindow: 200000,
+    segments: [seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'truth', 'repo = Vanguduza/dial-new'), seg('OPTIONAL_CONTEXT', 'OPTIONAL', 'opt', 'background')],
+  });
+  checks.push(crit('AR-01', basic.ok && Boolean(basic.manifest), 'runtime prompt compiler exists'));
+
+  // 2. hard context budgets enforced — a profile over budget without
+  //    justification must BLOCK, not truncate silently.
+  const overBudget = compileRuntimePrompt({
+    repoDir: repo, taskId: 't2', harnessId: 'claude-code', modelId: 'claude-sonnet-5', modelFamily: 'claude',
+    contextWindow: 200000,
+    segments: [seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'truth', 'x')],
+    modelProfile: { profile: 'COMPILED', rules: ['word '.repeat(500)], suppressed_behaviors: [], token_budget: { max_behavioral_tokens: 50 }, profile_hash: 'h' },
+  });
+  checks.push(crit('AR-02', !overBudget.ok && overBudget.reason === 'PROFILE_BUDGET_EXCEEDED_WITHOUT_JUSTIFICATION', 'hard context budgets enforced'));
+
+  // 3. output reserve enforced — MUST_INCLUDE + reserve exceeding the window
+  //    must not be resolved by dropping the reserve.
+  const noReserve = compileRuntimePrompt({
+    repoDir: repo, taskId: 't3', harnessId: 'claude-code', modelId: 'claude-sonnet-5', modelFamily: 'claude',
+    contextWindow: 100, outputReserveTokens: 3000,
+    segments: [seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'truth', 'word '.repeat(200))],
+  });
+  checks.push(crit('AR-03', !noReserve.ok && noReserve.reason === 'MUST_INCLUDE_DOES_NOT_FIT', 'output reserve enforced'));
+
+  // 4. duplicate-context elimination active
+  const dup = compileRuntimePrompt({
+    repoDir: repo, taskId: 't4', harnessId: 'claude-code', modelId: 'claude-sonnet-5', modelFamily: 'claude',
+    contextWindow: 200000,
+    segments: [
+      seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'truth', 'repo = Vanguduza/dial-new'),
+      seg('REQUIRED_EXECUTION_CONTEXT', 'COMPRESSIBLE', 'role', 'repo = Vanguduza/dial-new'),
+    ],
+  });
+  checks.push(crit('AR-04', dup.ok && dup.manifest.duplicate_sources_removed.length === 1, 'duplicate-context elimination active'));
+
+  // 5. skill conflict detection active
+  const conflict = compileRuntimePrompt({
+    repoDir: repo, taskId: 't5', harnessId: 'claude-code', modelId: 'claude-sonnet-5', modelFamily: 'claude',
+    contextWindow: 200000,
+    segments: [
+      seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'a', 'act decisively without secondary verification'),
+      { ...seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'b', 'require secondary verification before destructive action'), contradicts: 'a' },
+    ],
+  });
+  checks.push(crit('AR-05', !conflict.ok && conflict.reason === 'UNRESOLVED_CONFLICTING_MANDATORY_INSTRUCTIONS', 'skill conflict detection active'));
+
+  // 6. performance hierarchy orders the field before cost ranking.
+  //
+  //    Owner ruling, 2026-09-13: past performance ORDERS the queue, it never
+  //    removes a pair from it. So the probe gives a cheap pair a bad record on
+  //    one archetype and asserts three things: it is not excluded, it sinks to
+  //    last for that archetype, and the record does not follow it to a
+  //    different archetype.
+  const floorReg = freshRegistries();
+  const cheap = {
+    ...floorReg.models.models.find((m) => m.model_id === 'claude-haiku-4-5-20251001'),
+    model_id: 'probe-cheap', cost_profile: 'ECONOMICAL',
+  };
+  floorReg.models = { ...floorReg.models, models: [...floorReg.models.models, cheap] };
+  floorReg.compatibility = {
+    ...floorReg.compatibility,
+    compatibility: {
+      ...floorReg.compatibility.compatibility,
+      'claude-code': {
+        ...floorReg.compatibility.compatibility['claude-code'],
+        candidate_pairs: [...floorReg.compatibility.compatibility['claude-code'].candidate_pairs, 'probe-cheap'],
+      },
+    },
+  };
+  const probeId = 'claude-code+probe-cheap';
+  const badReg = { ...floorReg, ledger: { ...floorReg.ledger, entries: [{
+    harness_id: 'claude-code', model_id: 'probe-cheap',
+    task_archetype: 'INFRA_RECOVERY', role: 'BUILDER', risk_class: null,
+    sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
+  }] } };
+  const recovery = selectExecutionPair({
+    repoDir: repo, registries: badReg, role: 'BUILDER',
+    taskRequirements: { risk_class: 'HIGH', task_archetype: 'INFRA_RECOVERY', required_capabilities: ['coding'] },
+  });
+  const order = (recovery.eligible_pairs || []).map((x) => x.pair_id);
+  const notExcluded = !(recovery.excluded_candidates || []).some((c) => c.pair_id === probeId);
+  const sankToLast = order.length > 1 && order[order.length - 1] === probeId;
+
+  const routine = selectExecutionPair({
+    repoDir: repo, registries: badReg, role: 'BUILDER',
+    taskRequirements: { risk_class: 'HIGH', task_archetype: 'ROUTINE_CODE_CHANGE', required_capabilities: ['coding'] },
+  });
+  const routineOrder = (routine.eligible_pairs || []).map((x) => x.pair_id);
+  const scopedToArchetype = routineOrder.indexOf(probeId) < order.indexOf(probeId);
+
+  checks.push(crit('AR-06', notExcluded && sankToLast && scopedToArchetype,
+    'performance hierarchy orders before cost ranking, never excludes, and is scoped to task type'));
+
+  // 6b. no probation: a model DIAL has never used is eligible for CRITICAL.
+  const critical = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: CRITICAL, role: 'BUILDER' });
+  const noProbation = (critical.eligible_pairs || []).some((p) => p.pair_id === 'claude-code+claude-fable-5-1');
+  checks.push(crit('AR-21', noProbation, 'subscription presence confers eligibility at every risk class'));
+
+  // 6c. performance can never remove a pair, even with a uniformly bad ledger.
+  const allBad = { ...floorReg, ledger: { ...floorReg.ledger, entries: (floorReg.models.models || []).map((m) => ({
+    harness_id: 'claude-code', model_id: m.model_id, task_archetype: null, role: null, risk_class: null,
+    sample_count: 60, final_accept_count: 2, first_pass_accept_count: 1, escaped_defect_rate: 0.8,
+  })) } };
+  const stillPlaced = selectExecutionPair({ repoDir: repo, registries: allBad, taskRequirements: CRITICAL, role: 'BUILDER' });
+  checks.push(crit('AR-22', stillPlaced.ok === true && (stillPlaced.eligible_pairs || []).length > 0,
+    'work is still placed when every pair has a poor record'));
+
+  // 7. volatile state revalidated before dispatch
+  const policy = reg.policy.revalidation_before_dispatch || {};
+  checks.push(crit('AR-07', policy.required === true && policy.on_change === 'REFUSE_STALE_DISPATCH', 'volatile state revalidated before dispatch'));
+
+  // 8. escalation stop-loss active
+  const fp = failureFingerprint({ taskId: 'x', failureClass: 'TEST_FAILURE', rootCauseHypothesis: 'h1' });
+  const stopLoss = decideEscalation({
+    repoDir: repo,
+    attempts: [{ failure_fingerprint: fp }, { failure_fingerprint: fp }],
+    lastFailure: { failure_fingerprint: fp },
+  });
+  checks.push(crit('AR-08', stopLoss.decision === 'ESCALATE' && stopLoss.reason === 'SIMILAR_FAILURE_STOP_LOSS', 'escalation stop-loss active'));
+
+  // 9. similar-failure detection active — a different root cause must not be
+  //    counted as a repeat.
+  const fp2 = failureFingerprint({ taskId: 'x', failureClass: 'TEST_FAILURE', rootCauseHypothesis: 'h2' });
+  const different = decideEscalation({ repoDir: repo, attempts: [{ failure_fingerprint: fp }, { failure_fingerprint: fp }], lastFailure: { failure_fingerprint: fp2 } });
+  checks.push(crit('AR-09', different.decision === 'RE_ROUTE' && fp !== fp2, 'similar-failure detection active'));
+
+  // 10. empirical skill promotion active
+  const promote = evaluateSkillRetention({
+    activationCount: 30,
+    baseline: { final_accept_rate: 0.80, first_pass_accept_rate: 0.60, median_total_tokens: 1000, median_rework_ratio: 0.2 },
+    withSkill: { final_accept_rate: 0.88, first_pass_accept_rate: 0.72, median_total_tokens: 950, median_rework_ratio: 0.15 },
+  });
+  checks.push(crit('AR-10', promote.decision === 'PROMOTE', 'empirical skill promotion active'));
+
+  // 11. skill deprecation/pruning active
+  const prune = evaluateSkillRetention({
+    activationCount: 30,
+    baseline: { final_accept_rate: 0.80, first_pass_accept_rate: 0.60, median_total_tokens: 1000, median_rework_ratio: 0.2 },
+    withSkill: { final_accept_rate: 0.80, first_pass_accept_rate: 0.60, median_total_tokens: 1400, median_rework_ratio: 0.2 },
+  });
+  checks.push(crit('AR-11', prune.decision === 'DEPRECATE', 'skill deprecation/pruning active'));
+
+  // 12. weak telemetry is handled by the smoothing weight, and never excludes.
+  //
+  //     Asserted behaviourally, not by reading config: the previous version of
+  //     this check asserted a policy field's VALUE, and that field turned out to
+  //     be read by no routing code at all. A check that reads config proves the
+  //     config, not the system.
+  const cons = reg.policy.conservative_routing_under_weak_telemetry || {};
+  const ledgerFor = (entries) => ({ ...reg, ledger: { ...reg.ledger, entries } });
+  const mk = (m, acc, n) => ({
+    harness_id: 'claude-code', model_id: m, task_archetype: null, role: null, risk_class: null,
+    sample_count: n, final_accept_count: acc, first_pass_accept_count: Math.round(acc * 0.7), escaped_defect_rate: 0,
+  });
+  const qOf = (regs, m) => expectedQuality({ registries: regs, pair: { harness_id: 'claude-code', model_id: m, model: {} } });
+  const fewSamples = ledgerFor([mk('probe-a', 2, 3)]);
+  const manySamples = ledgerFor([mk('probe-a', 20, 30)]);
+  // Own record carries more of the score as evidence accumulates, continuously.
+  const lowConfidence = qOf(fewSamples, 'probe-a').own_record_weight;
+  const highConfidence = qOf(manySamples, 'probe-a').own_record_weight;
+  checks.push(crit('AR-12', cons.may_exclude_pair === false
+    && cons.mechanism === 'POSTERIOR_SMOOTHING_WEIGHT'
+    && lowConfidence < highConfidence && lowConfidence > 0 && highConfidence < 1,
+    'weak telemetry blends via the smoothing weight and never excludes'));
+
+  // 13. first-pass quality tracked separately
+  let firstPassTracked = false;
+  try {
+    const rec = recordExecutionOutcome({
+      repoDir: repo, root: tmp, registries: reg, harnessId: 'claude-code', modelId: 'claude-sonnet-5',
+      accepted: true, firstPassAccepted: true, evidenceSource: 'CI',
+    });
+    firstPassTracked = rec.entry.first_pass_accept_rate === 1 && rec.entry.final_accept_rate === 1;
+  } catch { firstPassTracked = false; }
+  checks.push(crit('AR-13', firstPassTracked && reg.ledger.first_pass_tracked_separately_from_final === true, 'first-pass quality tracked'));
+
+  // 14. prompt manifest emitted
+  checks.push(crit('AR-14', Boolean(basic.manifest?.manifest_hash) && Boolean(basic.manifest?.accounting), 'prompt manifest emitted'));
+
+  // 15. execution receipt references prompt manifest
+  const lowRoute = selectExecutionPair({ repoDir: repo, registries: reg, taskRequirements: LOW, role: 'BUILDER' });
+  let receiptLinked = false;
+  if (lowRoute.ok) {
+    const profile = runVeklPass2({ repoDir: repo, registries: reg, taskId: 't15', selection: lowRoute.selection, taskRequirements: LOW, role: 'BUILDER' });
+    const compiled = compileRuntimePrompt({
+      repoDir: repo, taskId: 't15', harnessId: lowRoute.selection.harness_id, modelId: lowRoute.selection.model_id,
+      modelFamily: 'claude', contextWindow: 200000,
+      segments: [seg('MUST_INCLUDE_TRUTH', 'MUST_INCLUDE', 'truth', 'repo = Vanguduza/dial-new')],
+      modelProfile: profile,
+    });
+    receiptLinked = compiled.ok && compiled.manifest.context.model_profile_hash === profile.profile_hash;
+  }
+  checks.push(crit('AR-15', receiptLinked, 'execution receipt references prompt manifest'));
+
+  // Reject worker self-report as a performance signal — the ledger integrity
+  // rule the whole feedback loop rests on.
+  let selfReportRejected = false;
+  try {
+    recordExecutionOutcome({
+      repoDir: repo, root: tmp, registries: reg, harnessId: 'claude-code', modelId: 'claude-sonnet-5',
+      accepted: true, evidenceSource: 'WORKER_SELF_REPORT',
+    });
+  } catch (e) { selfReportRejected = /INADMISSIBLE/.test(String(e.message)); }
+  checks.push(crit('AR-16', selfReportRejected, 'worker self-report rejected as performance evidence'));
+
+  // Discovery staleness fails closed.
+  const staleReg = loadRoutingRegistries(repo);
+  const stale = selectExecutionPair({ repoDir: repo, registries: staleReg, taskRequirements: LOW });
+  checks.push(crit('AR-17', !stale.ok && ['STALE_DISCOVERY', 'DISCOVERY_UNAVAILABLE'].includes(stale.reason), 'stale discovery fails closed'));
+
+  // Incompatible pairs are blocked, not merely unranked.
+  const incompatible = (stale.excluded_candidates || []).concat(lowRoute.excluded_candidates || []);
+  const blocksFabricated = selectExecutionPair({ repoDir: repo, registries: reg, taskRequirements: LOW })
+    .excluded_candidates.some((c) => c.pair_id === 'antigravity+claude-opus-5' && c.reason === 'PAIR_NOT_COMPATIBLE');
+  checks.push(crit('AR-18', blocksFabricated, 'unsupported harness/model combinations blocked'));
+
+  // Manager runtime is never selectable as a worker.
+  const managerReg = freshRegistries();
+  managerReg.harnesses = {
+    ...managerReg.harnesses,
+    harnesses: managerReg.harnesses.harnesses.map((h) => ({ ...h, manager_runtime_eligible: true })),
+  };
+  const managerRoute = selectExecutionPair({ repoDir: repo, registries: managerReg, taskRequirements: LOW });
+  checks.push(crit('AR-19', !managerRoute.ok, 'manager runtime never selected as worker'));
+
+  // Model capability does not imply tool authorisation.
+  const toolsAttached = lowRoute.ok ? lowRoute.selection.specialist_tools : [];
+  checks.push(crit('AR-20', Array.isArray(toolsAttached) && toolsAttached.length === 0, 'tools attached only when task requires'));
+
+  // 23. a resource-caused failure never demotes the pair; VEKL is updated.
+  const attrRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'dial-attr-'));
+  let ratingProtected = false;
+  let veklRaised = false;
+  try {
+    const base = {
+      repoDir: repo, root: attrRoot, registries: reg, harnessId: 'claude-code', modelId: 'claude-opus-5',
+      taskArchetype: 'INFRA_RECOVERY', role: 'BUILDER', evidenceSource: 'CI',
+    };
+    for (let i = 0; i < 5; i++) {
+      recordExecutionOutcome({ ...base, accepted: false, signals: ['MUST_INCLUDE_CONTEXT_MISSING'] });
+    }
+    const entry = projectLedgerForRouting({ root: attrRoot })[0] || {};
+    ratingProtected = entry.sample_count === 0 && entry.excluded_samples === 5;
+    const one = recordExecutionOutcome({ ...base, accepted: false, signals: ['REQUIRED_SKILL_UNAVAILABLE'], taskId: 'x' });
+    veklRaised = one.vekl_signal?.remediation_target === 'VEKL_RESOURCES' && one.vekl_signal?.rating_impact === 'NONE';
+  } catch { /* leaves both false */ }
+  fs.rmSync(attrRoot, { recursive: true, force: true });
+  checks.push(crit('AR-23', ratingProtected && veklRaised,
+    'resource-caused failures do not demote the pair and raise a VEKL improvement signal'));
+
+  // 24. a deficit in what DIAL supplied outranks a pair-performance signal.
+  const outranks = attributeOutcome({
+    signals: ['IGNORED_SUPPLIED_ACCEPTANCE_CRITERIA', 'ACCEPTANCE_CRITERIA_ABSENT'], accepted: false,
+  }).attribution === 'RESOURCE_DEFICIT';
+  const silenceIsNotBlame = attributeOutcome({ signals: [], accepted: false }).attribution === 'UNDETERMINED';
+  checks.push(crit('AR-24', outranks && silenceIsNotBlame,
+    'resource deficit outranks pair blame; an unattributed failure is not held against the pair'));
+
+  // 25. the prior is calibrated from DIAL's own outcomes, not hand-set.
+  const seeded = calibratedPrior({ entries: [] });
+  const learned = calibratedPrior({ entries: [mk('probe-a', 24, 40)] });
+  checks.push(crit('AR-25',
+    seeded.basis === 'SEED' && learned.basis === 'GLOBAL_CALIBRATED' && Math.abs(learned.value - 0.6) < 1e-9,
+    'prior is computed from observed outcomes once enough evidence exists'));
+
+  // 26. measured and unmeasured pairs are scored on the SAME scale.
+  //
+  //     They were not, at first: an unmeasured pair returned the bare prior
+  //     while a measured one returned a weighted blend including a defect term,
+  //     so a below-average pair scored ABOVE an unknown. A probe caught it. This
+  //     asserts the comparison both ways round.
+  const fleet = ledgerFor([mk('above', 28, 40), mk('below', 10, 20), mk('filler', 20, 40)]);
+  const unknownQ = qOf(fleet, 'never-used').value;
+  const aboveQ = qOf(fleet, 'above').value;
+  const belowQ = qOf(fleet, 'below').value;
+  checks.push(crit('AR-26', aboveQ > unknownQ && belowQ < unknownQ,
+    'above-average beats an unknown and below-average loses to one, on one scale'));
+
+  // 27. the smoothing weight is learned from the fleet's real spread, so no
+  //     standing number waits to be revisited when the numbers arrive.
+  const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+  const alike = calibratedSmoothingWeight({ entries: [rate('a', 0.70, 60), rate('b', 0.71, 60), rate('c', 0.69, 60)] });
+  const spread = calibratedSmoothingWeight({ entries: [rate('a', 0.95, 60), rate('b', 0.30, 60), rate('c', 0.45, 60)] });
+  const unseeded = calibratedSmoothingWeight({ entries: [] });
+  checks.push(crit('AR-27',
+    unseeded.basis === 'SEED'
+    && alike.value > spread.value
+    && spread.basis === 'EMPIRICAL_BAYES'
+    && spread.value >= 6 && alike.value <= 30,
+    'smoothing weight is learned: alike fleet shrinks harder than a widely-spread one'));
+
+  fs.rmSync(tmp, { recursive: true, force: true });
+  return {
+    schema_version: 1,
+    policy_version: reg.policy.policy_version,
+    status: checks.every((c) => c.ok) ? 'GREEN' : 'RED',
+    passed: checks.filter((c) => c.ok).length,
+    total: checks.length,
+    checks,
+  };
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const r = checkAdaptiveRoutingArchitecture();
+  console.log(JSON.stringify(r, null, 2));
+  if (r.status !== 'GREEN') process.exitCode = 1;
+}
