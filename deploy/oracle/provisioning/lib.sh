@@ -12,8 +12,23 @@
 
 set -euo pipefail
 
-PROTECTED_HOSTS=("dial-hermes-control" "oracle-admin-v2")
-TARGET_INSTANCE="oracle-admin"
+# Two different kinds of "do not touch", which used to be one list and should not be.
+#
+# NEVER_PROVISION is categorical. dial-hermes-control is the production control host and
+# shares this subnet's VCN, route table and default security list; the standing constraint
+# on it has no exception and no flag. Nothing in this directory may provision it, ever.
+#
+# PROVISIONABLE_HOSTS are the recovery pair. Both are admin hosts of the same shape and
+# the same role, and the owner has ordered the second brought up as a rescuer. Treating
+# oracle-admin-v2 as untouchable made the estate's own second rescuer unbuildable, which
+# is how it ended up down and unrepaired while everything else was hardened around it.
+#
+# Provisionable does not mean default. TARGET_INSTANCE stays oracle-admin, so nothing
+# reaches v2 without being named deliberately.
+NEVER_PROVISION=("dial-hermes-control")
+PROVISIONABLE_HOSTS=("oracle-admin" "oracle-admin-v2")
+PROTECTED_HOSTS=("${NEVER_PROVISION[@]}")
+TARGET_INSTANCE="${DIAL_TARGET_HOST:-oracle-admin}"
 
 : "${DIAL_OCI_REGION:=af-johannesburg-1}"
 OCI_CONFIG_FILE="${OCI_CLI_CONFIG_FILE:-$HOME/.oci/config}"
@@ -61,15 +76,29 @@ require_cli() {
     || die "OCI CLI cannot authenticate. On a workstation run 'oci setup config'; in Cloud Shell check the region selector and that your session has not expired."
 }
 
-# Refuse any display name that is a protected host. Called at every boundary that
+# Refuse any display name this tooling must not provision. Called at every boundary that
 # names an instance, so a copy-paste of the wrong name cannot reach the API.
-assert_target_is_oracle_admin() {
+#
+# Fail closed in three directions: a categorically protected host is refused whatever the
+# caller intended; a host absent from the provisionable list is refused even if it was
+# named explicitly; and a host that is provisionable but is not the CURRENT target is
+# still refused, so targeting v2 is a deliberate act rather than a side effect.
+assert_provisionable_target() {
   local name="${1:?name required}"
-  for protected in "${PROTECTED_HOSTS[@]}"; do
-    [[ "$name" == "$protected" ]] && die "REFUSED: '$name' is a protected host. Only '$TARGET_INSTANCE' may be provisioned."
+  for protected in "${NEVER_PROVISION[@]}"; do
+    [[ "$name" == "$protected" ]] && die "REFUSED: '$name' is the production control host and is never provisioned by this tooling."
   done
-  [[ "$name" == "$TARGET_INSTANCE" ]] || die "REFUSED: expected '$TARGET_INSTANCE', got '$name'."
+  local ok=false
+  for h in "${PROVISIONABLE_HOSTS[@]}"; do [[ "$name" == "$h" ]] && ok=true; done
+  [[ "$ok" == true ]] || die "REFUSED: '$name' is not a provisionable host. Known: ${PROVISIONABLE_HOSTS[*]}"
+  [[ "$name" == "$TARGET_INSTANCE" ]] \
+    || die "REFUSED: this run targets '$TARGET_INSTANCE', not '$name'.
+To act on '$name' deliberately, set DIAL_TARGET_HOST='$name' and re-run."
 }
+
+# Kept so existing callers and their tests keep working while meaning exactly what they
+# always meant. New code should call assert_provisionable_target.
+assert_target_is_oracle_admin() { assert_provisionable_target "$@"; }
 
 # Resolve an instance OCID by display name, ignoring TERMINATED records so a
 # previously destroyed oracle-admin does not shadow the new one.

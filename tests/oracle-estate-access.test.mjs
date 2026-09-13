@@ -306,3 +306,88 @@ describe('all three ways in are protected together', () => {
     expect(boot).toMatch(/systemctl cat/);
   });
 });
+
+describe('the second rescuer can be built without the control host becoming reachable', () => {
+  // Both E2s are recovery peers of the same shape and role, but the tooling treated
+  // oracle-admin-v2 as untouchable — which made the estate's own second rescuer
+  // unbuildable, and is how it ended up down and unrepaired while everything else was
+  // hardened around it. dial-hermes-control's protection is a different kind and stays
+  // categorical.
+  const LIB = path.join(PROV, 'lib.sh');
+  const RESCUER = path.join(PROV, '70-second-rescuer.sh');
+
+  // A refusal exits non-zero, which is the point of it — so the helper must catch that
+  // rather than treat it as a broken command.
+  const out = (name, env = {}) => {
+    try {
+      return execFileSync('bash', ['-c',
+        `source "$0" >/dev/null 2>&1; set +e; assert_provisionable_target "$1" 2>&1`, LIB, name],
+        { env: { ...process.env, ...env }, encoding: 'utf8', stdio: 'pipe' });
+    } catch (e) { return `${e.stdout ?? ''}${e.stderr ?? ''}`; }
+  };
+
+  it('refuses the control host even when deliberately targeted', () => {
+    expect(out('dial-hermes-control')).toMatch(/never provisioned/);
+    expect(out('dial-hermes-control', { DIAL_TARGET_HOST: 'dial-hermes-control' }))
+      .toMatch(/never provisioned/);
+  });
+
+  it('refuses a host that is not in the fabric at all', () => {
+    expect(out('nonsense')).toMatch(/not a provisionable host/);
+  });
+
+  it('leaves oracle-admin as the default target, so nothing changes by accident', () => {
+    expect(out('oracle-admin')).toBe('');
+  });
+
+  it('refuses v2 by default, and allows it only when named', () => {
+    expect(out('oracle-admin-v2')).toMatch(/this run targets 'oracle-admin'/);
+    expect(out('oracle-admin-v2', { DIAL_TARGET_HOST: 'oracle-admin-v2' })).toBe('');
+  });
+
+  it('the driver refuses the control host and unknown hosts', () => {
+    for (const [host, pattern] of [
+      ['dial-hermes-control', /never provisioned/],
+      ['nonsense', /not a provisionable host/],
+    ]) {
+      const r = run(RESCUER, ['--check'], { DIAL_TARGET_HOST: host });
+      expect(r.out).toMatch(pattern);
+      expect(r.status).not.toBe(0);
+    }
+  });
+
+  it('refuses a rescuer with no public address of its own', () => {
+    // A rescuer reachable only through its peer is not a rescuer — it is the dependency
+    // the architecture forbids, wearing the word "recovery".
+    expect(fs.readFileSync(RESCUER, 'utf8')).toMatch(/reachable only through its peer is not a rescuer/);
+  });
+
+  it('does not move work onto the second rescuer', () => {
+    // The E2 pair exist to recover the estate. Bringing v2 up adds a rescuer; it must not
+    // quietly become a worker, which is what "take load off admin" would have meant.
+    const v2 = HOSTS.hosts.find((h) => h.host_id === 'oracle-admin-v2');
+    expect(v2.development_pool_mb).toBe(0);
+    expect(v2.max_concurrent_heavy_jobs).toBe(0);
+    expect(v2.roles).toContain('RECOVERY');
+    expect(fs.readFileSync(RESCUER, 'utf8')).toMatch(/does not move work onto v2/);
+  });
+
+  it('bootstrap derives its own identity rather than assuming oracle-admin', () => {
+    // Hardcoding the name meant running bootstrap anywhere else installed a recovery peer
+    // under the WRONG identity: wrong peers seeded, wrong name certified.
+    const boot = fs.readFileSync(path.join(PROV, 'bootstrap.sh'), 'utf8');
+    expect(boot).toMatch(/HOST_ID="\$\(hostname\)"/);
+    expect(boot).toMatch(/is not a RECOVERY host in hosts\.json/);
+    const code = boot.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n');
+    expect(code).not.toMatch(/DIAL_FABRIC_HOST_ID=oracle-admin\b/);
+  });
+
+  it('tells the owner to use one Commander account for every host', () => {
+    // Devices register under their own hostname, so one account holds both. Two accounts
+    // would split the estate across two logins and make it easy to pair a host where
+    // ChatGPT cannot see it.
+    for (const f of [RESCUER, path.join(PROV, 'run.sh')]) {
+      expect(fs.readFileSync(f, 'utf8')).toMatch(/SAME Commander account/i);
+    }
+  });
+});

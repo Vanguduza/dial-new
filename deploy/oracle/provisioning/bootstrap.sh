@@ -235,13 +235,29 @@ phase5() {
   local fab=$REPO_DIR/deploy/oracle/resource-fabric
   # Both spellings: oracle-cloud-agent.service on Oracle Linux, a snap unit on Ubuntu.
   local OCA_UNITS=(oracle-cloud-agent.service snap.oracle-cloud-agent.oracle-cloud-agent.service)
+
+  # Which host is this? Ask the machine, then check the answer against the fabric. This
+  # used to be the literal string "oracle-admin", which meant running bootstrap anywhere
+  # else installed a recovery peer under the WRONG identity: wrong peers seeded, wrong
+  # name certified, and a second host quietly claiming to be the first. Deriving it and
+  # validating it is how the same script serves both admin hosts.
+  local HOST_ID; HOST_ID="$(hostname)"
+  if ! node -e 'const f=require(process.argv[1]);
+      const h=f.hosts.find(x=>x.host_id===process.argv[2]);
+      if(!h||!h.roles.includes("RECOVERY")) process.exit(2)' \
+      "$fab/hosts.json" "$HOST_ID" 2>/dev/null; then
+    fact fabric_staged "false: $HOST_ID is not a RECOVERY host in hosts.json"
+    say "PHASE 5: $HOST_ID is not a recovery peer in hosts.json — refusing to stage a fabric identity that is not its own"
+    return 1
+  fi
+  fact fabric_host_id "$HOST_ID"
   [[ -d $fab ]] || return 1
   install -d -m 700 -o $ADMIN_USER -g $ADMIN_USER "$FABRIC_STATE"
 
   cat > $ETC_DIR/fabric.env <<CONF
 # Non-secret configuration for the DIAL recovery fabric on this host.
 DIAL_FABRIC_STATE=$FABRIC_STATE
-DIAL_FABRIC_HOST_ID=oracle-admin
+DIAL_FABRIC_HOST_ID=$HOST_ID
 DIAL_REPO_DIR=$REPO_DIR
 DIAL_FABRIC_SSH_USER=ubuntu
 CONF
@@ -249,7 +265,7 @@ CONF
 
   # Stage via the repository's own installer rather than reimplementing it.
   sudo -u $ADMIN_USER env DIAL_REPO_DIR="$REPO_DIR" DIAL_FABRIC_STATE="$FABRIC_STATE" \
-       DIAL_FABRIC_HOST_ID=oracle-admin bash "$fab/install-recovery-peer.sh" || return 1
+       DIAL_FABRIC_HOST_ID="$HOST_ID" bash "$fab/install-recovery-peer.sh" || return 1
 
   # The fabric's units are systemd USER units (recovery-agent.mjs shells
   # `systemctl --user`). User units need lingering to run without a login session.
@@ -346,11 +362,11 @@ CONF
   # plane and a running one, and a staged recovery plane recovers nothing.
   if [[ -x /usr/local/bin/dial-seed-known-hosts ]]; then
     local seed_out
-    seed_out="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID=oracle-admin \
+    seed_out="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID="$HOST_ID" \
       DIAL_REPO_DIR="$REPO_DIR" bash /usr/local/bin/dial-seed-known-hosts 2>&1 | tr '\n' ' ')"
     fact known_hosts_seeding "$seed_out"
     local seeded
-    seeded="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID=oracle-admin \
+    seeded="$(sudo -u $ADMIN_USER env DIAL_FABRIC_HOST_ID="$HOST_ID" \
       bash /usr/local/bin/dial-seed-known-hosts --verify 2>&1 | { grep -c '^SEEDED' || true; } | head -1)"
     if [[ "${seeded:-0}" -gt 0 ]]; then
       sudo -u $ADMIN_USER XDG_RUNTIME_DIR=$rt systemctl --user enable --now dial-recovery-agent.service 2>/dev/null || true

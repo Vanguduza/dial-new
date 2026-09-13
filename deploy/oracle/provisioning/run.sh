@@ -8,7 +8,11 @@
 #   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
 #   ~/p/run.sh twoway     report the two-way recovery state on the host
 #   ~/p/run.sh seed       seed peer host keys and start the recovery agent
+#   ~/p/run.sh rescuer    bring up oracle-admin-v2 as the second rescuer
 #   ~/p/run.sh commander  the five Commander criteria, separately, with the reason
+#
+# Host-facing modes default to oracle-admin. Add `--host oracle-admin-v2` to act on the
+# other rescuer, with its address in DIAL_FABRIC_ORACLE_ADMIN_V2_SSH_HOST.
 #   ~/p/run.sh access     can every VM be reached on its own? (read-only, all 3 hosts)
 #   ~/p/run.sh indep      the independence test — no host is a mandatory hop
 #   ~/p/run.sh status     show state, change nothing
@@ -30,7 +34,23 @@ mode="${1:-next}"
 # shellcheck source=/dev/null
 source ./env.sh
 
-instance_ip() { jq -r '.public_ip // ""' instance.json 2>/dev/null; }
+# Which host are we acting on? Default oracle-admin, so nothing existing changes; name
+# another with --host and it is resolved from the env override the fabric already uses.
+# Without this, every host-facing mode silently meant oracle-admin whatever you typed.
+DIAL_RUN_HOST="${DIAL_RUN_HOST:-oracle-admin}"
+for _i in "$@"; do
+  [[ "${_prev:-}" == "--host" ]] && DIAL_RUN_HOST="$_i"
+  _prev="$_i"
+done
+
+instance_ip() {
+  if [[ "$DIAL_RUN_HOST" != "oracle-admin" ]]; then
+    local k="DIAL_FABRIC_${DIAL_RUN_HOST^^}_SSH_HOST"; k="${k//-/_}"
+    printf '%s' "${!k:-}"
+    return 0
+  fi
+  jq -r '.public_ip // ""' instance.json 2>/dev/null
+}
 
 ssh_host() {
   if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" || ! -r "$DIAL_SSH_PRIVATE_KEY_FILE" ]]; then
@@ -95,6 +115,12 @@ INTRO
   # Interactive, so a TTY is required and the call is deliberately NOT wrapped in
   # `timeout` — it lasts as long as the owner takes. commander-pair.sh imposes its
   # own 10-minute bound.
+  echo "Pairing: $DIAL_RUN_HOST ($ip)"
+  echo
+  echo "Use the SAME Commander account for every host. Each registers under its own"
+  echo "hostname, so they appear as separate devices on one account — a second account"
+  echo "would split the estate across two logins for no benefit."
+  echo
   ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" -t \
       -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
       "ubuntu@$ip" 'sudo -u ubuntu dial-commander-pair'
@@ -216,6 +242,7 @@ EOT
 
 case "$mode" in
   status) exit 0 ;;
+  rescuer) ./70-second-rescuer.sh "${@:2}"; exit $? ;;
   commander) commander; exit $? ;;
   twoway) twoway; exit $? ;;
   seed)   seed;   exit $? ;;
