@@ -8,6 +8,7 @@
 #   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
 #   ~/p/run.sh twoway     report the two-way recovery state on the host
 #   ~/p/run.sh seed       seed peer host keys and start the recovery agent
+#   ~/p/run.sh commander  the five Commander criteria, separately, with the reason
 #   ~/p/run.sh access     can every VM be reached on its own? (read-only, all 3 hosts)
 #   ~/p/run.sh indep      the independence test — no host is a mandatory hop
 #   ~/p/run.sh status     show state, change nothing
@@ -166,8 +167,56 @@ seed() {
     fi'
 }
 
+# Commander health, criterion by criterion. The certification only ever says AMBER with
+# "not functionally proven end to end", which is true of a DEAD Commander and of a
+# perfectly working one that simply has no recent proof on file — two very different
+# situations behind one sentence. This separates them.
+commander() {
+  echo "=== Desktop Commander on oracle-admin ==="
+  echo
+  ssh_host 'set +e
+    u=$(id -u ubuntu)
+    printf "credential file : "
+    if [ -f /home/ubuntu/.desktop-commander-device/device.json ]; then
+      printf "present (mode %s, modified %s)\n" \
+        "$(stat -c %a /home/ubuntu/.desktop-commander-device/device.json)" \
+        "$(stat -c %y /home/ubuntu/.desktop-commander-device/device.json | cut -d. -f1)"
+    else
+      echo "ABSENT — this host has never completed device authorization"
+    fi
+    printf "service         : "
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u systemctl --user is-active dial-commander-remote.service 2>&1
+    echo
+    echo "--- the five criteria ---"
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u dial-commander-probe 2>&1
+    echo
+    echo "--- last 10 lines from the service ---"
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u journalctl --user -u dial-commander-remote.service -n 10 --no-pager 2>&1'
+  local rc=$?
+  cat <<'EOT'
+
+How to read this:
+
+  PROCESS_UP        the outbound session process is running
+  SESSION_VALID     a device credential exists here, with safe permissions
+  REMOTE_REGISTERED the Commander service accepted THIS device since the unit started
+  PING_RESPONDS     )  only ever GREEN from a proof a real tool call wrote, and only
+  COMMAND_EXECUTES  )  if that proof is under an hour old
+
+The last two being unproven does NOT mean Commander is broken. A device you are using
+happily from ChatGPT right now will show them unproven until a tool call writes a proof:
+
+  ~/p/run.sh recheck    after running dial-commander-record-proof through Commander
+
+And note that device registration is PER MACHINE. If ChatGPT was talking to a host that
+no longer exists, that device is gone for good and this host needs its own pairing.
+EOT
+  return $rc
+}
+
 case "$mode" in
   status) exit 0 ;;
+  commander) commander; exit $? ;;
   twoway) twoway; exit $? ;;
   seed)   seed;   exit $? ;;
   # These two run HERE, not on the host: they ask about all three hosts, and asking a
