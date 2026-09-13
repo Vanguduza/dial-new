@@ -131,7 +131,8 @@
     "agent:vekl:signal-calibration": "node agent-system/bin/signal-calibration-check.mjs",
     "agent:vekl:retrieval-eval": "node agent-system/bin/retrieval-eval.mjs",
     "agent:routing:architecture-check": "node agent-system/orchestration/adaptive-routing-architecture-check.mjs",
-    "agent:routing:select": "node agent-system/orchestration/execution-pair-router.mjs"
+    "agent:routing:select": "node agent-system/orchestration/execution-pair-router.mjs",
+    "agent:project-truth:verify-pr": "python3 scripts/project_truth_local.py verify-pr --base \"$(git merge-base origin/master HEAD)\" --branch \"$(git rev-parse --abbrev-ref HEAD)\""
   },
   "dependencies": {
     "@google/stitch-sdk": "0.3.5",
