@@ -7,7 +7,7 @@ import { authorizeTool, expectedQuality, selectExecutionPair } from '../agent-sy
 import { deterministicMinimalBehaviorCoalition, runVeklPass2, tokenBenefitGate } from '../agent-system/orchestration/vekl-pass2.mjs';
 import { compileRuntimePrompt, eliminateDuplicates } from '../agent-system/orchestration/runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint, shouldDeEscalate, buildHandoffState } from '../agent-system/orchestration/escalation-policy.mjs';
-import { calibratedPrior, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
+import { calibratedPrior, calibratedSmoothingWeight, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
 import { attributeOutcome, buildVeklImprovementSignal } from '../agent-system/orchestration/outcome-attribution.mjs';
 import { checkAdaptiveRoutingArchitecture } from '../agent-system/orchestration/adaptive-routing-architecture-check.mjs';
 
@@ -586,9 +586,45 @@ describe('calibrated prior and the confidence dial', () => {
     expect(q(fresh(), 'never-used').own_record_weight).toBe(0);
   });
 
+  it('learns the smoothing weight from how much the pairs actually differ', () => {
+    const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+    // Alike pairs: the spread is mostly sampling noise, so shrink hard.
+    const alike = calibratedSmoothingWeight({ entries: [rate('a', 0.70, 60), rate('b', 0.71, 60), rate('c', 0.69, 60)] });
+    // Widely differing pairs: the spread is real, so trust each record sooner.
+    const spread = calibratedSmoothingWeight({ entries: [rate('a', 0.95, 60), rate('b', 0.30, 60), rate('c', 0.45, 60)] });
+    expect(alike.value).toBeGreaterThan(spread.value);
+    expect(spread.basis).toBe('EMPIRICAL_BAYES');
+  });
+
+  it('seeds the weight only until the fleet can speak for itself', () => {
+    expect(calibratedSmoothingWeight({ entries: [] }).basis).toBe('SEED');
+    // Two pairs is too few to estimate a spread from.
+    const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+    expect(calibratedSmoothingWeight({ entries: [rate('a', 0.7, 60), rate('b', 0.4, 60)] }).basis).toBe('SEED');
+  });
+
+  it('keeps the learned weight inside bounds that keep the ledger meaningful', () => {
+    const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+    const extreme = calibratedSmoothingWeight({ entries: [rate('a', 0.99, 80), rate('b', 0.02, 80), rate('c', 0.5, 80)] });
+    // w is "jobs before a pair's own record carries half its score".
+    expect(extreme.value).toBeGreaterThanOrEqual(6);
+    expect(extreme.value).toBeLessThanOrEqual(30);
+    expect(extreme.clamped).toBe(true);
+  });
+
+  it('subtracts sampling noise before reading the spread', () => {
+    const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+    // Identical true rates measured on tiny samples look varied by luck alone.
+    // Without the correction that noise would masquerade as real spread and
+    // collapse the weight, letting a couple of runs swing a pair's standing.
+    const tiny = calibratedSmoothingWeight({ entries: [rate('a', 0.6, 5), rate('b', 0.8, 5), rate('c', 0.4, 5)] });
+    expect(tiny.value).toBeGreaterThan(6);
+  });
+
   it('reports which basis the prior came from', () => {
     expect(q(fresh(), 'never-used').prior_basis).toBe('SEED');
     expect(q(withLedger([mk('a', 24, 40)]), 'a').prior_basis).toBe('GLOBAL_CALIBRATED');
+    expect(q(fresh(), 'never-used').weight_basis).toBe('SEED');
   });
 
   it('breaks an exact tie toward the better-evidenced pair', () => {

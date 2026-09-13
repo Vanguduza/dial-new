@@ -14,7 +14,7 @@ import { expectedQuality, selectExecutionPair } from './execution-pair-router.mj
 import { runVeklPass2 } from './vekl-pass2.mjs';
 import { compileRuntimePrompt } from './runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint } from './escalation-policy.mjs';
-import { calibratedPrior, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
+import { calibratedPrior, calibratedSmoothingWeight, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
 import { attributeOutcome } from './outcome-attribution.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -320,6 +320,19 @@ export function checkAdaptiveRoutingArchitecture() {
   const belowQ = qOf(fleet, 'below').value;
   checks.push(crit('AR-26', aboveQ > unknownQ && belowQ < unknownQ,
     'above-average beats an unknown and below-average loses to one, on one scale'));
+
+  // 27. the smoothing weight is learned from the fleet's real spread, so no
+  //     standing number waits to be revisited when the numbers arrive.
+  const rate = (id, r, n) => ({ model_id: id, sample_count: n, final_accept_count: Math.round(r * n) });
+  const alike = calibratedSmoothingWeight({ entries: [rate('a', 0.70, 60), rate('b', 0.71, 60), rate('c', 0.69, 60)] });
+  const spread = calibratedSmoothingWeight({ entries: [rate('a', 0.95, 60), rate('b', 0.30, 60), rate('c', 0.45, 60)] });
+  const unseeded = calibratedSmoothingWeight({ entries: [] });
+  checks.push(crit('AR-27',
+    unseeded.basis === 'SEED'
+    && alike.value > spread.value
+    && spread.basis === 'EMPIRICAL_BAYES'
+    && spread.value >= 6 && alike.value <= 30,
+    'smoothing weight is learned: alike fleet shrinks harder than a widely-spread one'));
 
   fs.rmSync(tmp, { recursive: true, force: true });
   return {

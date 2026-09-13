@@ -200,6 +200,77 @@ export function calibratedPrior({
   return { value: seed, basis: 'SEED', samples: global.n };
 }
 
+/**
+ * The smoothing weight, learned rather than set.
+ *
+ * The weight is the strength of the prior — how many observations it is worth.
+ * Empirical Bayes says that is not a taste question: it is readable from how
+ * much the pairs actually differ from each other.
+ *
+ *   pairs perform alike  → differences are mostly noise → shrink hard  → high w
+ *   pairs differ a lot   → differences are real         → trust records → low w
+ *
+ * Method of moments on a Beta prior. For Beta with mean m and concentration w,
+ * Var = m(1-m)/(w+1), so w = m(1-m)/Var - 1. The variance observed ACROSS pairs
+ * also contains each pair's own binomial sampling noise, so that is subtracted
+ * first — otherwise a fleet measured on small samples would look far more
+ * varied than it is and the weight would collapse.
+ *
+ * This is what removes the standing "revisit when you have numbers" caveat:
+ * having the numbers is the trigger, and DIAL reads them itself.
+ *
+ * The bounds are guards against a pathological estimate from thin data, not
+ * taste. Read them as "jobs before a pair's own record carries half its score",
+ * which is exactly what w means:
+ *   min 6  — two bad runs must not halve a pair's standing.
+ *   max 30 — past this the ledger would be decorative at DIAL's job volume.
+ * A clamped estimate is flagged, so it is visible when the data is too thin to
+ * speak for itself.
+ */
+export function calibratedSmoothingWeight({
+  entries = [],
+  seed = 12,
+  minPairs = 3,
+  minSamplesPerPair = 5,
+  min = 6,
+  max = 30,
+} = {}) {
+  const usable = entries.filter((e) => Number(e.sample_count || 0) >= minSamplesPerPair);
+  if (usable.length < minPairs) {
+    return { value: seed, basis: 'SEED', pairs: usable.length };
+  }
+
+  const rates = usable.map((e) => Number(e.final_accept_count || 0) / Number(e.sample_count));
+  const totalN = usable.reduce((s, e) => s + Number(e.sample_count), 0);
+  const totalA = usable.reduce((s, e) => s + Number(e.final_accept_count || 0), 0);
+  const m = totalA / totalN;
+  if (!(m > 0 && m < 1)) return { value: max, basis: 'DEGENERATE_MEAN', pairs: usable.length };
+
+  const observedVar = rates.reduce((s, r) => s + (r - m) ** 2, 0) / rates.length;
+  const samplingVar = usable.reduce(
+    (s, e, i) => s + (rates[i] * (1 - rates[i])) / Number(e.sample_count), 0,
+  ) / usable.length;
+  const betweenVar = observedVar - samplingVar;
+
+  // No detectable spread beyond sampling noise: the pairs look alike, so the
+  // prior is strong and individual records should move a score only slowly.
+  if (!(betweenVar > 0)) {
+    return { value: max, basis: 'NO_DETECTABLE_SPREAD', pairs: usable.length, observed_variance: observedVar };
+  }
+
+  const raw = (m * (1 - m)) / betweenVar - 1;
+  const clamped = Math.min(max, Math.max(min, raw));
+  return {
+    value: Number(clamped.toFixed(2)),
+    basis: 'EMPIRICAL_BAYES',
+    pairs: usable.length,
+    pooled_mean: Number(m.toFixed(4)),
+    between_pair_variance: Number(betweenVar.toFixed(6)),
+    raw: Number(raw.toFixed(2)),
+    clamped: raw !== clamped,
+  };
+}
+
 /** Flattens the control-home ledger into the shape the router reads. */
 export function projectLedgerForRouting({ root = DEFAULT_CONTROL_HOME } = {}) {
   const ledger = loadPerformanceLedger(root);

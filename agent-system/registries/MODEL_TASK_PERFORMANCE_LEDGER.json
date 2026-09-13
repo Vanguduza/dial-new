@@ -66,17 +66,16 @@
       "GLOBAL_CALIBRATED",
       "SEED"
     ],
-    "prior_weight": 12,
-    "prior_weight_note": "The confidence dial. A pair's own record carries samples/(weight+samples) of its score, so the blend from prior to measured is continuous and nothing jumps in the ordering as a pair crosses a sample count. Raised from 8 to 12 because DIAL's jobs are substantial and infrequent: over-reacting to three bad runs costs more than reacting slowly. At 12 a pair needs ~12 jobs before its own record carries half its score. This is a smaller judgment than the prior was -- it sets how fast DIAL learns, not what it believes absent evidence -- but it should be revisited once real data exists.",
-    "own_record_weight_at": {
-      "3 samples": "20%",
-      "8 samples": "40%",
-      "15 samples": "56%",
-      "30 samples": "71%",
-      "60 samples": "83%"
-    },
     "only_rating_bearing_samples_calibrate": true,
-    "only_rating_bearing_note": "Resource-caused failures are excluded, so they cannot drag the population mean down either."
+    "only_rating_bearing_note": "Resource-caused failures are excluded, so they cannot drag the population mean down either.",
+    "seed_prior_weight": 12,
+    "prior_weight_min": 6,
+    "prior_weight_max": 30,
+    "min_pairs_to_calibrate_weight": 3,
+    "min_samples_per_pair_to_calibrate_weight": 5,
+    "weight_note": "The smoothing weight is LEARNED, not configured. Empirical Bayes reads it from how much the pairs actually differ: alike pairs mean the differences are mostly noise, so shrink hard (high weight); widely differing pairs mean the differences are real, so trust each record sooner (low weight). Method of moments on a Beta prior, with each pair's own binomial sampling noise subtracted first -- otherwise a fleet measured on small samples looks far more varied than it is and the weight collapses.",
+    "weight_bounds_note": "The bounds guard against a pathological estimate from thin data; they are not tuning. Read them as jobs before a pair's own record carries half its score, which is what the weight means. min 6: two bad runs must not halve a pair's standing. max 30: past this the ledger would be decorative at DIAL's job volume. A clamped estimate is flagged so thin data is visible rather than silent.",
+    "no_manual_revisit_required": true
   },
   "entries": [],
   "entries_note": "Empty by construction. DIAL has no harness x model execution evidence yet; the legacy worker cards also carry sample_count 0. Populated only from trusted outcomes at execution-receipt time.",

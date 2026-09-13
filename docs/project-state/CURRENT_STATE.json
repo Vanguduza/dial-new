@@ -10,16 +10,14 @@
     "agent-system/orchestration/adaptive-routing-architecture-check.mjs",
     "agent-system/orchestration/execution-pair-router.mjs",
     "agent-system/orchestration/model-performance-ledger.mjs",
-    "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
     "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
-    "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/authorizations/auth-20260913-owner-calibrated-prior-hybrid.json",
+    "docs/project-state/authorizations/auth-20260913-owner-self-learning-smoothing-weight.json",
     "tests/orchestration-adaptive-routing.test.mjs"
   ],
-  "content_diff_sha256": "eb0017e7a2d27aa3c126d0c674d2d4d21d8943bcb8012ba01ab93ec57d3db40f",
-  "observed_at_utc": "2026-09-13T03:21:40.439589+00:00",
+  "content_diff_sha256": "dd66f89662c63e6c1c751ae2aa596262b8f5cba54187fd633a5abe53a7de41fa",
+  "observed_at_utc": "2026-09-13T03:33:19.414477+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "773b3b98e643fef65d06154269168bd79cd78f86",
+  "source_parent": "95748fc56be0c16ce95d11598743896a829f479b",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

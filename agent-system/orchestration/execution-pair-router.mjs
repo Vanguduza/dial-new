@@ -18,7 +18,7 @@ import {
   DEFAULT_REPO_DIR, discoveryFresh, estimateTokens, generatePairs, harnessQualified,
   hashObject, loadRoutingRegistries, modelRoutable, nowIso,
 } from './adaptive-routing-core.mjs';
-import { calibratedPrior } from './model-performance-ledger.mjs';
+import { calibratedPrior, calibratedSmoothingWeight } from './model-performance-ledger.mjs';
 
 const RISK_ORDER = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
@@ -74,13 +74,26 @@ function ledgerEntry(ledger, pair, { taskArchetype = null, role = null, riskClas
  */
 export function expectedQuality({ registries, pair, taskArchetype = null, role = null, riskClass = null } = {}) {
   const cold = registries.ledger.cold_start || {};
-  const weight = Number(cold.prior_weight ?? 12);
+  const entries = registries.ledger.entries || [];
+
+  // Both the prior and its strength are read from DIAL's own outcomes. Nothing
+  // here is a standing number waiting to be revisited: the weight retunes
+  // itself as the fleet's real spread becomes visible.
+  const weighting = calibratedSmoothingWeight({
+    entries,
+    seed: Number(cold.seed_prior_weight ?? 12),
+    minPairs: Number(cold.min_pairs_to_calibrate_weight ?? 3),
+    minSamplesPerPair: Number(cold.min_samples_per_pair_to_calibrate_weight ?? 5),
+    min: Number(cold.prior_weight_min ?? 6),
+    max: Number(cold.prior_weight_max ?? 30),
+  });
+  const weight = weighting.value;
 
   // The prior is derived from DIAL's own outcomes, not typed in. That is what
   // makes "ranks below an unknown" mean "below average" rather than "below a
   // number someone chose once".
   const calibration = calibratedPrior({
-    entries: registries.ledger.entries || [],
+    entries,
     seed: Number(cold.seed_prior ?? 0.75),
     minGlobalSamples: Number(cold.min_global_samples_to_calibrate ?? 30),
     minArchetypeSamples: Number(cold.min_archetype_samples_to_calibrate ?? 30),
@@ -99,7 +112,7 @@ export function expectedQuality({ registries, pair, taskArchetype = null, role =
     return {
       value: blend(prior, prior, 0), first_pass: prior, samples: 0,
       source: 'CALIBRATED_PRIOR', prior_basis: calibration.basis, prior,
-      own_record_weight: 0, granularity: 'NONE',
+      weight, weight_basis: weighting.basis, own_record_weight: 0, granularity: 'NONE',
     };
   }
   const { entry, granularity } = found;
@@ -114,6 +127,8 @@ export function expectedQuality({ registries, pair, taskArchetype = null, role =
     source: 'LEDGER',
     prior_basis: calibration.basis,
     prior,
+    weight,
+    weight_basis: weighting.basis,
     // How much of this score is the pair's own record rather than the prior.
     // The smoothing weight is the confidence dial: it blends continuously, so
     // nothing jumps in the ordering as a pair crosses a sample count.

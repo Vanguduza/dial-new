@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260913-owner-self-learning-smoothing-weight",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "1c9615d96af3752252e49fd7185151dc8bed723087f4b1fe19fbb04e2f54e862",
+  "owner_instruction_excerpt": "No revisiting should be required when numbers are available, make use of hermes self learning",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260913-self-learning-smoothing-weight",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-13T03:32:00+00:00",
+  "base_sha": "95748fc56be0c16ce95d11598743896a829f479b",
+  "branch_scope": "claude/adaptive-harness-model-routing-dec032",
+  "authorized_paths": [
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
+    "tests/orchestration-adaptive-routing.test.mjs"
+  ],
+  "change_classes": [
+    "self_learning_calibration",
+    "standing_judgment_removal",
+    "empirical_bayes_estimation",
+    "technical_implementation",
+    "project_truth_reconciliation"
+  ],
+  "owner_overrides": [
+    {
+      "overridden": "The agent left prior_weight as a hand-set constant of 12 with a note saying it should be revisited from real data once it existed.",
+      "ruling": "No revisiting should be required when numbers are available. Hermes must learn the value itself.",
+      "effect": "prior_weight is deleted. calibratedSmoothingWeight() derives it from the fleet's own outcome spread on every routing decision, so the value tracks the data as the data arrives and there is nothing left for a human to come back and tune."
+    }
+  ],
+  "decision": {
+    "question": "The smoothing weight sets how fast a pair's own record displaces the prior. It was a constant, and a constant is a standing judgment that ages.",
+    "resolution": "Estimate it by empirical Bayes -- method of moments on a Beta prior over the fleet's rating-bearing accept rates -- subtracting each pair's binomial sampling noise before reading the between-pair variance. Alike pairs mean the observed differences are mostly noise, so shrink hard; widely differing pairs mean the differences are real, so trust each record sooner.",
+    "rejected_alternatives": [
+      "Keeping the constant and adding a reminder to revisit it, which is exactly what the owner ruled out.",
+      "A scheduled recalibration job, which introduces a staleness window and a thing to operate; the estimate is cheap enough to compute per decision from the ledger already loaded."
+    ]
+  },
+  "notes": [
+    "Sampling-noise subtraction is the load-bearing part. Raw variance across pairs measured on small samples is dominated by binomial noise, which reads as real spread and collapses the weight to its floor -- DIAL would over-trust three-run records. Each pair's r(1-r)/n is subtracted first; if nothing survives, the spread is not detectable and the weight goes to its maximum rather than to a guess.",
+    "Three bases are reported in the routing trace so the number is never silent about where it came from: SEED (fewer than 3 pairs with 5+ samples), NO_DETECTABLE_SPREAD or DEGENERATE_MEAN (evidence exists but carries no signal, shrink maximally), EMPIRICAL_BAYES (learned). The trace also carries own_record_weight so a reader sees how much of a score is the pair's own record.",
+    "Probed in both directions rather than asserted. Empty ledger -> weight 12, basis SEED, own-record share 0%. A fleet of three pairs at 0.69/0.70/0.71 over 60 runs -> weight 30, NO_DETECTABLE_SPREAD, own-record 67%. A fleet at 0.95/0.45/0.30 -> weight 6, EMPIRICAL_BAYES, own-record 91%. The same pair history yields a five-fold different weight purely because the fleet around it differs, which is the behaviour the ruling asked for.",
+    "Bounds [6, 30] are a guard against a pathological estimate from thin data, not tuning, and are stated in the unit the weight actually has: jobs before a pair's own record carries half its score. Below 6 two bad runs would halve a pair's standing; above 30 the ledger would be decorative at DIAL's job volume. A clamped estimate is flagged in the trace so thin data is visible.",
+    "AR-27 was verified by inducing its failure: with calibratedSmoothingWeight forced to return the seed, the gate exits 1 with AR-27 ok:false and three routing tests fail. Restored, gate exits 0 and 62/62 pass."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
