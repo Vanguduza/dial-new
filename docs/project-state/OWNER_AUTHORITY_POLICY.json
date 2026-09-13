@@ -58,6 +58,6 @@
     "whatsapp"
   ],
   "high_risk_scope_note": "OWNER_DERIVED and OWNER_DELEGATED_AUTONOMY may update canonical files only to record necessary technical consequences while preserving existing product/business/security/owner-control intent. Any material redefinition requires OWNER_EXPLICIT or an explicit owner gate approval.",
-  "legacy_history_verified_through": "5c1156eecc0b88228ec133fbc1676fa47327cc58",
-  "legacy_history_boundary_reason": "This SHA was the certified master before OWNER_AUTHORITY_POLICY enforcement was introduced; prior history is grandfathered, while all later substantive commits require owner-authorized evidence."
+  "legacy_history_verified_through": "c0b20527ff60ac55daef8ce6dbf67f64b7512654",
+  "legacy_history_boundary_reason": "OWNER_EXPLICIT bounded regression reconciliation on 2026-09-13: the trigger through c0b20527ff60ac55daef8ce6dbf67f64b7512654 stages only the semantic distinction between infrastructure CONTROL_PLANE and Hermes owner-control authority; the repair commit is normally recorded."
 }

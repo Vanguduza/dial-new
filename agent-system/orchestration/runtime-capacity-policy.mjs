@@ -34,7 +34,7 @@ export function parseProviderRetryAfter(value, { nowMs = Date.now() } = {}) {
   if (dated) {
     const cleaned = dated[1].replace(/(\d)(?:st|nd|rd|th)/i, '$1');
     const parsed = Date.parse(`${cleaned} UTC`);
-    if (Number.isFinite(parsed) && parsed > nowMs) return iso(parsed);
+    if (Number.isFinite(parsed)) return iso(parsed);
   }
 
   const clock = text.match(/try again at\s+(\d{1,2}):(\d{2})\s*(AM|PM)/i);

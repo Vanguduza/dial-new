@@ -7,7 +7,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { evaluatePlacement, loadJson, DEFAULT_HOSTS, DEFAULT_POLICY } from './placement.mjs';
+import { loadJson, DEFAULT_HOSTS, DEFAULT_POLICY } from './placement.mjs';
+import { evaluateHybridPlacement } from './hybrid-placement.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const STATE_DIR = process.env.DIAL_FABRIC_STATE || '/var/lib/dial-fabric';
@@ -27,9 +28,8 @@ function atomicJson(target, value) {
   fs.renameSync(tmp, target);
 }
 function readDirJson(dir) {
-  try {
-    return fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort().map((f) => [f, JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))]);
-  } catch { return []; }
+  try { return fs.readdirSync(dir).filter((f) => f.endsWith('.json')).sort().map((f) => [f, JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))]); }
+  catch { return []; }
 }
 
 export function loadTelemetry(stateDir = STATE_DIR) {
@@ -41,19 +41,22 @@ export function validateTask(task) {
   if (!/^[A-Za-z0-9._:-]{1,128}$/.test(task.task_id || '')) throw new Error('valid task_id required');
   if (!task.project || typeof task.project !== 'string') throw new Error('project required');
   if (task.command || task.shell || task.exec) throw new Error('scheduler refuses arbitrary command payloads');
+  if (task.workload_class && !/^[A-Z][A-Z0-9_]{1,63}$/.test(String(task.workload_class))) throw new Error('invalid workload_class');
   return task;
 }
 
 export function scheduleTask(task, { stateDir = STATE_DIR, telemetry = loadTelemetry(stateDir), nowMs = Date.now() } = {}) {
   validateTask(task);
-  const placement = evaluatePlacement({ task, hosts: HOSTS, policy: POLICY, telemetry, nowMs });
+  const placement = evaluateHybridPlacement({ task, hosts: HOSTS, policy: POLICY, telemetry, nowMs });
+  const normalizedTask = { ...task, workload_class: placement.workload_class };
   const record = {
-    schema_version: 1,
+    schema_version: 2,
     task_id: task.task_id,
     project: task.project,
+    workload_class: placement.workload_class,
     selected_host: placement.selected,
     placement,
-    task_hash: hash(task),
+    task_hash: hash(normalizedTask),
     decided_at: new Date(nowMs).toISOString(),
   };
   record.decision_hash = hash({ ...record, decided_at: undefined });
@@ -61,8 +64,8 @@ export function scheduleTask(task, { stateDir = STATE_DIR, telemetry = loadTelem
 
   if (!placement.selected) return record;
   const dispatch = {
-    schema_version: 1,
-    task,
+    schema_version: 2,
+    task: normalizedTask,
     selected_host: placement.selected,
     placement_evidence_hash: placement.evidence_hash,
     decision_hash: record.decision_hash,
@@ -93,10 +96,7 @@ export function runOnce({ stateDir = STATE_DIR, nowMs = Date.now() } = {}) {
 
 export async function daemon({ stateDir = STATE_DIR, intervalMs = 5000 } = {}) {
   fs.mkdirSync(path.join(stateDir, 'inbox'), { recursive: true, mode: 0o700 });
-  while (true) {
-    runOnce({ stateDir });
-    await new Promise((resolve) => setTimeout(resolve, intervalMs));
-  }
+  while (true) { runOnce({ stateDir }); await new Promise((resolve) => setTimeout(resolve, intervalMs)); }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

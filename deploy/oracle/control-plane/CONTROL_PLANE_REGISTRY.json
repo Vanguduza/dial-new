@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "policy_id": "dial-hybrid-control-plane-v1",
+  "hosts": {
+    "oracle-admin": {
+      "host_class": "RECOVERY_CONTROL_ONLY",
+      "immutable_role": true,
+      "worker_eligible": false,
+      "background_worker_eligible": false,
+      "allowed_workloads": ["CONTROL", "RECOVERY", "DIAGNOSTICS", "OCI_CONTROL", "SSH_BROKER", "POLICY_LEDGER", "GIT_METADATA_READ"],
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true, "commander": true}
+    },
+    "dial-hermes-control": {
+      "host_class": "DIAL_HEAVY_DEVELOPMENT",
+      "immutable_role": true,
+      "worker_eligible": true,
+      "background_worker_eligible": true,
+      "allowed_workloads": ["INTERACTIVE_DEV", "HEAVY_BUILD", "TEST", "MODEL_WORKER", "HERMES_RUNTIME", "VEKL_CONSUME"],
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true, "commander": false}
+    },
+    "oracle-admin-v2": {
+      "host_class": "BACKGROUND_ENGINEERING",
+      "immutable_role": true,
+      "worker_eligible": false,
+      "background_worker_eligible": true,
+      "allowed_workloads": ["BACKGROUND_KNOWLEDGE", "VEKL_LIGHT", "INDEXING_LIGHT", "DOC_PROCESSING", "RECOVERY", "DIAGNOSTICS"],
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true, "commander": true}
+    }
+  },
+  "routing": {
+    "CONTROL": ["oracle-admin"],
+    "RECOVERY": ["oracle-admin", "oracle-admin-v2"],
+    "DIAGNOSTICS": ["oracle-admin", "oracle-admin-v2", "dial-hermes-control"],
+    "INTERACTIVE_DEV": ["dial-hermes-control"],
+    "HEAVY_BUILD": ["dial-hermes-control"],
+    "TEST": ["dial-hermes-control"],
+    "MODEL_WORKER": ["dial-hermes-control"],
+    "HERMES_RUNTIME": ["dial-hermes-control"],
+    "BACKGROUND_KNOWLEDGE": ["oracle-admin-v2", "dial-hermes-control"],
+    "VEKL_LIGHT": ["oracle-admin-v2"],
+    "INDEXING_LIGHT": ["oracle-admin-v2"],
+    "DOC_PROCESSING": ["oracle-admin-v2"],
+    "VEKL_CONSUME": ["dial-hermes-control"]
+  },
+  "fail_closed": true,
+  "transport_availability_never_implies_workload_permission": true
+}

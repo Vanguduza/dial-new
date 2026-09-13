@@ -1,20 +1,21 @@
 {
   "authority_classes": [
-    "OWNER_DERIVED"
+    "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260911-owner-repo-audit-remediation"
+    "auth-20260913-owner-control-role-semantic-fix"
   ],
-  "branch": "claude/dial-repo-audit-adoption-k8neax",
+  "branch": "feat/hybrid-mcp-ssh-control-plane",
   "changed_files": [
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "package.json"
+    ".github/workflows/hybrid-control-plane-control-role-fix.yml",
+    "deploy/oracle/resource-fabric/role-guard.mjs",
+    "docs/project-state/OWNER_AUTHORITY_POLICY.json",
+    "docs/project-state/authorizations/auth-20260913-owner-control-role-semantic-fix.json"
   ],
-  "content_diff_sha256": "e1b0571498c985bc25f9e0a28275ee5066d51563a9253c59205716b000204e84",
-  "observed_at_utc": "2026-09-11T17:02:27.991058+00:00",
+  "content_diff_sha256": "fcce18458066916175fee2b6b007babf863353dff8a70d9dc5e5705f337f5b83",
+  "observed_at_utc": "2026-09-13T06:55:30+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "2429350577d5143ea1a4ab169bbcda01c6f3b7e7",
+  "source_parent": "c0b20527ff60ac55daef8ce6dbf67f64b7512654",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

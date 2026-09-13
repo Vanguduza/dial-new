@@ -1,104 +1,82 @@
 {
-  "schema_version": 1,
-  "policy_id": "dial-resource-fabric-v1",
-  "note": "Public IP addresses are intentionally omitted. docs/orchestration/IMPLEMENTATION_STATE.md records that public IPs and account identifiers are sensitive operational detail and must not live in the repository. Operators supply them at install time via DIAL_FABRIC_<HOST>_SSH_HOST. Private OCI addresses are the primary peer-recovery path per the architecture (section 21). recovery_authority_max bounds what a host may execute in the recovery plane at all (Rev 3 section 5.2); recovery_service_allowlist bounds which units it may restart on a peer, where [\"*\"] means the full APPROVED_SERVICES set.",
+  "schema_version": 2,
+  "policy_id": "dial-resource-fabric-v2-hybrid-control",
+  "note": "Public endpoints remain external. Host classes are immutable placement authority: transport reachability never grants workload permission.",
   "hosts": [
     {
       "host_id": "dial-hermes-control",
+      "host_class": "DIAL_HEAVY_DEVELOPMENT",
+      "immutable_role": true,
       "oci_shape": "VM.Standard.A1.Flex",
       "architecture": "arm64",
       "cpu_total": 4,
       "memory_total_mb": 24576,
       "private_ip": "10.0.0.184",
-      "roles": [
-        "HERMES_CONTROL",
-        "HEAVY_COMPUTE",
-        "BOUNDED_RECOVERY"
-      ],
+      "roles": ["HERMES_CONTROL", "HEAVY_COMPUTE", "BOUNDED_RECOVERY"],
+      "worker_eligible": true,
+      "background_worker_eligible": true,
+      "allowed_workload_classes": ["INTERACTIVE_DEV", "HEAVY_BUILD", "TEST", "MODEL_WORKER", "HERMES_RUNTIME", "VEKL_CONSUME"],
       "recovery_role": "RECOVERABLE_BY_PEERS_AND_BOUNDED_RECOVERER",
-      "recovers": [
-        "oracle-admin",
-        "oracle-admin-v2"
-      ],
+      "recovers": ["oracle-admin", "oracle-admin-v2"],
       "recovery_authority_max": "R1",
-      "recovery_service_allowlist": [
-        "dial-recovery-agent.service",
-        "dial-host-agent.timer"
-      ],
+      "recovery_service_allowlist": ["dial-recovery-agent.service", "dial-host-agent.timer"],
       "control_reservation_mb": 8192,
       "development_pool_mb": 14336,
+      "background_pool_mb": 2048,
       "emergency_headroom_mb": 2048,
       "max_concurrent_heavy_jobs": 2,
-      "toolchains": [
-        "node22",
-        "npm10",
-        "python3",
-        "git"
-      ]
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true},
+      "toolchains": ["node22", "npm10", "python3", "git"]
     },
     {
       "host_id": "oracle-admin-v2",
+      "host_class": "BACKGROUND_ENGINEERING",
+      "immutable_role": true,
       "oci_shape": "VM.Standard.E2.1.Micro",
       "architecture": "x86_64",
       "cpu_total": 1,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.245",
-      "roles": [
-        "ADMIN",
-        "RECOVERY",
-        "LIGHT_X86"
-      ],
+      "roles": ["ADMIN", "RECOVERY", "LIGHT_X86", "BACKGROUND_ENGINEERING"],
+      "worker_eligible": false,
+      "background_worker_eligible": true,
+      "allowed_workload_classes": ["BACKGROUND_KNOWLEDGE", "VEKL_LIGHT", "INDEXING_LIGHT", "DOC_PROCESSING", "RECOVERY", "DIAGNOSTICS"],
       "recovery_role": "PRIMARY",
-      "recovers": [
-        "oracle-admin",
-        "dial-hermes-control"
-      ],
+      "recovers": ["oracle-admin", "dial-hermes-control"],
       "recovery_authority_max": "R3",
-      "recovery_service_allowlist": [
-        "*"
-      ],
-      "control_reservation_mb": 0,
+      "recovery_service_allowlist": ["*"],
+      "control_reservation_mb": 256,
       "development_pool_mb": 0,
-      "emergency_headroom_mb": 200,
+      "background_pool_mb": 384,
+      "emergency_headroom_mb": 256,
       "max_concurrent_heavy_jobs": 0,
-      "toolchains": [
-        "node22",
-        "npm10",
-        "python3",
-        "git"
-      ]
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true, "commander": true},
+      "toolchains": ["node22", "npm10", "python3", "git"]
     },
     {
       "host_id": "oracle-admin",
+      "host_class": "RECOVERY_CONTROL_ONLY",
+      "immutable_role": true,
       "oci_shape": "VM.Standard.E2.1.Micro",
       "architecture": "x86_64",
       "cpu_total": 1,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.123",
-      "roles": [
-        "ADMIN",
-        "RECOVERY",
-        "LIGHT_X86"
-      ],
+      "roles": ["ADMIN", "RECOVERY", "CONTROL_PLANE", "OCI_CONTROL", "SSH_BROKER", "POLICY_LEDGER", "DIAGNOSTICS"],
+      "worker_eligible": false,
+      "background_worker_eligible": false,
+      "allowed_workload_classes": ["CONTROL", "RECOVERY", "DIAGNOSTICS", "OCI_CONTROL", "SSH_BROKER", "POLICY_LEDGER", "GIT_METADATA_READ"],
       "recovery_role": "SECONDARY",
-      "recovers": [
-        "oracle-admin-v2",
-        "dial-hermes-control"
-      ],
+      "recovers": ["oracle-admin-v2", "dial-hermes-control"],
       "recovery_authority_max": "R3",
-      "recovery_service_allowlist": [
-        "*"
-      ],
-      "control_reservation_mb": 0,
+      "recovery_service_allowlist": ["*"],
+      "control_reservation_mb": 512,
       "development_pool_mb": 0,
-      "emergency_headroom_mb": 200,
+      "background_pool_mb": 0,
+      "emergency_headroom_mb": 256,
       "max_concurrent_heavy_jobs": 0,
-      "toolchains": [
-        "node22",
-        "npm10",
-        "python3",
-        "git"
-      ]
+      "transports": {"direct_ssh": true, "relay_ssh": true, "oci_recovery": true, "commander": true},
+      "toolchains": ["node22", "npm10", "python3", "git"]
     }
   ]
 }
