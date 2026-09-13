@@ -10,11 +10,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadRoutingRegistries } from './adaptive-routing-core.mjs';
-import { selectExecutionPair } from './execution-pair-router.mjs';
+import { expectedQuality, selectExecutionPair } from './execution-pair-router.mjs';
 import { runVeklPass2 } from './vekl-pass2.mjs';
 import { compileRuntimePrompt } from './runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint } from './escalation-policy.mjs';
-import { evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
+import { calibratedPrior, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
 import { attributeOutcome } from './outcome-attribution.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -185,15 +185,28 @@ export function checkAdaptiveRoutingArchitecture() {
   });
   checks.push(crit('AR-11', prune.decision === 'DEPRECATE', 'skill deprecation/pruning active'));
 
-  // 12. conservative routing under weak telemetry — RANKING ONLY.
-  //     With too few samples DIAL must not fabricate confidence in either
-  //     direction: it neither assumes a new model is better than a proven one
-  //     nor withholds work from it. So this must never exclude a pair.
+  // 12. weak telemetry is handled by the smoothing weight, and never excludes.
+  //
+  //     Asserted behaviourally, not by reading config: the previous version of
+  //     this check asserted a policy field's VALUE, and that field turned out to
+  //     be read by no routing code at all. A check that reads config proves the
+  //     config, not the system.
   const cons = reg.policy.conservative_routing_under_weak_telemetry || {};
-  checks.push(crit('AR-12', cons.enabled === true
-    && cons.may_exclude_pair === false
-    && cons.below_threshold_behaviour === 'RANK_ON_DECLARED_CAPABILITY_AND_COST',
-    'weak telemetry changes ranking only, never eligibility'));
+  const ledgerFor = (entries) => ({ ...reg, ledger: { ...reg.ledger, entries } });
+  const mk = (m, acc, n) => ({
+    harness_id: 'claude-code', model_id: m, task_archetype: null, role: null, risk_class: null,
+    sample_count: n, final_accept_count: acc, first_pass_accept_count: Math.round(acc * 0.7), escaped_defect_rate: 0,
+  });
+  const qOf = (regs, m) => expectedQuality({ registries: regs, pair: { harness_id: 'claude-code', model_id: m, model: {} } });
+  const fewSamples = ledgerFor([mk('probe-a', 2, 3)]);
+  const manySamples = ledgerFor([mk('probe-a', 20, 30)]);
+  // Own record carries more of the score as evidence accumulates, continuously.
+  const lowConfidence = qOf(fewSamples, 'probe-a').own_record_weight;
+  const highConfidence = qOf(manySamples, 'probe-a').own_record_weight;
+  checks.push(crit('AR-12', cons.may_exclude_pair === false
+    && cons.mechanism === 'POSTERIOR_SMOOTHING_WEIGHT'
+    && lowConfidence < highConfidence && lowConfidence > 0 && highConfidence < 1,
+    'weak telemetry blends via the smoothing weight and never excludes'));
 
   // 13. first-pass quality tracked separately
   let firstPassTracked = false;
@@ -287,6 +300,26 @@ export function checkAdaptiveRoutingArchitecture() {
   const silenceIsNotBlame = attributeOutcome({ signals: [], accepted: false }).attribution === 'UNDETERMINED';
   checks.push(crit('AR-24', outranks && silenceIsNotBlame,
     'resource deficit outranks pair blame; an unattributed failure is not held against the pair'));
+
+  // 25. the prior is calibrated from DIAL's own outcomes, not hand-set.
+  const seeded = calibratedPrior({ entries: [] });
+  const learned = calibratedPrior({ entries: [mk('probe-a', 24, 40)] });
+  checks.push(crit('AR-25',
+    seeded.basis === 'SEED' && learned.basis === 'GLOBAL_CALIBRATED' && Math.abs(learned.value - 0.6) < 1e-9,
+    'prior is computed from observed outcomes once enough evidence exists'));
+
+  // 26. measured and unmeasured pairs are scored on the SAME scale.
+  //
+  //     They were not, at first: an unmeasured pair returned the bare prior
+  //     while a measured one returned a weighted blend including a defect term,
+  //     so a below-average pair scored ABOVE an unknown. A probe caught it. This
+  //     asserts the comparison both ways round.
+  const fleet = ledgerFor([mk('above', 28, 40), mk('below', 10, 20), mk('filler', 20, 40)]);
+  const unknownQ = qOf(fleet, 'never-used').value;
+  const aboveQ = qOf(fleet, 'above').value;
+  const belowQ = qOf(fleet, 'below').value;
+  checks.push(crit('AR-26', aboveQ > unknownQ && belowQ < unknownQ,
+    'above-average beats an unknown and below-average loses to one, on one scale'));
 
   fs.rmSync(tmp, { recursive: true, force: true });
   return {

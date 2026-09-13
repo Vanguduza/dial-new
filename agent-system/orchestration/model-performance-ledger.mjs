@@ -162,6 +162,44 @@ export function recordExecutionOutcome({
   return { key, entry: next, excluded, attribution: attributed, vekl_signal: veklSignal };
 }
 
+/**
+ * The calibrated prior: what an arbitrary capable pair actually accepts at.
+ *
+ * This replaces a hand-set constant with a number derived from DIAL's own
+ * outcomes, and it is the whole reason the comparison means anything. Ranking a
+ * pair "below an unknown" is only informative if the unknown is pegged to
+ * reality; against a guess it says nothing.
+ *
+ * Per-archetype once an archetype has enough of its own evidence, global
+ * otherwise, seeded until either has enough. Only rating-bearing samples count,
+ * so resource-caused failures cannot drag the population mean down either.
+ */
+export function calibratedPrior({
+  entries = [],
+  seed = 0.75,
+  minGlobalSamples = 30,
+  minArchetypeSamples = 30,
+  taskArchetype = null,
+} = {}) {
+  const pooled = (rows) => {
+    const n = rows.reduce((s, e) => s + Number(e.sample_count || 0), 0);
+    const a = rows.reduce((s, e) => s + Number(e.final_accept_count || 0), 0);
+    return { n, rate: n > 0 ? a / n : null };
+  };
+
+  if (taskArchetype) {
+    const scoped = pooled(entries.filter((e) => e.task_archetype === taskArchetype));
+    if (scoped.n >= minArchetypeSamples && scoped.rate !== null) {
+      return { value: scoped.rate, basis: 'ARCHETYPE_CALIBRATED', samples: scoped.n, task_archetype: taskArchetype };
+    }
+  }
+  const global = pooled(entries);
+  if (global.n >= minGlobalSamples && global.rate !== null) {
+    return { value: global.rate, basis: 'GLOBAL_CALIBRATED', samples: global.n };
+  }
+  return { value: seed, basis: 'SEED', samples: global.n };
+}
+
 /** Flattens the control-home ledger into the shape the router reads. */
 export function projectLedgerForRouting({ root = DEFAULT_CONTROL_HOME } = {}) {
   const ledger = loadPerformanceLedger(root);

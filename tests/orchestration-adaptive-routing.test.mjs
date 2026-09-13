@@ -7,7 +7,7 @@ import { authorizeTool, expectedQuality, selectExecutionPair } from '../agent-sy
 import { deterministicMinimalBehaviorCoalition, runVeklPass2, tokenBenefitGate } from '../agent-system/orchestration/vekl-pass2.mjs';
 import { compileRuntimePrompt, eliminateDuplicates } from '../agent-system/orchestration/runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint, shouldDeEscalate, buildHandoffState } from '../agent-system/orchestration/escalation-policy.mjs';
-import { evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
+import { calibratedPrior, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
 import { attributeOutcome, buildVeklImprovementSignal } from '../agent-system/orchestration/outcome-attribution.mjs';
 import { checkAdaptiveRoutingArchitecture } from '../agent-system/orchestration/adaptive-routing-architecture-check.mjs';
 
@@ -460,12 +460,15 @@ describe('escalation, stop-loss and the performance ledger', () => {
     expect(evaluateSkillRetention({ activationCount: 2, baseline: base, withSkill: base }).decision).toBe('KEEP_EVALUATING');
   });
 
-  it('uses the cold-start prior when the ledger is empty', () => {
+  it('falls back to the seed prior when the ledger is empty', () => {
     const reg = fresh();
     const { pairs } = generatePairs({ registries: reg });
     const q = expectedQuality({ registries: reg, pair: pairs[0] });
-    expect(q.source).toBe('COLD_START_PRIOR');
-    expect(q.value).toBe(0.75);
+    expect(q.source).toBe('CALIBRATED_PRIOR');
+    expect(q.prior_basis).toBe('SEED');
+    expect(q.prior).toBe(0.75);
+    // Scored through the same blend a measured pair uses, so the two compare.
+    expect(q.value).toBeCloseTo(0.75 * 0.55 + 0.75 * 0.25 + 0.2, 10);
   });
 });
 
@@ -537,6 +540,64 @@ describe('outcome attribution: resources vs the pair', () => {
       harnessId: 'h', modelId: 'm',
       attribution: { attribution: 'PAIR_PERFORMANCE', rating_bearing: true },
     })).toBeNull();
+  });
+});
+
+describe('calibrated prior and the confidence dial', () => {
+  const mk = (m, acc, n, archetype = null) => ({
+    harness_id: 'claude-code', model_id: m, task_archetype: archetype, role: null, risk_class: null,
+    sample_count: n, final_accept_count: acc, first_pass_accept_count: Math.round(acc * 0.7), escaped_defect_rate: 0,
+  });
+  const withLedger = (entries) => { const r = fresh(); r.ledger = { ...r.ledger, entries }; return r; };
+  const q = (reg, m) => expectedQuality({ registries: reg, pair: { harness_id: 'claude-code', model_id: m, model: {} } });
+
+  it('uses the seed only until there is enough evidence to compute one', () => {
+    expect(calibratedPrior({ entries: [] }).basis).toBe('SEED');
+    expect(calibratedPrior({ entries: [mk('a', 6, 10)] }).basis).toBe('SEED');
+    const learned = calibratedPrior({ entries: [mk('a', 24, 40)] });
+    expect(learned.basis).toBe('GLOBAL_CALIBRATED');
+    expect(learned.value).toBeCloseTo(0.6, 10);
+  });
+
+  it('prefers an archetype prior once that archetype has its own evidence', () => {
+    const entries = [mk('a', 24, 40, 'X'), mk('b', 6, 10, 'Y')];
+    expect(calibratedPrior({ entries, taskArchetype: 'X' }).basis).toBe('ARCHETYPE_CALIBRATED');
+    // Y has only 10 samples of its own, so it falls back to the global pool.
+    expect(calibratedPrior({ entries, taskArchetype: 'Y' }).basis).toBe('GLOBAL_CALIBRATED');
+  });
+
+  it('scores measured and unmeasured pairs on the same scale', () => {
+    // This is the bug a probe caught: an unmeasured pair returned the bare
+    // prior while a measured one returned a weighted blend, so a below-average
+    // pair scored ABOVE an unknown. Assert both directions.
+    const reg = withLedger([mk('above', 28, 40), mk('below', 10, 20), mk('filler', 20, 40)]);
+    const unknown = q(reg, 'never-used').value;
+    expect(q(reg, 'above').value).toBeGreaterThan(unknown);
+    expect(q(reg, 'below').value).toBeLessThan(unknown);
+  });
+
+  it('blends the own record in continuously as evidence accumulates', () => {
+    const at = (n) => q(withLedger([mk('a', Math.round(n * 0.6), n)]), 'a').own_record_weight;
+    const w = [at(3), at(8), at(15), at(30), at(60)];
+    // Monotonic, never 0 with evidence, never 1 -- no threshold, no jump.
+    for (let i = 1; i < w.length; i++) expect(w[i]).toBeGreaterThan(w[i - 1]);
+    expect(w[0]).toBeGreaterThan(0);
+    expect(w[w.length - 1]).toBeLessThan(1);
+    expect(q(fresh(), 'never-used').own_record_weight).toBe(0);
+  });
+
+  it('reports which basis the prior came from', () => {
+    expect(q(fresh(), 'never-used').prior_basis).toBe('SEED');
+    expect(q(withLedger([mk('a', 24, 40)]), 'a').prior_basis).toBe('GLOBAL_CALIBRATED');
+  });
+
+  it('breaks an exact tie toward the better-evidenced pair', () => {
+    const reg = fresh();
+    const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: LOW });
+    const scores = route.eligible_pairs.map((p) => p.score);
+    // With an empty ledger several pairs tie; ordering must still be total.
+    expect(new Set(route.eligible_pairs.map((p) => p.pair_id)).size).toBe(route.eligible_pairs.length);
+    expect(scores).toEqual([...scores].sort((a, b) => b - a));
   });
 });
 

@@ -249,11 +249,12 @@
     "note": "§75. A simple documentation task may fall back; production credential rotation blocks if no qualified route exists."
   },
   "conservative_routing_under_weak_telemetry": {
-    "note": "Weak telemetry changes RANKING ONLY and never eligibility. With too few samples to estimate quality, DIAL does not fabricate confidence in either direction: it neither assumes a new model is better than a proven one nor withholds work from it. Assigned jobs are how the evidence gets built.",
+    "note": "Weak telemetry is handled by the smoothing weight in MODEL_TASK_PERFORMANCE_LEDGER.cold_start, which blends a pair's own record in continuously as evidence accumulates. There is no threshold and no separate below-threshold mode: an unmeasured pair simply scores the calibrated prior, which is identical across all unmeasured pairs, so ordering among them falls to declared capability fit and cost on its own.",
     "enabled": true,
-    "min_samples_for_confident_estimate": 8,
-    "below_threshold_behaviour": "RANK_ON_DECLARED_CAPABILITY_AND_COST",
-    "may_exclude_pair": false
+    "mechanism": "POSTERIOR_SMOOTHING_WEIGHT",
+    "may_exclude_pair": false,
+    "removed_field": "below_threshold_behaviour",
+    "removed_field_note": "Declared a RANK_ON_DECLARED_CAPABILITY_AND_COST mode that no routing code ever read. It was satisfied structurally rather than contradicted -- an unmeasured pair's quality is a constant -- so it was dead config, and dead config that looks load-bearing is worse than none."
   },
   "revalidation_before_dispatch": {
     "required": true,
@@ -403,6 +404,8 @@
     "attribution_required_before_rating": true,
     "resource_caused_outcomes_do_not_demote": true,
     "ordering_is_relative": true,
-    "ordering_note": "Ordering is comparative, not absolute. A pair with a mediocre record still outranks pairs that compare worse, and is still assigned the work when it is the best available match."
+    "ordering_note": "Ordering is comparative, not absolute. A pair with a mediocre record still outranks pairs that compare worse, and is still assigned the work when it is the best available match.",
+    "min_samples_for_evidenced_placement_is_reporting_only": true,
+    "reporting_only_note": "min_samples_for_evidenced_placement drives the below_reference flag in the trace so a reader can see 'we do not really know about this pair yet'. It gates visibility, never ranking or eligibility."
   }
 }

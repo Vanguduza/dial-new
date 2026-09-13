@@ -55,11 +55,28 @@
     "note": "§74 requires that overrides not silently rewrite learned routing performance, but is silent on whether overridden runs are recorded at all. Recording them while excluding them from scores preserves the audit trail without biasing the ledger."
   },
   "cold_start": {
-    "prior": 0.75,
-    "prior_weight": 8,
-    "note": "Matches the posterior smoothing already implemented in harness-capability-exchange.mjs so pair scores and legacy card scores remain comparable during the Phase 1/2 overlap.",
-    "unproven_models_excluded_from_high_risk": true,
-    "calibration_note": "prior is the assumed acceptance rate of an arbitrary capable pair. It is a real calibration parameter, not a formality: a pair measured BELOW the prior ranks below an unmeasured one, which is correct Bayesian behaviour only if the prior reflects reality. Recalibrate from accumulated evidence."
+    "note": "The prior is COMPUTED from DIAL's own rating-bearing outcomes, not typed in. Ranking a pair 'below an unknown' is only informative when the unknown is pegged to reality; against a guess it says nothing.",
+    "owner_decision": "Owner approved the hybrid on 2026-09-13: calibrate the prior, and let the smoothing weight act as the confidence dial.",
+    "seed_prior": 0.75,
+    "seed_note": "Used only until there is enough evidence to compute a real one. Inherited from harness-capability-exchange.mjs.",
+    "min_global_samples_to_calibrate": 30,
+    "min_archetype_samples_to_calibrate": 30,
+    "calibration_scope": [
+      "ARCHETYPE_CALIBRATED",
+      "GLOBAL_CALIBRATED",
+      "SEED"
+    ],
+    "prior_weight": 12,
+    "prior_weight_note": "The confidence dial. A pair's own record carries samples/(weight+samples) of its score, so the blend from prior to measured is continuous and nothing jumps in the ordering as a pair crosses a sample count. Raised from 8 to 12 because DIAL's jobs are substantial and infrequent: over-reacting to three bad runs costs more than reacting slowly. At 12 a pair needs ~12 jobs before its own record carries half its score. This is a smaller judgment than the prior was -- it sets how fast DIAL learns, not what it believes absent evidence -- but it should be revisited once real data exists.",
+    "own_record_weight_at": {
+      "3 samples": "20%",
+      "8 samples": "40%",
+      "15 samples": "56%",
+      "30 samples": "71%",
+      "60 samples": "83%"
+    },
+    "only_rating_bearing_samples_calibrate": true,
+    "only_rating_bearing_note": "Resource-caused failures are excluded, so they cannot drag the population mean down either."
   },
   "entries": [],
   "entries_note": "Empty by construction. DIAL has no harness x model execution evidence yet; the legacy worker cards also carry sample_count 0. Populated only from trusted outcomes at execution-receipt time.",

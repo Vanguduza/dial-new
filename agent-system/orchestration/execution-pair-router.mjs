@@ -10,14 +10,15 @@
 // probation: a model new to DIAL can be assigned any work its harness and the
 // task's security policy permit. Owner decision, 2026-09-13.
 //
-// Stage order is still load-bearing: hard filters, THEN the quality floor, THEN
-// cost ranking. The floor now retires a pair the ledger shows underperforming
-// rather than gating a new one, but it must stay ahead of cost ranking so a
-// cheap pair with a bad record cannot win a CRITICAL task on price.
+// Past performance ORDERS the field; it never removes a pair from it. Ranking
+// runs on a prior calibrated from DIAL's own outcomes, blended with each pair's
+// own record by the smoothing weight, so a pair ranked below an unknown is
+// genuinely below average rather than below a number someone typed once.
 import {
   DEFAULT_REPO_DIR, discoveryFresh, estimateTokens, generatePairs, harnessQualified,
   hashObject, loadRoutingRegistries, modelRoutable, nowIso,
 } from './adaptive-routing-core.mjs';
+import { calibratedPrior } from './model-performance-ledger.mjs';
 
 const RISK_ORDER = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
@@ -73,20 +74,50 @@ function ledgerEntry(ledger, pair, { taskArchetype = null, role = null, riskClas
  */
 export function expectedQuality({ registries, pair, taskArchetype = null, role = null, riskClass = null } = {}) {
   const cold = registries.ledger.cold_start || {};
-  const prior = Number(cold.prior ?? 0.75);
-  const weight = Number(cold.prior_weight ?? 8);
+  const weight = Number(cold.prior_weight ?? 12);
+
+  // The prior is derived from DIAL's own outcomes, not typed in. That is what
+  // makes "ranks below an unknown" mean "below average" rather than "below a
+  // number someone chose once".
+  const calibration = calibratedPrior({
+    entries: registries.ledger.entries || [],
+    seed: Number(cold.seed_prior ?? 0.75),
+    minGlobalSamples: Number(cold.min_global_samples_to_calibrate ?? 30),
+    minArchetypeSamples: Number(cold.min_archetype_samples_to_calibrate ?? 30),
+    taskArchetype,
+  });
+  const prior = calibration.value;
+
+  // Both branches must produce `value` on the SAME scale or the comparison is
+  // meaningless -- which is the very thing this calibration exists to fix.
+  // An unmeasured pair is therefore scored through the identical blend, with
+  // the prior standing in for both accept rates and no observed defects.
+  const blend = (final, first, defect) => final * 0.55 + first * 0.25 + (1 - defect) * 0.2;
+
   const found = ledgerEntry(registries.ledger, pair, { taskArchetype, role, riskClass });
-  if (!found) return { value: prior, first_pass: prior, samples: 0, source: 'COLD_START_PRIOR', granularity: 'NONE' };
+  if (!found) {
+    return {
+      value: blend(prior, prior, 0), first_pass: prior, samples: 0,
+      source: 'CALIBRATED_PRIOR', prior_basis: calibration.basis, prior,
+      own_record_weight: 0, granularity: 'NONE',
+    };
+  }
   const { entry, granularity } = found;
   const samples = Number(entry.sample_count ?? 0);
   const final = posterior(Number(entry.final_accept_count ?? 0), samples, prior, weight);
   const first = posterior(Number(entry.first_pass_accept_count ?? 0), samples, prior, weight);
   const defect = Number(entry.escaped_defect_rate ?? 0);
   return {
-    value: final * 0.55 + first * 0.25 + (1 - defect) * 0.2,
+    value: blend(final, first, defect),
     first_pass: first,
     samples,
     source: 'LEDGER',
+    prior_basis: calibration.basis,
+    prior,
+    // How much of this score is the pair's own record rather than the prior.
+    // The smoothing weight is the confidence dial: it blends continuously, so
+    // nothing jumps in the ordering as a pair crosses a sample count.
+    own_record_weight: samples / (weight + samples),
     granularity,
   };
 }
@@ -239,7 +270,11 @@ export function selectExecutionPair({
     const firstPass = Number(pair.quality.first_pass ?? pair.quality.value);
     const score = (pair.quality.value * taskFit * reliability * firstPass) / cost.cost;
     return { ...pair, cost, task_fit: taskFit, reliability, score };
-  }).sort((a, b) => b.score - a.score || a.pair_id.localeCompare(b.pair_id));
+  }).sort((a, b) => b.score - a.score
+    // Equal scores resolve toward the better-evidenced pair, so a measured pair
+    // and an identically-scoring unknown do not oscillate between runs.
+    || (b.quality.samples ?? 0) - (a.quality.samples ?? 0)
+    || a.pair_id.localeCompare(b.pair_id));
 
   if (!ranked.length) {
     return {
