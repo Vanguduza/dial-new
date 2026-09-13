@@ -48,8 +48,8 @@ record, never a permanent hard-coding.
 
 # DIAL Development System — Adaptive Harness, Model Routing, and VEKL Model-Specific Execution Architecture
 
-**Status:** Target engineering architecture derived from current DIAL implementation audit and design discussion  
-**Target repository:** `Vanguduza/dial-new`  
+**Status:** Target engineering architecture derived from current DIAL implementation audit and design discussion\
+**Target repository:** `Vanguduza/dial-new`\
 **Primary objective:** Upgrade DIAL development orchestration so that model and harness selection are dynamic, task-aware, subscription-aware, and token-efficient, while preserving VEKL as the authoritative knowledge-resolution layer and avoiding unnecessary prompt/context bloat.
 
 ---
@@ -1782,9 +1782,9 @@ The objective is:
 
 The target DIAL execution philosophy is:
 
-> **VEKL first determines what the task actually requires.  
-> DIAL then selects the best available harness and model for that task.  
-> VEKL then supplies only the smallest model-specific execution guidance that improves the selected model’s performance.  
+> **VEKL first determines what the task actually requires.\
+> DIAL then selects the best available harness and model for that task.\
+> VEKL then supplies only the smallest model-specific execution guidance that improves the selected model’s performance.\
 > The worker acts, verifies the result, records evidence, and stops.**
 
 In compact form:
@@ -3430,4 +3430,3 @@ This rule applies to:
 The system is therefore optimized not for minimum prompt size, but for:
 
 > **maximum accepted engineering quality at minimum end-to-end development cost.**
-
