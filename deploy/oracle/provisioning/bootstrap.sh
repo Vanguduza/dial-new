@@ -233,6 +233,8 @@ soft 4 phase4
 # ========================================== PHASE 5 recovery plane installation
 phase5() {
   local fab=$REPO_DIR/deploy/oracle/resource-fabric
+  # Both spellings: oracle-cloud-agent.service on Oracle Linux, a snap unit on Ubuntu.
+  local OCA_UNITS=(oracle-cloud-agent.service snap.oracle-cloud-agent.oracle-cloud-agent.service)
   [[ -d $fab ]] || return 1
   install -d -m 700 -o $ADMIN_USER -g $ADMIN_USER "$FABRIC_STATE"
 
@@ -277,6 +279,38 @@ CONF
   else
     fact role_guard_installed false
   fi
+
+  # ---- Protect all three ways in, together (owner-ordered) -------------------------
+  # The three access paths are SSH, OCI Run Command and Desktop Commander. Until now only
+  # Commander had memory settings and they marked it as the preferred kill; sshd and the
+  # Oracle agent had none at all and survived on the kernel's own scoring. Protect the set,
+  # rather than protecting nothing and sacrificing one.
+  local dropin
+  if [[ -f $REPO_DIR/deploy/oracle/provisioning/systemd/dial-protect-sshd.conf ]]; then
+    for u in ssh.service sshd.service; do
+      if systemctl cat "$u" >/dev/null 2>&1; then
+        install -d -m 755 "/etc/systemd/system/$u.d"
+        install -m 644 "$REPO_DIR/deploy/oracle/provisioning/systemd/dial-protect-sshd.conf" \
+          "/etc/systemd/system/$u.d/50-dial-protect.conf"
+        fact ssh_memory_protected "$u"
+        break
+      fi
+    done
+  fi
+  # The agent unit is named differently on Oracle Linux and on Ubuntu (a snap). Checking
+  # only one reports the emergency path as unprotected on a host where it is running fine.
+  if [[ -f $REPO_DIR/deploy/oracle/provisioning/systemd/dial-protect-oracle-agent.conf ]]; then
+    for u in "${OCA_UNITS[@]:-oracle-cloud-agent.service snap.oracle-cloud-agent.oracle-cloud-agent.service}"; do
+      if systemctl cat "$u" >/dev/null 2>&1; then
+        install -d -m 755 "/etc/systemd/system/$u.d"
+        install -m 644 "$REPO_DIR/deploy/oracle/provisioning/systemd/dial-protect-oracle-agent.conf" \
+          "/etc/systemd/system/$u.d/50-dial-protect.conf"
+        fact oracle_agent_memory_protected "$u"
+        break
+      fi
+    done
+  fi
+  systemctl daemon-reload 2>/dev/null || true
 
   # Rev 3 section 5.2: the inbound half of two-way recovery. Installing the RESTRICTION is
   # safe and unconditional; AUTHORIZING the control host's key is a separate owner action

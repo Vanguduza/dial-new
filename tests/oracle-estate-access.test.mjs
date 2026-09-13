@@ -242,3 +242,67 @@ describe('the independence test states what it actually established', () => {
     expect(code).toMatch(/No disruption test is needed/);
   });
 });
+
+describe('all three ways in are protected together', () => {
+  // The host had memory settings on exactly one unit — Desktop Commander — and they
+  // marked it as the thing to kill first. sshd and the Oracle agent, the two paths that
+  // get you back into a broken machine, had none at all. On a 1 GB host that is not a
+  // policy, it is a coin toss with your access on it.
+  const SYSTEMD = path.join(PROV, 'systemd');
+  const read = (f) => fs.readFileSync(path.join(SYSTEMD, f), 'utf8');
+  const val = (body, key) => body.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1];
+  const mb = (s) => (s ? Number(s.replace(/M$/, '')) : null);
+
+  const COMMANDER = 'dial-commander-remote.service';
+  const PROTECTED = ['dial-protect-sshd.conf', 'dial-protect-oracle-agent.conf', COMMANDER];
+
+  for (const f of PROTECTED) {
+    it(`${f} reserves memory the kernel will not reclaim`, () => {
+      expect(mb(val(read(f), 'MemoryMin'))).toBeGreaterThan(0);
+    });
+
+    it(`${f} is not a preferred OOM victim`, () => {
+      expect(Number(val(read(f), 'OOMScoreAdjust'))).toBeLessThan(0);
+    });
+  }
+
+  it('keeps the two ways BACK IN ahead of the convenience path', () => {
+    // If it ever came to choosing among the three, Commander is the one that can be
+    // re-paired from outside. SSH and Run Command are how you would do that.
+    const commander = Number(val(read(COMMANDER), 'OOMScoreAdjust'));
+    for (const f of ['dial-protect-sshd.conf', 'dial-protect-oracle-agent.conf']) {
+      expect(Number(val(read(f), 'OOMScoreAdjust'))).toBeLessThan(commander);
+    }
+  });
+
+  it('still caps Commander, because a leak must not strand every other path', () => {
+    // A ceiling that contains a runaway is a different thing from a ceiling that kills a
+    // healthy process. Removing it entirely would trade one failure mode for a worse one.
+    const body = read(COMMANDER);
+    const max = mb(val(body, 'MemoryMax'));
+    const min = mb(val(body, 'MemoryMin'));
+    expect(max).toBeGreaterThan(0);
+    expect(max).toBeGreaterThan(min);
+  });
+
+  it('leaves the protected set comfortably inside a 1 GB host', () => {
+    const total = PROTECTED.reduce((n, f) => n + mb(val(read(f), 'MemoryMin')), 0);
+    expect(total).toBeGreaterThan(0);
+    // ~950 MB usable on an E2.1.Micro. Reservations must not crowd out the OS.
+    expect(total).toBeLessThan(500);
+  });
+
+  it('no longer starves Commander inside a slice weighted for recovery', () => {
+    expect(Number(val(read(COMMANDER), 'CPUWeight'))).toBeGreaterThan(100);
+  });
+
+  it('bootstrap installs the drop-ins under BOTH Oracle agent unit names', () => {
+    // Ubuntu runs it as a snap unit. Checking only the Oracle Linux name would report the
+    // emergency path as unprotected on a host where it is running perfectly well.
+    const boot = fs.readFileSync(path.join(PROV, 'bootstrap.sh'), 'utf8');
+    expect(boot).toMatch(/snap\.oracle-cloud-agent\.oracle-cloud-agent\.service/);
+    expect(boot).toMatch(/dial-protect-sshd\.conf/);
+    expect(boot).toMatch(/dial-protect-oracle-agent\.conf/);
+    expect(boot).toMatch(/systemctl cat/);
+  });
+});

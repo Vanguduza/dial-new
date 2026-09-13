@@ -26,12 +26,39 @@ TimeoutStartSec=90
 TimeoutStopSec=30
 KillSignal=SIGTERM
 
-# 1 GB host. Commander must never be the reason SSH or the Oracle agent starves.
+# 1 GB host. Commander must never be the reason SSH or the Oracle agent starves — but it
+# must not be the designated casualty either, which is what the previous settings made it.
+#
+# WHAT CHANGED AND WHY
+#
+# It used to carry OOMScoreAdjust=300 and MemoryMax=256M: the kernel was told to kill this
+# first, and systemd was told to kill it outright at 256 MB. On a 1 GB host under pressure
+# that is not a risk, it is a schedule. Every kill looked like a mystery disconnection,
+# because Restart=always brought it straight back ten seconds later.
+#
+# It now sits in the same protected tier as SSH and the Oracle agent:
+#
+#   MemoryMin=192M     a reservation. The kernel will not reclaim these pages under
+#                      pressure, so ordinary memory shortage can no longer take Commander.
+#   OOMScoreAdjust=-500  no longer a preferred victim. Still slightly behind sshd and the
+#                      Oracle agent at -900, deliberately: those two are how you get BACK
+#                      IN when Commander fails, so if it ever came to choosing among the
+#                      three, Commander is the one that can be re-paired from outside.
+#   MemoryMax=320M     RETAINED, and raised. A ceiling that contains a memory leak is a
+#                      different thing from a ceiling that kills a healthy process. 320 MB
+#                      leaves normal operation clear of it; a runaway still cannot take the
+#                      host down and strand every other path with it.
+#   CPUWeight=200      was 20, which starved it inside a slice weighted 1000.
+#
+# The protected set totals 64 + 128 + 192 = 384 MB of roughly 950 MB usable, which leaves
+# the OS and the recovery plane comfortable.
 Slice=dial-recovery.slice
-MemoryHigh=180M
-MemoryMax=256M
-CPUWeight=20
-OOMScoreAdjust=300
+MemoryMin=192M
+MemoryLow=224M
+MemoryHigh=288M
+MemoryMax=320M
+CPUWeight=200
+OOMScoreAdjust=-500
 
 NoNewPrivileges=true
 PrivateTmp=true
