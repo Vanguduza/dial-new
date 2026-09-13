@@ -4,21 +4,36 @@
   "registry_version": "1.0.0",
   "decision_ref": "DEC-032",
   "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-
   "authority_note": "A model describes a REASONING/CODING capability, independent of the execution environment that hosts it. Entries here are SEEDS and qualification records, never a permanent hard-coding: live availability is discovered per §37 from authenticated subscriptions and normalised into this registry. An entry that discovery cannot confirm is not routable regardless of what is written here.",
-
   "eligibility_default": {
-    "policy": "DISCOVERABLE_BY_DEFAULT_QUALIFIED_BEFORE_ROUTABLE",
-    "deviation_from_document": "§6 states every model in an authorised subscription is 'worker-eligible by default, unless explicitly disqualified'. Taken literally that is allow-by-default and contradicts §38 (routing uses only models meeting qualification policy) and §65 (DISCOVERED → QUALIFYING → SHADOW_TESTED → LIMITED_TRAFFIC → QUALIFIED). DIAL fails closed everywhere else, so the deny-until-qualified reading wins: discovery WIDENS the candidate pool, only qualification GRANTS eligibility. §6's intent — do not hand-encode one Claude model and one Codex model — is fully preserved, because discovery is what populates the pool.",
-    "resolved_by": "owner review 2026-09-12"
+    "policy": "SUBSCRIPTION_PRESENCE_CONFERS_ELIGIBILITY",
+    "rule": "A model confirmed present on an authorised subscription is worker-eligible at every risk class its harness and the task's security/data policy permit. DIAL does not re-prove capabilities the provider already establishes.",
+    "owner_decision": "Owner overruled an earlier deny-until-qualified reading on 2026-09-13: model capabilities are known, DIAL should not make a model earn access, and performance is learned from real assigned jobs rather than from probation work.",
+    "disqualifiers_are_explicit_only": [
+      "MODEL_ABSENT_FROM_SUBSCRIPTION",
+      "MODEL_UNAVAILABLE_OR_UNHEALTHY",
+      "QUOTA_EXHAUSTED",
+      "HARNESS_INCOMPATIBLE",
+      "REQUIRED_CAPABILITY_NOT_DECLARED",
+      "DATA_CLASS_NOT_PERMITTED",
+      "RISK_CLASS_NOT_PERMITTED_BY_HARNESS",
+      "OWNER_FORBADE_MODEL_OR_PROVIDER"
+    ],
+    "no_probation": true,
+    "no_first_test_restriction": true,
+    "learning_source": "ASSIGNED_JOBS"
   },
-
   "manager_eligibility_never_excludes_worker_eligibility": true,
-
-  "qualification_states": ["DISCOVERED", "QUALIFYING", "SHADOW_TESTED", "LIMITED_TRAFFIC", "QUALIFIED", "APPROVED", "DEGRADED", "BLOCKED", "UNAVAILABLE"],
-  "routable_states": ["LIMITED_TRAFFIC", "QUALIFIED", "APPROVED"],
-  "high_risk_routable_states": ["QUALIFIED", "APPROVED"],
-
+  "qualification_states": [
+    "PRESENT",
+    "ABSENT",
+    "UNAVAILABLE",
+    "QUOTA_EXHAUSTED",
+    "BLOCKED_BY_OWNER"
+  ],
+  "routable_states": [
+    "PRESENT"
+  ],
   "models": [
     {
       "model_id": "claude-sonnet-5",
@@ -30,14 +45,24 @@
       "worker_eligible": true,
       "manager_eligible": true,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": true,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": true,
+        "debugging": true,
+        "review": true
       },
       "cost_profile": "STANDARD",
       "latency_profile": "STANDARD",
-      "reliability_profile": "PROVEN",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": 200000,
-      "known_strengths": ["balanced implementation and reasoning", "sustained tool use"],
+      "known_strengths": [
+        "balanced implementation and reasoning",
+        "sustained tool use"
+      ],
       "known_failure_modes": [],
       "identity": {
         "resolved_version": null,
@@ -45,11 +70,12 @@
         "qualification_epoch": 1
       },
       "qualification": {
-        "state": "QUALIFIED",
-        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:claude-sonnet-worker",
-        "basis": "Existing DEC-028 worker card claude-sonnet-worker was already QUALIFIED as a pre-bound pair. Qualification is inherited for the pair it covered, not for the model on every harness."
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "INHERITED_FROM_COMPATIBILITY_SHIM:claude-sonnet-worker"
       },
-      "seed": false
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
     {
       "model_id": "gpt-5.6-sol",
@@ -61,26 +87,39 @@
       "worker_eligible": true,
       "manager_eligible": true,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": true,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": true,
+        "debugging": true,
+        "review": true
       },
       "cost_profile": "PREMIUM",
       "latency_profile": "STANDARD",
-      "reliability_profile": "PROVEN",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": 400000,
-      "known_strengths": ["strong implementation", "bounded task execution"],
-      "known_failure_modes": ["benefits from explicit postcondition testing"],
+      "known_strengths": [
+        "strong implementation",
+        "bounded task execution"
+      ],
+      "known_failure_modes": [
+        "benefits from explicit postcondition testing"
+      ],
       "identity": {
         "resolved_version": null,
         "capability_fingerprint": null,
         "qualification_epoch": 1
       },
       "qualification": {
-        "state": "QUALIFIED",
-        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:codex-sol-worker",
-        "basis": "Existing DEC-028 worker card codex-sol-worker was already QUALIFIED as a pre-bound pair."
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "INHERITED_FROM_COMPATIBILITY_SHIM:codex-sol-worker"
       },
-      "seed": false
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
     {
       "model_id": "claude-opus-5",
@@ -92,22 +131,41 @@
       "worker_eligible": true,
       "manager_eligible": true,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": true,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": true,
+        "debugging": true,
+        "review": true
       },
       "cost_profile": "PREMIUM",
       "latency_profile": "SLOWER",
-      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": 200000,
-      "known_strengths": ["architecture", "multi-system reasoning", "ambiguity resolution"],
-      "known_failure_modes": ["can overthink", "may act prematurely on plausible assumptions"],
-      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
-      "qualification": {
-        "state": "DISCOVERED",
-        "evidence_hash": null,
-        "basis": "Seed entry. No DIAL execution evidence exists. Must pass §65 cold-start before routable, and high-risk work may not be its first test."
+      "known_strengths": [
+        "architecture",
+        "multi-system reasoning",
+        "ambiguity resolution"
+      ],
+      "known_failure_modes": [
+        "can overthink",
+        "may act prematurely on plausible assumptions"
+      ],
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 0
       },
-      "seed": true
+      "qualification": {
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "Seed entry. No DIAL execution evidence exists. Must pass §65 cold-start before routable, and high-risk work may not be its first test."
+      },
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
     {
       "model_id": "claude-fable-5-1",
@@ -119,18 +177,37 @@
       "worker_eligible": true,
       "manager_eligible": true,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": true, "debugging": true, "review": true
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": true,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": true,
+        "debugging": true,
+        "review": true
       },
       "cost_profile": "PREMIUM",
       "latency_profile": "SLOWER",
-      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": 200000,
-      "known_strengths": ["architecture", "ambiguity resolution"],
+      "known_strengths": [
+        "architecture",
+        "ambiguity resolution"
+      ],
       "known_failure_modes": [],
-      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
-      "qualification": { "state": "DISCOVERED", "evidence_hash": null, "basis": "Seed entry. No DIAL execution evidence." },
-      "seed": true
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 0
+      },
+      "qualification": {
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "Seed entry. No DIAL execution evidence."
+      },
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
     {
       "model_id": "claude-haiku-4-5-20251001",
@@ -142,18 +219,40 @@
       "worker_eligible": true,
       "manager_eligible": false,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": false, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": false, "debugging": true, "review": false
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": false,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": false,
+        "debugging": true,
+        "review": false
       },
       "cost_profile": "ECONOMICAL",
       "latency_profile": "FAST",
-      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": 200000,
-      "known_strengths": ["mechanical refactor", "bounded edits", "low latency"],
-      "known_failure_modes": ["not suitable for architecture or ambiguity resolution"],
-      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 0 },
-      "qualification": { "state": "DISCOVERED", "evidence_hash": null, "basis": "Seed entry. Candidate for the economical tier in §13 escalation once qualified." },
-      "seed": true
+      "known_strengths": [
+        "mechanical refactor",
+        "bounded edits",
+        "low latency"
+      ],
+      "known_failure_modes": [
+        "not suitable for architecture or ambiguity resolution"
+      ],
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 0
+      },
+      "qualification": {
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "Seed entry. Candidate for the economical tier in §13 escalation once qualified."
+      },
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
     {
       "model_id": "antigravity-native",
@@ -165,31 +264,51 @@
       "worker_eligible": true,
       "manager_eligible": false,
       "capabilities": {
-        "coding": true, "reasoning": true, "visual_reasoning": true, "long_context": true,
-        "structured_output": true, "tool_reasoning": true, "architecture": false, "debugging": true, "review": false
+        "coding": true,
+        "reasoning": true,
+        "visual_reasoning": true,
+        "long_context": true,
+        "structured_output": true,
+        "tool_reasoning": true,
+        "architecture": false,
+        "debugging": true,
+        "review": false
       },
       "cost_profile": "STANDARD",
       "latency_profile": "STANDARD",
-      "reliability_profile": "UNPROVEN_IN_DIAL",
+      "reliability_profile": "PROVIDER_ESTABLISHED",
       "context_window": null,
-      "known_strengths": ["browser execution", "visual and interactive workflows"],
+      "known_strengths": [
+        "browser execution",
+        "visual and interactive workflows"
+      ],
       "known_failure_modes": [],
-      "identity": { "resolved_version": null, "capability_fingerprint": null, "qualification_epoch": 1 },
-      "qualification": {
-        "state": "QUALIFIED",
-        "evidence_hash": "INHERITED_FROM_COMPATIBILITY_SHIM:antigravity-worker",
-        "basis": "Bound to DEC-031 external-capability evidence via the existing antigravity-worker card."
+      "identity": {
+        "resolved_version": null,
+        "capability_fingerprint": null,
+        "qualification_epoch": 1
       },
-      "seed": false
+      "qualification": {
+        "state": "PRESENT",
+        "basis": "SUBSCRIPTION_PRESENCE",
+        "confirmed_by": "DISCOVERY",
+        "prior_record": "INHERITED_FROM_COMPATIBILITY_SHIM:antigravity-worker"
+      },
+      "registry_entry_kind": "SUBSCRIPTION_SEED"
     }
   ],
-
   "discovery": {
     "required": true,
-    "sources": ["anthropic-subscription", "chatgpt-subscription", "google-subscription"],
+    "sources": [
+      "anthropic-subscription",
+      "chatgpt-subscription",
+      "google-subscription"
+    ],
     "normalises_into": "models[]",
     "stale_discovery_behaviour": "FAIL_CLOSED",
     "stale_discovery_note": "§37 requires discovery but never says what happens when it fails or returns a truncated list. DIAL already answers this shape of question for host telemetry: stale evidence makes a target ineligible for normal work rather than silently trusted. The same rule applies here — discovery older than max_discovery_age_ms makes every model whose availability it would confirm ineligible for new routing, while work already in flight is unaffected.",
     "max_discovery_age_ms": 3600000
-  }
+  },
+  "qualification_note": "State records whether the model is currently present and usable on its subscription. It is not a maturity ladder and carries no notion of a model earning trust. Performance is tracked separately in MODEL_TASK_PERFORMANCE_LEDGER.json and informs ranking, never eligibility.",
+  "reliability_note": "reliability_profile describes what the PROVIDER establishes about the model, not how much DIAL has used it. A model is never ranked down merely for being new to DIAL; differentiation comes from the performance ledger once real assigned jobs have produced evidence."
 }

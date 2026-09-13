@@ -5,13 +5,18 @@
 // authority boundary: the manager runtime is still never selected here, and
 // nothing below may waive a mandatory gate.
 //
-// Stage order is load-bearing and is the thing most likely to be got wrong on
-// a later edit: hard filters, THEN the minimum quality floor, THEN cost
-// ranking. Ranking before the floor would let a cheap unqualified pair win a
-// CRITICAL task, which is the specific failure §91 exists to prevent.
+// Eligibility is conferred by presence on an authorised subscription. DIAL does
+// not re-prove capabilities the provider already establishes, and there is no
+// probation: a model new to DIAL can be assigned any work its harness and the
+// task's security policy permit. Owner decision, 2026-09-13.
+//
+// Stage order is still load-bearing: hard filters, THEN the quality floor, THEN
+// cost ranking. The floor now retires a pair the ledger shows underperforming
+// rather than gating a new one, but it must stay ahead of cost ranking so a
+// cheap pair with a bad record cannot win a CRITICAL task on price.
 import {
   DEFAULT_REPO_DIR, discoveryFresh, estimateTokens, generatePairs, harnessQualified,
-  hashObject, inheritedShimQualification, loadRoutingRegistries, modelRoutable, nowIso,
+  hashObject, loadRoutingRegistries, modelRoutable, nowIso,
 } from './adaptive-routing-core.mjs';
 
 const RISK_ORDER = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
@@ -32,9 +37,11 @@ function ledgerEntry(ledger, pair, { taskArchetype = null, role = null } = {}) {
 }
 
 /**
- * Expected acceptance probability for a pair. With an empty ledger this is the
- * cold-start prior, which is deliberately too low to clear the HIGH/CRITICAL
- * floors — see the bootstrap rule for how a pair earns those.
+ * Expected acceptance probability for a pair, learned from assigned jobs.
+ *
+ * With no ledger entry this is the cold-start prior and `samples` is 0, which
+ * the floor reads as "no evidence yet" and admits. The prior therefore shapes
+ * ranking only; it never withholds work from a model DIAL has not used.
  */
 export function expectedQuality({ registries, pair, taskArchetype = null, role = null } = {}) {
   const cold = registries.ledger.cold_start || {};
@@ -65,7 +72,7 @@ export function effectiveExecutionCost({ registries, pair, estimate = {} } = {})
     token_cost: Number(estimate.token_cost ?? costProfile),
     subscription_scarcity: Number(estimate.subscription_scarcity ?? costProfile),
     latency: Number(estimate.latency ?? latencyProfile),
-    expected_rework: Number(estimate.expected_rework ?? (pair.proven ? 0.2 : 0.5)),
+    expected_rework: Number(estimate.expected_rework ?? (pair.proven ? 0.2 : 0.3)),
     expected_review_cost: Number(estimate.expected_review_cost ?? 0.3),
     premium_opportunity_cost: Number(estimate.premium_opportunity_cost ?? costProfile),
   };
@@ -80,43 +87,28 @@ export function effectiveExecutionCost({ registries, pair, estimate = {} } = {})
 }
 
 /**
- * The floor a pair must clear, and whether the bootstrap lets it try at all.
- * Returns the reason rather than a bare boolean so the trace can explain a
- * refusal without the caller re-deriving it.
+ * Whether the ledger has enough evidence to disqualify this pair at this risk
+ * class. Returns the reason rather than a bare boolean so the trace can explain
+ * a refusal without the caller re-deriving it.
  */
 export function qualityFloorDecision({ registries, pair, riskClass, quality } = {}) {
   const floor = registries.policy.minimum_quality_floor || {};
   const required = Number(floor.by_risk_class?.[riskClass] ?? 0);
-  const boot = floor.bootstrap || {};
-  const inherited = boot.inherits_from_compatibility_shim
-    ? inheritedShimQualification({ registries, harnessId: pair.harness_id, modelId: pair.model_id })
-    : null;
+  const minSamples = Number(floor.min_samples_before_floor_applies ?? 0);
+  const samples = Number(quality.samples ?? 0);
 
-  if (!inherited) {
-    const cap = boot.uninherited_pairs_max_risk_class || 'MEDIUM';
-    if (!riskAtMost(riskClass, cap)) {
-      return { ok: false, reason: 'UNPROVEN_MODEL_ON_HIGH_RISK_TASK', required, cap, inherited: null };
-    }
+  // The floor retires a pair that has demonstrably underperformed. It is not a
+  // bar a new pair must clear before it is trusted: model capabilities are
+  // established by the provider, and DIAL learns from real assigned jobs. So
+  // with too little evidence to judge, the pair is admitted rather than held
+  // back — no probation, no "prove yourself on small work first".
+  if (floor.applies_only_with_evidence !== false && samples < minSamples) {
+    return { ok: true, required, observed: quality.value, samples, basis: 'NO_EVIDENCE_YET_ADMITTED' };
   }
-  // An inherited pair clears the floor on the strength of the qualification the
-  // DEC-028 card already carried; without that, the posterior must clear it.
-  if (inherited) return { ok: true, required, inherited, basis: 'INHERITED_SHIM_QUALIFICATION' };
   if (quality.value >= required) {
-    return { ok: true, required, observed: quality.value, basis: 'LEDGER_POSTERIOR' };
+    return { ok: true, required, observed: quality.value, samples, basis: 'LEDGER_POSTERIOR' };
   }
-
-  // Chicken-and-egg: the cold-start prior (0.75) sits below even the LOW floor
-  // (0.80), so an uninherited pair could never accumulate the samples it needs
-  // to clear the floor it is being held to. §97 supplies the escape — unknown
-  // models may be tested under low-risk conditions — so exploration admits the
-  // pair at the risk classes the policy names, and nowhere else. It is flagged,
-  // so ranking can still prefer a proven pair and the trace shows why it ran.
-  const exploration = registries.policy.conservative_routing_under_weak_telemetry || {};
-  const allowed = exploration.exploration_allowed_at_risk_classes || [];
-  if (exploration.enabled === true && allowed.includes(riskClass)) {
-    return { ok: true, required, observed: quality.value, basis: 'EXPLORATION_UNDER_WEAK_TELEMETRY', exploration: true };
-  }
-  return { ok: false, reason: 'BELOW_QUALITY_FLOOR', required, observed: quality.value, inherited: null };
+  return { ok: false, reason: 'BELOW_QUALITY_FLOOR', required, observed: quality.value, samples };
 }
 
 /**
@@ -183,7 +175,7 @@ export function selectExecutionPair({
     if (mHealth.quota_state === 'EXHAUSTED') { reject(pair.pair_id, 'MODEL_QUOTA_EXHAUSTED'); continue; }
 
     if (!modelRoutable({ model: m, policyRegistry: reg.models, riskClass })) {
-      reject(pair.pair_id, 'MODEL_NOT_QUALIFIED', m.qualification?.state); continue;
+      reject(pair.pair_id, 'MODEL_NOT_PRESENT_ON_SUBSCRIPTION', m.qualification?.state); continue;
     }
     if (m.worker_eligible !== true) { reject(pair.pair_id, 'ROLE_NOT_ALLOWED', 'not worker_eligible'); continue; }
 
@@ -213,7 +205,9 @@ export function selectExecutionPair({
   const ranked = floored.map((pair) => {
     const cost = effectiveExecutionCost({ registries: reg, pair });
     const taskFit = pair.proven ? 1 : 0.85;
-    const reliability = { PROVEN: 1, UNPROVEN_IN_DIAL: 0.8 }[pair.model.reliability_profile] ?? 0.8;
+    // Reliability reflects what the provider establishes, not how much DIAL has
+    // used the model. A model is never ranked down for being new here.
+    const reliability = { PROVIDER_ESTABLISHED: 1, DEGRADED: 0.6 }[pair.model.reliability_profile] ?? 1;
     const firstPass = Number(pair.quality.first_pass ?? pair.quality.value);
     const score = (pair.quality.value * taskFit * reliability * firstPass) / cost.cost;
     return { ...pair, cost, task_fit: taskFit, reliability, score };
@@ -253,9 +247,7 @@ export function selectExecutionPair({
     provider: selected.provider,
     role,
     specialist_tools: requiredSpecialistTools({ registries: reg, taskRequirements }),
-    selection_reason: selected.floor.basis === 'INHERITED_SHIM_QUALIFICATION'
-      ? 'HIGHEST_SCORE_AMONG_FLOOR_CLEARING_PAIRS_INHERITED_QUALIFICATION'
-      : 'HIGHEST_SCORE_AMONG_FLOOR_CLEARING_PAIRS',
+    selection_reason: `HIGHEST_SCORE_AMONG_ELIGIBLE_PAIRS:${selected.floor.basis}`,
     expected_quality: selected.quality.value,
     expected_token_cost: selected.cost.breakdown.token_cost?.value ?? null,
     expected_rework: selected.cost.breakdown.expected_rework?.value ?? null,

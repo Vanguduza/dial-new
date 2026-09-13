@@ -65,48 +65,74 @@ describe('DIAL adaptive harness x model routing (DEC-032)', () => {
     expect(['STALE_DISCOVERY', 'DISCOVERY_UNAVAILABLE']).toContain(route.reason);
   });
 
-  it('refuses an unqualified model and admits a qualified one', () => {
+  it('admits every subscription model without making it earn access', () => {
     const reg = fresh();
     const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: LOW });
     expect(route.ok).toBe(true);
-    const excluded = route.excluded_candidates.find((c) => c.pair_id === 'claude-code+claude-opus-5');
-    expect(excluded.reason).toBe('MODEL_NOT_QUALIFIED');
+    const eligible = route.eligible_pairs.map((p) => p.pair_id);
+    // Opus, Fable and Haiku have no DIAL track record at all. They are routable
+    // anyway: capabilities come from the provider, not from DIAL probation.
+    expect(eligible).toContain('claude-code+claude-opus-5');
+    expect(eligible).toContain('claude-code+claude-fable-5-1');
+    expect(eligible).toContain('claude-code+claude-haiku-4-5-20251001');
+    expect(route.excluded_candidates.some((c) => c.reason === 'MODEL_NOT_PRESENT_ON_SUBSCRIPTION')).toBe(false);
   });
 
-  it('applies the quality floor before cost ranking, not after', () => {
+  it('assigns a model with no DIAL history to critical work', () => {
     const reg = fresh();
-    // A pair that survives every earlier gate but has no inherited
-    // qualification: the floor is the only thing that can stop it.
-    const probe = {
-      ...reg.models.models.find((m) => m.model_id === 'claude-sonnet-5'),
-      model_id: 'probe-unshimmed', cost_profile: 'ECONOMICAL',
-      qualification: { state: 'QUALIFIED', evidence_hash: 'PROBE' },
-    };
-    reg.models = { ...reg.models, models: [...reg.models.models, probe] };
-    reg.compatibility.compatibility['claude-code'].candidate_pairs.push('probe-unshimmed');
-
-    const critical = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
-    expect(critical.excluded_candidates.find((c) => c.pair_id === 'claude-code+probe-unshimmed').reason)
-      .toBe('UNPROVEN_MODEL_ON_HIGH_RISK_TASK');
-
-    // The cheapest pair does not win a CRITICAL task merely by being cheapest.
-    if (critical.ok) expect(critical.selection.model_id).not.toBe('probe-unshimmed');
+    const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
+    expect(route.ok).toBe(true);
+    expect(route.eligible_pairs.map((p) => p.pair_id)).toContain('claude-code+claude-fable-5-1');
   });
 
-  it('explores an unproven pair only at low risk, so it can earn evidence', () => {
+  it('excludes a pair only once the ledger shows it underperforming', () => {
     const reg = fresh();
-    const probe = {
-      ...reg.models.models.find((m) => m.model_id === 'claude-sonnet-5'),
-      model_id: 'probe-explore',
-      qualification: { state: 'QUALIFIED', evidence_hash: 'PROBE' },
+    const pairId = 'claude-code+claude-opus-5';
+    // With no evidence the pair is admitted at CRITICAL; the floor is not a bar
+    // to climb. Give it a poor, well-sampled record and the floor then bites.
+    const before = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
+    expect(before.eligible_pairs.map((p) => p.pair_id)).toContain(pairId);
+
+    reg.ledger = {
+      ...reg.ledger,
+      entries: [{
+        harness_id: 'claude-code', model_id: 'claude-opus-5', task_archetype: null, role: null,
+        sample_count: 40, final_accept_count: 8, first_pass_accept_count: 4, escaped_defect_rate: 0.5,
+      }],
     };
-    reg.models = { ...reg.models, models: [...reg.models.models, probe] };
-    reg.compatibility.compatibility['claude-code'].candidate_pairs.push('probe-explore');
-    const low = selectExecutionPair({ repoDir, registries: reg, taskRequirements: LOW });
-    expect(low.eligible_pairs.some((p) => p.pair_id === 'claude-code+probe-explore')).toBe(true);
-    const high = selectExecutionPair({ repoDir, registries: reg, taskRequirements: HIGH });
-    expect(high.excluded_candidates.find((c) => c.pair_id === 'claude-code+probe-explore').reason)
-      .toBe('UNPROVEN_MODEL_ON_HIGH_RISK_TASK');
+    const after = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
+    expect(after.excluded_candidates.find((c) => c.pair_id === pairId).reason).toBe('BELOW_QUALITY_FLOOR');
+  });
+
+  it('keeps the quality floor ahead of cost ranking', () => {
+    const reg = fresh();
+    const cheap = {
+      ...reg.models.models.find((m) => m.model_id === 'claude-haiku-4-5-20251001'),
+      model_id: 'probe-cheap-bad', cost_profile: 'ECONOMICAL',
+    };
+    reg.models = { ...reg.models, models: [...reg.models.models, cheap] };
+    reg.compatibility.compatibility['claude-code'].candidate_pairs.push('probe-cheap-bad');
+    reg.ledger = {
+      ...reg.ledger,
+      entries: [{
+        harness_id: 'claude-code', model_id: 'probe-cheap-bad', task_archetype: null, role: null,
+        sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
+      }],
+    };
+    // A cheap pair with a bad record must not win a CRITICAL task on price.
+    const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
+    expect(route.excluded_candidates.find((c) => c.pair_id === 'claude-code+probe-cheap-bad').reason)
+      .toBe('BELOW_QUALITY_FLOOR');
+    if (route.ok) expect(route.selection.model_id).not.toBe('probe-cheap-bad');
+  });
+
+  it('learns from assigned jobs rather than withholding work to build evidence', () => {
+    const reg = fresh();
+    const pairId = 'claude-code+claude-fable-5-1';
+    for (const risk of ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']) {
+      const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: { ...LOW, risk_class: risk } });
+      expect(route.eligible_pairs.map((p) => p.pair_id)).toContain(pairId);
+    }
   });
 
   it('rejects a data class the harness does not support', () => {

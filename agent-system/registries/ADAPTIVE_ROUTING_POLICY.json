@@ -4,9 +4,7 @@
   "policy_version": "1.0.0",
   "decision_ref": "DEC-032",
   "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-
   "authority_note": "Routing is deterministic code bound to this policy version. Every routing decision records policy_version so it can be re-derived. Changing any threshold requires a policy_version bump.",
-
   "routing_stages": [
     "RECEIVE_VEKL_PASS1_PACKAGE",
     "READ_TASK_TRIAGE",
@@ -25,7 +23,6 @@
     "REVALIDATE_VOLATILE_BINDINGS",
     "DISPATCH"
   ],
-
   "hard_filters": [
     "PROVIDER_AUTHENTICATION",
     "MODEL_AVAILABILITY",
@@ -40,83 +37,135 @@
     "REPOSITORY_LEASE_REQUIREMENTS",
     "SECURITY_RESTRICTIONS"
   ],
-
   "rejection_reasons": [
-    "HARNESS_NOT_QUALIFIED", "HARNESS_UNHEALTHY", "HARNESS_NOT_AUTHENTICATED",
-    "MODEL_NOT_QUALIFIED", "MODEL_UNAVAILABLE", "MODEL_QUOTA_EXHAUSTED",
-    "PAIR_NOT_COMPATIBLE", "CAPABILITY_MISSING", "ROLE_NOT_ALLOWED",
-    "RISK_CLASS_NOT_PERMITTED", "DATA_CLASS_NOT_PERMITTED",
-    "BELOW_QUALITY_FLOOR", "UNPROVEN_MODEL_ON_HIGH_RISK_TASK",
-    "TOOL_NOT_AUTHORIZED", "MANAGER_RUNTIME_CARD_FORBIDDEN",
-    "STALE_DISCOVERY", "STALE_EXECUTION_ENVELOPE", "DISCOVERY_UNAVAILABLE"
+    "BELOW_QUALITY_FLOOR",
+    "CAPABILITY_MISSING",
+    "DATA_CLASS_NOT_PERMITTED",
+    "DISCOVERY_UNAVAILABLE",
+    "HARNESS_NOT_AUTHENTICATED",
+    "HARNESS_NOT_QUALIFIED",
+    "HARNESS_UNHEALTHY",
+    "MANAGER_RUNTIME_CARD_FORBIDDEN",
+    "MODEL_NOT_PRESENT_ON_SUBSCRIPTION",
+    "MODEL_QUOTA_EXHAUSTED",
+    "MODEL_UNAVAILABLE",
+    "OWNER_FORBADE_MODEL_OR_PROVIDER",
+    "PAIR_NOT_COMPATIBLE",
+    "RISK_CLASS_NOT_PERMITTED",
+    "ROLE_NOT_ALLOWED",
+    "STALE_DISCOVERY",
+    "STALE_EXECUTION_ENVELOPE",
+    "TOOL_NOT_AUTHORIZED"
   ],
-
   "minimum_quality_floor": {
-    "note": "§91. Applied BEFORE cost ranking, never after. A weaker model is never chosen merely because it is cheaper.",
+    "note": "Applied only where the ledger actually has evidence. A model is never excluded for lacking a DIAL track record: capabilities are established by the provider, and DIAL learns from assigned jobs. The floor exists to retire a pair that has demonstrably underperformed, not to make a new pair earn access.",
+    "owner_decision": "Owner ruled on 2026-09-13 that all subscription models qualify and that DIAL must not re-prove known capabilities. The earlier probation ladder and the low-risk exploration carve-out are removed.",
+    "applies_only_with_evidence": true,
+    "min_samples_before_floor_applies": 8,
     "by_risk_class": {
-      "LOW": 0.80,
-      "MEDIUM": 0.90,
+      "LOW": 0.8,
+      "MEDIUM": 0.9,
       "HIGH": 0.96,
       "CRITICAL": 0.99
     },
-    "bootstrap": {
-      "problem": "With the cold-start posterior (prior 0.75, weight 8) and an empty ledger, no pair can reach 0.96 or 0.99. Taken literally the floor blocks all HIGH and CRITICAL work on day one -- a self-blocking gate.",
-      "rule": "INHERIT_THEN_PROVE",
-      "inherits_from_compatibility_shim": true,
-      "inherit_note": "A pair whose model+harness matches a DEC-028 worker card that was already QUALIFIED inherits that card's qualification as its floor basis, because that exact pairing already carried production authority. This grandfathers claude-code+claude-sonnet-5 and codex-app-server+gpt-5.6-sol and nothing else.",
-      "uninherited_pairs_max_risk_class": "MEDIUM",
-      "uninherited_note": "A pair with no inherited qualification and no ledger evidence may take LOW and MEDIUM work only. It reaches HIGH/CRITICAL by accumulating trusted-outcome evidence, never by assertion.",
-      "expires_when": "the ledger holds sufficient trusted-outcome samples for the pair at the requested risk class"
-    },
-    "high_risk_never_first_test": true,
-    "high_risk_never_first_test_note": "§65. An unproven model's first DIAL execution may not be a HIGH or CRITICAL task."
+    "below_floor_action": "EXCLUDE_PAIR_FOR_THIS_RISK_CLASS",
+    "no_evidence_action": "ADMIT",
+    "no_probation": true,
+    "no_first_test_restriction": true
   },
-
   "cost_model": {
     "note": "§14's denominator adds token_cost + latency + expected_rework_cost, which sums tokens, milliseconds and rework -- three different units. §55 separately introduces effective_execution_cost without connecting it back. This policy resolves the two into one normalised function.",
     "normalise_into": "effective_execution_cost",
     "score_formula": "(expected_quality * task_fit * reliability * first_pass_probability) / effective_execution_cost",
     "effective_execution_cost_terms": [
-      { "term": "token_cost", "weight": 1.0, "unit": "normalised_0_1" },
-      { "term": "subscription_scarcity", "weight": 1.0, "unit": "normalised_0_1" },
-      { "term": "latency", "weight": 0.5, "unit": "normalised_0_1" },
-      { "term": "expected_rework", "weight": 1.5, "unit": "normalised_0_1" },
-      { "term": "expected_review_cost", "weight": 0.5, "unit": "normalised_0_1" },
-      { "term": "premium_opportunity_cost", "weight": 0.75, "unit": "normalised_0_1" }
+      {
+        "term": "token_cost",
+        "weight": 1.0,
+        "unit": "normalised_0_1"
+      },
+      {
+        "term": "subscription_scarcity",
+        "weight": 1.0,
+        "unit": "normalised_0_1"
+      },
+      {
+        "term": "latency",
+        "weight": 0.5,
+        "unit": "normalised_0_1"
+      },
+      {
+        "term": "expected_rework",
+        "weight": 1.5,
+        "unit": "normalised_0_1"
+      },
+      {
+        "term": "expected_review_cost",
+        "weight": 0.5,
+        "unit": "normalised_0_1"
+      },
+      {
+        "term": "premium_opportunity_cost",
+        "weight": 0.75,
+        "unit": "normalised_0_1"
+      }
     ],
     "all_terms_normalised_before_summation": true,
     "subscription_aware": true,
     "subscription_note": "§55. Flat-rate access, rolling quotas, seat limits and rate limits mean scarcity pressure can matter more than nominal token price."
   },
-
   "behavioural_guidance_budgets": {
     "note": "The document states three budget tables. §23 (routine 100 / moderate 200 / complex 400) conflicts with §50 and §87, which agree with each other. The two-against-one agreement is adopted; §23 is treated as superseded. These limits are ENFORCEABLE (§87), not advisory, and cover model-specific behavioural guidance ONLY -- never required engineering context.",
     "superseded_table": "§23",
     "adopted_table": "§50 and §87",
     "by_complexity": {
-      "SIMPLE": { "min_tokens": 0, "max_tokens": 50 },
-      "NORMAL": { "min_tokens": 50, "max_tokens": 120 },
-      "COMPLEX": { "min_tokens": 120, "max_tokens": 250 },
-      "HIGH_RISK": { "min_tokens": 250, "max_tokens": 400 }
+      "SIMPLE": {
+        "min_tokens": 0,
+        "max_tokens": 50
+      },
+      "NORMAL": {
+        "min_tokens": 50,
+        "max_tokens": 120
+      },
+      "COMPLEX": {
+        "min_tokens": 120,
+        "max_tokens": 250
+      },
+      "HIGH_RISK": {
+        "min_tokens": 250,
+        "max_tokens": 400
+      }
     },
     "exceeding_requires_recorded_justification": true,
-    "justification_kinds": ["EXPECTED_QUALITY_GAIN", "EXPECTED_RISK_REDUCTION", "EXPECTED_REWORK_REDUCTION"],
+    "justification_kinds": [
+      "EXPECTED_QUALITY_GAIN",
+      "EXPECTED_RISK_REDUCTION",
+      "EXPECTED_REWORK_REDUCTION"
+    ],
     "none_is_valid_output": true,
     "none_note": "§24/§50. ModelExecutionProfile = NONE is a valid and expected result when no model-specific adaptation is expected to improve the outcome."
   },
-
   "token_accounting": {
     "note": "§87 makes budgets enforceable and §89/§101 require per-source token counts, but the document never says whose tokenizer. Claude and GPT tokenize the same text to different counts, so a single number cannot be correct for both.",
     "method": "PER_MODEL_ESTIMATOR_WITH_DECLARED_ERROR_BOUND",
     "estimator": "CHARACTER_RATIO",
-    "chars_per_token_by_family": { "claude": 3.6, "openai-codex": 3.9, "gpt": 3.9, "provider_native": 3.8, "default": 3.6 },
+    "chars_per_token_by_family": {
+      "claude": 3.6,
+      "openai-codex": 3.9,
+      "gpt": 3.9,
+      "provider_native": 3.8,
+      "default": 3.6
+    },
     "declared_error_bound_percent": 15,
     "enforcement_margin_percent": 15,
     "enforcement_note": "Budgets are enforced against the estimate inflated by the error bound, so an under-estimate cannot silently exceed a hard limit. Where a harness exposes an exact token count, the exact count supersedes the estimate and the margin is dropped.",
     "exact_count_supersedes_estimate": true
   },
-
-  "context_classes": ["MUST_INCLUDE", "COMPRESSIBLE", "ON_DEMAND", "OPTIONAL"],
+  "context_classes": [
+    "MUST_INCLUDE",
+    "COMPRESSIBLE",
+    "ON_DEMAND",
+    "OPTIONAL"
+  ],
   "context_allocation_priority": [
     "MUST_INCLUDE_TRUTH",
     "ACCEPTANCE_CRITERIA",
@@ -129,10 +178,25 @@
   "optional_context_never_consumes_output_reserve": true,
   "must_include_never_compressed_below_safety": true,
   "default_output_reserve_tokens": 3000,
-
   "prompt_compiler": {
-    "operations": ["PRESERVE_MUST_INCLUDE", "REMOVE_DUPLICATE_CONTEXT", "MERGE_OVERLAPPING_GUIDANCE", "REJECT_CONFLICTING_GUIDANCE", "ENFORCE_PROFILE_BUDGET", "ENFORCE_TOTAL_BUDGET", "RESERVE_OUTPUT", "DEFER_ON_DEMAND", "EMIT_MANIFEST"],
-    "outcomes": ["PASS", "COMPRESS_MORE", "DEFER_OPTIONAL_CONTEXT", "RESELECT_MODEL_WITH_LARGER_CONTEXT", "BLOCK"],
+    "operations": [
+      "PRESERVE_MUST_INCLUDE",
+      "REMOVE_DUPLICATE_CONTEXT",
+      "MERGE_OVERLAPPING_GUIDANCE",
+      "REJECT_CONFLICTING_GUIDANCE",
+      "ENFORCE_PROFILE_BUDGET",
+      "ENFORCE_TOTAL_BUDGET",
+      "RESERVE_OUTPUT",
+      "DEFER_ON_DEMAND",
+      "EMIT_MANIFEST"
+    ],
+    "outcomes": [
+      "PASS",
+      "COMPRESS_MORE",
+      "DEFER_OPTIONAL_CONTEXT",
+      "RESELECT_MODEL_WITH_LARGER_CONTEXT",
+      "BLOCK"
+    ],
     "fail_closed_conditions": [
       "MUST_INCLUDE_DOES_NOT_FIT",
       "UNRESOLVED_CONFLICTING_MANDATORY_INSTRUCTIONS",
@@ -143,43 +207,84 @@
     ],
     "is_not_a_source_of_truth": true
   },
-
   "hysteresis": {
     "note": "§59. Small routing-score changes must not cause mid-task churn.",
     "min_improvement_to_switch": 0.15,
-    "bypassed_by": ["CAPABILITY_FAILURE", "QUOTA_UNAVAILABLE", "OWNER_STEER_INVALIDATION", "EVIDENCED_UNDERPERFORMANCE", "MATERIAL_COMPLEXITY_INCREASE", "SECURITY_OR_RISK_CHANGE", "ESCALATION_STOP_LOSS"],
+    "bypassed_by": [
+      "CAPABILITY_FAILURE",
+      "QUOTA_UNAVAILABLE",
+      "OWNER_STEER_INVALIDATION",
+      "EVIDENCED_UNDERPERFORMANCE",
+      "MATERIAL_COMPLEXITY_INCREASE",
+      "SECURITY_OR_RISK_CHANGE",
+      "ESCALATION_STOP_LOSS"
+    ],
     "bypass_note": "ESCALATION_STOP_LOSS is added to resolve a deadlock the document leaves open: §92 demands escalation after repeated similar failures, while §59 blocks a switch whose score improvement is below threshold. Failure-driven escalation therefore outranks hysteresis."
   },
-
   "escalation": {
-    "decisions": ["CONTINUE", "ESCALATE", "DE_ESCALATE", "RE_ROUTE", "BLOCK"],
-    "attempt_policy": { "max_similar_failures": 2, "max_total_worker_switches": 3, "max_premium_escalations": 1 },
-    "similar_failure_dimensions": ["same_task", "same_failure_class", "same_unresolved_assumption", "same_tool_failure", "same_rejected_acceptance_criterion", "same_root_cause_hypothesis"],
+    "decisions": [
+      "CONTINUE",
+      "ESCALATE",
+      "DE_ESCALATE",
+      "RE_ROUTE",
+      "BLOCK"
+    ],
+    "attempt_policy": {
+      "max_similar_failures": 2,
+      "max_total_worker_switches": 3,
+      "max_premium_escalations": 1
+    },
+    "similar_failure_dimensions": [
+      "same_task",
+      "same_failure_class",
+      "same_unresolved_assumption",
+      "same_tool_failure",
+      "same_rejected_acceptance_criterion",
+      "same_root_cause_hypothesis"
+    ],
     "retry_without_strategy_change_counts_against_budget": true,
-    "on_budget_exhausted": ["RE_RESOLVE_TASK_EVIDENCE", "ESCALATE_MODEL_OR_TOPOLOGY", "BLOCK_IF_NO_JUSTIFIED_ROUTE"]
+    "on_budget_exhausted": [
+      "RE_RESOLVE_TASK_EVIDENCE",
+      "ESCALATE_MODEL_OR_TOPOLOGY",
+      "BLOCK_IF_NO_JUSTIFIED_ROUTE"
+    ]
   },
-
   "degraded_mode": {
-    "responses": ["CONTINUE_WITH_FALLBACK", "READ_ONLY", "DEFER", "BLOCK"],
-    "by_risk_class": { "LOW": "CONTINUE_WITH_FALLBACK", "MEDIUM": "CONTINUE_WITH_FALLBACK", "HIGH": "DEFER", "CRITICAL": "BLOCK" },
+    "responses": [
+      "CONTINUE_WITH_FALLBACK",
+      "READ_ONLY",
+      "DEFER",
+      "BLOCK"
+    ],
+    "by_risk_class": {
+      "LOW": "CONTINUE_WITH_FALLBACK",
+      "MEDIUM": "CONTINUE_WITH_FALLBACK",
+      "HIGH": "DEFER",
+      "CRITICAL": "BLOCK"
+    },
     "security_sensitive_always": "BLOCK",
     "note": "§75. A simple documentation task may fall back; production credential rotation blocks if no qualified route exists."
   },
-
   "conservative_routing_under_weak_telemetry": {
+    "note": "Weak telemetry changes RANKING ONLY and never eligibility. With too few samples to estimate quality, DIAL does not fabricate confidence in either direction: it neither assumes a new model is better than a proven one nor withholds work from it. Assigned jobs are how the evidence gets built.",
     "enabled": true,
     "min_samples_for_confident_estimate": 8,
-    "below_threshold_behaviour": "PREFER_PROVEN_PAIR",
-    "exploration_allowed_at_risk_classes": ["LOW"],
-    "note": "§97. Unknown models may be tested under low-risk or shadow conditions, never assumed equal to qualified routes."
+    "below_threshold_behaviour": "RANK_ON_DECLARED_CAPABILITY_AND_COST",
+    "may_exclude_pair": false
   },
-
   "revalidation_before_dispatch": {
     "required": true,
-    "volatile_bindings": ["model_still_available", "harness_still_healthy", "quota_still_available", "tool_provider_reachable", "execution_envelope_current", "unit_revision_unchanged", "owner_steer_has_not_invalidated"],
+    "volatile_bindings": [
+      "model_still_available",
+      "harness_still_healthy",
+      "quota_still_available",
+      "tool_provider_reachable",
+      "execution_envelope_current",
+      "unit_revision_unchanged",
+      "owner_steer_has_not_invalidated"
+    ],
     "on_change": "REFUSE_STALE_DISPATCH"
   },
-
   "subscription_capacity": {
     "note": "Not specified in the document. §55 names subscription limits and §77 names concurrency, but nothing connects them: parallel workers can both route to the same premium model and both stall on one rate limit. Capacity is therefore reserved the way compute-governor.mjs already reserves tokens.",
     "reservation_required": true,
@@ -187,36 +292,93 @@
     "default_max_concurrent_per_source": 2,
     "on_exhausted": "DEFER"
   },
-
   "session_continuity": {
-    "decisions": ["CONTINUE_EXISTING_SESSION", "START_FRESH_SESSION"],
-    "fresh_session_required_when": ["ROLE_CHANGED", "MODEL_CHANGED", "REVIEWER_INDEPENDENCE_REQUIRED", "STALE_HIDDEN_CONTEXT_RISK", "PROJECT_TRUTH_CHANGED", "OWNER_STEER_INVALIDATED_ASSUMPTIONS"],
+    "decisions": [
+      "CONTINUE_EXISTING_SESSION",
+      "START_FRESH_SESSION"
+    ],
+    "fresh_session_required_when": [
+      "ROLE_CHANGED",
+      "MODEL_CHANGED",
+      "REVIEWER_INDEPENDENCE_REQUIRED",
+      "STALE_HIDDEN_CONTEXT_RISK",
+      "PROJECT_TRUTH_CHANGED",
+      "OWNER_STEER_INVALIDATED_ASSUMPTIONS"
+    ],
     "role_rebound_every_attempt": true
   },
-
   "reviewer_independence": {
     "prefer_different_family_for_builder_and_reviewer": true,
-    "required_at_risk_classes": ["HIGH", "CRITICAL"],
-    "reviewer_receives_before_worker_reasoning": ["task_truth", "acceptance_criteria", "artifact_or_result", "verification_evidence"],
-    "withheld_until_after": ["worker_reasoning", "worker_confidence", "worker_self_assessment"],
+    "required_at_risk_classes": [
+      "HIGH",
+      "CRITICAL"
+    ],
+    "reviewer_receives_before_worker_reasoning": [
+      "task_truth",
+      "acceptance_criteria",
+      "artifact_or_result",
+      "verification_evidence"
+    ],
+    "withheld_until_after": [
+      "worker_reasoning",
+      "worker_confidence",
+      "worker_self_assessment"
+    ],
     "note": "§63. Reuses the independence_class diversity already implemented in harness-capability-exchange.mjs rather than introducing a second mechanism."
   },
-
   "owner_overrides": {
-    "supported": ["FORCE_MODEL", "FORBID_MODEL", "FORCE_HARNESS", "FORBID_HARNESS", "FORCE_PROVIDER", "FORBID_PROVIDER", "FORCE_REVIEWER_DIVERSITY", "FORCE_PREMIUM_REASONING"],
+    "supported": [
+      "FORCE_MODEL",
+      "FORBID_MODEL",
+      "FORCE_HARNESS",
+      "FORBID_HARNESS",
+      "FORCE_PROVIDER",
+      "FORBID_PROVIDER",
+      "FORCE_REVIEWER_DIVERSITY",
+      "FORCE_PREMIUM_REASONING"
+    ],
     "scope_default": "CURRENT_TASK",
     "promotion_to_project_truth_requires_owner_authorization": true,
     "may_not_silently_rewrite_learned_performance": true,
-    "may_not_waive": ["MANDATORY_SECURITY_REVIEW", "MANDATORY_INDEPENDENT_REVIEW", "DATA_CLASS_POLICY", "ACCEPTANCE_GATES"]
+    "may_not_waive": [
+      "MANDATORY_SECURITY_REVIEW",
+      "MANDATORY_INDEPENDENT_REVIEW",
+      "DATA_CLASS_POLICY",
+      "ACCEPTANCE_GATES"
+    ]
   },
-
-  "data_classes": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED", "LOCAL_ONLY"],
+  "data_classes": [
+    "PUBLIC",
+    "INTERNAL",
+    "CONFIDENTIAL",
+    "RESTRICTED",
+    "LOCAL_ONLY"
+  ],
   "model_quality_never_overrides_data_policy": true,
-
-  "trust_classes": ["OWNER", "PROJECT_TRUTH", "INTERNAL", "UNTRUSTED_EXTERNAL"],
-  "untrusted_sources": ["donor_repositories", "browser_pages", "mcp_resources", "stitch_output", "external_documentation", "issue_comments", "generated_code", "model_generated_plans"],
-  "untrusted_may_never_override": ["project_truth", "owner_authority", "routing_policy", "security_policy", "tool_permissions", "acceptance_criteria"],
-
+  "trust_classes": [
+    "OWNER",
+    "PROJECT_TRUTH",
+    "INTERNAL",
+    "UNTRUSTED_EXTERNAL"
+  ],
+  "untrusted_sources": [
+    "donor_repositories",
+    "browser_pages",
+    "mcp_resources",
+    "stitch_output",
+    "external_documentation",
+    "issue_comments",
+    "generated_code",
+    "model_generated_plans"
+  ],
+  "untrusted_may_never_override": [
+    "project_truth",
+    "owner_authority",
+    "routing_policy",
+    "security_policy",
+    "tool_permissions",
+    "acceptance_criteria"
+  ],
   "production_hardening_gate": [
     "runtime_prompt_compiler_exists",
     "hard_context_budgets_enforced",

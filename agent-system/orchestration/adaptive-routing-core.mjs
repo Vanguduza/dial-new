@@ -69,13 +69,20 @@ export function estimateTokens({ repoDir = DEFAULT_REPO_DIR, text, modelFamily =
   return { tokens, exact: false, enforced_tokens: Math.ceil(tokens * (1 + margin)) };
 }
 
-// ── qualification ──────────────────────────────────────────────────────────
+// ── eligibility ────────────────────────────────────────────────────────────
+/**
+ * Presence on an authorised subscription confers eligibility, at every risk
+ * class the harness and the task's security policy allow.
+ *
+ * There is deliberately no maturity ladder and no risk-class restriction tied
+ * to how much DIAL has used a model: capabilities are established by the
+ * provider, and DIAL learns how a model actually performs from real assigned
+ * jobs rather than from probation work. Owner decision, 2026-09-13.
+ */
 export function modelRoutable({ model, policyRegistry, riskClass = 'LOW' } = {}) {
   const state = model?.qualification?.state;
-  const routable = policyRegistry?.routable_states || ['LIMITED_TRAFFIC', 'QUALIFIED', 'APPROVED'];
-  const highRisk = policyRegistry?.high_risk_routable_states || ['QUALIFIED', 'APPROVED'];
-  const needed = riskClass === 'HIGH' || riskClass === 'CRITICAL' ? highRisk : routable;
-  return needed.includes(state);
+  const routable = policyRegistry?.routable_states || ['PRESENT'];
+  return routable.includes(state);
 }
 
 export function harnessQualified(harness) {

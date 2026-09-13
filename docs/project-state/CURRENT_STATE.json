@@ -7,12 +7,21 @@
   ],
   "branch": "claude/adaptive-harness-model-routing-dec032",
   "changed_files": [
-    "tests/orchestration-vekl-resources.test.mjs"
+    "agent-system/orchestration/adaptive-routing-architecture-check.mjs",
+    "agent-system/orchestration/adaptive-routing-core.mjs",
+    "agent-system/orchestration/execution-pair-router.mjs",
+    "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
+    "agent-system/registries/DECISION_LOG.json",
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
+    "agent-system/registries/MODEL_REGISTRY.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
+    "docs/project-state/authorizations/auth-20260913-owner-subscription-presence-eligibility.json",
+    "tests/orchestration-adaptive-routing.test.mjs"
   ],
-  "content_diff_sha256": "f3e75f8a7cfb43d4311447a3433881cd25187f0185f595e2006b8759f7e7a84c",
-  "observed_at_utc": "2026-09-13T00:26:39.551392+00:00",
+  "content_diff_sha256": "79d30f95e8e6ae7166b9957eeda97e451a10da8d95c1ddec80521f6717326715",
+  "observed_at_utc": "2026-09-13T02:28:19.234671+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "5d364a6b1824a0ff5d9d66ab74b3e77b4d5e39fa",
+  "source_parent": "5e66bcd0050359e4af626f9635a329452edd6b67",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

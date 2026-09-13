@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // DEC-032 §102 production hardening gate.
 //
-// Fifteen properties that must be ENFORCED IN CODE, not merely described. The
+// The §102 properties that must be ENFORCED IN CODE, not merely described. The
 // check exercises each one against a temporary control home rather than
 // asserting a file exists, because "the module is present" and "the rule
 // fires" are different claims and only the second one matters.
@@ -90,40 +90,45 @@ export function checkAdaptiveRoutingArchitecture() {
 
   // 6. quality floor applied before cost ranking.
   //
-  //    The obvious test — assert the seed models are absent from a CRITICAL
-  //    route — passes for the wrong reason: they carry qualification state
-  //    DISCOVERED and are rejected by the qualification filter long before the
-  //    floor runs. Removing the floor entirely left that assertion green, which
-  //    is how it was caught. The instrument must therefore use a pair that is
-  //    fully QUALIFIED (so it survives every earlier gate) yet carries no
-  //    inherited shim qualification, leaving the floor as the only thing that
-  //    can reject it.
+  //    The floor no longer gates a new pair — owner decision, 2026-09-13: all
+  //    subscription models qualify and DIAL learns from assigned jobs. What the
+  //    floor still must do is keep a pair the ledger shows underperforming from
+  //    winning a high-risk task on price. So the probe gives a cheap pair a bad,
+  //    well-sampled record and asserts it is excluded, and asserts the same pair
+  //    is admitted while it has no record at all.
   const floorReg = freshRegistries();
-  const unshimmed = {
+  const cheap = {
     ...floorReg.models.models.find((m) => m.model_id === 'claude-sonnet-5'),
-    model_id: 'claude-probe-unshimmed',
-    reliability_profile: 'UNPROVEN_IN_DIAL',
-    qualification: { state: 'QUALIFIED', evidence_hash: 'PROBE', basis: 'architecture-check fixture' },
+    model_id: 'probe-cheap-bad', cost_profile: 'ECONOMICAL',
   };
-  floorReg.models = { ...floorReg.models, models: [...floorReg.models.models, unshimmed] };
+  floorReg.models = { ...floorReg.models, models: [...floorReg.models.models, cheap] };
   floorReg.compatibility = {
     ...floorReg.compatibility,
     compatibility: {
       ...floorReg.compatibility.compatibility,
       'claude-code': {
         ...floorReg.compatibility.compatibility['claude-code'],
-        candidate_pairs: [...floorReg.compatibility.compatibility['claude-code'].candidate_pairs, 'claude-probe-unshimmed'],
+        candidate_pairs: [...floorReg.compatibility.compatibility['claude-code'].candidate_pairs, 'probe-cheap-bad'],
       },
     },
   };
-  const probeId = 'claude-code+claude-probe-unshimmed';
-  const floorCritical = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: CRITICAL, role: 'BUILDER' });
-  const floorLow = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: LOW, role: 'BUILDER' });
-  const rejectedOnCritical = (floorCritical.excluded_candidates || [])
-    .some((c) => c.pair_id === probeId && c.reason === 'UNPROVEN_MODEL_ON_HIGH_RISK_TASK');
-  const admittedOnLow = (floorLow.eligible_pairs || []).some((p) => p.pair_id === probeId);
-  checks.push(crit('AR-06', rejectedOnCritical && admittedOnLow,
-    'quality floor applied before cost ranking (qualified-but-unproven pair blocked on CRITICAL, explored on LOW)'));
+  const probeId = 'claude-code+probe-cheap-bad';
+  const noRecord = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: CRITICAL, role: 'BUILDER' });
+  const admittedWithoutRecord = (noRecord.eligible_pairs || []).some((p) => p.pair_id === probeId);
+
+  const badReg = { ...floorReg, ledger: { ...floorReg.ledger, entries: [{
+    harness_id: 'claude-code', model_id: 'probe-cheap-bad', task_archetype: null, role: null,
+    sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
+  }] } };
+  const withRecord = selectExecutionPair({ repoDir: repo, registries: badReg, taskRequirements: CRITICAL, role: 'BUILDER' });
+  const excludedWithBadRecord = (withRecord.excluded_candidates || [])
+    .some((c) => c.pair_id === probeId && c.reason === 'BELOW_QUALITY_FLOOR');
+  checks.push(crit('AR-06', admittedWithoutRecord && excludedWithBadRecord,
+    'quality floor applied before cost ranking (evidence-gated: admitted with no record, excluded on a bad one)'));
+
+  // 6b. no probation: a model DIAL has never used is eligible for CRITICAL.
+  const noProbation = (noRecord.eligible_pairs || []).some((p) => p.pair_id === 'claude-code+claude-fable-5-1');
+  checks.push(crit('AR-21', noProbation, 'subscription presence confers eligibility at every risk class'));
 
   // 7. volatile state revalidated before dispatch
   const policy = reg.policy.revalidation_before_dispatch || {};
@@ -160,10 +165,15 @@ export function checkAdaptiveRoutingArchitecture() {
   });
   checks.push(crit('AR-11', prune.decision === 'DEPRECATE', 'skill deprecation/pruning active'));
 
-  // 12. conservative routing under weak telemetry
+  // 12. conservative routing under weak telemetry — RANKING ONLY.
+  //     With too few samples DIAL must not fabricate confidence in either
+  //     direction: it neither assumes a new model is better than a proven one
+  //     nor withholds work from it. So this must never exclude a pair.
   const cons = reg.policy.conservative_routing_under_weak_telemetry || {};
-  checks.push(crit('AR-12', cons.enabled === true && cons.below_threshold_behaviour === 'PREFER_PROVEN_PAIR'
-    && JSON.stringify(cons.exploration_allowed_at_risk_classes) === JSON.stringify(['LOW']), 'conservative routing under weak telemetry'));
+  checks.push(crit('AR-12', cons.enabled === true
+    && cons.may_exclude_pair === false
+    && cons.below_threshold_behaviour === 'RANK_ON_DECLARED_CAPABILITY_AND_COST',
+    'weak telemetry changes ranking only, never eligibility'));
 
   // 13. first-pass quality tracked separately
   let firstPassTracked = false;
