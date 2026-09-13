@@ -1,20 +1,20 @@
 {
   "authority_classes": [
-    "OWNER_DERIVED"
+    "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260911-owner-repo-audit-remediation"
+    "auth-20260913-owner-hybrid-mcp-ssh-control-plane"
   ],
-  "branch": "claude/dial-repo-audit-adoption-k8neax",
+  "branch": "feat/hybrid-mcp-ssh-control-plane",
   "changed_files": [
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "package.json"
+    ".github/workflows/hybrid-control-plane-authority-reconcile.yml",
+    "docs/project-state/OWNER_AUTHORITY_POLICY.json",
+    "docs/project-state/authorizations/auth-20260913-owner-hybrid-mcp-ssh-control-plane.json"
   ],
-  "content_diff_sha256": "e1b0571498c985bc25f9e0a28275ee5066d51563a9253c59205716b000204e84",
-  "observed_at_utc": "2026-09-11T17:02:27.991058+00:00",
+  "content_diff_sha256": "19ed70415ac786163c7429af5b1f541dc66beaabd7507aa04692cc967cd2a5f5",
+  "observed_at_utc": "2026-09-13T06:46:15.095085+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "2429350577d5143ea1a4ab169bbcda01c6f3b7e7",
+  "source_parent": "825730237805157412028cec73ddbad8a867dd97",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

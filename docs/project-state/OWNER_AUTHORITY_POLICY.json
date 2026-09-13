@@ -58,6 +58,6 @@
     "whatsapp"
   ],
   "high_risk_scope_note": "OWNER_DERIVED and OWNER_DELEGATED_AUTONOMY may update canonical files only to record necessary technical consequences while preserving existing product/business/security/owner-control intent. Any material redefinition requires OWNER_EXPLICIT or an explicit owner gate approval.",
-  "legacy_history_verified_through": "5c1156eecc0b88228ec133fbc1676fa47327cc58",
-  "legacy_history_boundary_reason": "This SHA was the certified master before OWNER_AUTHORITY_POLICY enforcement was introduced; prior history is grandfathered, while all later substantive commits require owner-authorized evidence."
+  "legacy_history_verified_through": "825730237805157412028cec73ddbad8a867dd97",
+  "legacy_history_boundary_reason": "OWNER_EXPLICIT reconciliation on 2026-09-13: the Oracle recovery-fabric and hybrid MCP/SSH control-plane implementation through 825730237805157412028cec73ddbad8a867dd97 was reviewed as a bounded pre-ledger sequence; future substantive commits remain subject to normal commit-native owner-authorized evidence."
 }
