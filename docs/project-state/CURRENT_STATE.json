@@ -14,7 +14,7 @@
     "docs/project-state/authorizations/auth-20260913-owner-hybrid-control-plane-regression-fix.json"
   ],
   "content_diff_sha256": "f1ac35e440a05c9b3ef8bc67df6071b32d00892dc635292b1c79989e311ffa70",
-  "observed_at_utc": "2026-09-13T06:51:26.188659+00:00",
+  "observed_at_utc": "2026-09-13T06:53:00+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
   "source_parent": "8b311d638a317509a6abc5d38a376a2033893395",
