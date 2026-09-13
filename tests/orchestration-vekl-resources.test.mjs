@@ -6,6 +6,7 @@ import { deterministicMinimalCoalition, resolveEngineeringResources } from '../a
 import { refreshAheadOfWorkResearch } from '../agent-system/orchestration/engineering-presearch.mjs';
 import { runProjectAwareResearchForecast } from '../agent-system/orchestration/engineering-research-manager.mjs';
 import { loadRuntimeHealth, recordRuntimeHealth } from '../agent-system/orchestration/runtime-health.mjs';
+import { parseProviderRetryAfter } from '../agent-system/orchestration/runtime-capacity-policy.mjs';
 import { cachedCodexIdentity } from '../agent-system/orchestration/runtime-identity-cache.mjs';
 import { persistSkillActivation, activationSummary, renderSkillActivationBundle } from '../agent-system/orchestration/skill-activation-store.mjs';
 import { reResolvePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from '../agent-system/orchestration/engineering-knowledge-broker.mjs';
@@ -83,6 +84,17 @@ describe('VEKL 2 federated engineering resources',()=>{
     expect(health.state).toBe('ACCOUNT_LIMITED');
     expect(health.retry_after).toBe('2026-09-12T05:42:00.000Z');
     expect(cachedCodexIdentity({repoDir,root})).not.toBeNull();
+  });
+
+  it('treats an absolute retry-at that has already passed as no cooldown at all',()=>{
+    // Pinning the clock in the test above must not hide the other branch.
+    // parseProviderRetryAfter deliberately yields null once the instant has
+    // passed, because a cooldown in the past is not a cooldown -- and
+    // providerCooldownUntil then falls back to observed_at + duration. Only
+    // the future branch was covered anywhere before this.
+    const msg="You've hit your usage limit; try again at Sep 12th, 2026 5:42 AM. usageLimitExceeded";
+    expect(parseProviderRetryAfter(msg,{nowMs:Date.parse('2026-09-12T04:00:00Z')})).toBe('2026-09-12T05:42:00.000Z');
+    expect(parseProviderRetryAfter(msg,{nowMs:Date.parse('2026-09-12T20:00:00Z')})).toBeNull();
   });
 
   it('does not invoke Sol research while a known provider cooldown is active',async()=>{

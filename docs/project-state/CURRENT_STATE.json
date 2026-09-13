@@ -7,13 +7,12 @@
   ],
   "branch": "claude/adaptive-harness-model-routing-dec032",
   "changed_files": [
-    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-    "docs/dial/final-audit/MANIFEST_v2_2.json"
+    "tests/orchestration-vekl-resources.test.mjs"
   ],
-  "content_diff_sha256": "1ae4cf238e25a5dfdd0a7aaa657d4d6019c5b7ca2a83c116c1ebdd2b38d38382",
-  "observed_at_utc": "2026-09-13T00:18:10.110897+00:00",
+  "content_diff_sha256": "f3e75f8a7cfb43d4311447a3433881cd25187f0185f595e2006b8759f7e7a84c",
+  "observed_at_utc": "2026-09-13T00:26:39.551392+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "700f9b8a4948e02db74e91f7620de3e2e4d2b519",
+  "source_parent": "5d364a6b1824a0ff5d9d66ab74b3e77b4d5e39fa",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
