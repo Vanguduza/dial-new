@@ -1,20 +1,23 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { route, allowedOnHost } from './hybrid-router.mjs';
+import { appendAudit } from './audit-ledger.mjs';
 
 const DENY_PATTERNS = [
   [/\bnpm\s+(ci|install|test)\b/i, 'TEST'],
   [/\bnpm\s+run\s+(verify|build|test)\b/i, 'TEST'],
   [/\bpnpm\s+(install|test|build)\b/i, 'TEST'],
+  [/\byarn\s+(install|test|build)\b/i, 'TEST'],
   [/\bgradle(w)?\b.*\b(build|assemble|test)\b/i, 'HEAVY_BUILD'],
-  [/\bdocker\s+build\b/i, 'HEAVY_BUILD'],
+  [/\bdocker\s+(build|compose\s+build)\b/i, 'HEAVY_BUILD'],
   [/\btsc\b/i, 'HEAVY_BUILD'],
   [/\bvitest\b/i, 'TEST'],
+  [/\bjest\b/i, 'TEST'],
   [/\b(graphify|graphrag)\b.*\b(index|build|rebuild)\b/i, 'INDEXING_LIGHT'],
   [/\bvekl\b.*\b(full|rebuild|refresh)\b/i, 'VEKL_LIGHT'],
+  [/\b(codex|claude|antigravity)\b.*\b(worker|run|exec)\b/i, 'MODEL_WORKER'],
 ];
 
 const ALLOW_PATTERNS = [
@@ -48,21 +51,11 @@ export function auditEvent({ source, command, workloadClass, decision, reason, h
 
 export function admit({ command, source = 'UNKNOWN', host = os.hostname(), declaredWorkload = null }) {
   const inferred = declaredWorkload ? { workload_class: String(declaredWorkload).toUpperCase(), confidence: 'DECLARED' } : classifyCommand(command);
-  if (!inferred.workload_class) {
-    return { decision: 'REFUSE', reason: 'AMBIGUOUS_WORKLOAD_FAIL_CLOSED', host, source, classification: inferred };
-  }
-  if (!allowedOnHost(host, inferred.workload_class)) {
-    return { decision: 'REFUSE', reason: 'HOST_ROLE_MISMATCH', host, source, classification: inferred };
-  }
+  if (!inferred.workload_class) return { decision: 'REFUSE', reason: 'AMBIGUOUS_WORKLOAD_FAIL_CLOSED', host, source, classification: inferred };
+  if (!allowedOnHost(host, inferred.workload_class)) return { decision: 'REFUSE', reason: 'HOST_ROLE_MISMATCH', host, source, classification: inferred };
   const routed = route({ workload_class: inferred.workload_class, target_host: host }, { localHost: host });
   if (routed.decision !== 'ALLOW') return { ...routed, host, source, classification: inferred };
   return { decision: 'ALLOW', reason: 'HOST_ROLE_MATCH', host, source, classification: inferred };
-}
-
-function appendAudit(event) {
-  const file = process.env.DIAL_CONTROL_AUDIT_LOG;
-  if (!file) return;
-  fs.appendFileSync(file, `${JSON.stringify(event)}\n`, { encoding: 'utf8' });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -73,14 +66,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const source = process.env.DIAL_COMMAND_SOURCE || 'CLI';
   const result = admit({ command, source, declaredWorkload: process.env.DIAL_WORKLOAD_CLASS || null });
   appendAudit(auditEvent({ source, command, workloadClass: result.classification?.workload_class ?? null, decision: result.decision, reason: result.reason }));
-  if (result.decision !== 'ALLOW') {
-    console.error(JSON.stringify(result, null, 2));
-    process.exit(3);
-  }
-  if (!execute) {
-    console.log(JSON.stringify(result, null, 2));
-    process.exit(0);
-  }
+  if (result.decision !== 'ALLOW') { console.error(JSON.stringify(result, null, 2)); process.exit(3); }
+  if (!execute) { console.log(JSON.stringify(result, null, 2)); process.exit(0); }
   const child = spawnSync('/bin/bash', ['-lc', command], { stdio: 'inherit' });
   process.exit(child.status ?? 1);
 }
