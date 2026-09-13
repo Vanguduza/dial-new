@@ -29,26 +29,55 @@ function posterior(successes, samples, prior, weight) {
   return (weight * prior + successes) / (weight + samples);
 }
 
-function ledgerEntry(ledger, pair, { taskArchetype = null, role = null } = {}) {
-  const entries = ledger.entries || [];
-  const match = (e, strict) => e.harness_id === pair.harness_id && e.model_id === pair.model_id
-    && (!strict || (e.task_archetype === taskArchetype && e.role === role));
-  return entries.find((e) => match(e, true)) || entries.find((e) => match(e, false)) || null;
+/**
+ * Task-capability matching index: the most SPECIFIC evidence for this pair wins.
+ *
+ * A pairing that does badly on infra recovery should drop below the next pair
+ * for infra recovery, without that record dragging down its standing on work it
+ * handles well. So the cascade prefers evidence recorded against this exact
+ * archetype/role/risk before falling back to broader evidence, and reports the
+ * granularity it landed on so the trace shows what the ordering was based on.
+ */
+const EVIDENCE_CASCADE = Object.freeze([
+  { granularity: 'ARCHETYPE_ROLE_RISK', keys: ['task_archetype', 'role', 'risk_class'] },
+  { granularity: 'ARCHETYPE_ROLE', keys: ['task_archetype', 'role'] },
+  { granularity: 'ARCHETYPE', keys: ['task_archetype'] },
+  { granularity: 'PAIR_GLOBAL', keys: [] },
+]);
+
+function ledgerEntry(ledger, pair, { taskArchetype = null, role = null, riskClass = null } = {}) {
+  const entries = (ledger.entries || []).filter(
+    (e) => e.harness_id === pair.harness_id && e.model_id === pair.model_id,
+  );
+  const want = { task_archetype: taskArchetype, role, risk_class: riskClass };
+  for (const level of EVIDENCE_CASCADE) {
+    const hit = entries.find((e) => level.keys.every((k) => e[k] != null && e[k] === want[k])
+      && (level.keys.length > 0 || EVIDENCE_CASCADE[0].keys.every((k) => e[k] == null)));
+    if (hit) return { entry: hit, granularity: level.granularity };
+  }
+  // Deliberately no "any entry for this pair" fallback. A record scoped to one
+  // archetype must not leak into an unrelated one -- that would let a poor
+  // showing on infra recovery demote the same pair on routine code changes,
+  // which is the opposite of a task-capability matching index.
+  return null;
 }
 
 /**
- * Expected acceptance probability for a pair, learned from assigned jobs.
+ * Where this pair sits in the performance hierarchy for THIS kind of task,
+ * learned from completed jobs.
  *
- * With no ledger entry this is the cold-start prior and `samples` is 0, which
- * the floor reads as "no evidence yet" and admits. The prior therefore shapes
- * ranking only; it never withholds work from a model DIAL has not used.
+ * This is a ranking signal, never a gate. A pair with no record scores the
+ * cold-start prior and competes normally; a pair that has done badly on this
+ * task type scores below it and therefore gets offered the work only after the
+ * better-matched pairs. Nothing here can exclude a pair from consideration.
  */
-export function expectedQuality({ registries, pair, taskArchetype = null, role = null } = {}) {
+export function expectedQuality({ registries, pair, taskArchetype = null, role = null, riskClass = null } = {}) {
   const cold = registries.ledger.cold_start || {};
   const prior = Number(cold.prior ?? 0.75);
   const weight = Number(cold.prior_weight ?? 8);
-  const entry = ledgerEntry(registries.ledger, pair, { taskArchetype, role });
-  if (!entry) return { value: prior, samples: 0, source: 'COLD_START_PRIOR' };
+  const found = ledgerEntry(registries.ledger, pair, { taskArchetype, role, riskClass });
+  if (!found) return { value: prior, first_pass: prior, samples: 0, source: 'COLD_START_PRIOR', granularity: 'NONE' };
+  const { entry, granularity } = found;
   const samples = Number(entry.sample_count ?? 0);
   const final = posterior(Number(entry.final_accept_count ?? 0), samples, prior, weight);
   const first = posterior(Number(entry.first_pass_accept_count ?? 0), samples, prior, weight);
@@ -58,7 +87,7 @@ export function expectedQuality({ registries, pair, taskArchetype = null, role =
     first_pass: first,
     samples,
     source: 'LEDGER',
-    granularity: entry.task_archetype ? 'TASK_ARCHETYPE' : 'PAIR',
+    granularity,
   };
 }
 
@@ -87,28 +116,28 @@ export function effectiveExecutionCost({ registries, pair, estimate = {} } = {})
 }
 
 /**
- * Whether the ledger has enough evidence to disqualify this pair at this risk
- * class. Returns the reason rather than a bare boolean so the trace can explain
- * a refusal without the caller re-deriving it.
+ * Placement in the performance hierarchy for this task type.
+ *
+ * Deliberately returns no pass/fail. Past performance orders the queue; it
+ * never removes a pair from it. Owner ruling, 2026-09-13: a pairing that did
+ * badly on a task type should not be assigned a similar task AHEAD of the next
+ * pair on the task-capability matching index — but if it is the only pair that
+ * can do the work, it still gets the work.
  */
-export function qualityFloorDecision({ registries, pair, riskClass, quality } = {}) {
-  const floor = registries.policy.minimum_quality_floor || {};
-  const required = Number(floor.by_risk_class?.[riskClass] ?? 0);
-  const minSamples = Number(floor.min_samples_before_floor_applies ?? 0);
+export function performancePlacement({ registries, pair, riskClass, quality } = {}) {
+  const cfg = registries.policy.performance_hierarchy || {};
+  const reference = Number(cfg.reference_by_risk_class?.[riskClass] ?? 0);
+  const minSamples = Number(cfg.min_samples_for_evidenced_placement ?? 0);
   const samples = Number(quality.samples ?? 0);
-
-  // The floor retires a pair that has demonstrably underperformed. It is not a
-  // bar a new pair must clear before it is trusted: model capabilities are
-  // established by the provider, and DIAL learns from real assigned jobs. So
-  // with too little evidence to judge, the pair is admitted rather than held
-  // back — no probation, no "prove yourself on small work first".
-  if (floor.applies_only_with_evidence !== false && samples < minSamples) {
-    return { ok: true, required, observed: quality.value, samples, basis: 'NO_EVIDENCE_YET_ADMITTED' };
-  }
-  if (quality.value >= required) {
-    return { ok: true, required, observed: quality.value, samples, basis: 'LEDGER_POSTERIOR' };
-  }
-  return { ok: false, reason: 'BELOW_QUALITY_FLOOR', required, observed: quality.value, samples };
+  const evidenced = samples >= minSamples;
+  return {
+    basis: evidenced ? `EVIDENCED:${quality.granularity}` : 'COLD_START_PRIOR',
+    evidenced,
+    samples,
+    observed: quality.value,
+    reference,
+    below_reference: evidenced && quality.value < reference,
+  };
 }
 
 /**
@@ -192,17 +221,16 @@ export function selectExecutionPair({
     surviving.push(pair);
   }
 
-  // ── quality floor, before any cost consideration ─────────────────────────
-  const floored = [];
-  for (const pair of surviving) {
-    const quality = expectedQuality({ registries: reg, pair, taskArchetype: archetype, role });
-    const decision = qualityFloorDecision({ registries: reg, pair, riskClass, quality });
-    if (!decision.ok) { reject(pair.pair_id, decision.reason, `required=${decision.required}`); continue; }
-    floored.push({ ...pair, quality, floor: decision });
-  }
+  // ── performance placement (ordering, not exclusion) ─────────────────────
+  // Every pair that cleared the hard filters stays in the running. Past
+  // performance on this task type decides the ORDER they are offered in.
+  const placed = surviving.map((pair) => {
+    const quality = expectedQuality({ registries: reg, pair, taskArchetype: archetype, role, riskClass });
+    return { ...pair, quality, placement: performancePlacement({ registries: reg, pair, riskClass, quality }) };
+  });
 
-  // ── cost ranking, only among pairs that cleared the floor ────────────────
-  const ranked = floored.map((pair) => {
+  // ── cost ranking across the whole eligible field ─────────────────────────
+  const ranked = placed.map((pair) => {
     const cost = effectiveExecutionCost({ registries: reg, pair });
     const taskFit = pair.proven ? 1 : 0.85;
     // Reliability reflects what the provider establishes, not how much DIAL has
@@ -247,7 +275,7 @@ export function selectExecutionPair({
     provider: selected.provider,
     role,
     specialist_tools: requiredSpecialistTools({ registries: reg, taskRequirements }),
-    selection_reason: `HIGHEST_SCORE_AMONG_ELIGIBLE_PAIRS:${selected.floor.basis}`,
+    selection_reason: `TOP_OF_PERFORMANCE_HIERARCHY:${selected.placement.basis}`,
     expected_quality: selected.quality.value,
     expected_token_cost: selected.cost.breakdown.token_cost?.value ?? null,
     expected_rework: selected.cost.breakdown.expected_rework?.value ?? null,

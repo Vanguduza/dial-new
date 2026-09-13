@@ -13,7 +13,7 @@
     "GENERATE_COMPATIBLE_PAIRS",
     "APPLY_SECURITY_RISK_DATA_FILTERS",
     "APPLY_HEALTH_QUOTA_FILTERS",
-    "APPLY_MINIMUM_QUALITY_FLOOR",
+    "PLACE_IN_PERFORMANCE_HIERARCHY",
     "RANK_BY_EXPECTED_TOTAL_COST",
     "APPLY_HYSTERESIS",
     "SELECT_MINIMUM_SUFFICIENT_PAIR",
@@ -38,7 +38,6 @@
     "SECURITY_RESTRICTIONS"
   ],
   "rejection_reasons": [
-    "BELOW_QUALITY_FLOOR",
     "CAPABILITY_MISSING",
     "DATA_CLASS_NOT_PERMITTED",
     "DISCOVERY_UNAVAILABLE",
@@ -57,22 +56,6 @@
     "STALE_EXECUTION_ENVELOPE",
     "TOOL_NOT_AUTHORIZED"
   ],
-  "minimum_quality_floor": {
-    "note": "Applied only where the ledger actually has evidence. A model is never excluded for lacking a DIAL track record: capabilities are established by the provider, and DIAL learns from assigned jobs. The floor exists to retire a pair that has demonstrably underperformed, not to make a new pair earn access.",
-    "owner_decision": "Owner ruled on 2026-09-13 that all subscription models qualify and that DIAL must not re-prove known capabilities. The earlier probation ladder and the low-risk exploration carve-out are removed.",
-    "applies_only_with_evidence": true,
-    "min_samples_before_floor_applies": 8,
-    "by_risk_class": {
-      "LOW": 0.8,
-      "MEDIUM": 0.9,
-      "HIGH": 0.96,
-      "CRITICAL": 0.99
-    },
-    "below_floor_action": "EXCLUDE_PAIR_FOR_THIS_RISK_CLASS",
-    "no_evidence_action": "ADMIT",
-    "no_probation": true,
-    "no_first_test_restriction": true
-  },
   "cost_model": {
     "note": "§14's denominator adds token_cost + latency + expected_rework_cost, which sums tokens, milliseconds and rework -- three different units. §55 separately introduces effective_execution_cost without connecting it back. This policy resolves the two into one normalised function.",
     "normalise_into": "effective_execution_cost",
@@ -385,7 +368,7 @@
     "output_reserve_enforced",
     "duplicate_context_elimination_active",
     "skill_conflict_detection_active",
-    "quality_floor_before_cost_ranking",
+    "performance_hierarchy_orders_before_cost_ranking",
     "volatile_state_revalidated_before_dispatch",
     "escalation_stop_loss_active",
     "similar_failure_detection_active",
@@ -395,5 +378,31 @@
     "first_pass_quality_tracked",
     "prompt_manifest_emitted",
     "execution_receipt_references_prompt_manifest"
-  ]
+  ],
+  "performance_hierarchy": {
+    "note": "Past job outcomes build a performance hierarchy PER TASK TYPE and decide the ORDER pairs are offered in. This never excludes a pair. A pairing that did badly on a task type is not assigned a similar task ahead of the next pair on the task-capability matching index, but remains available if it is the only pair that can do the work.",
+    "owner_decision": "Owner ruled on 2026-09-13 that the evidence signal exists to rank, not to exclude. The earlier minimum_quality_floor, which removed pairs below a threshold, is replaced by this.",
+    "may_exclude_pair": false,
+    "min_samples_for_evidenced_placement": 8,
+    "reference_by_risk_class": {
+      "LOW": 0.8,
+      "MEDIUM": 0.9,
+      "HIGH": 0.96,
+      "CRITICAL": 0.99
+    },
+    "reference_is_advisory_only": true,
+    "reference_note": "reference_by_risk_class is the standard a pair is COMPARED against for reporting and for the below_reference flag in the trace. It is not a cut-off and nothing is removed for missing it.",
+    "evidence_cascade": [
+      "ARCHETYPE_ROLE_RISK",
+      "ARCHETYPE_ROLE",
+      "ARCHETYPE",
+      "PAIR_GLOBAL"
+    ],
+    "cascade_note": "Most specific evidence wins, so a poor record on one task type does not drag down a pair's standing on work it handles well.",
+    "no_evidence_uses_cold_start_prior": true,
+    "attribution_required_before_rating": true,
+    "resource_caused_outcomes_do_not_demote": true,
+    "ordering_is_relative": true,
+    "ordering_note": "Ordering is comparative, not absolute. A pair with a mediocre record still outranks pairs that compare worse, and is still assigned the work when it is the best available match."
+  }
 }

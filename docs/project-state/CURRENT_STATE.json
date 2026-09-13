@@ -8,20 +8,19 @@
   "branch": "claude/adaptive-harness-model-routing-dec032",
   "changed_files": [
     "agent-system/orchestration/adaptive-routing-architecture-check.mjs",
-    "agent-system/orchestration/adaptive-routing-core.mjs",
     "agent-system/orchestration/execution-pair-router.mjs",
+    "agent-system/orchestration/model-performance-ledger.mjs",
+    "agent-system/orchestration/outcome-attribution.mjs",
     "agent-system/registries/ADAPTIVE_ROUTING_POLICY.json",
-    "agent-system/registries/DECISION_LOG.json",
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "agent-system/registries/MODEL_REGISTRY.json",
+    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
     "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/authorizations/auth-20260913-owner-subscription-presence-eligibility.json",
+    "docs/project-state/authorizations/auth-20260913-owner-outcome-attribution.json",
     "tests/orchestration-adaptive-routing.test.mjs"
   ],
-  "content_diff_sha256": "79d30f95e8e6ae7166b9957eeda97e451a10da8d95c1ddec80521f6717326715",
-  "observed_at_utc": "2026-09-13T02:28:19.234671+00:00",
+  "content_diff_sha256": "0579ab7dd89d1e5dd7ff2bf942e1c88f1bb754b5ca4eaaa5d9712b83dff1b037",
+  "observed_at_utc": "2026-09-13T02:55:32.381962+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "5e66bcd0050359e4af626f9635a329452edd6b67",
+  "source_parent": "c822e12c2b68f5f6f27408bee8452697e564e30d",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

@@ -7,7 +7,8 @@ import { authorizeTool, expectedQuality, selectExecutionPair } from '../agent-sy
 import { deterministicMinimalBehaviorCoalition, runVeklPass2, tokenBenefitGate } from '../agent-system/orchestration/vekl-pass2.mjs';
 import { compileRuntimePrompt, eliminateDuplicates } from '../agent-system/orchestration/runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint, shouldDeEscalate, buildHandoffState } from '../agent-system/orchestration/escalation-policy.mjs';
-import { evaluateSkillRetention, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
+import { evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
+import { attributeOutcome, buildVeklImprovementSignal } from '../agent-system/orchestration/outcome-attribution.mjs';
 import { checkAdaptiveRoutingArchitecture } from '../agent-system/orchestration/adaptive-routing-architecture-check.mjs';
 
 const repoDir = process.cwd();
@@ -85,45 +86,82 @@ describe('DIAL adaptive harness x model routing (DEC-032)', () => {
     expect(route.eligible_pairs.map((p) => p.pair_id)).toContain('claude-code+claude-fable-5-1');
   });
 
-  it('excludes a pair only once the ledger shows it underperforming', () => {
-    const reg = fresh();
-    const pairId = 'claude-code+claude-opus-5';
-    // With no evidence the pair is admitted at CRITICAL; the floor is not a bar
-    // to climb. Give it a poor, well-sampled record and the floor then bites.
-    const before = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
-    expect(before.eligible_pairs.map((p) => p.pair_id)).toContain(pairId);
-
-    reg.ledger = {
-      ...reg.ledger,
-      entries: [{
-        harness_id: 'claude-code', model_id: 'claude-opus-5', task_archetype: null, role: null,
-        sample_count: 40, final_accept_count: 8, first_pass_accept_count: 4, escaped_defect_rate: 0.5,
-      }],
-    };
-    const after = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
-    expect(after.excluded_candidates.find((c) => c.pair_id === pairId).reason).toBe('BELOW_QUALITY_FLOOR');
-  });
-
-  it('keeps the quality floor ahead of cost ranking', () => {
+  it('ranks a poor performer below the next pair instead of excluding it', () => {
     const reg = fresh();
     const cheap = {
       ...reg.models.models.find((m) => m.model_id === 'claude-haiku-4-5-20251001'),
-      model_id: 'probe-cheap-bad', cost_profile: 'ECONOMICAL',
+      model_id: 'probe-cheap', cost_profile: 'ECONOMICAL',
     };
     reg.models = { ...reg.models, models: [...reg.models.models, cheap] };
-    reg.compatibility.compatibility['claude-code'].candidate_pairs.push('probe-cheap-bad');
+    reg.compatibility.compatibility['claude-code'].candidate_pairs.push('probe-cheap');
     reg.ledger = {
       ...reg.ledger,
       entries: [{
-        harness_id: 'claude-code', model_id: 'probe-cheap-bad', task_archetype: null, role: null,
+        harness_id: 'claude-code', model_id: 'probe-cheap',
+        task_archetype: 'INFRA_RECOVERY', role: 'BUILDER', risk_class: null,
         sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
       }],
     };
-    // A cheap pair with a bad record must not win a CRITICAL task on price.
+    const route = selectExecutionPair({
+      repoDir, registries: reg, role: 'BUILDER',
+      taskRequirements: { risk_class: 'HIGH', task_archetype: 'INFRA_RECOVERY', required_capabilities: ['coding'] },
+    });
+    const order = route.eligible_pairs.map((p) => p.pair_id);
+    // Still in the running -- cheapest, and not removed.
+    expect(order).toContain('claude-code+probe-cheap');
+    expect(route.excluded_candidates.some((c) => c.pair_id === 'claude-code+probe-cheap')).toBe(false);
+    // But last, so every better-matched pair is offered the work first.
+    expect(order[order.length - 1]).toBe('claude-code+probe-cheap');
+    expect(route.selection.model_id).not.toBe('probe-cheap');
+  });
+
+  it('keeps a poor record on one task type from dragging down another', () => {
+    const reg = fresh();
+    reg.ledger = {
+      ...reg.ledger,
+      entries: [{
+        harness_id: 'claude-code', model_id: 'claude-sonnet-5',
+        task_archetype: 'INFRA_RECOVERY', role: 'BUILDER', risk_class: null,
+        sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
+      }],
+    };
+    const at = (r) => r.eligible_pairs.findIndex((p) => p.pair_id === 'claude-code+claude-sonnet-5');
+    const recovery = selectExecutionPair({
+      repoDir, registries: reg, role: 'BUILDER',
+      taskRequirements: { risk_class: 'HIGH', task_archetype: 'INFRA_RECOVERY', required_capabilities: ['coding'] },
+    });
+    const routine = selectExecutionPair({
+      repoDir, registries: reg, role: 'BUILDER',
+      taskRequirements: { risk_class: 'HIGH', task_archetype: 'ROUTINE_CODE_CHANGE', required_capabilities: ['coding'] },
+    });
+    // The archetype-scoped record demotes it for recovery work only.
+    expect(at(recovery)).toBeGreaterThan(at(routine));
+  });
+
+  it('is never excluded on performance, even when every record is appalling', () => {
+    const reg = fresh();
+    reg.ledger = {
+      ...reg.ledger,
+      entries: (reg.models.models || []).map((m) => ({
+        harness_id: 'claude-code', model_id: m.model_id, task_archetype: null, role: null, risk_class: null,
+        sample_count: 60, final_accept_count: 2, first_pass_accept_count: 1, escaped_defect_rate: 0.8,
+      })),
+    };
     const route = selectExecutionPair({ repoDir, registries: reg, taskRequirements: CRITICAL });
-    expect(route.excluded_candidates.find((c) => c.pair_id === 'claude-code+probe-cheap-bad').reason)
-      .toBe('BELOW_QUALITY_FLOOR');
-    if (route.ok) expect(route.selection.model_id).not.toBe('probe-cheap-bad');
+    expect(route.ok).toBe(true);
+    expect(route.eligible_pairs.length).toBeGreaterThan(0);
+    expect(route.excluded_candidates.some((c) => /QUALITY|FLOOR|PERFORMANCE/.test(c.reason))).toBe(false);
+  });
+
+  it('matches task capability before performance is consulted', () => {
+    const reg = fresh();
+    const route = selectExecutionPair({
+      repoDir, registries: reg, role: 'BUILDER',
+      taskRequirements: { risk_class: 'HIGH', task_archetype: 'ARCHITECTURE_CHANGE', required_capabilities: ['coding', 'architecture'] },
+    });
+    expect(route.excluded_candidates.find((c) => c.pair_id === 'claude-code+claude-haiku-4-5-20251001').reason)
+      .toBe('CAPABILITY_MISSING');
+    expect(route.eligible_pairs.map((p) => p.pair_id)).toContain('claude-code+claude-opus-5');
   });
 
   it('learns from assigned jobs rather than withholding work to build evidence', () => {
@@ -428,6 +466,77 @@ describe('escalation, stop-loss and the performance ledger', () => {
     const q = expectedQuality({ registries: reg, pair: pairs[0] });
     expect(q.source).toBe('COLD_START_PRIOR');
     expect(q.value).toBe(0.75);
+  });
+});
+
+describe('outcome attribution: resources vs the pair', () => {
+  it('blames the resources, not the pair, when the context was inadequate', () => {
+    const a = attributeOutcome({ signals: ['MUST_INCLUDE_CONTEXT_MISSING'], accepted: false });
+    expect(a.attribution).toBe('RESOURCE_DEFICIT');
+    expect(a.rating_bearing).toBe(false);
+    expect(a.requires_vekl_update).toBe(true);
+  });
+
+  it('lets a resource deficit outrank a pair-performance signal', () => {
+    // A worker cannot have ignored an acceptance criterion it was never given.
+    const a = attributeOutcome({
+      signals: ['IGNORED_SUPPLIED_ACCEPTANCE_CRITERIA', 'ACCEPTANCE_CRITERIA_ABSENT'],
+      accepted: false,
+    });
+    expect(a.attribution).toBe('RESOURCE_DEFICIT');
+  });
+
+  it('treats an outage as neither the pair nor the resources', () => {
+    expect(attributeOutcome({ signals: ['QUOTA_EXHAUSTED'], accepted: false }).attribution).toBe('EXTERNAL');
+  });
+
+  it('holds an unattributed failure out of the rating rather than blaming the pair', () => {
+    const a = attributeOutcome({ signals: [], accepted: false });
+    expect(a.attribution).toBe('UNDETERMINED');
+    expect(a.rating_bearing).toBe(false);
+  });
+
+  it('counts a genuine pair failure', () => {
+    const a = attributeOutcome({ signals: ['PREMATURE_SUCCESS_CLAIM'], accepted: false });
+    expect(a.attribution).toBe('PAIR_PERFORMANCE');
+    expect(a.rating_bearing).toBe(true);
+  });
+
+  it('leaves the rating untouched across many resource-caused failures', () => {
+    const root = temp('attr');
+    const base = {
+      repoDir, root, harnessId: 'claude-code', modelId: 'claude-opus-5',
+      taskArchetype: 'INFRA_RECOVERY', role: 'BUILDER', evidenceSource: 'CI',
+    };
+    for (let i = 0; i < 10; i++) {
+      recordExecutionOutcome({ ...base, accepted: false, signals: ['REQUIRED_SKILL_UNAVAILABLE'] });
+    }
+    const entry = projectLedgerForRouting({ root })[0];
+    expect(entry.sample_count).toBe(0);
+    expect(entry.excluded_samples).toBe(10);
+    expect(entry.excluded_by_attribution.RESOURCE_DEFICIT).toBe(10);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('raises a VEKL improvement signal naming the deficit', () => {
+    const root = temp('attr-vekl');
+    const r = recordExecutionOutcome({
+      repoDir, root, harnessId: 'claude-code', modelId: 'claude-opus-5',
+      taskArchetype: 'INFRA_RECOVERY', role: 'BUILDER', evidenceSource: 'CI',
+      accepted: false, signals: ['CONFLICTING_RULES_SUPPLIED'], taskId: 't1',
+    });
+    expect(r.vekl_signal.kind).toBe('VEKL_IMPROVEMENT_SIGNAL');
+    expect(r.vekl_signal.deficits).toContain('CONFLICTING_RULES_SUPPLIED');
+    expect(r.vekl_signal.rating_impact).toBe('NONE');
+    expect(r.vekl_signal.remediation_target).toBe('VEKL_RESOURCES');
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('raises no VEKL signal when the pair itself was at fault', () => {
+    expect(buildVeklImprovementSignal({
+      harnessId: 'h', modelId: 'm',
+      attribution: { attribution: 'PAIR_PERFORMANCE', rating_bearing: true },
+    })).toBeNull();
   });
 });
 

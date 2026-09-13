@@ -4,37 +4,113 @@
   "registry_version": "1.0.0",
   "decision_ref": "DEC-032",
   "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-
   "authority_note": "§64. Worker self-reported success is NEVER an authoritative performance signal. Every entry must name the trusted outcome it derives from and the confidence of that source. An entry without an evidence source is inadmissible.",
-
-  "trusted_evidence_sources": ["DETERMINISTIC_TEST", "CI", "ACCEPTANCE_GATE", "INDEPENDENT_REVIEW", "DEPLOYMENT_VERIFICATION", "OWNER_ACCEPTANCE", "POSTCONDITION_EVIDENCE", "DEFECT_ESCAPE_EVIDENCE"],
-  "inadmissible_sources": ["WORKER_SELF_REPORT", "WORKER_CONFIDENCE", "MODEL_PROSE"],
-
-  "granularities": ["global", "project", "stack", "task_archetype", "role", "risk_class", "harness", "model_version", "skill_profile"],
+  "trusted_evidence_sources": [
+    "DETERMINISTIC_TEST",
+    "CI",
+    "ACCEPTANCE_GATE",
+    "INDEPENDENT_REVIEW",
+    "DEPLOYMENT_VERIFICATION",
+    "OWNER_ACCEPTANCE",
+    "POSTCONDITION_EVIDENCE",
+    "DEFECT_ESCAPE_EVIDENCE"
+  ],
+  "inadmissible_sources": [
+    "WORKER_SELF_REPORT",
+    "WORKER_CONFIDENCE",
+    "MODEL_PROSE"
+  ],
+  "granularities": [
+    "global",
+    "project",
+    "stack",
+    "task_archetype",
+    "role",
+    "risk_class",
+    "harness",
+    "model_version",
+    "skill_profile"
+  ],
   "preference_order": "MOST_SPECIFIC_RELEVANT_EVIDENCE_WINS",
-
   "tracked_metrics": [
-    "first_pass_accept_rate", "final_accept_rate", "escaped_defect_rate", "median_total_tokens",
-    "p95_latency_ms", "median_rework_ratio", "retry_count", "wrong_target_incidents",
-    "speculative_repair_incidents", "premature_success_incidents", "postcondition_failures", "reviewer_rejection_rate"
+    "first_pass_accept_rate",
+    "final_accept_rate",
+    "escaped_defect_rate",
+    "median_total_tokens",
+    "p95_latency_ms",
+    "median_rework_ratio",
+    "retry_count",
+    "wrong_target_incidents",
+    "speculative_repair_incidents",
+    "premature_success_incidents",
+    "postcondition_failures",
+    "reviewer_rejection_rate"
   ],
   "first_pass_tracked_separately_from_final": true,
   "first_pass_note": "§99. First-pass acceptance is weighted separately because a cheap model needing repeated correction can cost more than an expensive one that succeeds once.",
-
   "owner_override_handling": {
     "record_overridden_executions": true,
     "evidence_source_tag": "OWNER_OVERRIDE",
     "excluded_from_routing_scores": true,
     "note": "§74 requires that overrides not silently rewrite learned routing performance, but is silent on whether overridden runs are recorded at all. Recording them while excluding them from scores preserves the audit trail without biasing the ledger."
   },
-
   "cold_start": {
     "prior": 0.75,
     "prior_weight": 8,
     "note": "Matches the posterior smoothing already implemented in harness-capability-exchange.mjs so pair scores and legacy card scores remain comparable during the Phase 1/2 overlap.",
-    "unproven_models_excluded_from_high_risk": true
+    "unproven_models_excluded_from_high_risk": true,
+    "calibration_note": "prior is the assumed acceptance rate of an arbitrary capable pair. It is a real calibration parameter, not a formality: a pair measured BELOW the prior ranks below an unmeasured one, which is correct Bayesian behaviour only if the prior reflects reality. Recalibrate from accumulated evidence."
   },
-
   "entries": [],
-  "entries_note": "Empty by construction. DIAL has no harness x model execution evidence yet; the legacy worker cards also carry sample_count 0. Populated only from trusted outcomes at execution-receipt time."
+  "entries_note": "Empty by construction. DIAL has no harness x model execution evidence yet; the legacy worker cards also carry sample_count 0. Populated only from trusted outcomes at execution-receipt time.",
+  "attribution": {
+    "note": "Before an outcome may move a pair's rating, DIAL decides WHY it went that way. A pair that did badly because the resources it was given were inadequate has not underperformed -- the resources have. Counting that against the pair would poison the ledger and progressively misroute work away from a model that was never the problem.",
+    "owner_decision": "Owner ruled on 2026-09-13 that a pair's rating must be evaluated for whether the resources provided -- information, skills, rules -- caused the outcome. If so the pair is not demoted and VEKL is updated instead.",
+    "classes": [
+      "PAIR_PERFORMANCE",
+      "RESOURCE_DEFICIT",
+      "EXTERNAL",
+      "UNDETERMINED"
+    ],
+    "rating_bearing_classes": [
+      "PAIR_PERFORMANCE"
+    ],
+    "precedence": [
+      "EXTERNAL",
+      "RESOURCE_DEFICIT",
+      "PAIR_PERFORMANCE"
+    ],
+    "precedence_note": "A resource deficit outranks a pair-performance signal: a worker that missed an acceptance criterion it was never given has not ignored it. External outranks both.",
+    "no_signal_is_undetermined": true,
+    "no_signal_note": "Silence is not evidence against the worker. An unattributed outcome is held out of the rating.",
+    "resource_deficit_raises_vekl_signal": true,
+    "vekl_signal_path": "execution/routing/vekl-improvement/",
+    "resource_deficit_signals": [
+      "MUST_INCLUDE_CONTEXT_MISSING",
+      "REQUIRED_CONTEXT_DEFERRED",
+      "ACCEPTANCE_CRITERIA_ABSENT",
+      "REQUIRED_SKILL_UNAVAILABLE",
+      "CONFLICTING_RULES_SUPPLIED",
+      "STALE_KNOWLEDGE_SUPPLIED",
+      "PROFILE_BUDGET_STARVED_GUIDANCE",
+      "REQUIRED_TOOL_NOT_AUTHORIZED",
+      "TASK_TRUTH_AMBIGUOUS"
+    ],
+    "external_signals": [
+      "HARNESS_UNHEALTHY",
+      "PROVIDER_OUTAGE",
+      "QUOTA_EXHAUSTED",
+      "RATE_LIMITED",
+      "INFRASTRUCTURE_FAILURE",
+      "RUN_CANCELLED"
+    ],
+    "pair_performance_signals": [
+      "POSTCONDITION_FAILED_WITH_COMPLETE_CONTEXT",
+      "WRONG_TARGET_DESPITE_EXPLICIT_TARGET",
+      "PREMATURE_SUCCESS_CLAIM",
+      "IGNORED_SUPPLIED_ACCEPTANCE_CRITERIA",
+      "SPECULATIVE_REPAIR_WITHOUT_OBSERVATION",
+      "REVIEWER_REJECTED_ON_CORRECTNESS"
+    ]
+  }
 }

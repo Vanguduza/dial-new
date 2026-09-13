@@ -14,7 +14,8 @@ import { selectExecutionPair } from './execution-pair-router.mjs';
 import { runVeklPass2 } from './vekl-pass2.mjs';
 import { compileRuntimePrompt } from './runtime-prompt-compiler.mjs';
 import { decideEscalation, failureFingerprint } from './escalation-policy.mjs';
-import { evaluateSkillRetention, recordExecutionOutcome } from './model-performance-ledger.mjs';
+import { evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from './model-performance-ledger.mjs';
+import { attributeOutcome } from './outcome-attribution.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
@@ -88,18 +89,17 @@ export function checkAdaptiveRoutingArchitecture() {
   });
   checks.push(crit('AR-05', !conflict.ok && conflict.reason === 'UNRESOLVED_CONFLICTING_MANDATORY_INSTRUCTIONS', 'skill conflict detection active'));
 
-  // 6. quality floor applied before cost ranking.
+  // 6. performance hierarchy orders the field before cost ranking.
   //
-  //    The floor no longer gates a new pair — owner decision, 2026-09-13: all
-  //    subscription models qualify and DIAL learns from assigned jobs. What the
-  //    floor still must do is keep a pair the ledger shows underperforming from
-  //    winning a high-risk task on price. So the probe gives a cheap pair a bad,
-  //    well-sampled record and asserts it is excluded, and asserts the same pair
-  //    is admitted while it has no record at all.
+  //    Owner ruling, 2026-09-13: past performance ORDERS the queue, it never
+  //    removes a pair from it. So the probe gives a cheap pair a bad record on
+  //    one archetype and asserts three things: it is not excluded, it sinks to
+  //    last for that archetype, and the record does not follow it to a
+  //    different archetype.
   const floorReg = freshRegistries();
   const cheap = {
-    ...floorReg.models.models.find((m) => m.model_id === 'claude-sonnet-5'),
-    model_id: 'probe-cheap-bad', cost_profile: 'ECONOMICAL',
+    ...floorReg.models.models.find((m) => m.model_id === 'claude-haiku-4-5-20251001'),
+    model_id: 'probe-cheap', cost_profile: 'ECONOMICAL',
   };
   floorReg.models = { ...floorReg.models, models: [...floorReg.models.models, cheap] };
   floorReg.compatibility = {
@@ -108,27 +108,47 @@ export function checkAdaptiveRoutingArchitecture() {
       ...floorReg.compatibility.compatibility,
       'claude-code': {
         ...floorReg.compatibility.compatibility['claude-code'],
-        candidate_pairs: [...floorReg.compatibility.compatibility['claude-code'].candidate_pairs, 'probe-cheap-bad'],
+        candidate_pairs: [...floorReg.compatibility.compatibility['claude-code'].candidate_pairs, 'probe-cheap'],
       },
     },
   };
-  const probeId = 'claude-code+probe-cheap-bad';
-  const noRecord = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: CRITICAL, role: 'BUILDER' });
-  const admittedWithoutRecord = (noRecord.eligible_pairs || []).some((p) => p.pair_id === probeId);
-
+  const probeId = 'claude-code+probe-cheap';
   const badReg = { ...floorReg, ledger: { ...floorReg.ledger, entries: [{
-    harness_id: 'claude-code', model_id: 'probe-cheap-bad', task_archetype: null, role: null,
+    harness_id: 'claude-code', model_id: 'probe-cheap',
+    task_archetype: 'INFRA_RECOVERY', role: 'BUILDER', risk_class: null,
     sample_count: 50, final_accept_count: 5, first_pass_accept_count: 2, escaped_defect_rate: 0.6,
   }] } };
-  const withRecord = selectExecutionPair({ repoDir: repo, registries: badReg, taskRequirements: CRITICAL, role: 'BUILDER' });
-  const excludedWithBadRecord = (withRecord.excluded_candidates || [])
-    .some((c) => c.pair_id === probeId && c.reason === 'BELOW_QUALITY_FLOOR');
-  checks.push(crit('AR-06', admittedWithoutRecord && excludedWithBadRecord,
-    'quality floor applied before cost ranking (evidence-gated: admitted with no record, excluded on a bad one)'));
+  const recovery = selectExecutionPair({
+    repoDir: repo, registries: badReg, role: 'BUILDER',
+    taskRequirements: { risk_class: 'HIGH', task_archetype: 'INFRA_RECOVERY', required_capabilities: ['coding'] },
+  });
+  const order = (recovery.eligible_pairs || []).map((x) => x.pair_id);
+  const notExcluded = !(recovery.excluded_candidates || []).some((c) => c.pair_id === probeId);
+  const sankToLast = order.length > 1 && order[order.length - 1] === probeId;
+
+  const routine = selectExecutionPair({
+    repoDir: repo, registries: badReg, role: 'BUILDER',
+    taskRequirements: { risk_class: 'HIGH', task_archetype: 'ROUTINE_CODE_CHANGE', required_capabilities: ['coding'] },
+  });
+  const routineOrder = (routine.eligible_pairs || []).map((x) => x.pair_id);
+  const scopedToArchetype = routineOrder.indexOf(probeId) < order.indexOf(probeId);
+
+  checks.push(crit('AR-06', notExcluded && sankToLast && scopedToArchetype,
+    'performance hierarchy orders before cost ranking, never excludes, and is scoped to task type'));
 
   // 6b. no probation: a model DIAL has never used is eligible for CRITICAL.
-  const noProbation = (noRecord.eligible_pairs || []).some((p) => p.pair_id === 'claude-code+claude-fable-5-1');
+  const critical = selectExecutionPair({ repoDir: repo, registries: floorReg, taskRequirements: CRITICAL, role: 'BUILDER' });
+  const noProbation = (critical.eligible_pairs || []).some((p) => p.pair_id === 'claude-code+claude-fable-5-1');
   checks.push(crit('AR-21', noProbation, 'subscription presence confers eligibility at every risk class'));
+
+  // 6c. performance can never remove a pair, even with a uniformly bad ledger.
+  const allBad = { ...floorReg, ledger: { ...floorReg.ledger, entries: (floorReg.models.models || []).map((m) => ({
+    harness_id: 'claude-code', model_id: m.model_id, task_archetype: null, role: null, risk_class: null,
+    sample_count: 60, final_accept_count: 2, first_pass_accept_count: 1, escaped_defect_rate: 0.8,
+  })) } };
+  const stillPlaced = selectExecutionPair({ repoDir: repo, registries: allBad, taskRequirements: CRITICAL, role: 'BUILDER' });
+  checks.push(crit('AR-22', stillPlaced.ok === true && (stillPlaced.eligible_pairs || []).length > 0,
+    'work is still placed when every pair has a poor record'));
 
   // 7. volatile state revalidated before dispatch
   const policy = reg.policy.revalidation_before_dispatch || {};
@@ -238,6 +258,35 @@ export function checkAdaptiveRoutingArchitecture() {
   // Model capability does not imply tool authorisation.
   const toolsAttached = lowRoute.ok ? lowRoute.selection.specialist_tools : [];
   checks.push(crit('AR-20', Array.isArray(toolsAttached) && toolsAttached.length === 0, 'tools attached only when task requires'));
+
+  // 23. a resource-caused failure never demotes the pair; VEKL is updated.
+  const attrRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'dial-attr-'));
+  let ratingProtected = false;
+  let veklRaised = false;
+  try {
+    const base = {
+      repoDir: repo, root: attrRoot, registries: reg, harnessId: 'claude-code', modelId: 'claude-opus-5',
+      taskArchetype: 'INFRA_RECOVERY', role: 'BUILDER', evidenceSource: 'CI',
+    };
+    for (let i = 0; i < 5; i++) {
+      recordExecutionOutcome({ ...base, accepted: false, signals: ['MUST_INCLUDE_CONTEXT_MISSING'] });
+    }
+    const entry = projectLedgerForRouting({ root: attrRoot })[0] || {};
+    ratingProtected = entry.sample_count === 0 && entry.excluded_samples === 5;
+    const one = recordExecutionOutcome({ ...base, accepted: false, signals: ['REQUIRED_SKILL_UNAVAILABLE'], taskId: 'x' });
+    veklRaised = one.vekl_signal?.remediation_target === 'VEKL_RESOURCES' && one.vekl_signal?.rating_impact === 'NONE';
+  } catch { /* leaves both false */ }
+  fs.rmSync(attrRoot, { recursive: true, force: true });
+  checks.push(crit('AR-23', ratingProtected && veklRaised,
+    'resource-caused failures do not demote the pair and raise a VEKL improvement signal'));
+
+  // 24. a deficit in what DIAL supplied outranks a pair-performance signal.
+  const outranks = attributeOutcome({
+    signals: ['IGNORED_SUPPLIED_ACCEPTANCE_CRITERIA', 'ACCEPTANCE_CRITERIA_ABSENT'], accepted: false,
+  }).attribution === 'RESOURCE_DEFICIT';
+  const silenceIsNotBlame = attributeOutcome({ signals: [], accepted: false }).attribution === 'UNDETERMINED';
+  checks.push(crit('AR-24', outranks && silenceIsNotBlame,
+    'resource deficit outranks pair blame; an unattributed failure is not held against the pair'));
 
   fs.rmSync(tmp, { recursive: true, force: true });
   return {

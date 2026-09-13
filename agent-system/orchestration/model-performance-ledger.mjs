@@ -6,6 +6,7 @@
 // lets a confident worker move its own score.
 import { DEFAULT_CONTROL_HOME, appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
 import { DEFAULT_REPO_DIR, hashObject, loadRoutingRegistries, nowIso } from './adaptive-routing-core.mjs';
+import { attributeOutcome, buildVeklImprovementSignal } from './outcome-attribution.mjs';
 
 const REL = 'execution/routing/performance-ledger.json';
 
@@ -49,6 +50,11 @@ export function recordExecutionOutcome({
   escapedDefect = false,
   incidents = {},
   ownerOverride = false,
+  signals = [],
+  attribution = null,
+  taskId = null,
+  promptManifestHash = null,
+  modelProfileHash = null,
 } = {}) {
   const reg = registries || loadRoutingRegistries(repoDir);
   const ledgerPolicy = reg.ledger;
@@ -68,16 +74,30 @@ export function recordExecutionOutcome({
     sample_count: 0, final_accept_count: 0, first_pass_accept_count: 0, escaped_defect_count: 0,
     total_tokens: 0, total_latency_ms: 0, total_rework_ratio: 0, total_retries: 0,
     wrong_target_incidents: 0, speculative_repair_incidents: 0, premature_success_incidents: 0, postcondition_failures: 0,
-    excluded_samples: 0,
+    excluded_samples: 0, excluded_by_attribution: {},
   };
+
+  // Attribution decides whether this outcome may move the rating at all.
+  //
+  // A pair that did badly because the resources it was given were inadequate
+  // has not underperformed — the resources have. Counting that against the pair
+  // would poison the ledger and misroute work away from a model that was never
+  // the problem, so the rating is left alone and a VEKL improvement signal is
+  // raised instead. Owner ruling, 2026-09-13.
+  const attributed = attribution || attributeOutcome({ signals, accepted });
 
   // §74: overridden runs are recorded for audit but excluded from scores, so
   // an owner forcing a model neither rewards nor punishes it in the ledger.
-  const excluded = ownerOverride === true || evidenceSource === 'OWNER_OVERRIDE';
+  const excluded = ownerOverride === true
+    || evidenceSource === 'OWNER_OVERRIDE'
+    || attributed.rating_bearing !== true;
 
   const next = { ...prev };
   if (excluded) {
     next.excluded_samples += 1;
+    next.excluded_by_attribution = { ...(prev.excluded_by_attribution || {}) };
+    const bucket = attributed.attribution;
+    next.excluded_by_attribution[bucket] = Number(next.excluded_by_attribution[bucket] || 0) + 1;
   } else {
     next.sample_count += 1;
     if (accepted) next.final_accept_count += 1;
@@ -105,20 +125,41 @@ export function recordExecutionOutcome({
   next.last_confidence = confidence;
   next.updated_at = nowIso();
 
+  next.last_attribution = attributed.attribution;
   ledger.entries[key] = next;
   ledger.updated_at = nowIso();
   writeJsonAtomic(REL, ledger, root);
 
+  // The other half of the rule: when the resources were at fault, VEKL is what
+  // gets updated. The signal names the task shape and the specific deficit, so
+  // the knowledge and behaviour layers have something concrete to fix.
+  const veklSignal = buildVeklImprovementSignal({
+    taskId, harnessId, modelId, taskArchetype, role, riskClass,
+    attribution: attributed, promptManifestHash, modelProfileHash,
+  });
+  if (veklSignal) {
+    writeJsonAtomic(`execution/routing/vekl-improvement/${veklSignal.signal_hash}.json`, veklSignal, root);
+    appendJsonl('events/vekl-improvement.jsonl', {
+      event: 'VEKL_IMPROVEMENT_SIGNAL_RAISED',
+      pair: veklSignal.pair,
+      task_archetype: taskArchetype,
+      deficits: veklSignal.deficits,
+      rating_impact: 'NONE',
+      at: nowIso(),
+    }, root);
+  }
+
   appendJsonl('events/adaptive-routing.jsonl', {
     event: excluded ? 'PERFORMANCE_SAMPLE_EXCLUDED' : 'PERFORMANCE_SAMPLE_RECORDED',
     pair: `${harnessId}+${modelId}`,
+    attribution: attributed.attribution,
     evidence_source: evidenceSource,
     accepted: Boolean(accepted),
     first_pass: Boolean(firstPassAccepted),
     at: nowIso(),
   }, root);
 
-  return { key, entry: next, excluded };
+  return { key, entry: next, excluded, attribution: attributed, vekl_signal: veklSignal };
 }
 
 /** Flattens the control-home ledger into the shape the router reads. */
