@@ -24,10 +24,10 @@ export function normalizeOwnerInstruction(input) {
 
 export function workloadHint(envelope) {
   const t = envelope.text.toLowerCase();
-  if (/\b(verify|test|build|compile)\b/.test(t)) return 'TEST';
-  if (/\b(vekl|graphrag|index|corpus)\b/.test(t)) return 'VEKL_LIGHT';
+  if (/\b(verify|verification|test|testing|build|compile|compilation)\b/.test(t)) return 'TEST';
+  if (/\b(vekl|graphrag|index|indexing|corpus)\b/.test(t)) return 'VEKL_LIGHT';
   if (/\b(oci|recovery|ssh|commander|connectivity)\b/.test(t)) return 'RECOVERY';
-  if (/\b(develop|implement|code|fix)\b/.test(t)) return 'INTERACTIVE_DEV';
+  if (/\b(develop|development|implement|implementation|code|coding|fix)\b/.test(t)) return 'INTERACTIVE_DEV';
   return null;
 }
 
