@@ -21,7 +21,7 @@ const DENY_PATTERNS = [
 ];
 
 const ALLOW_PATTERNS = [
-  [/^\s*(uptime|free|df|ss|ip|hostname|id|whoami)\b/i, 'DIAGNOSTICS'],
+  [/^\s*(uptime|free|df|ss|ip|hostname|id|whoami|ps)\b/i, 'DIAGNOSTICS'],
   [/^\s*git\s+(status|log|show|diff|rev-parse|branch)\b/i, 'GIT_METADATA_READ'],
   [/^\s*(systemctl|journalctl)\s+(status|show|is-active|is-enabled)\b/i, 'DIAGNOSTICS'],
   [/^\s*oci\b/i, 'OCI_CONTROL'],
@@ -36,17 +36,7 @@ export function classifyCommand(command) {
 }
 
 export function auditEvent({ source, command, workloadClass, decision, reason, host = os.hostname() }) {
-  return {
-    schema_version: 1,
-    event: decision === 'ALLOW' ? 'WORKLOAD_ADMISSION' : 'RECOVERY_ROLE_VIOLATION',
-    host,
-    source,
-    workload_class: workloadClass,
-    decision,
-    reason,
-    command_sha256: crypto.createHash('sha256').update(command).digest('hex'),
-    timestamp: new Date().toISOString(),
-  };
+  return { schema_version: 1, event: decision === 'ALLOW' ? 'WORKLOAD_ADMISSION' : 'RECOVERY_ROLE_VIOLATION', host, source, workload_class: workloadClass, decision, reason, command_sha256: crypto.createHash('sha256').update(command).digest('hex'), timestamp: new Date().toISOString() };
 }
 
 export function admit({ command, source = 'UNKNOWN', host = os.hostname(), declaredWorkload = null }) {
@@ -60,14 +50,14 @@ export function admit({ command, source = 'UNKNOWN', host = os.hostname(), decla
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
-  const execute = args[0] === '--exec';
-  if (execute) args.shift();
+  const quiet = args[0] === '--quiet'; if (quiet) args.shift();
+  const execute = args[0] === '--exec'; if (execute) args.shift();
   const command = args.join(' ');
   const source = process.env.DIAL_COMMAND_SOURCE || 'CLI';
   const result = admit({ command, source, declaredWorkload: process.env.DIAL_WORKLOAD_CLASS || null });
   appendAudit(auditEvent({ source, command, workloadClass: result.classification?.workload_class ?? null, decision: result.decision, reason: result.reason }));
-  if (result.decision !== 'ALLOW') { console.error(JSON.stringify(result, null, 2)); process.exit(3); }
-  if (!execute) { console.log(JSON.stringify(result, null, 2)); process.exit(0); }
+  if (result.decision !== 'ALLOW') { if (!quiet) console.error(JSON.stringify(result, null, 2)); process.exit(3); }
+  if (!execute) { if (!quiet) console.log(JSON.stringify(result, null, 2)); process.exit(0); }
   const child = spawnSync('/bin/bash', ['-lc', command], { stdio: 'inherit' });
   process.exit(child.status ?? 1);
 }
