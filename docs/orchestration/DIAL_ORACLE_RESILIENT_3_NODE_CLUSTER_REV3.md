@@ -75,58 +75,90 @@ is not the current estate and must not be assumed by any script.
 
 ### 2.1 The capacity envelope
 
-> **The estate is over the line.** Oracle halved the Always Free Ampere A1 allowance from
-> 4 OCPU / 24 GB to **2 OCPU / 12 GB**, effective **2026-06-15**, and began terminating
-> over-limit instances on **2026-08-18**. There was no blog post and no advance
-> notification: the documentation was edited, and an "Action Required" email followed on
-> 2026-08-05. `dial-hermes-control` is declared at 4 OCPU / 24 GB — **double the current
-> allowance**, and therefore subject to termination.
+> **Open question, not a finding.** Secondary reports say Oracle halved the Always Free
+> Ampere A1 allowance from 4 OCPU / 24 GB to 2 OCPU / 12 GB on 2026-06-15 and began
+> terminating over-limit instances on 2026-08-18. `dial-hermes-control` is declared at
+> 4 OCPU / 24 GB, so if those reports applied here it would be over.
+>
+> **They may well not apply here.** None of those sources could be read from this
+> environment — all were blocked by the egress proxy, so the figures come from
+> search-result summaries of pages nobody opened. And the estate contradicts them:
+> `dial-hermes-control` is running at 4 / 24 today, 25 days after the reported
+> termination date, actively publishing the Oracle status feed. The owner also reports
+> earlier research showing this configuration is permitted. Direct observation of a live
+> host outranks an unread secondary source.
+>
+> **Service limits are per-account.** Grandfathering, account age, region and account type
+> all change the answer, and no published figure settles it for a particular tenancy.
+> `./50-free-tier-check.sh --tenancy` reads this account's real limits. Until that has been
+> run, nothing in this section is grounds for resizing anything.
 
-Always Free provides, per tenancy:
+Published Always Free figures, as best they are known — **confidence LOW, no source read
+directly**:
 
-| Resource | Allowance (confirmed 2026-09-12) | Committed by this estate | Remaining |
+| Resource | Reported allowance | Committed by this estate | Status |
 |---|---|---|---|
-| AMD compute | 2 × `VM.Standard.E2.1.Micro` — *unchanged in 2026* | `oracle-admin` + `oracle-admin-v2` | **0** |
-| Arm compute | `VM.Standard.A1.Flex`, **2 OCPU / 12 GB** total, divisible across up to 4 instances | `dial-hermes-control` declares 4 / 24 | **−2 OCPU / −12 GB — OVER** |
-| Block storage | 200 GB across boot and block volumes — *unchanged in 2026* | 3 boot volumes | see §2.3 |
-| Volume backups | limited; **confirm the current figure before assigning policies** | none assigned | see §6.2 |
+| AMD compute | 2 × `VM.Standard.E2.1.Micro` — reportedly unchanged | `oracle-admin` + `oracle-admin-v2` | at the reported limit |
+| Arm compute | `VM.Standard.A1.Flex`, reportedly reduced to 2 OCPU / 12 GB | `dial-hermes-control` declares 4 / 24 | **over the reported figure; the figure is unverified** |
+| Block storage | 200 GB across boot and block volumes — reportedly unchanged | 3 boot volumes | see §2.3 |
+| Volume backups | limited; confirm before assigning policies | none assigned | see §6.2 |
 
-The figures are not restated here as fact. They live, dated and sourced, in
-`deploy/oracle/free-tier-allowance.json`, and `deploy/oracle/provisioning/50-free-tier-check.sh`
-measures the estate against them:
+The figures are not restated as fact anywhere. They live, dated and with their provenance
+recorded — including what was *not* read — in `deploy/oracle/free-tier-allowance.json`.
+`deploy/oracle/provisioning/50-free-tier-check.sh` measures the estate against them:
 
 ```bash
-./50-free-tier-check.sh --declared   # hosts.json only; no OCI credentials needed
-./50-free-tier-check.sh              # live, against the control plane
+./50-free-tier-check.sh --tenancy    # this account's real limits — the only authority
+./50-free-tier-check.sh --declared   # hosts.json vs the figures on record
+./50-free-tier-check.sh              # live inventory vs the figures on record
 ```
 
-A stale confirmation or an unread canonical page reports `UNVERIFIED`, never `WITHIN`.
-"We last checked in March" is not the same as "we are inside", and the penalty for the
-difference is instance termination.
+The check reports two things and never conflates them: whether the estate exceeds the
+figures on record (arithmetic, reliable) and whether those figures are actually known
+(provenance, currently not). Over an unverified line reports `CHECK_TENANCY`, not
+`EXCEEDS` — because "over a number nobody has read" is not a finding, and treating it as
+one sends someone resizing production on the strength of a blog post.
 
 ### 2.1.1 What this means, and what it does not
 
 **It does not explain the 2026-09-12 outage.** The host lost was `oracle-admin`, an
-E2.1.Micro, and the AMD allowance did not change. The correlation is worth checking
-against the tenancy's audit log, but it is not a cause and this document will not
-promote it into one.
+E2.1.Micro, and the AMD allowance is not reported to have changed. Not a cause, and this
+document will not promote it into one.
 
-**It does mean requirement 1 is currently unmet.** The owner has two honest options, and
-neither is for an agent to choose:
+**Requirement 1 is unresolved, not unmet.** The difference matters. Nobody has established
+that this estate exceeds anything; what has been established is that the repository had no
+way to tell. Resolving it is one command: `./50-free-tier-check.sh --tenancy`, or the
+Console path it prints.
 
-1. **Resize** `dial-hermes-control` to 2 OCPU / 12 GB in the OCI Console. This halves the
-   development pool, so `hosts.json` and `policy.json` must be updated together
-   (`development_pool_mb` is presently 14336, which would no longer exist) or the
-   scheduler will place work on memory that is not there.
+If that comes back showing a 2 OCPU limit, there are two honest options and neither is an
+agent's to choose:
+
+1. **Resize** `dial-hermes-control` to 2 OCPU / 12 GB. This halves the development pool, so
+   `hosts.json` and `policy.json` must be updated together (`development_pool_mb` is
+   presently 14336, which would no longer exist) or the scheduler will place work on memory
+   that is not there.
 2. **Accept the cost deliberately** and run the A1 host as a paid instance.
 
-Either way, **apply the backup policy first**. An over-limit host with no boot-volume
-backup is the 2026-09-12 loss queued up to happen again, on the control host this time.
+If it comes back at 4 OCPU, the estate is fine and the allowance file should be corrected
+with `canonical_source_read: true` and the real figure.
 
-This is also the clearest possible argument for §2.5's rules and for this check existing
-at all: the previous revision asserted the estate was inside Always Free using figures
-that had been superseded three months earlier, and nothing in the system was in a
-position to notice.
+**Apply the backup policy either way.** No host has one. That is worth fixing whatever the
+limits turn out to be, and it is the part of this section that does not depend on an
+unresolved question.
+
+### 2.1.2 The lesson, which is not about capacity
+
+Rev 3 first asserted the estate was inside Always Free using figures with no provenance.
+The correction replaced them with different figures that had no better provenance — three
+"corroborating sources" that were listed in the repository despite every one of them having
+been blocked and never opened — and stated the result as fact. The second version was more
+confident than the first while being no better founded.
+
+So the durable fix is not a number. It is that `free-tier-allowance.json` records how well
+each figure is known, including `any_source_read_directly`, and the check refuses to turn a
+weakly-known figure into a finding. A capacity claim nobody measures goes false unnoticed;
+a capacity claim measured against an unverified constant goes false just as quietly, and
+looks rigorous while doing it.
 
 ### 2.2 The consequence Rev 2 missed
 
@@ -154,24 +186,25 @@ ability to recover for disk nobody asked for.
 
 ### 2.4 Headroom: subdividing the Arm allowance
 
-The A1 allowance is **divisible across up to four instances**. It is not obliged to be
-one machine. That property survived the 2026 reduction; the size did not.
+The A1 allowance is **divisible across up to four instances**. It is not obliged to be one
+machine, and that is where any headroom lives — not in a spare E2, of which there is none.
 
-If a standby or a third recovery node is ever needed, the only free-tier route is to
-split the Arm allowance rather than to add an E2. At the current 2 OCPU / 12 GB:
+If a standby or a third recovery node is ever needed, split the Arm allowance:
 
 ```
-Declared today:  dial-hermes-control   4 OCPU / 24 GB     (OVER — see §2.1)
+Today:              dial-hermes-control   4 OCPU / 24 GB
 
-Compliant:       dial-hermes-control   2 OCPU / 12 GB     (whole allowance)
+At a 4-OCPU limit:  dial-hermes-control   3 OCPU / 18 GB
+                    recovery-c (arm64)    1 OCPU /  6 GB
 
-Compliant split: dial-hermes-control   1 OCPU /  8 GB
-                 recovery-c (arm64)    1 OCPU /  4 GB     (still free)
+At a 2-OCPU limit:  dial-hermes-control   1 OCPU /  8 GB
+                    recovery-c (arm64)    1 OCPU /  4 GB
 ```
 
-The headroom this section was written to describe is now much thinner: a compliant split
-leaves Hermes with 8 GB, against a `development_pool_mb` of 14336. **A third recovery node
-and the current development pool are no longer simultaneously affordable on Always Free.**
+Which of those applies depends on this tenancy's actual limit (§2.1). It matters: at
+2 OCPU a split leaves Hermes with 8 GB against a `development_pool_mb` of 14336, so **a
+third recovery node and the current development pool would not be simultaneously
+affordable.** At 4 OCPU they are. Establish the limit before designing around either.
 
 Any such split is a **deliberate, owner-authorized change**, and must update `hosts.json`
 and `policy.json` together, or the scheduler will place work on memory that no longer
@@ -650,12 +683,10 @@ unit-tested, but it has never run between two live hosts. Per §7.1 that is not 
    certification stands at AMBER.
 5. **The control-plane outage is unresolved** — Sol and Sonnet `AUTH_FAILED`, gate
    `DEVELOPMENT_BLOCKED`. Independent of everything above; no host recovery fixes it.
-6. **The estate exceeds the Always Free Arm allowance.** Re-confirmed 2026-09-12 and
-   corrected in §2.1: the A1 allowance halved to 2 OCPU / 12 GB on 2026-06-15 and
-   `dial-hermes-control` is declared at double that. `50-free-tier-check.sh` reports
-   `EXCEEDS`. The owner decides between resizing and paying; apply the backup policy
-   first either way. The canonical Oracle page could not be read from this environment
-   (egress-blocked), so the figures are corroborated rather than canonical and the check
-   reports `UNVERIFIED` rather than `WITHIN` until that is fixed.
+6. **This tenancy's Arm limit is unknown.** Secondary reports say the Always Free A1
+   allowance halved to 2 OCPU / 12 GB, which `dial-hermes-control` would exceed — but no
+   source could be read from this environment, and the host is running today, well after
+   the reported enforcement date. `./50-free-tier-check.sh --tenancy` settles it in one
+   command and nothing should be resized before it is run. See §2.1.
 7. **Rev 2's two-subnet design is not implemented** and the estate is single-subnet. If a
    production/management split is wanted it is a planned migration, not an assumption.

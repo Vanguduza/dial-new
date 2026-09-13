@@ -1,0 +1,42 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260913-owner-free-tier-claim-correction",
+  "authorized_paths": [
+    "deploy/oracle/free-tier-allowance.json",
+    "deploy/oracle/provisioning/50-free-tier-check.sh",
+    "docs/orchestration/DIAL_ORACLE_RESILIENT_3_NODE_CLUSTER_REV3.md",
+    "docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md",
+    "tests/oracle-free-tier.test.mjs",
+    "docs/project-state/authorizations/auth-20260913-owner-free-tier-claim-correction.json"
+  ],
+  "base_sha": "9d18926f85bad46c2c9b37dafdaa619332402508",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "documentation",
+    "resource_governance",
+    "technical_implementation",
+    "evidence_integrity"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-13T00:04:59.558992+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner challenged the previous commit's claim that the estate exceeds the Always Free Ampere A1 allowance, stating that earlier research showed the configuration is permitted. The challenge is correct and the claim was not verified. Every source behind it was blocked by this environment's egress proxy - docs.oracle.com, infoq.com and linuxiac.com were each attempted and each refused - so the figures came only from web-search result summaries of pages that were never opened. Worse, three of those unread URLs were recorded in free-tier-allowance.json under the key corroborating_sources, which reads as though they had been read. Counter-evidence was available and under-weighted: dial-hermes-control is running at 4 OCPU 24 GB and publishing the Oracle status feed 25 days after the reported termination date, which direct observation outranks an unread secondary source. Service limits are also per-account, so no published figure settles the question for a tenancy. This commit corrects the overstatement rather than the numbers. free-tier-allowance.json gains any_source_read_directly, a confidence level, a contradicting_evidence block and an authority block naming the tenancy's own service limits; corroborating_sources is renamed sources_named_but_not_read. 50-free-tier-check.sh now separates the arithmetic from the provenance and reports CHECK_TENANCY rather than EXCEEDS when the figure exceeded is weakly known, and gains a --tenancy mode that reads the account's real limits. Rev 3 section 2.1 is downgraded from a finding to an open question with the counter-evidence stated, and section 2.1.2 records the meta-lesson: the correction was more confident than the thing it corrected while being no better founded. One test previously asserted that EXCEEDS outranks UNVERIFIED because being over the line is the louder fact; that rule was wrong and is inverted. No capacity change was made and none is recommended until the tenancy limits are read. The backup gap is raised separately because it holds whatever the limits turn out to be.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "Did you verify your claim? Because previous research showed that im allowed this setup",
+  "owner_instruction_sha256": "ff14b34f398b5f03f166e770143d7dbe205cc33bd66551ea374813452fd9cc0d",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260913-free-tier-claim-correction"
+  }
+}

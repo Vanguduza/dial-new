@@ -422,13 +422,21 @@ Named rather than quietly omitted.
    itself tested; no bounded-recovery key has been generated or authorized, and
    `dial-hermes-control` has never restarted an E2's recovery agent. Three owner commands
    away (§7).
-6a. **The estate exceeds the Always Free Arm allowance.** Oracle halved it to
-   2 OCPU / 12 GB on 2026-06-15 and terminates over-limit instances;
-   `dial-hermes-control` is declared at 4 OCPU / 24 GB. Run
-   `./50-free-tier-check.sh --declared`. This does **not** explain the 2026-09-12 outage —
-   that host was an E2 and the AMD allowance did not change — but it is a live termination
-   risk to the control host, and item 5 above (no backup policy) is what makes it
-   dangerous rather than merely expensive.
+6a. **This tenancy's Arm compute limit is unknown.** Secondary reports say the Always Free
+   A1 allowance halved to 2 OCPU / 12 GB in June 2026, which `dial-hermes-control` at
+   4 OCPU / 24 GB would exceed. None of those sources could be read from the research
+   environment, and the estate contradicts them: that host is running today, well after the
+   reported enforcement date, and the owner reports earlier research showing the
+   configuration is permitted. Service limits are per-account, so no published figure
+   settles it. One command does:
+
+   ```bash
+   ./50-free-tier-check.sh --tenancy
+   ```
+
+   Nothing should be resized before it is run. This does **not** explain the 2026-09-12
+   outage either way — that host was an E2 and the AMD allowance is not reported to have
+   changed.
 7. **Offsite backup is installed but unauthorized.** `rclone config` has not been run,
    so `/etc/dial-recovery/rclone.conf` does not exist and the timer is inert by design.
 8. **SSH ingress is `0.0.0.0/0`** on `oracle-admin`, deliberately: Cloud Shell's egress

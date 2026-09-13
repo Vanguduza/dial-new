@@ -3,21 +3,29 @@
 #
 #   ./50-free-tier-check.sh              # live check against OCI
 #   ./50-free-tier-check.sh --declared   # check hosts.json only; no OCI, no credentials
+#   ./50-free-tier-check.sh --tenancy    # read THIS account's real service limits
 #   ./50-free-tier-check.sh --json
 #
 # WHY THIS EXISTS
 #
-# Rev 3 section 2.1 asserted the estate fitted inside Always Free, using figures that were
-# already wrong when they were written: Oracle halved the Ampere A1 allowance from
-# 4 OCPU / 24 GB to 2 OCPU / 12 GB effective 2026-06-15 and began terminating over-limit
-# instances on 2026-08-18, with no blog post and no advance notice. The lesson is not
-# "update the number". It is that a capacity claim nobody measures is a capacity claim
-# nobody notices going false — and the penalty for this one is instance termination,
-# which is precisely how oracle-admin was lost.
+# Rev 3 section 2.1 asserted the estate fitted inside Always Free using figures with no
+# provenance and no expiry. The first attempt to fix that replaced them with different
+# figures that had no better provenance — the same mistake with fresher digits.
 #
-# So the allowance is dated data (deploy/oracle/free-tier-allowance.json) with a staleness
-# bound, and this compares it against what actually exists. Stale figures report
-# UNVERIFIED, never WITHIN: "we last checked in March" is not the same as "we are inside".
+# So this reports TWO separate things and never conflates them:
+#
+#   1. Does the estate exceed the figures on record?   (arithmetic — reliable)
+#   2. Are the figures on record actually known?       (provenance — often not)
+#
+# When (2) is weak, (1) is not a finding. "Over an unverified line" is not "over the
+# line", and reporting it as though it were sends someone resizing production on the
+# strength of a blog post nobody read.
+#
+# THIS FILE IS NOT AUTHORITY FOR WHAT A TENANCY MAY RUN.
+#
+# Service limits are per-account: grandfathering, account age, region and account type
+# all change the answer. The tenancy's own limits are the only authority, and --tenancy
+# reads them. Everything else here is a prompt to go and look.
 
 set -uo pipefail
 
@@ -27,9 +35,12 @@ HOSTS="${DIAL_FABRIC_HOSTS:-$HERE/../resource-fabric/hosts.json}"
 MODE=live
 JSON_ONLY=false
 
+TENANCY_ONLY=false
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --declared) MODE=declared; shift ;;
+    --tenancy)  TENANCY_ONLY=true; shift ;;
     --json)     JSON_ONLY=true; shift ;;
     *) echo "50-free-tier-check: unknown argument '$1'" >&2; exit 2 ;;
   esac
@@ -39,6 +50,44 @@ say() { [[ "$JSON_ONLY" == true ]] || echo "$*" >&2; }
 
 [[ -r "$ALLOWANCE" ]] || { echo "50-free-tier-check: no allowance file at $ALLOWANCE" >&2; exit 2; }
 [[ -r "$HOSTS" ]]     || { echo "50-free-tier-check: no hosts.json at $HOSTS" >&2; exit 2; }
+
+# --- --tenancy: ask the only source that actually decides -----------------------------
+if [[ "$TENANCY_ONLY" == true ]]; then
+  # shellcheck source=/dev/null
+  if ! source "$HERE/lib.sh" >/dev/null 2>&1 || ! command -v oci >/dev/null 2>&1; then
+    cat >&2 <<'HELP'
+No OCI CLI or credentials here, so the tenancy's real limits cannot be read from this
+machine. They are the ONLY authority for what this account may run — published free-tier
+figures describe a default, and accounts are grandfathered, upgraded and regional.
+
+Read them from OCI Cloud Shell:
+
+  oci limits value list \
+    --compartment-id "$OCI_TENANCY" \
+    --service-name compute --region af-johannesburg-1 --all \
+    --query "data[?contains(name,'a1')].{limit:name,value:value}" --output table
+
+Or in the Console:
+
+  Governance & Administration -> Limits, Quotas and Usage
+  Service: Compute -> Region: af-johannesburg-1 -> look for the Ampere A1 core count
+
+Whatever that says is the answer. Record it in deploy/oracle/free-tier-allowance.json
+with provenance.canonical_source_read set to true.
+HELP
+    exit 3
+  fi
+  limits="$(oci_ limits value list --compartment-id "${DIAL_OCI_TENANCY:-$DIAL_OCI_COMPARTMENT}" \
+    --service-name compute --all 2>/dev/null)" || limits=""
+  if [[ -n "$limits" ]] && jq -e '.data' >/dev/null 2>&1 <<<"$limits"; then
+    jq -r '.data[] | select(.name | test("a1|micro|e2"; "i")) | "  \(.name): \(.value)"' <<<"$limits"
+    echo
+    echo "These are this tenancy's actual limits and they outrank every published figure."
+    exit 0
+  fi
+  echo "Could not read service limits; check the Console path above." >&2
+  exit 3
+fi
 
 # ---- is the allowance itself still trustworthy? -------------------------------------
 confirmed="$(jq -r '.confirmed_at_utc // ""' "$ALLOWANCE")"
@@ -115,12 +164,21 @@ verdict="$(jq -n --argjson o "$observed" --slurpfile a "$ALLOWANCE" '
 exceeds="$(jq -c '[.[] | select(.over)]' <<<"$verdict")"
 n_over="$(jq 'length' <<<"$exceeds")"
 
-if [[ "$n_over" -gt 0 ]]; then
+# The two questions, kept apart. A figure nobody has read cannot establish that anything
+# exceeds it, so weak provenance downgrades an "over" result to a prompt to go and look —
+# it does not promote it to a finding.
+figures_known=true
+[[ "$allowance_state" == FRESH ]] || figures_known=false
+[[ "$canonical_read" == true ]]   || figures_known=false
+
+if [[ "$figures_known" != true ]]; then
+  if [[ "$n_over" -gt 0 ]]; then
+    state=CHECK_TENANCY
+  else
+    state=UNVERIFIED
+  fi
+elif [[ "$n_over" -gt 0 ]]; then
   state=EXCEEDS
-elif [[ "$allowance_state" != FRESH || "$canonical_read" != true ]]; then
-  # Inside the numbers we have, but the numbers are stale or never came from the
-  # canonical page. That is UNVERIFIED, and UNVERIFIED never reads as healthy.
-  state=UNVERIFIED
 else
   state=WITHIN
 fi
@@ -129,10 +187,15 @@ report="$(jq -n \
   --arg state "$state" --arg src "$source_of_truth" --arg at "$(date -u +%FT%TZ)" \
   --arg astate "$allowance_state" --arg conf "$confirmed" --argjson age "$age_days" \
   --argjson canon "$canonical_read" --argjson rows "$verdict" --argjson obs "$observed" \
-  '{schema_version:1, report:"Always Free allowance check",
-    source_authority:"deploy/oracle/free-tier-allowance.json",
+  --arg conf_level "$(jq -r '.provenance.confidence // "UNKNOWN"' "$ALLOWANCE")" \
+  --argjson read_any "$(jq -r '.provenance.any_source_read_directly // false' "$ALLOWANCE")" \
+  '{schema_version:2, report:"Always Free allowance check",
+    source_authority:"the tenancy service limits; this file is a prompt to read them, not a substitute",
+    figures_from:"deploy/oracle/free-tier-allowance.json",
     observed_at:$at, inventory_source:$src, state:$state,
-    allowance:{state:$astate, confirmed_at_utc:$conf, age_days:$age, canonical_source_read:$canon},
+    allowance:{state:$astate, confirmed_at_utc:$conf, age_days:$age,
+               canonical_source_read:$canon, any_source_read_directly:$read_any,
+               confidence:$conf_level},
     rows:$rows, observed:$obs}')"
 
 if [[ "$JSON_ONLY" == true ]]; then
@@ -145,26 +208,41 @@ else
   echo
   echo "STATE: $state"
   case "$state" in
+    CHECK_TENANCY)
+      echo
+      echo "The estate is over the figures ON RECORD — but those figures are not known well"
+      echo "enough to call that a finding. Confidence is $(jq -r '.provenance.confidence' "$ALLOWANCE"), and"
+      echo "any_source_read_directly is $(jq -r '.provenance.any_source_read_directly' "$ALLOWANCE")."
+      echo
+      jq -r '.provenance.contradicting_evidence
+             | "Evidence against them: \(.observation)\n\(.why_it_matters)"' "$ALLOWANCE" 2>/dev/null
+      echo
+      echo "Service limits are per-account. Read this tenancy's own:"
+      echo "  ./50-free-tier-check.sh --tenancy"
+      echo "Whatever that says settles it. Until then, change nothing on this basis."
+      echo
+      echo "Independent of the limit question: no host has a boot-volume backup, and that"
+      echo "is worth fixing whatever the limits turn out to be."
+      echo "  ./40-backup-policy.sh --apply --include-hermes" ;;
     EXCEEDS)
       echo
-      echo "One or more resources exceed the Always Free allowance. Oracle terminates"
-      echo "over-limit instances without warning — that is how oracle-admin was lost, and"
-      echo "an over-limit host with no boot-volume backup is that loss repeating."
+      echo "One or more resources exceed the allowance, against figures that were actually"
+      echo "confirmed. Oracle terminates over-limit instances, and an over-limit host with"
+      echo "no boot-volume backup is the 2026-09-12 loss repeating."
       echo "Resize in the OCI Console, or accept the cost deliberately. Then run:"
       echo "  ./40-backup-policy.sh --apply --include-hermes" ;;
     UNVERIFIED)
       echo
-      echo "Inside the figures on record, but those figures are $allowance_state and the"
-      echo "canonical Oracle page has not been read from this environment. Re-confirm"
-      echo "$(jq -r '.canonical_source' "$ALLOWANCE")"
-      echo "and update deploy/oracle/free-tier-allowance.json before resting a decision on this." ;;
+      echo "Inside the figures on record, but the figures are $allowance_state and"
+      echo "confidence is $(jq -r '.provenance.confidence' "$ALLOWANCE"). Read the tenancy's own limits:"
+      echo "  ./50-free-tier-check.sh --tenancy" ;;
     WITHIN)
       echo "Inside the allowance, against figures confirmed ${age_days} days ago." ;;
   esac
 fi
 
 case "$state" in
-  WITHIN)     exit 0 ;;
-  UNVERIFIED) exit 3 ;;
-  *)          exit 1 ;;
+  WITHIN)                   exit 0 ;;
+  UNVERIFIED|CHECK_TENANCY) exit 3 ;;
+  *)                        exit 1 ;;
 esac
