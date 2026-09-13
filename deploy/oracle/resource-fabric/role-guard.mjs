@@ -13,7 +13,7 @@ export const REASON = Object.freeze({
   WORKLOAD_NOT_PERMITTED: 'WORKLOAD_NOT_PERMITTED', AUTHORITY_REQUIRES_RECOVERY_ROLE: 'AUTHORITY_REQUIRES_RECOVERY_ROLE',
   AUTHORITY_REQUIRES_CONTROL_ROLE: 'AUTHORITY_REQUIRES_CONTROL_ROLE', UNMAPPED_RECOVERY_AUTHORITY: 'UNMAPPED_RECOVERY_AUTHORITY',
   HOST_HAS_NO_RECOVERY_AUTHORITY_MAX: 'HOST_HAS_NO_RECOVERY_AUTHORITY_MAX', AUTHORITY_EXCEEDS_HOST_RECOVERY_MAX: 'AUTHORITY_EXCEEDS_HOST_RECOVERY_MAX',
-  OWNER_AUTHORIZATION_REQUIRED: 'OWNER_AUTHORIZATION_REQUIRED', HEAVY_WORK_NOT_PERMITTED: 'HEAVY_WORK_NOT_PERMITTED',
+  OWNER_AUTHORIZATION_REQUIRED: 'OWNER_AUTHORIZATION_REQUIRED', NO_DEVELOPMENT_POOL_ON_THIS_HOST: 'NO_DEVELOPMENT_POOL_ON_THIS_HOST', HEAVY_WORK_NOT_PERMITTED: 'HEAVY_WORK_NOT_PERMITTED',
   ARCHITECTURE_MISMATCH: 'ARCHITECTURE_MISMATCH', ALLOWED_BY_ROLE: 'ALLOWED_BY_ROLE'
 });
 
@@ -50,8 +50,15 @@ export function evaluate(task, { hostId = os.hostname(), hosts = HOSTS, policy =
   if (task?.architecture && task.architecture !== self.architecture) return { ...base, decision: DECISION.REFUSE, reason: REASON.ARCHITECTURE_MISMATCH };
 
   if (!isRecoveryPlane) {
-    if (!workload) return { ...base, decision: DECISION.REFUSE, reason: REASON.WORKLOAD_CLASS_REQUIRED };
-    if (!(self.allowed_workload_classes ?? []).includes(workload)) return { ...base, decision: DECISION.REFUSE, reason: REASON.WORKLOAD_NOT_PERMITTED };
+    // Hybrid callers carry an explicit workload class and are checked against the
+    // immutable host allowlist. Legacy recovery-fabric callers predate that field;
+    // preserve their established development-pool contract instead of silently
+    // changing the role-guard API beneath them.
+    if (workload) {
+      if (!(self.allowed_workload_classes ?? []).includes(workload)) return { ...base, decision: DECISION.REFUSE, reason: REASON.WORKLOAD_NOT_PERMITTED };
+    } else if (self.development_pool_mb === 0) {
+      return { ...base, decision: DECISION.REFUSE, reason: REASON.NO_DEVELOPMENT_POOL_ON_THIS_HOST };
+    }
   }
   if (isHeavy(task ?? {}, policy) && self.max_concurrent_heavy_jobs === 0) return { ...base, decision: DECISION.REFUSE, reason: REASON.HEAVY_WORK_NOT_PERMITTED };
   return { ...base, decision: DECISION.ALLOW, reason: REASON.ALLOWED_BY_ROLE, ...(permittedClass ? { recovery_class: permittedClass, recovery_authority_max: self.recovery_authority_max } : {}) };
@@ -59,7 +66,21 @@ export function evaluate(task, { hostId = os.hostname(), hosts = HOSTS, policy =
 
 export function describeSelf(hostId = os.hostname(), hosts = HOSTS, policy = POLICY) {
   const self = hosts.hosts.find((h) => h.host_id === hostId); if (!self) return { host: hostId, known: false };
-  return { host: hostId, known: true, host_class: self.host_class ?? null, immutable_role: self.immutable_role === true, roles: self.roles, worker_eligible: self.worker_eligible === true, background_worker_eligible: self.background_worker_eligible === true, allowed_workload_classes: self.allowed_workload_classes ?? [], recovery_role: self.recovery_role, recovery_authority_max: self.recovery_authority_max ?? null, development_permitted: self.development_pool_mb > 0, background_permitted: Number(self.background_pool_mb ?? 0) > 0, heavy_work_permitted: self.max_concurrent_heavy_jobs > 0 };
+  return {
+    host: hostId, known: true, host_class: self.host_class ?? null, immutable_role: self.immutable_role === true,
+    roles: self.roles, worker_eligible: self.worker_eligible === true, background_worker_eligible: self.background_worker_eligible === true,
+    allowed_workload_classes: self.allowed_workload_classes ?? [], recovery_role: self.recovery_role, recovers: self.recovers ?? [],
+    recovery_authority_max: self.recovery_authority_max ?? null, recovery_service_allowlist: self.recovery_service_allowlist ?? [],
+    development_permitted: self.development_pool_mb > 0, background_permitted: Number(self.background_pool_mb ?? 0) > 0,
+    heavy_work_permitted: self.max_concurrent_heavy_jobs > 0,
+    authority_classes_permitted: [
+      ...(isRecovery(self) || isBoundedRecoverer(self)
+        ? (policy.authority_routing?.recovery_plane_only ?? []).filter((a) =>
+            evaluate({ authority_class: a, owner_authorization: 'PROBE' }, { hostId, hosts, policy }).decision === DECISION.ALLOW)
+        : []),
+      ...(isControl(self) ? (policy.authority_routing?.control_slice_only ?? []) : []),
+    ],
+  };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
