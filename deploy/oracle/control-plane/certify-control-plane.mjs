@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { allowedOnHost, route } from './hybrid-router.mjs';
 import { admit } from './guarded-command.mjs';
 import { normalizeOwnerInstruction, workloadHint } from './owner-channel-adapter.mjs';
+import { planSemanticOperation } from './ssh-semantic-executor.mjs';
 
 assert.equal(allowedOnHost('oracle-admin', 'HEAVY_BUILD'), false);
 assert.equal(allowedOnHost('oracle-admin', 'TEST'), false);
@@ -19,4 +20,7 @@ assert.equal(admit({ command: 'some-unknown-tool --do-stuff', source: 'SSH', hos
 const owner = normalizeOwnerInstruction({ source: 'WHATSAPP', text: 'Run the full DIAL verification' });
 assert.equal(owner.authority, 'OWNER');
 assert.equal(workloadHint(owner), 'TEST');
-console.log(JSON.stringify({ certification: 'GREEN', assertions: 13 }, null, 2));
+assert.equal(planSemanticOperation({ operation: 'HOST_HEALTH', target_host: 'oracle-admin-v2' }).decision, 'ALLOW');
+assert.equal(planSemanticOperation({ operation: 'HOST_HEALTH', target_host: 'oracle-admin-v2' }).transport, 'DIRECT_SSH');
+assert.equal(planSemanticOperation({ operation: 'SERVICE_STATUS', target_host: 'oracle-admin', args: { service: '../bad' } }).decision, 'REFUSE');
+console.log(JSON.stringify({ certification: 'GREEN', assertions: 16 }, null, 2));
