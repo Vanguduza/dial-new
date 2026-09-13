@@ -3,21 +3,20 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260913-owner-adaptive-routing-publication"
+    "auth-20260913-owner-hermes-local-mcp-activation"
   ],
-  "branch": "claude/adaptive-harness-model-routing-dec032",
+  "branch": "claude/hermes-local-mcp-activation-byqtq3",
   "changed_files": [
-    "agent-system/orchestration/adaptive-routing-architecture-check.mjs",
-    "agent-system/orchestration/execution-pair-router.mjs",
-    "agent-system/orchestration/model-performance-ledger.mjs",
-    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
-    "docs/project-state/authorizations/auth-20260913-owner-self-learning-smoothing-weight.json",
-    "tests/orchestration-adaptive-routing.test.mjs"
+    "deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh",
+    "deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh",
+    "docs/orchestration/DIAL_HERMES_LOCAL_MCP_PLANE.md",
+    "docs/project-state/authorizations/auth-20260913-owner-hermes-local-mcp-activation.json",
+    "docs/project-state/authorizations/auth-20260913-owner-hermes-local-mcp-plane.json"
   ],
-  "content_diff_sha256": "dd66f89662c63e6c1c751ae2aa596262b8f5cba54187fd633a5abe53a7de41fa",
-  "observed_at_utc": "2026-09-13T03:33:19.414477+00:00",
+  "content_diff_sha256": "c4fd679df972239508170795b6a0ee3090a86f3f4dbf6ab8b76076ec41e14950",
+  "observed_at_utc": "2026-09-13T16:01:08.653292+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "95748fc56be0c16ce95d11598743896a829f479b",
+  "source_parent": "197533130d88f22cd84af26ac5fa225f3a37126f",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
