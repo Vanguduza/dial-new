@@ -202,7 +202,8 @@ started**: it SSHes to peers with `StrictHostKeyChecking=yes`, so it stays off u
 /opt/dial-recovery/dial-new     recovery branch checkout
 /opt/dial-recovery/commander    pinned Desktop Commander install
 /opt/dial-recovery/bin          re-runnable bootstrap
-/var/lib/dial-recovery          bootstrap state, Commander execution proof
+/var/lib/dial-recovery          bootstrap state (root-owned)
+/var/lib/dial-recovery/commander  Commander execution proof (ubuntu-owned, 0750)
 /var/lib/dial-recovery/fabric   fabric state: telemetry, leases, decisions (0700)
 /var/log/dial-recovery          recovery logs
 /etc/dial-recovery              non-secret configuration

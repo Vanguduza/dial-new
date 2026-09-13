@@ -15,13 +15,20 @@ Wants=network-online.target
 # an unpaired host never shows a spuriously running Commander.
 ConditionPathExists=%h/.desktop-commander-device/device.json
 
+# systemd reads the start rate limit from [Unit]. It sat in [Service] until
+# 2026-09-13, where it is silently ignored — so the default applied instead: five
+# starts inside ten seconds and systemd gives up PERMANENTLY, leaving Commander
+# dead until someone logs in and resets it. With Restart=always and RestartSec=10s
+# that is reachable whenever the outbound session flaps. Zero means never give up;
+# the memory protections below are what stop a restart loop from being expensive.
+StartLimitIntervalSec=0
+
 [Service]
 Type=simple
 # Non-root: this is owner admin tooling on the recovery plane, not a system daemon.
 ExecStart=/opt/dial-recovery/commander/node_modules/.bin/desktop-commander remote
 Restart=always
 RestartSec=10s
-StartLimitIntervalSec=0
 TimeoutStartSec=90
 TimeoutStopSec=30
 KillSignal=SIGTERM

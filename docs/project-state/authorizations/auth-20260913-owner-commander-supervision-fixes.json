@@ -1,0 +1,43 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260913-owner-commander-supervision-fixes",
+  "authorized_paths": [
+    "deploy/oracle/provisioning/systemd/dial-commander-remote.service",
+    "deploy/oracle/provisioning/commander-probe.sh",
+    "deploy/oracle/provisioning/commander-record-proof.sh",
+    "deploy/oracle/provisioning/commander-pair.sh",
+    "deploy/oracle/provisioning/bootstrap.sh",
+    "deploy/oracle/provisioning/README.md",
+    "tests/oracle-admin-provisioning.test.mjs",
+    "docs/project-state/authorizations/auth-20260913-owner-commander-supervision-fixes.json"
+  ],
+  "base_sha": "14f74bef75a96ed653e21e4d209a76b91a81e6ce",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "technical_implementation",
+    "recovery_plane",
+    "evidence_integrity"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-13T04:00:00+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner reviewed a third-party assessment of the remaining Desktop Commander defects on oracle-admin and ordered all four fixes landed. All four were confirmed against the repository before being changed. (1) StartLimitIntervalSec=0 sat in [Service], where systemd ignores it, so the default rate limit applied instead: five starts in ten seconds and the unit is disabled permanently, reachable whenever the outbound session flaps against Restart=always with RestartSec=10s. Moved to [Unit]. (2) The Commander execution proof was written into /var/lib/dial-recovery, which is root-owned because it holds bootstrap state, while the writer runs as the admin user inside a Commander tool call. The write therefore failed on every host and PING_RESPONDS/COMMAND_EXECUTES could never leave UNVERIFIED, making host GREEN unreachable by construction. The proof moves to an admin-owned subdirectory that bootstrap creates. (3) REMOTE_REGISTERED was decided by grepping the journal for the single 'Device ready:' line emitted at registration; on a 1 GB host with a size-capped journal that line rotates away, so the check failed a service BECAUSE it had been healthy a long time. It now reads the unit's live established outbound session as the primary signal, keeps the journal as a fallback for a freshly started unit, and OMITS the criterion rather than failing it when neither reading can be taken - doctor.mjs reads an absent criterion as UNVERIFIED, which is the honest answer to 'I could not look'. (4) commander-pair.sh ran the device in the foreground under a ten-minute timeout, but the process does not exit once the credential is saved, so the device was served by an unsupervised process for the remainder of the window and the systemd unit was only enabled after it expired; a closed terminal took the host offline with no unit behind it. Pairing now runs detached with its output streamed, stops it as soon as the credential parses, and hands the session to the unit. Two adjacent defects found while making these changes are included because they block the same work: the proof was validated against the literal hostname 'oracle-admin', so the second rescuer could never have been certified by the mechanism built for it, now compared against the live hostname; and the new proof-directory guard tested writability without testing that the path is a directory, which let an existing non-directory fall through to the bare shell error the guard exists to replace. Landed in the repository rather than on the host because bootstrap installs these files from the repository, so a host-side fix is erased by the next repair run. Seven regression tests added. No capacity, networking, security-authority or control-host change; dial-hermes-control untouched.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "Do the four now",
+  "owner_instruction_sha256": "2e7efdc3fba30638aaed9646431f0b76f11d176e7c4920f909e494db493c147e",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260913-commander-supervision-fixes"
+  }
+}

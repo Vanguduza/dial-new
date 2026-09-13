@@ -12,8 +12,9 @@
 # The device registers under os.hostname(), which is why the instance hostname is
 # `oracle-admin`: that is the name that appears in the client device list.
 #
-# Once the credential exists, this script hands the session over to the supervised
-# systemd unit so the device stays online across reboots.
+# Once the credential exists, this script stops the temporary authorization process
+# and hands the session to the supervised systemd unit, which is what keeps the
+# device online across reboots and across the owner closing this terminal.
 
 set -euo pipefail
 
@@ -34,9 +35,48 @@ else
   echo "Starting device authorization. Approve the code shown below in your browser."
   echo "The session persistence default is ON, so this is a one-time step."
   echo
-  # Runs in the foreground so the owner can see the URL and code. It exits once the
-  # credential is saved; the supervised unit takes over below.
-  timeout "${DIAL_PAIR_TIMEOUT:-600}" "$BIN" remote || true
+  # WHY THIS IS NOT A PLAIN FOREGROUND CALL
+  #
+  # `desktop-commander remote` does not exit once the credential is saved — it goes on
+  # to serve the device session. Running it as `timeout 600 … remote` therefore left an
+  # UNSUPERVISED process serving the device for ten minutes after pairing, and the
+  # systemd unit was only enabled once that timeout expired. Two failures came out of
+  # that: the device looked online while nothing was supervising it, and if the owner
+  # closed the terminal (or the SSH session dropped) the process died with no unit
+  # behind it and the host went dark again.
+  #
+  # So: run it detached, show its output live so the owner can still read the URL and
+  # code, and take it down the moment the credential is on disk. The supervised unit
+  # below is then the only thing holding the session.
+  log="$(mktemp "${TMPDIR:-/tmp}/dial-commander-pair.XXXXXX")"
+  "$BIN" remote >"$log" 2>&1 &
+  pair_pid=$!
+  tail -n +1 -f "$log" & tail_pid=$!
+  # Neither helper may outlive this script, however it ends.
+  # shellcheck disable=SC2064
+  trap "kill $tail_pid $pair_pid 2>/dev/null || true; rm -f '$log'" EXIT INT TERM
+
+  deadline=$(( SECONDS + ${DIAL_PAIR_TIMEOUT:-600} ))
+  while (( SECONDS < deadline )); do
+    if [[ -f $CRED ]]; then
+      # The file appears before it is finished being written; wait for it to parse.
+      for _ in 1 2 3 4 5; do
+        if jq -e 'type == "object" and length > 0' "$CRED" >/dev/null 2>&1; then break; fi
+        sleep 1
+      done
+      break
+    fi
+    kill -0 "$pair_pid" 2>/dev/null || break   # it gave up or failed; report below
+    sleep 2
+  done
+
+  kill "$tail_pid" 2>/dev/null || true
+  # Hand the session over. SIGTERM is what systemd would send it anyway.
+  kill "$pair_pid" 2>/dev/null || true
+  wait "$pair_pid" 2>/dev/null || true
+  trap - EXIT INT TERM
+  rm -f "$log"
+  echo
 fi
 
 if [[ -f $CRED ]]; then

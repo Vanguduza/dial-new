@@ -20,8 +20,25 @@
 
 set -uo pipefail
 
-PROOF="${COMMANDER_PROOF:-/var/lib/dial-recovery/commander-proof.json}"
-install -d -m 755 "$(dirname "$PROOF")" 2>/dev/null || true
+PROOF="${COMMANDER_PROOF:-/var/lib/dial-recovery/commander/proof.json}"
+PROOF_DIR="$(dirname "$PROOF")"
+install -d -m 750 "$PROOF_DIR" 2>/dev/null || true
+
+# Say so here rather than letting the redirection below fail with a bare shell error
+# that the Commander client shows as an empty result. This is the exact failure that
+# kept the client criteria UNVERIFIED on a host where Commander was working perfectly:
+# the directory was root-owned and this script does not run as root.
+# Both halves matter. "Writable" alone passes when the path exists but is a FILE, and
+# the script then falls through to a bare "Not a directory" from the redirection —
+# which the Commander client renders as an empty result, the very failure mode this
+# guard exists to replace.
+if [[ ! -d "$PROOF_DIR" || ! -w "$PROOF_DIR" ]]; then
+  echo "Cannot write the execution proof: $PROOF_DIR is not a writable directory for $(id -un)." >&2
+  echo "Fix on the host with:" >&2
+  echo "  sudo install -d -m 750 -o $(id -un) -g $(id -gn) $PROOF_DIR" >&2
+  echo "or re-run bootstrap, which now creates it with the right owner." >&2
+  exit 4
+fi
 
 # Walk the process ancestry looking for the Commander device process. A genuine
 # tool call is a descendant of `desktop-commander remote`; an interactive SSH shell
@@ -61,7 +78,7 @@ jq -n \
     evidence:{ping:$ping, filesystem_read:$fs_read, harmless_command:$harmless, uptime:$uptime},
     caller_ancestry:$ancestry}' > "$PROOF"
 
-chmod 644 "$PROOF"
+chmod 640 "$PROOF"
 cat "$PROOF"
 
 if [[ "$via" != "desktop-commander" ]]; then

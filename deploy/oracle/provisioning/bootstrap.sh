@@ -401,6 +401,16 @@ phase6() {
   # world-readable, and never inside the git checkout.
   install -d -m 700 -o $ADMIN_USER -g $ADMIN_USER /home/$ADMIN_USER/.desktop-commander-device
 
+  # The execution proof is written by $ADMIN_USER from inside a Commander tool call, so
+  # the directory holding it must belong to $ADMIN_USER. $STATE_DIR above it stays
+  # root-owned: it holds bootstrap state, which the admin user has no business editing.
+  # Until 2026-09-13 the proof was written straight into $STATE_DIR, so the write failed
+  # on every host and PING_RESPONDS/COMMAND_EXECUTES could never leave UNVERIFIED.
+  install -d -m 750 -o $ADMIN_USER -g $ADMIN_USER "$STATE_DIR/commander"
+  fact commander_proof_path "$STATE_DIR/commander/proof.json"
+  # A proof at the old root-owned path can only be stale; nothing reads it now.
+  rm -f "$STATE_DIR/commander-proof.json"
+
   local ud=/home/$ADMIN_USER/.config/systemd/user
   install -d -m 755 -o $ADMIN_USER -g $ADMIN_USER "$ud"
   install -m 644 -o $ADMIN_USER -g $ADMIN_USER \

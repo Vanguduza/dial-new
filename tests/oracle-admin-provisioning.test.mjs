@@ -250,6 +250,97 @@ describe('Desktop Commander transport and health', () => {
   });
 });
 
+/**
+ * Four defects confirmed live on oracle-admin on 2026-09-13, all of which had the same
+ * shape: the host was working, and the machinery around it said otherwise or quietly
+ * undermined it. They are guarded here because unit files and probes are installed FROM
+ * THIS REPO by bootstrap, so a fix applied on the host is erased by the next repair.
+ */
+describe('Commander supervision defects fixed 2026-09-13', () => {
+  const unitSection = (src, name) => {
+    const body = src.split(/^\[/m);
+    const sec = body.find((b) => b.startsWith(`${name}]`));
+    return sec ? sec.slice(name.length + 1) : '';
+  };
+
+  it('reads the start rate limit from [Unit], where systemd actually looks for it', () => {
+    const unit = read('systemd/dial-commander-remote.service');
+    const directive = /^StartLimitIntervalSec=/m;
+    // In [Service] it is silently ignored and the default applies: five starts in ten
+    // seconds and systemd gives up permanently, which is the disconnection being fixed.
+    expect(unitSection(unit, 'Unit')).toMatch(directive);
+    expect(unitSection(unit, 'Service')).not.toMatch(directive);
+    expect(unit).toMatch(/^StartLimitIntervalSec=0$/m);
+  });
+
+  it('writes the execution proof somewhere the admin user can actually write', () => {
+    // The parent stays root-owned (bootstrap state); the proof gets its own directory.
+    for (const f of ['commander-probe.sh', 'commander-record-proof.sh']) {
+      expect(read(f)).toMatch(/COMMANDER_PROOF:-\/var\/lib\/dial-recovery\/commander\/proof\.json/);
+      expect(read(f)).not.toMatch(/dial-recovery\/commander-proof\.json/);
+    }
+    expect(read('bootstrap.sh'))
+      .toMatch(/install -d -m 750 -o \$ADMIN_USER -g \$ADMIN_USER "\$STATE_DIR\/commander"/);
+  });
+
+  it('says why it cannot record a proof instead of failing with an empty result', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'proofro-'));
+    // A plain file where the directory should be. Mode bits would not do: this suite
+    // can run as root, and root ignores them — the check would pass without testing
+    // anything. No user, root included, can create a directory inside a file.
+    const blocker = path.join(dir, 'blocker');
+    fs.writeFileSync(blocker, 'not a directory');
+    let out = '';
+    try {
+      sh('bash', [path.join(P, 'commander-record-proof.sh')],
+        { env: { ...process.env, COMMANDER_PROOF: path.join(blocker, 'proof.json') } });
+    } catch (e) { out = `${e.stdout || ''}${e.stderr || ''}`; }
+    expect(out).toMatch(/not a writable directory/);
+    expect(out).toMatch(/install -d -m 750/);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('binds the proof to the live hostname, so a second rescuer can be certified too', () => {
+    // Pinning the literal "oracle-admin" made the criterion unreachable on every other
+    // host in the estate while still looking like a working check.
+    const src = read('commander-probe.sh');
+    expect(src).toMatch(/--arg h "\$\(hostname\)"/);
+    expect(src).not.toMatch(/\.hostname == "oracle-admin"/);
+  });
+
+  it('does not decide registration from a log line that rotates away', () => {
+    const src = read('commander-probe.sh');
+    // Primary reading is the live outbound session, not a one-off journal line: on a
+    // size-capped journal that line ages out, so the check used to fail a service
+    // BECAUSE it had been healthy for a long time.
+    expect(src).toMatch(/ss -H -tnp state established/);
+    expect(src).toMatch(/MainPID/);
+    // And when it cannot look at all, it omits the criterion rather than failing it.
+    expect(src).toMatch(/UNVERIFIED rather than failed/);
+  });
+
+  it('reports RED for registration when the unit is not running at all', () => {
+    const out = sh('bash', [path.join(P, 'commander-probe.sh')],
+      { env: { ...process.env, COMMANDER_PROOF: '/nonexistent/proof.json', HOME: os.tmpdir() } });
+    expect(out).toMatch(/REMOTE_REGISTERED=RED/);
+    expect(out).not.toMatch(/REMOTE_REGISTERED=GREEN/);
+  });
+
+  it('hands pairing to systemd immediately instead of serving it unsupervised', () => {
+    const src = read('commander-pair.sh');
+    // The old form ran the device in the foreground for the whole timeout, so for ten
+    // minutes the session was held by a process no unit owned and a closed terminal
+    // took the host offline.
+    expect(src).not.toMatch(/timeout "\$\{DIAL_PAIR_TIMEOUT[^}]*\}" "\$BIN" remote/);
+    expect(src).toMatch(/"\$BIN" remote >"\$log" 2>&1 &/);
+    expect(src).toMatch(/kill "\$pair_pid"/);
+    // The timeout still bounds how long it waits for the owner to approve.
+    expect(src).toMatch(/DIAL_PAIR_TIMEOUT:-600/);
+    // And the unit is what ends up holding the session.
+    expect(src).toMatch(/systemctl --user enable --now "\$UNIT"/);
+  });
+});
+
 describe('fabric inventory agreement', () => {
   it('pins the private IP the fabric already records for oracle-admin', () => {
     const hosts = JSON.parse(fs.readFileSync(path.join(FABRIC, 'hosts.json'), 'utf8'));
