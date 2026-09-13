@@ -617,6 +617,32 @@ Concretely: Run Command is proven by output returned through the control plane; 
 is proven by a record that only a real tool call could have written; direct-access
 independence is proven by §7.2.
 
+### 7.1.1 What runs the check
+
+| Tool | Answers |
+|---|---|
+| `provisioning/60-estate-access-check.sh` | for **every** host including the protected ones: does it have its own address, its own Run Command path, and no dependency on a peer? |
+| `provisioning/61-independence-test.sh` | §7.2 itself — remove a path and confirm the others hold |
+
+Until these existed, the certification apparatus was scoped entirely to `oracle-admin`
+(`host-certify.sh` has "oracle-admin host certification" written into it) and the other two
+hosts appeared only in guards saying *do not touch this*. The estate had a rule about three
+hosts and evidence about one, which is how "I cannot reach `dial-hermes-control` because
+`oracle-admin-v2` is down" became sayable: false, and unrefutable from evidence.
+
+`60-` is strictly read-only — no create, update, delete, reboot or run-command — which is
+what makes it safe to aim at a protected host, and aiming it at them is the point. Three
+of its behaviours matter more than its passes:
+
+- anything it cannot measure reads `UNVERIFIED`, and `UNVERIFIED` never counts toward the
+  two-independent-paths bar;
+- Desktop Commander is deliberately **not** probed over SSH. Reading it that way would make
+  the Commander result depend on the SSH path, and a check whose three "independent" paths
+  share a dependency is assuming independence rather than measuring it;
+- if it reached no host at all, it downgrades every SSH failure to `UNVERIFIED` and says the
+  prober may be blind. A checker that reports the whole estate BROKEN because it is behind a
+  proxy would, during an outage, send someone rebuilding hosts that were never down.
+
 ### 7.2 Independence test (non-destructive)
 
 1. Stop the Commander session on `oracle-admin`. Verify the other two remain reachable
@@ -630,6 +656,31 @@ independence is proven by §7.2.
 
 Step 3 is new in Rev 3 and is the direct test of requirements 2 and 3 together. Never
 prove isolation by powering off production.
+
+`61-independence-test.sh` implements this, with the safety property that governs the whole
+design:
+
+> **Never remove a way in before proving you have another one.**
+
+It refuses to start unless OCI Run Command is already `PROVEN` on the target, because that
+is the path that survives SSH being gone and the way the block gets lifted if everything
+else fails. Without that gate the script would be a way to lock yourself out of a host in
+order to discover whether you could still get into it.
+
+The rest follows from the same principle: the removed rule is written to disk **before** the
+removal; the restore is armed **before** the change, so a crash or Ctrl-C still restores;
+the restore is verified afterwards; a failed restore prints the saved file and the exact
+command to replay it; and an outstanding disruption from a previous run is detected and
+reported **first**, ahead of every other check, because a host sitting with no ingress
+outranks anything else the tool could say.
+
+Protected hosts are refused: blocking ingress to them is a networking change to a protected
+host, and no test result is worth that. Their independence is established structurally, and
+by watching them stay reachable while `oracle-admin` is the one disrupted — the same
+evidence from the other side. It never stops an instance to prove isolation; §7.2 says so,
+and a stopped Always Free instance may not start again.
+
+Default is report-only. `--disrupt` opts in.
 
 ---
 
@@ -671,6 +722,11 @@ Named rather than omitted.
 These are the honest remainder. Note what §9.1 does *not* claim: the mechanism is built and
 unit-tested, but it has never run between two live hosts. Per §7.1 that is not proof.
 
+0. **Direct access is proven for one host of three.** `oracle-admin` has SSH and Run
+   Command proven and Commander unpaired. `oracle-admin-v2` is down. `dial-hermes-control`
+   has never been checked at all — no tooling existed to ask until §7.1.1, and it has not
+   yet been run anywhere it can see the estate. Running `60-estate-access-check.sh` from
+   Cloud Shell closes this.
 1. **Two-way recovery is unexercised end to end.** The tooling to prove it now exists and
    is itself tested against a bounded, an unbounded and a dead target — but no
    bounded-recovery key has been generated or authorized, and Hermes has never restarted

@@ -8,6 +8,8 @@
 #   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
 #   ~/p/run.sh twoway     report the two-way recovery state on the host
 #   ~/p/run.sh seed       seed peer host keys and start the recovery agent
+#   ~/p/run.sh access     can every VM be reached on its own? (read-only, all 3 hosts)
+#   ~/p/run.sh indep      the independence test — no host is a mandatory hop
 #   ~/p/run.sh status     show state, change nothing
 #   ~/p/run.sh log        show the last run's output
 #
@@ -168,6 +170,11 @@ case "$mode" in
   status) exit 0 ;;
   twoway) twoway; exit $? ;;
   seed)   seed;   exit $? ;;
+  # These two run HERE, not on the host: they ask about all three hosts, and asking a
+  # host whether it is independent of its peers by first connecting to it through one of
+  # them would answer its own question wrongly.
+  access) ./60-estate-access-check.sh; exit $? ;;
+  indep)  ./61-independence-test.sh "${@:2}"; exit $? ;;
   pair)   pair;   exit $? ;;
   repair) repair; exit $? ;;
   log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;

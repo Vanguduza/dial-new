@@ -1,0 +1,45 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260913-owner-estate-access-independence",
+  "authorized_paths": [
+    "deploy/oracle/provisioning/60-estate-access-check.sh",
+    "deploy/oracle/provisioning/61-independence-test.sh",
+    "deploy/oracle/provisioning/run.sh",
+    "docs/orchestration/DIAL_ORACLE_RESILIENT_3_NODE_CLUSTER_REV3.md",
+    "docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md",
+    "tests/oracle-estate-access.test.mjs",
+    "vitest.config.ts",
+    "docs/project-state/authorizations/auth-20260913-owner-estate-access-independence.json"
+  ],
+  "base_sha": "55a1d989c09910b785b902db6c4e561e5d170230",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "recovery_plane",
+    "documentation",
+    "technical_implementation",
+    "evidence_integrity"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-13T01:20:12.446171+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner asked whether two-way recovery and direct per-VM access were fully implemented, then approved building both missing checks. Inspection established that direct access was a documented rule with evidence for one host of three: host-certify.sh is scoped to oracle-admin by name, and the only appearances of dial-hermes-control and oracle-admin-v2 in the provisioning tooling were protection guards. Nothing could answer whether the control host had its own independent paths, which is how the false claim that Hermes was unreachable because oracle-admin-v2 was down became unrefutable from evidence. 60-estate-access-check.sh covers every host including the protected ones and is strictly read-only, verified by a test asserting no mutating OCI verb appears in it. It reports UNVERIFIED for anything it cannot measure and never counts that toward the two-independent-paths bar; it deliberately does not probe Desktop Commander over SSH because that would couple the two paths it is meant to compare; and when it reached no host at all it downgrades every SSH failure to UNVERIFIED rather than reporting the estate broken, since a prober behind a proxy would otherwise send someone rebuilding hosts that were never down. 61-independence-test.sh implements Rev 3 section 7.2 under one governing rule: never remove a way in before proving you have another. It refuses to start unless OCI Run Command is already PROVEN on the target, saves the removed rule to disk before removing it, arms the restore before the change so a crash still restores, verifies the restore, prints a replay command if it fails, and detects an outstanding disruption from a previous run before anything else. Protected hosts are refused outright and no instance is ever stopped to prove isolation. Default is report-only. Three defects were found and fixed while testing: a hint naming an environment variable that could never resolve, a claim that no host depends on a peer printed when zero hosts had been checked, and the outstanding-disruption check sitting behind require_cli where a missing OCI CLI would hide it. No capacity, networking or host change was made; both tools are additive and the disruptive one has not been run.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "Both",
+  "owner_instruction_sha256": "b6c1d862f9f75ec31eb9829b6a5968eb291dc8785e7fb59d4bc6ef00f292d3f7",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260913-estate-access-independence"
+  }
+}

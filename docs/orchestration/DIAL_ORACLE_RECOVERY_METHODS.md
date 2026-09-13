@@ -43,6 +43,18 @@ nicety — it is the out-of-band path that makes an SSH mistake survivable.
 **3. OCI Console serial/VNC console.** For a host that boots but has no working
 network stack at all.
 
+**Checking all three at once.** `./60-estate-access-check.sh` asks every host — including
+the protected ones — whether it has its own address, its own Run Command path, and no
+dependency on a peer. It is strictly read-only, which is why it is safe to aim at
+`dial-hermes-control`. Anything it cannot measure reads `UNVERIFIED`, never healthy, and if
+it reached no host at all it says the prober may be blind rather than blaming the estate.
+
+`./61-independence-test.sh` goes further and proves it: temporarily remove one host's SSH
+ingress and confirm the others are untouched. It refuses to start unless Run Command is
+already proven on the target, because that is the way back in — removing your only way into
+a host to find out whether you can still get in is not a test, it is an outage. Protected
+hosts are refused outright. Default is report-only; `--disrupt` opts in.
+
 **4. Peer recovery.** Either E2 can repair the other and the control host, over the
 private addresses in `hosts.json`, without touching the internet. Since Rev 3 the control
 host can also observe either E2 and restart its recovery units — bounded at R1, so it
