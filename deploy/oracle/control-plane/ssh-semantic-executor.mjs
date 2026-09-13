@@ -7,9 +7,6 @@ import { fileURLToPath } from 'node:url';
 import { route } from './hybrid-router.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const registry = JSON.parse(fs.readFileSync(path.join(here, 'CONTROL_PLANE_REGISTRY.json'), 'utf8'));
-const rfHosts = JSON.parse(fs.readFileSync(path.join(here, '../resource-fabric/hosts.json'), 'utf8'));
-
 const SAFE_SERVICE = /^[a-zA-Z0-9_.@:-]+$/;
 const OPS = Object.freeze({
   HOST_HEALTH: { workload_class: 'DIAGNOSTICS', build: () => "printf 'HOST='; hostname; uptime; free -m; df -h /" },
@@ -18,7 +15,11 @@ const OPS = Object.freeze({
   GIT_METADATA: { workload_class: 'GIT_METADATA_READ', build: (a) => { const p = String(a.path || ''); if (!/^\/[a-zA-Z0-9_./-]+$/.test(p)) throw new Error('INVALID_PATH'); return `git -C ${JSON.stringify(p)} status --short --branch`; } }
 });
 
-function hostRecord(hostId) { return rfHosts.hosts.find((h) => h.host_id === hostId) ?? null; }
+function hostRecord(hostId) {
+  const p = process.env.DIAL_FABRIC_HOSTS_FILE || path.join(here, '../resource-fabric/hosts.json');
+  try { const data = JSON.parse(fs.readFileSync(p, 'utf8')); return data.hosts?.find((h) => h.host_id === hostId) ?? null; }
+  catch { return null; }
+}
 function sshHost(hostId) {
   const envKey = `DIAL_FABRIC_${hostId.toUpperCase().replaceAll('-', '_')}_SSH_HOST`;
   return process.env[envKey] || hostRecord(hostId)?.private_ip || null;
@@ -27,9 +28,10 @@ function sshHost(hostId) {
 export function planSemanticOperation({ operation, target_host, args = {} }) {
   const spec = OPS[operation];
   if (!spec) return { decision: 'REFUSE', reason: 'UNKNOWN_SEMANTIC_OPERATION' };
+  let command;
+  try { command = spec.build(args); } catch (error) { return { decision: 'REFUSE', reason: error.message || 'INVALID_ARGUMENT' }; }
   const routed = route({ workload_class: spec.workload_class, target_host }, { localHost: os.hostname() });
   if (routed.decision !== 'ALLOW') return routed;
-  const command = spec.build(args);
   return { ...routed, operation, command };
 }
 
