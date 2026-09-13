@@ -3,20 +3,25 @@ import os from 'node:os';
 import readline from 'node:readline';
 import { route } from './hybrid-router.mjs';
 import { admit } from './guarded-command.mjs';
+import { executeSemanticOperation, planSemanticOperation } from './ssh-semantic-executor.mjs';
 import registry from './CONTROL_PLANE_REGISTRY.json' with { type: 'json' };
 
 const tools = [
   { name: 'dial_route_workload', description: 'Select an eligible DIAL host and transport for a classified workload.', inputSchema: { type: 'object', required: ['workload_class'], properties: { workload_class: { type: 'string' }, target_host: { type: 'string' } } } },
   { name: 'dial_host_policy', description: 'Read immutable host role and workload permissions.', inputSchema: { type: 'object', required: ['host_id'], properties: { host_id: { type: 'string' } } } },
   { name: 'dial_admit_command', description: 'Classify and policy-check a command without executing it.', inputSchema: { type: 'object', required: ['command', 'source'], properties: { command: { type: 'string' }, source: { type: 'string' }, host_id: { type: 'string' }, workload_class: { type: 'string' } } } },
+  { name: 'dial_plan_semantic_operation', description: 'Plan a bounded diagnostic/control operation and its target transport without execution.', inputSchema: { type: 'object', required: ['operation','target_host'], properties: { operation: { type: 'string' }, target_host: { type: 'string' }, args: { type: 'object' } } } },
+  { name: 'dial_run_semantic_operation', description: 'Run one allowlisted semantic operation over local or direct SSH transport. No raw shell is exposed.', inputSchema: { type: 'object', required: ['operation','target_host'], properties: { operation: { type: 'string' }, target_host: { type: 'string' }, args: { type: 'object' } } } },
   { name: 'dial_control_status', description: 'Return local control-plane identity and policy version.', inputSchema: { type: 'object', properties: {} } }
 ];
 
-function result(value) { return { content: [{ type: 'text', text: JSON.stringify(value, null, 2) }], isError: value?.decision === 'REFUSE' }; }
+function result(value) { return { content: [{ type: 'text', text: JSON.stringify(value, null, 2) }], isError: value?.decision === 'REFUSE' || (value?.exit_code !== undefined && value.exit_code !== 0) }; }
 function callTool(name, args = {}) {
   if (name === 'dial_route_workload') return result(route(args, { localHost: os.hostname() }));
   if (name === 'dial_host_policy') return result(registry.hosts?.[args.host_id] ?? { decision: 'REFUSE', reason: 'UNKNOWN_HOST' });
   if (name === 'dial_admit_command') return result(admit({ command: args.command, source: args.source, host: args.host_id || os.hostname(), declaredWorkload: args.workload_class || null }));
+  if (name === 'dial_plan_semantic_operation') return result(planSemanticOperation(args));
+  if (name === 'dial_run_semantic_operation') return result(executeSemanticOperation(args));
   if (name === 'dial_control_status') return result({ host: os.hostname(), policy_id: registry.policy_id, schema_version: registry.schema_version, fail_closed: registry.fail_closed });
   return result({ decision: 'REFUSE', reason: 'UNKNOWN_TOOL' });
 }
