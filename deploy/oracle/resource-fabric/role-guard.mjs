@@ -19,7 +19,7 @@ export const REASON = Object.freeze({
 
 export function hostEntry(hostId = os.hostname()) { return HOSTS.hosts.find((h) => h.host_id === hostId) ?? null; }
 const isRecovery = (h) => h.roles.includes('RECOVERY');
-const isControl = (h) => h.roles.includes('HERMES_CONTROL') || h.roles.includes('CONTROL_PLANE');
+const isControl = (h) => h.roles.includes('HERMES_CONTROL');
 const isBoundedRecoverer = (h) => h.roles.includes('BOUNDED_RECOVERY');
 export function recoveryClassOf(authority, policy = POLICY) { for (const [c,m] of Object.entries(policy.recovery_action_classes?.classes ?? {})) if (m.includes(authority)) return c; return null; }
 export function recoveryClassRank(rclass, policy = POLICY) { return (policy.recovery_action_classes?.order ?? []).indexOf(rclass); }

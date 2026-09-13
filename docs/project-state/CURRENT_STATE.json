@@ -3,20 +3,19 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260913-owner-hybrid-control-plane-regression-fix"
+    "auth-20260913-owner-control-role-semantic-fix"
   ],
   "branch": "feat/hybrid-mcp-ssh-control-plane",
   "changed_files": [
-    ".github/workflows/hybrid-control-plane-regression-reconcile.yml",
-    "agent-system/orchestration/runtime-capacity-policy.mjs",
+    ".github/workflows/hybrid-control-plane-control-role-fix.yml",
     "deploy/oracle/resource-fabric/role-guard.mjs",
     "docs/project-state/OWNER_AUTHORITY_POLICY.json",
-    "docs/project-state/authorizations/auth-20260913-owner-hybrid-control-plane-regression-fix.json"
+    "docs/project-state/authorizations/auth-20260913-owner-control-role-semantic-fix.json"
   ],
-  "content_diff_sha256": "f1ac35e440a05c9b3ef8bc67df6071b32d00892dc635292b1c79989e311ffa70",
-  "observed_at_utc": "2026-09-13T06:53:00+00:00",
+  "content_diff_sha256": "fcce18458066916175fee2b6b007babf863353dff8a70d9dc5e5705f337f5b83",
+  "observed_at_utc": "2026-09-13T06:54:49.737944+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "8b311d638a317509a6abc5d38a376a2033893395",
+  "source_parent": "c0b20527ff60ac55daef8ce6dbf67f64b7512654",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
