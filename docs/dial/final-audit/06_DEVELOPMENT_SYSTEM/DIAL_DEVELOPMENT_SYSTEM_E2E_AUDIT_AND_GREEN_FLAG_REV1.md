@@ -5,7 +5,7 @@
 **Audit date:** 2026-09-14
 **Audit client:** Claude Code Remote provider container (x86_64, 4 vCPU, 15 GB, no SSH keys, no systemd, no Codex/Hermes binaries)
 **Authority of this document:** `NO_AUTHORITY` for Project Truth. It records evidence and recommendations. Every recommended canonical change is marked `OWNER_DECISION_REQUIRED`.
-**Machine-readable companion:** `DIAL_DEVELOPMENT_GREEN_FLAG.json`, `DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json`, `DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json`, `evidence/`.
+**Machine-readable companion:** `DIAL_DEVELOPMENT_GREEN_FLAG.json`, `DIAL_DEVELOPMENT_READINESS_MATRIX.json`, `DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json`, `DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json`, `evidence/`.
 
 ---
 
@@ -299,3 +299,54 @@ Contradictory: DEC-032 record vs shipped routing policy; orchestration README/IM
 6. Adopt commit signing and export branch-protection evidence.
 
 Nothing in this branch changes owner authority, the Project Truth hierarchy, payment or legal architecture, security policy, infrastructure role boundaries beyond additive fail-closed guards, or VEKL semantics.
+
+## 27. Required readiness matrix (expanded from discovered architecture)
+
+Cells: `Y` proven by a command, probe or test in this audit; `N` proven absent or failing; `?` not verifiable from this client (re-run on the named host); `-` not applicable. Per-row evidence and the exact next action are in `DIAL_DEVELOPMENT_READINESS_MATRIX.json` (42 rows; status counts {"RED": 8, "NOT": 13, "GREEN": 11, "AMBER": 8, "N/A": 2}).
+
+| Domain | Required | Installed | Configured | Authenticated | Integrated | Tested | Deterministic | Secure | Status | Gap |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Hermes control plane (dial-hermes-control) | ✓ | ? | ? | ? | N | Y | Y | Y | RED | GAP-001 |
+| Hermes agent runtime (hermes CLI, config lock, turn hooks) | ✓ | ? | ? | ? | ? | Y | Y | Y | NOT CERTIFIED | GAP-002, GAP-007 |
+| Codex CLI / App Server exact gpt-5.6-sol | ✓ | ? | ? | ? | ? | Y | Y | Y | NOT CERTIFIED | GAP-002, GAP-007 |
+| Claude Code (provider container) | ✓ | Y | Y | Y | Y | Y | Y | Y | GREEN |  |
+| Claude Code (control host, exact claude-sonnet-5 fallback) | ✓ | ? | ? | ? | ? | Y | Y | Y | NOT CERTIFIED | GAP-002, GAP-007 |
+| External orchestrator queue + development gate | ✓ | ? | Y | - | N | Y | Y | Y | RED | GAP-001 |
+| Mission controller (dial-development-root) | ✓ | ? | Y | - | N | Y | Y | Y | RED | GAP-004 |
+| Owner steering broker + typed operator gateway (chat-control 9130, operator stdio MCP) | ✓ | ? | Y | ? | ? | Y | Y | Y | NOT CERTIFIED |  |
+| Oracle status mirror + publisher timer (false-idle prevention) | ✓ | Y | Y | ? | N | Y | Y | Y | RED | GAP-003 |
+| VEKL 2.2 (Units, GraphRAG, capsules, trace, admission) | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN | GAP-008, GAP-020 |
+| VEKL federated resources, presearch/research timer | ✓ | Y | Y | - | ? | Y | Y | Y | AMBER | GAP-013 |
+| GraphRAG structural reality (TypeScript baseline) | ✓ | Y | Y | - | N | Y | Y | Y | AMBER | GAP-012, GAP-006 |
+| Graphify 0.9.58 provider |  | N | Y | - | N | Y | Y | Y | RED | GAP-012 |
+| Model routing: locked manager chain | ✓ | Y | Y | ? | Y | Y | Y | Y | GREEN |  |
+| Model routing: DEC-032 adaptive harness x model pairs | ✓ | Y | Y | - | N | Y | Y | Y | AMBER | GAP-009 |
+| Adaptive execution fabric (triage, envelope, topology, leases, receipts, HCX) | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN |  |
+| MCP dial-oracle-status (read-only mirror) | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN |  |
+| MCP dial-oracle-control (Claude/Codex mutable owner controls) | ✓ | ? | ? | ? | ? | Y | Y | Y | NOT CERTIFIED |  |
+| MCP dial-truth (read-only canon) |  | N | N | - | N | N | - | - | RED | GAP-016 |
+| GitHub repository, PR flow, CI (verify + project-truth) | ✓ | Y | Y | Y | Y | Y | Y | N | AMBER | GAP-010 |
+| Project Truth guard, authorization records, ledger | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN | GAP-022 resolved |
+| Host role guard (dial-role-guard equivalent) | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN | GAP-023 resolved; GAP-005 consolidation |
+| vekl-worker node + job contract | ✓ | N | Y | N | N | Y | Y | Y | RED | GAP-005 |
+| oracle-admin recovery node + Desktop Commander |  | N | Y | N | N | Y | Y | Y | RED | GAP-005 |
+| Provider-container execution (Claude Code Remote / Codex cloud) | ✓ | Y | Y | Y | Y | Y | Y | Y | GREEN | GAP-005 |
+| Owner WhatsApp (Hermes self-chat pairing) |  | ? | Y | ? | ? | Y | Y | Y | NOT CERTIFIED | GAP-017 |
+| Owner WhatsApp (Meta Cloud API adapter) |  | ? | ? | ? | ? | Y | Y | Y | NOT CERTIFIED |  |
+| xKiro HAIF auxiliary |  | ? | Y | ? | ? | Y | Y | Y | NOT CERTIFIED |  |
+| Google Antigravity (worker harness) |  | N | Y | N | N | Y | Y | Y | NOT CERTIFIED |  |
+| Google Stitch (design provider) |  | Y | N | N | N | Y | Y | Y | NOT CERTIFIED |  |
+| Google Pomelli (GMPC creative, human-operated) |  | - | Y | N | N | Y | - | Y | NOT CERTIFIED |  |
+| Context7 / Exa connectors |  | N | N | N | N | - | - | - | AMBER | GAP-016 |
+| dial-development-governor plugin |  | N | N | - | N | - | - | - | N/A | GAP-016 |
+| Host toolchain (git, node 22, npm 10, python3, jq, rg, sqlite3, ssh) | ✓ | Y | Y | - | Y | Y | Y | N | AMBER | GAP-007 |
+| Systemd supervision + sandboxing (15 user units) | ✓ | ? | Y | - | ? | Y | Y | N | NOT CERTIFIED | GAP-011 |
+| Containers (Docker/Compose) |  | - | - | - | - | - | - | - | N/A |  |
+| Secrets management | ✓ | Y | Y | - | Y | Y | - | Y | GREEN (repo) / ? (hosts) | GAP-011 |
+| Network (egress to GitHub/npm/Anthropic/OpenAI; loopback-only listeners; worker SSH) | ✓ | - | Y | - | Y | Y | - | ? | AMBER |  |
+| Backup / recovery (state.db backup, checkpoints, reboot soak, recovery node) | ✓ | ? | Y | - | ? | Y | Y | Y | NOT CERTIFIED | GAP-005 |
+| Observability (who/what/model/worker/commit/tests/why) | ✓ | Y | Y | - | Y | Y | Y | Y | AMBER | GAP-014 |
+| Playwright E2E (transition/EPC surfaces) | ✓ | Y | Y | - | Y | Y | Y | - | GREEN |  |
+| Bootstrap and certification system (ops/development-bootstrap) | ✓ | Y | Y | - | Y | Y | Y | Y | GREEN (container) / not yet run on hosts |  |
+
+Reading the matrix: every `?` in the Installed/Configured/Authenticated columns is a host-side fact that only `bootstrap.sh --verify --role <host>` on that host can turn into `Y` or `N`; every `N` under Installed or Authenticated is a concrete install or login the owner (or a host-side session) still has to perform. The bootstrap's `--apply` does not yet perform the host runtime installs or the interactive logins itself; that limitation is recorded in the last row and in §21.
