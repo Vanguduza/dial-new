@@ -1,6 +1,6 @@
 # DIAL Unified Operator Gateway
 
-Status: implemented repository architecture. Oracle activation is qualified independently from channel enrollment. WhatsApp delivery is fail-closed until an owner pairing or official Meta Cloud configuration exists.
+Status: implemented repository architecture. Oracle activation is qualified independently from channel enrollment. WhatsApp delivery is fail-closed until an owner pairing or official Meta Cloud configuration exists. ChatGPT remote MCP exposure is repository-ready but remains fail-closed until a supported ChatGPT custom-app connection and authenticated private HTTPS ingress are configured.
 
 ## Purpose
 
@@ -10,7 +10,8 @@ DIAL has one development-control authority and multiple owner-facing adapters.
 Owner
   |
   +-- Claude Code / Claude chat ----+
-  +-- Codex ------------------------+--> typed dial_* controls
+  +-- Codex ------------------------+
+  +-- ChatGPT ----------------------+--> typed dial_* controls
   +-- WhatsApp owner self-chat -----+          |
   +-- WhatsApp Cloud API -----------+          v
                                       DIAL operator gateway
@@ -24,7 +25,7 @@ Owner
                                   DIAL repository + deterministic gates
 ```
 
-Claude, Codex and WhatsApp are not independent orchestrators. They share one owner-control authority. Normal autonomous work remains mission/queue driven. Current owner **actions** enter the hybrid Hermes steering broker: they are acknowledged immediately, become current owner direction, allow an already-active repository writer to reach a safe boundary, block later autonomous claims, and then execute before autonomous work resumes. Read-only owner questions remain immediate live turns. The locked runtime chain, VEKL process governance for material action, repository evidence, security/credential boundaries and deterministic verification authority remain unchanged.
+Claude, Codex, ChatGPT and WhatsApp are not independent orchestrators. They share one owner-control authority. Normal autonomous work remains mission/queue driven. Current owner **actions** enter the hybrid Hermes steering broker: they are acknowledged immediately, become current owner direction, allow an already-active repository writer to reach a safe boundary, block later autonomous claims, and then execute before autonomous work resumes. Read-only owner questions remain immediate live turns. The locked runtime chain, VEKL process governance for material action, repository evidence, security/credential boundaries and deterministic verification authority remain unchanged.
 
 ## Authority and security locks
 
@@ -35,6 +36,8 @@ Claude, Codex and WhatsApp are not independent orchestrators. They share one own
 - Operator channels never receive control-plane secrets through status calls.
 - A channel ending or disconnecting never changes the persistent Oracle mission state.
 - Worker output cannot advance a feature/gate without normal repository evidence.
+- ChatGPT is a thin owner console only. `/mcp/chatgpt` fixes the operator channel identity server-side to `chatgpt`; ChatGPT cannot choose another owner channel by sending headers.
+- The ChatGPT MCP origin remains bound to localhost. Remote ChatGPT use requires an authenticated private HTTPS tunnel/Access policy; port `9130` is never directly exposed.
 - Authenticated paired-owner WhatsApp supports normal conversational questions, full-text steering and supported uploads. Action prose enters `dial_owner_steer`; it is not inserted into the ordinary autonomous mission queue.
 - `owner-steering-broker.mjs` persists owner steers, acknowledges them immediately, blocks subsequent autonomous claims, lets any existing repository writer reach its safe boundary, then executes the owner steer through `owner-live-control.mjs`. Query turns are read-only and do not serialize repository writes.
 - Supported owner document/image uploads are copied out of the Hermes media cache into a mode-0600, content-addressed DIAL control-root intake before the owner-steering broker references them. Executable/macro media is not an accepted steering attachment.
@@ -48,7 +51,7 @@ The shared surface is implemented by `agent-system/orchestration/chat-control-br
 - `dial_project_status`
 - `dial_mission_status`
 - `dial_submit_instruction` — explicitly background/queued work only
-- `dial_owner_steer` — normal current-owner action lane; hybrid safe-boundary steering used by Claude, Codex and WhatsApp
+- `dial_owner_steer` — normal current-owner action lane; hybrid safe-boundary steering used by Claude, Codex, ChatGPT and WhatsApp
 - `dial_owner_live_turn` — immediate read-only owner questions; explicit action-mode calls are redirected to `dial_owner_steer`
 - `dial_list_packets`
 - `dial_packet_status`
@@ -87,6 +90,36 @@ It calls the shared typed functions directly and therefore does not copy the HTT
 Codex is enrolled with the same stdio MCP server and `DIAL_OPERATOR_CHANNEL=codex`. This is separate from Codex App Server's role as the GPT-5.6 Sol runtime used by Hermes. A Codex user session is an operator surface; the Oracle Codex App Server runtime is an execution slot. Current owner actions use the same `dial_owner_steer` contract as paired WhatsApp; read-only questions may use `dial_owner_live_turn`. Neither role creates a second mission authority.
 
 Codex repository guidance is in root `AGENTS.md` so status questions use Oracle evidence instead of local-session inference.
+
+## ChatGPT
+
+ChatGPT uses the existing bearer-protected HTTP MCP implementation; it does **not** get a new controller or a generic proxy. The dedicated owner endpoint is:
+
+```text
+http://127.0.0.1:9130/mcp/chatgpt
+```
+
+The route forces this operator identity inside the gateway:
+
+```text
+channel=chatgpt
+actor=owner
+transport=chatgpt_http_mcp
+```
+
+That identity is not taken from a caller-provided `X-DIAL-Operator-Channel` header. The route exposes the same `dial_*` tool registry and the same idempotency, audit, owner-provenance, Project Truth, owner-steering and runtime gates as Claude/Codex/WhatsApp.
+
+The localhost URL is never supplied directly to ChatGPT. A remote ChatGPT connection requires all of the following before the channel is considered live:
+
+1. `dial-chat-control.service` is healthy on localhost.
+2. A private HTTPS ingress/tunnel exposes **only** the ChatGPT MCP path to `127.0.0.1:9130/mcp/chatgpt` and preserves MCP request/response semantics.
+3. The ingress has an authentication/access policy; direct public access to port `9130` remains forbidden.
+4. ChatGPT stores or obtains the MCP credential through its supported app authentication flow; the bearer token is never placed in prompts, repository files, screenshots or ordinary chat text.
+5. ChatGPT scans the tool surface successfully and the operator qualification test proves `channel=chatgpt` owner provenance.
+
+Repository readiness and ChatGPT product enrollment are separate states. If the current ChatGPT plan/workspace does not expose private custom/full MCP app creation, the server remains ready but the ChatGPT channel is `NOT_ENROLLED`; this is not a reason to weaken authentication or route through SSH/Desktop Commander.
+
+Normal owner actions use `dial_owner_steer`; read-only questions use `dial_owner_live_turn`; explicitly backgrounded work may use `dial_submit_instruction`. ChatGPT is therefore a control console for Hermes/Oracle, not another development manager.
 
 ## WhatsApp: Hermes owner self-chat
 
@@ -203,9 +236,21 @@ dial-hermes-whatsapp-operator.service
 dial-whatsapp-cloud-operator.service
 ```
 
-and enrolls `dial-oracle-control` in locally installed Claude and Codex clients when those CLIs are available.
+and enrolls `dial-oracle-control` in locally installed Claude and Codex clients when those CLIs are available. The same `dial-chat-control.service` also serves the dedicated localhost ChatGPT route at `/mcp/chatgpt`; no second service or mission controller is created.
 
 The Hermes WhatsApp bridge service itself starts only after pairing credentials exist. The owner operator service may run before pairing and reports `WAITING_PAIRING`. The Cloud operator may run before Meta configuration and reports `UNCONFIGURED`.
+
+## ChatGPT remote MCP activation
+
+Repository-side preparation is performed by:
+
+```bash
+bash deploy/oracle/hermes-codex/install-chatgpt-mcp-adapter.sh
+```
+
+The helper installs/refreshes the existing chat-control service, initializes the existing mode-0600 bearer token if absent, and verifies that the dedicated ChatGPT route is present. It does **not** print the token and does **not** create public exposure.
+
+The remote-facing endpoint must be an owner-controlled HTTPS hostname/path protected by a private access layer and routed only to `127.0.0.1:9130/mcp/chatgpt`. ChatGPT enrollment is then performed in ChatGPT's supported custom-app/MCP configuration surface. If that product surface is unavailable to the owner's current ChatGPT plan/workspace, the activation state remains `NOT_ENROLLED`; do not substitute Desktop Commander, SSH or an unauthenticated public route.
 
 ## Cloud API configuration
 
@@ -219,25 +264,29 @@ The script prompts locally (secrets are not arguments or repository content), wr
 
 ## Qualification
 
-Repository qualification proves the gateway without requiring external WhatsApp enrollment:
+Repository qualification proves the gateway without requiring external WhatsApp or ChatGPT enrollment:
 
 - source modules exist and syntax-check;
-- operator tests pass;
+- operator tests pass, including `/mcp/chatgpt` provenance binding;
 - chat-control bearer token remains mode 0600;
 - typed tool list includes status, VEKL, `dial_owner_steer`, instruction and channel-health tools;
 - no shell/exec/filesystem generic tool exists;
 - Codex and Claude mutable MCPs are enrolled;
+- ChatGPT is present in the typed operator-channel registry and its dedicated route cannot be relabeled by caller headers;
 - `dial-owner-steering.service` and both WhatsApp operator services are active;
 - Cloud adapter health is `UNCONFIGURED`, `DISABLED` or `READY` and exposes no secret fields;
 - Hermes WhatsApp status is structurally valid whether paired or unpaired;
 - DIAL-only continuity soak restarts and recovers the owner-steering broker and both operator services;
 - normal mission/development-gate requirements remain unchanged.
 
-Real WhatsApp delivery is separately activated only after normal owner pairing or valid Meta credentials. Qualification must never manufacture or bypass either credential boundary.
+Real WhatsApp delivery is separately activated only after normal owner pairing or valid Meta credentials. Real ChatGPT delivery is separately activated only after supported custom-app enrollment plus authenticated private HTTPS ingress. Qualification must never manufacture or bypass either credential boundary.
 
 ## Failure behavior
 
-- Claude/Codex disconnect: Oracle continues; reconnect and read status/progress.
+- Claude/Codex/ChatGPT disconnect: Oracle continues; reconnect and read status/progress.
+- ChatGPT custom-app support unavailable on the current plan/workspace: `NOT_ENROLLED`; server-side route remains dormant and authenticated.
+- ChatGPT private tunnel/Access unavailable: no direct port exposure and no fallback through SSH/Desktop Commander.
+- Invalid ChatGPT bearer/access authentication: HTTP 401 or edge denial; no tool execution.
 - WhatsApp unpaired: `WAITING_PAIRING`; no inbound command path.
 - Meta config absent/disabled: `UNCONFIGURED`/`DISABLED`; webhook rejects processing.
 - Invalid Meta signature: HTTP 401; no command execution.
@@ -249,4 +298,4 @@ Real WhatsApp delivery is separately activated only after normal owner pairing o
 
 ## Compatibility
 
-`DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md` remains historical/Claude-specific detail. This document is the canonical multi-channel operator architecture. `DEC-025` retains the typed DIAL-only gateway/authentication/no-shell foundation; `DEC-030` is the locked hybrid owner-steering supersession for normal owner-action semantics.
+`DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md` remains historical/Claude-specific detail. This document is the canonical multi-channel operator architecture. `DEC-025` retains the typed DIAL-only gateway/authentication/no-shell foundation; `DEC-030` remains the locked hybrid owner-steering supersession for normal owner-action semantics. ChatGPT is an additional authenticated adapter under those same decisions and does not alter their authority model.
