@@ -1,0 +1,98 @@
+#cloud-config
+# oracle-admin first boot.
+#
+# Structured cloud-config rather than one large shell blob (task brief section 21).
+# The only embedded script is the phased bootstrap, injected verbatim by
+# render-cloud-init.sh at its placeholder line below, so bootstrap.sh stays a single
+# lintable, testable, re-runnable file rather than being duplicated here.
+#
+# The ordering matters: users, SSH key and package installation are cloud-init's
+# own responsibility and complete before runcmd. If the bootstrap script fails
+# outright, the host still boots with a working key-only SSH login and a running
+# Oracle Cloud Agent — the recovery floor does not depend on anything below it.
+
+preserve_hostname: false
+hostname: oracle-admin
+fqdn: oracle-admin.public.dialhermes.oraclevcn.com
+manage_etc_hosts: true
+
+users:
+  - name: ubuntu
+    groups: [adm, sudo]
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - @@SSH_PUBLIC_KEY@@
+
+ssh_pwauth: false
+disable_root: true
+
+package_update: true
+package_upgrade: false
+packages:
+  - openssh-server
+  - curl
+  - ca-certificates
+  - git
+  - jq
+  - unzip
+  - rsync
+  - lsof
+  - procps
+  - iproute2
+  - net-tools
+
+write_files:
+  # Written before any restart can occur. bootstrap.sh re-validates with `sshd -t`
+  # and removes this file if the merged config would not parse, so a bad drop-in
+  # can never be the reason the operator is locked out.
+  - path: /etc/ssh/sshd_config.d/99-oracle-admin-recovery.conf
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # DIAL oracle-admin recovery policy. Key-only administrative access.
+      PubkeyAuthentication yes
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+      UsePAM yes
+
+  - path: /etc/systemd/journald.conf.d/10-dial-recovery.conf
+    owner: root:root
+    permissions: '0644'
+    content: |
+      [Journal]
+      SystemMaxUse=100M
+      SystemMaxFileSize=20M
+      MaxRetentionSec=1week
+
+  - path: /etc/dial-recovery/host.env
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Non-secret host identity for the DIAL recovery plane.
+      DIAL_FABRIC_HOST_ID=oracle-admin
+      DIAL_FABRIC_STATE=/var/lib/dial-recovery/fabric
+      DIAL_REPO_DIR=/opt/dial-recovery/dial-new
+      DIAL_COMMANDER_PROBE=/usr/local/bin/dial-commander-probe
+
+  - path: /opt/dial-recovery/bin/bootstrap.sh
+    owner: root:root
+    permissions: '0755'
+    content: |
+@@BOOTSTRAP@@
+
+runcmd:
+  # Recovery directory layout (section 23). Secrets never live under the checkout.
+  - [ install, -d, -m, '0755', /opt/dial-recovery ]
+  - [ install, -d, -m, '0755', /var/lib/dial-recovery ]
+  - [ install, -d, -m, '0750', /var/log/dial-recovery ]
+  - [ install, -d, -m, '0750', /etc/dial-recovery ]
+  # Guarantee SSH before anything else can go wrong.
+  - [ systemctl, enable, --now, ssh ]
+  - bash -c 'command -v ufw >/dev/null && ufw allow OpenSSH || true'
+  - [ systemctl, enable, --now, oracle-cloud-agent ]
+  # Phases 0-7. Never allowed to fail the boot: the floor above is already up.
+  - bash -c '/opt/dial-recovery/bin/bootstrap.sh || echo "bootstrap reported failures; see /var/log/oracle-admin-bootstrap.log"'
+
+final_message: "oracle-admin cloud-init finished after $UPTIME seconds. Bootstrap state: /var/lib/dial-recovery/bootstrap-state.json"

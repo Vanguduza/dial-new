@@ -1,0 +1,9 @@
+[Unit]
+Description=DIAL micro-node survival slice
+
+[Slice]
+MemoryAccounting=yes
+CPUAccounting=yes
+MemoryMin=192M
+MemoryLow=192M
+CPUWeight=10000

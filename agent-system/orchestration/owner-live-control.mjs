@@ -2,7 +2,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
+import { executeProviderFirstHermesInstruction } from './provider-first-hermes-executor.mjs';
 import { resolvePacketEngineeringKnowledge } from './engineering-knowledge-broker.mjs';
 import { activationSummary } from './skill-activation-store.mjs';
 import { ensureDialMission, missionStatus, recordDialOwnerAuthorityRoot, setDialMissionPriority } from './mission-control.mjs';
@@ -118,7 +118,7 @@ export function ownerLiveInterruptActive(root) {
   return value;
 }
 
-export async function executeOwnerLiveTurn({ instruction, mode = null, advisoryContext = '', priorityDirective = null, root, repoDir, requestedBy = 'owner', requestId = null, ownerProvenance = null, executor = executeHermesInstruction, knowledgeResolver = resolvePacketEngineeringKnowledge } = {}) {
+export async function executeOwnerLiveTurn({ instruction, mode = null, advisoryContext = '', priorityDirective = null, root, repoDir, requestedBy = 'owner', requestId = null, ownerProvenance = null, executor = executeProviderFirstHermesInstruction, knowledgeResolver = resolvePacketEngineeringKnowledge } = {}) {
   const text = clean(instruction);
   if (!text) throw new Error('owner live instruction is required');
   ensureControlLayout(root);
@@ -170,6 +170,7 @@ export async function executeOwnerLiveTurn({ instruction, mode = null, advisoryC
       instruction: prompt,
       packetId: turnId,
       skillActivation: activation,
+      requestedBy: recordBase.requested_by,
     });
     const ok = result?.event === 'HERMES_OPERATIONAL_TURN_COMPLETED';
     const completed = {

@@ -1,0 +1,11 @@
+[Unit]
+Description=DIAL survival slice (SSH, tunnel, overlay, monitoring)
+Documentation=file:///etc/dial/PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md
+
+[Slice]
+MemoryAccounting=yes
+CPUAccounting=yes
+IOAccounting=yes
+MemoryMin=384M
+MemoryLow=384M
+CPUWeight=10000

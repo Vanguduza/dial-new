@@ -1,0 +1,20 @@
+[Unit]
+Description=DIAL reciprocal peer recovery agent (architecture sections 13, 14, 20)
+After=network-online.target
+
+[Service]
+Type=simple
+Slice=dial-recovery.slice
+Environment=DIAL_FABRIC_STATE=%h/.local/state/dial-fabric
+ExecStart=/usr/bin/env node %h/dial-new/deploy/oracle/resource-fabric/recovery-agent.mjs daemon
+Restart=always
+RestartSec=5s
+StartLimitIntervalSec=0
+TimeoutStartSec=60
+TimeoutStopSec=30
+KillSignal=SIGTERM
+OOMScoreAdjust=-900
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

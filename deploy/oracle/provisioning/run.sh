@@ -1,0 +1,430 @@
+#!/usr/bin/env bash
+# Runs every remaining provisioning step, in order, until something needs a human.
+#
+#   ~/p/run.sh            do everything that can be done unattended
+#   ~/p/run.sh recheck    re-collect certification after Commander pairing
+#   ~/p/run.sh diagnose   probe the host directly and show what is wrong
+#   ~/p/run.sh pair       authorize the Desktop Commander device (needs a browser)
+#   ~/p/run.sh repair     re-run host bootstrap from a ref that has the tooling
+#   ~/p/run.sh twoway     report the two-way recovery state on the host
+#   ~/p/run.sh seed       seed peer host keys and start the recovery agent
+#   ~/p/run.sh commander  the five Commander criteria, separately, with the reason
+#
+#   ~/p/run.sh access     can every VM be reached on its own? (read-only, all 3 hosts)
+#   ~/p/run.sh indep      the independence test — no host is a mandatory hop
+#   ~/p/run.sh status     show state, change nothing
+#   ~/p/run.sh log        show the last run's output
+#
+# Steps are chosen from which artefacts exist, so this is safe to re-run at any
+# point: completed work is skipped, nothing runs twice or out of order. It waits
+# out first boot on its own rather than asking for another manual attempt.
+#
+# Runs in the FOREGROUND. Use it inside tmux (`tmux new -s dial`, reattach with
+# `tmux attach -t dial`) — tmux already survives a dropped connection.
+
+set -uo pipefail
+cd "$(dirname "$(readlink -f "$0")")" || exit 1
+
+LOG=run.log
+mode="${1:-next}"
+
+# shellcheck source=/dev/null
+source ./env.sh
+
+# This provisioning surface is recovery-only and acts on oracle-admin exclusively.
+# dial-hermes-control and vekl-worker are inspected through separate estate checks.
+DIAL_RUN_HOST="oracle-admin"
+
+instance_ip() {
+  jq -r '.public_ip // ""' instance.json 2>/dev/null
+}
+
+ssh_host() {
+  if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" || ! -r "$DIAL_SSH_PRIVATE_KEY_FILE" ]]; then
+    echo "No readable SSH private key. Set DIAL_SSH_PRIVATE_KEY_FILE and re-source env.sh." >&2
+    return 78
+  fi
+  # ConnectTimeout bounds only the handshake, not the REMOTE COMMAND. A remote
+  # program that never exits (dial-host-certify used to, by executing a binary with
+  # no --version flag and landing in an stdin-waiting MCP server) would otherwise
+  # stall this script silently and indefinitely. Bound the whole call.
+  timeout "${DIAL_SSH_TIMEOUT:-120}" \
+    ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" \
+        -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+        -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+        "ubuntu@$(instance_ip)" "$@"
+  local rc=$?
+  [[ $rc -eq 124 ]] && echo "ssh timed out after ${DIAL_SSH_TIMEOUT:-120}s (remote command did not finish)" >&2
+  return $rc
+}
+
+diagnose() {
+  local ip; ip="$(instance_ip)"
+  echo "Probing $ip directly."
+  echo
+  echo "--- can we open an SSH session at all? ---"
+  ssh_host 'echo SSH_OK; id -un; uptime -p'
+  echo "ssh exit: $?"
+  echo
+  echo "--- is the certification tool installed? ---"
+  ssh_host 'ls -l /usr/local/bin/dial-host-certify 2>&1; ls -l /opt/dial-recovery 2>&1 | head'
+  echo
+  echo "--- did cloud-init finish, and what did bootstrap do? ---"
+  ssh_host 'cloud-init status 2>&1; sudo jq -c ".phases" /var/lib/dial-recovery/bootstrap-state.json 2>&1'
+  echo
+  echo "--- last 25 lines of the bootstrap log ---"
+  ssh_host 'sudo tail -25 /var/log/oracle-admin-bootstrap.log 2>&1'
+  echo
+  echo "--- run dial-host-certify and show BOTH streams ---"
+  # An empty body is exactly what stalled collection, so capture the streams apart
+  # rather than reading an empty stdout as "nothing wrong".
+  ssh_host 'sudo dial-host-certify >/tmp/dhc.out 2>/tmp/dhc.err; echo "exit=$?";
+            echo "--stdout (first 400 bytes)--"; head -c 400 /tmp/dhc.out; echo;
+            echo "--stderr (last 20 lines)--";  tail -20 /tmp/dhc.err'
+}
+
+pair() {
+  local ip; ip="$(instance_ip)"
+  if [[ -z "${DIAL_SSH_PRIVATE_KEY_FILE:-}" || ! -r "$DIAL_SSH_PRIVATE_KEY_FILE" ]]; then
+    echo "No readable SSH private key. Re-source env.sh first." >&2; return 78
+  fi
+  cat <<'INTRO'
+Desktop Commander device authorization.
+
+This prints a URL and a short code. Approve them in a browser that is signed in to
+the SAME Desktop Commander account your ChatGPT connector uses — pairing under a
+different account registers the device where ChatGPT cannot see it.
+
+Nothing secret is typed into the host, cloud-init or the repository: the host only
+receives the resulting device credential. It is one time; the session persists.
+
+INTRO
+  # Interactive, so a TTY is required and the call is deliberately NOT wrapped in
+  # `timeout` — it lasts as long as the owner takes. commander-pair.sh imposes its
+  # own 10-minute bound.
+  echo "Pairing: $DIAL_RUN_HOST ($ip)"
+  echo
+  echo "Use the SAME Commander account for every host. Each registers under its own"
+  echo "hostname, so they appear as separate devices on one account — a second account"
+  echo "would split the estate across two logins for no benefit."
+  echo
+  ssh -i "$DIAL_SSH_PRIVATE_KEY_FILE" -t \
+      -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+      "ubuntu@$ip" 'sudo -u ubuntu dial-commander-pair'
+}
+
+repair() {
+  local ref="${DIAL_REPO_REF:-claude/oracle-e2-recovery-rebuild-3yotjc}"
+  echo "The host was built from a ref without deploy/oracle/provisioning, so"
+  echo "dial-host-certify and the Commander scripts were never installed."
+  echo "Repointing the host checkout at $ref and re-running bootstrap."
+  echo "This is idempotent and leaves SSH and the Oracle agent untouched."
+  echo
+  # Stream the phase headings live. Piping the remote output through `tail` shows
+  # nothing at all until bootstrap finishes several minutes later, which is
+  # indistinguishable from a hang.
+  DIAL_SSH_TIMEOUT="${DIAL_SSH_TIMEOUT:-900}" \
+  ssh_host "sudo DIAL_REPO_REF='$ref' /opt/dial-recovery/bin/bootstrap.sh 2>&1" \
+    | grep --line-buffered -E '=== \[|PHASE|FAILED|NOT installed|BOOTSTRAP COMPLETE'
+  return "${PIPESTATUS[0]}"
+}
+
+# ---- two-way recovery (Rev 3 section 5) --------------------------------------------
+# The host is the TARGET of the bounded direction, so what it can report is whether the
+# restriction is installed, whether a peer key is bound to it, and what its own audit log
+# has seen. Proof that the direction WORKS is produced on dial-hermes-control by
+# dial-verify-two-way-recovery; this is the E2-side half, and it says which it is.
+twoway() {
+  echo "=== two-way recovery, as oracle-admin sees it ==="
+  echo
+  ssh_host 'set +e
+    printf "forced command  : "; [ -x /usr/local/bin/dial-bounded-recovery ] && echo installed || echo ABSENT
+    printf "peer key        : "; sudo -u ubuntu dial-authorize-bounded-recovery --verify 2>&1 | head -2
+    printf "audit log       : "
+    if [ -r /var/log/dial-bounded-recovery.log ]; then
+      a=$( { grep -c "verdict=ALLOW" /var/log/dial-bounded-recovery.log || true; } | head -1)
+      r=$( { grep -c "verdict=REFUSED" /var/log/dial-bounded-recovery.log || true; } | head -1)
+      echo "${a:-0} allowed, ${r:-0} refused, last $(tail -1 /var/log/dial-bounded-recovery.log 2>/dev/null | awk "{print \$1}")"
+    else
+      echo "none yet — the control host has never connected"
+    fi
+    printf "peer host keys  : "; sudo -u ubuntu dial-seed-known-hosts --verify 2>&1 | tr "\n" "; "
+    echo
+    printf "recovery agent  : "; sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) systemctl --user is-active dial-recovery-agent.service 2>&1'
+  local rc=$?
+  echo
+  echo "To PROVE the direction end to end, run this ON dial-hermes-control:"
+  echo "  dial-install-bounded-recovery-peer     # once: generate the key, print the .pub"
+  echo "  dial-verify-two-way-recovery           # non-destructive; refusal probes included"
+  echo
+  echo "Nothing here is proof on its own. A forced command that has never been"
+  echo "connected to is an untested restriction."
+  return $rc
+}
+
+# Seeding is what stands between a staged recovery plane and a running one.
+seed() {
+  echo "Seeding peer host keys on the host, then starting the recovery agent if any landed."
+  echo
+  ssh_host 'set +e
+    sudo -u ubuntu dial-seed-known-hosts 2>&1
+    echo
+    n=$(sudo -u ubuntu dial-seed-known-hosts --verify 2>&1 | { grep -c "^SEEDED" || true; } | head -1)
+    if [ "${n:-0}" -gt 0 ]; then
+      sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) \
+        systemctl --user enable --now dial-recovery-agent.service 2>&1
+      echo "recovery agent: $(sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$(id -u ubuntu) systemctl --user is-active dial-recovery-agent.service 2>&1)"
+    else
+      echo "No peer host key could be seeded; the recovery agent stays stopped."
+      echo "That is correct: it SSHes with StrictHostKeyChecking=yes and would only fail closed."
+    fi'
+}
+
+# Commander health, criterion by criterion. The certification only ever says AMBER with
+# "not functionally proven end to end", which is true of a DEAD Commander and of a
+# perfectly working one that simply has no recent proof on file — two very different
+# situations behind one sentence. This separates them.
+commander() {
+  echo "=== Desktop Commander on oracle-admin ==="
+  echo
+  ssh_host 'set +e
+    u=$(id -u ubuntu)
+    printf "credential file : "
+    if [ -f /home/ubuntu/.desktop-commander-device/device.json ]; then
+      printf "present (mode %s, modified %s)\n" \
+        "$(stat -c %a /home/ubuntu/.desktop-commander-device/device.json)" \
+        "$(stat -c %y /home/ubuntu/.desktop-commander-device/device.json | cut -d. -f1)"
+    else
+      echo "ABSENT — this host has never completed device authorization"
+    fi
+    printf "service         : "
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u systemctl --user is-active dial-commander-remote.service 2>&1
+    echo
+    echo "--- the five criteria ---"
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u dial-commander-probe 2>&1
+    echo
+    echo "--- last 10 lines from the service ---"
+    sudo -u ubuntu XDG_RUNTIME_DIR=/run/user/$u journalctl --user -u dial-commander-remote.service -n 10 --no-pager 2>&1'
+  local rc=$?
+  cat <<'EOT'
+
+How to read this:
+
+  PROCESS_UP        the outbound session process is running
+  SESSION_VALID     a device credential exists here, with safe permissions
+  REMOTE_REGISTERED the Commander service accepted THIS device since the unit started
+  PING_RESPONDS     )  only ever GREEN from a proof a real tool call wrote, and only
+  COMMAND_EXECUTES  )  if that proof is under an hour old
+
+The last two being unproven does NOT mean Commander is broken. A device you are using
+happily from ChatGPT right now will show them unproven until a tool call writes a proof:
+
+  ~/p/run.sh recheck    after running dial-commander-record-proof through Commander
+
+And note that device registration is PER MACHINE. If ChatGPT was talking to a host that
+no longer exists, that device is gone for good and this host needs its own pairing.
+EOT
+  return $rc
+}
+
+case "$mode" in
+  status) exit 0 ;;
+  commander) commander; exit $? ;;
+  twoway) twoway; exit $? ;;
+  seed)   seed;   exit $? ;;
+  # These two run HERE, not on the host: they ask about all three hosts, and asking a
+  # host whether it is independent of its peers by first connecting to it through one of
+  # them would answer its own question wrongly.
+  access) ./60-estate-access-check.sh; exit $? ;;
+  indep)  ./61-independence-test.sh "${@:2}"; exit $? ;;
+  pair)   pair;   exit $? ;;
+  repair) repair; exit $? ;;
+  log)    tail -80 "$LOG" 2>/dev/null || echo "no $LOG yet"; exit 0 ;;
+  diagnose) diagnose; exit 0 ;;
+  recheck)
+    # Commander pairing changes the host's state, so the old evidence is stale.
+    rm -f host-certification.json certification-report.json
+    echo "Cleared previous certification; collecting fresh evidence."
+    ;;
+esac
+
+# Section 19 evidence. Kept as a file so the verdict is recorded, not just printed.
+hermes_diff() {
+  ./00-hermes-fingerprint.sh diff hermes-before.json hermes-after.json | tee hermes-diff.txt
+}
+
+LAST_SSH_RC=""; LAST_SSH_ERR=""; LAST_BODY=""
+
+_try_collect() {
+  local tmp err; tmp="$(mktemp)"; err="$(mktemp)"
+  ssh_host 'sudo dial-host-certify' > "$tmp" 2>"$err"
+  local rc=$?
+
+  # The exit code cannot decide this: dial-host-certify exits non-zero for any
+  # verdict below GREEN, which is a result, not a failure. So the BODY decides, and
+  # it must contain a certification state.
+  #
+  # Validate it UNCONDITIONALLY. The previous version only validated when ssh
+  # reported failure, so a connection that returned exit 0 with an empty body was
+  # accepted without any check at all: it wrote an empty host-certification.json,
+  # the step-chooser saw the artefact still missing, and re-queued the step forever.
+  # Test the file is non-empty BEFORE asking jq. jq's exit status for "no output at
+  # all" is version-dependent: jq 1.7 exits 4, older builds exit 0. Cloud Shell ships
+  # an older one, so the guard passed on an empty body and the failure surfaced much
+  # later as a mysterious zero-byte write. A direct test needs no such assumption.
+  if [[ -s "$tmp" ]] && jq -e '.certification.state' "$tmp" >/dev/null 2>&1; then
+    # Report success only if the artefact is actually on disk afterwards. Returning
+    # 0 on the strength of having parsed the body meant a failed `mv` still counted
+    # as collected, and the step was then re-queued forever against an empty file.
+    # `cp` rather than `mv`: mv across filesystems can fail in ways that report
+    # nothing useful, and the temp file is in /tmp while the artefact belongs in the
+    # working directory. Verify the result, and if it did not land say exactly why —
+    # "unknown error" is not a diagnosis.
+    local cperr; cperr="$(cp -f "$tmp" host-certification.json 2>&1)"
+    if [[ -s host-certification.json ]]; then rm -f "$err" "$tmp"; return 0; fi
+    LAST_SSH_RC="$rc"
+    LAST_SSH_ERR="write to $PWD/host-certification.json failed: ${cperr:-cp reported nothing}"
+    LAST_BODY="dir=$(ls -ld . 2>&1 | head -1) | disk=$(df -h . 2>/dev/null | tail -1) | src=$(ls -l "$tmp" 2>&1 | head -1)"
+    rm -f "$tmp" "$err"
+    return 1
+  fi
+
+  LAST_SSH_RC="$rc"
+  LAST_SSH_ERR="$(head -c 400 "$err")"
+  if [[ -s "$tmp" ]]; then
+    LAST_BODY="$(head -c 300 "$tmp")"
+  else
+    LAST_BODY="(empty response — dial-host-certify produced no output on the host)"
+  fi
+  rm -f "$tmp" "$err"
+  return 1
+}
+
+# First boot installs Node, clones the repository and stages the recovery plane on a
+# 1 GB host, so SSH legitimately refuses for several minutes after launch. Waiting
+# here is the script's job, not the operator's.
+collect_certification() {
+  local attempts="${DIAL_CERT_ATTEMPTS:-10}" i
+  for ((i = 1; i <= attempts; i++)); do
+    echo "Collecting host certification from $(instance_ip) (attempt $i/$attempts) …"
+    if _try_collect; then
+      jq -r '"host verdict: \(.certification.state) — \(.certification.reason)"' host-certification.json
+      return 0
+    fi
+    # Say why, every time. Silence here is what made the last failure unreadable.
+    if [[ "${LAST_SSH_RC:-}" == "124" ]]; then
+      echo "  TIMED OUT — the host accepted the connection but dial-host-certify did not finish."
+      echo "  Run  ~/p/run.sh repair  to install the current certification tool."
+    else
+      echo "  no certification yet (ssh exit ${LAST_SSH_RC:-?})"
+    fi
+    [[ -n "$LAST_SSH_ERR" ]] && echo "  stderr: ${LAST_SSH_ERR%%$'\n'*}"
+    [[ -n "$LAST_BODY"    ]] && echo "  body:   ${LAST_BODY%%$'\n'*}"
+    [[ $i -lt $attempts ]] && sleep 60
+  done
+  echo >&2
+  echo "Could not collect certification after $attempts attempts." >&2
+  echo "Run  ~/p/run.sh diagnose  to see what the host is actually doing." >&2
+  return 1
+}
+
+final_report() {
+  node 30-certify.mjs --host-report host-certification.json
+  local rc=$?
+  # 2 is AMBER: healthy host, Commander not yet proven. Expected before pairing.
+  [[ $rc -eq 2 ]] && return 0
+  return $rc
+}
+
+: > "$LOG"
+# An earlier bug could leave a zero-byte artefact behind. It is not evidence of
+# anything, and keeping it only confuses the step-chooser and the reader.
+# Deliberately only the certification artefacts: clearing an empty network.json or
+# instance.json would re-run the preflight or the launch, and infrastructure steps
+# must never be re-triggered by a tidy-up.
+for stale in host-certification.json certification-report.json; do
+  if [[ -f "$stale" && ! -s "$stale" ]]; then
+    echo "Removing empty $stale left by an earlier failed run."
+    rm -f "$stale"
+  fi
+done
+
+last_step=""; repeats=0
+
+while :; do
+  if   [[ ! -f hermes-before.json ]]; then step=(./00-hermes-fingerprint.sh snapshot hermes-before.json)
+  elif [[ ! -f network.json       ]]; then step=(./10-network-preflight.sh)
+  elif [[ ! -f instance.json      ]]; then step=(./20-launch-oracle-admin.sh)
+  elif [[ ! -f hermes-after.json  ]]; then step=(./00-hermes-fingerprint.sh snapshot hermes-after.json)
+  elif [[ ! -f hermes-diff.txt    ]]; then step=(hermes_diff)
+  elif [[ ! -s host-certification.json   ]]; then step=(collect_certification)
+  elif [[ ! -s certification-report.json ]]; then step=(final_report)
+  else break
+  fi
+
+  # Structural safety net: a step that reports success without producing its
+  # artefact would otherwise be re-queued forever. Never spin.
+  if [[ "${step[*]}" == "$last_step" ]]; then
+    repeats=$((repeats + 1))
+    if [[ $repeats -ge 2 ]]; then
+      printf '\nABORTING: step "%s" reported success but produced no artefact.\n' "${step[*]}"
+      printf 'Run  ~/p/run.sh diagnose  for the host-side detail.\n\n'
+      exit 1
+    fi
+  else
+    repeats=0
+  fi
+  last_step="${step[*]}"
+
+  printf '\n>>> %s\n\n' "${step[*]}"
+  "${step[@]}" 2>&1 | tee -a "$LOG"
+  rc=${PIPESTATUS[0]}
+
+  if [[ $rc -ne 0 ]]; then
+    printf '\nSTEP FAILED (exit %s): %s\n' "$rc" "${step[*]}"
+    printf 'Read the error above. Full output: %s/%s\n\n' "$PWD" "$LOG"
+    exit $rc
+  fi
+done
+
+state="$(jq -r '.certification.state // "unknown"' certification-report.json 2>/dev/null)"
+ip="$(instance_ip)"
+
+printf '\n=====================================================\n'
+printf 'CERTIFICATION: %s\n' "$state"
+printf '=====================================================\n\n'
+
+if [[ "$state" == "GREEN" ]]; then
+  printf 'oracle-admin is a proven recovery foothold. Nothing further to run.\n\n'
+  exit 0
+fi
+
+# Print the blockers the report actually recorded. Saying "one step left" while the
+# evidence lists two is the tool flattering itself, which is exactly what this
+# certification exists to prevent.
+echo "Outstanding, per certification-report.json:"
+jq -r '.certification.blockers[]? | "  - " + .' certification-report.json 2>/dev/null
+echo
+echo "Recovery-plane detail (why it is not yet proven):"
+jq -r '.recovery_plane | "  fabric module loads:            \(.fabric_module_loads)\n  stale telemetry fails closed:  \(.stale_telemetry_fails_closed)\n  DIAL workload present:         \(.dial_application_workload)\n  repo:                          \(.repo_sha) (\(.repo_ref))"' \
+  host-certification.json 2>/dev/null
+echo
+
+cat <<EOF
+Of those, only the Commander step needs you; it needs a browser:
+
+  1. Pair Desktop Commander (one time):
+
+     ~/p/run.sh pair
+
+     It prints a URL and a short code. Approve it in your browser.
+
+  2. In ChatGPT, with the oracle-admin device selected, run:
+
+     dial-commander-record-proof
+
+  3. Back here, once:
+
+     ~/p/run.sh recheck
+
+EOF

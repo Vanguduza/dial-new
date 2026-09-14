@@ -1,0 +1,13 @@
+[Unit]
+Description=DIAL Desktop Commander slice
+Documentation=file:///etc/dial/PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md
+
+[Slice]
+MemoryAccounting=yes
+CPUAccounting=yes
+IOAccounting=yes
+MemoryLow=256M
+MemoryHigh=512M
+MemoryMax=768M
+CPUWeight=200
+CPUQuota=50%
