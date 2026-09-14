@@ -1,0 +1,53 @@
+{
+  "ok": true,
+  "runs": 3,
+  "identical_decisions": true,
+  "decision_hashes": [
+    "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+    "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+    "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782"
+  ],
+  "decision_fields": {
+    "project": {
+      "slug": "dial",
+      "truth": "aa37987d79fe7d2a5750a62f93dcea316feb48a52b5e697fa7546553c9acf758"
+    },
+    "role": {
+      "allowed": true,
+      "role": "provider-container"
+    },
+    "vekl": {
+      "state": "NO_EXTERNAL_SKILL_REQUIRED",
+      "scope": "DEVELOPMENT_UNIT",
+      "unit": "DU-LIN-d4d39547e780d115fca12840",
+      "revision": "5306f77a9ebe5d87e24b6d3b534cafdf2cf297b12e3c0b2a5edd25503b178e54",
+      "map": "2a7690075985ff806a7bfd81ce5d4229cc40f44f52b1f4e5bb6e3c23bd016cdc",
+      "graph_revision": "3ac6aec54a671e5047a73279c62abcbd657868be0f30b54abe69ac55874e8ece",
+      "neighbourhood": "3a91123832376ef8069273bb6bfd5b3ce310397abc324b36cf52cb0eecd56d7b",
+      "routes": "9d0209c545bcf02cb6b318374ff111afa7307b5833d4607dc7d3671dfb37ec13",
+      "envelope": "6281bf38db2e5ad328ca10568e872d066e891bebe2442f44fec36919e9fdf2a5",
+      "capsule_content": [
+        "05184a25826e36195bfc557b8bc68ac9f97943f55981186b3c9d257dc98f817a",
+        "14cd458731e6adfab4646db7d7468c07001988d6f8515b6b78b679d97f4b1c52",
+        "2ff717ec0c0e2cb99450bf1941e434987518840bde40347309fc93766ad2f705",
+        "3e68d1a4e0b1d3c7727d9c28049fd70f5373b6a0f71bc9cfaffa922a370f9ed3",
+        "4719c44cfd193aba06b417629a241e9aa1f09cfdcd53df507be072ef2074e8ab",
+        "9e6a58b08425ff0565083436e319c18ce5ba3ea00a77aa3ffcb5de05c613eda1",
+        "b3ba5d856a9350c776f1baf3c392119a8c6049313895fffb613c28947f367e9f"
+      ],
+      "readiness": "READY"
+    },
+    "triage": {
+      "archetype": "TEST_REPAIR",
+      "risk": "LOW",
+      "hash": "1d730fa5dc5f87726164464808081748cd36d4183d55b6d14a627b4258fd42c4"
+    },
+    "topology": "c40d33ece4ef5e009170105af97e0b5c31f62cd271394943223e8dbadf746f83",
+    "provider": {
+      "runtime": "codex_app_server",
+      "model": "gpt-5.6-sol"
+    }
+  },
+  "failed_runs": [],
+  "forbidden_leaks": []
+}

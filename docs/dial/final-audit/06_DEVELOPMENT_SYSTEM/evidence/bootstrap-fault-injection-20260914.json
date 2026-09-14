@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "scenarios": [
+    {
+      "id": "provider-primary-unavailable",
+      "expectation": "exact claude-sonnet-5 fallback selected, classified as HERMES_FALLBACK_RUNTIME",
+      "outcome": {
+        "selected_runtime": "claude_code",
+        "model": "claude-sonnet-5",
+        "role": "HERMES_FALLBACK_RUNTIME"
+      },
+      "ok": true
+    },
+    {
+      "id": "provider-total-loss",
+      "expectation": "visible NO_HERMES_RUNTIME_AVAILABLE; no substitute",
+      "outcome": {
+        "ok": false,
+        "code": "NO_HERMES_RUNTIME_AVAILABLE",
+        "error": "NO_HERMES_RUNTIME_AVAILABLE"
+      },
+      "ok": true
+    },
+    {
+      "id": "alternate-model-identity",
+      "expectation": "claude-opus-5 identity rejected as a Hermes slot",
+      "outcome": {
+        "candidate": null
+      },
+      "ok": true
+    },
+    {
+      "id": "stale-runtime-evidence",
+      "expectation": "stale (20h) identity evidence is not executable",
+      "outcome": {
+        "candidate": null
+      },
+      "ok": true
+    },
+    {
+      "id": "role-mismatch",
+      "expectation": "every mismatched workload refused with WORKLOAD_FORBIDDEN_FOR_ROLE",
+      "outcome": {
+        "oracle-admin:REPOSITORY_WRITE": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+        "vekl-worker:OWNER_CONTROL": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+        "provider-container:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+        "oracle-admin:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE"
+      },
+      "ok": true
+    },
+    {
+      "id": "unknown-host-role",
+      "expectation": "ROLE_UNKNOWN refuses even DIAGNOSTICS",
+      "outcome": {
+        "code": "ROLE_UNKNOWN"
+      },
+      "ok": true
+    },
+    {
+      "id": "stale-knowledge-binding",
+      "expectation": "fresh binding ok=true; mutated project_truth_hash -> ok=false with PROJECT_TRUTH_HASH_CHANGED",
+      "outcome": {
+        "fresh_ok": true,
+        "stale_ok": false,
+        "reasons": [
+          "PROJECT_TRUTH_HASH_CHANGED"
+        ],
+        "mutated": 1
+      },
+      "ok": true
+    },
+    {
+      "id": "development-gate-absent",
+      "expectation": "DEVELOPMENT_BLOCKED with gate_present=false",
+      "outcome": {
+        "unblocked": false,
+        "gate_present": false
+      },
+      "ok": true
+    },
+    {
+      "id": "github-unreachable",
+      "expectation": "unreachable endpoint reports ok=false with a bounded timeout, no hang",
+      "outcome": {
+        "ok": false,
+        "error": "ERR_TLS_CERT_ALTNAME_INVALID",
+        "duration_ms": 75
+      },
+      "ok": true
+    }
+  ]
+}

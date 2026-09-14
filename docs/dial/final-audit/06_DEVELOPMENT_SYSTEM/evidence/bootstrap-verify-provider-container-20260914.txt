@@ -1,0 +1,28 @@
+Domain| Required| Installed| Configured| Authenticated| Integrated| Tested| Deterministic| Secure| Status
+Hermes| ✓| —| ✓| —| ✗| —| ✓| —| RED
+Claude| ✓| ✓| —| ✓| —| —| —| ✓| GREEN
+Codex| ✓| —| —| —| —| —| —| —| NOT_APPLICABLE
+GitHub| ✓| —| —| ✓| —| —| —| —| AMBER
+VEKL| ✓| —| —| —| —| ✓| ✓| —| GREEN
+GraphRAG| ✓| —| —| —| ✗| —| —| —| RED
+MCP| ✓| ✓| ✓| ✓| ✓| —| —| —| AMBER
+Model routing| ✓| —| —| —| —| ✓| —| —| GREEN
+Project Truth| ✓| —| ✗| ✓| —| —| —| —| AMBER
+vekl-worker| ✓| —| —| —| ✓| —| —| —| AMBER
+oracle-admin| | —| —| —| —| —| —| —| AMBER
+Owner WhatsApp| | —| —| —| —| —| —| —| NOT_APPLICABLE
+Desktop Commander| | —| —| —| —| —| —| —| NOT_APPLICABLE
+Xkiro| | —| —| —| —| —| —| —| NOT_APPLICABLE
+Google tools| | —| —| —| —| —| —| —| AMBER
+Security| ✓| —| —| —| —| —| —| ?| GREEN
+Supply chain| ✓| —| ✗| —| —| —| —| ✗| RED
+Systemd| ✓| —| —| —| —| —| —| —| NOT_APPLICABLE
+Containers| | ✓| —| —| —| —| —| —| GREEN
+Network| ✓| —| —| —| —| —| —| ?| GREEN
+Bootstrap| ✓| —| —| —| ✓| ✓| ✓| —| GREEN
+Role guard| ✓| —| —| —| —| —| —| —| GREEN
+
+VERDICT: RED — mandatory checks not certified: hermes.development-gate
+checks: {"PASS":53,"FAIL":7,"UNVERIFIED":1,"NOT_APPLICABLE":13,"OWNER_ACTION_REQUIRED":3,"EXTERNAL_GATE":3}
+blocking gates: EXTERNAL-GATE-HERMES-REQUALIFICATION-001, EXTERNAL-GATE-VEKL-WORKER-001
+EXIT=1

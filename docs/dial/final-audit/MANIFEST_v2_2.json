@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-13T03:17:02.859Z",
+  "generated_at": "2026-09-14T20:36:09.753Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 243,
+  "file_count": 253,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "598ba6c333c6ca021fc0d076fd5e482ac22815069e574849a117f6e21cbf29a4"
+      "sha256": "526d1f3382b724f25f50c94ea6f21c41f6d9f4b7830ec1c6dc7cc5e420fd0b55"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -187,6 +187,26 @@
       "sha256": "ae50fdca8dd7d98be4f7fc41a3570073db2281ddb1997b07fb4cb8fd2753b694"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_FLAG.json",
+      "bytes": 75742,
+      "sha256": "c1e4ca0f27e8e359d16fe12eed978511b80380795d4d9fe83bd41476cfecbb20"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_E2E_AUDIT_AND_GREEN_FLAG_REV1.md",
+      "bytes": 32848,
+      "sha256": "6d020f558cf000c0dce287c16716a7b275c9833f4386ac7a5583250513650a83"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
+      "bytes": 22363,
+      "sha256": "428bef0ae5c9573d8cbdf300209dcc317c3665932a31e4c2fb706f98e1694b27"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
+      "bytes": 14444,
+      "sha256": "2ede0d0e94b9aefe0600134897bef8c97f60de118145004e4864e9f67a37ee5d"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",
       "bytes": 22285,
       "sha256": "0b366cee0a894ce584f02100e432ae5facf4aac30d0b92e444a0f9aeaa224002"
@@ -215,6 +235,36 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
       "bytes": 40373,
       "sha256": "2ec20e46ea6bd9612bb6fb479a7f236e35653a92b6b1c737778c93cd196d8c35"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/bootstrap-determinism-20260914.json",
+      "bytes": 2182,
+      "sha256": "5174204671dcf764cf58cb06a139b7be6823af5ee9e388ae9351f40da2c2ed49"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/bootstrap-fault-injection-20260914.json",
+      "bytes": 2550,
+      "sha256": "cbd995e0690d0ae529494f283acc2369abde1f5d75fb5f65a366c59be1c76498"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/bootstrap-self-test-20260914.json",
+      "bytes": 8661,
+      "sha256": "163350eeed7580cf59cf31b5b25af6b4ed03b8f61fb4d8e4394baad2f475d51d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/bootstrap-verify-provider-container-20260914.json",
+      "bytes": 111538,
+      "sha256": "7effca3210abe1783bb3a456ce71f494cc2769aafd3a694d390fa94e6bb497d1"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/bootstrap-verify-provider-container-20260914.txt",
+      "bytes": 1654,
+      "sha256": "5e09f10d0e10b079712369f68d2f9a8ba72fbea00480a500dcad5a4aa2db5fe4"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/npm-run-verify-20260914.json",
+      "bytes": 4078,
+      "sha256": "42e21d2e5d1d98582647224aad6fd99a09bdd1300da80c3ea1f0b3633ba2c83c"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",

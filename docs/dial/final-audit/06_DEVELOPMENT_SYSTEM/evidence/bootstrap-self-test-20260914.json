@@ -1,0 +1,186 @@
+{
+  "ok": true,
+  "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+  "control_root": "/tmp/dial-selftest-jHyRIh",
+  "stages": [
+    {
+      "stage": "OWNER_INSTRUCTION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 0,
+      "instruction_sha256": "7a2dc92785578f0726b301de9f83a30e97c9ebd496d0b723e596afd1357c353a",
+      "channel": "bootstrap-selftest",
+      "actor": "owner",
+      "authority_class": "NO_AUTHORITY",
+      "reason": "read-only instruction"
+    },
+    {
+      "stage": "HERMES_INTAKE",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 4,
+      "packet_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "persisted": true,
+      "control_root": "/tmp/dial-selftest-jHyRIh"
+    },
+    {
+      "stage": "PROJECT_IDENTIFICATION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 11,
+      "project_slug": "dial",
+      "project_truth_hash": "aa37987d79fe7d2a5750a62f93dcea316feb48a52b5e697fa7546553c9acf758"
+    },
+    {
+      "stage": "ROLE_GUARD",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 12,
+      "allowed": true,
+      "role": "provider-container",
+      "source": "provider_container"
+    },
+    {
+      "stage": "VEKL_RESOLUTION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7535,
+      "resolution_state": "NO_EXTERNAL_SKILL_REQUIRED",
+      "activation_id": "ska_44823531cdf64e65974a10382f50fcc0",
+      "manifest_sha256": "407913093d4510a75471eebb9614727df4f6e1573a1e733a3a4e68105347a95c",
+      "scope": "DEVELOPMENT_UNIT",
+      "unit_lineage_id": "DU-LIN-d4d39547e780d115fca12840",
+      "unit_revision_hash": "5306f77a9ebe5d87e24b6d3b534cafdf2cf297b12e3c0b2a5edd25503b178e54",
+      "unit_map_hash": "2a7690075985ff806a7bfd81ce5d4229cc40f44f52b1f4e5bb6e3c23bd016cdc",
+      "graph_generation_id": "KG-63885be186bbc216f52d98c97c444c41",
+      "graph_revision_hash": "3ac6aec54a671e5047a73279c62abcbd657868be0f30b54abe69ac55874e8ece",
+      "graph_neighbourhood_hash": "3a91123832376ef8069273bb6bfd5b3ce310397abc324b36cf52cb0eecd56d7b",
+      "knowledge_route_policy_hash": "9d0209c545bcf02cb6b318374ff111afa7307b5833d4607dc7d3671dfb37ec13",
+      "determinism_envelope_hash": "6281bf38db2e5ad328ca10568e872d066e891bebe2442f44fec36919e9fdf2a5",
+      "context_capsule_hashes": [
+        "01903f624df13391542e4e1b7a2bf9816dcb1f2d06555fc9733ade76f5570810",
+        "85d01b9156d16fb57e3fc8fbaec6aaa77b8a1d23b52bc86fe38282462594274e",
+        "87260d5cb1260a5a7749493ce344e822b9ce4622f87f6a2d8edec89642bc5e36",
+        "902535fa4e73c0b41e731a0dea7251aa3317d798c1c6ec13ff791a5f3a71c39a",
+        "a09ae95580fdef373b2a4a14820181136cb19da9a1e4b4786b7b6378fe431d8c",
+        "ca51a1949c935f8336b90fcb24bd0992d07e36dba778e7d7e40d99704c748855",
+        "d63a564cb68bf4de3f3b4b93aa93b3a569924ac566fee77628f5d62fbf26d926"
+      ],
+      "capsule_content_hashes": [
+        "05184a25826e36195bfc557b8bc68ac9f97943f55981186b3c9d257dc98f817a",
+        "14cd458731e6adfab4646db7d7468c07001988d6f8515b6b78b679d97f4b1c52",
+        "2ff717ec0c0e2cb99450bf1941e434987518840bde40347309fc93766ad2f705",
+        "3e68d1a4e0b1d3c7727d9c28049fd70f5373b6a0f71bc9cfaffa922a370f9ed3",
+        "4719c44cfd193aba06b417629a241e9aa1f09cfdcd53df507be072ef2074e8ab",
+        "9e6a58b08425ff0565083436e319c18ce5ba3ea00a77aa3ffcb5de05c613eda1",
+        "b3ba5d856a9350c776f1baf3c392119a8c6049313895fffb613c28947f367e9f"
+      ],
+      "knowledge_readiness_state": "READY",
+      "binding_hash": "d5264755f8cd30876a6e39777f7fc1bf2cd84aeae1448c0513042174d4415188"
+    },
+    {
+      "stage": "TASK_CLASSIFICATION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7538,
+      "archetype": "TEST_REPAIR",
+      "risk_class": "LOW",
+      "mandatory_gates": [
+        "VEKL_CURRENT",
+        "DETERMINISTIC_VERIFICATION"
+      ],
+      "triage_result_hash": "1d730fa5dc5f87726164464808081748cd36d4183d55b6d14a627b4258fd42c4"
+    },
+    {
+      "stage": "EXECUTION_TOPOLOGY",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7538,
+      "topology": "SOLO",
+      "topology_hash": "c40d33ece4ef5e009170105af97e0b5c31f62cd271394943223e8dbadf746f83"
+    },
+    {
+      "stage": "PROVIDER_SELECTION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7540,
+      "policy": "LOCKED_SOL_THEN_SONNET",
+      "selected_runtime": "codex_app_server",
+      "selected_model": "gpt-5.6-sol",
+      "role": "HERMES_PRIMARY_RUNTIME",
+      "health_input_hash": "bcca351aed9d9f391c7f72bb01ddcaf678772817e25c2e2cb1d46d8f257a6c43"
+    },
+    {
+      "stage": "WORKER_INVOCATION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7540,
+      "simulated": true,
+      "executor": "agent-system/orchestration/hermes-runtime-executor.mjs",
+      "model_turn_spent": false,
+      "guard_env": {
+        "DIAL_PACKET_ID": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+        "DIAL_CONTROL_HOME": "/tmp/dial-selftest-jHyRIh"
+      }
+    },
+    {
+      "stage": "READ_ONLY_REPOSITORY_OPERATION",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7567,
+      "command": "git rev-parse HEAD; git status --porcelain",
+      "head": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+      "dirty_files": 10
+    },
+    {
+      "stage": "EVIDENCE_RETURN",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7569,
+      "receipt_path": "execution/receipts/selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d.json",
+      "receipt_hash": "7930c683de4b93559a3e45e4f1bb838a759f81fc60618198bed57fd681ca5ca4"
+    },
+    {
+      "stage": "OWNER_RESPONSE",
+      "correlation_id": "selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d",
+      "at_ms": 7569,
+      "response": "DIAL self-test selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d: routed TEST_REPAIR/LOW for SPARE-F001 through codex_app_server (gpt-5.6-sol) with VEKL unit DU-LIN-d4d39547e780d115fca12840; repository HEAD 62eb71274c042ac02e61dedeb3f62c4c60d2e479; no files modified."
+    }
+  ],
+  "missing_stages": [],
+  "decision_fingerprint": {
+    "fields": {
+      "project": {
+        "slug": "dial",
+        "truth": "aa37987d79fe7d2a5750a62f93dcea316feb48a52b5e697fa7546553c9acf758"
+      },
+      "role": {
+        "allowed": true,
+        "role": "provider-container"
+      },
+      "vekl": {
+        "state": "NO_EXTERNAL_SKILL_REQUIRED",
+        "scope": "DEVELOPMENT_UNIT",
+        "unit": "DU-LIN-d4d39547e780d115fca12840",
+        "revision": "5306f77a9ebe5d87e24b6d3b534cafdf2cf297b12e3c0b2a5edd25503b178e54",
+        "map": "2a7690075985ff806a7bfd81ce5d4229cc40f44f52b1f4e5bb6e3c23bd016cdc",
+        "graph_revision": "3ac6aec54a671e5047a73279c62abcbd657868be0f30b54abe69ac55874e8ece",
+        "neighbourhood": "3a91123832376ef8069273bb6bfd5b3ce310397abc324b36cf52cb0eecd56d7b",
+        "routes": "9d0209c545bcf02cb6b318374ff111afa7307b5833d4607dc7d3671dfb37ec13",
+        "envelope": "6281bf38db2e5ad328ca10568e872d066e891bebe2442f44fec36919e9fdf2a5",
+        "capsule_content": [
+          "05184a25826e36195bfc557b8bc68ac9f97943f55981186b3c9d257dc98f817a",
+          "14cd458731e6adfab4646db7d7468c07001988d6f8515b6b78b679d97f4b1c52",
+          "2ff717ec0c0e2cb99450bf1941e434987518840bde40347309fc93766ad2f705",
+          "3e68d1a4e0b1d3c7727d9c28049fd70f5373b6a0f71bc9cfaffa922a370f9ed3",
+          "4719c44cfd193aba06b417629a241e9aa1f09cfdcd53df507be072ef2074e8ab",
+          "9e6a58b08425ff0565083436e319c18ce5ba3ea00a77aa3ffcb5de05c613eda1",
+          "b3ba5d856a9350c776f1baf3c392119a8c6049313895fffb613c28947f367e9f"
+        ],
+        "readiness": "READY"
+      },
+      "triage": {
+        "archetype": "TEST_REPAIR",
+        "risk": "LOW",
+        "hash": "1d730fa5dc5f87726164464808081748cd36d4183d55b6d14a627b4258fd42c4"
+      },
+      "topology": "c40d33ece4ef5e009170105af97e0b5c31f62cd271394943223e8dbadf746f83",
+      "provider": {
+        "runtime": "codex_app_server",
+        "model": "gpt-5.6-sol"
+      }
+    },
+    "hash": "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782"
+  },
+  "receipt_hash": "7930c683de4b93559a3e45e4f1bb838a759f81fc60618198bed57fd681ca5ca4",
+  "response": "DIAL self-test selftest-9f59eec4-09cd-40b9-ac01-e6837f158f0d: routed TEST_REPAIR/LOW for SPARE-F001 through codex_app_server (gpt-5.6-sol) with VEKL unit DU-LIN-d4d39547e780d115fca12840; repository HEAD 62eb71274c042ac02e61dedeb3f62c4c60d2e479; no files modified."
+}

@@ -1,0 +1,2405 @@
+{
+  "schema_version": 1,
+  "report_id": "run-2026-09-14T2019-d1d3dc",
+  "repository": "Vanguduza/dial-new",
+  "repository_commit": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+  "branch": "claude/dial-e2e-audit-green-flag-hqqlyw",
+  "timestamp": "2026-09-14T20:22:36.418Z",
+  "host_role_certified_from": "provider-container",
+  "overall_status": "RED",
+  "verdict_reason": "mandatory checks not certified: hermes.development-gate",
+  "owner_statement": "DIAL DEVELOPMENT SYSTEM NOT YET GREEN — BLOCKERS REMAIN",
+  "summary": {
+    "total": 80,
+    "counts": {
+      "PASS": 53,
+      "FAIL": 7,
+      "UNVERIFIED": 1,
+      "NOT_APPLICABLE": 13,
+      "OWNER_ACTION_REQUIRED": 3,
+      "EXTERNAL_GATE": 3
+    },
+    "mandatory_open": [
+      "hermes.development-gate"
+    ],
+    "required_failed": [
+      "graphrag.structural-snapshot-producer",
+      "hermes.oracle-status-mirror",
+      "hermes.oracle-head-drift",
+      "supply.unpinned-installers"
+    ]
+  },
+  "readiness_matrix": [
+    {
+      "domain": "Hermes",
+      "required": true,
+      "installed": "—",
+      "configured": "✓",
+      "authenticated": "—",
+      "integrated": "✗",
+      "tested": "—",
+      "deterministic": "✓",
+      "secure": "—",
+      "status": "RED"
+    },
+    {
+      "domain": "Claude",
+      "required": true,
+      "installed": "✓",
+      "configured": "—",
+      "authenticated": "✓",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "✓",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Codex",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "GitHub",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "✓",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "VEKL",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "✓",
+      "deterministic": "✓",
+      "secure": "—",
+      "status": "GREEN"
+    },
+    {
+      "domain": "GraphRAG",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "✗",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "RED"
+    },
+    {
+      "domain": "MCP",
+      "required": true,
+      "installed": "✓",
+      "configured": "✓",
+      "authenticated": "✓",
+      "integrated": "✓",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "Model routing",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "✓",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Project Truth",
+      "required": true,
+      "installed": "—",
+      "configured": "✗",
+      "authenticated": "✓",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "vekl-worker",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "✓",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "oracle-admin",
+      "required": false,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "Owner WhatsApp",
+      "required": false,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "Desktop Commander",
+      "required": false,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "Xkiro",
+      "required": false,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "Google tools",
+      "required": false,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "AMBER"
+    },
+    {
+      "domain": "Security",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "?",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Supply chain",
+      "required": true,
+      "installed": "—",
+      "configured": "✗",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "✗",
+      "status": "RED"
+    },
+    {
+      "domain": "Systemd",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "Containers",
+      "required": false,
+      "installed": "✓",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Network",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "?",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Bootstrap",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "✓",
+      "tested": "✓",
+      "deterministic": "✓",
+      "secure": "—",
+      "status": "GREEN"
+    },
+    {
+      "domain": "Role guard",
+      "required": true,
+      "installed": "—",
+      "configured": "—",
+      "authenticated": "—",
+      "integrated": "—",
+      "tested": "—",
+      "deterministic": "—",
+      "secure": "—",
+      "status": "GREEN"
+    }
+  ],
+  "green_flag_conditions": [
+    {
+      "n": 1,
+      "condition": "Canonical Project Truth is identifiable",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 2,
+      "condition": "Project Truth contradictions affecting development resolved or blocked",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 3,
+      "condition": "Hermes is operational",
+      "status": "NOT_MET",
+      "gap": "GAP-003"
+    },
+    {
+      "n": 4,
+      "condition": "Hermes has deterministic project routing",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 5,
+      "condition": "VEKL operational at required maturity",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 6,
+      "condition": "Knowledge provenance functional",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 7,
+      "condition": "Stale-context handling exists",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 8,
+      "condition": "Development-unit lineage reliable",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 9,
+      "condition": "Critical GraphRAG functions operational",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 10,
+      "condition": "Graphify work does not conflict with current architecture",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 11,
+      "condition": "Claude authentication works",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 12,
+      "condition": "Codex authentication works",
+      "status": "NOT_MET",
+      "gap": "GAP-002"
+    },
+    {
+      "n": 13,
+      "condition": "Required models accessible",
+      "status": "NOT_MET",
+      "gap": "GAP-002"
+    },
+    {
+      "n": 14,
+      "condition": "Model-routing policy enforced",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 15,
+      "condition": "Required MCP services work",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 16,
+      "condition": "GitHub authentication works",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 17,
+      "condition": "DIAL repositories reachable",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 18,
+      "condition": "Branch governance works",
+      "status": "NOT_MET",
+      "gap": "GAP-010"
+    },
+    {
+      "n": 19,
+      "condition": "Provider-container execution works",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 20,
+      "condition": "vekl-worker works where required",
+      "status": "NOT_MET",
+      "gap": "GAP-005"
+    },
+    {
+      "n": 21,
+      "condition": "Role separation works",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 22,
+      "condition": "oracle-admin remains recovery/admin oriented",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 23,
+      "condition": "Required development runtimes installed",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 24,
+      "condition": "Required plugins/connectors installed",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 25,
+      "condition": "Required plugins/connectors authenticated",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 26,
+      "condition": "Google/external tooling certified or explicitly non-blocking",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 27,
+      "condition": "Secrets safely managed",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 28,
+      "condition": "Critical services supervised",
+      "status": "NOT_MET",
+      "gap": "GAP-001"
+    },
+    {
+      "n": 29,
+      "condition": "Backup/recovery exists",
+      "status": "NOT_MET",
+      "gap": "GAP-005"
+    },
+    {
+      "n": 30,
+      "condition": "Audit logs/evidence exist",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 31,
+      "condition": "Bootstrap reproducible",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 32,
+      "condition": "Bootstrap verification passes",
+      "status": "NOT_MET",
+      "gap": null
+    },
+    {
+      "n": 33,
+      "condition": "End-to-end self-test passes",
+      "status": "MET",
+      "gap": null
+    },
+    {
+      "n": 34,
+      "condition": "No unresolved P0 findings",
+      "status": "NOT_MET",
+      "gap": null
+    },
+    {
+      "n": 35,
+      "condition": "No unresolved auth gate on a mandatory component",
+      "status": "NOT_MET",
+      "gap": null
+    }
+  ],
+  "project_truth": [
+    {
+      "id": "repo.canonical-state",
+      "domain": "Project Truth",
+      "title": "PROJECT_CANONICAL_STATE.json identifies repository and canonical integration branch",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "repository": "Vanguduza/dial-new",
+        "canonical_integration_branch": "master",
+        "head": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+        "branch": "claude/dial-e2e-audit-green-flag-hqqlyw"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.required-ancestors",
+      "domain": "Project Truth",
+      "title": "HEAD descends from all 6 required canonical ancestors",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git merge-base --is-ancestor <sha> HEAD",
+        "missing": [],
+        "shallow": false
+      },
+      "remediation": "rebase onto canonical master lineage",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.worktree",
+      "domain": "Project Truth",
+      "title": "worktree state recorded",
+      "status": "PASS",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "command": "git status --porcelain",
+        "dirty_files": 6
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.PROJECT_TRUTH.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/canon/PROJECT_TRUTH.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/canon/PROJECT_TRUTH.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.FEATURE_REGISTRY.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/registries/FEATURE_REGISTRY.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/registries/FEATURE_REGISTRY.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DECISION_LOG.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/registries/DECISION_LOG.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/registries/DECISION_LOG.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.BUILD_READINESS_SCORECARD.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.REPOSITORY_BOOTSTRAP_CHECKLIST.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.project-truth-guard",
+      "domain": "Project Truth",
+      "title": "Project Truth authority guard (scripts/project_truth_local.py verify)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "python3 scripts/project_truth_local.py verify",
+        "exit": 0,
+        "output": ""
+      },
+      "remediation": "every substantive commit needs an owner authorization record and ledger row",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.git-hooks",
+      "domain": "Project Truth",
+      "title": "Project Truth git hooks installed (core.hooksPath=.githooks)",
+      "status": "FAIL",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "command": "git config --get core.hooksPath",
+        "output": "(unset)"
+      },
+      "remediation": "bash scripts/install-project-truth-hooks.sh (bootstrap --apply does this)",
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "hermes": [
+    {
+      "id": "hermes.placement",
+      "domain": "Hermes",
+      "title": "Hermes runtime not required on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "manifest": [
+          "dial-hermes-control"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "hermes.control-plane-fingerprint",
+      "domain": "Hermes",
+      "title": "current control-plane fingerprint computed",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "algorithm": "sha256-git-tree-v1",
+        "value": "422edfd097269e5f414b065bae205ec8e48d97bd936c5a913ce7ef2be3afca5d",
+        "paths": [
+          "agent-system/orchestration",
+          "agent-system/engineering-knowledge",
+          "deploy/oracle/hermes-codex"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "hermes.development-gate",
+      "domain": "Hermes",
+      "title": "external orchestration gate state (only readable on the control host)",
+      "status": "EXTERNAL_GATE",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "note": "state/external-orchestration-gate.json lives under /var/lib/dial-control on dial-hermes-control; not reachable from this role"
+      },
+      "remediation": "run bootstrap --verify --role dial-hermes-control on the control host",
+      "severity": null,
+      "gate": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001"
+    },
+    {
+      "id": "hermes.oracle-status-mirror",
+      "domain": "Hermes",
+      "title": "Oracle status mirror available=true fresh=false (PRIVATE_GIT_STATUS_BRANCH)",
+      "status": "FAIL",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "source": "PRIVATE_GIT_STATUS_BRANCH",
+        "age_minutes": 978,
+        "observed_at": "2026-09-14T04:04:02.280Z",
+        "mission_state": "BLOCKED_OWNER",
+        "development_state": "DEVELOPMENT_BLOCKED",
+        "failed_checks": [
+          "qualified_control_plane_unchanged"
+        ],
+        "oracle_head": "0bc356df34d03114fd9f265d47a614bf5836e153",
+        "current_head": "62eb71274c042ac02e61dedeb3f62c4c60d2e479"
+      },
+      "remediation": "dial-operator-status-publisher.timer must be active on the control host (publishes every 30 s)",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "hermes.oracle-head-drift",
+      "domain": "Hermes",
+      "title": "Oracle host checkout is behind the audited commit",
+      "status": "FAIL",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "oracle_head": "0bc356df34d03114fd9f265d47a614bf5836e153",
+        "audited_head": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+        "commits_between": "18"
+      },
+      "remediation": "git pull on the control host, reinstall control plane, requalify",
+      "severity": "P1",
+      "gate": null
+    }
+  ],
+  "vekl": [
+    {
+      "id": "vekl.knowledge-check",
+      "domain": "VEKL",
+      "title": "engineering-knowledge registries valid (provenance, trust tiers, no executable community signal)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:knowledge:check",
+        "exit": 0,
+        "output_tail": "  \"reference_or_policy_resources\": 102, |   \"failures\": [] | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-unit-check",
+      "domain": "VEKL",
+      "title": "Development Unit registry deterministic (stable lineage + revision)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:unit-check",
+        "exit": 0,
+        "output_tail": "  \"expected_hash\": \"0799ed5ab65a70f86da6215862e8b84c889a7d17dcde9cb1b2a118aba86b3d36\", |   \"actual_hash\": \"0799ed5ab65a70f86da6215862e8b84c889a7d17dcde9cb1b2a118aba86b3d36\" | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-graph-check",
+      "domain": "VEKL",
+      "title": "canon graph compiles and rebuilds deterministically",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:graph-check",
+        "exit": 0,
+        "output_tail": "  \"nodes\": 5393, |   \"edges\": 16882 | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-orphan-check",
+      "domain": "VEKL",
+      "title": "no orphan graph nodes",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:orphan-check",
+        "exit": 0,
+        "output_tail": "    \"VERIFICATION_GATE\": 2 |   } | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-architecture-check",
+      "domain": "VEKL",
+      "title": "VEKL 2.2 architecture criteria (35) green",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:architecture-check",
+        "exit": 0,
+        "output_tail": "    }, |     { |       \"crit"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-retrieval-eval",
+      "domain": "VEKL",
+      "title": "bounded GraphRAG retrieval golden set",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:retrieval-eval",
+        "exit": 0,
+        "output_tail": "  \"failures\": 0, |   \"pending_owner_decision\": [] | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "graphrag.graphify-activation",
+      "domain": "GraphRAG",
+      "title": "Graphify provider execution_enabled=false qualified=false (fail-closed until host qualification)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "registry": "agent-system/registries/STRUCTURAL_REALITY_POLICY.json",
+        "graphify": {
+          "qualified": false,
+          "activation_ready": false,
+          "execution_enabled": false
+        }
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "graphrag.structural-snapshot-producer",
+      "domain": "GraphRAG",
+      "title": "structural snapshot producer wired into a scheduled path",
+      "status": "FAIL",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "finding": "publishStructuralSnapshot / TypeScriptStructuralCodeGraphProvider are imported only by tests; no bin/npm/timer builds a snapshot, so resolveStructuralReality is always MISSING_ADVISORY"
+      },
+      "remediation": "use workers/vekl-worker-job.mjs STRUCTURAL_SNAPSHOT (added by this bootstrap) from the worker timer",
+      "severity": "P2",
+      "gate": null
+    }
+  ],
+  "providers": [
+    {
+      "id": "claude.binary",
+      "domain": "Claude",
+      "title": "claude version >= 2.0.0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "claude --version",
+        "output": "2.1.270 (Claude Code)",
+        "location": "/opt/node22/bin/claude",
+        "version": "2.1.270"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "claude.no-ambient-key",
+      "domain": "Claude",
+      "title": "no ambient API keys (ANTHROPIC_API_KEY)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "env | grep -E '^(ANTHROPIC_API_KEY)='",
+        "present_names": [],
+        "values": "never read"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "claude.auth",
+      "domain": "Claude",
+      "title": "Claude authenticated (provider-managed session)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "env CLAUDE_CODE_REMOTE / CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST",
+        "output": "provider-managed session present; this process is running under it"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "claude.exact-model-policy",
+      "domain": "Claude",
+      "title": "exact Hermes fallback model policy is claude-sonnet-5 (repository constant)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "grep HERMES_PREFERRED_CLAUDE_MODEL agent-system/orchestration/hermes-plan-models.mjs",
+        "output": "claude-sonnet-5",
+        "cli": "2.1.270 (Claude Code)"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "codex.placement",
+      "domain": "Codex",
+      "title": "Codex runtime not required on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "manifest": [
+          "dial-hermes-control"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "xkiro.placement",
+      "domain": "Xkiro",
+      "title": "HAIF not placed on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {},
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "google.dev-antigravity",
+      "domain": "Google tools",
+      "title": "DEV-ANTIGRAVITY (HOST_SOFTWARE+CLI) maturity=UNKNOWN default_enabled=false",
+      "status": "OWNER_ACTION_REQUIRED",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "registry": "agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json",
+        "kill_switch": "DIAL_ANTIGRAVITY_ENABLED"
+      },
+      "remediation": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "severity": null,
+      "gate": "AUTH-GATE-GOOGLE-ANTIGRAVITY-001"
+    },
+    {
+      "id": "google.design-stitch",
+      "domain": "Google tools",
+      "title": "DESIGN-STITCH (REMOTE_API) maturity=UNKNOWN default_enabled=false",
+      "status": "OWNER_ACTION_REQUIRED",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "registry": "agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json",
+        "kill_switch": "DIAL_STITCH_ENABLED"
+      },
+      "remediation": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "severity": null,
+      "gate": "AUTH-GATE-GOOGLE-STITCH-001"
+    },
+    {
+      "id": "google.creative-pomelli",
+      "domain": "Google tools",
+      "title": "CREATIVE-POMELLI (WEB_APPLICATION) maturity=UNKNOWN default_enabled=false",
+      "status": "OWNER_ACTION_REQUIRED",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "registry": "agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json",
+        "kill_switch": "DIAL_POMELLI_INGEST_ENABLED"
+      },
+      "remediation": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "severity": null,
+      "gate": "AUTH-GATE-GOOGLE-POMELLI-001"
+    },
+    {
+      "id": "google.gemini-cli",
+      "domain": "Google tools",
+      "title": "Gemini / Gemini CLI / other Google AI tooling",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "finding": "not referenced by any canonical DIAL document or registry; not required"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "mcp": [
+    {
+      "id": "mcp.dial-oracle-status.module",
+      "domain": "MCP",
+      "title": "dial-oracle-status server module present and syntax-valid",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "file": "/home/user/dial-new/agent-system/orchestration/claude-oracle-status-mcp.mjs",
+        "command": "node --check /home/user/dial-new/agent-system/orchestration/claude-oracle-status-mcp.mjs",
+        "output": ""
+      },
+      "remediation": "restore module from canonical branch",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.dial-oracle-status.registered",
+      "domain": "MCP",
+      "title": "dial-oracle-status registered in .mcp.json",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "file": ".mcp.json",
+        "registered": true
+      },
+      "remediation": "bootstrap --apply regenerates .mcp.json from the manifest",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.dial-oracle-status.capability-probe",
+      "domain": "MCP",
+      "title": "dial-oracle-status answers tools/list and dial_oracle_status over stdio",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "command": "node /home/user/dial-new/ops/development-bootstrap/mcp/probe-stdio.mjs /home/user/dial-new/agent-system/orchestration/claude-oracle-status-mcp.mjs",
+        "tools": [
+          "dial_oracle_status"
+        ],
+        "available": true,
+        "fresh": false
+      },
+      "remediation": "node agent-system/orchestration/claude-oracle-status-mcp.mjs must start and answer JSON-RPC",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.dial-oracle-control.placement",
+      "domain": "MCP",
+      "title": "dial-oracle-control not placed on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "hosts": [
+          "dial-hermes-control"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.dial.mcp.oracle-control.placement",
+      "domain": "MCP",
+      "title": "dial.mcp.oracle-control not placed on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "hosts": [
+          "dial-hermes-control"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.dial-truth.implemented",
+      "domain": "MCP",
+      "title": "dial-truth: DOCUMENTED_NOT_IMPLEMENTED: no server module exists; do not enable.",
+      "status": "FAIL",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "config_location": "agent-system/mcp/dial-truth-server.README.md (contract only)"
+      },
+      "remediation": "implement or mark deprecated; do not enable a described-only server",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.github.repository-reach",
+      "domain": "MCP",
+      "title": "GitHub repository reachable with credentials (git ls-remote origin master)",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "command": "git ls-remote --heads origin master",
+        "output": "fa7c655f12faf02a2b33cc15799069526bdda3a6\trefs/heads/master"
+      },
+      "remediation": "reconnect GitHub under claude.ai Settings -> Connectors or install a deploy key",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "mcp.desktop-commander.placement",
+      "domain": "MCP",
+      "title": "desktop-commander not placed on provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "hosts": [
+          "oracle-admin"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "plugins": [],
+  "workers": [
+    {
+      "id": "oracle-admin.role-separation",
+      "domain": "oracle-admin",
+      "title": "oracle-admin cannot run development workloads (role guard)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "probes": [
+          "REPOSITORY_WRITE",
+          "HERMES_RUNTIME",
+          "OWNER_CONTROL"
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "oracle-admin.live",
+      "domain": "oracle-admin",
+      "title": "oracle-admin host live certification",
+      "status": "EXTERNAL_GATE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "note": "no canonical provisioning exists on master; recovery path unproven"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": "EXTERNAL-GATE-ORACLE-ADMIN-001"
+    },
+    {
+      "id": "vekl-worker.role-separation",
+      "domain": "vekl-worker",
+      "title": "vekl-worker cannot become control authority (OWNER_CONTROL/HERMES_RUNTIME/EXTERNAL_QUEUE refused)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "role_definition": "BACKGROUND_ENGINEERING_WORKER"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl-worker.dispatch-local",
+      "domain": "vekl-worker",
+      "title": "worker job contract: dispatch REPO_HEAD -> sealed receipt (local transport)",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "correlation_id": "2bc584c7-bb75-4da7-b89d-a1633ee1ba35",
+        "receipt_hash": "23d3173f52b8d5ae546733115146db0c4744f582e48983d713712be9a8c8555a",
+        "worker_role": "vekl-worker",
+        "result": {
+          "head": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+          "branch": "claude/dial-e2e-audit-green-flag-hqqlyw",
+          "dirty": 6
+        }
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl-worker.live",
+      "domain": "vekl-worker",
+      "title": "vekl-worker host reachable and executing jobs over SSH",
+      "status": "EXTERNAL_GATE",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "note": "no vekl-worker host is declared in canonical master; hosts inventory exists only on the unmerged PR #24 lineage (as oracle-admin-v2)"
+      },
+      "remediation": "owner: confirm the host name mapping, then run bootstrap --apply --role vekl-worker on it and bootstrap --verify with DIAL_WORKER_SSH_HOST set on the control host",
+      "severity": null,
+      "gate": "EXTERNAL-GATE-VEKL-WORKER-001"
+    }
+  ],
+  "github": [
+    {
+      "id": "github.remote",
+      "domain": "GitHub",
+      "title": "origin is Vanguduza/dial-new",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git remote get-url origin",
+        "output": "https://github.com/Vanguduza/dial-new"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "github.auth-reach",
+      "domain": "GitHub",
+      "title": "authenticated reach: git ls-remote origin master",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git ls-remote --heads origin master",
+        "output": "fa7c655f12faf02a2b33cc15799069526bdda3a6\trefs/heads/master",
+        "exit": 0
+      },
+      "remediation": "restore GitHub credentials (deploy key / connector)",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "github.branch-protection",
+      "domain": "GitHub",
+      "title": "branch protection on master (required checks project-truth + verify) — not verifiable from repository content",
+      "status": "UNVERIFIED",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "finding": "no CODEOWNERS, no committed protection ruleset; PROJECT_TRUTH_PROTOCOL asserts a required project-truth check"
+      },
+      "remediation": "owner: confirm GitHub branch protection settings; export ruleset JSON into docs/project-state as evidence",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "github.commit-signing",
+      "domain": "GitHub",
+      "title": "commit signing policy",
+      "status": "FAIL",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "finding": "no gpg/ssh signing configured or verified anywhere; integrity relies on ledger content hashes"
+      },
+      "remediation": "adopt SSH commit signing + verified-signature requirement (owner decision)",
+      "severity": "P2",
+      "gate": null
+    }
+  ],
+  "security": [
+    {
+      "id": "security.no-tracked-secrets",
+      "domain": "Security",
+      "title": "no secret-pattern strings in tracked files",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git grep -lE <secret patterns>",
+        "files": []
+      },
+      "remediation": "rotate and purge",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "security.no-tracked-secret-files",
+      "domain": "Security",
+      "title": "no .env/.pem/.key/creds files tracked",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "sh -c git ls-files | grep -iE '(^|/)\\.env($|\\.)|\\.pem$|\\.key$|id_rsa|creds\\.json$' || true",
+        "files": []
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "security.control-home-modes",
+      "domain": "Security",
+      "title": "control home present",
+      "status": "NOT_APPLICABLE",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "control_home": "/tmp/dial-bootstrap-control",
+        "exists": false
+      },
+      "remediation": "bash deploy/oracle/hermes-codex/bootstrap-host.sh",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "supply.lockfile",
+      "domain": "Supply chain",
+      "title": "package-lock.json present and npm ci used",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "package-lock.json",
+        "exists": true
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "supply.unpinned-installers",
+      "domain": "Supply chain",
+      "title": "host runtimes installed through pinned, verifiable channels",
+      "status": "FAIL",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "unpinned_runtimes": [
+          "rt.node",
+          "rt.claude-code"
+        ],
+        "source": "deploy/oracle/hermes-codex/bootstrap-host.sh uses curl|bash for node/claude/hermes and @openai/codex@latest"
+      },
+      "remediation": "record installed versions as evidence now (bootstrap does); migrate to pinned channels (see audit remediation)",
+      "severity": "P1",
+      "gate": null
+    }
+  ],
+  "authentication": [
+    {
+      "id": "claude.auth",
+      "domain": "Claude",
+      "title": "Claude authenticated (provider-managed session)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "env CLAUDE_CODE_REMOTE / CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST",
+        "output": "provider-managed session present; this process is running under it"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "github.auth-reach",
+      "domain": "GitHub",
+      "title": "authenticated reach: git ls-remote origin master",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git ls-remote --heads origin master",
+        "output": "fa7c655f12faf02a2b33cc15799069526bdda3a6\trefs/heads/master",
+        "exit": 0
+      },
+      "remediation": "restore GitHub credentials (deploy key / connector)",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.PROJECT_TRUTH.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/canon/PROJECT_TRUTH.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/canon/PROJECT_TRUTH.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.FEATURE_REGISTRY.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/registries/FEATURE_REGISTRY.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/registries/FEATURE_REGISTRY.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DECISION_LOG.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: agent-system/registries/DECISION_LOG.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "agent-system/registries/DECISION_LOG.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.BUILD_READINESS_SCORECARD.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "repo.locked-authority.REPOSITORY_BOOTSTRAP_CHECKLIST.json",
+      "domain": "Project Truth",
+      "title": "locked authority present: docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "file": "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/11_REPOSITORY_ALIGNMENT/REPOSITORY_BOOTSTRAP_CHECKLIST.json"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "network": [
+    {
+      "id": "net.github",
+      "domain": "Network",
+      "title": "repository, PR, CI: https://github.com",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "url": "https://github.com",
+        "ok": true,
+        "status": 200,
+        "duration_ms": 125
+      },
+      "remediation": "check egress policy / proxy for this host",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "net.github-api",
+      "domain": "Network",
+      "title": "presearch corroboration, MCP: https://api.github.com",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "url": "https://api.github.com",
+        "ok": true,
+        "status": 403,
+        "duration_ms": 75
+      },
+      "remediation": "check egress policy / proxy for this host",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "net.npm-registry",
+      "domain": "Network",
+      "title": "npm ci: https://registry.npmjs.org",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "url": "https://registry.npmjs.org",
+        "ok": true,
+        "status": 200,
+        "duration_ms": 66
+      },
+      "remediation": "check egress policy / proxy for this host",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "net.anthropic",
+      "domain": "Network",
+      "title": "Claude Code subscription route: https://api.anthropic.com",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "url": "https://api.anthropic.com",
+        "ok": true,
+        "status": 404,
+        "duration_ms": 51
+      },
+      "remediation": "check egress policy / proxy for this host",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "net.loopback-only-services",
+      "domain": "Network",
+      "title": "control-plane listeners bind 127.0.0.1 only (9130/9132/9119/3011/9141)",
+      "status": "NOT_APPLICABLE",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "command": "ss -ltnp | grep -E ':(9130|9132|9119|3011|9141)\\b'"
+      },
+      "remediation": "verified live via systemd/units check + ss on the control host",
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "bootstrap": [
+    {
+      "id": "role.resolved",
+      "domain": "Role guard",
+      "title": "host role resolved: provider-container via provider_container",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "role": "provider-container",
+        "source": "provider_container",
+        "reason": "CLAUDE_CODE_REMOTE",
+        "provider": "claude-code-remote"
+      },
+      "remediation": "echo <role> | sudo tee /etc/dial/host-role; chmod 644",
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "role.forbidden-workloads-refused",
+      "domain": "Role guard",
+      "title": "every forbidden workload refused for every declared role (mismatched-role probes)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "probes": 34,
+        "leaks": []
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "pkg.git",
+      "domain": "Bootstrap",
+      "title": "git version >= 2.39.0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "git --version",
+        "output": "git version 2.43.0",
+        "location": "/usr/bin/git",
+        "version": "2.43.0"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "rt.node",
+      "domain": "Bootstrap",
+      "title": "node version >= 22.13.0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "node --version",
+        "output": "v22.22.2",
+        "location": "/opt/node22/bin/node",
+        "version": "22.22.2"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "rt.npm",
+      "domain": "Bootstrap",
+      "title": "npm version >= 10.0.0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm --version",
+        "output": "10.9.7",
+        "location": "/opt/node22/bin/npm",
+        "version": "10.9.7"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "rt.python3",
+      "domain": "Bootstrap",
+      "title": "python3 version >= 3.10.0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "python3 --version",
+        "output": "Python 3.11.15",
+        "location": "/usr/local/bin/python3",
+        "version": "3.11.15"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "bootstrap.host-facts",
+      "domain": "Bootstrap",
+      "title": "host vm x64 4cpu 16075MB disk_avail=29133MB",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "hostname": "vm",
+        "platform": "linux",
+        "arch": "x64",
+        "cpus": 4,
+        "memory_total_mb": 16075,
+        "memory_free_mb": 15240,
+        "node": "22.22.2",
+        "user": "root",
+        "uid": 0,
+        "load_average": [
+          0.82,
+          0.47,
+          0.49
+        ],
+        "disk": {
+          "ok": true,
+          "command": "df -Pk /home/user/dial-new",
+          "total_mb": 258020,
+          "used_mb": 8805,
+          "avail_mb": 29133,
+          "use_pct": "24%"
+        }
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "bootstrap.resource-floor",
+      "domain": "Bootstrap",
+      "title": "resource floor: >= 2 vCPU, >= 3.5 GB RAM, >= 5 GB free disk for verification workloads",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "cpus": 4,
+        "memory_total_mb": 16075,
+        "disk_avail_mb": 29133
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "systemd.placement",
+      "domain": "Systemd",
+      "title": "no supervised services declared for provider-container",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {},
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "containers.declared",
+      "domain": "Containers",
+      "title": "no container workloads declared (canonical deployment is systemd sandboxing)",
+      "status": "NOT_APPLICABLE",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "containers": 0,
+        "note": "Canonical DIAL deployment uses systemd user units with sandboxing (NoNewPrivileges, ProtectSystem=strict, ReadOnlyPaths). No Docker/Compose/Podman exists in the repository; container checks are NOT_APPLICABLE unless a role declares a container workload."
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "containers.docker-present",
+      "domain": "Containers",
+      "title": "docker present (daemon unreachable)",
+      "status": "PASS",
+      "criticality": "OPTIONAL",
+      "evidence": {
+        "command": "docker version --format {{.Server.Version}}",
+        "server_version": null
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.e2e",
+      "domain": "Bootstrap",
+      "title": "end-to-end self-test passed (12 stages, correlation selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "correlation_id": "selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62",
+        "decision_hash": "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+        "receipt_hash": "47a1408cf903f27bdd05d654d4ef0e0cbb97baceb3f9f757382af70cf34cfd76",
+        "missing_stages": [],
+        "response": "DIAL self-test selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62: routed TEST_REPAIR/LOW for SPARE-F001 through codex_app_server (gpt-5.6-sol) with VEKL unit DU-LIN-d4d39547e780d115fca12840; repository HEAD 62eb71274c042ac02e61dedeb3f62c4c60d2e479; no files modified."
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.determinism",
+      "domain": "Bootstrap",
+      "title": "determinism: 3 runs identical=true forbidden_leaks=0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "decision_hashes": [
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782"
+        ],
+        "fields": {
+          "project": {
+            "slug": "dial",
+            "truth": "aa37987d79fe7d2a5750a62f93dcea316feb48a52b5e697fa7546553c9acf758"
+          },
+          "role": {
+            "allowed": true,
+            "role": "provider-container"
+          },
+          "vekl": {
+            "state": "NO_EXTERNAL_SKILL_REQUIRED",
+            "scope": "DEVELOPMENT_UNIT",
+            "unit": "DU-LIN-d4d39547e780d115fca12840",
+            "revision": "5306f77a9ebe5d87e24b6d3b534cafdf2cf297b12e3c0b2a5edd25503b178e54",
+            "map": "2a7690075985ff806a7bfd81ce5d4229cc40f44f52b1f4e5bb6e3c23bd016cdc",
+            "graph_revision": "3ac6aec54a671e5047a73279c62abcbd657868be0f30b54abe69ac55874e8ece",
+            "neighbourhood": "3a91123832376ef8069273bb6bfd5b3ce310397abc324b36cf52cb0eecd56d7b",
+            "routes": "9d0209c545bcf02cb6b318374ff111afa7307b5833d4607dc7d3671dfb37ec13",
+            "envelope": "6281bf38db2e5ad328ca10568e872d066e891bebe2442f44fec36919e9fdf2a5",
+            "capsule_content": [
+              "05184a25826e36195bfc557b8bc68ac9f97943f55981186b3c9d257dc98f817a",
+              "14cd458731e6adfab4646db7d7468c07001988d6f8515b6b78b679d97f4b1c52",
+              "2ff717ec0c0e2cb99450bf1941e434987518840bde40347309fc93766ad2f705",
+              "3e68d1a4e0b1d3c7727d9c28049fd70f5373b6a0f71bc9cfaffa922a370f9ed3",
+              "4719c44cfd193aba06b417629a241e9aa1f09cfdcd53df507be072ef2074e8ab",
+              "9e6a58b08425ff0565083436e319c18ce5ba3ea00a77aa3ffcb5de05c613eda1",
+              "b3ba5d856a9350c776f1baf3c392119a8c6049313895fffb613c28947f367e9f"
+            ],
+            "readiness": "READY"
+          },
+          "triage": {
+            "archetype": "TEST_REPAIR",
+            "risk": "LOW",
+            "hash": "1d730fa5dc5f87726164464808081748cd36d4183d55b6d14a627b4258fd42c4"
+          },
+          "topology": "c40d33ece4ef5e009170105af97e0b5c31f62cd271394943223e8dbadf746f83",
+          "provider": {
+            "runtime": "codex_app_server",
+            "model": "gpt-5.6-sol"
+          }
+        },
+        "forbidden_leaks": []
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.fault-injection",
+      "domain": "Bootstrap",
+      "title": "fault injection: 9/9 scenarios fail safely",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "scenarios": [
+          {
+            "id": "provider-primary-unavailable",
+            "ok": true,
+            "outcome": {
+              "selected_runtime": "claude_code",
+              "model": "claude-sonnet-5",
+              "role": "HERMES_FALLBACK_RUNTIME"
+            }
+          },
+          {
+            "id": "provider-total-loss",
+            "ok": true,
+            "outcome": {
+              "ok": false,
+              "code": "NO_HERMES_RUNTIME_AVAILABLE",
+              "error": "NO_HERMES_RUNTIME_AVAILABLE"
+            }
+          },
+          {
+            "id": "alternate-model-identity",
+            "ok": true,
+            "outcome": {
+              "candidate": null
+            }
+          },
+          {
+            "id": "stale-runtime-evidence",
+            "ok": true,
+            "outcome": {
+              "candidate": null
+            }
+          },
+          {
+            "id": "role-mismatch",
+            "ok": true,
+            "outcome": {
+              "oracle-admin:REPOSITORY_WRITE": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "vekl-worker:OWNER_CONTROL": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "provider-container:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "oracle-admin:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE"
+            }
+          },
+          {
+            "id": "unknown-host-role",
+            "ok": true,
+            "outcome": {
+              "code": "ROLE_UNKNOWN"
+            }
+          },
+          {
+            "id": "stale-knowledge-binding",
+            "ok": true,
+            "outcome": {
+              "fresh_ok": true,
+              "stale_ok": false,
+              "reasons": [
+                "PROJECT_TRUTH_HASH_CHANGED"
+              ],
+              "mutated": 1
+            }
+          },
+          {
+            "id": "development-gate-absent",
+            "ok": true,
+            "outcome": {
+              "unblocked": false,
+              "gate_present": false
+            }
+          },
+          {
+            "id": "github-unreachable",
+            "ok": true,
+            "outcome": {
+              "ok": false,
+              "error": "ERR_TLS_CERT_ALTNAME_INVALID",
+              "duration_ms": 22
+            }
+          }
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "tests": [
+    {
+      "id": "vekl.knowledge-check",
+      "domain": "VEKL",
+      "title": "engineering-knowledge registries valid (provenance, trust tiers, no executable community signal)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:knowledge:check",
+        "exit": 0,
+        "output_tail": "  \"reference_or_policy_resources\": 102, |   \"failures\": [] | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-unit-check",
+      "domain": "VEKL",
+      "title": "Development Unit registry deterministic (stable lineage + revision)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:unit-check",
+        "exit": 0,
+        "output_tail": "  \"expected_hash\": \"0799ed5ab65a70f86da6215862e8b84c889a7d17dcde9cb1b2a118aba86b3d36\", |   \"actual_hash\": \"0799ed5ab65a70f86da6215862e8b84c889a7d17dcde9cb1b2a118aba86b3d36\" | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-graph-check",
+      "domain": "VEKL",
+      "title": "canon graph compiles and rebuilds deterministically",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:graph-check",
+        "exit": 0,
+        "output_tail": "  \"nodes\": 5393, |   \"edges\": 16882 | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-orphan-check",
+      "domain": "VEKL",
+      "title": "no orphan graph nodes",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:orphan-check",
+        "exit": 0,
+        "output_tail": "    \"VERIFICATION_GATE\": 2 |   } | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-architecture-check",
+      "domain": "VEKL",
+      "title": "VEKL 2.2 architecture criteria (35) green",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:architecture-check",
+        "exit": 0,
+        "output_tail": "    }, |     { |       \"crit"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.vekl-retrieval-eval",
+      "domain": "VEKL",
+      "title": "bounded GraphRAG retrieval golden set",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:vekl:retrieval-eval",
+        "exit": 0,
+        "output_tail": "  \"failures\": 0, |   \"pending_owner_decision\": [] | }"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.routing-architecture-check",
+      "domain": "Model routing",
+      "title": "adaptive routing architecture (AR-01..27) green",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:routing:architecture-check",
+        "exit": 0,
+        "output_tail": "      \"ok\": true, |       \"detail\": \"execution receipt references prompt manifest\" |  "
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "vekl.aef-architecture-check",
+      "domain": "Model routing",
+      "title": "adaptive execution fabric architecture green",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "command": "npm run agent:aef:architecture-check",
+        "exit": 0,
+        "output_tail": "      \"id\": \"EF-21\", |       \"ok\": true, |       \"detail\": \"developmen"
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.e2e",
+      "domain": "Bootstrap",
+      "title": "end-to-end self-test passed (12 stages, correlation selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62)",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "correlation_id": "selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62",
+        "decision_hash": "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+        "receipt_hash": "47a1408cf903f27bdd05d654d4ef0e0cbb97baceb3f9f757382af70cf34cfd76",
+        "missing_stages": [],
+        "response": "DIAL self-test selftest-c4d3b48f-23f1-4d85-ba6b-9ea3facb0c62: routed TEST_REPAIR/LOW for SPARE-F001 through codex_app_server (gpt-5.6-sol) with VEKL unit DU-LIN-d4d39547e780d115fca12840; repository HEAD 62eb71274c042ac02e61dedeb3f62c4c60d2e479; no files modified."
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.determinism",
+      "domain": "Bootstrap",
+      "title": "determinism: 3 runs identical=true forbidden_leaks=0",
+      "status": "PASS",
+      "criticality": "MANDATORY",
+      "evidence": {
+        "decision_hashes": [
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782",
+          "e29997ec6190bfbc06b934d6e51103c5081165c78a9ef689cb11c2d924a40782"
+        ],
+        "fields": {
+          "project": {
+            "slug": "dial",
+            "truth": "aa37987d79fe7d2a5750a62f93dcea316feb48a52b5e697fa7546553c9acf758"
+          },
+          "role": {
+            "allowed": true,
+            "role": "provider-container"
+          },
+          "vekl": {
+            "state": "NO_EXTERNAL_SKILL_REQUIRED",
+            "scope": "DEVELOPMENT_UNIT",
+            "unit": "DU-LIN-d4d39547e780d115fca12840",
+            "revision": "5306f77a9ebe5d87e24b6d3b534cafdf2cf297b12e3c0b2a5edd25503b178e54",
+            "map": "2a7690075985ff806a7bfd81ce5d4229cc40f44f52b1f4e5bb6e3c23bd016cdc",
+            "graph_revision": "3ac6aec54a671e5047a73279c62abcbd657868be0f30b54abe69ac55874e8ece",
+            "neighbourhood": "3a91123832376ef8069273bb6bfd5b3ce310397abc324b36cf52cb0eecd56d7b",
+            "routes": "9d0209c545bcf02cb6b318374ff111afa7307b5833d4607dc7d3671dfb37ec13",
+            "envelope": "6281bf38db2e5ad328ca10568e872d066e891bebe2442f44fec36919e9fdf2a5",
+            "capsule_content": [
+              "05184a25826e36195bfc557b8bc68ac9f97943f55981186b3c9d257dc98f817a",
+              "14cd458731e6adfab4646db7d7468c07001988d6f8515b6b78b679d97f4b1c52",
+              "2ff717ec0c0e2cb99450bf1941e434987518840bde40347309fc93766ad2f705",
+              "3e68d1a4e0b1d3c7727d9c28049fd70f5373b6a0f71bc9cfaffa922a370f9ed3",
+              "4719c44cfd193aba06b417629a241e9aa1f09cfdcd53df507be072ef2074e8ab",
+              "9e6a58b08425ff0565083436e319c18ce5ba3ea00a77aa3ffcb5de05c613eda1",
+              "b3ba5d856a9350c776f1baf3c392119a8c6049313895fffb613c28947f367e9f"
+            ],
+            "readiness": "READY"
+          },
+          "triage": {
+            "archetype": "TEST_REPAIR",
+            "risk": "LOW",
+            "hash": "1d730fa5dc5f87726164464808081748cd36d4183d55b6d14a627b4258fd42c4"
+          },
+          "topology": "c40d33ece4ef5e009170105af97e0b5c31f62cd271394943223e8dbadf746f83",
+          "provider": {
+            "runtime": "codex_app_server",
+            "model": "gpt-5.6-sol"
+          }
+        },
+        "forbidden_leaks": []
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    },
+    {
+      "id": "selftest.fault-injection",
+      "domain": "Bootstrap",
+      "title": "fault injection: 9/9 scenarios fail safely",
+      "status": "PASS",
+      "criticality": "REQUIRED",
+      "evidence": {
+        "scenarios": [
+          {
+            "id": "provider-primary-unavailable",
+            "ok": true,
+            "outcome": {
+              "selected_runtime": "claude_code",
+              "model": "claude-sonnet-5",
+              "role": "HERMES_FALLBACK_RUNTIME"
+            }
+          },
+          {
+            "id": "provider-total-loss",
+            "ok": true,
+            "outcome": {
+              "ok": false,
+              "code": "NO_HERMES_RUNTIME_AVAILABLE",
+              "error": "NO_HERMES_RUNTIME_AVAILABLE"
+            }
+          },
+          {
+            "id": "alternate-model-identity",
+            "ok": true,
+            "outcome": {
+              "candidate": null
+            }
+          },
+          {
+            "id": "stale-runtime-evidence",
+            "ok": true,
+            "outcome": {
+              "candidate": null
+            }
+          },
+          {
+            "id": "role-mismatch",
+            "ok": true,
+            "outcome": {
+              "oracle-admin:REPOSITORY_WRITE": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "vekl-worker:OWNER_CONTROL": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "provider-container:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE",
+              "oracle-admin:HERMES_RUNTIME": "WORKLOAD_FORBIDDEN_FOR_ROLE"
+            }
+          },
+          {
+            "id": "unknown-host-role",
+            "ok": true,
+            "outcome": {
+              "code": "ROLE_UNKNOWN"
+            }
+          },
+          {
+            "id": "stale-knowledge-binding",
+            "ok": true,
+            "outcome": {
+              "fresh_ok": true,
+              "stale_ok": false,
+              "reasons": [
+                "PROJECT_TRUTH_HASH_CHANGED"
+              ],
+              "mutated": 1
+            }
+          },
+          {
+            "id": "development-gate-absent",
+            "ok": true,
+            "outcome": {
+              "unblocked": false,
+              "gate_present": false
+            }
+          },
+          {
+            "id": "github-unreachable",
+            "ok": true,
+            "outcome": {
+              "ok": false,
+              "error": "ERR_TLS_CERT_ALTNAME_INVALID",
+              "duration_ms": 22
+            }
+          }
+        ]
+      },
+      "remediation": null,
+      "severity": null,
+      "gate": null
+    }
+  ],
+  "blocking_gates": [
+    {
+      "gate_id": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "hermes.development-gate",
+      "criticality": "MANDATORY",
+      "requirement": "run bootstrap --verify --role dial-hermes-control on the control host",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check hermes.development-gate returns PASS on re-run of bootstrap --verify",
+      "components": [
+        "hermes.development-gate",
+        "hermes.development-gate"
+      ]
+    },
+    {
+      "gate_id": "EXTERNAL-GATE-VEKL-WORKER-001",
+      "status": "EXTERNAL_GATE",
+      "component": "vekl-worker.live",
+      "requirement": "owner: confirm the host name mapping, then run bootstrap --apply --role vekl-worker on it and bootstrap --verify with DIAL_WORKER_SSH_HOST set on the control host",
+      "criticality": "REQUIRED",
+      "components": [
+        "vekl-worker.live"
+      ]
+    }
+  ],
+  "owner_action_gates": [
+    {
+      "gate_id": "AUTH-GATE-GOOGLE-ANTIGRAVITY-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "google.dev-antigravity",
+      "criticality": "OPTIONAL",
+      "requirement": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check google.dev-antigravity returns PASS on re-run of bootstrap --verify"
+    },
+    {
+      "gate_id": "AUTH-GATE-GOOGLE-POMELLI-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "google.creative-pomelli",
+      "criticality": "OPTIONAL",
+      "requirement": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check google.creative-pomelli returns PASS on re-run of bootstrap --verify"
+    },
+    {
+      "gate_id": "AUTH-GATE-GOOGLE-STITCH-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "google.design-stitch",
+      "criticality": "OPTIONAL",
+      "requirement": "owner authentication (browser/OAuth or human session) then node agent-system/orchestration/google-capability-cli.mjs qualify",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check google.design-stitch returns PASS on re-run of bootstrap --verify"
+    },
+    {
+      "gate_id": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "hermes.development-gate",
+      "criticality": "MANDATORY",
+      "requirement": "run bootstrap --verify --role dial-hermes-control on the control host",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check hermes.development-gate returns PASS on re-run of bootstrap --verify"
+    },
+    {
+      "gate_id": "EXTERNAL-GATE-ORACLE-ADMIN-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "oracle-admin.live",
+      "criticality": "OPTIONAL",
+      "requirement": "owner action",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check oracle-admin.live returns PASS on re-run of bootstrap --verify"
+    },
+    {
+      "gate_id": "EXTERNAL-GATE-VEKL-WORKER-001",
+      "status": "OWNER_ACTION_REQUIRED",
+      "component": "vekl-worker.live",
+      "criticality": "REQUIRED",
+      "requirement": "owner: confirm the host name mapping, then run bootstrap --apply --role vekl-worker on it and bootstrap --verify with DIAL_WORKER_SSH_HOST set on the control host",
+      "auth_type": null,
+      "scopes": [],
+      "bootstrap_prerequisites": "COMPLETE — machine-side prerequisites are installed/verified before this gate is raised",
+      "verification_command": null,
+      "expected_success_evidence": "check vekl-worker.live returns PASS on re-run of bootstrap --verify"
+    }
+  ],
+  "p0_open": [
+    {
+      "id": "GAP-001",
+      "title": "Live Hermes control plane is not qualified for the current master",
+      "gate": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001",
+      "owner_decision_required": false
+    },
+    {
+      "id": "GAP-002",
+      "title": "Codex ChatGPT OAuth, Claude subscription and Hermes provider binding on the control host cannot be certified from this client",
+      "gate": "AUTH-GATE-CODEX-001, AUTH-GATE-CLAUDE-001",
+      "owner_decision_required": false
+    },
+    {
+      "id": "GAP-003",
+      "title": "Oracle runtime status mirror is stale, so live Hermes operability cannot be established by any console",
+      "gate": null,
+      "owner_decision_required": false
+    },
+    {
+      "id": "GAP-004",
+      "title": "Root mission dial-development-root is BLOCKED_OWNER since 2026-09-08",
+      "gate": null,
+      "owner_decision_required": true
+    }
+  ],
+  "gap_register": {
+    "source": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
+    "counts": {
+      "P0": 4,
+      "P1": 6,
+      "P2": 7,
+      "P3": 6
+    },
+    "open_by_severity": {
+      "P0": 4,
+      "P1": 5,
+      "P2": 5,
+      "P3": 6
+    },
+    "owner_decisions_required": [
+      "GAP-004",
+      "GAP-005",
+      "GAP-009",
+      "GAP-010",
+      "GAP-012",
+      "GAP-018",
+      "GAP-019",
+      "GAP-021"
+    ]
+  },
+  "traceability": {
+    "source": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
+    "counts": {
+      "DOCUMENTED_AND_IMPLEMENTED": 15,
+      "DOCUMENTED_PARTIAL": 6,
+      "IMPLEMENTED_NOT_DOCUMENTED": 1,
+      "CONTRADICTORY_DOCUMENTATION": 2,
+      "EXTERNAL_GATE": 1,
+      "DOCUMENTED_NOT_IMPLEMENTED (live)": 2,
+      "IMPLEMENTED_NOT_DOCUMENTED (canon)": 2,
+      "OBSOLETE": 1,
+      "UNKNOWN": 1
+    }
+  },
+  "evidence": [
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/bootstrap-determinism-20260914.json",
+      "sha256": "5174204671dcf764cf58cb06a139b7be6823af5ee9e388ae9351f40da2c2ed49",
+      "bytes": 2182
+    },
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/bootstrap-fault-injection-20260914.json",
+      "sha256": "cbd995e0690d0ae529494f283acc2369abde1f5d75fb5f65a366c59be1c76498",
+      "bytes": 2550
+    },
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/bootstrap-self-test-20260914.json",
+      "sha256": "163350eeed7580cf59cf31b5b25af6b4ed03b8f61fb4d8e4394baad2f475d51d",
+      "bytes": 8661
+    },
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/bootstrap-verify-provider-container-20260914.json",
+      "sha256": "7effca3210abe1783bb3a456ce71f494cc2769aafd3a694d390fa94e6bb497d1",
+      "bytes": 111538
+    },
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/bootstrap-verify-provider-container-20260914.txt",
+      "sha256": "5e09f10d0e10b079712369f68d2f9a8ba72fbea00480a500dcad5a4aa2db5fe4",
+      "bytes": 1654
+    },
+    {
+      "file": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/evidence/npm-run-verify-20260914.json",
+      "sha256": "42e21d2e5d1d98582647224aad6fd99a09bdd1300da80c3ea1f0b3633ba2c83c",
+      "bytes": 4078
+    }
+  ],
+  "secrets_policy": "no secret values; locations and modes only",
+  "report_hash": "2d94efcedc07b9cdc8718cc0ef83fab739df854e8ad4820981138ec342521d3d"
+}

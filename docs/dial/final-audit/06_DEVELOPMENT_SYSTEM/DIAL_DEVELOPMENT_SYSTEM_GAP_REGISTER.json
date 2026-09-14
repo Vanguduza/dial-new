@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "register_id": "dial-development-system-gap-register-rev1",
+  "audited_commit": "62eb71274c042ac02e61dedeb3f62c4c60d2e479",
+  "audited_at": "2026-09-14",
+  "severity_law": {
+    "P0": "GREEN-FLAG BLOCKER: development must not commence",
+    "P1": "REQUIRED HARDENING: could run, integrity materially at risk",
+    "P2": "IMPORTANT IMPROVEMENT",
+    "P3": "OPTIMIZATION"
+  },
+  "gaps": [
+    {
+      "id": "GAP-001", "severity": "P0", "status": "OPEN_EXTERNAL_GATE", "domain": "Hermes",
+      "title": "Live Hermes control plane is not qualified for the current master",
+      "evidence": "Oracle status mirror (dial_oracle_status): development.state=DEVELOPMENT_BLOCKED, gate_status=PRODUCTION_GREEN, failed_checks=[qualified_control_plane_unchanged]; repository.head=0bc356d on the Oracle host vs audited master 62eb712 (git rev-list --count 0bc356d..62eb712 = 18; 9 commits touch the fingerprinted paths agent-system/orchestration, agent-system/engineering-knowledge, deploy/oracle/hermes-codex).",
+      "consequence": "The external orchestrator refuses ordinary work; the qualified fingerprint no longer matches the code that would execute.",
+      "remediation": "On dial-hermes-control: git pull master; bash deploy/oracle/hermes-codex/install-control-plane.sh; qualify-control-plane.sh; soak-control-plane.sh process; soak-external-orchestrator.sh; soak-control-plane.sh continuity; finalize-control-plane.sh. Then ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control.",
+      "gate": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001", "owner_decision_required": false
+    },
+    {
+      "id": "GAP-002", "severity": "P0", "status": "NOT_CERTIFIED", "domain": "Providers",
+      "title": "Codex ChatGPT OAuth, Claude subscription and Hermes provider binding on the control host cannot be certified from this client",
+      "evidence": "This session runs in a Claude Code Remote container (x86_64, no ssh keys, no systemd, codex and hermes binaries absent). The only live signal is the Oracle mirror, which is 15+ hours stale (observed 2026-09-14T04:04:02Z) and reports Sol=HEALTHY, Sonnet=HEALTHY with identity_cache_valid=false.",
+      "consequence": "Mandatory authentication conditions 11, 12, 13 of the green-flag criteria are unproven.",
+      "remediation": "bootstrap.sh --verify --role dial-hermes-control runs codex login status, claude auth status and the Hermes config lock as benign probes and records PASS/OWNER_ACTION_REQUIRED per credential.",
+      "gate": "AUTH-GATE-CODEX-001, AUTH-GATE-CLAUDE-001", "owner_decision_required": false
+    },
+    {
+      "id": "GAP-003", "severity": "P0", "status": "OPEN", "domain": "Hermes",
+      "title": "Oracle runtime status mirror is stale, so live Hermes operability cannot be established by any console",
+      "evidence": "readOracleOperatorStatus: available=true fresh=false source=PRIVATE_GIT_STATUS_BRANCH age 967-973 minutes. install-operator-status-publisher.sh schedules a 30 s timer; a 15 h gap means the timer, the git push credential or the host itself has failed.",
+      "consequence": "CLAUDE.md forbids inferring idle; with a stale mirror no owner console can truthfully answer whether DIAL is running. False-idle prevention is degraded.",
+      "remediation": "On the control host: systemctl --user status dial-operator-status-publisher.timer; journalctl --user -u dial-operator-status-publisher.service; repair push credential; confirm mirror age < 5 min via bootstrap --verify.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-004", "severity": "P0", "status": "OPEN_OWNER_DECISION", "domain": "Mission",
+      "title": "Root mission dial-development-root is BLOCKED_OWNER since 2026-09-08",
+      "evidence": "mission.owner_blocker: type=OWNER_DECISION, reason='fix verified and left uncommitted — this session's tool permissions do not allow git add/commit/push, so an owner or a differently-permissioned step must land it', observed_at 2026-09-08T08:40:15Z; turn 10; 9 completed / 1 failed packets.",
+      "consequence": "Autonomous development cannot resume until the owner lands or discards that uncommitted fix and issues RESUME through the typed gateway.",
+      "remediation": "Owner: inspect the blocked packet via dial_packet_status, land or discard the fix, then dial_resume_mission.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-005", "severity": "P1", "status": "OPEN_OWNER_DECISION", "domain": "Topology",
+      "title": "vekl-worker and oracle-admin exist only on unmerged, mutually divergent lineages; canonical master has one host and (before this branch) no host-role guard",
+      "evidence": "master: zero references to vekl-worker or oracle-admin as hosts (only a prompt example and one doc mention of dial-hermes-control). PR #24 (open, 1 conflict, README: recovery-agent/scheduler 'not implemented'); PR #26/#27 merged into claude/oracle-e2-recovery-rebuild-3yotjc (deleted; names the second node oracle-admin-v2); origin/work/bootstrap-reconcile-20260914 (pushed 2026-09-14T20:02Z, 128 files, doc status 'PROPOSED — NOT_IMPLEMENTED', names vekl-worker 10.0.0.51 and uses key=value /etc/dial/host-role).",
+      "consequence": "Four candidate implementations of host roles/placement (PR #24 fabric, PR #27 control-plane, execution-fabric branch, this bootstrap's role guard) risk becoming parallel authorities. The bootstrap role guard reads the execution-fabric role-file format so both converge on one declaration, but only one can be canonical.",
+      "remediation": "Owner decision: adopt one lineage (recommended: this bootstrap's role guard + manifest for host convergence, execution-fabric branch for venue routing once it passes verify), close the rest with supersession notes; then provision/declare vekl-worker and oracle-admin and run bootstrap --verify on each.",
+      "gate": "EXTERNAL-GATE-VEKL-WORKER-001, EXTERNAL-GATE-ORACLE-ADMIN-001", "owner_decision_required": true
+    },
+    {
+      "id": "GAP-006", "severity": "P1", "status": "RESOLVED_IN_THIS_BRANCH", "domain": "Testing",
+      "title": "Two test files were never collected by vitest, and one contained a failing assertion on master",
+      "evidence": "vitest.config.ts include list omitted tests/orchestration-vekl-structural-reality.test.mjs and tests/frontend-product-experience.test.mjs (grep count 0). Running them with an explicit config: 40 passed, 1 failed ('normalizer creates provider-independent structural identities' expected /^[0-9a-f]{64}$/ but ids are 'sym:<sha256>' / 'mod:<sha256>' by design in structural-code-graph-provider.mjs:10-11). CI run 272 on 62eb712 was green because the file never ran.",
+      "consequence": "PR #30's Graphify gate (16 structural checks) was merged without ever executing in CI.",
+      "remediation": "Both files added to the include list; assertion aligned to the prefixed identity scheme; suite now 30/30 and 11/11.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-007", "severity": "P1", "status": "OPEN", "domain": "Supply chain",
+      "title": "Host runtimes are installed through unpinned curl|bash and floating package versions",
+      "evidence": "deploy/oracle/hermes-codex/bootstrap-host.sh:28 NodeSource setup | sudo bash; :33 npm -g @openai/codex@latest; :36 claude.ai/install.sh | bash; :40 hermes-agent.nousresearch.com/install.sh | bash; :45 uv pip install -e (|| true). pair-hermes-whatsapp.sh:64 caret ranges express/pino/qrcode-terminal. Contrast: install-google-antigravity.sh pins version + SHA-256; install-haif.sh pins to git SHA; package.json exact pins.",
+      "consequence": "The qualified control plane can silently change underneath its fingerprint (the fingerprint covers repo trees, not installed runtime versions).",
+      "remediation": "Record installed versions as evidence (bootstrap does); set manifest.runtimes[rt.codex].pinned_version after qualification; move Node to a signed apt source; download Claude/Hermes installers to disk, verify checksum, then execute; pin the pairing runtime dependencies exactly.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-008", "severity": "P1", "status": "OPEN", "domain": "VEKL",
+      "title": "VEKL enforcement at the tool layer is conditional on DIAL_PACKET_ID; the mission controller enforces VEKL by prompt text only",
+      "evidence": "agent-system/hooks/pre-tool-guard.mjs:12-29 guards only when packetId is set; mission-controller.mjs:30-32 instructs the model to run engineering-knowledge-resolve.mjs but calls no VEKL API; unscoped packets (no Feature ID) get scope UNSCOPED_PLANNING with no unit map/binding/trace (engineering-knowledge-broker.mjs:62).",
+      "consequence": "A worker launched without the packet environment, or an unscoped packet, can act without a fresh knowledge binding.",
+      "remediation": "Fail closed in the guard when DIAL_PACKET_ID is absent and the tool use is consequential inside the repository; have the mission controller call ensurePacketEngineeringKnowledge before dispatch (code, not prose).",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-009", "severity": "P1", "status": "OPEN_OWNER_DECISION", "domain": "Model routing",
+      "title": "DEC-032 adaptive harness x model routing is implemented but dormant, and its decision record contradicts the shipped policy",
+      "evidence": "selectExecutionPair has no production caller (only tests and adaptive-routing-architecture-check.mjs); adaptive-execution-planner.mjs:9 still routes DEC-028 pre-bound cards; HARNESS_REGISTRY compatibility_shims.retired=false. DEC-032 enforced_by names agent-system/orchestration/model-availability-discovery.mjs which does not exist, while MODEL_REGISTRY discovery.required=true FAIL_CLOSED (discoveryFresh would return DISCOVERY_NEVER_RUN). DEC-032 text requires a quality floor before cost ranking; ADAPTIVE_ROUTING_POLICY.performance_hierarchy.may_exclude_pair=false removed it (owner ruling 2026-09-13). MODEL_REGISTRY claude-opus-5.prior_record still describes probation the same file forbids.",
+      "consequence": "Worker routing today is the DEC-028 card path; the documented DEC-032 behaviour is not what executes. If wired as-is it would fail closed on discovery.",
+      "remediation": "Owner: amend DEC-032 consequence/reopens_if to the ruled policy; implement model-availability-discovery.mjs (subscription presence) before wiring selectExecutionPair into the planner; clean MODEL_REGISTRY prior_record text.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-010", "severity": "P1", "status": "OPEN", "domain": "GitHub",
+      "title": "Branch protection is asserted but not evidenced; no CODEOWNERS; no commit signing",
+      "evidence": ".github/ holds only two workflows; PROJECT_TRUTH_PROTOCOL.md:25-26 asserts a required project-truth check; no ruleset export in repo; no gpg/ssh signing anywhere; ledger integrity relies on diff_sha256 rows an author with push access can also write.",
+      "consequence": "A push-capable actor who also writes a matching ledger row and authorization file passes verification.",
+      "remediation": "Owner: confirm protection (required checks verify + project-truth, no force-push, PR required) and export the ruleset JSON into docs/project-state as evidence; adopt SSH commit signing with a verified-signature requirement.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-011", "severity": "P2", "status": "OPEN", "domain": "Security",
+      "title": "Unit sandboxing gaps: an EnvironmentFile carrying credentials has no mode assertion; two units lack UnsetEnvironment; repository mounted read-write by three units",
+      "evidence": "install-haif.sh:52 EnvironmentFile=-.../haif-r2.env (mode never asserted by any gate); dial-mission-controller.service and dial-hermes-whatsapp-bridge.service lack UnsetEnvironment=*_API_KEY; dial-hermes-runtime, dial-owner-steering and dial-hermes-orchestrator mount the repo RW; status publisher has RW on .git.",
+      "consequence": "Narrow but real privilege surface beyond the documented least-privilege model.",
+      "remediation": "Assert 0600 on haif-r2.env in finalize-control-plane.sh; add UnsetEnvironment to the two units; review whether the runtime supervisor needs RW on the repo.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-012", "severity": "P2", "status": "PARTIALLY_RESOLVED", "domain": "GraphRAG",
+      "title": "Graphify/structural reality landed without a DECISION_LOG entry and its snapshot producer was never invoked outside tests",
+      "evidence": "DECISION_LOG.json has zero structural/Graphify entries (32 decisions); publishStructuralSnapshot and both providers are imported only by the test file; resolveStructuralReality therefore always returns MISSING_ADVISORY; graphify binary absent everywhere; STRUCTURAL_REALITY_POLICY: qualified=false, execution_enabled=false (correctly fail-closed).",
+      "consequence": "The structural plane is inert shadow mode; canon has no decision record for a retrieval-adjacent plane.",
+      "remediation": "This branch adds the STRUCTURAL_SNAPSHOT worker job (proven locally: 1952 nodes / 2158 edges published). Owner: record a DEC for structural reality; schedule the job on vekl-worker or the control host.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-013", "severity": "P2", "status": "OPEN", "domain": "Documentation",
+      "title": "Canonical documents drift from implementation",
+      "evidence": "VEKL v2 doc §19 names agent-system/bin/resources-resolve.mjs (does not exist) and omits every 2.2 concept (Units, graph, capsules, traces); HERMES_XKIRO_HAIF.md:3 cites DEC-023 (SEO) instead of DEC-027; IMPLEMENTATION_STATE.md and orchestration README state a blanket Opus/Fable/Haiku prohibition that DEC-032's worker registry no longer matches; docs/project-state/CURRENT_STATE.json names a deleted branch as current; operations-plane.mjs:13 health-checks 'hermes-gateway.service' while the installer discovers the gateway unit name by regex.",
+      "consequence": "A reader following the named canonical VEKL doc gets a 2.1-era picture of a 2.2 system.",
+      "remediation": "Mark supersession in the v2 doc pointing to the 2.2 addendum; fix the DEC reference; add a DEC-032 note to IMPLEMENTATION_STATE.md; regenerate CURRENT_STATE.json post-merge.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-014", "severity": "P2", "status": "OPEN", "domain": "Observability",
+      "title": "No tool-invocation log, no per-test results, no commit SHA on execution records",
+      "evidence": "Envelopes pin tool_grants (intent) but nothing records tools actually invoked; deterministic_verify stores one boolean for a 29-step chain; execution receipts and job records carry no before/after commit SHA (join must go through the Project Truth ledger).",
+      "consequence": "'Which tools ran', 'which test failed' and 'which packet produced this commit' are reconstructable only by hand.",
+      "remediation": "Emit a PostToolUse event per invocation into events/; persist vitest JSON reporter output per verify job; stamp HEAD before/after on execution receipts.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-015", "severity": "P3", "status": "OPEN", "domain": "Testing",
+      "title": "vitest reports an unhandled worker RPC timeout on constrained hosts although every test passes",
+      "evidence": "Two runs on this 4-vCPU container: 651/651 tests passed, 'Error: [vitest-worker]: Timeout calling onTaskUpdate', exit 1; a 26 s synchronous animation test (generateFrameProfile) starves the worker heartbeat. CI (2-vCPU ubuntu-latest, run 272) passed.",
+      "consequence": "npm run verify can exit non-zero for environmental reasons, which would be indistinguishable from a real failure on a slow worker host.",
+      "remediation": "Split the frame-profile test or raise vitest's teardown/RPC timeout for that suite.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-016", "severity": "P2", "status": "OPEN", "domain": "MCP",
+      "title": "Described-but-absent tooling: dial-truth MCP, dial-development-governor plugin, Context7/Exa connectors, plugin skills routed by TOOLING_USE_POLICY",
+      "evidence": "agent-system/mcp/dial-truth-server.mjs does not exist; dial-development-governor is not installed anywhere and duplicates agent-system/hooks; Context7/Exa are registry rows with connector: locators only; none of the engineering:/operations:/product-management:/design: skills is installed.",
+      "consequence": "Policy routes work to tools that are not there; CT-3's exact-version rule has no executable path.",
+      "remediation": "Implement dial-truth or mark it deprecated; delete or deprecate the governor package; either install the connectors or downgrade the policy lines to optional.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-017", "severity": "P3", "status": "OPEN", "domain": "Owner WhatsApp",
+      "title": "No inbound rate limiting and no retention on processed-message and idempotency directories",
+      "evidence": "whatsapp-operator-adapter.mjs and whatsapp-hermes-operator.mjs: no rate limiter; operator-channels/whatsapp/processed/ and chat-control/idempotency/ grow without GC.",
+      "consequence": "Slow disk growth; a flood from the allowed sender is processed at full speed.",
+      "remediation": "Add a per-sender token bucket and a bounded retention sweep in the operations plane.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-018", "severity": "P3", "status": "OPEN_OWNER_DECISION", "domain": "GitHub",
+      "title": "Canonical integration branch is master; the owner brief recalls main as the historical preference",
+      "evidence": "PROJECT_CANONICAL_STATE.json canonical_integration_branch=master; workflows accept master and main; decision-evolution and verify-pr hardcode origin/master.",
+      "consequence": "No functional impact; a rename would touch scripts, CI and the status mirror.",
+      "remediation": "Owner: keep master (recommended) or order a rename as an OWNER_EXPLICIT change.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-019", "severity": "P3", "status": "OPEN_OWNER_DECISION", "domain": "Model routing",
+      "title": "No Astra policy exists in the repository",
+      "evidence": "Case-insensitive search across docs, registries, code and git history finds Astra only as Opel/Vauxhall vehicle catalogue rows. HARNESS_MODEL_COMPATIBILITY default_when_unlisted=BLOCKED and hermes-plan-models UNKNOWN_*_NOT_USED rules make any unlisted model non-executable.",
+      "consequence": "The historical distinction the owner describes (experimental third-party Astra API vs Astra via Codex/OpenAI) is not recorded; by default no Astra route is approved infrastructure.",
+      "remediation": "Owner: if a rule is wanted, record it as a DEC and a MODEL_REGISTRY row; otherwise nothing to do.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-020", "severity": "P3", "status": "OPEN", "domain": "VEKL",
+      "title": "Capsule and activation-manifest hashes are packet-scoped, so cross-packet 'same capsule resolved' needs a body re-hash",
+      "evidence": "context-capsule-builder.mjs:8 hashes {schema_version, capsule_type, packet_id, ..., body}; two identical runs produced different context_capsule_hashes and manifest_sha256 while capsule bodies were byte-identical (bootstrap determinism harness compares body hashes and passes 3/3).",
+      "consequence": "GRAPHRAG_DETERMINISM_POLICY's 'bitwise deterministic output' holds per packet, not across packets; audits must re-hash bodies.",
+      "remediation": "Add a content_hash (type+body) next to capsule_hash so replay/equality is direct.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-021", "severity": "P3", "status": "OPEN", "domain": "GitHub",
+      "title": "Stale open PRs that can no longer merge",
+      "evidence": "PR #8 (work/operator-gateway-20260908): 15 conflicting files, content superseded by later merges; PR #29 (ChatGPT operator MCP) conflicts only in generated ledger files; PR #24 conflicts in vitest.config.ts.",
+      "consequence": "Noise in the merge queue; #29 and #24 are candidates for rebase, #8 for closure.",
+      "remediation": "Close #8 with a supersession note; rebase #24/#29 if the owner still wants them.",
+      "gate": null, "owner_decision_required": true
+    },
+    {
+      "id": "GAP-022", "severity": "P2", "status": "RESOLVED_BY_BOOTSTRAP_APPLY", "domain": "Project Truth",
+      "title": "Project Truth git hooks are not enabled in a fresh clone",
+      "evidence": "git config --get core.hooksPath is unset after clone; .githooks/pre-commit and pre-push exist; CI still verifies PRs, but local ledger recording requires bash scripts/install-project-truth-hooks.sh.",
+      "consequence": "Local commits made without the hook lack ledger rows until reconciled; CI then blocks the PR.",
+      "remediation": "bootstrap --apply installs the hooks on every non-container role.",
+      "gate": null, "owner_decision_required": false
+    },
+    {
+      "id": "GAP-023", "severity": "P2", "status": "RESOLVED_IN_THIS_BRANCH", "domain": "Topology",
+      "title": "No fail-closed host-role guard existed in canonical master",
+      "evidence": "git grep hostname|HOST_ROLE|ConditionHost over deploy/ and agent-system/orchestration/ found nothing; installers accept any DIAL_REPO_DIR/DIAL_CONTROL_HOME and run on any machine.",
+      "consequence": "Nothing prevented running the control plane or workers on the wrong host.",
+      "remediation": "ops/development-bootstrap/roles/role-guard.mjs (library + CLI): resolves role from env / /etc/dial/host-role (bare or ROLE=) / provider-container / hostname; UNKNOWN refuses everything; 34 forbidden-workload probes pass; fault-injection scenario role-mismatch and unknown-host-role pass.",
+      "gate": null, "owner_decision_required": false
+    }
+  ]
+}

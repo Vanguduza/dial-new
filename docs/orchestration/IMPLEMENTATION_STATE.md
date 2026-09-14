@@ -32,6 +32,17 @@ PRODUCTION_GREEN_NOT_REACHED
 
 **DIAL product development must not resume yet.**
 
+## Development-system end-to-end audit — 2026-09-14
+
+An owner-ordered repository-first audit of the whole development system was recorded at commit `62eb7127` on branch `claude/dial-e2e-audit-green-flag-hqqlyw`:
+
+- verdict **RED — NOT YET GREEN**; 25 of 35 green-flag conditions met; four P0 blockers, all live-host or owner-decision gates;
+- the Oracle status mirror was ≥ 15 h stale, the root mission `BLOCKED_OWNER` since 2026-09-08, the development gate failing `qualified_control_plane_unchanged`, and the Oracle checkout 18 commits behind master, so the live control plane must be re-qualified for the current fingerprint before any GREEN claim;
+- a deterministic bootstrap and certification system was added under `ops/development-bootstrap/` (manifest, fail-closed host-role guard for `dial-hermes-control` / `vekl-worker` / `oracle-admin` / provider containers, provider and MCP probes, convergence with backups and rollback, E2E/determinism/fault-injection self-tests, sealed worker-job contract, machine-readable readiness report);
+- two vitest suites that master never collected were added to the include list and one latent failing assertion was aligned to the implementation.
+
+Authority: `docs/project-state/authorizations/auth-20260914-owner-development-system-e2e-audit.json`. Full report: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_E2E_AUDIT_AND_GREEN_FLAG_REV1.md`; machine-readable: `DIAL_DEVELOPMENT_GREEN_FLAG.json`. This record does not advance any gate and does not alter the locked runtime policy.
+
 ## Live Oracle auxiliary-operations evidence — 2026-09-04
 
 The auxiliary operations implementation has been installed on the Oracle control host without invoking either model runtime. Live evidence currently proves:
