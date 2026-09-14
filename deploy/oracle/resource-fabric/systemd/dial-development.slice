@@ -1,0 +1,9 @@
+[Unit]
+Description=DIAL development slice — builds, tests, research, indexing (architecture section 6.2)
+Before=slices.target
+
+[Slice]
+MemoryHigh=14G
+MemoryMax=15G
+CPUWeight=300
+IOWeight=250

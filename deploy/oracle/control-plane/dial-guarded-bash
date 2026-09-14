@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONTROL_HOME="${DIAL_CONTROL_PLANE_HOME:-$HOME/.local/lib/dial-control-plane}"
+GUARD="$CONTROL_HOME/guarded-command.mjs"
+AUDIT="${DIAL_CONTROL_AUDIT_LOG:-$HOME/.local/state/dial-control-plane/policy-ledger.jsonl}"
+
+# Desktop Commander invokes bash-compatible shells as: <shell> -l -c <command>.
+# Preserve normal interactive/login behavior only when no command is supplied.
+if [[ "${1:-}" == "-l" && "${2:-}" == "-c" ]]; then
+  command_text="${3:-}"
+  DIAL_COMMAND_SOURCE=COMMANDER DIAL_CONTROL_AUDIT_LOG="$AUDIT" node "$GUARD" --quiet "$command_text"
+  exec /bin/bash -l -c "$command_text"
+fi
+
+if [[ "${1:-}" == "-c" ]]; then
+  command_text="${2:-}"
+  DIAL_COMMAND_SOURCE=COMMANDER DIAL_CONTROL_AUDIT_LOG="$AUDIT" node "$GUARD" --quiet "$command_text"
+  exec /bin/bash -c "$command_text"
+fi
+
+# Interactive shells are not a valid Commander execution path on a control-only host.
+echo 'dial-guarded-bash: interactive shell refused on RECOVERY_CONTROL_ONLY host' >&2
+exit 3
