@@ -1,0 +1,12 @@
+[Unit]
+Description=DIAL resource fabric host capability agent
+After=network-online.target
+
+[Service]
+Type=oneshot
+Slice=dial-recovery.slice
+Environment=DIAL_FABRIC_STATE=%h/.local/state/dial-fabric
+ExecStart=/usr/bin/env node %h/dial-new/deploy/oracle/resource-fabric/host-agent.mjs --publish
+OOMScoreAdjust=-500
+NoNewPrivileges=true
+PrivateTmp=true

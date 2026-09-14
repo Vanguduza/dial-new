@@ -210,11 +210,20 @@ else
 fi
 normalize_codex_config
 
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operations-plane.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
+
+# The typed ingress exists before the execution fabric is exposed. Install the
+# mandatory provider-first admission boundary, signed venue guard and private
+# three-node MCP runtime before enabling the development orchestrator service.
+bash "$DIAL_REPO_DIR/deploy/oracle/execution-fabric/install-control-runtime.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/execution-fabric/qualify-execution-fabric.sh"
+
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh"
 
 cat <<'EOF'
 

@@ -1,0 +1,14 @@
+[Unit]
+Description=DIAL control-plane slice
+Documentation=file:///etc/dial/PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md
+
+[Slice]
+MemoryAccounting=yes
+CPUAccounting=yes
+IOAccounting=yes
+MemoryMin=2G
+MemoryLow=3.5G
+MemoryHigh=5G
+MemoryMax=6G
+CPUWeight=800
+CPUQuota=200%

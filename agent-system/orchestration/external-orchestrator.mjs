@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertDevelopmentUnblocked } from './development-unblock.mjs';
 import { missionExecutionAllowed } from './mission-control.mjs';
-import { executeHermesInstruction } from './hermes-runtime-executor.mjs';
+import { executeProviderFirstHermesInstruction } from './provider-first-hermes-executor.mjs';
 import { ownerLiveInterruptActive } from './owner-live-control.mjs';
 import { ownerSteeringBlocksAutonomous } from './owner-steering-broker.mjs';
 import { ensurePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } from './engineering-knowledge-broker.mjs';
@@ -207,7 +207,7 @@ function isQualificationCanary(job) {
 export async function processNextExternalWork({
   repoDir = DEFAULT_REPO,
   root,
-  executor = executeHermesInstruction,
+  executor = executeProviderFirstHermesInstruction,
   developmentGate = assertDevelopmentUnblocked,
   heartbeatMs = Number(process.env.DIAL_EXTERNAL_ORCHESTRATOR_HEARTBEAT_MS || 30_000),
 } = {}) {
@@ -289,6 +289,7 @@ export async function processNextExternalWork({
         instruction: job.instruction,
         packetId: job.job_id,
         skillActivation,
+        requestedBy: job.requested_by,
       });
     }
   } catch (error) {
