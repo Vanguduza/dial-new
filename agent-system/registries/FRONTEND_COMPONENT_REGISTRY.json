@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-components-1.1",
+  "identity_rule": "STABLE_CROSS_RENDERER_COMPONENT_ID",
+  "components": [
+    {
+      "component_id": "dial.action.primary",
+      "status": "CERTIFIABLE",
+      "category": "ACTION",
+      "required_states": [
+        "READY",
+        "DISABLED",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "component.button.radius"
+      ],
+      "bindings": {
+        "compose": "DialPrimaryAction",
+        "react": "DialPrimaryAction",
+        "figma": "Dial/Action/Primary",
+        "preview": "components/action/primary"
+      }
+    },
+    {
+      "component_id": "dial.action.secondary",
+      "status": "CERTIFIABLE",
+      "category": "ACTION",
+      "required_states": [
+        "READY",
+        "DISABLED",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "component.button.radius"
+      ],
+      "bindings": {
+        "compose": "DialSecondaryAction",
+        "react": "DialSecondaryAction",
+        "figma": "Dial/Action/Secondary",
+        "preview": "components/action/secondary"
+      }
+    },
+    {
+      "component_id": "dial.surface.card",
+      "status": "CERTIFIABLE",
+      "category": "CONTAINER",
+      "required_states": [
+        "READY",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "component.card.radius"
+      ],
+      "bindings": {
+        "compose": "DialCard",
+        "react": "DialCard",
+        "figma": "Dial/Surface/Card",
+        "preview": "components/surface/card"
+      }
+    },
+    {
+      "component_id": "dial.state.panel",
+      "status": "CERTIFIABLE",
+      "category": "STATE",
+      "required_states": [
+        "LOADING",
+        "EMPTY",
+        "ERROR",
+        "OFFLINE",
+        "STALE",
+        "PERMISSION_DENIED",
+        "DEGRADED"
+      ],
+      "token_refs": [
+        "component.card.radius"
+      ],
+      "bindings": {
+        "compose": "DialStatePanel",
+        "react": "DialStatePanel",
+        "figma": "Dial/State/Panel",
+        "preview": "components/state/panel"
+      }
+    },
+    {
+      "component_id": "dial.navigation.top",
+      "status": "CERTIFIABLE",
+      "category": "NAVIGATION",
+      "required_states": [
+        "READY"
+      ],
+      "token_refs": [],
+      "bindings": {
+        "compose": "DialTopBar",
+        "react": "DialTopBar",
+        "figma": "Dial/Navigation/Top",
+        "preview": "components/navigation/top"
+      }
+    }
+  ]
+}

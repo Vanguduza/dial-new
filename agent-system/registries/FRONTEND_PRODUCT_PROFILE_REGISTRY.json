@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-product-profiles-1.1",
+  "authority_model": "PROJECT_TRUTH_AND_PRODUCT_VISUAL_AUTHORITY_SUPERIOR",
+  "inheritance_rules": {
+    "base_profile": "dial.global",
+    "merge": "DEEP_MERGE_EXPLICIT_OVERRIDE",
+    "unknown_override": "REFUSE",
+    "visual_authority_wins": true
+  },
+  "profiles": [
+    {
+      "profile_id": "dial.global",
+      "extends": null,
+      "status": "ACTIVE",
+      "brand_family": "DIAL",
+      "design_principles": [
+        "convenience",
+        "clarity",
+        "professional_polish",
+        "functional_truth",
+        "responsive_composition"
+      ],
+      "density_default": "STANDARD",
+      "motion_policy": "PURPOSEFUL_REDUCED_MOTION_SAFE",
+      "token_namespace": "dial.global",
+      "component_namespace": "dial",
+      "pattern_allowlist": [
+        "PRECISION_MINIMALISM",
+        "BENTO",
+        "DENSE_SAAS",
+        "EDITORIAL_COMPOSITION",
+        "AURORA_MESH_GRADIENTS",
+        "SOFT_TACTILE_DEPTH"
+      ],
+      "pattern_denylist": [
+        "DECORATIVE_GLASS_EVERYWHERE",
+        "UNBOUNDED_CLAY",
+        "FAKE_SKEUOMORPHISM"
+      ],
+      "renderer_preferences": [
+        "JETPACK_COMPOSE",
+        "REACT_TYPESCRIPT",
+        "SVG",
+        "CANVAS",
+        "RIVE"
+      ]
+    },
+    {
+      "profile_id": "dial.spare",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_A_SPARE",
+      "pattern_allowlist_add": [
+        "PREMIUM_AUTOMOTIVE",
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.tech",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_A_TECH",
+      "pattern_allowlist_add": [
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.groceries",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_GROCERIES",
+      "density_default": "COMFORTABLE"
+    },
+    {
+      "profile_id": "dial.logistics",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_LOGISTICS",
+      "pattern_allowlist_add": [
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "COMPACT"
+    },
+    {
+      "profile_id": "dial.care",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_CARE",
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.control",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_HERMES_CONTROL",
+      "pattern_allowlist_add": [
+        "DENSE_SAAS",
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "OPERATIONAL"
+    },
+    {
+      "profile_id": "dial.van",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_VAN",
+      "density_default": "COMFORTABLE",
+      "motion_policy": "CHARACTERFUL_BUT_TASK_SAFE"
+    }
+  ]
+}

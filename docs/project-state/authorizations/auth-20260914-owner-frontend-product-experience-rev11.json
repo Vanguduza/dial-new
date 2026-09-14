@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260914-owner-frontend-product-experience-rev11",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "ed568550e10a4b0df7443f48a2ea7b4c2aa05960ff4e06c8b1208f6319d77119",
+  "owner_instruction_excerpt": "Implement it fully",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260914-frontend-product-experience-rev11",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-14T12:45:00+00:00",
+  "base_sha": "197533130d88f22cd84af26ac5fa225f3a37126f",
+  "branch_scope": "gpt/frontend-product-experience-rev11-20260914",
+  "authorized_paths": [
+    "agent-system/orchestration/*.mjs",
+    "agent-system/registries/DESIGN_PROVIDER_POLICY.json",
+    "agent-system/registries/FRONTEND_*.json",
+    "agent-system/schemas/frontend/**",
+    "tests/frontend-product-experience.test.mjs"
+  ],
+  "change_classes": [
+    "frontend_product_experience_integration",
+    "vekl_product_experience_enrichment",
+    "fdep_execution_binding",
+    "frontend_design_determinism",
+    "design_provider_bounding",
+    "donor_frontend_projection",
+    "frontend_certification",
+    "frontend_learning",
+    "technical_implementation",
+    "test_and_evidence"
+  ],
+  "notes": [
+    "Owner explicitly instructed full implementation of the reviewed Canonical Frontend Design System as an enrichment of existing DIAL structures, not as a parallel canon or VEKL.",
+    "This authorization is branch-scoped and path-bounded; Project Truth, FRC, security/domain authority, existing VEKL and existing Adaptive Execution Fabric remain superior.",
+    "No business model, money/custody model, security authority, owner-control boundary, legal position, or locked provider is changed by this work."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

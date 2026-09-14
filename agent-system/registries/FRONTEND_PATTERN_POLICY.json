@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-pattern-policy-1.1",
+  "default": "PRECISION_MINIMALISM",
+  "rules": [
+    {
+      "pattern_id": "PRECISION_MINIMALISM",
+      "allowed": true,
+      "conditions": []
+    },
+    {
+      "pattern_id": "DENSE_SAAS",
+      "allowed": true,
+      "conditions": [
+        "INFORMATION_DENSE_OR_OPERATIONAL"
+      ]
+    },
+    {
+      "pattern_id": "BENTO",
+      "allowed": true,
+      "conditions": [
+        "INDEPENDENT_SUMMARY_GROUPS"
+      ]
+    },
+    {
+      "pattern_id": "GLASSMORPHISM",
+      "allowed": true,
+      "conditions": [
+        "LAYERING_HAS_MEANING",
+        "CONTRAST_CERTIFIED",
+        "BOUNDED_SURFACES_ONLY"
+      ]
+    },
+    {
+      "pattern_id": "REFRACTIVE_LIQUID_GLASS",
+      "allowed": true,
+      "conditions": [
+        "HIGH_END_PRESENTATION",
+        "CONTRAST_CERTIFIED",
+        "PERFORMANCE_BUDGET_GREEN",
+        "NOT_DENSE_DATA_FIELD"
+      ]
+    },
+    {
+      "pattern_id": "SOFT_TACTILE_DEPTH",
+      "allowed": true,
+      "conditions": [
+        "TACTILE_CONTROL_OR_FOCAL_SURFACE"
+      ]
+    },
+    {
+      "pattern_id": "PREMIUM_AUTOMOTIVE",
+      "allowed": true,
+      "conditions": [
+        "AUTOMOTIVE_PRODUCT_PROFILE"
+      ]
+    },
+    {
+      "pattern_id": "TECHNICAL_INDUSTRIAL",
+      "allowed": true,
+      "conditions": [
+        "OPERATIONAL_OR_ENGINEERING_CONTEXT"
+      ]
+    },
+    {
+      "pattern_id": "AURORA_MESH_GRADIENTS",
+      "allowed": true,
+      "conditions": [
+        "DECORATIVE_BACKGROUND_ONLY",
+        "TEXT_CONTRAST_CERTIFIED"
+      ]
+    },
+    {
+      "pattern_id": "EDITORIAL_COMPOSITION",
+      "allowed": true,
+      "conditions": [
+        "DISCOVERY_OR_STORYTELLING"
+      ]
+    },
+    {
+      "pattern_id": "CLAY_SOFT_3D",
+      "allowed": false,
+      "conditions": [
+        "EXPLICIT_APPROVED_VISUAL_DELTA_REQUIRED"
+      ]
+    },
+    {
+      "pattern_id": "SELECTIVE_SKEUOMORPHISM",
+      "allowed": true,
+      "conditions": [
+        "REAL_WORLD_AFFORDANCE_BENEFITS_COMPREHENSION"
+      ]
+    }
+  ],
+  "forbidden": [
+    "PATTERN_AS_DEFAULT_DECORATION",
+    "LOW_CONTRAST_GLASS_TEXT",
+    "UNBOUNDED_BLUR",
+    "DECORATIVE_DEPTH_ON_ALL_SURFACES",
+    "AI_GENERATED_INCONSISTENT_ICON_FAMILIES"
+  ]
+}

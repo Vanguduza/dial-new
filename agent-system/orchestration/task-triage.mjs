@@ -12,7 +12,7 @@ const DONOR=/\b(donor|fixitnow|assimil|port[- ]wholesale)\b/i;
 const UI=/\b(frontend|screen|ui|ux|visual|layout|design)\b/i;
 export function riskMax(a,b){return RISK[a]>=RISK[b]?a:b;}
 export function classifyTask({unitMap={},instruction='',affectedPaths=[],featureRecord={},contractRecord={},designMode=null}={}){
- const text=[instruction,(affectedPaths||[]).join(' '),featureRecord?.module,featureRecord?.outcome,contractRecord?.security_profile,(contractRecord?.surfaces||[]).join(' ')].filter(Boolean).join(' ');
+ const text=[instruction,(affectedPaths||[]).join(' '),featureRecord?.module,featureRecord?.outcome,contractRecord?.security_profile,(contractRecord?.surfaces||[]).map((x)=>typeof x==='string'?x:(x?.surface_id||x?.id||'')).join(' ')].filter(Boolean).join(' ');
  const fired=[];let archetype='ROUTINE_CODE_CHANGE',risk='LOW';
  if(ARCH.test(text)){archetype='ARCHITECTURE_CHANGE';risk='CRITICAL';fired.push('ARCHITECTURE_AUTHORITY_BOUNDARY');}
  else if(MONEY.test(text)){archetype='MONEY_PATH_CHANGE';risk='HIGH';fired.push('MONEY_PATH');}
@@ -28,8 +28,9 @@ export function classifyTask({unitMap={},instruction='',affectedPaths=[],feature
  if(/\b(clinical|health claim|production money|project truth|manager runtime)\b/i.test(text)){risk='CRITICAL';fired.push('CRITICAL_RISK_FLOOR');}
  const mandatoryIndependentReview=['HIGH','CRITICAL'].includes(risk)||['DONOR_ADAPTATION','NEW_FRONTEND_DESIGN','LOCKED_DESIGN_ENHANCEMENT'].includes(archetype);
  const mandatoryCompetitiveReview=risk==='CRITICAL'&&archetype==='ARCHITECTURE_CHANGE';
- const requiredCapabilities=[archetype.includes('DESIGN')||archetype==='DONOR_ADAPTATION'?'coding':'coding'];
- if(['NEW_FRONTEND_DESIGN','LOCKED_DESIGN_ENHANCEMENT','DONOR_ADAPTATION','VISUAL_REGRESSION'].includes(archetype)) requiredCapabilities.push('visualReasoning');
- const result={schema_version:1,archetype,risk_class:risk,required_capabilities:[...new Set(requiredCapabilities)].sort(),prohibited_capabilities:[],mandatory_gates:['VEKL_CURRENT','DETERMINISTIC_VERIFICATION',...(unitMap?.product_experience_map?.applicable?['PRODUCT_EXPERIENCE']:[])],mandatory_review_classes:mandatoryIndependentReview?['INDEPENDENT_REVIEW']:[],mandatory_independent_review:mandatoryIndependentReview,mandatory_competitive_review:mandatoryCompetitiveReview,parallelizable_dimensions:[],deterministic_rules_fired:[...new Set(fired)].sort(),policy_version:'dial-aef-triage-1',input_hash:hashObject({text,designMode,unit:unitMap?.unit_revision_hash||null})};
+ const requiredCapabilities=['coding'];if(['NEW_FRONTEND_DESIGN','LOCKED_DESIGN_ENHANCEMENT','DONOR_ADAPTATION','VISUAL_REGRESSION'].includes(archetype)) requiredCapabilities.push('visualReasoning');
+ const fp=unitMap?.product_experience_map?.frontend_projection;const frontendApplicable=Boolean(fp?.applicable)&&['NEW_FRONTEND_DESIGN','LOCKED_DESIGN_ENHANCEMENT','DONOR_ADAPTATION','VISUAL_REGRESSION'].includes(archetype);
+ const frontendRouting=frontendApplicable?{applicable:true,policy_version:'frontend-presentation-router-1.1',execution_mode:fp.presentation_decision?.execution_mode||'SYNTHESIZE',presentation_decision_hash:fp.presentation_decision?.content_hash||null,renderer_id:fp.presentation_decision?.renderer_id||null,template_ids:[...(fp.presentation_decision?.template_ids||[])].sort(),vrde_hash:fp.visual_render_determinism_envelope?.content_hash||null}:{applicable:false,policy_version:'frontend-presentation-router-1.1'};
+ const result={schema_version:1,archetype,risk_class:risk,required_capabilities:[...new Set(requiredCapabilities)].sort(),prohibited_capabilities:[],mandatory_gates:['VEKL_CURRENT','DETERMINISTIC_VERIFICATION',...(unitMap?.product_experience_map?.applicable?['PRODUCT_EXPERIENCE']:[]),...(frontendApplicable?['FDEP_CURRENT','FRONTEND_COMPOSITE_CERTIFICATION']:[])],mandatory_review_classes:mandatoryIndependentReview?['INDEPENDENT_REVIEW']:[],mandatory_independent_review:mandatoryIndependentReview,mandatory_competitive_review:mandatoryCompetitiveReview,parallelizable_dimensions:[],deterministic_rules_fired:[...new Set(fired)].sort(),frontend_routing:frontendRouting,policy_version:'dial-aef-triage-1',input_hash:hashObject({text,designMode,unit:unitMap?.unit_revision_hash||null,frontend:frontendRouting})};
  return {...result,triage_result_hash:hashObject(result)};
 }

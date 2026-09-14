@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-renderers-1.1",
+  "renderers": [
+    {
+      "renderer_id": "JETPACK_COMPOSE",
+      "platforms": [
+        "ANDROID"
+      ],
+      "use_when": [
+        "NATIVE_ANDROID",
+        "DEVICE_INTEGRATION",
+        "OFFLINE_CRITICAL"
+      ],
+      "forbid_when": []
+    },
+    {
+      "renderer_id": "REACT_TYPESCRIPT",
+      "platforms": [
+        "WEB",
+        "DESKTOP_WEB_WRAPPER"
+      ],
+      "use_when": [
+        "WEB_APP",
+        "ADMIN",
+        "SAAS"
+      ],
+      "forbid_when": []
+    },
+    {
+      "renderer_id": "SVG",
+      "platforms": [
+        "ANDROID",
+        "WEB",
+        "DESKTOP"
+      ],
+      "use_when": [
+        "VECTOR_DIAGRAM",
+        "ICON",
+        "TECHNICAL_ILLUSTRATION"
+      ],
+      "forbid_when": [
+        "COMPLEX_INTERACTIVE_APP_SURFACE"
+      ]
+    },
+    {
+      "renderer_id": "CANVAS",
+      "platforms": [
+        "ANDROID",
+        "WEB",
+        "DESKTOP"
+      ],
+      "use_when": [
+        "HIGH_DENSITY_CUSTOM_DRAWING",
+        "REALTIME_VISUALIZATION"
+      ],
+      "forbid_when": [
+        "SEMANTIC_CONTROLS_WITHOUT_ACCESSIBILITY_OVERLAY"
+      ]
+    },
+    {
+      "renderer_id": "RIVE",
+      "platforms": [
+        "ANDROID",
+        "WEB",
+        "DESKTOP"
+      ],
+      "use_when": [
+        "BOUNDED_STATEFUL_ANIMATION",
+        "CHARACTER_ANIMATION"
+      ],
+      "forbid_when": [
+        "BUSINESS_LOGIC_AUTHORITY",
+        "TEXT_HEAVY_CORE_UI"
+      ]
+    }
+  ],
+  "selection_rule": "SURFACE_LOCAL_AUTHORITY_AFFECTED_PATHS_AND_PRODUCT_CONTEXT_FIRST_GLOBAL_STACK_NEVER_FORCES_RENDERER",
+  "runtime_provider_dependency_forbidden": true
+}
