@@ -30,12 +30,13 @@ import { executeOwnerLiveTurn } from './owner-live-control.mjs';
 import { ownerSteeringStatus, submitOwnerSteer } from './owner-steering-broker.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
-export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
+export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'chatgpt', 'whatsapp', 'local_cli', 'unknown']);
 export const CHAT_CONTROL_TOKEN_REL = 'secrets/chat-control.token';
+export const CHATGPT_MCP_PATH = '/mcp/chatgpt';
 const DEFAULT_HOST = process.env.DIAL_CHAT_CONTROL_HOST || '127.0.0.1';
 const DEFAULT_PORT = Number(process.env.DIAL_CHAT_CONTROL_PORT || 9130);
 const WRITE_TOOLS = new Set(['dial_submit_instruction', 'dial_owner_steer', 'dial_owner_live_turn', 'dial_pause_mission', 'dial_resume_mission', 'dial_reprioritize', 'dial_approve_gate', 'dial_reject_gate']);
-const OWNER_AUTHORITY_CHANNELS = new Set(['claude', 'codex', 'whatsapp']);
+const OWNER_AUTHORITY_CHANNELS = new Set(['claude', 'codex', 'chatgpt', 'whatsapp']);
 const EVENT_FILES = [
   'events/mission-control.jsonl',
   'events/external-orchestrator.jsonl',
@@ -259,7 +260,7 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     const instruction = clean(args.instruction, 30000); if (!instruction) throw new Error('instruction is required');
     const requestId = normalizeRequestId(args.request_id);
     const ownerProvenance = ownerChannelProvenance({ instruction, requestId, operatorContext, forceAction: true });
-    if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner steer requires an authenticated Claude, Codex or WhatsApp owner channel');
+    if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner steer requires an authenticated Claude, Codex, ChatGPT or WhatsApp owner channel');
     result = submitOwnerSteer({ instruction, attachmentCount: Number(args.attachment_count || 0), requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance, root });
   }
   else if (name === 'dial_owner_live_turn') {
@@ -268,7 +269,7 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     const mode = args.mode || null;
     const ownerProvenance = ownerChannelProvenance({ instruction, requestId, operatorContext, forceAction: mode === 'instruction' });
     if (mode === 'instruction') {
-      if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner action requires an authenticated Claude, Codex or WhatsApp owner channel');
+      if (ownerProvenance.authority === 'NO_AUTHORITY') throw new Error('owner action requires an authenticated Claude, Codex, ChatGPT or WhatsApp owner channel');
       result = submitOwnerSteer({ instruction, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance, root });
     } else {
       result = await executeOwnerLiveTurn({ instruction, mode: 'query', root, repoDir: project.repo_dir, requestedBy: `${operatorContext.channel}:${operatorContext.actor}`, requestId, ownerProvenance });
@@ -328,20 +329,24 @@ async function readBody(req, max = 1024 * 1024) { const chunks = []; let size = 
 export function createChatControlServer({ root, host = DEFAULT_HOST, port = DEFAULT_PORT } = {}) {
   ensureControlLayout(root); ensureChatControlToken(root); const expected = readToken(root);
   const server = http.createServer(async (req, res) => {
-    if (req.method === 'GET' && req.url === '/health') return sendJson(res, 200, { service: 'dial-chat-control', project: 'dial', authority: CHAT_CONTROL_AUTHORITY, state: 'UP', at: now() });
-    if (req.url !== '/mcp') return sendJson(res, 404, { error: 'not found' });
+    if (req.method === 'GET' && req.url === '/health') return sendJson(res, 200, { service: 'dial-chat-control', project: 'dial', authority: CHAT_CONTROL_AUTHORITY, state: 'UP', chatgpt_mcp_path: CHATGPT_MCP_PATH, at: now() });
+    const chatgptRoute = req.url === CHATGPT_MCP_PATH;
+    if (req.url !== '/mcp' && !chatgptRoute) return sendJson(res, 404, { error: 'not found' });
     const auth = String(req.headers.authorization || ''); const provided = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
     if (!timingSafeTokenEqual(provided, expected)) return sendJson(res, 401, { error: 'unauthorized' });
     if (req.method !== 'POST') return sendJson(res, 405, { error: 'POST required' });
     try {
       const raw = await readBody(req); const body = JSON.parse(raw);
-      const response = await handleRpc(body, root, { channel: req.headers['x-dial-operator-channel'] || 'unknown', actor: req.headers['x-dial-operator-actor'] || 'owner', transport: 'http_mcp' });
+      const operator = chatgptRoute
+        ? { channel: 'chatgpt', actor: 'owner', transport: 'chatgpt_http_mcp' }
+        : { channel: req.headers['x-dial-operator-channel'] || 'unknown', actor: req.headers['x-dial-operator-actor'] || 'owner', transport: 'http_mcp' };
+      const response = await handleRpc(body, root, operator);
       if (response === null) { res.writeHead(202, { 'cache-control': 'no-store' }); return res.end(); }
       return sendJson(res, 200, response);
     } catch (error) { return sendJson(res, 400, rpcError(null, -32700, clean(error?.message || error, 4000))); }
   });
   server.listen(port, host, () => {
-    writeJsonAtomic('state/chat-control-heartbeat.json', { service: 'dial-chat-control', project: 'dial', pid: process.pid, host, port, authority: CHAT_CONTROL_AUTHORITY, state: 'RUNNING', token_fingerprint: ensureChatControlToken(root).fingerprint, at: now() }, root);
+    writeJsonAtomic('state/chat-control-heartbeat.json', { service: 'dial-chat-control', project: 'dial', pid: process.pid, host, port, authority: CHAT_CONTROL_AUTHORITY, state: 'RUNNING', token_fingerprint: ensureChatControlToken(root).fingerprint, chatgpt_mcp_path: CHATGPT_MCP_PATH, at: now() }, root);
   });
   const stop = () => server.close(() => process.exit(0)); process.on('SIGTERM', stop); process.on('SIGINT', stop);
   return server;
