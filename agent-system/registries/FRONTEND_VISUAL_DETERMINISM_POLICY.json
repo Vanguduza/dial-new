@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-visual-determinism-1.1",
+  "required_dimensions": [
+    "platform",
+    "renderer",
+    "viewport",
+    "density",
+    "locale",
+    "timezone",
+    "color_scheme",
+    "font_scale",
+    "animation_policy",
+    "asset_manifest_hash",
+    "capture_settle_policy",
+    "dynamic_region_policy"
+  ],
+  "comparability": "ALL_REQUIRED_DIMENSIONS_EQUAL_UNLESS_EXPLICIT_TOLERANCE",
+  "profiles": [
+    {
+      "profile_id": "web.standard.desktop",
+      "platform": "WEB",
+      "renderer": "REACT_TYPESCRIPT",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "device_scale_factor": 1
+      },
+      "density": "STANDARD",
+      "locale": "en",
+      "timezone": "UTC",
+      "color_scheme": "LIGHT",
+      "font_scale": 1,
+      "animation_policy": "REDUCE_OR_SETTLE",
+      "capture_settle_policy": "NETWORK_IDLE_PLUS_2_FRAMES",
+      "dynamic_region_policy": "MASK_DECLARED_ONLY"
+    },
+    {
+      "profile_id": "android.phone.standard",
+      "platform": "ANDROID",
+      "renderer": "JETPACK_COMPOSE",
+      "viewport": {
+        "width_dp": 412,
+        "height_dp": 915
+      },
+      "density": "DEVICE_PROFILE_PINNED",
+      "locale": "en",
+      "timezone": "UTC",
+      "color_scheme": "LIGHT",
+      "font_scale": 1,
+      "animation_policy": "DISABLE_OR_TEST_CLOCK_SETTLE",
+      "capture_settle_policy": "COMPOSE_IDLE_PLUS_2_FRAMES",
+      "dynamic_region_policy": "MASK_DECLARED_ONLY"
+    }
+  ]
+}

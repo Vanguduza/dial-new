@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-archetypes-1.1",
+  "archetypes": [
+    {
+      "archetype_id": "TRANSACTIONAL_WORKSPACE",
+      "intents": [
+        "POS",
+        "CHECKOUT",
+        "ORDER",
+        "CART"
+      ],
+      "regions": [
+        "PRIMARY_WORKSPACE",
+        "SUMMARY",
+        "ACTION_RAIL"
+      ],
+      "density": "COMPACT",
+      "scroll_policy": "REGION_BOUNDED"
+    },
+    {
+      "archetype_id": "OPERATIONAL_DASHBOARD",
+      "intents": [
+        "DASHBOARD",
+        "OPERATIONS",
+        "CONTROL",
+        "MONITOR"
+      ],
+      "regions": [
+        "STATUS",
+        "PRIMARY_METRICS",
+        "WORK_QUEUE",
+        "DETAIL"
+      ],
+      "density": "OPERATIONAL",
+      "scroll_policy": "VERTICAL_WITH_STICKY_STATUS"
+    },
+    {
+      "archetype_id": "CATALOG_EXPLORER",
+      "intents": [
+        "CATALOG",
+        "SEARCH",
+        "BROWSE",
+        "SPARE"
+      ],
+      "regions": [
+        "SEARCH",
+        "FILTERS",
+        "RESULTS",
+        "DETAIL"
+      ],
+      "density": "STANDARD",
+      "scroll_policy": "RESULTS_PRIMARY"
+    },
+    {
+      "archetype_id": "FORM_WORKFLOW",
+      "intents": [
+        "FORM",
+        "EDIT",
+        "CREATE",
+        "ONBOARD"
+      ],
+      "regions": [
+        "CONTEXT",
+        "FIELDS",
+        "VALIDATION",
+        "ACTIONS"
+      ],
+      "density": "STANDARD",
+      "scroll_policy": "VERTICAL"
+    },
+    {
+      "archetype_id": "CONVERSATIONAL_ASSISTANT",
+      "intents": [
+        "ASSISTANT",
+        "CHAT",
+        "VAN"
+      ],
+      "regions": [
+        "CONVERSATION",
+        "COMPOSER",
+        "CONTEXT",
+        "STATUS"
+      ],
+      "density": "COMFORTABLE",
+      "scroll_policy": "CONVERSATION_PRIMARY"
+    },
+    {
+      "archetype_id": "REFERENCE_RECONSTRUCTION",
+      "intents": [
+        "RECONSTRUCT",
+        "BENCHMARK",
+        "VISUAL_REFERENCE"
+      ],
+      "regions": [
+        "AUTHORITY_DEFINED"
+      ],
+      "density": "AUTHORITY_DEFINED",
+      "scroll_policy": "AUTHORITY_DEFINED"
+    }
+  ]
+}

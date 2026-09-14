@@ -1,0 +1,1062 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.local/schemas/frontend/FRONTEND_CONTRACTS.schema.json",
+  "title": "DIAL Frontend Product Experience Contracts",
+  "description": "Machine-readable contracts for the Rev 1.1 Product Experience integration. These schemas validate specialist frontend artifacts; Project Truth, FRC, domain/security authority, VEKL and the Adaptive Execution Fabric remain superior.",
+  "type": "object",
+  "$defs": {
+    "BaseArtifact": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "artifact_type",
+        "artifact_id",
+        "content_hash",
+        "status",
+        "provenance"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifact_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "ProductDesignProfile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "profile"
+          ],
+          "properties": {
+            "profile": {
+              "type": "object"
+            },
+            "registry_version": {
+              "type": "string"
+            },
+            "artifact_type": {
+              "const": "ProductDesignProfile"
+            }
+          }
+        }
+      ]
+    },
+    "SurfaceManifest": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "unit_lineage_id",
+            "surfaces"
+          ],
+          "properties": {
+            "unit_lineage_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "unit_revision_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "feature_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "surface_id",
+                  "source_ref",
+                  "source"
+                ],
+                "properties": {
+                  "surface_id": {
+                    "type": "string"
+                  },
+                  "source_ref": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "route": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "kind": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "required_states": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "uniqueItems": true
+                  },
+                  "user_journey_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "uniqueItems": true
+                  },
+                  "action_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "uniqueItems": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "artifact_type": {
+              "const": "SurfaceManifest"
+            }
+          }
+        }
+      ]
+    },
+    "SurfaceStateMatrix": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "unit_lineage_id",
+            "surfaces"
+          ],
+          "properties": {
+            "unit_lineage_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "surface_id",
+                  "states"
+                ],
+                "properties": {
+                  "surface_id": {
+                    "type": "string"
+                  },
+                  "states": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "state_id",
+                        "requirement"
+                      ],
+                      "properties": {
+                        "state_id": {
+                          "enum": [
+                            "READY",
+                            "LOADING",
+                            "EMPTY",
+                            "PARTIAL",
+                            "ERROR",
+                            "OFFLINE",
+                            "STALE",
+                            "PERMISSION_DENIED",
+                            "SYNCING",
+                            "CONFLICT",
+                            "DEGRADED",
+                            "SUCCESS"
+                          ]
+                        },
+                        "requirement": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "artifact_type": {
+              "const": "SurfaceStateMatrix"
+            }
+          }
+        }
+      ]
+    },
+    "VisualReferenceSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "references"
+          ],
+          "properties": {
+            "unit_lineage_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "reference_id",
+                  "authority_level",
+                  "required_fidelity"
+                ],
+                "properties": {
+                  "reference_id": {
+                    "type": "string"
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authority_level": {
+                    "enum": [
+                      "CANONICAL_REFERENCE",
+                      "ARCHETYPE_REFERENCE",
+                      "DERIVED",
+                      "SYSTEM_STANDARD"
+                    ]
+                  },
+                  "required_fidelity": {
+                    "type": "string"
+                  },
+                  "approved_delta_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "uniqueItems": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "fallback_authority_level": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "artifact_type": {
+              "const": "VisualReferenceSpec"
+            }
+          }
+        }
+      ]
+    },
+    "VisualRenderDeterminismEnvelope": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "renderer"
+          ],
+          "properties": {
+            "platform": {
+              "type": "string"
+            },
+            "renderer": {
+              "type": "string"
+            },
+            "viewport": {
+              "type": "object"
+            },
+            "density": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "locale": {
+              "type": "string"
+            },
+            "timezone": {
+              "type": "string"
+            },
+            "color_scheme": {
+              "type": "string"
+            },
+            "font_scale": {
+              "type": "number"
+            },
+            "animation_policy": {
+              "type": "string"
+            },
+            "asset_manifest_hash": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "capture_settle_policy": {
+              "type": "string"
+            },
+            "dynamic_region_policy": {
+              "type": "string"
+            },
+            "framework_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "harness_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "artifact_type": {
+              "const": "VisualRenderDeterminismEnvelope"
+            }
+          }
+        }
+      ]
+    },
+    "PresentationDecision": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "execution_mode",
+            "archetype_id",
+            "renderer_id",
+            "pattern_id",
+            "template_ids"
+          ],
+          "properties": {
+            "execution_mode": {
+              "enum": [
+                "RECONSTRUCT",
+                "SYNTHESIZE",
+                "ENHANCE",
+                "ASSIMILATE"
+              ]
+            },
+            "archetype_id": {
+              "type": "string"
+            },
+            "renderer_id": {
+              "type": "string"
+            },
+            "density": {
+              "type": "string"
+            },
+            "pattern_id": {
+              "type": "string"
+            },
+            "motion_policy": {
+              "type": "string"
+            },
+            "template_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "exception_policy": {
+              "type": "string"
+            },
+            "artifact_type": {
+              "const": "PresentationDecision"
+            }
+          }
+        }
+      ]
+    },
+    "DonorFrontendReuseProjection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reuse_mode",
+            "source_authority_hash"
+          ],
+          "properties": {
+            "reuse_mode": {
+              "enum": [
+                "WHOLESALE",
+                "PORT_AND_ADAPT",
+                "LOGIC_ONLY",
+                "UX_PATTERN_ONLY",
+                "VISUAL_PATTERN_ONLY",
+                "ALGORITHM_ONLY",
+                "REFERENCE_ONLY",
+                "REJECT"
+              ]
+            },
+            "source_authority_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "preserve": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "adapt": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "replace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "enhance": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "forbid": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "artifact_type": {
+              "const": "DonorFrontendReuseProjection"
+            }
+          }
+        }
+      ]
+    },
+    "ApprovedVisualDelta": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "authority_ref",
+            "delta"
+          ],
+          "properties": {
+            "authority_ref": {
+              "type": "string"
+            },
+            "delta": {
+              "type": "object"
+            },
+            "owner_authority_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "artifact_type": {
+              "const": "ApprovedVisualDelta"
+            }
+          }
+        }
+      ]
+    },
+    "ApprovedExperienceEnhancement": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "authority_ref",
+            "enhancement"
+          ],
+          "properties": {
+            "authority_ref": {
+              "type": "string"
+            },
+            "enhancement": {
+              "type": "object"
+            },
+            "owner_authority_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "artifact_type": {
+              "const": "ApprovedExperienceEnhancement"
+            }
+          }
+        }
+      ]
+    },
+    "ComponentSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "component_id",
+            "states",
+            "renderer_bindings"
+          ],
+          "properties": {
+            "component_id": {
+              "type": "string"
+            },
+            "states": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "renderer_bindings": {
+              "type": "object"
+            },
+            "token_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "artifact_type": {
+              "const": "ComponentSpec"
+            }
+          }
+        }
+      ]
+    },
+    "PatternPolicy": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "pattern_id",
+            "eligibility"
+          ],
+          "properties": {
+            "pattern_id": {
+              "type": "string"
+            },
+            "eligibility": {
+              "type": "object"
+            },
+            "artifact_type": {
+              "const": "PatternPolicy"
+            }
+          }
+        }
+      ]
+    },
+    "RendererPolicy": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "renderer_id",
+            "eligibility"
+          ],
+          "properties": {
+            "renderer_id": {
+              "type": "string"
+            },
+            "eligibility": {
+              "type": "object"
+            },
+            "artifact_type": {
+              "const": "RendererPolicy"
+            }
+          }
+        }
+      ]
+    },
+    "ArchetypeSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "archetype_id"
+          ],
+          "properties": {
+            "archetype_id": {
+              "type": "string"
+            },
+            "surface_intents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "artifact_type": {
+              "const": "ArchetypeSpec"
+            }
+          }
+        }
+      ]
+    },
+    "DesignCandidate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "candidate_hash",
+            "authority"
+          ],
+          "properties": {
+            "candidate_hash": {
+              "type": "string"
+            },
+            "authority": {
+              "const": "NON_AUTHORITATIVE_DESIGN_CANDIDATE"
+            },
+            "fdep_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "screen_refs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "artifact_type": {
+              "const": "DesignCandidate"
+            }
+          }
+        }
+      ]
+    },
+    "DesignNormalizationEvidence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "candidate_hash",
+            "violations"
+          ],
+          "properties": {
+            "candidate_hash": {
+              "type": "string"
+            },
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "change_budget_satisfied": {
+              "type": "boolean"
+            },
+            "artifact_type": {
+              "const": "DesignNormalizationEvidence"
+            }
+          }
+        }
+      ]
+    },
+    "ComponentCertification": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "component_id",
+            "checks"
+          ],
+          "properties": {
+            "component_id": {
+              "type": "string"
+            },
+            "checks": {
+              "type": "object"
+            },
+            "artifact_type": {
+              "const": "ComponentCertification"
+            }
+          }
+        }
+      ]
+    },
+    "TemplateArtifact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "template_id",
+            "mode",
+            "required_inputs",
+            "outputs"
+          ],
+          "properties": {
+            "template_id": {
+              "type": "string"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "required_inputs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "artifact_type": {
+              "const": "TemplateArtifact"
+            }
+          }
+        }
+      ]
+    },
+    "DesignLintReport": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "violations"
+          ],
+          "properties": {
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "artifact_type": {
+              "const": "DesignLintReport"
+            }
+          }
+        }
+      ]
+    },
+    "DesignCodeParityStatus": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "design_hash",
+            "code_hash",
+            "mismatches"
+          ],
+          "properties": {
+            "design_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "code_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mismatches": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "artifact_type": {
+              "const": "DesignCodeParityStatus"
+            }
+          }
+        }
+      ]
+    },
+    "CertificationEvidence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "visual_gates",
+            "failures"
+          ],
+          "properties": {
+            "visual_gates": {
+              "type": "object"
+            },
+            "failures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "composite_passed": {
+              "type": "boolean"
+            },
+            "artifact_type": {
+              "const": "CertificationEvidence"
+            }
+          }
+        }
+      ]
+    },
+    "FrontendDesignExecutionPacket": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "task_id",
+            "unit_lineage_id",
+            "unit_revision_hash",
+            "unit_map_hash",
+            "product_design_profile",
+            "surface_manifest",
+            "surface_state_matrix",
+            "visual_reference_spec",
+            "presentation_decision",
+            "visual_render_determinism_envelope",
+            "registry_hashes",
+            "acceptance",
+            "authority_constraints"
+          ],
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "unit_lineage_id": {
+              "type": "string"
+            },
+            "unit_revision_hash": {
+              "type": "string"
+            },
+            "unit_map_hash": {
+              "type": "string"
+            },
+            "triage_result_hash": {
+              "type": "string"
+            },
+            "product_design_profile": {
+              "$ref": "#/$defs/ProductDesignProfile"
+            },
+            "surface_manifest": {
+              "$ref": "#/$defs/SurfaceManifest"
+            },
+            "surface_state_matrix": {
+              "$ref": "#/$defs/SurfaceStateMatrix"
+            },
+            "visual_reference_spec": {
+              "$ref": "#/$defs/VisualReferenceSpec"
+            },
+            "presentation_decision": {
+              "$ref": "#/$defs/PresentationDecision"
+            },
+            "visual_render_determinism_envelope": {
+              "$ref": "#/$defs/VisualRenderDeterminismEnvelope"
+            },
+            "template_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "registry_hashes": {
+              "type": "object"
+            },
+            "change_budget": {
+              "type": "object"
+            },
+            "acceptance": {
+              "type": "object"
+            },
+            "authority_constraints": {
+              "type": "object"
+            },
+            "artifact_type": {
+              "const": "FrontendDesignExecutionPacket"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ProductDesignProfile"
+    },
+    {
+      "$ref": "#/$defs/SurfaceManifest"
+    },
+    {
+      "$ref": "#/$defs/SurfaceStateMatrix"
+    },
+    {
+      "$ref": "#/$defs/VisualReferenceSpec"
+    },
+    {
+      "$ref": "#/$defs/VisualRenderDeterminismEnvelope"
+    },
+    {
+      "$ref": "#/$defs/PresentationDecision"
+    },
+    {
+      "$ref": "#/$defs/DonorFrontendReuseProjection"
+    },
+    {
+      "$ref": "#/$defs/ApprovedVisualDelta"
+    },
+    {
+      "$ref": "#/$defs/ApprovedExperienceEnhancement"
+    },
+    {
+      "$ref": "#/$defs/ComponentSpec"
+    },
+    {
+      "$ref": "#/$defs/PatternPolicy"
+    },
+    {
+      "$ref": "#/$defs/RendererPolicy"
+    },
+    {
+      "$ref": "#/$defs/ArchetypeSpec"
+    },
+    {
+      "$ref": "#/$defs/DesignCandidate"
+    },
+    {
+      "$ref": "#/$defs/DesignNormalizationEvidence"
+    },
+    {
+      "$ref": "#/$defs/ComponentCertification"
+    },
+    {
+      "$ref": "#/$defs/TemplateArtifact"
+    },
+    {
+      "$ref": "#/$defs/DesignLintReport"
+    },
+    {
+      "$ref": "#/$defs/DesignCodeParityStatus"
+    },
+    {
+      "$ref": "#/$defs/CertificationEvidence"
+    },
+    {
+      "$ref": "#/$defs/FrontendDesignExecutionPacket"
+    }
+  ]
+}
