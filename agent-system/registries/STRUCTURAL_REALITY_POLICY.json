@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "policy_id": "dial-vekl-structural-reality",
+  "policy_version": "1.0.0",
+  "authority": {
+    "plane": "SUBORDINATE_STRUCTURAL_EVIDENCE",
+    "may_mutate_project_truth": false,
+    "may_redefine_development_units": false,
+    "may_change_engineering_resource_eligibility": false,
+    "order": [
+      "OWNER_CANONICAL",
+      "PROJECT_TRUTH",
+      "LOCKED_DECISION_OR_EDR",
+      "FRC_OR_CONTRACT",
+      "VEKL_CANONICAL_ASSERTION",
+      "VERIFIED_RUNTIME_EVIDENCE",
+      "GRAPHIFY_EXTRACTED",
+      "GRAPHIFY_RESOLVED",
+      "VEKL_DERIVED",
+      "MODEL_INFERRED"
+    ]
+  },
+  "rollout": {
+    "mode": "SHADOW",
+    "material_execution_dependency": false,
+    "resource_eligibility_dependency": false,
+    "missing_snapshot_behavior": "ADVISORY_MISSING",
+    "bound_stale_snapshot_behavior": "REFUSE_STALE",
+    "hard_gate_requires_live_qualification": true
+  },
+  "source_manifest": {
+    "profile": "DIAL_CODE_ONLY_V1",
+    "exclude_directory_names": [".git", "node_modules", "dist", "build", "coverage", ".cache", ".next", ".turbo"],
+    "exclude_path_prefixes": ["docs/dial/final-audit/ARCHIVE/"],
+    "symlink_policy": "HASH_LINK_DO_NOT_FOLLOW",
+    "path_escape_policy": "REFUSE"
+  },
+  "providers": {
+    "typescript-structural": {
+      "provider_id": "typescript-structural",
+      "provider_version": "dial-1",
+      "purpose": "DETERMINISTIC_BASELINE_AND_QUALIFICATION_FALLBACK",
+      "execution_enabled": true,
+      "authority": "STRUCTURAL_EVIDENCE"
+    },
+    "graphify": {
+      "provider_id": "graphify",
+      "provider_version": "0.9.58",
+      "profile": "CODE_ONLY",
+      "qualified": false,
+      "activation_ready": false,
+      "execution_enabled": false,
+      "requires": [
+        "EXACT_VERSION",
+        "NO_EGRESS_EVIDENCE",
+        "SOURCE_TREE_IMMUTABILITY_EVIDENCE",
+        "PARSER_VERSION_EVIDENCE",
+        "SCHEMA_SAMPLE_EVIDENCE"
+      ],
+      "authority": "STRUCTURAL_EVIDENCE"
+    }
+  },
+  "normalization": {
+    "raw_provider_graph_is_evidence_only": true,
+    "provider_independent_identity": "sha256(repo+path+symbol_kind+qualified_name)",
+    "reject_secret_bearing_payloads": true,
+    "reject_external_paths": true,
+    "inferred_edges_require_review": true
+  },
+  "relationship_weights": {
+    "AUTHORISED_BY": 1.0,
+    "BELONGS_TO_UNIT": 1.0,
+    "IMPLEMENTS": 0.95,
+    "TESTED_BY": 0.95,
+    "CALLS": 0.9,
+    "USES_SCHEMA": 0.9,
+    "HANDLES_EVENT": 0.9,
+    "IMPORTS": 0.7,
+    "SAME_COMMUNITY": 0.55,
+    "SIMILAR_STRUCTURE": 0.4,
+    "GRAPHIFY_INFERRED_LINK": 0.35,
+    "SEMANTIC_SIMILARITY": "RERANK_ONLY"
+  },
+  "retrieval": {
+    "max_hops": 4,
+    "max_nodes": 160,
+    "semantic_similarity": "RERANK_ONLY_AFTER_STRUCTURAL_ELIGIBILITY",
+    "mandatory_constraints_may_be_truncated": false,
+    "resource_eligibility_is_unchanged": true
+  },
+  "frontend": {
+    "graph_layer": "G_PX",
+    "implementation_layer": "G_IMPL",
+    "direct_graphify_to_frontend_authority": false,
+    "bind_projection_hash": true,
+    "bind_fdep_hash": true,
+    "bind_vrde_hash": true,
+    "design_code_parity_owner": "frontend-certification.mjs",
+    "graphify_role": "STRUCTURAL_EVIDENCE_PROVIDER"
+  },
+  "structural_contracts": [
+    {"contract_id":"SC-001","statement":"No UI package imports settlement persistence","default_mode":"ADVISORY"},
+    {"contract_id":"SC-002","statement":"All payment mutation flows pass through PaymentOrchestrator","default_mode":"ADVISORY"},
+    {"contract_id":"SC-003","statement":"No worker invokes canonical mutation APIs directly","default_mode":"ADVISORY"},
+    {"contract_id":"SC-004","statement":"WhatsApp owner control cannot bypass Hermes authority mediation","default_mode":"ADVISORY"},
+    {"contract_id":"SC-005","statement":"Canonical challenge acceptance only enters through owner decision path","default_mode":"ADVISORY"}
+  ],
+  "protected_domains": ["PAYMENT", "AUTHORITY", "IDENTITY", "SECURITY", "OWNER_CONTROL", "CANON_MUTATION", "KNOWLEDGE_ADMISSION"],
+  "certification": {
+    "clean_rebuild_count": 2,
+    "normalized_hashes_must_match": true,
+    "provider_outage_may_reuse_approved_current_snapshot": true,
+    "provider_outage_may_use_stale_snapshot": false,
+    "evidence_replay_required": true
+  }
+}
