@@ -3,21 +3,16 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260913-owner-adaptive-routing-publication"
+    "auth-20260914-owner-provider-first-execution-fabric-rev2"
   ],
-  "branch": "claude/adaptive-harness-model-routing-dec032",
+  "branch": "claude/setup-review-09exdj",
   "changed_files": [
-    "agent-system/orchestration/adaptive-routing-architecture-check.mjs",
-    "agent-system/orchestration/execution-pair-router.mjs",
-    "agent-system/orchestration/model-performance-ledger.mjs",
-    "agent-system/registries/MODEL_TASK_PERFORMANCE_LEDGER.json",
-    "docs/project-state/authorizations/auth-20260913-owner-self-learning-smoothing-weight.json",
-    "tests/orchestration-adaptive-routing.test.mjs"
+    "docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md"
   ],
-  "content_diff_sha256": "dd66f89662c63e6c1c751ae2aa596262b8f5cba54187fd633a5abe53a7de41fa",
-  "observed_at_utc": "2026-09-13T03:33:19.414477+00:00",
+  "content_diff_sha256": "c8fd133acd90f3a3d71fea9883452073c76652e2104c741fd73701966cc42f90",
+  "observed_at_utc": "2026-09-14T03:51:00.770331+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "95748fc56be0c16ce95d11598743896a829f479b",
+  "source_parent": "d269da06baac7223f29826370a3d3514735c26e4",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

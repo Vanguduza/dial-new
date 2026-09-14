@@ -24,8 +24,9 @@ infrastructure policy for the whole estate and is not tied to any one project.
 ## 1.1 The rule
 
 > If a provider can complete the work within the infrastructure its subscription
-> allows, it runs there. Oracle receives the work only when provider
-> infrastructure has proved inadequate for it.
+> allows, it runs there. Oracle receives the work only where provider
+> infrastructure is inadequate for it — proved by a failed attempt, or shown by
+> limits the fabric already holds.
 
 Everything else in this document exists to make that rule enforceable, auditable,
 and safe for the control plane.
@@ -151,29 +152,34 @@ about.
 work unit arrives
       |
       v
-select provider from registry
+does a fact already in hand rule every provider out?   (§5.2, no investigation)
       |
-      v
-dispatch to provider container  <--------+
-      |                                  |
-      +-- completes -----> record, done  |
-      |                                  |
-      +-- provider unavailable ----------+  (§6: retry / switch / queue / fail)
-      |                                  |     never Oracle
-      |                                  |
-      +-- attempted, infrastructure inadequate
-                 |
-                 v
-          record observed reason as evidence
-                 |
-                 v
-          Oracle local sandbox (§8)
-                 |
-                 +-- needs host privilege --> policy gate --> Commander
+      +-- yes --> Oracle sandbox (§8)        basis: ENVELOPE_EXCEEDED / HOST_SUBJECT
+      |
+      +-- no or unknown
+               |
+               v
+      dispatch to provider container  <--------+
+               |                               |
+               +-- completes ----> record, done|
+               |                               |
+               +-- provider unavailable -------+  (§6: retry / switch / queue / fail)
+               |                                  never Oracle
+               |
+               +-- attempted, infrastructure inadequate
+                        |
+                        v
+                 record observed reason as evidence
+                        |
+                        v
+                 Oracle local sandbox (§8)
+                        |
+                        +-- needs host privilege --> policy gate --> Commander
 ```
 
-There is no pre-dispatch list of work that belongs on Oracle. Eligibility is
-determined by attempting the work in the provider and observing the outcome.
+There is no pre-dispatch list of work that belongs on Oracle. The only
+pre-dispatch step is a comparison against declared limits the fabric already
+holds (§5.2); everything it cannot rule out in advance is attempted.
 
 ---
 
@@ -195,27 +201,66 @@ The replacement distinguishes two uses of a reason:
 | effect on routing | permits or denies | none |
 | purpose | pre-authorize | audit, and learn the envelope |
 
-A fallback to Oracle is legitimate when a provider attempt has **run and failed
-for an infrastructure cause**. The cause is recorded verbatim from the provider —
-disk exhausted, egress blocked to a required host, wall-clock exceeded, memory
-ceiling hit, required device absent, image lacks a toolchain, workspace exceeds
-clone limits. The fabric does not branch on this string. It records it.
+This concerns the failure *reason* — the string a provider returns when an
+attempt fails. Nothing routes on it. It is distinct from a declared envelope
+figure, which is a number the fabric already holds and which §5.2 does compare
+before dispatch.
 
-The accumulated record is the useful artifact: over time it describes what each
-subscription's infrastructure cannot do, which is knowledge the fabric should
-learn rather than assume.
+## 5.1 Three venue bases
 
-## 5.1 Locality that is genuinely known in advance
+An attempt is how the fabric learns something it does not already know. It is not
+a ritual every unit performs. Where the answer is already in hand, a doomed
+attempt buys nothing and spends wall-clock and subscription quota to confirm what
+the registry states.
 
-A small class of work can only ever execute on a specific host — operating on
-that host's systemd units, its local filesystem, or a service bound to its
-private interface. This is not an exception to §1.1: such work has no provider
-container that could host it, so there is nothing to attempt. It is addressed to
-a node, not routed to one, and it enters through the privileged path in §8.3.
+| basis | when | attempt first |
+| --- | --- | --- |
+| `HOST_SUBJECT` | the work's subject is a specific host — its systemd units, its local filesystem, a service on its private interface | no |
+| `PROVIDER_ENVELOPE_EXCEEDED` | a fact already in hand shows the unit cannot fit any eligible provider envelope (§5.2) | no |
+| `PROVIDER_ATTEMPTED_INADEQUATE` | everything else | **yes** |
 
-This must not be allowed to grow back into an allowlist. The test is narrow: the
-work names a specific host as its subject. "Faster locally", "packages already
-installed", "provider queue is long" and "small enough" are not locality.
+`PROVIDER_ATTEMPTED_INADEQUATE` is the default and covers most units. When an
+attempt fails for an infrastructure cause, the cause is recorded verbatim from
+the provider — disk exhausted, egress blocked to a required host, wall-clock
+exceeded, memory ceiling hit, required device absent, image lacks a toolchain,
+workspace exceeds clone limits. The fabric does not branch on this string. It
+records it.
+
+`HOST_SUBJECT` is not an exception to §1.1: such work has no provider container
+that could host it, so there is nothing to attempt. It is addressed to a node,
+not routed to one, and enters through the privileged path in §8.3.
+
+## 5.2 The envelope check
+
+§3 has each registry entry declare an infrastructure envelope. Where the fabric
+already holds a requirement that exceeds every eligible envelope, it routes to
+Oracle directly.
+
+This is not the allowlist returning. An allowlist names kinds of work and is
+authored in advance; the envelope check is arithmetic on declared limits,
+evaluated per unit, naming no categories. Two rules keep it that way and keep it
+cheap:
+
+**It never investigates.** The check reads only what the fabric already has —
+registry envelopes and facts carried with the unit or previously observed. It
+performs no probe, no pre-flight measurement and no extra I/O, so it adds no
+latency to dispatch. If the data is not in hand, the unit is attempted.
+
+**The requirement figure comes from the control plane, never the submitter.**
+A submitter that could assert its own requirement could route itself to Oracle at
+will, and the allowlist would return as a data field. Because the figure is the
+control plane's, there is no inflation to police and no penalty machinery to
+build.
+
+Where a requirement is only observable by running the work — peak memory, disk
+growth under dependency expansion — it is not in hand, so the unit is attempted.
+That is the correct outcome, not a gap.
+
+**When in doubt, attempt.** Ambiguity resolves toward the provider.
+
+This must not be allowed to grow back into an allowlist. "Faster locally",
+"packages already installed", "provider queue is long" and "small enough" are
+not envelope facts and are not locality.
 
 ---
 
@@ -592,9 +637,9 @@ shell or any automation.
 ```text
 oracle-admin          rejects all project work and any fallback venue role
 vekl-worker           rejects control authority and heavy local compute
-dial-hermes-control   rejects unclassified heavy work, and rejects any unit whose
-                      venue basis is provider-unavailable rather than
-                      provider-attempted-inadequate
+dial-hermes-control   rejects unclassified heavy work, and admits a unit only on
+                      one of the three bases in §5.1 — never on
+                      provider-unavailable
 ```
 
 The last clause is the mechanism behind §6. It is the fabric's load-bearing
@@ -603,12 +648,25 @@ decision, not as prose.
 
 ## 14.1 The venue decision must be signed
 
-Everything in this fabric keys off the venue basis and the recorded attempt
-history. If a unit can assert its own basis, the control is decorative.
+Everything in this fabric keys off the venue basis. If a unit can assert its own
+basis, the control is decorative.
 
-The control plane signs the venue decision. Guards verify the signature before
-execution. A unit arriving at Oracle without a valid signed decision recording a
-failed provider attempt is rejected.
+The control plane signs the venue decision; guards verify the signature before
+execution. A unit arriving at Oracle without a valid signed decision is rejected.
+
+The signed decision carries the basis and the evidence for it:
+
+```text
+HOST_SUBJECT                    the host named as the work's subject
+PROVIDER_ENVELOPE_EXCEEDED      the requirement, the envelopes compared against,
+                                and the dimension that exceeded
+PROVIDER_ATTEMPTED_INADEQUATE   the attempt record and observed reason
+```
+
+For `PROVIDER_ENVELOPE_EXCEEDED` this makes the guard's check arithmetic rather
+than trust: both the requirement and the envelopes originate with the control
+plane (§5.2), so the guard re-computes the comparison and rejects a decision
+whose numbers do not support its basis.
 
 ---
 
@@ -703,10 +761,14 @@ proven by causing the failure, not by inspecting configuration.
 | A | ordinary work unit submitted | executes in a provider container; Oracle CPU impact minimal |
 | B | provider blocked (outage) | retry, switch, queue or visible failure; **no** Oracle execution |
 | C | provider attempt fails on infrastructure | reason recorded; Oracle sandbox; within configured limits |
+| C2 | unit whose known requirement exceeds every envelope | routed to Oracle with **no** provider attempt; basis and compared figures recorded |
+| C3 | unit whose requirement is not in hand | attempted in a provider; no pre-flight probe issued; dispatch latency unchanged from baseline |
 | D | host-subject work (systemd change) | sandbox cannot perform it; policy gate; Commander executes |
 | E | project work sent to `oracle-admin` | denied by host-role guard |
 | F | heavy unit sent to `vekl-worker` | dispatched outward, not executed locally |
 | G | **induced** — forged venue basis claiming inadequacy | rejected: signature invalid |
+| G2 | **induced** — signed decision claiming `ENVELOPE_EXCEEDED` whose figures do not exceed | rejected: guard re-computes the comparison |
+| G3 | **induced** — submitter supplies its own requirement figure | ignored; the control-plane figure is used |
 | H | **induced** — unit submitted directly by cron, systemd and shell, bypassing the control plane | rejected by guard in all three cases |
 | I | **induced** — guard service stopped, then unit submitted | fails closed; no execution |
 | J | **induced** — memory stress in dev slice | dev reclaimed first; control plane holds its 2G floor; SSH responsive |
@@ -782,7 +844,8 @@ before this document can be certified.
 
 | area | Rev 1 | Rev 2 |
 | --- | --- | --- |
-| Oracle eligibility | closed enum of `locality_reason` values checked before dispatch | no list; provider attempted first, insufficiency observed and recorded (§5) |
+| Oracle eligibility | closed enum of `locality_reason` values checked before dispatch | no list; three bases (§5.1) — attempt is the default, skipped only where a fact already in hand rules every provider out |
+| declared envelopes | declared in the registry but never consulted | compared before dispatch, without investigation and with no added latency (§5.2) |
 | reason handling | gate | evidence (§5) |
 | outage vs inadequacy | conflated; no insufficiency concept | separated, with opposite handling (§6) |
 | providers | two hardcoded execution classes | registry of N entries; Antigravity included (§3) |
@@ -806,5 +869,6 @@ before this document can be certified.
 > and authoritative. It is not a source of development compute.
 
 Providers supply elastic compute. The control plane decides venue, and records
-why. Oracle receives work only when a provider has tried and could not — never
-because a provider was busy, and never because a list said so.
+why. Oracle receives work only when a provider has tried and could not, or when
+the limits already on file say it plainly could not — never because a provider
+was busy, and never because a list said so.
