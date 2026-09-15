@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "authority_note": "Host roles are declared here and enforced by roles/role-guard.mjs (fail-closed). Role names follow the owner's architectural intent (dial-hermes-control, vekl-worker, oracle-admin). The unmerged Oracle lineage (PR #24/#26/#27) names the background node 'oracle-admin-v2'; canonical master names no second node at all. Mapping vekl-worker <-> oracle-admin-v2 is OWNER_DECISION_REQUIRED and is recorded in the audit, not silently resolved here. The unmerged branch work/bootstrap-reconcile-20260914 (2026-09-14) uses the same three node names with classes CONTROL_AUTHORITY / BACKGROUND_COORDINATOR / RECOVERY_CONTROL_ONLY and a key=value /etc/dial/host-role; this guard reads that file format too so the two converge on one role declaration.",
+  "resolution_order": [
+    "DIAL_HOST_ROLE environment variable",
+    "/etc/dial/host-role file (owner-installed, root-owned)",
+    "provider-container detection (CLAUDE_CODE_REMOTE / CODEX_* environment)",
+    "hostname exact match against role aliases",
+    "otherwise UNKNOWN -> every governed workload is refused"
+  ],
+  "roles": {
+    "dial-hermes-control": {
+      "host_class": "HERMES_CONTROL_PLANE",
+      "description": "Primary DIAL development orchestration/control plane: owner intake, Hermes runtime, mission control, VEKL orchestration, external queue, operator gateway. Carries eligible heavy compute only when provider-side execution is not possible.",
+      "aliases": [
+        "dial-hermes-control"
+      ],
+      "expected_arch": [
+        "arm64",
+        "aarch64"
+      ],
+      "immutable": true,
+      "allowed_workloads": [
+        "OWNER_CONTROL",
+        "HERMES_RUNTIME",
+        "MISSION_CONTROL",
+        "VEKL_RESOLVE",
+        "VEKL_RESEARCH",
+        "EXTERNAL_QUEUE",
+        "OPERATOR_GATEWAY",
+        "DETERMINISTIC_VERIFY",
+        "REPOSITORY_WRITE",
+        "HEAVY_BUILD",
+        "WORKER_DISPATCH",
+        "DIAGNOSTICS"
+      ],
+      "forbidden_workloads": [
+        "OCI_RECOVERY",
+        "BREAK_GLASS"
+      ],
+      "control_home": "/var/lib/dial-control",
+      "may_be_control_authority": true
+    },
+    "vekl-worker": {
+      "host_class": "BACKGROUND_ENGINEERING_WORKER",
+      "description": "Second worker VM for background/worker-class development activity that must not burden the control plane: VEKL research refresh, structural snapshot extraction, indexing, document processing, deterministic verification replicas. Never a control authority, never a Hermes manager runtime, never an owner-control endpoint. Heavy compute (full verification, builds) is rejected: it belongs to provider-side execution or, when host-bound, to dial-hermes-control (the unmerged execution-fabric lineage names this class BACKGROUND_COORDINATOR).",
+      "aliases": [
+        "vekl-worker",
+        "oracle-admin-v2"
+      ],
+      "expected_arch": [
+        "x86_64",
+        "arm64",
+        "aarch64"
+      ],
+      "immutable": true,
+      "allowed_workloads": [
+        "VEKL_RESEARCH",
+        "STRUCTURAL_SNAPSHOT",
+        "INDEXING",
+        "DOC_PROCESSING",
+        "DIAGNOSTICS",
+        "WORKER_JOB"
+      ],
+      "forbidden_workloads": [
+        "BREAK_GLASS",
+        "DETERMINISTIC_VERIFY",
+        "EXTERNAL_QUEUE",
+        "HEAVY_BUILD",
+        "HERMES_RUNTIME",
+        "MISSION_CONTROL",
+        "OCI_RECOVERY",
+        "OPERATOR_GATEWAY",
+        "OWNER_CONTROL",
+        "REPOSITORY_WRITE",
+        "WORKER_DISPATCH"
+      ],
+      "control_home": "/var/lib/dial-worker",
+      "may_be_control_authority": false
+    },
+    "oracle-admin": {
+      "host_class": "RECOVERY_CONTROL_ONLY",
+      "description": "Infrastructure administration, recovery, emergency access, Desktop Commander remote recovery, infrastructure health, break-glass. Must never become a normal development worker.",
+      "aliases": [
+        "oracle-admin"
+      ],
+      "expected_arch": [
+        "x86_64",
+        "arm64",
+        "aarch64"
+      ],
+      "immutable": true,
+      "allowed_workloads": [
+        "DIAGNOSTICS",
+        "OCI_RECOVERY",
+        "BREAK_GLASS",
+        "SSH_BROKER",
+        "HOST_HEALTH"
+      ],
+      "forbidden_workloads": [
+        "OWNER_CONTROL",
+        "HERMES_RUNTIME",
+        "MISSION_CONTROL",
+        "EXTERNAL_QUEUE",
+        "OPERATOR_GATEWAY",
+        "REPOSITORY_WRITE",
+        "HEAVY_BUILD",
+        "VEKL_RESOLVE",
+        "VEKL_RESEARCH",
+        "STRUCTURAL_SNAPSHOT",
+        "WORKER_JOB",
+        "WORKER_DISPATCH",
+        "DETERMINISTIC_VERIFY"
+      ],
+      "control_home": "/var/lib/dial-admin",
+      "may_be_control_authority": false
+    },
+    "provider-container": {
+      "host_class": "PROVIDER_HOSTED_EXECUTION",
+      "description": "Claude Code Remote / Codex cloud execution container. Ephemeral; carries bounded repository development on a topic branch, read-only repository context, evidence generation and PR workflow. It has no control home, no systemd, no Hermes runtime and no owner-control authority.",
+      "aliases": [],
+      "expected_arch": [
+        "x86_64",
+        "arm64",
+        "aarch64"
+      ],
+      "immutable": false,
+      "allowed_workloads": [
+        "REPOSITORY_WRITE",
+        "DETERMINISTIC_VERIFY",
+        "DIAGNOSTICS",
+        "VEKL_RESOLVE",
+        "STRUCTURAL_SNAPSHOT",
+        "DOC_PROCESSING",
+        "WORKER_JOB"
+      ],
+      "forbidden_workloads": [
+        "OWNER_CONTROL",
+        "HERMES_RUNTIME",
+        "MISSION_CONTROL",
+        "EXTERNAL_QUEUE",
+        "OPERATOR_GATEWAY",
+        "OCI_RECOVERY",
+        "BREAK_GLASS",
+        "WORKER_DISPATCH"
+      ],
+      "control_home": null,
+      "may_be_control_authority": false
+    }
+  },
+  "workloads": {
+    "OWNER_CONTROL": "typed dial_* owner controls, steering broker, WhatsApp adapters",
+    "HERMES_RUNTIME": "Hermes manager runtime (Codex App Server / Claude Code exact slots)",
+    "MISSION_CONTROL": "persistent dial-development-root mission controller",
+    "VEKL_RESOLVE": "engineering-knowledge resolution / activation for a packet",
+    "VEKL_RESEARCH": "ahead-of-work presearch refresh (network to allowlisted sources)",
+    "STRUCTURAL_SNAPSHOT": "structural code-graph extraction (TypeScript baseline; Graphify only when qualified)",
+    "EXTERNAL_QUEUE": "dial-hermes-orchestrator queue claim/execute",
+    "OPERATOR_GATEWAY": "chat-control HTTP MCP, operator stdio MCP",
+    "DETERMINISTIC_VERIFY": "npm run verify and its sub-gates",
+    "REPOSITORY_WRITE": "editing and committing the DIAL repository",
+    "HEAVY_BUILD": "production build / pack regeneration",
+    "WORKER_DISPATCH": "dispatching a bounded job to a worker host over SSH",
+    "WORKER_JOB": "executing an allowlisted worker job and returning a receipt",
+    "INDEXING": "retrieval index maintenance",
+    "DOC_PROCESSING": "document ingestion / conversion",
+    "DIAGNOSTICS": "read-only host, service and repository inspection",
+    "OCI_RECOVERY": "cloud console / OCI CLI recovery actions",
+    "BREAK_GLASS": "emergency access and repair of other hosts",
+    "SSH_BROKER": "brokering SSH into other estate hosts",
+    "HOST_HEALTH": "infrastructure health probes"
+  }
+}
