@@ -2,10 +2,39 @@ import { hashObject } from './knowledge-graph-core.mjs';
 const BAD=[['SCRIPT',/<script\b/i],['EVENT_HANDLER',/\son[a-z]+\s*=/i],['JAVASCRIPT_URL',/javascript:/i],['EVAL',/\beval\s*\(|new\s+Function\s*\(/i],['IFRAME',/<(?:iframe|object|embed)\b/i],['META_REFRESH',/<meta[^>]+http-equiv=["']?refresh/i],['SERVICE_WORKER',/serviceWorker\.register/i],['WEBSOCKET',/\b(?:WebSocket|EventSource)\s*\(/i],['CSS_IMPORT',/@import\s+/i],['REMOTE_URL',/https?:\/\//i],['SVG_SCRIPT',/<svg[\s\S]*?<script\b/i]];
 export function quarantineDesignArtifact({content,mimeType='text/html'}={}){const text=String(content??'');const violations=BAD.filter(([,r])=>r.test(text)).map(([id])=>id);return{ok:violations.length===0,mime_type:mimeType,size_bytes:Buffer.byteLength(text),artifact_hash:hashObject(text),violations};}
 
+function stripCssImports(text){
+  const source=String(text??'');
+  let out='',cursor=0;
+  const re=/@import\b/ig;
+  while(true){
+    re.lastIndex=cursor;
+    const match=re.exec(source);
+    if(!match){out+=source.slice(cursor);break;}
+    out+=source.slice(cursor,match.index);
+    let i=re.lastIndex,quote=null,depth=0,escaped=false;
+    for(;i<source.length;i+=1){
+      const ch=source[i];
+      if(quote){
+        if(escaped){escaped=false;continue;}
+        if(ch==='\\'){escaped=true;continue;}
+        if(ch===quote) quote=null;
+        continue;
+      }
+      if(ch==='"'||ch==="'"){quote=ch;continue;}
+      if(ch==='('){depth+=1;continue;}
+      if(ch===')'){depth=Math.max(0,depth-1);continue;}
+      if(ch===';'&&depth===0){i+=1;break;}
+      if((ch==='\n'||ch==='\r')&&depth===0) break;
+    }
+    cursor=i;
+  }
+  return out;
+}
+
 export function sanitizeDesignArtifactForEvidence({content,mimeType='text/html'}={}){
   const raw=String(content??'');
   const rawQuarantine=quarantineDesignArtifact({content:raw,mimeType});
-  let inert=raw
+  let inert=stripCssImports(raw)
     .replace(/<script\b[\s\S]*?<\/script\s*>/gi,'')
     .replace(/<(?:iframe|object|embed)\b[\s\S]*?<\/(?:iframe|object|embed)\s*>/gi,'')
     .replace(/<(?:iframe|object|embed)\b[^>]*\/?\s*>/gi,'')
@@ -14,7 +43,6 @@ export function sanitizeDesignArtifactForEvidence({content,mimeType='text/html'}
     .replace(/\s+(?:src|href|action|formaction|poster)\s*=\s*([\"'])https?:\/\/[^\"']*\1/gi,'')
     .replace(/\s+(?:src|href|action|formaction|poster)\s*=\s*https?:\/\/[^\s>]+/gi,'')
     .replace(/url\(\s*([\"']?)https?:\/\/[^)]*\1\s*\)/gi,'url("")')
-    .replace(/@import\s+(?:url\()?\s*([\"']?)https?:\/\/[^;)]*\1\)?\s*;?/gi,'')
     .replace(/javascript:/gi,'')
     .replace(/https?:\/\/[^\s<>'\")]+/gi,'');
   const sanitizedQuarantine=quarantineDesignArtifact({content:inert,mimeType});

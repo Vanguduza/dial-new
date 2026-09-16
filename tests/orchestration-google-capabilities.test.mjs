@@ -166,16 +166,16 @@ describe('Google external capability boundaries', () => {
   });
 
   it('converts active Stitch prototype scaffolding into inert evidence without weakening raw quarantine', () => {
-    const raw = '<main onload="boot()"><img src="https://lh3.googleusercontent.com/example"><a href="https://example.com">View</a><script src="https://cdn.example.com/app.js">boot()</script><section style="background-image:url(https://example.com/bg.png)">DIAL</section></main>';
+    const raw = '<style>@import url(\'https://fonts.googleapis.com/css2?family=Inter:wght@300;400\'); @import \"theme.css\"; @import url(data:text/css;base64,Zm9vO2Jhcg==);</style><main onload="boot()"><img src="https://lh3.googleusercontent.com/example"><a href="https://example.com">View</a><script src="https://cdn.example.com/app.js">boot()</script><section style="background-image:url(https://example.com/bg.png)">DIAL</section></main>';
     const before = quarantineDesignArtifact({ content: raw });
     expect(before.ok).toBe(false);
-    expect(before.violations).toEqual(expect.arrayContaining(['SCRIPT','EVENT_HANDLER','REMOTE_URL']));
+    expect(before.violations).toEqual(expect.arrayContaining(['SCRIPT','EVENT_HANDLER','CSS_IMPORT','REMOTE_URL']));
     const inert = sanitizeDesignArtifactForEvidence({ content: raw });
     expect(inert.transformed).toBe(true);
     expect(inert.raw_quarantine.ok).toBe(false);
     expect(inert.ok).toBe(true);
     expect(inert.sanitized_quarantine.violations).toEqual([]);
-    expect(inert.content).not.toMatch(/<script\b|\son[a-z]+\s*=|https?:\/\//i);
+    expect(inert.content).not.toMatch(/<script\b|\son[a-z]+\s*=|@import\b|https?:\/\//i);
   });
 
   it('selects Stitch only when explicitly preferred and preserves direct fallback when unavailable', () => {
