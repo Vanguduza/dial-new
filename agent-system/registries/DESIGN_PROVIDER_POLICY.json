@@ -2,7 +2,7 @@
   "schema_version": 1,
   "policy_version": "dial-aef-design-provider-3-frontend-1.1",
   "authority": "DEVELOPMENT_PROVIDER_POLICY",
-  "stitch_optional": true,
+  "stitch_optional": false,
   "runtime_dependency_forbidden": true,
   "provider_output_requires_quarantine": true,
   "reverse_authority_flow_forbidden": true,
@@ -23,7 +23,7 @@
   },
   "providers": {
     "google-stitch": {
-      "optional": true,
+      "optional": false,
       "capability_id": "DESIGN-STITCH",
       "authority": "NON_AUTHORITATIVE_CANDIDATE",
       "live_qualification_required": true,

@@ -3,7 +3,7 @@
 **Status:** ACTIVE / NOT GREEN
 **Branch:** `gpt/dial-development-system-green-closure-20260915`
 **Closure base:** `2e291761cd07951c6c75a2674f11e86185a1551f`
-**Updated:** 2026-09-15T19:15:00Z
+**Updated:** 2026-09-16T08:22:00Z
 **Rule:** A task moves to DONE only from measured evidence. No missing evidence is converted to GREEN.
 
 Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER GATE`
@@ -87,7 +87,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 ## Phase 5 — MCP, auth, network and required-capability readiness
 
 - [x] P5.01 Codex ChatGPT authentication + live canary.
-- [~] P5.02 Claude subscription authentication and exact `claude-sonnet-5` identity are proven, but the latest VEKL live fallback canary hit `ACCOUNT_LIMITED` after 180 s; current fallback execution capacity must be re-proven before GREEN.
+- [~] P5.02 Claude subscription authentication and exact `claude-sonnet-5` identity were previously proven, but a fresh live probe at 2026-09-16T08:05:42Z returned `ACCOUNT_LIMITED` before model execution (`resolved_model=null`); current Sonnet fallback execution capacity therefore remains unproven and must recover before GREEN.
 - [x] P5.03 Hermes `openai-codex` OAuth authentication + runtime canary.
 - [x] P5.04 GitHub CLI authentication and repository API access.
 - [x] P5.05 Owner Hermes WhatsApp pairing.
@@ -101,7 +101,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [!] P5.13 Authenticated Cloudflare Access/public MCP is canonically mandatory (`ops/development-bootstrap/manifest.json` CORE_DEVELOPMENT_REQUIRED and fabric §11). Private VCN MCP remains healthy, but final GREEN requires a real `DIAL_MCP_INGRESS_URL` backed by authenticated Access/Tunnel and a live provider-ingress probe.
 - [!] P5.14 Tailscale (or owner-approved equivalent independent of Cloudflare) is a mandatory RECOVERY_REQUIRED secondary overlay. Repository certification now probes Tailscale fail-closed; current control/worker/admin state is `NeedsLogin`, so authentication and live reciprocal overlay evidence remain an owner gate.
 - [~] P5.15 Context7/Exa: exact local runtimes installed (Context7 4.1.1, Exa 3.4.1); Context7 resolve/query live canaries PASS. Exa runtime PASS but API-key-backed functional canary remains an owner auth gate; provider-surface enrollment still requires final proof.
-- [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. Stitch exact SDK is present but credential/tool-discovery/sandbox/orchestrated proof remains pending. Pomelli remains GMPC human-operated REFERENCE_ONLY.
+- [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. The stale `stitch_optional=true` design-provider projection was reconciled to DEC-033 and regression-tested; Stitch exact SDK is present but credential/tool-discovery/sandbox/orchestrated proof remains pending. Pomelli remains GMPC human-operated REFERENCE_ONLY.
 - [!] P5.17 Configure/authenticate/live-probe the admitted WhatsApp Cloud API owner adapter (DEC-033).
 - [x] P5.18 Antigravity Google session authenticated under canonical isolated worker identity; all 14 live `agy models` were qualified, normal HCX selection executed a real Unit, guarded write/network denials passed, and capacity-limited fallback rerouted from Opus to Sonnet with revoked/released leases and settled compute. Latest capability state: `INTEGRATED`.
 - [!] P5.19 Configure Stitch credential/OAuth, prove fixed-host MCP tool discovery, synthetic sandbox screen, quarantine/admission, and selectable specialist invocation.
@@ -125,7 +125,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P7.03 Adaptive/VEKL/provider-first targeted suites passed.
 - [x] P7.04 Previously sandbox-blocked child-git/shell suites re-run on the real control host; control-plane/operations/chat/operator and closure-targeted suites execute normally outside the Codex sandbox.
 - [x] P7.05 Latest closure-targeted real-control runs are green: 7 suites / 202 tests plus VEKL resource+graph 24 tests and focused bootstrap/Google/operator 54 tests on Vitest 4.1.11.
-- [x] P7.06 Full `npm run verify` rerun after recovery-placement/install-host and qualifier PATH hardening: PASS on real control; 46 test files / 784 tests PASS, syntax/diff gates GREEN, audit 0 vulnerabilities.
+- [x] P7.06 Full `npm run verify` rerun again on live closure head `d758f9593a9c51940eaee3ef73be7a7908aa70d5`: PASS on real control; 46 test files / 785 tests PASS, syntax/diff gates GREEN. This refresh supersedes the earlier 784-test run while the detailed 784-test execution receipt remains historical evidence.
 - [x] P7.07 Project Truth verifier and PR-authority verifier are enforced on the closure branch and were GREEN through the committed closure/evidence sequence; every repair commit is re-verified before push.
 - [x] P7.08 Determinism self-test: 3/3 bounded routing/VEKL decisions produced identical decision hash `2b761b17b069c61961e45311764164fa0a1940dc0ad5684a0a723831bcd8bf3e`; zero forbidden-role leaks.
 - [x] P7.09 Safe fault injection: 9/9 scenarios PASS, including primary-provider fallback, total provider loss fail-closed, alternate-model rejection, stale runtime refusal, role mismatch, unknown role, stale knowledge binding, absent development gate, and bounded network timeout.
@@ -142,8 +142,8 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.07 Closure implementation committed on the authorized PR branch; Project Truth pre-commit evidence recorded and local verify/verify-pr GREEN. Signed-commit enforcement remains the separate P8.03 protected-master gate.
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
-- [ ] P8.10 Close obsolete/conflicting temporary audit/sync PRs after closure PR supersedes them.
-- [x] P8.11 PR #34 repair CI is GREEN across all five required contexts: `project-truth`, gates/types/unit suites, production build/typecheck, conforming pack, and customer transition contract. `mergeStateStatus=CLEAN` after branch protection was reconciled to the real fail-closed CI lanes.
+- [x] P8.10 Obsolete reverse audit-sync PR #33 was closed as conflicting and superseded by closure PR #34; unrelated historical/feature PRs were deliberately not closed blindly.
+- [x] P8.11 PR #34 CI remains GREEN across all five required contexts: `project-truth`, gates/types/unit suites, production build/typecheck, conforming pack, and customer transition contract. GitHub currently reports the PR `MERGEABLE` but `mergeStateStatus=BLOCKED` because required-signature governance is now active; CI itself is not the blocker.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA

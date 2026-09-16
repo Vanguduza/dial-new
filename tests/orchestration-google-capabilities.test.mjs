@@ -78,6 +78,14 @@ describe('Google external capability boundaries', () => {
     expect(stitchCredentialStatus({ STITCH_API_KEY: 'x'.repeat(20) }).configured).toBe(true);
   });
 
+  it('projects DEC-033 Stitch readiness as required, not setup-optional', () => {
+    const policy = JSON.parse(fs.readFileSync(path.join(repoDir, 'agent-system/registries/DESIGN_PROVIDER_POLICY.json'), 'utf8'));
+    expect(policy.readiness_ref).toBe('DEC-033');
+    expect(policy.readiness_required).toBe(true);
+    expect(policy.stitch_optional).toBe(false);
+    expect(policy.providers['google-stitch'].optional).toBe(false);
+  });
+
   it('quarantines an unexpected live Stitch tool instead of expanding authority', async () => {
     const clientFactory = () => ({
       client: {
