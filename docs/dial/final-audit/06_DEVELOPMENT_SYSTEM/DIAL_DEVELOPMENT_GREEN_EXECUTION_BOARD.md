@@ -15,11 +15,11 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P0.03 Work only in isolated closure worktree; do not mutate dirty production checkout.
 - [x] P0.04 Stop concurrent Codex/Fable writers before manual reconciliation.
 - [x] P0.05 Establish this live execution board and update it as closure progresses.
-- [~] P0.06 Current remote `master` rechecked unchanged at `fa7c655f12faf02a2b33cc15799069526bdda3a6`; closure history flattened onto that SHA and Project Truth verify now passes. Final immediate pre-commit remote recheck remains required.
+- [x] P0.06 Remote `master` rechecked immediately before this closure evidence commit and remains exactly `fa7c655f12faf02a2b33cc15799069526bdda3a6`; closure history remains based on that SHA and Project Truth verify/verify-pr are GREEN.
 
 ## Phase 1 — Repository closure and deterministic dependency inventory
 
-- [~] P1.01 Review the full closure diff for PR32, Project Truth, security and VEKL regressions.
+- [x] P1.01 Full closure diff reviewed against current canonical `master`; 149 changed/new files were re-enumerated and checked across Project Truth, security, VEKL, bootstrap, recovery, CI and governance surfaces with no unresolved static regression introduced by the closure branch.
 - [x] P1.02 Add authoritative readiness classes: core development, owner control, recovery, optional, reference-only.
 - [x] P1.03 Add explicit bootstrap `--auth`/`--resume` workflow; never silently authenticate.
 - [x] P1.04 Add deterministic `apply`/`repair` convergence and fail-closed pin validation.
@@ -40,7 +40,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P1.19 Correct `StartLimitIntervalSec` placement to `[Unit]`.
 - [x] P1.20 Add valid `[Socket]` SSH survival drop-in; stop installing `[Service]` stanza on `ssh.socket`.
 - [x] P1.21 Fix host-certifier stale-telemetry fail-closed probe.
-- [ ] P1.22 Run static diff review across every changed/new file and eliminate dead/stale/comment-only contradictions.
+- [x] P1.22 Static review complete across all 149 changed/new files: 36 JSON files parse, 64 JS/MJS files pass `node --check`, 28 shell files pass `bash -n`, YAML parses, `git diff --check` is clean, no conflict markers exist, and suspicious changed-line scan produced only intentional guard/docs/deprecation references. Direct systemd unit verification produced only expected host-specific missing-binary warnings on the control host, not unit syntax faults.
 
 ## Phase 2 — Supply-chain closure and exact pins
 
