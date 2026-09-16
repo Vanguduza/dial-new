@@ -215,6 +215,23 @@ report="$(jq -n \
     host:$host, observed_at:$at, recovery_authority_max:$ceiling, bounded_recoverer:$bounded,
     repair_attempted:$repair, verdict:$v, targets:$r}')"
 
+# Persist the latest machine-readable verdict at the canonical path consumed by bootstrap certification.
+# Timestamped evidence remains useful history, but a stable latest pointer is required for deterministic automation.
+if [[ -n "${DIAL_RECOVERY_LATEST_VERDICT:-}" ]]; then
+  LATEST_VERDICT="$DIAL_RECOVERY_LATEST_VERDICT"
+elif [[ "$HOST_ID" == "dial-hermes-control" && -d /var/lib/dial-control ]]; then
+  LATEST_VERDICT=/var/lib/dial-control/state/two-way-recovery-verdict.json
+elif [[ -d /var/lib/dial-recovery ]]; then
+  LATEST_VERDICT=/var/lib/dial-recovery/fabric/two-way-recovery-verdict.json
+else
+  LATEST_VERDICT="$STATE_DIR/two-way-recovery-verdict.json"
+fi
+mkdir -p "$(dirname "$LATEST_VERDICT")" || { echo "verify-two-way-recovery: cannot create latest-verdict directory" >&2; exit 6; }
+tmp_latest="${LATEST_VERDICT}.tmp.$$"
+printf '%s\n' "$report" > "$tmp_latest" || { rm -f "$tmp_latest"; echo "verify-two-way-recovery: cannot persist latest verdict" >&2; exit 6; }
+chmod 600 "$tmp_latest" || { rm -f "$tmp_latest"; exit 6; }
+mv -f "$tmp_latest" "$LATEST_VERDICT" || { rm -f "$tmp_latest"; exit 6; }
+
 if [[ "$JSON_ONLY" == true ]]; then
   printf '%s\n' "$report"
 else

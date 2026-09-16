@@ -12,7 +12,14 @@ install -d -m 0700 "$CONTROL/secrets" "$CONTROL/execution" "$CONTROL/state"
 if [[ ! -e "$CONTROL/execution/fabric-audit.jsonl" ]]; then
   install -m 0600 /dev/null "$CONTROL/execution/fabric-audit.jsonl"
 else
-  chmod 0600 "$CONTROL/execution/fabric-audit.jsonl"
+  # The audit ledger is append-only after first install. Do not fail an idempotent rerun
+  # by chmod'ing an already-correct append-only inode. If its mode drifted, temporarily
+  # remove +a, repair the mode, then restore +a.
+  audit_mode="$(stat -c '%a' "$CONTROL/execution/fabric-audit.jsonl")"
+  if [[ "$audit_mode" != "600" ]]; then
+    if command -v chattr >/dev/null 2>&1; then sudo chattr -a "$CONTROL/execution/fabric-audit.jsonl" 2>/dev/null || true; fi
+    chmod 0600 "$CONTROL/execution/fabric-audit.jsonl"
+  fi
 fi
 if command -v chattr >/dev/null 2>&1; then
   sudo chattr +a "$CONTROL/execution/fabric-audit.jsonl" 2>/dev/null || true

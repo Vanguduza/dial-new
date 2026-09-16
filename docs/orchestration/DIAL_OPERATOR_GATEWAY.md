@@ -1,6 +1,6 @@
 # DIAL Unified Operator Gateway
 
-Status: implemented repository architecture. Oracle activation is qualified independently from channel enrollment. WhatsApp delivery is fail-closed until an owner pairing or official Meta Cloud configuration exists.
+Status: implemented repository architecture. Oracle activation is qualified independently from channel enrollment. Development owner WhatsApp is fail-closed until the dedicated Dial Hermes Control account is paired and the single owner allowlist is configured. Meta WhatsApp Cloud is not a development owner-control transport.
 
 ## Purpose
 
@@ -11,8 +11,7 @@ Owner
   |
   +-- Claude Code / Claude chat ----+
   +-- Codex ------------------------+--> typed dial_* controls
-  +-- WhatsApp owner self-chat -----+          |
-  +-- WhatsApp Cloud API -----------+          v
+  +-- Dial Hermes Control WhatsApp -+          v
                                       DIAL operator gateway
                                               |
                                       persistent Oracle mission
@@ -35,11 +34,11 @@ Claude, Codex and WhatsApp are not independent orchestrators. They share one own
 - Operator channels never receive control-plane secrets through status calls.
 - A channel ending or disconnecting never changes the persistent Oracle mission state.
 - Worker output cannot advance a feature/gate without normal repository evidence.
-- Authenticated paired-owner WhatsApp supports normal conversational questions, full-text steering and supported uploads. Action prose enters `dial_owner_steer`; it is not inserted into the ordinary autonomous mission queue.
+- The dedicated, authenticated Dial Hermes Control WhatsApp account supports normal conversational questions, full-text steering and supported uploads. Action prose enters `dial_owner_steer`; it is not inserted into the ordinary autonomous mission queue.
 - `owner-steering-broker.mjs` persists owner steers, acknowledges them immediately, blocks subsequent autonomous claims, lets any existing repository writer reach its safe boundary, then executes the owner steer through `owner-live-control.mjs`. Query turns are read-only and do not serialize repository writes.
 - Supported owner document/image uploads are copied out of the Hermes media cache into a mode-0600, content-addressed DIAL control-root intake before the owner-steering broker references them. Executable/macro media is not an accepted steering attachment.
 - xKiro/HAIF may receive only coarse PUBLIC steering metadata (scope tags, urgency, active-writer count, mission state, overlap and attachment count) as non-authoritative advisory evidence. Raw owner text, repository content and restricted/private material are not sent under the current `PUBLIC_ONLY` governance state.
-- Important mission events are pushed automatically to the verified owner self-chat with a persisted event cursor so service restarts do not replay historical notifications.
+- Important mission and steering events are pushed automatically to the verified owner chat through a persisted outbox. Cursor advancement and durable enqueue happen together; successful delivery is evidenced by returned WhatsApp message IDs, and send failures remain retryable instead of silently losing the update.
 
 ## Shared typed tools
 
@@ -88,45 +87,34 @@ Codex is enrolled with the same stdio MCP server and `DIAL_OPERATOR_CHANNEL=code
 
 Codex repository guidance is in root `AGENTS.md` so status questions use Oracle evidence instead of local-session inference.
 
-## WhatsApp: Hermes owner self-chat
+## WhatsApp: Dial Hermes Control dedicated account
 
-`whatsapp-hermes-operator.mjs` is the preferred zero-extra-provider path when the owner elects to pair the existing Hermes WhatsApp bridge.
+`whatsapp-hermes-operator.mjs` is the sole development-owner WhatsApp adapter. It uses the existing Hermes/Baileys bridge with a dedicated WhatsApp account so the owner has a normal one-to-one conversation with **Dial Hermes Control**, rather than messaging themselves. The legacy paired self-chat development-control route is retired. There is no WhatsApp fallback while the dedicated account is awaiting configuration/pairing.
 
-Security is defense in depth:
+Security and delivery are defense in depth:
 
-1. Hermes bridge runs in `WHATSAPP_MODE=self-chat` with closed DM policy.
-2. The bridge rejects non-self chats, groups and status traffic before queueing.
-3. The DIAL adapter independently reads the paired identity and rejects any queued message whose chat ID is not the paired owner self-chat.
-4. Message IDs are hashed and deduplicated.
-5. The text router preserves recognized shortcuts; normal authenticated action prose enters `dial_owner_steer`, while question-like prose is a read-only `dial_owner_live_turn`. Neither path exposes a raw shell/filesystem proxy.
-6. `owner-steering-broker.mjs` is the normal action serializer. It persists the steer, creates an intake guard, blocks new autonomous claims, waits for current repository writers to finish safely, then delegates execution to `owner-live-control.mjs`.
-7. xKiro advisory processing is optional and non-authoritative. Under `PUBLIC_ONLY`, only coarse non-sensitive metadata is eligible; raw instructions, uploads and repository data stay local.
-8. Supported PDFs, office/text/data documents and images are persisted content-addressed under `/var/lib/dial-control/operator-channels/whatsapp/uploads/`; source cache paths are validated before copy and executable/macro formats are rejected.
-9. Automatic mission and owner-steer lifecycle notifications are cursor-deduplicated.
-10. Replies and notifications are sent back only to the verified self-chat.
-11. Pairing state is outside Git under the Hermes session directory.
+1. The bridge runs in `WHATSAPP_MODE=bot` with `WHATSAPP_DM_POLICY=closed`.
+2. Exactly one owner phone identity is configured locally in `/var/lib/dial-control/secrets/hermes-whatsapp-control.env` (mode `0600`); repository evidence stores only a hash-derived owner fingerprint.
+3. Groups, status traffic, strangers and any sender outside that allowlist are rejected before DIAL owner-control routing. LID/phone aliases are resolved only from the protected pairing session.
+4. The dedicated Hermes account uses a separate protected session at `~/.hermes/whatsapp/dial-hermes-control/session`; no legacy self-chat session is enrolled or consulted.
+5. Message IDs are hashed/deduplicated. Authenticated owner rate pressure is audited but does **not** silently discard the instruction.
+6. Normal authenticated action prose enters `dial_owner_steer`; questions use the read-only `dial_owner_live_turn`. Neither path exposes shell/filesystem authority.
+7. The steering broker persists owner direction, blocks later autonomous claims, lets any active repository writer reach a safe boundary, then applies the steer through the locked manager chain.
+8. Supported PDFs, office/text/data documents and images are copied content-addressed into the mode-0600 DIAL control-root intake; executable/macro formats are rejected.
+9. Outbound command replies and important notifications first enter a bounded persistent outbox. The item is removed only after the Hermes bridge returns a successful WhatsApp message-ID receipt. Failed sends stay queued with attempt/error evidence and retry on later ticks.
+10. Every development-control reply is headed `Dial Hermes Control` with no former icon or separator underline.
+11. Pairing remains deterministic and integrity-pinned through the vendored Baileys runtime. Missing pairing or owner configuration fails closed.
 
-If no pairing credentials exist, the operator service remains healthy in `WAITING_PAIRING`. On Oracle, use `bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground` (or `--background` when an authenticated operator surface will render the protected event stream). The helper enforces a singleton pairer, clears only incomplete unpaired state, pauses the live bridge during enrollment, and restores the normal bridge after valid credentials are written. Missing pairing never falls back to an open inbound channel.
+Configure the owner allowlist locally, then pair the **dedicated Hermes WhatsApp account**:
 
-The pairing helper uses an **isolated, deploy-only compatibility runtime** because the Hermes-pinned Baileys 7.0.0-rc13 QR flow can accept a phone scan and still fail before `pair-success` when WhatsApp sends `companion_reg_refresh`. The runtime pins the upstream fix head for WhiskeySockets/Baileys PR #2765 and applies the pre-login ACK safety change from PR #2749. This exception exists only for owner development-control enrollment; it does not alter DIAL's customer/business WhatsApp lock, which remains official Meta Cloud API + Flows only.
+```bash
+bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh
+bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground
+```
 
-## WhatsApp: official Cloud API
+The pairing helper is singleton, uses only the dedicated session, clears only incomplete state in that session, and starts the dedicated bridge only after valid credentials are written. The retired self-chat route is not restored or consulted.
 
-`whatsapp-operator-adapter.mjs` provides a first-party Meta Cloud API path when a WhatsApp Business deployment is desired.
-
-It is bound to `127.0.0.1:9132`; port 9132 must never be exposed directly. A public HTTPS ingress, if configured, may route only the webhook path `/whatsapp/operator/webhook` to this local listener.
-
-Inbound requirements:
-
-- GET verification requires the configured verify token.
-- POST requires `X-Hub-Signature-256` HMAC SHA-256 validation against the raw body with the Meta app secret.
-- Sender must exactly match an owner entry in `allowed_senders` after digits-only normalization.
-- Unauthorized senders receive no command response.
-- Duplicate webhook message IDs cannot repeat a write.
-
-Outbound replies use the configured Graph API version and phone-number ID. All Meta secrets live only in `/var/lib/dial-control/secrets/whatsapp-operator.json` with mode `0600`.
-
-The service may be installed before credentials exist. Its health state is then `UNCONFIGURED`; that is an explicit channel activation state, not a development failure.
+The Meta Cloud adapter source may remain available for customer/business product integrations, but it is **not enrolled, installed or qualified as a development-owner control channel**. Product/customer WhatsApp remains governed by the canonical official Meta Cloud API + Flows lock in Project Truth.
 
 ## WhatsApp command grammar
 
@@ -152,13 +140,13 @@ REJECT <gate-id> [rationale]
 INSTRUCTION <bounded development instruction>
 ```
 
-`INSTRUCT` and `REPRIORITISE` are accepted aliases for `INSTRUCTION` and `PRIORITY` where supported by the parser. In the paired Hermes owner self-chat, `INSTRUCTION ...` and normal non-question prose are registered through `dial_owner_steer`, not ordinary queue submissions. The broker immediately tells the owner whether the steer is next or waiting for an active writer to reach a safe boundary. Question-like prose is an explicit read-only live turn. Neither lane is a shell escape: both preserve truthful evidence, security/credential boundaries and deterministic verification.
+`INSTRUCT` and `REPRIORITISE` are accepted aliases for `INSTRUCTION` and `PRIORITY` where supported by the parser. In the dedicated Dial Hermes Control owner chat, `INSTRUCTION ...` and normal non-question prose are registered through `dial_owner_steer`, not ordinary queue submissions. The broker immediately tells the owner whether the steer is next or waiting for an active writer to reach a safe boundary. Question-like prose is an explicit read-only live turn. Neither lane is a shell escape: both preserve truthful evidence, security/credential boundaries and deterministic verification.
 
 ## WhatsApp owner documents and automatic notifications
 
-The paired Hermes owner self-chat accepts supported document/image steering material in addition to text. Current document extensions are PDF, DOCX, TXT/Markdown/RTF/ODT, CSV/XLSX and JSON/YAML; images are PNG/JPEG/WebP. Macro-enabled/executable formats are not accepted. Each file is limited to 25 MiB, each message to 8 attachments and 50 MiB total. Files are SHA-256 addressed, copied with mode 0600 into the DIAL control root, and referenced from the hybrid owner-steer record. The executing manager must inspect the material before acting, reconcile durable owner decisions into canonical Project Truth, and treat embedded binaries/macros as non-executable data.
+The dedicated Dial Hermes Control chat accepts supported document/image steering material in addition to text. Current document extensions are PDF, DOCX, TXT/Markdown/RTF/ODT, CSV/XLSX and JSON/YAML; images are PNG/JPEG/WebP. Macro-enabled/executable formats are not accepted. Each file is limited to 25 MiB, each message to 8 attachments and 50 MiB total. Files are SHA-256 addressed, copied with mode 0600 into the DIAL control root, and referenced from the hybrid owner-steer record. The executing manager must inspect the material before acting, reconcile durable owner decisions into canonical Project Truth, and treat embedded binaries/macros as non-executable data.
 
-The owner self-chat also receives automatic important notifications for completed/failed mission packets, owner blockers, mission-controller errors, pause/resume, mission completion, owner-steer execution start, owner-steer completion/failure and supersession. Separate persisted cursors prevent replaying old mission or steering events after restart.
+The owner chat also receives automatic important notifications for failed/completed mission packets, owner blockers, mission-controller errors, pause/resume, mission completion, owner-steer execution start, completion/failure and supersession. Notifications are durably enqueued before cursor advancement and require a WhatsApp message-ID receipt before leaving the outbox, preventing loss across transient send failures or restarts.
 
 ## Hybrid owner-steering execution semantics
 
@@ -180,7 +168,7 @@ Write-tool idempotency is stored under:
 /var/lib/dial-control/chat-control/idempotency/<tool>/<request-id>.json
 ```
 
-WhatsApp derives the write request ID from the channel plus immutable inbound message ID. The Cloud adapter also persists processed webhook state before sending its outbound reply so a delivery retry can recover a failed reply without repeating the development action.
+WhatsApp derives the write request ID from the channel plus immutable inbound message ID. The dedicated Hermes adapter records the development action once, persists its reply in the durable outbox, and retries delivery without repeating the action.
 
 WhatsApp progress cursors are persisted per owner/sender, so `PROGRESS` can report changes since the prior request rather than replaying the whole event history.
 
@@ -200,22 +188,11 @@ dial-mission-controller.service
 dial-owner-steering.service
 dial-hermes-whatsapp-bridge.path
 dial-hermes-whatsapp-operator.service
-dial-whatsapp-cloud-operator.service
 ```
 
 and enrolls `dial-oracle-control` in locally installed Claude and Codex clients when those CLIs are available.
 
-The Hermes WhatsApp bridge service itself starts only after pairing credentials exist. The owner operator service may run before pairing and reports `WAITING_PAIRING`. The Cloud operator may run before Meta configuration and reports `UNCONFIGURED`.
-
-## Cloud API configuration
-
-Run interactively on the Oracle host:
-
-```bash
-bash deploy/oracle/hermes-codex/configure-whatsapp-cloud-operator.sh
-```
-
-The script prompts locally (secrets are not arguments or repository content), writes a mode-0600 config, and restarts the adapter. A public authenticated/restricted HTTPS ingress is a separate infrastructure activation step because it depends on the owner's domain/tunnel/account configuration.
+The Hermes WhatsApp bridge service is path-triggered after dedicated pairing credentials exist. The owner operator can run before pairing but cannot report READY until the dedicated account is paired, the bridge is connected and exactly one owner is configured.
 
 ## Qualification
 
@@ -227,20 +204,19 @@ Repository qualification proves the gateway without requiring external WhatsApp 
 - typed tool list includes status, VEKL, `dial_owner_steer`, instruction and channel-health tools;
 - no shell/exec/filesystem generic tool exists;
 - Codex and Claude mutable MCPs are enrolled;
-- `dial-owner-steering.service` and both WhatsApp operator services are active;
-- Cloud adapter health is `UNCONFIGURED`, `DISABLED` or `READY` and exposes no secret fields;
-- Hermes WhatsApp status is structurally valid whether paired or unpaired;
-- DIAL-only continuity soak restarts and recovers the owner-steering broker and both operator services;
+- `dial-owner-steering.service` and `dial-hermes-whatsapp-operator.service` are active;
+- the dedicated Hermes WhatsApp status is `READY`, `mode=bot`, `paired=true`, `owner_count=1`, and the bridge is connected;
+- the live channel completes a benign owner round-trip and returns a WhatsApp message-ID receipt;
+- DIAL-only continuity soak restarts and recovers the owner-steering broker and Hermes owner operator;
 - normal mission/development-gate requirements remain unchanged.
 
-Real WhatsApp delivery is separately activated only after normal owner pairing or valid Meta credentials. Qualification must never manufacture or bypass either credential boundary.
+Real development-owner WhatsApp delivery is activated only after the dedicated Hermes account is paired and owner-only configuration is present. Qualification must never manufacture or bypass that pairing boundary.
 
 ## Failure behavior
 
 - Claude/Codex disconnect: Oracle continues; reconnect and read status/progress.
-- WhatsApp unpaired: `WAITING_PAIRING`; no inbound command path.
-- Meta config absent/disabled: `UNCONFIGURED`/`DISABLED`; webhook rejects processing.
-- Invalid Meta signature: HTTP 401; no command execution.
+- Dedicated Hermes account unpaired/misconfigured: `NOT_READY`; no GREEN owner-control path.
+- Bridge/send outage: completed owner actions are not repeated; their replies/important updates remain in the persistent outbox until a message-ID receipt is obtained.
 - Unauthorized WhatsApp sender: audited hash only; no command or reply.
 - Duplicate message: no duplicate typed write.
 - Reply delivery failure after completed command: persisted result may be replied on retry without rerunning the command.
@@ -249,4 +225,4 @@ Real WhatsApp delivery is separately activated only after normal owner pairing o
 
 ## Compatibility
 
-`DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md` remains historical/Claude-specific detail. This document is the canonical multi-channel operator architecture. `DEC-025` retains the typed DIAL-only gateway/authentication/no-shell foundation; `DEC-030` is the locked hybrid owner-steering supersession for normal owner-action semantics.
+`DIAL_CLAUDE_CHAT_CONTROL_BRIDGE.md` remains historical/Claude-specific detail. This document is the canonical multi-channel operator architecture. `DEC-025` retains the typed DIAL-only gateway/authentication/no-shell foundation; `DEC-030` retains the locked hybrid safe-boundary owner-steering semantics; `DEC-034` locks the dedicated Dial Hermes Control WhatsApp transport and completely retires DEC-030's prior self-chat transport path while preserving DEC-030's hybrid steering semantics.

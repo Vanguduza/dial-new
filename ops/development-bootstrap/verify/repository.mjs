@@ -50,7 +50,7 @@ export async function certifyRepository({ role, repoDir, controlHome, manifest, 
   const gp = structural?.providers?.graphify || structural?.graphify || {};
   checks.push(check({ id: 'graphrag.graphify-activation', domain: 'GraphRAG', title: `Graphify provider execution_enabled=${gp.execution_enabled === true} qualified=${gp.qualified === true} (fail-closed until host qualification)`, status: gp.execution_enabled === true && gp.qualified !== true ? STATUS.FAIL : STATUS.PASS, criticality: CRITICALITY.MANDATORY, evidence: { registry: 'agent-system/registries/STRUCTURAL_REALITY_POLICY.json', graphify: { qualified: gp.qualified ?? null, activation_ready: gp.activation_ready ?? null, execution_enabled: gp.execution_enabled ?? null } } }));
   const workerInstaller = fs.readFileSync(path.join(repoDir, 'ops/development-bootstrap/workers/install-worker-agent.sh'), 'utf8');
-  const producerWired = /dial-structural-snapshot\.timer/.test(workerInstaller) && /"kind":"STRUCTURAL_SNAPSHOT"/.test(workerInstaller);
+  const producerWired = /dial-structural-snapshot\.timer/.test(workerInstaller) && /--kind\s+STRUCTURAL_SNAPSHOT/.test(workerInstaller);
   checks.push(check({ id: 'graphrag.structural-snapshot-producer', domain: 'GraphRAG', title: 'bounded structural snapshot producer is wired into the vekl-worker timer', status: producerWired ? STATUS.PASS : STATUS.FAIL, criticality: CRITICALITY.REQUIRED, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { installer: 'ops/development-bootstrap/workers/install-worker-agent.sh', scheduled: producerWired, authority: 'SUBORDINATE_STRUCTURAL_EVIDENCE' }, remediation: 'install dial-structural-snapshot.timer on vekl-worker', severity: producerWired ? null : 'P2' }));
 
   // Control-plane fingerprint and Oracle state.

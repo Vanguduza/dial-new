@@ -12,6 +12,7 @@ import { parseOperatorTextCommand, executeOperatorTextCommand } from '../agent-s
 import { extractWhatsAppTextMessages, processWhatsAppMessage, verifyMetaSignature, whatsappOperatorConfigStatus } from '../agent-system/orchestration/whatsapp-operator-adapter.mjs';
 import { buildAttachmentInstruction, collectMissionEventNotifications, collectOwnerSteeringNotifications, persistWhatsAppAttachments } from '../agent-system/orchestration/whatsapp-owner-input.mjs';
 import { classifyOwnerLiveMode, executeOwnerLiveTurn } from '../agent-system/orchestration/owner-live-control.mjs';
+import { formatDialHermesControlMessage } from '../agent-system/orchestration/whatsapp-hermes-operator.mjs';
 import { ownerSteeringBlocksAutonomous, ownerSteeringStatus, processOwnerSteeringTick, submitOwnerSteer } from '../agent-system/orchestration/owner-steering-broker.mjs';
 import { processNextExternalWork, submitExternalWork } from '../agent-system/orchestration/external-orchestrator.mjs';
 import { callChatControlTool } from '../agent-system/orchestration/chat-control-bridge.mjs';
@@ -57,10 +58,10 @@ describe('DIAL unified operator gateway', () => {
     markDialMissionBlocked({ root, reason: 'Owner direction required before continuing.' });
     const envelopeDir = path.join(root, 'execution/tasks/aef-task'); mkdirSync(envelopeDir, { recursive: true });
     writeFileSync(path.join(envelopeDir, 'envelope.json'), JSON.stringify({ task_id: 'aef-task', envelope_hash: 'env-hash', state: 'RUNNING' }));
-    const ownerProvenance = { authority: 'OWNER_EXPLICIT', instruction_sha256: 'a'.repeat(64), instruction_excerpt: 'Land the verified fix', request_id: 'wa-live-test-0001', channel: 'whatsapp', actor: 'self:test', transport: 'hermes_owner_self_chat' };
+    const ownerProvenance = { authority: 'OWNER_EXPLICIT', instruction_sha256: 'a'.repeat(64), instruction_excerpt: 'Land the verified fix', request_id: 'wa-live-test-0001', channel: 'whatsapp', actor: 'owner:test', transport: 'hermes_owner_whatsapp' };
     const out = await executeOwnerLiveTurn({
       instruction: 'Land the verified fix and continue from the current repository truth.',
-      mode: 'instruction', root, repoDir: repo, requestedBy: 'whatsapp:self:test', requestId: 'wa-live-test-0001', ownerProvenance,
+      mode: 'instruction', root, repoDir: repo, requestedBy: 'whatsapp:owner:test', requestId: 'wa-live-test-0001', ownerProvenance,
       knowledgeResolver: () => null,
       executor: async ({ instruction }) => ({ event: 'HERMES_OPERATIONAL_TURN_COMPLETED', runtime: 'test-runtime', resolved_model: 'test-model', response: instruction.includes('ACTION turn') ? 'Applied owner direction.' : 'bad prompt' }),
     });
@@ -78,7 +79,7 @@ describe('DIAL unified operator gateway', () => {
     markDialMissionBlocked({ root, reason: 'Need an owner decision.' });
     expect(classifyOwnerLiveMode('What is the current owner blockage?')).toBe('query');
     const out = await executeOwnerLiveTurn({
-      instruction: 'What is the current owner blockage?', root, repoDir: repo, requestedBy: 'whatsapp:self:test', requestId: 'wa-live-test-0002',
+      instruction: 'What is the current owner blockage?', root, repoDir: repo, requestedBy: 'whatsapp:owner:test', requestId: 'wa-live-test-0002',
       executor: async ({ instruction }) => ({ event: 'HERMES_OPERATIONAL_TURN_COMPLETED', runtime: 'test-runtime', resolved_model: 'test-model', response: instruction.includes('QUESTION/READ turn') ? 'Need an owner decision.' : 'bad prompt' }),
     });
     expect(out.response).toBe('Need an owner decision.');
@@ -89,7 +90,7 @@ describe('DIAL unified operator gateway', () => {
 
   it('registers normal owner direction in the hybrid steering lane instead of the autonomous queue', () => {
     const { root } = rootWithRepo();
-    const steer = submitOwnerSteer({ instruction: 'Reconcile the POS checkout against the locked benchmark.', requestedBy: 'whatsapp:self:test', requestId: 'wa-steer-test-0001', root });
+    const steer = submitOwnerSteer({ instruction: 'Reconcile the POS checkout against the locked benchmark.', requestedBy: 'whatsapp:owner:test', requestId: 'wa-steer-test-0001', root });
     expect(steer.state).toBe('PENDING');
     expect(steer.reply).toContain('next for execution before autonomous development continues');
     expect(steer.public_advisory_metadata.steer_scope_tags).toContain('POS');
@@ -102,13 +103,13 @@ describe('DIAL unified operator gateway', () => {
 
   it('treats a trusted typed owner action as explicit owner authority even when prose lacks a write-intent keyword', async () => {
     const { root } = rootWithRepo();
-    const steer = await callChatControlTool('dial_owner_steer', { instruction: 'Make the checkout blue.', request_id: 'wa-steer-test-plain-action' }, root, { channel: 'whatsapp', actor: 'self:test', transport: 'hermes_owner_self_chat' });
+    const steer = await callChatControlTool('dial_owner_steer', { instruction: 'Make the checkout blue.', request_id: 'wa-steer-test-plain-action' }, root, { channel: 'whatsapp', actor: 'owner:test', transport: 'hermes_owner_whatsapp' });
     expect(steer.owner_instruction_provenance).toMatchObject({ authority: 'OWNER_EXPLICIT', channel: 'whatsapp', request_id: 'wa-steer-test-plain-action' });
   });
 
   it('redirects explicit action-mode live turns into the safe-boundary steering broker', async () => {
     const { root } = rootWithRepo();
-    const result = await callChatControlTool('dial_owner_live_turn', { instruction: 'Make the checkout blue.', mode: 'instruction', request_id: 'wa-live-action-redirect' }, root, { channel: 'whatsapp', actor: 'self:test', transport: 'hermes_owner_self_chat' });
+    const result = await callChatControlTool('dial_owner_live_turn', { instruction: 'Make the checkout blue.', mode: 'instruction', request_id: 'wa-live-action-redirect' }, root, { channel: 'whatsapp', actor: 'owner:test', transport: 'hermes_owner_whatsapp' });
     expect(result.state).toBe('PENDING');
     expect(result.owner_instruction_provenance.authority).toBe('OWNER_EXPLICIT');
     expect(ownerSteeringStatus(root).pending_count).toBe(1);
@@ -124,7 +125,7 @@ describe('DIAL unified operator gateway', () => {
     const { root, repo } = rootWithRepo();
     const processing = path.join(root, 'work-queue/processing'); mkdirSync(processing, { recursive: true });
     writeFileSync(path.join(processing, 'active.json'), JSON.stringify({ job_id: 'active-packet', state: 'PROCESSING', instruction: 'Continue checkout implementation.' }));
-    const steer = submitOwnerSteer({ instruction: 'Change the POS layout after the current safe packet.', requestedBy: 'whatsapp:self:test', requestId: 'wa-steer-test-0002', root });
+    const steer = submitOwnerSteer({ instruction: 'Change the POS layout after the current safe packet.', requestedBy: 'whatsapp:owner:test', requestId: 'wa-steer-test-0002', root });
     expect(steer.active_writer_count).toBe(1);
     expect((await processOwnerSteeringTick({ root, repoDir: repo, advisoryWaitMs: 0, liveTurn: async () => ({ state: 'COMPLETED' }) })).action).toBe('WAITING_SAFE_BOUNDARY');
     expect(ownerSteeringBlocksAutonomous(root)).toBe(true);
@@ -142,7 +143,7 @@ describe('DIAL unified operator gateway', () => {
     let liveStarted;
     const started = new Promise((resolve) => { liveStarted = resolve; });
     const livePromise = executeOwnerLiveTurn({
-      instruction: 'Apply the owner change now.', mode: 'instruction', root, repoDir: repo, requestedBy: 'whatsapp:self:test', requestId: 'wa-live-test-0003',
+      instruction: 'Apply the owner change now.', mode: 'instruction', root, repoDir: repo, requestedBy: 'whatsapp:owner:test', requestId: 'wa-live-test-0003',
       knowledgeResolver: () => null,
       executor: async () => { liveStarted(); await hold; return { event: 'HERMES_OPERATIONAL_TURN_COMPLETED', runtime: 'test-runtime', resolved_model: 'test-model', response: 'done' }; },
     });
@@ -250,6 +251,11 @@ describe('DIAL unified operator gateway', () => {
     const installer = readFileSync('deploy/oracle/hermes-codex/install-operator-gateway.sh', 'utf8');
     const chatInstaller = readFileSync('deploy/oracle/hermes-codex/install-chat-control-bridge.sh', 'utf8');
     expect(installer).toContain('dial-owner-steering.service');
+    expect(installer).toContain('.hermes/whatsapp/dial-hermes-control/session');
+    expect(installer).toContain('EnvironmentFile=-${HERMES_WA_CONTROL_ENV}');
+    expect(installer).toContain('systemctl --user disable --now dial-whatsapp-cloud-operator.service');
+    expect(installer).toContain('disable --now dial-hermes-whatsapp-bridge.path dial-hermes-whatsapp-bridge.service dial-hermes-whatsapp-operator.service');
+    expect(installer).not.toContain('ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-operator-adapter.mjs serve');
     expect(installer).toContain('ReadWritePaths=${CONTROL_HOME} ${REPO_DIR} ${HERMES_HOME} ${CODEX_HOME}');
     expect(installer).toContain('ReadOnlyPaths=${REPO_DIR} ${HERMES_DIR}');
     expect(installer).toContain('UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY');
@@ -257,13 +263,23 @@ describe('DIAL unified operator gateway', () => {
     expect(chatInstaller).toContain('ReadWritePaths=${CONTROL_HOME} ${HERMES_HOME} ${CODEX_HOME}');
   });
 
-  it('keeps owner QR enrollment singleton, isolated and patched without weakening product WhatsApp', () => {
+  it('keeps dedicated Dial Hermes Control QR enrollment singleton, isolated and owner-only', () => {
     const pairing = readFileSync('deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh', 'utf8');
+    const configure = readFileSync('deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh', 'utf8');
     expect(pairing).toContain('flock -n 9');
     expect(pairing).toContain('companion_reg_refresh');
     expect(pairing).toContain('4f263f0e365c2e74dd1b824031d1c5910f518c26');
-    expect(pairing).toContain('WHATSAPP_MODE=self-chat');
-    expect(pairing).not.toMatch(/cloudflared|localtunnel|ngrok/);
+    expect(pairing).toContain('WHATSAPP_MODE=bot');
+    expect(pairing).toContain('.hermes/whatsapp/dial-hermes-control/session');
+    expect(configure).toContain('WHATSAPP_DM_POLICY=closed');
+    expect(configure).toContain('WHATSAPP_ALLOWED_USERS=${OWNER_ID}');
+    expect(pairing).not.toMatch(/cloudflared|localtunnel|ngrok|self-chat/);
+  });
+
+  it('formats every development-control reply as Dial Hermes Control without an underline', () => {
+    expect(formatDialHermesControlMessage('Owner steer 2 is now being applied.')).toBe('*Dial Hermes Control*\nOwner steer 2 is now being applied.');
+    expect(formatDialHermesControlMessage('*Dial Hermes Control*\nAlready formatted.')).toBe('*Dial Hermes Control*\nAlready formatted.');
+    expect(formatDialHermesControlMessage('status')).not.toMatch(/────|Hermes Agent|⚕/);
   });
 
   it('exposes the same typed control toolset through a Codex-compatible stdio MCP server', async () => {

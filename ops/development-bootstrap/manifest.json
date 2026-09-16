@@ -371,10 +371,11 @@
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "installer": "deploy/oracle/hermes-codex/install-control-plane.sh",
       "workload": "HERMES_RUNTIME",
-      "repo_rw_expected": false,
+      "repo_rw_expected": true,
       "check_ids": [
         "systemd.dial-hermes-runtime.service"
-      ]
+      ],
+      "repo_rw_reason": "Hermes runtime is the controlled manager/execution runtime; repository writes remain subject to DIAL owner/VEKL/AEF gates and provider-first routing."
     },
     {
       "id": "svc.dial-hermes-orchestrator",
@@ -473,24 +474,6 @@
       "repo_rw_expected": false,
       "check_ids": [
         "systemd.dial-hermes-whatsapp-operator.service"
-      ],
-      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
-    },
-    {
-      "id": "svc.dial-whatsapp-cloud-operator",
-      "unit": "dial-whatsapp-cloud-operator.service",
-      "scope": "user",
-      "hosts": [
-        "dial-hermes-control"
-      ],
-      "criticality": "REQUIRED",
-      "readiness_class": "OWNER_CONTROL_REQUIRED",
-      "installer": "deploy/oracle/hermes-codex/install-operator-gateway.sh",
-      "workload": "OWNER_CONTROL",
-      "port": 9132,
-      "repo_rw_expected": false,
-      "check_ids": [
-        "systemd.dial-whatsapp-cloud-operator.service"
       ],
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
     },
@@ -1332,20 +1315,42 @@
       "tooling_kind": "CREDENTIAL",
       "purpose": "Private MCP binding between control host and background coordinator",
       "auth_type": "NON_INTERACTIVE_SECRET",
-      "location": "/var/lib/dial-control/secrets/remote-mcp-capability (control); /var/lib/dial-worker/secrets/private-mcp-url (worker)",
+      "location": "/var/lib/dial-control/secrets/remote-mcp-capability",
       "required_mode": "600",
       "hosts": [
-        "dial-hermes-control",
+        "dial-hermes-control"
+      ],
+      "probe": "stat mode 600",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": false,
+      "install_semantics": "phase3-bind-private-mcp.sh / phase3-register-nodes.sh",
+      "config_semantics": "control secret file /var/lib/dial-control/secrets/remote-mcp-capability",
+      "auth_semantics": "NON_INTERACTIVE_SECRET",
+      "probe_semantics": "control capability file exists at mode 600; worker-side bound URL is a separate role-local credential",
+      "check_ids": [
+        "security.private-mcp-capability"
+      ]
+    },
+    {
+      "id": "cred.worker-private-mcp-url",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Worker-local authenticated private MCP URL binding",
+      "auth_type": "NON_INTERACTIVE_SECRET",
+      "location": "/var/lib/dial-worker/secrets/private-mcp-url",
+      "required_mode": "600",
+      "hosts": [
         "vekl-worker"
       ],
       "probe": "stat mode 600; coordinator state mcp.ok=true",
       "criticality": "MANDATORY",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "interactive": false,
-      "install_semantics": "phase3-bind-private-mcp.sh / phase3-register-nodes.sh",
-      "config_semantics": "secrets files",
-      "auth_semantics": "NON_INTERACTIVE_SECRET",
-      "probe_semantics": "existence + mode 600 + coordinator health",
+      "owner_action": null,
+      "install_semantics": "phase3-bind-private-mcp.sh / phase3-register-nodes.sh installs the worker-local URL binding",
+      "config_semantics": "/var/lib/dial-worker/secrets/private-mcp-url mode 600",
+      "auth_semantics": "NON_INTERACTIVE_SECRET generated from the control capability; no owner credential action",
+      "probe_semantics": "worker-local file existence/mode plus background-coordinator mcp.ok=true",
       "check_ids": [
         "security.private-mcp-capability"
       ]
@@ -1353,9 +1358,9 @@
     {
       "id": "cred.whatsapp-pairing",
       "tooling_kind": "CREDENTIAL",
-      "purpose": "Owner self-chat pairing",
+      "purpose": "Dedicated Dial Hermes Control WhatsApp bot identity + owner allowlist",
       "auth_type": "DEVICE_CODE",
-      "location": "~/.hermes/whatsapp/session/creds.json",
+      "location": "~/.hermes/whatsapp/dial-hermes-control/session/creds.json",
       "required_mode": "600",
       "hosts": [
         "dial-hermes-control"
@@ -1364,32 +1369,17 @@
       "criticality": "REQUIRED",
       "readiness_class": "OWNER_CONTROL_REQUIRED",
       "interactive": true,
-      "owner_action": "bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground (QR scan)",
+      "owner_action": "bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh && bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground",
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
-      "install_semantics": "deterministic WhatsApp pairing runtime prepares the exact lock/vendor set before device pairing",
-      "config_semantics": "~/.hermes/whatsapp/session/creds.json mode 600",
-      "auth_semantics": "owner device/QR pairing",
-      "probe_semantics": "whatsapp-hermes-operator status reports PAIRED and benign owner-channel canary succeeds"
-    },
-    {
-      "id": "cred.whatsapp-cloud",
-      "tooling_kind": "CREDENTIAL",
-      "purpose": "Meta Cloud API adapter",
-      "auth_type": "API_KEY",
-      "location": "/var/lib/dial-control/secrets/whatsapp-operator.json",
-      "required_mode": "600",
-      "hosts": [
-        "dial-hermes-control"
+      "install_semantics": "deterministic pinned Hermes/Baileys pairing runtime prepares the sole Dial Hermes Control bot session; no legacy self-chat development-control path is enrolled or consulted",
+      "config_semantics": "mode-600 /var/lib/dial-control/secrets/hermes-whatsapp-control.env contains the single owner allowlist; the only development-control WhatsApp session is ~/.hermes/whatsapp/dial-hermes-control/session",
+      "auth_semantics": "dedicated Hermes WhatsApp account/device QR pairing plus exactly one allowlisted owner identity; no Meta Cloud API credential in the development control path",
+      "probe_semantics": "whatsapp-hermes-operator status reports READY, mode=bot, paired=true, owner_count=1 and bridge=connected; live round-trip receipt is required before GREEN",
+      "check_ids": [
+        "whatsapp.channel",
+        "systemd.dial-hermes-whatsapp-operator.service"
       ],
-      "probe": "whatsapp-operator-adapter status",
-      "criticality": "REQUIRED",
-      "readiness_class": "OWNER_CONTROL_REQUIRED",
-      "interactive": false,
-      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
-      "install_semantics": "operator gateway creates the credential reference; no credential value is stored in repository",
-      "config_semantics": "/var/lib/dial-control/secrets/whatsapp-operator.json mode 600",
-      "auth_semantics": "Meta Cloud API application/token configuration by owner",
-      "probe_semantics": "whatsapp-operator-adapter authenticated status plus benign send/receive canary"
+      "config_location": "/var/lib/dial-control/secrets/hermes-whatsapp-control.env"
     },
     {
       "id": "cred.xkiro",
@@ -1416,21 +1406,20 @@
       "tooling_kind": "CREDENTIAL",
       "purpose": "Control host -> E2 bounded recovery (forced command)",
       "auth_type": "SSH_KEY",
-      "location": "~/.ssh/dial-bounded-recovery (control host); authorized_keys forced command on each E2",
+      "location": "~/.ssh/dial-bounded-recovery",
       "required_mode": "600",
       "hosts": [
-        "dial-hermes-control",
-        "oracle-admin"
+        "dial-hermes-control"
       ],
-      "probe": "install-bounded-recovery-identity.sh --verify; verify-two-way-recovery.sh",
+      "probe": "verify bounded recovery channel",
       "criticality": "MANDATORY",
       "readiness_class": "RECOVERY_REQUIRED",
-      "interactive": true,
-      "owner_action": "install-bounded-recovery-peer.sh on the control host, then install-bounded-recovery-identity.sh <pub> on each E2 (owner grants the capability)",
+      "interactive": false,
+      "owner_action": null,
       "install_semantics": "deploy/oracle/resource-fabric/install-bounded-recovery-*.sh",
       "config_semantics": "forced-command authorized_keys entry",
       "auth_semantics": "SSH_KEY bound to bounded-recovery-command.sh",
-      "probe_semantics": "verify-two-way-recovery.sh verdict PROVEN",
+      "probe_semantics": "non-destructive verify-two-way-recovery.sh --target oracle-admin proves reachability and refusal boundary; R1 repair proof remains the live recovery certification gate",
       "check_ids": [
         "recovery.two-way"
       ]
@@ -1463,21 +1452,20 @@
       "tooling_kind": "CREDENTIAL",
       "purpose": "Control host -> vekl-worker diagnostics job dispatch over SSH (forced command)",
       "auth_type": "SSH_KEY",
-      "location": "~/.ssh/dial-worker (control host); authorized_keys restricted to workers/vekl-worker-job.mjs",
+      "location": "~/.ssh/node-hermes-to-vekl",
       "hosts": [
-        "dial-hermes-control",
-        "vekl-worker"
+        "dial-hermes-control"
       ],
-      "probe": "ssh -o BatchMode=yes vekl-worker true",
+      "probe": "ssh BatchMode vekl-worker true",
       "criticality": "REQUIRED",
       "readiness_class": "RECOVERY_REQUIRED",
-      "interactive": true,
-      "owner_action": "generate dedicated key pair; install forced-command authorized_keys entry on vekl-worker",
+      "interactive": false,
+      "owner_action": null,
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
       "install_semantics": "dedicated SSH keypair and forced-command authorized_keys entry installed by canonical worker/recovery tooling",
-      "config_semantics": "control private key remains under ~/.ssh with restrictive mode; worker public key entry is forced-command bounded",
+      "config_semantics": "~/.ssh/config resolves vekl-worker to the private VCN address with IdentityFile ~/.ssh/node-hermes-to-vekl; worker authorized_keys is forced-command bounded",
       "auth_semantics": "SSH_KEY public-key authentication only",
-      "probe_semantics": "BatchMode control-to-worker diagnostic probe plus forced-command/refusal evidence"
+      "probe_semantics": "BatchMode `ssh vekl-worker true` succeeds through the forced-command/private-VCN path; worker-side refusal is certified separately"
     },
     {
       "id": "cred.exa",
@@ -1493,12 +1481,33 @@
       "criticality": "REQUIRED",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "interactive": true,
-      "owner_action": "create/provide Exa API key and place it in the control-plane secret store",
+      "owner_action": "bash deploy/oracle/hermes-codex/configure-exa-api-key.sh",
       "owner_required_ref": "DEC-033",
       "install_semantics": "install-research-mcp.sh installs only the runtime; secret file is owner-provided outside repository",
       "config_semantics": "mode-600 file at /var/lib/dial-control/secrets/exa-api.key",
       "auth_semantics": "Exa API key",
       "probe_semantics": "web_search_exa benign search succeeds without secret disclosure"
+    },
+    {
+      "id": "cred.stitch",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Google Stitch governed design provider",
+      "auth_type": "API_KEY",
+      "location": "/var/lib/dial-control/secrets/stitch.env",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "dial-stitch live qualification",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": true,
+      "owner_action": "bash deploy/oracle/hermes-codex/configure-stitch-provider.sh",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "repository SDK/runtime is already exact-installed; owner only supplies supported provider credential through the secure configuration script",
+      "config_semantics": "mode-600 /var/lib/dial-control/secrets/stitch.env loaded only by run-stitch-provider.sh",
+      "auth_semantics": "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT; secret never enters repository or argv",
+      "probe_semantics": "run-stitch-provider.sh qualify must return INTEGRATED after live tool discovery, synthetic sandbox and governed proof chain"
     }
   ],
   "network_dependencies": [
@@ -1598,7 +1607,8 @@
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "resolve_via": "DIAL_MCP_INGRESS_URL",
       "configuration_required": true,
-      "owner_action": "configure the real Cloudflare Access ingress and export DIAL_MCP_INGRESS_URL; no placeholder URL is accepted"
+      "owner_action": "bash deploy/oracle/hermes-codex/configure-cloudflare-mcp-ingress.sh after the owner creates the authenticated Cloudflare Tunnel/Access application",
+      "config_location": "/var/lib/dial-control/config/development-network.env"
     },
     {
       "id": "net.secondary-recovery-overlay",
@@ -1615,7 +1625,7 @@
       "probe": "TAILSCALE",
       "configuration_required": true,
       "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
-      "owner_action": "authenticate Tailscale on all three hosts or configure an owner-approved equivalent overlay; then prove reciprocal reachability independent of Cloudflare"
+      "owner_action": "run `sudo tailscale up` on dial-hermes-control, vekl-worker and oracle-admin; then on each host run `bash deploy/oracle/resource-fabric/verify-secondary-recovery-overlay.sh <the-other-two-hostnames-or-Tailscale-IPs>`"
     }
   ],
   "health_checks": [

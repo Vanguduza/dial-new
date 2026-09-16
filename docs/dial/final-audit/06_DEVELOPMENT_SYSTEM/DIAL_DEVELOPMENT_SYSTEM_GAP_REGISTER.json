@@ -11,23 +11,22 @@
     "EXTERNAL_GATE"
   ],
   "summary": {
-    "total": 19,
+    "total": 24,
     "by_severity": {
-      "P0": 6,
-      "P1": 11,
+      "P0": 8,
+      "P1": 14,
       "P2": 2
     },
     "by_status": {
       "EXTERNAL_GATE": 5,
       "LIVE_APPLY_REQUIRED": 2,
-      "OWNER_ACTION_REQUIRED": 1,
+      "OWNER_ACTION_REQUIRED": 6,
       "RESOLVED_AUTHORIZATION": 1,
       "RESOLVED_REPOSITORY": 10
     },
     "open_by_severity": {
-      "P0": 5,
-      "P1": 3,
-      "P2": 0
+      "P0": 7,
+      "P1": 6
     }
   },
   "gaps": [
@@ -38,7 +37,7 @@
       "status": "EXTERNAL_GATE",
       "gate": "EXTERNAL-GATE-RECOVERY-SERVICES-001",
       "owner_decision_required": false,
-      "evidence": "oracle-admin is individually GREEN and bounded two-way recovery is PROVEN; final same-merged-SHA deployment/report remains a downstream gate"
+      "evidence": "oracle-admin is individually GREEN; fresh bounded control->oracle-admin recovery is PROVEN at 2026-09-16T12:58:48Z including R1 restart/refusal probes and canonical latest-verdict persistence. Final same-merged-SHA deployment/report remains a downstream gate."
     },
     {
       "id": "GAP-002",
@@ -101,7 +100,7 @@
       "status": "LIVE_APPLY_REQUIRED",
       "gate": "EXTERNAL-GATE-SYSTEMD-REINSTALL-001",
       "owner_decision_required": false,
-      "evidence": "control candidate hardening is live and verified; final merged-SHA deployment to control/worker/admin remains required"
+      "evidence": "control candidate hardening was reconverged live on 2026-09-16; all previously stale required control units satisfy sandbox properties, and the phase5 append-only audit-ledger installer is idempotent. Final merged-SHA deployment to control/worker/admin remains required."
     },
     {
       "id": "GAP-012",
@@ -110,7 +109,7 @@
       "status": "LIVE_APPLY_REQUIRED",
       "gate": "EXTERNAL-GATE-STRUCTURAL-TIMER-001",
       "owner_decision_required": false,
-      "evidence": "bounded advisory timer/service is implemented; final exact-SHA worker checkout/timer enablement remains pending"
+      "evidence": "bounded advisory timer/service is repository-wired and already enabled/active on vekl-worker; last live structural snapshot completed successfully with sealed subordinate-evidence receipt. Final exact-merged-SHA worker deployment remains required."
     },
     {
       "id": "GAP-007",
@@ -210,6 +209,42 @@
       "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
       "owner_decision_required": false,
       "evidence": "fabric \u00a712 path G requires Tailscale or equivalent independent of Cloudflare; live control, vekl-worker and oracle-admin all report Tailscale BackendState=NeedsLogin and Online=false"
+    },
+    {
+      "id": "GAP-025",
+      "title": "Google Stitch provider credentials and live governed qualification remain owner-gated",
+      "severity": "P0",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "AUTH-GATE-GOOGLE-STITCH-001",
+      "owner_decision_required": false,
+      "evidence": "repository SDK, governed stage/admission/AEF consumption/screen-certification/outage fallback, secure credential writer and runtime injection wrapper are complete; owner must supply supported Stitch API-key or OAuth/access-token credentials and run the live qualification path"
+    },
+    {
+      "id": "GAP-026",
+      "title": "Exa functional research MCP canary requires the owner API key",
+      "severity": "P1",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "AUTH-GATE-EXA-001",
+      "owner_decision_required": false,
+      "evidence": "exa-mcp-server 3.4.1 exact runtime, secure key writer and MCP initialize/tools-list/web_search_exa functional canary are repository-ready; no Exa credential is admitted on the control host"
+    },
+    {
+      "id": "GAP-027",
+      "title": "Dedicated Dial Hermes Control WhatsApp account requires owner pairing and live round-trip proof",
+      "severity": "P1",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "AUTH-GATE-WHATSAPP-001",
+      "owner_decision_required": false,
+      "evidence": "DEC-034 repository prerequisites are complete: dedicated bot mode, exactly-one-owner allowlist, sole protected session, no Meta Cloud development credential, durable outbound retries/message-id receipts and exact Dial Hermes Control heading. The legacy self-chat development-control route is retired. GREEN requires configuring/pairing the dedicated Hermes account and a benign owner round-trip."
+    },
+    {
+      "id": "GAP-028",
+      "title": "Provider-container repository connector and execution surface are not authenticated",
+      "severity": "P0",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "AUTH-GATE-PROVIDER-CONTAINER-GITHUB-001",
+      "owner_decision_required": false,
+      "evidence": "provider-container role, GitHub repository reach probe and signed-role evidence contract are repository-complete; Codex Cloud reports no workspace environment and Claude Remote requires interactive account/provider connector authentication"
     }
   ]
 }

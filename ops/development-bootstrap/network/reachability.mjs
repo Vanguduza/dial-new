@@ -1,6 +1,23 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { check, STATUS, CRITICALITY } from '../lib/result.mjs';
 import { httpsReach, tcpReach, run } from '../lib/probes.mjs';
 import { itemsForRole } from '../lib/manifest.mjs';
+
+function configuredValue(controlHome, key) {
+  const file = path.join(controlHome || '/var/lib/dial-control', 'config', 'development-network.env');
+  if (!fs.existsSync(file)) return null;
+  for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+    const match = line.match(/^([A-Z0-9_]+)=(\S+)$/);
+    if (match && match[1] === key) return match[2];
+  }
+  return null;
+}
+
+export function resolveNetworkTarget(dep, { controlHome = null, env = process.env } = {}) {
+  if (!dep?.resolve_via) return dep?.target || null;
+  return env[dep.resolve_via] || configuredValue(controlHome, dep.resolve_via) || dep.target || null;
+}
 
 export function evaluateTailscaleState(doc = {}) {
   const backend_state = doc?.BackendState || null;
@@ -17,7 +34,7 @@ export function evaluateTailscaleState(doc = {}) {
   };
 }
 
-export async function certifyNetwork({ role, manifest }) {
+export async function certifyNetwork({ role, manifest, controlHome = null }) {
   const domain = 'Network';
   const deps = itemsForRole(manifest.network_dependencies, role);
   const checks = [];
@@ -31,7 +48,7 @@ export async function certifyNetwork({ role, manifest }) {
       checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: ${ev.backend_state || 'UNAVAILABLE'}`, status, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { command: r.command, exit: r.status, ...ev }, gate: ev.ok ? null : (dep.gate || 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001'), remediation: dep.owner_action || 'authenticate Tailscale or configure the owner-approved equivalent secondary recovery overlay' }));
       continue;
     }
-    const target = dep.resolve_via ? (process.env[dep.resolve_via] || dep.target || null) : dep.target;
+    const target = resolveNetworkTarget(dep, { controlHome });
     if (!target) {
       checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: endpoint not configured`, status: dep.configuration_required ? STATUS.OWNER_ACTION_REQUIRED : STATUS.NOT_APPLICABLE, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { resolve_via: dep.resolve_via || null, configured: false, placeholder_used: false }, gate: dep.configuration_required ? (dep.gate || 'EXTERNAL-GATE-CLOUDFLARE-ACCESS-001') : null, remediation: dep.owner_action || null }));
       continue;
@@ -46,6 +63,24 @@ export async function certifyNetwork({ role, manifest }) {
     const r = await httpsReach(target);
     checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: ${target}`, status: r.ok ? STATUS.PASS : STATUS.FAIL, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: r, remediation: 'check egress policy / proxy for this host' }));
   }
-  checks.push(check({ id: 'net.loopback-only-services', domain, title: 'control-plane listeners bind 127.0.0.1 only (9130/9132/9119/3011/9141)', status: role === 'dial-hermes-control' ? STATUS.UNVERIFIED : STATUS.NOT_APPLICABLE, criticality: CRITICALITY.REQUIRED, evidence: { command: "ss -ltnp | grep -E ':(9130|9132|9119|3011|9141)\\b'" }, remediation: 'verified live via systemd/units check + ss on the control host' }));
+  if (role === 'dial-hermes-control') {
+    const listeners = run('ss', ['-ltnH'], { timeoutMs: 5000 });
+    const ports = new Set(['9130', '9132', '9119', '3011', '9141']);
+    const observed = [];
+    const violations = [];
+    if (listeners.ok) {
+      for (const line of listeners.output.split(/\n+/).filter(Boolean)) {
+        const parts = line.trim().split(/\s+/);
+        const local = parts[3] || '';
+        const match = local.match(/:(\d+)$/);
+        if (!match || !ports.has(match[1])) continue;
+        observed.push(local);
+        if (!(local.startsWith('127.0.0.1:') || local.startsWith('[::1]:') || local.startsWith('::1:'))) violations.push(local);
+      }
+    }
+    checks.push(check({ id: 'net.loopback-only-services', domain, title: 'control-plane listeners bind loopback only (9130/9132/9119/3011/9141)', status: listeners.ok && violations.length === 0 ? STATUS.PASS : STATUS.FAIL, criticality: CRITICALITY.REQUIRED, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { command: listeners.command, listeners: observed, violations }, remediation: 'reconfigure any exposed control-plane listener to 127.0.0.1 and reinstall its unit' }));
+  } else {
+    checks.push(check({ id: 'net.loopback-only-services', domain, title: 'control-plane loopback-listener check belongs on dial-hermes-control', status: STATUS.NOT_APPLICABLE, criticality: CRITICALITY.REQUIRED, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: {} }));
+  }
   return checks;
 }

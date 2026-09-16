@@ -78,7 +78,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P4.05 Install dedicated bounded control -> admin recovery identity.
 - [x] P4.06 Isolate bounded identity from unrestricted legacy admin SSH path for recovery verification.
 - [x] P4.07 Prove R0 observation and all negative/refusal controls.
-- [x] P4.08 Prove R1 recovery-agent restart.
+- [x] P4.08 Prove R1 recovery-agent restart; fresh `verify-two-way-recovery.sh --include-repair` verdict is `PROVEN` at 2026-09-16T12:58:48Z and is now persisted to the canonical latest-verdict path consumed by certification.
 - [x] P4.09 Fix live recovery service repo path and audit-log permissions.
 - [x] P4.10 Achieve individual `oracle-admin` GREEN certification.
 - [ ] P4.11 Deploy final merged recovery scripts/units to `oracle-admin` and re-certify against final SHA.
@@ -90,7 +90,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [~] P5.02 Claude subscription authentication and exact `claude-sonnet-5` identity were previously proven, but a fresh live probe at 2026-09-16T08:05:42Z returned `ACCOUNT_LIMITED` before model execution (`resolved_model=null`); current Sonnet fallback execution capacity therefore remains unproven and must recover before GREEN.
 - [x] P5.03 Hermes `openai-codex` OAuth authentication + runtime canary.
 - [x] P5.04 GitHub CLI authentication and repository API access.
-- [x] P5.05 Owner Hermes WhatsApp pairing.
+- [x] P5.05 Legacy Hermes self-chat development-control route retired; only the dedicated Dial Hermes Control path remains, currently waiting for owner number configuration/pairing.
 - [x] P5.06 xKiro FREE_ONLY authentication + live model canary.
 - [x] P5.07 Generate complete MCP inventory: canonical `manifest.mcp_servers` plus live evidence `/var/lib/dial-control/operations/mcp/live-inventory.json` covers endpoint/transport/host/auth/owner/criticality/proof (10 surfaces; 9 PASS, 1 PARTIAL with Exa key-backed functional canary pending P5.15).
 - [x] P5.08 Live-probe `dial-oracle-status`: stdio initialize/tools/list/tool-call PASS; `dial_oracle_status` returned non-error structured content.
@@ -102,7 +102,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [!] P5.14 Tailscale (or owner-approved equivalent independent of Cloudflare) is a mandatory RECOVERY_REQUIRED secondary overlay. Repository certification now probes Tailscale fail-closed; current control/worker/admin state is `NeedsLogin`, so authentication and live reciprocal overlay evidence remain an owner gate.
 - [~] P5.15 Context7/Exa: exact local runtimes installed (Context7 4.1.1, Exa 3.4.1); Context7 resolve/query live canaries PASS. Duplicate user-scope remote Context7/Exa definitions were removed after backup so only the canonical project-local wrappers remain and the conflicting-scope warnings are gone. Exa has no admitted `EXA_API_KEY` on the control host, so its key-backed functional/provider-surface canary remains an owner auth gate.
 - [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. Stitch repository-side orchestration is now closed: explicit specialist selection preserves default direct routing; the provider remains non-writing/non-authoritative; task/FDEP-bound generation, quarantine, admission, AEF Unit consumption, real-screen certification, outage fallback and same-repository-SHA proof validation are deterministic and regression-tested. Live Stitch authentication/tool discovery/sandbox/real-screen execution still requires provider credentials. Pomelli remains GMPC human-operated REFERENCE_ONLY.
-- [!] P5.17 Configure/authenticate/live-probe the admitted WhatsApp Cloud API owner adapter (DEC-033).
+- [!] P5.17 Pair/live-probe the DEC-034 dedicated Dial Hermes Control WhatsApp account: closed bot mode, exactly one owner allowlist, direct owner→Hermes conversation, benign instruction round-trip and WhatsApp message-ID delivery receipt. Meta Cloud is no longer a development owner-control gate.
 - [x] P5.18 Antigravity Google session authenticated under canonical isolated worker identity; all 14 live `agy models` were qualified, normal HCX selection executed a real Unit, guarded write/network denials passed, and capacity-limited fallback rerouted from Opus to Sonnet with revoked/released leases and settled compute. Latest capability state: `INTEGRATED`.
 - [!] P5.19 Repository-side Stitch prerequisites are complete and targeted regression passes 19/19: the canonical qualifier can derive visual-acceptance, AEF-consumption and outage-fallback proofs and rejects stale-SHA evidence. Remaining work is genuinely external: configure supported Stitch API-key or OAuth/access-token + Google Cloud project, then run fixed-host tool discovery, synthetic sandbox generation and one real governed screen/Unit acceptance path.
 - [x] P5.20 Re-audit every development capability registry entry: no operational `required=false` or `OPTIONAL_CAPABILITY` remains. Remaining `required=false` entries are explicitly GMPC-only human web, deprecated duplicate, or non-enrolled experimental API references.
@@ -125,7 +125,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P7.03 Adaptive/VEKL/provider-first targeted suites passed; latest post-Stitch targeted run is 2 files / 34 tests PASS, including the full non-authoritative Stitch stage -> admission -> AEF consumption -> screen-certification proof chain.
 - [x] P7.04 Previously sandbox-blocked child-git/shell suites re-run on the real control host; control-plane/operations/chat/operator and closure-targeted suites execute normally outside the Codex sandbox.
 - [x] P7.05 Latest closure-targeted real-control runs are green: 7 suites / 202 tests plus VEKL resource+graph 24 tests and focused bootstrap/Google/operator 54 tests on Vitest 4.1.11.
-- [x] P7.06 Full `npm run verify` rerun after the deterministic Stitch orchestration repair: PASS on real control; 46 test files / 788 tests PASS, with manifest/scorecard/boundary gates GREEN.
+- [x] P7.06 Full `npm run verify` rerun after dedicated WhatsApp/recovery/certifier closure: PASS on real control; 46 test files / 790 tests PASS, with manifest/scorecard/boundary gates GREEN.
 - [x] P7.07 Project Truth verifier and PR-authority verifier are enforced on the closure branch and were GREEN through the committed closure/evidence sequence; every repair commit is re-verified before push.
 - [x] P7.08 Determinism self-test: 3/3 bounded routing/VEKL decisions produced identical decision hash `2b761b17b069c61961e45311764164fa0a1940dc0ad5684a0a723831bcd8bf3e`; zero forbidden-role leaks.
 - [x] P7.09 Safe fault injection: 9/9 scenarios PASS, including primary-provider fallback, total provider loss fail-closed, alternate-model rejection, stale runtime refusal, role mismatch, unknown role, stale knowledge binding, absent development gate, and bounded network timeout.
@@ -213,11 +213,20 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - Canonical Claude project MCP definitions were reconciled: duplicate user-scope remote Context7/Exa entries were backed up and removed; only the locked project-local wrappers remain. Claude account login is still required before its workspace approval UI can be reached.
 - P5.12 was narrowed to a real provider-side gate: no Codex Cloud environment exists for this workspace and Claude Remote is behind interactive account authentication; control-host GitHub access is deliberately not substituted.
 - Stitch repository-side closure exposed and repaired a real qualification gap. The governed non-writing provider stage now binds generation/quarantine/admission/AEF-consumption/screen-acceptance/fallback evidence to the current repository SHA, and stale-SHA proof reuse is rejected.
-- Latest targeted Stitch/AEF regression: 2 files / 34 tests PASS. Latest complete real-host `npm run verify`: 46 files / 788 tests PASS; proof-chain tamper/SHA/coherence hardening is included.
+- Latest targeted Stitch/AEF regression: 2 files / 34 tests PASS. Latest complete real-host `npm run verify`: 46 files / 790 tests PASS; dedicated WhatsApp/recovery/certifier hardening and proof-chain tamper/SHA/coherence checks are included.
+
+## Live closure notes — 2026-09-16T13:13:00Z
+
+- Legacy self-chat owner control is fully retired. Only the dedicated `Dial Hermes Control` bot-mode session path remains and intentionally waits for owner number configuration/pairing.
+- Control-host systemd hardening was reconverged live. The venue installer was repaired to rerun safely against its own append-only audit ledger; five previously stale units now satisfy the canonical sandbox properties.
+- Reciprocal bounded recovery is freshly `PROVEN`, including the real R1 recovery-agent restart and all negative/refusal probes. The verifier now atomically persists `/var/lib/dial-control/state/two-way-recovery-verdict.json` mode 600 for deterministic certification consumption.
+- VEKL Development Unit registry is deterministic at 309 units; graph rebuild is deterministic at 5,395 nodes / 16,882 edges; retrieval evaluation is 10/10 with recall=1 and precision_proxy=1.
+- Fast control certification reached 127 PASS with remaining non-PASS states confined to genuine owner/external gates, final-SHA governance/requalification, and fast-mode-skipped full tests.
+- Complete `npm run verify` is GREEN on the closure worktree: 46 files / 790 tests PASS.
 
 ## Current critical path
 
-`P5 external auth gates (Antigravity, Stitch, Exa, WhatsApp Cloud, network overlays) -> P1.22 static closure review -> Phase 6 security/systemd -> Phase 7 full verification -> Phase 8 PR/CI/merge -> Phase 9 final-SHA deployment -> Phase 10 qualification/soak/certificates -> Phase 11 E2E -> Phase 12 GREEN`
+`P5 external auth gates (Stitch, Exa, Dial Hermes Control dedicated pairing, network overlays) -> P1.22 static closure review -> Phase 6 security/systemd -> Phase 7 full verification -> Phase 8 PR/CI/merge -> Phase 9 final-SHA deployment -> Phase 10 qualification/soak/certificates -> Phase 11 E2E -> Phase 12 GREEN`
 
 ## Live closure notes — 2026-09-15T11:35:42Z
 

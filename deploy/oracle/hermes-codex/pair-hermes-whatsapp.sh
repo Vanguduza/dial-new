@@ -5,7 +5,8 @@ umask 077
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 HERMES_DIR="${HERMES_HOME:-${HOME}/.hermes/hermes-agent}"
-SESSION="${HERMES_WHATSAPP_SESSION:-${HOME}/.hermes/whatsapp/session}"
+SESSION="${HERMES_WHATSAPP_SESSION:-${HOME}/.hermes/whatsapp/dial-hermes-control/session}"
+CONTROL_ENV="${CONTROL_HOME}/secrets/hermes-whatsapp-control.env"
 PAIR_HOME="${CONTROL_HOME}/operator-channels/whatsapp/pair-runtime"
 EVENTS="${CONTROL_HOME}/operator-channels/pairing-events.jsonl"
 PID_FILE="${PAIR_HOME}/pairer.pid"
@@ -148,15 +149,20 @@ cleanup(){
 }
 trap cleanup EXIT INT TERM
 
-log "waiting for owner pairing; QR payloads are written only to the protected event file"
+[[ -f "$CONTROL_ENV" ]] || fail "Dial Hermes Control owner allowlist is not configured; run configure-hermes-whatsapp-control.sh first"
+# shellcheck disable=SC1090
+source "$CONTROL_ENV"
+[[ "${DIAL_HERMES_WHATSAPP_MODE:-${WHATSAPP_MODE:-}}" == "bot" ]] || fail "Dial Hermes Control must use dedicated bot mode"
+[[ "${WHATSAPP_ALLOWED_USERS:-}" =~ ^[0-9]{8,20}$ ]] || fail "exactly one owner WhatsApp identifier must be configured"
+log "waiting for dedicated Dial Hermes Control account pairing; QR payloads are written only to the protected event file"
 set +e
-WHATSAPP_MODE=self-chat node "$PAIR_HOME/bridge.mjs" \
+WHATSAPP_MODE=bot WHATSAPP_DM_POLICY=closed WHATSAPP_ALLOWED_USERS="$WHATSAPP_ALLOWED_USERS" node "$PAIR_HOME/bridge.mjs" \
   --pair-only --pair-json --session "$SESSION" | tee "$EVENTS"
 rc=${PIPESTATUS[0]}
 set -e
 
 if paired; then
-  log "pairing complete; credentials saved outside Git"
+  log "Dial Hermes Control pairing complete; dedicated account credentials saved outside Git"
   exit 0
 fi
 log "pairing ended without valid credentials (exit ${rc})"

@@ -260,33 +260,33 @@
     },
     {
       "id": "cap.whatsapp-owner",
-      "name": "Owner WhatsApp (Hermes self-chat + Meta Cloud adapters)",
-      "authority": "DEC-025/DEC-030",
-      "purpose": "owner instructions/questions/uploads",
+      "name": "Dial Hermes Control dedicated WhatsApp owner channel",
+      "authority": "DEC-025/DEC-030/DEC-034",
+      "purpose": "direct owner-to-Hermes questions, priority steering, uploads and important development updates",
       "required": true,
       "host": "dial-hermes-control",
       "type": "OAUTH_CONNECTOR",
-      "install_method": "install-operator-gateway.sh + pair-hermes-whatsapp.sh",
+      "install_method": "configure-hermes-whatsapp-control.sh + pair-hermes-whatsapp.sh + install-operator-gateway.sh",
       "version_policy": "Exact lockfile; Baileys 7.0.0-rc14 vendored from source commit 4f263f0e365c2e74dd1b824031d1c5910f518c26; Express 4.22.2; Pino 9.14.0; qrcode-terminal 0.12.0.",
-      "config_location": "~/.hermes/whatsapp/session, control-root whatsapp-operator.json",
+      "config_location": "~/.hermes/whatsapp/dial-hermes-control/session + /var/lib/dial-control/secrets/hermes-whatsapp-control.env",
       "auth_type": "DEVICE_CODE",
       "secret_refs": [
-        "creds.json 0600",
-        "Meta app secret 0600"
+        "dedicated Hermes WhatsApp creds.json 0600",
+        "owner allowlist config 0600"
       ],
-      "health_probe": "WAITING_PAIRING/UNCONFIGURED/READY",
+      "health_probe": "whatsapp-hermes-operator status -> READY, mode=bot, owner_count=1, bridge=connected + live round-trip message-id receipt",
       "dependencies": [
         "cap.operator-gateway"
       ],
       "consumers": [
         "owner"
       ],
-      "fallback": "Claude/Codex consoles",
-      "failure_impact": "fresh OWNER_CONTROL/whole-system GREEN blocked until admitted owner channels are configured and live-proven",
+      "fallback": "Claude/Codex owner consoles only while the dedicated WhatsApp account is unpaired; no WhatsApp self-chat fallback is enrolled",
+      "failure_impact": "OWNER_CONTROL/whole-system GREEN blocked until dedicated Hermes account pairing and live round-trip proof",
       "owner": "owner",
-      "status": "PARTIAL_REQUIRED_CLOUD_AUTH",
-      "status_evidence": "Hermes self-chat owner channel is PAIRED and live. DEC-033 plus the owner required-capability directive make the admitted Meta WhatsApp Cloud adapter required as well; its Meta credential/live probe remains a GREEN blocker and is not optional.",
-      "owner_required_ref": "DEC-033"
+      "status": "OWNER_ACTION_REQUIRED_DEDICATED_PAIRING",
+      "status_evidence": "DEC-034 removes Meta Cloud and the legacy self-chat route from development owner control. Repository-side dedicated bot mode, single-owner allowlist, sole protected session, durable outbox/message-id receipts and Dial Hermes Control heading are implemented; owner pairing/live round-trip remains required.",
+      "owner_required_ref": "DEC-034"
     },
     {
       "id": "cap.xkiro-haif",

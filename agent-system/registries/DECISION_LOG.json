@@ -788,5 +788,28 @@
       "agent-system/orchestration/execution-pair-router.mjs"
     ],
     "reopens_if": "the product owner explicitly replaces this readiness rule while preserving deterministic capability discovery, authority boundaries, secret isolation, live qualification, model/harness compatibility evidence and no-false-green guarantees"
+  },
+  {
+    "decision_id": "DEC-034",
+    "decided_on": "2026-09-16",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / OWNER CONTROL / WHATSAPP",
+    "title": "Dial Hermes Control uses one dedicated Hermes WhatsApp identity for development owner steering",
+    "decision": "Supersede only DEC-030's WhatsApp transport details. DIAL development owner control uses the existing Hermes/Baileys WhatsApp bridge with a dedicated Dial Hermes Control WhatsApp account in bot mode, a separate protected pairing session and exactly one allowlisted owner identity. The owner chats directly with Hermes rather than self-chatting. Full-text questions, owner steers and supported document/image uploads enter the same typed DIAL owner-control contracts and safe-boundary steering semantics. Important updates and replies use durable retry state plus WhatsApp message-id receipts. Outbound development-control messages are headed exactly 'Dial Hermes Control' without the former icon/separator underline. Meta WhatsApp Cloud is not an owner-development control channel. Customer/business/product WhatsApp remains governed by the existing official Cloud API/Flows product lock.",
+    "consequence": "The prior self-chat development-control route is retired and is not a rollback/fallback path. Until the dedicated account is configured and paired, WhatsApp development owner control is intentionally unavailable while Claude/Codex owner consoles remain available. No Meta application credential is required for development owner steering. The dedicated Hermes account may accept messages only from the configured owner allowlist, groups and strangers are rejected, owner identifiers are not written to repository evidence, and rate pressure may not silently discard an authenticated owner instruction. DEC-030 owner precedence, safe-boundary serialization, AEF supersession/fencing, GPT-5.6 Sol -> exact Claude Sonnet 5 execution policy, no-shell boundary and audit provenance remain unchanged.",
+    "supersedes": "DEC-030 WhatsApp transport/self-chat details completely; no self-chat development-control fallback remains; DEC-030 hybrid owner-steering semantics remain locked",
+    "record": "docs/orchestration/DIAL_OPERATOR_GATEWAY.md; agent-system/canon/PROJECT_TRUTH.md; docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
+    "enforced_by": [
+      "agent-system/orchestration/whatsapp-hermes-operator.mjs",
+      "agent-system/orchestration/whatsapp-owner-input.mjs",
+      "deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh",
+      "deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh",
+      "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "ops/development-bootstrap/manifest.json",
+      "ops/development-bootstrap/verify/certify.mjs",
+      "tests/orchestration-operator-gateway.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly replaces the dedicated Hermes WhatsApp owner-control transport with an equal-or-stronger mechanism preserving direct owner-to-Hermes chat, owner-only authentication, non-dropping steering intake, durable delivery evidence, typed/no-shell control, safe-boundary serialization and separation from customer/business WhatsApp"
   }
 ]

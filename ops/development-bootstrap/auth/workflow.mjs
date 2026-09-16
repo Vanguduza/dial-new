@@ -22,9 +22,12 @@ const PROBES = {
   'hermes auth list': { cmd: 'hermes', args: ['auth', 'list'], expect: /openai-codex/ },
   'git ls-remote origin HEAD': { cmd: 'git', args: ['ls-remote', '--heads', 'origin', 'master'], expect: null, cwd: 'repo' },
   'whatsapp-hermes-operator status': { cmd: 'node', args: ['agent-system/orchestration/whatsapp-hermes-operator.mjs', 'status'], expect: null, cwd: 'repo' },
-  'whatsapp-operator-adapter status': { cmd: 'node', args: ['agent-system/orchestration/whatsapp-operator-adapter.mjs', 'status'], expect: null, cwd: 'repo' },
   'dial-commander-probe': { cmd: '/usr/local/bin/dial-commander-probe', args: [], expect: /SESSION_VALID/ },
   'install-bounded-recovery-identity.sh --verify; verify-two-way-recovery.sh': { cmd: 'bash', args: ['deploy/oracle/resource-fabric/install-bounded-recovery-identity.sh', '--verify'], expect: null, cwd: 'repo' },
+  'dial-exa-mcp live MCP canary': { cmd: 'node', args: ['ops/development-bootstrap/mcp/probe-exa.mjs'], expect: /\"ok\":true/, cwd: 'repo' },
+  'dial-stitch live qualification': { cmd: 'bash', args: ['deploy/oracle/hermes-codex/run-stitch-provider.sh', 'qualify'], expect: /\"status\":\s*\"INTEGRATED\"/, cwd: 'repo' },
+  'verify bounded recovery channel': { cmd: 'bash', args: ['deploy/oracle/resource-fabric/verify-two-way-recovery.sh', '--target', 'oracle-admin', '--json'], expect: /\"verdict\"\s*:\s*\"(?:PROVEN|PARTIAL)\"/, cwd: 'repo', env: { DIAL_FABRIC_HOST_ID: 'dial-hermes-control' } },
+  'ssh BatchMode vekl-worker true': { cmd: 'ssh', args: ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=5', 'vekl-worker', 'true'], expect: null },
 };
 
 function expandHome(p) { return String(p || '').replace(/^~(?=\/|$)/, process.env.HOME || ''); }
@@ -42,7 +45,7 @@ function fileBackedStatus(cred, controlHome) {
 export function runProbe(cred, { repoDir, timeoutMs = 20000 } = {}) {
   const spec = PROBES[cred.probe];
   if (!spec) return { available: false, command: cred.probe || null, ok: false, output: null, reason: 'no benign probe registered for this credential' };
-  const r = run(spec.cmd, spec.args, { timeoutMs, cwd: spec.cwd === 'repo' ? repoDir : undefined });
+  const r = run(spec.cmd, spec.args, { timeoutMs, cwd: spec.cwd === 'repo' ? repoDir : undefined, env: spec.env ? { ...process.env, ...spec.env } : undefined });
   if (r.error && /ENOENT/.test(r.error)) return { available: false, command: r.command, ok: false, output: 'binary missing', reason: 'probe binary absent' };
   const ok = r.ok && (!spec.expect || spec.expect.test(r.output));
   return { available: true, command: r.command, ok, exit: r.status, output: redact(r.output).slice(0, 300) };
@@ -62,7 +65,7 @@ export function evaluateCredential(cred, { repoDir, controlHome } = {}) {
   let reason;
   if (probe.available && probe.ok && (!fileState || fileState.ok)) { state = AUTH_STATES.CERTIFIED; reason = 'benign probe passed' + (fileState ? ' and credential files exist with the required mode' : ''); }
   else if (fileState && !fileState.ok && !cred.interactive) { state = AUTH_STATES.FAILED; reason = 'credential file missing or wrong mode (non-interactive credential; installer must regenerate it)'; }
-  else if (!probe.available && fileState) { state = fileState.ok ? AUTH_STATES.PROBE_UNAVAILABLE : (cred.interactive ? AUTH_STATES.HUMAN_LOGIN_REQUIRED : AUTH_STATES.FAILED); reason = probe.reason; }
+  else if (!probe.available && fileState) { state = fileState.ok && !cred.interactive ? AUTH_STATES.CERTIFIED : fileState.ok ? AUTH_STATES.PROBE_UNAVAILABLE : (cred.interactive ? AUTH_STATES.HUMAN_LOGIN_REQUIRED : AUTH_STATES.FAILED); reason = fileState.ok && !cred.interactive ? 'credential file exists with the required mode; functional health is certified by bootstrap --verify' : probe.reason; }
   else if (cred.interactive) { state = AUTH_STATES.HUMAN_LOGIN_REQUIRED; reason = 'probe did not certify an authenticated session; human login is necessary'; }
   else { state = AUTH_STATES.FAILED; reason = 'probe failed for a non-interactive credential'; }
   return {

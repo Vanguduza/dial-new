@@ -130,7 +130,15 @@ export async function certify({ repoDir, controlHome, manifest, role, runId, log
   const requiredPathEntries = requiredServicePath().split(':');
   const currentPathEntries = (process.env.PATH || '').split(':');
   const missingPathEntries = requiredPathEntries.filter((entry) => !currentPathEntries.includes(entry));
-  add([check({ id: 'bootstrap.path-hygiene', domain: 'Bootstrap', title: 'service PATH deterministically includes user-local and system binary directories', status: fallbackFound.length || missingPathEntries.length ? STATUS.FAIL : STATUS.PASS, criticality: CRITICALITY.REQUIRED, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { found_only_via_fallback: fallbackFound, required_path: requiredPathEntries, missing_path_entries: missingPathEntries, path: currentPathEntries.slice(0, 12) }, remediation: 'bootstrap --apply writes ~/.config/environment.d/10-dial-path.conf; reinstall generated units so each has the explicit safe PATH' })]);
+  const servicePathFile = path.join(process.env.HOME || '', '.config', 'environment.d', '10-dial-path.conf');
+  let persistedPathEntries = [];
+  try {
+    const line = fs.readFileSync(servicePathFile, 'utf8').split(/\r?\n/).find((row) => row.startsWith('PATH='));
+    persistedPathEntries = line ? line.slice(5).split(':').filter(Boolean) : [];
+  } catch {}
+  const persistedServicePathOk = requiredPathEntries.every((entry) => persistedPathEntries.includes(entry));
+  const pathHealthy = fallbackFound.length === 0 && (missingPathEntries.length === 0 || persistedServicePathOk);
+  add([check({ id: 'bootstrap.path-hygiene', domain: 'Bootstrap', title: 'service PATH deterministically includes user-local and system binary directories', status: pathHealthy ? STATUS.PASS : STATUS.FAIL, criticality: CRITICALITY.REQUIRED, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { found_only_via_fallback: fallbackFound, required_path: requiredPathEntries, caller_missing_path_entries: missingPathEntries, persisted_service_path_file: servicePathFile, persisted_service_path_ok: persistedServicePathOk, persisted_path: persistedPathEntries, caller_path: currentPathEntries.slice(0, 12) }, remediation: 'bootstrap --apply writes ~/.config/environment.d/10-dial-path.conf; reinstall generated units so each has the explicit safe PATH' })]);
   const host = hostFacts(); const disk = diskFree(repoDir);
   add([check({ id: 'bootstrap.host-facts', domain: 'Bootstrap', title: `host ${host.hostname} ${host.arch} ${host.cpus}cpu ${host.memory_total_mb}MB disk_avail=${disk.avail_mb}MB`, status: STATUS.PASS, criticality: CRITICALITY.OPTIONAL, readiness_class: 'OPTIONAL_CAPABILITY', evidence: { ...host, disk } })]);
   const floor = role === 'dial-hermes-control' ? { cpus: 2, mem: 3500, disk: 5000 } : role === 'provider-container' ? { cpus: 2, mem: 3500, disk: 5000 } : { cpus: 1, mem: 900, disk: 2000 };
@@ -146,7 +154,7 @@ export async function certify({ repoDir, controlHome, manifest, role, runId, log
   add(certifyCodex({ role, manifest }));
   add(certifyHermes({ role, manifest }));
   add(certifyXkiro({ role, controlHome }));
-  add(certifyGoogle({ role, repoDir }));
+  add(certifyGoogle({ role, repoDir, controlHome }));
 
   // Repository-local plugin wiring. These checks certify concrete configuration/artifacts rather than
   // assuming a plugin is healthy merely because its manifest row exists.
@@ -191,7 +199,7 @@ export async function certify({ repoDir, controlHome, manifest, role, runId, log
   add(certifyMcp({ role, manifest, repoDir }));
   add(certifySystemd({ role, manifest, repoDir }));
   add(certifyContainers({ manifest, role }));
-  add(await certifyNetwork({ role, manifest }));
+  add(await certifyNetwork({ role, manifest, controlHome }));
   // Fabric qualifier evidence (control host only).
   if (role === 'dial-hermes-control') {
     const q = readJsonSafe(path.join(controlHome, 'state/fabric-rev2-qualifier.json'));
@@ -205,8 +213,8 @@ export async function certify({ repoDir, controlHome, manifest, role, runId, log
   {
     const paired = role === 'dial-hermes-control' ? run('npm', ['run', '--silent', 'agent:operator:whatsapp-hermes-status'], { cwd: repoDir, timeoutMs: 30000 }) : null;
     let parsed = null; try { parsed = paired?.ok ? JSON.parse(paired.output) : null; } catch {}
-    const selfChatPaired = parsed?.state === 'PAIRED' || parsed?.paired === true || /\bPAIRED\b/.test(paired?.output || '');
-    add([check({ id: 'whatsapp.channel', domain: 'Owner WhatsApp', title: 'owner WhatsApp Hermes self-chat channel is paired and ready', status: role === 'dial-hermes-control' ? (selfChatPaired ? STATUS.PASS : STATUS.OWNER_ACTION_REQUIRED) : STATUS.NOT_APPLICABLE, criticality: CRITICALITY.REQUIRED, readiness_class: 'OWNER_CONTROL_REQUIRED', evidence: { command: 'npm run agent:operator:whatsapp-hermes-status', paired: selfChatPaired, output: (paired?.output || '').slice(0,300), owner_required_ref: 'DEC-033' }, gate: selfChatPaired ? null : 'AUTH-GATE-WHATSAPP-001', remediation: selfChatPaired ? null : 'bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground' })]);
+    const dedicatedReady = parsed?.state === 'READY' && parsed?.mode === 'bot' && parsed?.paired === true && parsed?.owner_count === 1 && parsed?.bridge === 'connected';
+    add([check({ id: 'whatsapp.channel', domain: 'Owner WhatsApp', title: 'Dial Hermes Control dedicated WhatsApp account is paired, owner-only and live', status: role === 'dial-hermes-control' ? (dedicatedReady ? STATUS.PASS : STATUS.OWNER_ACTION_REQUIRED) : STATUS.NOT_APPLICABLE, criticality: CRITICALITY.REQUIRED, readiness_class: 'OWNER_CONTROL_REQUIRED', evidence: { command: 'npm run agent:operator:whatsapp-hermes-status', dedicated_ready: dedicatedReady, mode: parsed?.mode || null, paired: parsed?.paired === true, owner_count: parsed?.owner_count ?? null, bridge: parsed?.bridge || null, owner_required_ref: 'latest owner instruction / DEC-033' }, gate: dedicatedReady ? null : 'AUTH-GATE-WHATSAPP-001', remediation: dedicatedReady ? null : 'bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh && bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground' })]);
   }
   if (role === 'oracle-admin') {
     const proof = readJsonSafe('/var/lib/dial-recovery/commander/proof.json');

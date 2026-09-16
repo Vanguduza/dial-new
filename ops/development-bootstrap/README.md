@@ -65,3 +65,7 @@ check fails or cannot be certified.
   fingerprint equality, systemd units, provider authentication and loopback-only listeners.
 - `vekl-worker`: toolchain, role separation, worker agent timer, job execution.
 - `oracle-admin`: toolchain and the proof that development workloads are refused.
+
+### External owner-gate handoff
+
+Machine-side prerequisites must be complete before asking the owner for credentials. The canonical secret/config entrypoints are `configure-exa-api-key.sh`, `configure-stitch-provider.sh`, `configure-hermes-whatsapp-control.sh`, and `configure-cloudflare-mcp-ingress.sh`. The secondary recovery overlay is authenticated with `sudo tailscale up` on each of the three hosts and verified locally with `verify-secondary-recovery-overlay.sh <peer>...`. After each owner action, rerun `bootstrap.sh --auth --resume <token> --role <role>` and then `bootstrap.sh --verify`; no credential value belongs in argv, Git, logs, or Project Truth evidence.

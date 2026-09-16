@@ -82,7 +82,7 @@ There is no third model and no blind replay. DIAL's repository state, tests, gat
 - `operator-text-router.mjs` — deterministic shortcut grammar for status/mission/pause/resume/priority/approval/background submission controls.
 - `owner-steering-broker.mjs` — canonical hybrid owner-action lane. It acknowledges owner direction immediately, persists it outside the autonomous inbox, blocks later autonomous claims, lets any current repository writer finish safely, then executes the steer before autonomous work resumes; optional xKiro advice is limited to coarse PUBLIC metadata and is non-authoritative.
 - `owner-live-control.mjs` — direct Hermes owner-turn executor used by the steering broker plus read-only/exceptional live turns; read-only questions do not serialize repository writers.
-- `whatsapp-hermes-operator.mjs` — owner self-chat adapter over the existing Hermes WhatsApp bridge, with natural-language hybrid steering, immediate status/questions, bounded document/image ingestion and automatic mission/steer lifecycle notifications.
+- `whatsapp-hermes-operator.mjs` — dedicated Dial Hermes Control owner adapter over the existing Hermes WhatsApp bridge (`bot` mode, exactly one owner allowlist), with natural-language hybrid steering, immediate status/questions, bounded document/image ingestion and durable receipt-backed mission/steer notifications.
 - `whatsapp-owner-input.mjs` — content-addressed owner attachment persistence, safe steering-instruction construction and deduplicated mission/owner-steering event notification mapping.
 - `whatsapp-operator-adapter.mjs` — official Meta Cloud API adapter with HMAC verification, sender allowlisting and replay protection.
 
@@ -115,7 +115,7 @@ Install the gateway, persistent mission controller, local Claude/Codex MCP enrol
 bash deploy/oracle/hermes-codex/install-operator-gateway.sh
 ```
 
-The HTTP MCP remains bound to `127.0.0.1:9130` and bearer-token protected. The optional WhatsApp Cloud webhook adapter remains bound to `127.0.0.1:9132`. Neither port is opened publicly by the installer. Hermes owner self-chat and official Meta Cloud API activation require their normal external credential/pairing boundaries.
+The HTTP MCP remains bound to `127.0.0.1:9130` and bearer-token protected. Development owner WhatsApp uses only the dedicated Dial Hermes Control Hermes/Baileys bridge and never opens a public webhook port. The historical Meta Cloud adapter is not enrolled as a development owner-control channel; customer/business WhatsApp remains governed separately by the product Cloud API/Flows lock.
 
 ## Owner-authorized Project Truth
 
