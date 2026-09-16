@@ -143,7 +143,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [x] P8.10 Obsolete reverse audit-sync PR #33 was closed as conflicting and superseded by closure PR #34; unrelated historical/feature PRs were deliberately not closed blindly.
-- [x] P8.11 PR #34 head `7054676b9ffd827d1b058a2895e1bfbcd4ee6c47` is pushed and all five required GitHub contexts are SUCCESS: `project-truth`, `gates, types and unit suites`, `production build and full typecheck`, `pipeline produces a conforming pack`, and `customer transition contract`. The exact same commit is locally full-verify GREEN at 46 files / 790 tests.
+- [x] P8.11 Required PR CI is live and repeatedly proven: the complete implementation head `7054676b9ffd827d1b058a2895e1bfbcd4ee6c47` passed all five required GitHub contexts and local full verify at 46 files / 790 tests. Evidence-only successors are deliberately not recorded here as “the current head” because this board is itself manifest-hashed; the exact current PR tip and its five check conclusions are read live from GitHub at certification time, avoiding a self-referential SHA loop.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA

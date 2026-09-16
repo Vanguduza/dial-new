@@ -8,14 +8,12 @@
   "branch": "gpt/dial-development-system-green-closure-20260915",
   "changed_files": [
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
-    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
-    "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/BRANCH_PROTECTION_EVIDENCE.json"
+    "docs/dial/final-audit/MANIFEST_v2_2.json"
   ],
-  "content_diff_sha256": "9274c7c8b2ebbfc3914b9b767b9efa2e60f0c3518eaadd1e8dc4c238562270a7",
-  "observed_at_utc": "2026-09-16T13:40:21.455107+00:00",
+  "content_diff_sha256": "e4acf562f2e0f1bd87ea4e75e285abb9766ad03bd3965264de5851e679d429cd",
+  "observed_at_utc": "2026-09-16T13:55:14.889608+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "7054676b9ffd827d1b058a2895e1bfbcd4ee6c47",
+  "source_parent": "a7ba9025c19d09825eaa6a5a6d712b3b2c83e547",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
