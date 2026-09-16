@@ -1,4 +1,5 @@
 import { Stitch, StitchToolClient } from '@google/stitch-sdk';
+import { execFileSync } from 'node:child_process';
 import {
   buildDesignCandidateManifest,
   quarantineDesignArtifact,
@@ -9,6 +10,7 @@ import {
   safeSecretStatus,
   sha256,
 } from './external-capability-core.mjs';
+import { readJson } from '../../state-store.mjs';
 
 export const STITCH_CAPABILITY_ID = 'DESIGN-STITCH';
 export const STITCH_MCP_URL = 'https://stitch.googleapis.com/mcp';
@@ -167,6 +169,36 @@ export async function downloadStitchArtifact(url, { fetchImpl = globalThis.fetch
   };
 }
 
+export const STITCH_PROOF_RELS = Object.freeze({
+  visual_acceptance: 'operations/external-capabilities/design-stitch/proofs/real-screen-acceptance.json',
+  orchestrated_use: 'operations/external-capabilities/design-stitch/proofs/aef-unit-consumption.json',
+  outage_fallback: 'operations/external-capabilities/design-stitch/proofs/outage-fallback.json',
+});
+
+function gitHead(repoDir) {
+  try { return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, encoding: 'utf8' }).trim(); } catch { return null; }
+}
+
+function validProof(value, kind, repositorySha) {
+  if (!value || value.schema_version !== 1 || value.provider !== 'google-stitch' || value.status !== 'PASSED') return false;
+  if (!repositorySha || value.repository_sha !== repositorySha) return false;
+  if (kind === 'visual_acceptance') return Boolean(value.task_id && value.candidate_hash && value.fdep_hash && value.certification_hash);
+  if (kind === 'orchestrated_use') return Boolean(value.task_id && value.candidate_hash && value.worker_artifact_id && value.envelope_hash);
+  if (kind === 'outage_fallback') return Boolean(value.selection_hash && String(value.selected || '').startsWith('DIRECT_'));
+  return false;
+}
+
+export function stitchQualificationProofStatus(root, repoDir = process.env.DIAL_REPO_DIR || process.cwd()) {
+  const repositorySha = gitHead(repoDir);
+  const proofs = Object.fromEntries(Object.entries(STITCH_PROOF_RELS).map(([kind, rel]) => [kind, readJson(rel, null, root)]));
+  return {
+    repository_sha: repositorySha,
+    visual_acceptance: { passed: validProof(proofs.visual_acceptance, 'visual_acceptance', repositorySha), evidence: proofs.visual_acceptance },
+    orchestrated_use: { passed: validProof(proofs.orchestrated_use, 'orchestrated_use', repositorySha), evidence: proofs.orchestrated_use },
+    outage_fallback: { passed: validProof(proofs.outage_fallback, 'outage_fallback', repositorySha), evidence: proofs.outage_fallback },
+  };
+}
+
 function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcceptance = false, orchestratedProof = false, outageFallback = false } = {}) {
   const checks = {
     implementation: true,
@@ -182,14 +214,19 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
   return { passed: Object.values(checks).every(Boolean), checks, missing: Object.entries(checks).filter(([, ok]) => !ok).map(([id]) => id) };
 }export async function qualifyStitch({
   root,
+  repoDir = process.env.DIAL_REPO_DIR || process.cwd(),
   env = process.env,
   clientFactory = createStitchClient,
   fetchImpl = globalThis.fetch,
-  visualAcceptance = false,
-  orchestratedProof = false,
-  outageFallback = false,
+  visualAcceptance = null,
+  orchestratedProof = null,
+  outageFallback = null,
 } = {}) {
   const observedAt = now();
+  const proofStatus = root ? stitchQualificationProofStatus(root, repoDir) : null;
+  const effectiveVisualAcceptance = visualAcceptance ?? proofStatus?.visual_acceptance?.passed ?? false;
+  const effectiveOrchestratedProof = orchestratedProof ?? proofStatus?.orchestrated_use?.passed ?? false;
+  const effectiveOutageFallback = outageFallback ?? proofStatus?.outage_fallback?.passed ?? false;
   const credentials = stitchCredentialStatus(env);
   const health = await stitchHealth({ env, clientFactory });
   let status = 'IMPLEMENTED';
@@ -235,9 +272,9 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
     liveScreen: liveQualification.passed,
     quarantine: quarantineProof,
     manifest: manifestProof,
-    visualAcceptance,
-    orchestratedProof,
-    outageFallback,
+    visualAcceptance: effectiveVisualAcceptance,
+    orchestratedProof: effectiveOrchestratedProof,
+    outageFallback: effectiveOutageFallback,
   });
   if (dod.passed) status = 'INTEGRATED';
   return persistCapabilityEvidence(root, STITCH_CAPABILITY_ID, {
@@ -254,7 +291,12 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
     health,
     authentication: { verified: health.authenticated === true },
     live_qualification: liveQualification,
-    orchestrated_use: { passed: Boolean(orchestratedProof) },
+    orchestrated_use: { passed: Boolean(effectiveOrchestratedProof), evidence_hash: proofStatus?.orchestrated_use?.evidence?.evidence_hash || null },
+    qualification_proofs: proofStatus ? {
+      visual_acceptance: { passed: proofStatus.visual_acceptance.passed, evidence_hash: proofStatus.visual_acceptance.evidence?.evidence_hash || null },
+      orchestrated_use: { passed: proofStatus.orchestrated_use.passed, evidence_hash: proofStatus.orchestrated_use.evidence?.evidence_hash || null },
+      outage_fallback: { passed: proofStatus.outage_fallback.passed, evidence_hash: proofStatus.outage_fallback.evidence?.evidence_hash || null },
+    } : null,
     definition_of_done: dod,
     status,
   });

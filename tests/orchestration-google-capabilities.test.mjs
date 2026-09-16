@@ -14,8 +14,10 @@ import {
 import {
   STITCH_ALLOWED_TOOLS,
   STITCH_MCP_URL,
+  qualifyStitch,
   stitchCredentialStatus,
   stitchHealth,
+  stitchQualificationProofStatus,
   validateStitchArtifact,
 } from '../agent-system/orchestration/providers/google/stitch-adapter.mjs';
 import {
@@ -32,6 +34,14 @@ import {
 } from '../agent-system/orchestration/hcx-worker-executor.mjs';
 import { readJson, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { executeAdaptiveSoloWithReroute } from '../agent-system/orchestration/adaptive-execution-runner.mjs';
+import {
+  admitStitchDesignStage,
+  executeStitchDesignStage,
+  proveStitchOutageFallback,
+  recordStitchScreenAcceptance,
+  recordStitchUnitConsumption,
+} from '../agent-system/orchestration/stitch-design-orchestration.mjs';
+import { selectDesignStrategy } from '../agent-system/orchestration/design-provider-router.mjs';
 
 const repoDir = process.cwd();
 function tempRoot() { return fs.mkdtempSync(path.join(os.tmpdir(), 'dial-google-cap-')); }
@@ -76,6 +86,88 @@ describe('Google external capability boundaries', () => {
     expect(STITCH_MCP_URL).toBe('https://stitch.googleapis.com/mcp');
     expect(stitchCredentialStatus({}).configured).toBe(false);
     expect(stitchCredentialStatus({ STITCH_API_KEY: 'x'.repeat(20) }).configured).toBe(true);
+  });
+
+  it('selects Stitch only when explicitly preferred and preserves direct fallback when unavailable', () => {
+    const ordinary = selectDesignStrategy({ designMode: 'NEW_DIAL_DESIGN', stitchEnabled: true, stitchEligible: true, directWorkerEligible: true, providerHealth: 'HEALTHY' });
+    expect(ordinary.selected).toBe('DIRECT_DIAL_IMPLEMENTATION');
+    const specialist = selectDesignStrategy({ designMode: 'NEW_DIAL_DESIGN', stitchEnabled: true, stitchEligible: true, directWorkerEligible: true, providerHealth: 'HEALTHY', preference: 'STITCH' });
+    expect(specialist.selected).toBe('STITCH_NEW_DESIGN_THEN_BUILD');
+    const outage = selectDesignStrategy({ designMode: 'NEW_DIAL_DESIGN', stitchEnabled: true, stitchEligible: true, directWorkerEligible: true, providerHealth: 'UNAVAILABLE', preference: 'STITCH' });
+    expect(outage.selected).toBe('DIRECT_DIAL_IMPLEMENTATION');
+  });
+
+  it('binds Stitch stage, admission, AEF consumption, real-screen certification and qualification proofs to one repository SHA', async () => {
+    const root = tempRoot();
+    const taskId = 'stitch-proof-task';
+    const envelopeHash = 'e'.repeat(64);
+    const fdepHash = 'f'.repeat(64);
+    writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, { task_id: taskId, envelope_hash: envelopeHash, state: 'READY' }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, {
+      applicable: true,
+      task_id: taskId,
+      unit_lineage_id: 'unit-stitch-proof',
+      unit_revision_hash: 'revision-stitch-proof',
+      content_hash: fdepHash,
+      provenance: { frontend_projection_hash: 'p'.repeat(64) },
+      product_design_profile: { content_hash: '1'.repeat(64) },
+      surface_manifest: { content_hash: '2'.repeat(64), surfaces: [{ surface_id: 'screen-main' }] },
+      surface_state_matrix: { content_hash: '3'.repeat(64), surfaces: [{ surface_id: 'screen-main', states: [{ state_id: 'READY', requirement: 'REQUIRED' }] }] },
+      visual_reference_spec: { content_hash: '4'.repeat(64), references: [] },
+      presentation_decision: { content_hash: '5'.repeat(64), execution_mode: 'SYNTHESIZE' },
+      visual_render_determinism_envelope: { content_hash: '6'.repeat(64) },
+      change_budget: { content_hash: '7'.repeat(64), allowed_structural_delta: 'NONE', new_token_ids: [], new_component_ids: [], new_pattern_ids: [] },
+      authority_constraints: { project_truth_superior: true, provider_output_authoritative: false },
+    }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/design-brief-bundle.json`, { task_id: taskId, content_hash: 'b'.repeat(64), provenance: { projection_hash: 'p'.repeat(64) } }, root);
+
+    const adapter = {
+      health: async () => ({ state: 'HEALTHY', authenticated: true }),
+      generate: async () => ({ screen_id: 'screen-1', html_url: 'https://storage.googleapis.com/dial/stitch.html', image_url: 'https://storage.googleapis.com/dial/stitch.png', response_hash: 'r'.repeat(64) }),
+    };
+    const artifactDownloader = async (url) => url.endsWith('.html')
+      ? { body: Buffer.from('<main><h1>DIAL</h1><button disabled>Ready</button></main>'), content_type: 'text/html' }
+      : { body: Buffer.from([1, 2, 3, 4]), content_type: 'image/png' };
+    const stage = await executeStitchDesignStage({ repoDir, root, taskId, adapter, artifactDownloader, envelopeGuard: () => ({ ok: true, reasons: [] }), fdepGuard: () => ({ ok: true, reasons: [] }) });
+    expect(stage.route.selected).toBe('STITCH_NEW_DESIGN_THEN_BUILD');
+    expect(stage.repository_sha).toMatch(/^[0-9a-f]{40}$/);
+    const accepted = admitStitchDesignStage({
+  repoDir,
+  root,
+  taskId,
+  evidence: { authority_conforms: true, required_states_present: true, change_budget_satisfied: true, donor_semantics_preserved: true, design_candidate_facts: {} },
+  envelopeGuard: () => ({ ok: true, reasons: [] }),
+  fdepGuard: () => ({ ok: true, reasons: [] }),
+});
+    const consumed = recordStitchUnitConsumption({ repoDir, root, taskId, workerArtifactId: 'artifact-worker-1', envelopeHash });
+    const visualGates = ['V1_STRUCTURAL','V2_GEOMETRY','V3_TYPOGRAPHY','V4_ASSETS','V5_PERCEPTUAL','V6_DELTA_PROVENANCE','V7_RESPONSIVE_IDENTITY','V8_AUTHORITY_SIGNOFF'].map((gate_id) => ({ gate_id, state: 'PASSED' }));
+    const certified = recordStitchScreenAcceptance({ repoDir, root, taskId, certification: { ok: true, status: 'PASSED', task_id: taskId, fdep_hash: fdepHash, content_hash: 'c'.repeat(64), accessibility: true, security: true, state_matrix_coverage: true, vrde_comparable: true, visual_gates: visualGates } });
+    const fallback = proveStitchOutageFallback({ repoDir, root });
+    expect(accepted.repository_sha).toBe(stage.repository_sha);
+    expect(consumed.repository_sha).toBe(stage.repository_sha);
+    expect(certified.repository_sha).toBe(stage.repository_sha);
+    expect(fallback.repository_sha).toBe(stage.repository_sha);
+    let proofs = stitchQualificationProofStatus(root, repoDir);
+    expect(proofs.visual_acceptance.passed).toBe(true);
+    expect(proofs.orchestrated_use.passed).toBe(true);
+    expect(proofs.outage_fallback.passed).toBe(true);
+
+    const clientFactory = () => ({
+      client: { listTools: async () => ({ tools: STITCH_ALLOWED_TOOLS.map((name) => ({ name })) }), close: async () => {} },
+      sdk: { createProject: async () => ({ projectId: 'project-q', generate: async () => ({ screenId: 'screen-q', getHtml: async () => 'https://storage.googleapis.com/dial/q.html', getImage: async () => 'https://storage.googleapis.com/dial/q.png' }) }) },
+      credentials: { configured: true },
+    });
+    const fetchImpl = async (url) => new Response(String(url).endsWith('.html') ? '<main><h1>Qualification</h1><button disabled>Ready</button></main>' : Buffer.from([9, 8, 7]), { status: 200, headers: { 'content-type': String(url).endsWith('.html') ? 'text/html' : 'image/png' } });
+    const qualified = await qualifyStitch({ root, repoDir, env: { DIAL_STITCH_ENABLED: 'true', DIAL_STITCH_LIVE_TESTS_ENABLED: 'true', STITCH_API_KEY: 'x'.repeat(20) }, clientFactory, fetchImpl });
+    expect(qualified.status).toBe('INTEGRATED');
+    expect(qualified.definition_of_done.passed).toBe(true);
+    expect(qualified.orchestrated_use.passed).toBe(true);
+
+    const stale = { ...proofs.visual_acceptance.evidence, repository_sha: '0'.repeat(40) };
+    writeJsonAtomic('operations/external-capabilities/design-stitch/proofs/real-screen-acceptance.json', stale, root);
+    proofs = stitchQualificationProofStatus(root, repoDir);
+    expect(proofs.visual_acceptance.passed).toBe(false);
+    fs.rmSync(root, { recursive: true, force: true });
   });
 
   it('projects DEC-033 Stitch readiness as required, not setup-optional', () => {

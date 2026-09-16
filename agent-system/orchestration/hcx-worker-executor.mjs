@@ -16,6 +16,7 @@ import { antigravityHeadless, recordAntigravityDispatchOutcome } from './provide
 import { assertModelAvailableForDispatch } from './model-availability-discovery.mjs';
 import { loadRoutingRegistries } from './adaptive-routing-core.mjs';
 import { releaseCompute, settleCompute } from './compute-governor.mjs';
+import { loadCurrentStitchAcceptedDesign, recordStitchUnitConsumption } from './stitch-design-orchestration.mjs';
 
 function now() { return new Date().toISOString(); }
 function norm(value) { return String(value || '').replaceAll('\\', '/').replace(/^\.\//, '').replace(/\/\*\*?$/, '').replace(/\/$/, ''); }
@@ -88,6 +89,14 @@ export async function executeSelectedHcxWorker({
     DIAL_WORKTREE_LEASE_ID: lease.lease_id,
     DIAL_FENCING_TOKEN: String(lease.fencing_token),
   };
+    const acceptedStitchDesign = loadCurrentStitchAcceptedDesign({ repoDir, root, taskId, envelopeHash: envelope.envelope_hash });
+  const stitchDesignContext = acceptedStitchDesign ? [
+    'Accepted non-authoritative Stitch design evidence is attached to this governed task.',
+    `Stitch candidate hash: ${acceptedStitchDesign.candidate_hash}`,
+    `Stitch admission evidence hash: ${acceptedStitchDesign.evidence_hash}`,
+    `Frontend design packet hash: ${acceptedStitchDesign.fdep_hash}`,
+    'Use it only as derived design input. Project Truth, FRC, Product Experience/FDEP, task envelope and acceptance gates remain superior.',
+  ].join('\n') : null;
   const boundedPrompt = [
     'DIAL HCX ANTIGRAVITY WORKER',
     `Task: ${taskId}`,
@@ -97,8 +106,9 @@ export async function executeSelectedHcxWorker({
     'Remain inside the current Task Execution Envelope. Do not push, merge, deploy, alter Project Truth, or broaden scope.',
     'Return a concise implementation/result summary after tool work.',
     '',
+    stitchDesignContext,
     delivery.text,
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   appendJsonl('events/adaptive-execution.jsonl', {
     event: 'HCX_WORKER_STARTED', task_id: taskId, harness_id: harnessId, worker_id: identity, at: now(),
@@ -146,6 +156,12 @@ export async function executeSelectedHcxWorker({
       worker_artifact_id: artifact.artifact_id,
       worker_finished_at: now(),
     }, root);
+    const stitchConsumption = acceptedStitchDesign ? recordStitchUnitConsumption({
+      root,
+      taskId,
+      workerArtifactId: artifact.artifact_id,
+      envelopeHash: envelope.envelope_hash,
+    }) : null;
     appendJsonl('events/adaptive-execution.jsonl', {
       event: 'HCX_WORKER_COMPLETED', task_id: taskId, harness_id: harnessId,
       worker_id: identity, artifact_id: artifact.artifact_id, at: now(),
@@ -160,6 +176,7 @@ export async function executeSelectedHcxWorker({
       artifact_hash: artifact.artifact_hash,
       result_hash: result.result_hash,
       compute_settlement: computeSettlement ? { reservation_id: computeSettlement.reservation_id, state: computeSettlement.state, actual_input_tokens: computeSettlement.actual_input_tokens, actual_output_tokens: computeSettlement.actual_output_tokens } : null,
+      stitch_design_consumption: stitchConsumption ? { evidence_hash: stitchConsumption.evidence_hash, candidate_hash: stitchConsumption.candidate_hash } : null,
       state: 'VERIFYING',
     };
   } catch (error) {

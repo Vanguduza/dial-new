@@ -3,7 +3,7 @@
 **Status:** ACTIVE / NOT GREEN
 **Branch:** `gpt/dial-development-system-green-closure-20260915`
 **Closure base:** `2e291761cd07951c6c75a2674f11e86185a1551f`
-**Updated:** 2026-09-16T08:41:31Z
+**Updated:** 2026-09-16T09:58:41Z
 **Rule:** A task moves to DONE only from measured evidence. No missing evidence is converted to GREEN.
 
 Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER GATE`
@@ -97,14 +97,14 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P5.09 Live-probe `dial-oracle-control`: 21 typed tools over stdio; Codex enrolled and Claude local enrollment repaired/proven connected; Hermes local MCP topology qualifier GREEN.
 - [x] P5.10 `dial-chat-control` loopback + bearer-authenticated JSON-RPC `tools/list` proven live: 21 typed tools, no generic shell/exec/filesystem primitive, and no token material exposed; proof persisted under control-plane MCP evidence.
 - [x] P5.11 Live-probe read-only `dial-truth` MCP: initialize/tools/list PASS and `get_decision(DEC-033)` returned `found=true`; toolset is bounded read-only canon access.
-- [ ] P5.12 Live-probe GitHub/provider-container connector.
+- [!] P5.12 GitHub/provider-container connector is repository-ready but still lacks an admissible provider-managed execution surface: Codex Cloud reports `no cloud environments are available for this workspace`, while Claude Remote requires interactive account login before the provider-container OAuth surface is reachable. Control-host GitHub access is not substituted for the required provider-side `git ls-remote origin master` proof.
 - [!] P5.13 Authenticated Cloudflare Access/public MCP is canonically mandatory (`ops/development-bootstrap/manifest.json` CORE_DEVELOPMENT_REQUIRED and fabric §11). Private VCN MCP remains healthy, but final GREEN requires a real `DIAL_MCP_INGRESS_URL` backed by authenticated Access/Tunnel and a live provider-ingress probe.
 - [!] P5.14 Tailscale (or owner-approved equivalent independent of Cloudflare) is a mandatory RECOVERY_REQUIRED secondary overlay. Repository certification now probes Tailscale fail-closed; current control/worker/admin state is `NeedsLogin`, so authentication and live reciprocal overlay evidence remain an owner gate.
-- [~] P5.15 Context7/Exa: exact local runtimes installed (Context7 4.1.1, Exa 3.4.1); Context7 resolve/query live canaries PASS. Exa runtime PASS but API-key-backed functional canary remains an owner auth gate; provider-surface enrollment still requires final proof.
-- [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. The stale `stitch_optional=true` design-provider projection was reconciled to DEC-033 and regression-tested; Stitch exact SDK is present but credential/tool-discovery/sandbox/orchestrated proof remains pending. Pomelli remains GMPC human-operated REFERENCE_ONLY.
+- [~] P5.15 Context7/Exa: exact local runtimes installed (Context7 4.1.1, Exa 3.4.1); Context7 resolve/query live canaries PASS. Duplicate user-scope remote Context7/Exa definitions were removed after backup so only the canonical project-local wrappers remain and the conflicting-scope warnings are gone. Exa has no admitted `EXA_API_KEY` on the control host, so its key-backed functional/provider-surface canary remains an owner auth gate.
+- [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. Stitch repository-side orchestration is now closed: explicit specialist selection preserves default direct routing; the provider remains non-writing/non-authoritative; task/FDEP-bound generation, quarantine, admission, AEF Unit consumption, real-screen certification, outage fallback and same-repository-SHA proof validation are deterministic and regression-tested. Live Stitch authentication/tool discovery/sandbox/real-screen execution still requires provider credentials. Pomelli remains GMPC human-operated REFERENCE_ONLY.
 - [!] P5.17 Configure/authenticate/live-probe the admitted WhatsApp Cloud API owner adapter (DEC-033).
 - [x] P5.18 Antigravity Google session authenticated under canonical isolated worker identity; all 14 live `agy models` were qualified, normal HCX selection executed a real Unit, guarded write/network denials passed, and capacity-limited fallback rerouted from Opus to Sonnet with revoked/released leases and settled compute. Latest capability state: `INTEGRATED`.
-- [!] P5.19 Configure Stitch credential/OAuth, prove fixed-host MCP tool discovery, synthetic sandbox screen, quarantine/admission, and selectable specialist invocation.
+- [!] P5.19 Repository-side Stitch prerequisites are complete and targeted regression passes 19/19: the canonical qualifier can derive visual-acceptance, AEF-consumption and outage-fallback proofs and rejects stale-SHA evidence. Remaining work is genuinely external: configure supported Stitch API-key or OAuth/access-token + Google Cloud project, then run fixed-host tool discovery, synthetic sandbox generation and one real governed screen/Unit acceptance path.
 - [x] P5.20 Re-audit every development capability registry entry: no operational `required=false` or `OPTIONAL_CAPABILITY` remains. Remaining `required=false` entries are explicitly GMPC-only human web, deprecated duplicate, or non-enrolled experimental API references.
 
 ## Phase 6 — Systemd/security/runtime verification
@@ -122,10 +122,10 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 
 - [x] P7.01 Development-bootstrap targeted suite: latest targeted run passed.
 - [x] P7.02 VEKL structural/frontend first-class Vitest inclusion fixed and targeted suite passed.
-- [x] P7.03 Adaptive/VEKL/provider-first targeted suites passed.
+- [x] P7.03 Adaptive/VEKL/provider-first targeted suites passed; latest post-Stitch targeted run is 2 files / 34 tests PASS, including the full non-authoritative Stitch stage -> admission -> AEF consumption -> screen-certification proof chain.
 - [x] P7.04 Previously sandbox-blocked child-git/shell suites re-run on the real control host; control-plane/operations/chat/operator and closure-targeted suites execute normally outside the Codex sandbox.
 - [x] P7.05 Latest closure-targeted real-control runs are green: 7 suites / 202 tests plus VEKL resource+graph 24 tests and focused bootstrap/Google/operator 54 tests on Vitest 4.1.11.
-- [x] P7.06 Full `npm run verify` rerun after Stitch-readiness reconciliation and manifest refresh: PASS on real control; 46 test files / 786 tests PASS, syntax/diff gates GREEN, audit 0 vulnerabilities.
+- [x] P7.06 Full `npm run verify` rerun after the deterministic Stitch orchestration repair: PASS on real control; 46 test files / 788 tests PASS, with manifest/scorecard/boundary gates GREEN.
 - [x] P7.07 Project Truth verifier and PR-authority verifier are enforced on the closure branch and were GREEN through the committed closure/evidence sequence; every repair commit is re-verified before push.
 - [x] P7.08 Determinism self-test: 3/3 bounded routing/VEKL decisions produced identical decision hash `2b761b17b069c61961e45311764164fa0a1940dc0ad5684a0a723831bcd8bf3e`; zero forbidden-role leaks.
 - [x] P7.09 Safe fault injection: 9/9 scenarios PASS, including primary-provider fallback, total provider loss fail-closed, alternate-model rejection, stale runtime refusal, role mismatch, unknown role, stale knowledge binding, absent development gate, and bounded network timeout.
@@ -143,7 +143,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [x] P8.10 Obsolete reverse audit-sync PR #33 was closed as conflicting and superseded by closure PR #34; unrelated historical/feature PRs were deliberately not closed blindly.
-- [~] P8.11 PR #34 previously passed all five required contexts; head `937c944` exposed one deterministic manifest-hash failure after the live board changed. The manifest is repaired locally and full `npm run verify` is now GREEN (46 files / 786 tests); fresh GitHub CI confirmation is pending the repair push.
+- [~] P8.11 PR #34 head `a4243fcf89018e9fc12dbf598ea63152d80657ec` has all five required GitHub contexts GREEN. The newer deterministic Stitch orchestration repair is locally full-verify GREEN at 46 files / 788 tests but is not yet committed/pushed, so fresh CI for that patch is still pending.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA
@@ -207,6 +207,13 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - Pinned toolbox image built successfully on the live ARM control host with Node 22.23.2/npm 10.9.8/Git 2.43/Python 3.12.3.
 - Worker secret isolation is live-proven. Role-candidate certification exposed three additional bootstrap defects: Claude was incorrectly required on the worker, cross-host control/recovery gates made role reports circular, and E2 `cpu_total` used OCPU rather than host-visible logical CPUs. All three are corrected in the closure worktree.
 - Worker candidate remains test-only on temporary staging SHAs. Final GREEN requires a signed report from the final merged `master` SHA; no staging candidate is accepted by the whole-system aggregator.
+
+## Live closure notes — 2026-09-16T09:48:00Z
+
+- Canonical Claude project MCP definitions were reconciled: duplicate user-scope remote Context7/Exa entries were backed up and removed; only the locked project-local wrappers remain. Claude account login is still required before its workspace approval UI can be reached.
+- P5.12 was narrowed to a real provider-side gate: no Codex Cloud environment exists for this workspace and Claude Remote is behind interactive account authentication; control-host GitHub access is deliberately not substituted.
+- Stitch repository-side closure exposed and repaired a real qualification gap. The governed non-writing provider stage now binds generation/quarantine/admission/AEF-consumption/screen-acceptance/fallback evidence to the current repository SHA, and stale-SHA proof reuse is rejected.
+- Latest targeted Stitch/AEF regression: 2 files / 34 tests PASS. Latest complete real-host `npm run verify`: 46 files / 788 tests PASS; proof-chain tamper/SHA/coherence hardening is included.
 
 ## Current critical path
 
