@@ -126,7 +126,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P7.04 Previously sandbox-blocked child-git/shell suites re-run on the real control host; control-plane/operations/chat/operator and closure-targeted suites execute normally outside the Codex sandbox.
 - [x] P7.05 Latest closure-targeted real-control runs are green: 7 suites / 202 tests plus VEKL resource+graph 24 tests and focused bootstrap/Google/operator 54 tests on Vitest 4.1.11.
 - [x] P7.06 Full `npm run verify` rerun after recovery-placement/install-host and qualifier PATH hardening: PASS on real control; 46 test files / 784 tests PASS, syntax/diff gates GREEN, audit 0 vulnerabilities.
-- [x] P7.07 Project Truth verifier and PR-authority verifier GREEN against closure commit `88413bc489ed99100fe9177a88202ddae5d7e3e5` from canonical `master` base.
+- [x] P7.07 Project Truth verifier and PR-authority verifier are enforced on the closure branch and were GREEN through the committed closure/evidence sequence; every repair commit is re-verified before push.
 - [x] P7.08 Determinism self-test: 3/3 bounded routing/VEKL decisions produced identical decision hash `2b761b17b069c61961e45311764164fa0a1940dc0ad5684a0a723831bcd8bf3e`; zero forbidden-role leaks.
 - [x] P7.09 Safe fault injection: 9/9 scenarios PASS, including primary-provider fallback, total provider loss fail-closed, alternate-model rejection, stale runtime refusal, role mismatch, unknown role, stale knowledge binding, absent development gate, and bounded network timeout.
 - [x] P7.10 Structured execution receipt captured at `evidence/closure-execution-receipt-20260916.json`: 784/784 assertions PASS with per-test status/duration/file plus before SHA `fa7c655...`, after SHA `88413bc...`, verify-output hashes and gate results.
@@ -140,10 +140,10 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [ ] P8.05 Restore/reconcile dirty production checkout safely; preserve existing stash/patch.
 - [x] P8.06 Gap register, traceability and live execution board reconciled to current repository/live evidence; stale supply-chain/recovery assumptions removed and remaining external gates preserved fail-closed.
 - [x] P8.07 Closure implementation committed on the authorized PR branch; Project Truth pre-commit evidence recorded and local verify/verify-pr GREEN. Signed-commit enforcement remains the separate P8.03 protected-master gate.
-- [ ] P8.08 Push closure branch.
-- [ ] P8.09 Open closure PR to protected `master`.
+- [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
+- [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [ ] P8.10 Close obsolete/conflicting temporary audit/sync PRs after closure PR supersedes them.
-- [ ] P8.11 Require all mandatory CI checks GREEN.
+- [~] P8.11 PR #34 initial CI exposed two repository coherency defects hidden by the warm control worktree: stale standalone preview lock metadata and stale pack-file scorecard. Both are repaired locally with exact Cloudflare pins; standalone/root clean `npm ci`, preview typecheck, production build, and full 46-file/784-test verify all pass. GitHub rerun pending the repair push.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA
