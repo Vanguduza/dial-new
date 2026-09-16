@@ -37,10 +37,12 @@ import { readJson, writeJsonAtomic } from '../agent-system/orchestration/state-s
 import { executeAdaptiveSoloWithReroute } from '../agent-system/orchestration/adaptive-execution-runner.mjs';
 import {
   admitStitchDesignStage,
+  buildStitchDesignPrompt,
   executeStitchDesignStage,
   proveStitchOutageFallback,
   recordStitchScreenAcceptance,
   recordStitchUnitConsumption,
+  resolveStitchVisualAuthorityProjection,
 } from '../agent-system/orchestration/stitch-design-orchestration.mjs';
 import { selectDesignStrategy } from '../agent-system/orchestration/design-provider-router.mjs';
 import { quarantineDesignArtifact, sanitizeDesignArtifactForEvidence } from '../agent-system/orchestration/design-candidate-admission.mjs';
@@ -96,6 +98,27 @@ describe('Google external capability boundaries', () => {
     expect(artifact.content_type).toBe('text/html');
     expect(artifact.byte_length).toBeGreaterThan(0);
     await expect(downloadStitchArtifact('https://contribution.usercontent.google.com.evil.example/stitch/export', { fetchImpl, maxBytes: 1024 })).rejects.toThrow('STITCH_ARTIFACT_URL_DENIED');
+  });
+
+  it('resolves canonical visual authority and forbids fabricated domain facts in the Stitch provider prompt', () => {
+    const fdep = {
+      task_id: 'prompt-test', unit_lineage_id: 'DU-LIN-test', unit_revision_hash: 'rev-test',
+      product_design_profile: { profile: { profile_id: 'dial.spare' } },
+      surface_manifest: { surfaces: [{ surface_id: 'DIAL_WEB' }, { surface_id: 'DIAL_CONSUMER' }, { surface_id: 'WHATSAPP' }] },
+      surface_state_matrix: { surfaces: [] },
+      visual_reference_spec: { references: [{ reference_id: 'PREMIUM_SOLUTIONS_ENVIRONMENT', authority_level: 'CANONICAL_REFERENCE', required_fidelity: 'AUTHORITY_DEFINED' }] },
+      presentation_decision: { execution_mode: 'ASSIMILATE' }, change_budget: {}, authority_constraints: { visual_authority_superior: true },
+    };
+    const resolved = resolveStitchVisualAuthorityProjection({ repoDir, fdep });
+    expect(resolved.references[0]).toMatchObject({ reference_id: 'PREMIUM_SOLUTIONS_ENVIRONMENT', status: 'RESOLVED_CANONICAL_PROJECTION' });
+    expect(resolved.references[0].projection_text).toContain('clean modern composition');
+    expect(resolved.references[0].projection_text).toContain('fake dashboard metrics');
+    const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64) } });
+    expect(prompt).toContain('ZERO FABRICATION');
+    expect(prompt).toContain('literal VINs');
+    expect(prompt).toContain('Do not claim WCAG compliance');
+    expect(prompt).toContain('a navigation label alone does not count as surface coverage');
+    expect(prompt).toContain('PREMIUM_SOLUTIONS_ENVIRONMENT');
   });
 
   it('converts active Stitch prototype scaffolding into inert evidence without weakening raw quarantine', () => {

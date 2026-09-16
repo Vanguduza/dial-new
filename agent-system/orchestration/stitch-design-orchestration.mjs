@@ -44,7 +44,62 @@ function designModeForFdep(fdep) {
   return fdep?.presentation_decision?.execution_mode === 'SYNTHESIZE' ? 'NEW_DIAL_DESIGN' : 'EXISTING_DIAL_DESIGN';
 }
 
-function stitchPrompt(fdep, brief) {
+const STITCH_VISUAL_AUTHORITY_SOURCES = Object.freeze({
+  PREMIUM_SOLUTIONS_ENVIRONMENT: Object.freeze({
+    path: 'docs/dial/final-audit/16_HOME_IDENTITY_WHATSAPP/DIAL_HOME_PREMIUM_SOLUTIONS_ENVIRONMENT_LOCK.md',
+    section_headings: ['3. Visual direction', '7. Trust atmosphere', '9. Interaction quality', '10. Anti-patterns'],
+  }),
+});
+
+function markdownSection(markdown, heading) {
+  const marker = `## ${heading}`;
+  const start = markdown.indexOf(marker);
+  if (start < 0) return null;
+  const bodyStart = start + marker.length;
+  const next = markdown.indexOf('\n## ', bodyStart);
+  return markdown.slice(bodyStart, next < 0 ? markdown.length : next).trim();
+}
+
+export function resolveStitchVisualAuthorityProjection({ repoDir, fdep } = {}) {
+  if (!repoDir || !fdep) throw new Error('STITCH_VISUAL_AUTHORITY_INPUT_REQUIRED');
+  const refs = fdep.visual_reference_spec?.references || [];
+  const resolved = refs.map((ref) => {
+    const referenceId = ref.reference_id || ref.ref;
+    const source = STITCH_VISUAL_AUTHORITY_SOURCES[referenceId];
+    if (!source) {
+      if (ref.authority_level === 'CANONICAL_REFERENCE') throw new Error(`STITCH_VISUAL_AUTHORITY_REFERENCE_UNRESOLVED:${referenceId}`);
+      return { reference_id: referenceId, authority_level: ref.authority_level || null, status: 'REFERENCE_ID_ONLY' };
+    }
+    const abs = path.join(repoDir, source.path);
+    if (!fs.existsSync(abs)) throw new Error(`STITCH_VISUAL_AUTHORITY_SOURCE_MISSING:${source.path}`);
+    const markdown = fs.readFileSync(abs, 'utf8');
+    const sections = source.section_headings.map((heading) => ({ heading, body: markdownSection(markdown, heading) }));
+    if (sections.some((row) => !row.body)) throw new Error(`STITCH_VISUAL_AUTHORITY_SECTION_MISSING:${referenceId}`);
+    const projectionText = sections.map((row) => `## ${row.heading}\n${row.body}`).join('\n\n');
+    return {
+      reference_id: referenceId,
+      authority_level: ref.authority_level || null,
+      required_fidelity: ref.required_fidelity || null,
+      status: 'RESOLVED_CANONICAL_PROJECTION',
+      source_ref: source.path,
+      source_sha256: rawSha256(markdown),
+      projection_text: projectionText,
+      projection_sha256: rawSha256(projectionText),
+    };
+  });
+  return { references: resolved, projection_hash: hashObject(resolved) };
+}
+
+export function buildStitchDesignPrompt({ repoDir, fdep, brief } = {}) {
+  const visualAuthorityProjection = resolveStitchVisualAuthorityProjection({ repoDir, fdep });
+  const providerDataPolicy = {
+    literal_domain_values_allowed_only_when_present_verbatim_in_governed_projection: true,
+    no_fabricated_vin_vehicle_model_year_part_number_price_stock_location_percentage_telemetry_error_code_identity_revision_or_metric: true,
+    no_unproven_certification_audit_accessibility_or_test_claims: true,
+    data_bearing_ready_state_without_authoritative_values: 'SHOW_FIELD_LABELS_AND_EMPTY_BOUND_REGIONS_ONLY',
+    required_state_variants_without_authoritative_values: 'SHOW_STATE_NAME_AND_STRUCTURAL_TREATMENT_ONLY',
+    required_surface_variants: (fdep.surface_manifest?.surfaces || []).map((row) => row.surface_id),
+  };
   const projection = {
     task_id: fdep.task_id,
     unit_lineage_id: fdep.unit_lineage_id,
@@ -53,15 +108,22 @@ function stitchPrompt(fdep, brief) {
     surface_manifest: fdep.surface_manifest,
     surface_state_matrix: fdep.surface_state_matrix,
     visual_reference_spec: fdep.visual_reference_spec,
+    visual_authority_projection: visualAuthorityProjection,
     presentation_decision: fdep.presentation_decision,
     change_budget: fdep.change_budget,
     authority_constraints: fdep.authority_constraints,
+    provider_data_policy: providerDataPolicy,
     design_brief_hash: brief?.content_hash || null,
   };
   return [
     'DIAL governed Stitch design provider stage.',
     'Return a design candidate only. Project Truth, FRC, Product Experience authority and this projection remain superior.',
-    'Do not invent domain truth, production data, tokens, components, prices, customer facts or runtime behavior.',
+    'The resolved visual-authority excerpt below is a one-way projection from canonical DIAL authority. Follow it; do not reinterpret the opaque reference id.',
+    'ZERO FABRICATION: do not invent or display literal VINs, vehicle makes/models/years, part or OEM numbers, prices, stock quantities, depot/location names, compatibility percentages, telemetry/latency, error codes, account identities, revision/version/date values, business metrics, or operational facts unless the exact literal value is present in the governed projection JSON.',
+    'Do not claim WCAG compliance, audits, certification, verification, tests passed, security clearance, or any other achieved status. Those are DIAL-owned post-provider gates.',
+    'When authoritative literal data is absent, READY-state composition must use field labels and empty bound value regions only; do not use example, demo, placeholder, synthetic, or realistic-looking data values.',
+    'For required LOADING, EMPTY, ERROR, PERMISSION_DENIED and DEGRADED states, show the state name and structural treatment only. Do not invent timestamps, causes, codes, cache ages, retry intervals, permission tiers, or system messages.',
+    'Represent each required surface as a distinct composition when the surface manifest includes DIAL_WEB, DIAL_CONSUMER or WHATSAPP; a navigation label alone does not count as surface coverage.',
     'Cover the required surface/state matrix and preserve the specified responsive/accessibility intent.',
     'Prefer static self-contained markup: no scripts, inline event handlers, remote assets, remote URLs, iframes, service workers or executable browser behavior. DIAL will treat all output as non-authoritative design evidence and sanitize it before admission.',
     JSON.stringify(projection),
@@ -113,7 +175,7 @@ export async function executeStitchDesignStage({
   if (!designProjectionHash) throw new Error('STITCH_STAGE_DESIGN_PROJECTION_HASH_REQUIRED');
   const generated = await stitch.generate({
     project_title: `DIAL ${fdep.unit_lineage_id} ${taskId}`,
-    prompt: stitchPrompt(fdep, brief),
+    prompt: buildStitchDesignPrompt({ repoDir, fdep, brief }),
     device_type: 'DESKTOP',
     design_projection_hash: designProjectionHash,
   });
