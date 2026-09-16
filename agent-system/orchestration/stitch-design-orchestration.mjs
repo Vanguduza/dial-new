@@ -24,6 +24,7 @@ import {
   admitDesignCandidate,
   buildDesignCandidateManifest,
   quarantineDesignArtifact,
+  sanitizeDesignArtifactForEvidence,
 } from './design-candidate-admission.mjs';
 import { normalizeDesignCandidate } from './frontend-design-normalizer.mjs';
 import { sha256 } from './providers/google/external-capability-core.mjs';
@@ -62,6 +63,7 @@ function stitchPrompt(fdep, brief) {
     'Return a design candidate only. Project Truth, FRC, Product Experience authority and this projection remain superior.',
     'Do not invent domain truth, production data, tokens, components, prices, customer facts or runtime behavior.',
     'Cover the required surface/state matrix and preserve the specified responsive/accessibility intent.',
+    'Prefer static self-contained markup: no scripts, inline event handlers, remote assets, remote URLs, iframes, service workers or executable browser behavior. DIAL will treat all output as non-authoritative design evidence and sanitize it before admission.',
     JSON.stringify(projection),
   ].join('\n');
 }
@@ -117,9 +119,12 @@ export async function executeStitchDesignStage({
   });
   const htmlArtifact = await artifactDownloader(generated.html_url, { maxBytes: 2_000_000 });
   const imageArtifact = await artifactDownloader(generated.image_url, { maxBytes: 8_000_000 });
-  const html = Buffer.from(htmlArtifact.body).toString('utf8');
-  const quarantine = quarantineDesignArtifact({ content: html, mimeType: htmlArtifact.content_type || 'text/html' });
-  if (!quarantine.ok) throw new Error(`STITCH_STAGE_QUARANTINED:${quarantine.violations.join(',')}`);
+  const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+  const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+  const rawStored = persistPrivateArtifact(root, taskId, 'candidate-raw.html', Buffer.from(htmlArtifact.body));
+  if (!sanitization.ok) throw new Error(`STITCH_STAGE_QUARANTINED:${sanitization.sanitized_quarantine.violations.join(',')}`);
+  const html = sanitization.content;
+  const quarantine = sanitization.sanitized_quarantine;
   const candidate = buildDesignCandidateManifest({
     taskId,
     providerId: 'google-stitch',
@@ -135,7 +140,7 @@ export async function executeStitchDesignStage({
     presentationDecisionHash: fdep.presentation_decision?.content_hash || null,
     vrdeHash: fdep.visual_render_determinism_envelope?.content_hash || null,
   });
-  const htmlStored = persistPrivateArtifact(root, taskId, 'candidate.html', Buffer.from(htmlArtifact.body));
+  const htmlStored = persistPrivateArtifact(root, taskId, 'candidate.html', Buffer.from(html, 'utf8'));
   const imageStored = persistPrivateArtifact(root, taskId, 'candidate-image.bin', Buffer.from(imageArtifact.body));
   const repoSha = repositorySha(repoDir);
   if (!repoSha) throw new Error('STITCH_STAGE_REPOSITORY_SHA_UNAVAILABLE');
@@ -150,7 +155,8 @@ export async function executeStitchDesignStage({
     candidate,
     provider_response_hash: generated.response_hash || null,
     artifacts: {
-      html: { ...htmlStored, content_type: htmlArtifact.content_type || null },
+      raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
+      html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
       image: { ...imageStored, content_type: imageArtifact.content_type || null },
     },
     observed_at: now(),

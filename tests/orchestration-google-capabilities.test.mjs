@@ -43,6 +43,7 @@ import {
   recordStitchUnitConsumption,
 } from '../agent-system/orchestration/stitch-design-orchestration.mjs';
 import { selectDesignStrategy } from '../agent-system/orchestration/design-provider-router.mjs';
+import { quarantineDesignArtifact, sanitizeDesignArtifactForEvidence } from '../agent-system/orchestration/design-candidate-admission.mjs';
 
 const repoDir = process.cwd();
 function tempRoot() { return fs.mkdtempSync(path.join(os.tmpdir(), 'dial-google-cap-')); }
@@ -95,6 +96,19 @@ describe('Google external capability boundaries', () => {
     expect(artifact.content_type).toBe('text/html');
     expect(artifact.byte_length).toBeGreaterThan(0);
     await expect(downloadStitchArtifact('https://contribution.usercontent.google.com.evil.example/stitch/export', { fetchImpl, maxBytes: 1024 })).rejects.toThrow('STITCH_ARTIFACT_URL_DENIED');
+  });
+
+  it('converts active Stitch prototype scaffolding into inert evidence without weakening raw quarantine', () => {
+    const raw = '<main onload="boot()"><img src="https://lh3.googleusercontent.com/example"><a href="https://example.com">View</a><script src="https://cdn.example.com/app.js">boot()</script><section style="background-image:url(https://example.com/bg.png)">DIAL</section></main>';
+    const before = quarantineDesignArtifact({ content: raw });
+    expect(before.ok).toBe(false);
+    expect(before.violations).toEqual(expect.arrayContaining(['SCRIPT','EVENT_HANDLER','REMOTE_URL']));
+    const inert = sanitizeDesignArtifactForEvidence({ content: raw });
+    expect(inert.transformed).toBe(true);
+    expect(inert.raw_quarantine.ok).toBe(false);
+    expect(inert.ok).toBe(true);
+    expect(inert.sanitized_quarantine.violations).toEqual([]);
+    expect(inert.content).not.toMatch(/<script\b|\son[a-z]+\s*=|https?:\/\//i);
   });
 
   it('selects Stitch only when explicitly preferred and preserves direct fallback when unavailable', () => {
