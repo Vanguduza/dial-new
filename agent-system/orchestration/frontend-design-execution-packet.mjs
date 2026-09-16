@@ -76,7 +76,7 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
     created_at:now(),
   };
   const packet={...content,content_hash:hashObject({...content,created_at:null})};
-  const brief=buildDesignBriefBundle({projection:px,unit,taskId,ownerAuthorityRef});
+  const brief=buildDesignBriefBundle({projection:px,unit,taskId,ownerAuthorityRef,instruction});
   writeJsonAtomic(`execution/tasks/${taskId}/frontend-design-execution-packet.json`,packet,root);
   if(brief) writeJsonAtomic(`execution/tasks/${taskId}/design-brief-bundle.json`,brief,root);
   return packet;

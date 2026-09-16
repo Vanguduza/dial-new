@@ -7,15 +7,16 @@
   ],
   "branch": "gpt/dial-development-system-green-closure-20260915",
   "changed_files": [
-    "agent-system/orchestration/design-candidate-admission.mjs",
+    "agent-system/orchestration/frontend-design-execution-packet.mjs",
+    "agent-system/orchestration/frontend-product-experience.mjs",
     "agent-system/orchestration/stitch-design-orchestration.mjs",
-    "tests/orchestration-adaptive-execution.test.mjs",
+    "tests/frontend-product-experience.test.mjs",
     "tests/orchestration-google-capabilities.test.mjs"
   ],
-  "content_diff_sha256": "10b49de76bc94941d35ad2775ccb6151e840256412d21424c052cc7236282a34",
-  "observed_at_utc": "2026-09-16T19:26:11.529286+00:00",
+  "content_diff_sha256": "a7cf0755749d2f9446eed93a0782badce33676b695b7b9118b41b1bc43d5eb51",
+  "observed_at_utc": "2026-09-16T19:43:49.651096+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "7189987922bc4105081eaaa46474c4b735cf1fcb",
+  "source_parent": "85b3fd47e632a3d935361e7680c749429570b794",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

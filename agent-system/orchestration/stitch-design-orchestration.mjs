@@ -164,12 +164,14 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     authority_constraints: fdep.authority_constraints,
     provider_data_policy: providerDataPolicy,
     design_brief_hash: brief?.content_hash || null,
+    governed_design_intent: brief?.design_intent || null,
   };
   return [
     'DIAL governed Stitch design provider stage.',
     `TARGET_SURFACE=${targetSurfaceId}. Generate exactly one composition for this surface only.`,
     'Return a non-authoritative design candidate only. Project Truth, FRC, Product Experience authority and the governed projections remain superior.',
-    'The resolved visual-authority excerpt and feature-contract projection below are one-way projections from canonical DIAL authority. Follow them exactly.',
+    'The resolved visual-authority excerpt, visual-safe feature projection and governed design intent below are one-way projections from canonical DIAL authority. Follow them exactly.',
+    'Treat governed_design_intent.text as the bounded task brief. Do not add product mechanics, labels, controls or runtime claims that are absent from that intent and the visual-safe feature projection.',
     'This must look like a real customer-facing DIAL experience, not a governance dashboard, debug console, state matrix, design-system specimen, test report, or engineering diagnostics screen.',
     'Do not visibly print feature IDs, surface IDs, Unit IDs, hashes, governance labels, archetype names, pattern names, provider names, qualification text, zero-fabrication notices, or acceptance/test metadata in the customer UI.',
     'ZERO FABRICATION: do not invent or display literal VINs, vehicle makes/models/years, part or OEM numbers, prices, stock quantities, depot/location names, compatibility percentages, telemetry/latency, error codes, account identities, revision/version/date values, business metrics, or operational facts unless the exact literal value is present in the governed projection JSON.',

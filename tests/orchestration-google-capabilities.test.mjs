@@ -119,12 +119,13 @@ describe('Google external capability boundaries', () => {
     expect(contract.features[0]).not.toHaveProperty('aggregate');
     expect(contract.features[0]).not.toHaveProperty('commands');
     expect(contract.internal_contract_fields_withheld).toEqual(expect.arrayContaining(['aggregate','states','commands','queries','permissions','acceptance_contract']));
-    const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64) }, surfaceId: 'DIAL_WEB' });
+    const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64), design_intent: { text: 'Create a simple premium vehicle selection composition with a garage entry point.', data_class: 'INTERNAL_SAFE_FOR_APPROVED_PROVIDER', findings: [], bounded_hash: 'i'.repeat(64) } }, surfaceId: 'DIAL_WEB' });
     expect(prompt).toContain('ZERO FABRICATION');
     expect(prompt).toContain('literal VINs');
     expect(prompt).toContain('WCAG compliance');
     expect(prompt).toContain('Generate exactly one composition for this surface only');
     expect(prompt).toContain('Vehicle selection & garage');
+    expect(prompt).toContain('Create a simple premium vehicle selection composition with a garage entry point.');
     expect(prompt).toContain('PRIMARY_READY_COMPOSITION_ONLY');
     expect(prompt).toContain('DIAL AEF implements and certifies the complete FDEP state matrix');
     expect(prompt).toContain('not a governance dashboard');
