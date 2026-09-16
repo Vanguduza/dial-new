@@ -3,10 +3,10 @@
   "repository": "Vanguduza/dial-new",
   "enforcement_type": "BRANCH_PROTECTION",
   "enforcement_id": "branch-protection:master",
-  "observed_at": "2026-09-16T03:48:20Z",
+  "observed_at": "2026-09-16T07:22:43Z",
   "exported_by": "Vanguduza",
   "source": "GITHUB_BRANCH_PROTECTION_API_EXPORT",
-  "source_payload_sha256": "f75d6cf0ac2b25835e554d22bcbc45dc9ee4ca140079a35c32b971565861c975",
+  "source_payload_sha256": "5387c7a7dbb43585496aa0c21b3ca9e5fa349c2ac001fdac8d1e14194c5ea097",
   "observed": {
     "branch": "master",
     "required_pull_request": true,
@@ -15,10 +15,13 @@
     "dismiss_stale_reviews": false,
     "required_status_checks": [
       "project-truth",
-      "verify"
+      "gates, types and unit suites",
+      "production build and full typecheck",
+      "pipeline produces a conforming pack",
+      "customer transition contract"
     ],
     "require_branches_up_to_date": true,
-    "required_signatures": false,
+    "required_signatures": true,
     "block_force_pushes": true,
     "block_deletions": true,
     "enforce_on_administrators": true

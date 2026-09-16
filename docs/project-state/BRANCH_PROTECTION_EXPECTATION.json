@@ -11,8 +11,11 @@
     "required_approving_review_count": 1,
     "dismiss_stale_reviews": true,
     "required_status_checks": [
-      "verify",
-      "project-truth"
+      "project-truth",
+      "gates, types and unit suites",
+      "production build and full typecheck",
+      "pipeline produces a conforming pack",
+      "customer transition contract"
     ],
     "require_branches_up_to_date": true,
     "required_signatures": true,

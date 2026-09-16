@@ -7,18 +7,16 @@
   ],
   "branch": "gpt/dial-development-system-green-closure-20260915",
   "changed_files": [
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "apps/preview-player/package-lock.json",
-    "apps/preview-player/package.json",
-    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
     "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "package-lock.json"
+    "docs/project-state/BRANCH_PROTECTION_EVIDENCE.json",
+    "docs/project-state/BRANCH_PROTECTION_EXPECTATION.json",
+    "docs/project-state/PROTECTED_MASTER_POLICY.md"
   ],
-  "content_diff_sha256": "a360afc47ea215d62908f0ff283d3f6e8bde82b8797f903164b9f9a18711badb",
-  "observed_at_utc": "2026-09-16T04:53:48.724965+00:00",
+  "content_diff_sha256": "a9775121c67a66dfde069c43124dfdba96bf0c5ae0f5dae1b98f48f2a7c67416",
+  "observed_at_utc": "2026-09-16T07:23:09.703595+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "3c6c7256a6fb9b26eae3304b01fc6ee85b527ccf",
+  "source_parent": "636f13df6ac0bf303da545033f6619d997c08858",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

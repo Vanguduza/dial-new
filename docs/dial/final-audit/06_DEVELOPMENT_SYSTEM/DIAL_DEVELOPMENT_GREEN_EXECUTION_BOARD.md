@@ -134,8 +134,8 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 ## Phase 8 — GitHub governance and closure PR
 
 - [x] P8.01 Confirm `master` protected; admins enforced; `project-truth` strict check required.
-- [x] P8.02 Capture fresh branch-protection API evidence conforming to repository schema: native `master` protection freshly exported and source-payload SHA-256 bound; strict required checks now include both `verify` and `project-truth`, while the verifier preserves the remaining real policy mismatches instead of inferring compliance.
-- [ ] P8.03 Resolve required signed-commit policy (currently disabled) without locking out CI/owner workflow.
+- [x] P8.02 Capture fresh branch-protection API evidence conforming to repository schema: native `master` protection is source-payload SHA-256 bound; strict required checks now map directly to `project-truth` plus all four real GitHub verification lanes, eliminating the stale synthetic `verify` context without weakening CI coverage.
+- [!] P8.03 Required-signature enforcement is now live on `master`, but PR #34 correctly becomes BLOCKED because closure commits are unsigned. The authenticated GitHub token lacks `admin:ssh_signing_key` (and `workflow`) scope, so registering a GitHub-recognised signing key/re-signing requires owner OAuth refresh. The same protected-master expectation also requires one owner CODEOWNER approval, but the repository currently has only the PR author (`Vanguduza`) as a direct collaborator, making self-review unsatisfiable without a second qualified reviewer or an owner-approved single-owner governance revision.
 - [x] P8.04 Enforcement mechanism resolved without weakening controls: either native GitHub branch protection or an equivalent ruleset is acceptable when fresh API evidence matches the same committed protected-master policy; mechanism-specific evidence is regression-tested.
 - [ ] P8.05 Restore/reconcile dirty production checkout safely; preserve existing stash/patch.
 - [x] P8.06 Gap register, traceability and live execution board reconciled to current repository/live evidence; stale supply-chain/recovery assumptions removed and remaining external gates preserved fail-closed.
@@ -143,7 +143,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [ ] P8.10 Close obsolete/conflicting temporary audit/sync PRs after closure PR supersedes them.
-- [~] P8.11 PR #34 initial CI exposed two repository coherency defects hidden by the warm control worktree: stale standalone preview lock metadata and stale pack-file scorecard. Both are repaired locally with exact Cloudflare pins; standalone/root clean `npm ci`, preview typecheck, production build, and full 46-file/784-test verify all pass. GitHub rerun pending the repair push.
+- [x] P8.11 PR #34 repair CI is GREEN across all five required contexts: `project-truth`, gates/types/unit suites, production build/typecheck, conforming pack, and customer transition contract. `mergeStateStatus=CLEAN` after branch protection was reconciled to the real fail-closed CI lanes.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA
