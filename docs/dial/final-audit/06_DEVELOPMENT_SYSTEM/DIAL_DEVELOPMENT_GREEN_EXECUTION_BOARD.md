@@ -135,7 +135,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 
 - [x] P8.01 Confirm `master` protected; admins enforced; `project-truth` strict check required.
 - [x] P8.02 Capture fresh branch-protection API evidence conforming to repository schema: native `master` protection is source-payload SHA-256 bound; strict required checks now map directly to `project-truth` plus all four real GitHub verification lanes, eliminating the stale synthetic `verify` context without weakening CI coverage.
-- [!] P8.03 Required-signature enforcement is now live on `master`, but PR #34 correctly becomes BLOCKED because closure commits are unsigned. The authenticated GitHub token lacks `admin:ssh_signing_key` (and `workflow`) scope, so registering a GitHub-recognised signing key/re-signing requires owner OAuth refresh. The same protected-master expectation also requires one owner CODEOWNER approval, but the repository currently has only the PR author (`Vanguduza`) as a direct collaborator, making self-review unsatisfiable without a second qualified reviewer or an owner-approved single-owner governance revision.
+- [~] P8.03 Canonical protected-master controls are now live and freshly API-evidenced: required signatures, strict five-check CI, admin enforcement, no force-push/deletion, one approving review, CODEOWNER review and stale-review dismissal all match the committed expectation. PR #34 remains correctly BLOCKED because its closure commits are unsigned and the authenticated GitHub identity cannot self-satisfy the required independent approval; owner signing setup plus a qualified second reviewer remain the genuine governance actions.
 - [x] P8.04 Enforcement mechanism resolved without weakening controls: either native GitHub branch protection or an equivalent ruleset is acceptable when fresh API evidence matches the same committed protected-master policy; mechanism-specific evidence is regression-tested.
 - [x] P8.05 Dirty `/home/ubuntu/dial-new` production checkout reconciled safely: exact conflicted index/worktree plus all three `vitest.config.ts` conflict stages were SHA-256-backed up under `~/.local/state/dial-recovery/production-reconcile-20260916T072737Z`, the pre-existing stash/patch was preserved, and the checkout was reset cleanly to unchanged canonical `origin/master` `fa7c655f12faf02a2b33cc15799069526bdda3a6`.
 - [x] P8.06 Gap register, traceability and live execution board reconciled to current repository/live evidence; stale supply-chain/recovery assumptions removed and remaining external gates preserved fail-closed.
@@ -143,7 +143,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [x] P8.10 Obsolete reverse audit-sync PR #33 was closed as conflicting and superseded by closure PR #34; unrelated historical/feature PRs were deliberately not closed blindly.
-- [~] P8.11 PR #34 head `a4243fcf89018e9fc12dbf598ea63152d80657ec` has all five required GitHub contexts GREEN. The newer deterministic Stitch orchestration repair is locally full-verify GREEN at 46 files / 788 tests but is not yet committed/pushed, so fresh CI for that patch is still pending.
+- [x] P8.11 PR #34 head `7054676b9ffd827d1b058a2895e1bfbcd4ee6c47` is pushed and all five required GitHub contexts are SUCCESS: `project-truth`, `gates, types and unit suites`, `production build and full typecheck`, `pipeline produces a conforming pack`, and `customer transition contract`. The exact same commit is locally full-verify GREEN at 46 files / 790 tests.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA
@@ -224,9 +224,15 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - Fast control certification reached 127 PASS with remaining non-PASS states confined to genuine owner/external gates, final-SHA governance/requalification, and fast-mode-skipped full tests.
 - Complete `npm run verify` is GREEN on the closure worktree: 46 files / 790 tests PASS.
 
+## Live closure notes — 2026-09-16T13:36:05Z
+
+- Non-fast control certification on `7054676b9ffd827d1b058a2895e1bfbcd4ee6c47` completed with 137 PASS, 6 OWNER_ACTION_REQUIRED, 8 NOT_APPLICABLE and two FAIL rows. All full self-test rows executed rather than being skipped.
+- One FAIL was stale exported branch-protection evidence; live GitHub controls have since been reconciled to the canonical expectation and recaptured from the GitHub API with a SHA-256-bound source payload. Post-refresh fast certification measures `github.branch-protection=PASS` with zero problems and `certification.protected-master-pin=PASS`; its counts are 128 PASS, 6 OWNER_ACTION_REQUIRED, 8 NOT_APPLICABLE, 1 FAIL and 4 fast-mode UNVERIFIED self-tests. The sole FAIL is `hermes.development-gate`, intentionally blocked until mandatory owner/external authentication gates clear; the four UNVERIFIED rows are already proven by the non-fast run and exact-head `npm run verify`.
+- All five GitHub CI lanes are SUCCESS on exact PR #34 head `7054676b9ffd827d1b058a2895e1bfbcd4ee6c47`.
+
 ## Current critical path
 
-`P5 external auth gates (Stitch, Exa, Dial Hermes Control dedicated pairing, network overlays) -> P1.22 static closure review -> Phase 6 security/systemd -> Phase 7 full verification -> Phase 8 PR/CI/merge -> Phase 9 final-SHA deployment -> Phase 10 qualification/soak/certificates -> Phase 11 E2E -> Phase 12 GREEN`
+`Single owner/external authentication pass (Claude capacity, Stitch, Exa, Dial Hermes Control pairing, Cloudflare Access, Tailscale, provider-container auth, GitHub signing/reviewer) -> protected PR merge -> Phase 9 exact merged-SHA deployment -> Phase 10 qualification/soak/certificates -> Phase 11 owner-to-repository E2E -> Phase 12 GREEN`
 
 ## Live closure notes — 2026-09-15T11:35:42Z
 

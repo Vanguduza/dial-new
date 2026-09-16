@@ -18,9 +18,9 @@
       "P2": 2
     },
     "by_status": {
-      "EXTERNAL_GATE": 5,
+      "EXTERNAL_GATE": 4,
       "LIVE_APPLY_REQUIRED": 2,
-      "OWNER_ACTION_REQUIRED": 6,
+      "OWNER_ACTION_REQUIRED": 7,
       "RESOLVED_AUTHORIZATION": 1,
       "RESOLVED_REPOSITORY": 10
     },
@@ -77,12 +77,12 @@
     },
     {
       "id": "GAP-010",
-      "title": "Protected-master policy is only partially applied",
+      "title": "Protected-master controls are live; signed closure history and independent approval remain owner-gated",
       "severity": "P0",
-      "status": "EXTERNAL_GATE",
+      "status": "OWNER_ACTION_REQUIRED",
       "gate": "OWNER-GATE-BRANCH-PROTECTION-001",
-      "owner_decision_required": true,
-      "evidence": "fresh native branch-protection API evidence is persisted; strict project-truth+verify checks, PR requirement, admin enforcement, no force-push/deletion are live; signatures and the sole-owner-compatible review policy remain unresolved"
+      "owner_decision_required": false,
+      "evidence": "fresh GitHub API evidence at 2026-09-16T13:36:05Z matches the full protected-master expectation: strict five-check CI, PR requirement, one approval, CODEOWNER review, stale-review dismissal, required signatures, admin enforcement, and force-push/deletion blocks are live. PR #34 remains blocked on unsigned closure commits and an independent qualified approval."
     },
     {
       "id": "GAP-009",
