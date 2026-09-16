@@ -3,7 +3,7 @@
 **Status:** ACTIVE / NOT GREEN
 **Branch:** `gpt/dial-development-system-green-closure-20260915`
 **Closure base:** `2e291761cd07951c6c75a2674f11e86185a1551f`
-**Updated:** 2026-09-16T08:22:00Z
+**Updated:** 2026-09-16T08:41:31Z
 **Rule:** A task moves to DONE only from measured evidence. No missing evidence is converted to GREEN.
 
 Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER GATE`
@@ -125,7 +125,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P7.03 Adaptive/VEKL/provider-first targeted suites passed.
 - [x] P7.04 Previously sandbox-blocked child-git/shell suites re-run on the real control host; control-plane/operations/chat/operator and closure-targeted suites execute normally outside the Codex sandbox.
 - [x] P7.05 Latest closure-targeted real-control runs are green: 7 suites / 202 tests plus VEKL resource+graph 24 tests and focused bootstrap/Google/operator 54 tests on Vitest 4.1.11.
-- [x] P7.06 Full `npm run verify` rerun again on live closure head `d758f9593a9c51940eaee3ef73be7a7908aa70d5`: PASS on real control; 46 test files / 785 tests PASS, syntax/diff gates GREEN. This refresh supersedes the earlier 784-test run while the detailed 784-test execution receipt remains historical evidence.
+- [x] P7.06 Full `npm run verify` rerun after Stitch-readiness reconciliation and manifest refresh: PASS on real control; 46 test files / 786 tests PASS, syntax/diff gates GREEN, audit 0 vulnerabilities.
 - [x] P7.07 Project Truth verifier and PR-authority verifier are enforced on the closure branch and were GREEN through the committed closure/evidence sequence; every repair commit is re-verified before push.
 - [x] P7.08 Determinism self-test: 3/3 bounded routing/VEKL decisions produced identical decision hash `2b761b17b069c61961e45311764164fa0a1940dc0ad5684a0a723831bcd8bf3e`; zero forbidden-role leaks.
 - [x] P7.09 Safe fault injection: 9/9 scenarios PASS, including primary-provider fallback, total provider loss fail-closed, alternate-model rejection, stale runtime refusal, role mismatch, unknown role, stale knowledge binding, absent development gate, and bounded network timeout.
@@ -143,7 +143,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.
 - [x] P8.09 Closure PR #34 opened against protected `master`: `Close DIAL development-system readiness gaps`.
 - [x] P8.10 Obsolete reverse audit-sync PR #33 was closed as conflicting and superseded by closure PR #34; unrelated historical/feature PRs were deliberately not closed blindly.
-- [x] P8.11 PR #34 CI remains GREEN across all five required contexts: `project-truth`, gates/types/unit suites, production build/typecheck, conforming pack, and customer transition contract. GitHub currently reports the PR `MERGEABLE` but `mergeStateStatus=BLOCKED` because required-signature governance is now active; CI itself is not the blocker.
+- [~] P8.11 PR #34 previously passed all five required contexts; head `937c944` exposed one deterministic manifest-hash failure after the live board changed. The manifest is repaired locally and full `npm run verify` is now GREEN (46 files / 786 tests); fresh GitHub CI confirmation is pending the repair push.
 - [ ] P8.12 Merge through protected `master`; delete temporary branch after successful merge.
 
 ## Phase 9 — Deploy exact merged SHA
