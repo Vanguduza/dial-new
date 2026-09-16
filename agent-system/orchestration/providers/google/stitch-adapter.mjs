@@ -147,15 +147,19 @@ export function validateStitchArtifact({ html, taskId = 'qualification', unitLin
     screenRefs: [],
   });
   return { ok: true, quarantine, manifest };
-}const STITCH_ARTIFACT_HOSTS = [
+}const STITCH_ARTIFACT_SUFFIX_HOSTS = [
   'storage.googleapis.com',
   'stitch.googleapis.com',
   'googleusercontent.com',
 ];
+const STITCH_ARTIFACT_EXACT_HOSTS = new Set([
+  'contribution.usercontent.google.com',
+]);
 
 function allowedArtifactHost(hostname) {
   const host = String(hostname || '').toLowerCase();
-  return STITCH_ARTIFACT_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+  return STITCH_ARTIFACT_EXACT_HOSTS.has(host)
+    || STITCH_ARTIFACT_SUFFIX_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
 }
 
 export async function downloadStitchArtifact(url, { fetchImpl = globalThis.fetch, maxBytes = 5_000_000 } = {}) {

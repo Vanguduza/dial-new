@@ -14,6 +14,7 @@ import {
 import {
   STITCH_ALLOWED_TOOLS,
   STITCH_MCP_URL,
+  downloadStitchArtifact,
   qualifyStitch,
   stitchCredentialStatus,
   stitchHealth,
@@ -86,6 +87,14 @@ describe('Google external capability boundaries', () => {
     expect(STITCH_MCP_URL).toBe('https://stitch.googleapis.com/mcp');
     expect(stitchCredentialStatus({}).configured).toBe(false);
     expect(stitchCredentialStatus({ STITCH_API_KEY: 'x'.repeat(20) }).configured).toBe(true);
+  });
+
+  it('admits the live Stitch HTML export host exactly without widening to lookalike hosts', async () => {
+    const fetchImpl = async () => new Response('<main>DIAL</main>', { status: 200, headers: { 'content-type': 'text/html' } });
+    const artifact = await downloadStitchArtifact('https://contribution.usercontent.google.com/stitch/export', { fetchImpl, maxBytes: 1024 });
+    expect(artifact.content_type).toBe('text/html');
+    expect(artifact.byte_length).toBeGreaterThan(0);
+    await expect(downloadStitchArtifact('https://contribution.usercontent.google.com.evil.example/stitch/export', { fetchImpl, maxBytes: 1024 })).rejects.toThrow('STITCH_ARTIFACT_URL_DENIED');
   });
 
   it('selects Stitch only when explicitly preferred and preserves direct fallback when unavailable', () => {
