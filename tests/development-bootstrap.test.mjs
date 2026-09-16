@@ -11,7 +11,7 @@ import { STATUS } from '../ops/development-bootstrap/lib/result.mjs';
 import { pinReady, planConvergence, supplyChainStatus } from '../ops/development-bootstrap/converge/converge.mjs';
 import { loadManifest, loadPins, validateManifest } from '../ops/development-bootstrap/lib/manifest.mjs';
 import { parseEnvironmentFiles, evaluateUnitHardening } from '../ops/development-bootstrap/systemd/units.mjs';
-import { certifyNetwork } from '../ops/development-bootstrap/network/reachability.mjs';
+import { certifyNetwork, evaluateTailscaleState } from '../ops/development-bootstrap/network/reachability.mjs';
 import { issueResumeToken, readResumeToken } from '../ops/development-bootstrap/auth/workflow.mjs';
 import { compactProcessedIds, consumeSenderRateLimit } from '../agent-system/orchestration/whatsapp-delivery-guard.mjs';
 import { composeGreenFlag, verifyWholeSystemEvidence } from '../ops/development-bootstrap/verify/green-flag.mjs';
@@ -173,6 +173,13 @@ describe('DIAL development bootstrap closure', () => {
       for (const directive of ['NoNewPrivileges', 'ProtectSystem', 'ProtectHome', 'PrivateTmp', 'UnsetEnvironment', 'Environment=PATH']) if (!service.includes(directive)) failures.push(`${path.relative(repoDir, file)}:${directive}`);
     }
     expect(failures).toEqual([]);
+  });
+
+  it('classifies the canonical secondary recovery overlay fail-closed', () => {
+    expect(evaluateTailscaleState({ BackendState: 'NeedsLogin', Self: { Online: false } })).toMatchObject({ ok: false, needs_login: true, backend_state: 'NeedsLogin' });
+    expect(evaluateTailscaleState({ BackendState: 'Running', TailscaleIPs: ['100.64.0.1'], Self: { Online: true, DNSName: 'dial.example.ts.net.' } })).toMatchObject({ ok: true, needs_login: false, backend_state: 'Running', online: true, tailscale_ips: ['100.64.0.1'] });
+    const overlay = loadManifest().network_dependencies.find((x) => x.id === 'net.secondary-recovery-overlay');
+    expect(overlay).toMatchObject({ criticality: 'MANDATORY', readiness_class: 'RECOVERY_REQUIRED', probe: 'TAILSCALE', gate: 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001' });
   });
 
   it('classifies absent Cloudflare configuration as an explicit external owner gate without a fake URL', async () => {

@@ -91,8 +91,8 @@
       "severity": "P1",
       "status": "OWNER_ACTION_REQUIRED",
       "gate": "EXTERNAL-GATE-CLOUDFLARE-ACCESS-001",
-      "owner_decision_required": true,
-      "evidence": "private MCP remains the current path; if public ingress is required, DIAL_MCP_INGRESS_URL must carry a real endpoint"
+      "owner_decision_required": false,
+      "evidence": "fabric \u00a711 and bootstrap manifest classify authenticated Cloudflare Access provider ingress as mandatory CORE_DEVELOPMENT_REQUIRED; real DIAL_MCP_INGRESS_URL and live authenticated ingress proof remain absent"
     },
     {
       "id": "GAP-011",
@@ -201,6 +201,15 @@
       "gate": null,
       "owner_decision_required": false,
       "evidence": "development bootstrap, structural reality and frontend experience suites are explicit includes"
+    },
+    {
+      "id": "GAP-024",
+      "title": "Mandatory independent secondary recovery overlay is not authenticated",
+      "severity": "P1",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
+      "owner_decision_required": false,
+      "evidence": "fabric \u00a712 path G requires Tailscale or equivalent independent of Cloudflare; live control, vekl-worker and oracle-admin all report Tailscale BackendState=NeedsLogin and Online=false"
     }
   ]
 }

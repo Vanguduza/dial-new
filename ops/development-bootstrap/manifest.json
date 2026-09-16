@@ -1599,6 +1599,23 @@
       "resolve_via": "DIAL_MCP_INGRESS_URL",
       "configuration_required": true,
       "owner_action": "configure the real Cloudflare Access ingress and export DIAL_MCP_INGRESS_URL; no placeholder URL is accepted"
+    },
+    {
+      "id": "net.secondary-recovery-overlay",
+      "tooling_kind": "NETWORK",
+      "target": null,
+      "purpose": "independent secondary recovery overlay (Tailscale or owner-approved equivalent), independent of Cloudflare",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "probe": "TAILSCALE",
+      "configuration_required": true,
+      "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
+      "owner_action": "authenticate Tailscale on all three hosts or configure an owner-approved equivalent overlay; then prove reciprocal reachability independent of Cloudflare"
     }
   ],
   "health_checks": [

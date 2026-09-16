@@ -82,7 +82,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P4.09 Fix live recovery service repo path and audit-log permissions.
 - [x] P4.10 Achieve individual `oracle-admin` GREEN certification.
 - [ ] P4.11 Deploy final merged recovery scripts/units to `oracle-admin` and re-certify against final SHA.
-- [ ] P4.12 Re-prove independent secondary recovery overlay if Tailscale remains canonical mandatory.
+- [!] P4.12 Independent secondary recovery overlay is canonically mandatory (`DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md` §12 path G). Tailscale is installed on control, worker and admin but all three report `BackendState=NeedsLogin` / offline; owner authentication or an owner-approved equivalent overlay plus reciprocal proof remains required.
 
 ## Phase 5 — MCP, auth, network and required-capability readiness
 
@@ -98,8 +98,8 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P5.10 `dial-chat-control` loopback + bearer-authenticated JSON-RPC `tools/list` proven live: 21 typed tools, no generic shell/exec/filesystem primitive, and no token material exposed; proof persisted under control-plane MCP evidence.
 - [x] P5.11 Live-probe read-only `dial-truth` MCP: initialize/tools/list PASS and `get_decision(DEC-033)` returned `found=true`; toolset is bounded read-only canon access.
 - [ ] P5.12 Live-probe GitHub/provider-container connector.
-- [!] P5.13 Configure/prove authenticated Cloudflare Access/public MCP if still mandatory; otherwise record canon change.
-- [!] P5.14 Authenticate/prove Tailscale secondary overlay if still mandatory; otherwise record canon change.
+- [!] P5.13 Authenticated Cloudflare Access/public MCP is canonically mandatory (`ops/development-bootstrap/manifest.json` CORE_DEVELOPMENT_REQUIRED and fabric §11). Private VCN MCP remains healthy, but final GREEN requires a real `DIAL_MCP_INGRESS_URL` backed by authenticated Access/Tunnel and a live provider-ingress probe.
+- [!] P5.14 Tailscale (or owner-approved equivalent independent of Cloudflare) is a mandatory RECOVERY_REQUIRED secondary overlay. Repository certification now probes Tailscale fail-closed; current control/worker/admin state is `NeedsLogin`, so authentication and live reciprocal overlay evidence remain an owner gate.
 - [~] P5.15 Context7/Exa: exact local runtimes installed (Context7 4.1.1, Exa 3.4.1); Context7 resolve/query live canaries PASS. Exa runtime PASS but API-key-backed functional canary remains an owner auth gate; provider-surface enrollment still requires final proof.
 - [~] P5.16 Antigravity/Stitch are required. Antigravity 1.2.0 is fully `INTEGRATED` with isolated identity, 14-model discovery, 13 healthy/1 dynamic-degraded pairing matrix, HCX selection, guard/receipt and live reroute proof. Stitch exact SDK is present but credential/tool-discovery/sandbox/orchestrated proof remains pending. Pomelli remains GMPC human-operated REFERENCE_ONLY.
 - [!] P5.17 Configure/authenticate/live-probe the admitted WhatsApp Cloud API owner adapter (DEC-033).
@@ -137,7 +137,7 @@ Legend: `[x] DONE` · `[~] ACTIVE/PARTIAL` · `[ ] TODO` · `[!] EXTERNAL/OWNER 
 - [x] P8.02 Capture fresh branch-protection API evidence conforming to repository schema: native `master` protection is source-payload SHA-256 bound; strict required checks now map directly to `project-truth` plus all four real GitHub verification lanes, eliminating the stale synthetic `verify` context without weakening CI coverage.
 - [!] P8.03 Required-signature enforcement is now live on `master`, but PR #34 correctly becomes BLOCKED because closure commits are unsigned. The authenticated GitHub token lacks `admin:ssh_signing_key` (and `workflow`) scope, so registering a GitHub-recognised signing key/re-signing requires owner OAuth refresh. The same protected-master expectation also requires one owner CODEOWNER approval, but the repository currently has only the PR author (`Vanguduza`) as a direct collaborator, making self-review unsatisfiable without a second qualified reviewer or an owner-approved single-owner governance revision.
 - [x] P8.04 Enforcement mechanism resolved without weakening controls: either native GitHub branch protection or an equivalent ruleset is acceptable when fresh API evidence matches the same committed protected-master policy; mechanism-specific evidence is regression-tested.
-- [ ] P8.05 Restore/reconcile dirty production checkout safely; preserve existing stash/patch.
+- [x] P8.05 Dirty `/home/ubuntu/dial-new` production checkout reconciled safely: exact conflicted index/worktree plus all three `vitest.config.ts` conflict stages were SHA-256-backed up under `~/.local/state/dial-recovery/production-reconcile-20260916T072737Z`, the pre-existing stash/patch was preserved, and the checkout was reset cleanly to unchanged canonical `origin/master` `fa7c655f12faf02a2b33cc15799069526bdda3a6`.
 - [x] P8.06 Gap register, traceability and live execution board reconciled to current repository/live evidence; stale supply-chain/recovery assumptions removed and remaining external gates preserved fail-closed.
 - [x] P8.07 Closure implementation committed on the authorized PR branch; Project Truth pre-commit evidence recorded and local verify/verify-pr GREEN. Signed-commit enforcement remains the separate P8.03 protected-master gate.
 - [x] P8.08 Closure branch pushed to GitHub with force-with-lease only to replace the stale imported remote tip; remote head was bound to the authorized closure history.

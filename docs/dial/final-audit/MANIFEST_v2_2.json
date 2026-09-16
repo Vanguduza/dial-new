@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-16T07:26:03.873Z",
+  "generated_at": "2026-09-16T07:34:44.778Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -193,13 +193,13 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
-      "bytes": 23018,
-      "sha256": "66e04d36b28801642e616d8e172be90024a7925e731614ca589879d8be26c047"
+      "bytes": 24009,
+      "sha256": "16becae922604d045b6d0cf254cb1a39f1a85a178724b71ace1e45cc704a530d"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
-      "bytes": 8122,
-      "sha256": "63e56b069d74318583fd4aa3078f6391f20fa7132f11a6aba97e2745efd3f932"
+      "bytes": 8719,
+      "sha256": "2ca002d360774e8285b80957464caf70e513a347bd7ef82643443b5478a93999"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
