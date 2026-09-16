@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260916-owner-development-green-gap-closure-resume",
+  "project": "dial",
+  "authority": "OWNER_DELEGATED_AUTONOMY",
+  "owner_instruction_sha256": "4efe26292e5428e5917c40702da879f722e3bf89890561635bf1d8adac969d67",
+  "owner_instruction_excerpt": "Arrange the todo list in execution order and keep it live and updating as you work through it. Resusume gap closure",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260916-development-green-gap-closure-resume",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-16T03:59:19.093847+00:00",
+  "base_sha": "fa7c655f12faf02a2b33cc15799069526bdda3a6",
+  "branch_scope": "gpt/dial-development-system-green-closure-20260915",
+  "authorized_paths": [
+    ".claude/*",
+    ".mcp.json",
+    ".github/*",
+    "agent-system/**",
+    "apps/**",
+    "deploy/**",
+    "docs/**",
+    "ops/**",
+    "package.json",
+    "package-lock.json",
+    "tests/**",
+    "vitest.config.ts"
+  ],
+  "change_classes": [
+    "development_green_gap_closure",
+    "technical_implementation",
+    "verification",
+    "project_truth_reconciliation",
+    "runtime_hardening",
+    "development_tooling_bootstrap"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

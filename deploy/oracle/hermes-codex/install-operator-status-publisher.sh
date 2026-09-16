@@ -21,11 +21,13 @@ Type=oneshot
 WorkingDirectory=$DIAL_REPO_DIR
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/operator-status-publisher.mjs
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
+ProtectHome=read-only
 ReadWritePaths=$DIAL_CONTROL_HOME $DIAL_REPO_DIR/.git
 EOF
 cat >"$SYSTEMD_DIR/dial-operator-status-publisher.timer" <<'EOF'

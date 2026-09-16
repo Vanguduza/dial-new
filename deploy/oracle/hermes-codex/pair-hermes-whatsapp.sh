@@ -10,7 +10,9 @@ PAIR_HOME="${CONTROL_HOME}/operator-channels/whatsapp/pair-runtime"
 EVENTS="${CONTROL_HOME}/operator-channels/pairing-events.jsonl"
 PID_FILE="${PAIR_HOME}/pairer.pid"
 LOCK_FILE="${PAIR_HOME}/pairer.lock"
-PAIR_SOURCE="${DIAL_WHATSAPP_PAIR_BAILEYS_SOURCE:-github:doryani-ai/Baileys#4f263f0e365c2e74dd1b824031d1c5910f518c26}"
+PAIR_SPEC_DIR="$REPO_DIR/deploy/oracle/hermes-codex/whatsapp-pair-runtime"
+PAIR_VENDOR="baileys-7.0.0-rc14-4f263f0e.tgz"
+PAIR_SOURCE_COMMIT="4f263f0e365c2e74dd1b824031d1c5910f518c26"
 MODE="${1:---foreground}"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
@@ -58,14 +60,36 @@ prepare_runtime(){
   cp "$src/allowlist.js" "$src/bridge_helpers.js" "$src/outbound_ids.js" "$src/owner_message_gate.js" "$PAIR_HOME/"
   sed -i "s/from '@whiskeysockets\/baileys'/from 'baileys'/" "$PAIR_HOME/bridge.mjs"
 
-  cat >"$PAIR_HOME/package.json" <<JSON
-{"name":"dial-hermes-whatsapp-pair-runtime","private":true,"type":"module","dependencies":{"baileys":"${PAIR_SOURCE}","express":"^4.21.0","pino":"^9.0.0","qrcode-terminal":"^0.12.0"}}
-JSON
-  local marker="$PAIR_HOME/.pair-source"
-  if [[ ! -d "$PAIR_HOME/node_modules/baileys" || ! -f "$marker" || "$(cat "$marker" 2>/dev/null || true)" != "$PAIR_SOURCE" ]]; then
-    log "preparing isolated patched pairing runtime"
-    (cd "$PAIR_HOME" && npm install --no-audit --no-fund)
-    printf '%s' "$PAIR_SOURCE" >"$marker"
+  [[ -f "$PAIR_SPEC_DIR/package.json" && -f "$PAIR_SPEC_DIR/package-lock.json" && -f "$PAIR_SPEC_DIR/vendor/$PAIR_VENDOR" ]] || fail "canonical WhatsApp pair runtime lock/vendor files are missing"
+  install -m 0600 "$PAIR_SPEC_DIR/package.json" "$PAIR_HOME/package.json"
+  install -m 0600 "$PAIR_SPEC_DIR/package-lock.json" "$PAIR_HOME/package-lock.json"
+  install -d -m 0700 "$PAIR_HOME/vendor"
+  install -m 0600 "$PAIR_SPEC_DIR/vendor/$PAIR_VENDOR" "$PAIR_HOME/vendor/$PAIR_VENDOR"
+
+  # package-lock is the complete dependency authority. Every non-link package must carry an integrity,
+  # and the locally vendored Baileys artifact is tied to the owner-reviewed upstream commit.
+  node - "$PAIR_HOME/package-lock.json" "$PAIR_SOURCE_COMMIT" <<'NODE'
+const fs=require('fs'); const lock=JSON.parse(fs.readFileSync(process.argv[2],'utf8')); const commit=process.argv[3];
+for(const [name,pkg] of Object.entries(lock.packages||{})){
+  if(!name || pkg.link) continue;
+  if(!pkg.integrity) throw new Error(`lock entry ${name} has no integrity`);
+}
+const root=lock.packages?.['']?.dependencies||{};
+for(const [name,spec] of Object.entries(root)){
+  if(/[~^*]|(latest|next|canary)/i.test(String(spec))) throw new Error(`floating direct dependency ${name}=${spec}`);
+}
+const b=lock.packages?.['node_modules/baileys'];
+if(b?.version!=='7.0.0-rc14' || b?.resolved!=='file:vendor/baileys-7.0.0-rc14-4f263f0e.tgz') throw new Error('Baileys lock identity mismatch');
+if(commit!=='4f263f0e365c2e74dd1b824031d1c5910f518c26') throw new Error('Baileys source commit mismatch');
+NODE
+  local lock_hash marker
+  lock_hash="$(sha256sum "$PAIR_HOME/package-lock.json" | awk '{print $1}')"
+  marker="$PAIR_HOME/.pair-lock-sha256"
+  if [[ ! -d "$PAIR_HOME/node_modules/baileys" || ! -f "$marker" || "$(cat "$marker" 2>/dev/null || true)" != "$lock_hash" ]]; then
+    log "preparing deterministic isolated patched pairing runtime"
+    (cd "$PAIR_HOME" && npm ci --no-audit --no-fund)
+    printf '%s' "$lock_hash" >"$marker"
+    chmod 600 "$marker"
   fi
 
   grep -q 'companion_reg_refresh' "$PAIR_HOME/node_modules/baileys/lib/Socket/socket.js" || fail "pairing runtime lacks companion registration refresh support"
@@ -96,11 +120,12 @@ case "$MODE" in
     log "pairing started in background; use $0 --status"
     exit 0
     ;;
-  --foreground) ;;
-  *) fail "usage: $0 [--foreground|--background|--status|--stop]" ;;
+  --foreground|--prepare-only) ;;
+  *) fail "usage: $0 [--foreground|--background|--status|--stop|--prepare-only]" ;;
 esac
 
 prepare_runtime
+if [[ "$MODE" == "--prepare-only" ]]; then log "deterministic pair runtime prepared"; exit 0; fi
 if paired; then log "WhatsApp is already paired; refusing to replace valid credentials"; exit 0; fi
 command -v flock >/dev/null || fail "flock is required"
 exec 9>"$LOCK_FILE"

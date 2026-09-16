@@ -3,8 +3,9 @@ import { checkKnowledgeBinding } from '../orchestration/knowledge-admission-guar
 import { checkKnowledgeExemption } from '../orchestration/knowledge-exemption.mjs';
 import { checkTaskExecutionEnvelope } from '../orchestration/task-execution-envelope.mjs';
 import { assertWorktreeLease } from '../orchestration/worker-lease-manager.mjs';
-import { readJson } from '../orchestration/state-store.mjs';
-import { classifyShellEffect, isConsequentialToolUse } from '../orchestration/shell-effect-classifier.mjs';
+import { appendJsonl, readJson } from '../orchestration/state-store.mjs';
+import { createHash } from 'node:crypto';
+import { classifyShellEffect, governedPacketDecision, isConsequentialToolUse, networkPolicyDecision } from '../orchestration/shell-effect-classifier.mjs';
 
 let input=""; for await (const c of process.stdin) input+=c;
 let j={}; try{j=JSON.parse(input)}catch{}
@@ -20,7 +21,10 @@ const leaseId=process.env.DIAL_WORKTREE_LEASE_ID||null;
 const fencingToken=process.env.DIAL_FENCING_TOKEN||null;
 const shellEffect=(tool==="Bash"||tool==="PowerShell")?classifyShellEffect(String(ti.command||"")):null;
 const consequential=isConsequentialToolUse(tool,ti);
-if(packetId&&consequential){
+const governed=process.env.DIAL_GOVERNED_SESSION==='1'||Boolean(taskId||workerId||process.env.DIAL_MISSION_ID);
+const packetDecision=governedPacketDecision({governed,consequential,packetId});
+if(packetDecision.decision){d=packetDecision.decision;reason=packetDecision.reason;}
+if(packetId&&consequential&&!d){
  const activation=loadSkillActivationForPacket(packetId,root);
  if(!activation){d="deny";reason="DIAL VEKL 2.2 guard: material tool use requires a persisted packet knowledge activation.";}
  else if(activation.knowledge_context?.unit_lineage_id){const check=checkKnowledgeBinding({repoDir,root,packetId});if(!check.ok){d="deny";reason=`DIAL VEKL 2.2 guard: stale Unit knowledge binding (${check.reasons.join(', ')}). Re-resolve before material tool use.`;}}
@@ -32,6 +36,10 @@ if(taskId&&consequential&&!d){
  const envelope=readJson(`execution/tasks/${taskId}/envelope.json`,null,root);
  if(!envelope||!envelopeHash||envelope.envelope_hash!==envelopeHash){d='deny';reason='DIAL AEF guard: material HCX worker use requires the current Task Execution Envelope.';}
  else{const current=checkTaskExecutionEnvelope({repoDir,root,envelope});if(!current.ok){d='deny';reason=`DIAL AEF guard: stale execution envelope (${current.reasons.join(', ')}).`;}}
+ if(!d){
+  const network=networkPolicyDecision({toolName:tool,toolInput:ti,allowlist:envelope?.network_allowlist||[]});
+  if(!network.ok){d='deny';reason=`DIAL AEF guard: ${network.reason}${network.denied?.length?` (${network.denied.join(', ')})`:''}.`;}
+ }
  if(!d&&(tool==='Edit'||tool==='Write'||((tool==='Bash'||tool==='PowerShell')&&shellEffect?.effect==='MATERIAL'))){
   if(!leaseId||!fencingToken||!workerId){d='deny';reason='DIAL AEF guard: repository-writing HCX worker requires worktree lease and fencing token.';}
   else{try{assertWorktreeLease({root,leaseId,workerId,fencingToken,path:ti.file_path||null});}catch(e){d='deny';reason=`DIAL AEF guard: ${e.message}`;}}
@@ -55,12 +63,16 @@ if(tool==="Bash"||tool==="PowerShell"){
   /\b(psql|supabase)\b.*\b(prod|production)\b/i
  ];
  if(deny.some(r=>r.test(cmd))){d="deny";reason="DIAL guard: destructive/secret-sensitive command blocked."}
- else if(ask.some(r=>r.test(cmd))){d="ask";reason="DIAL guard: production/infrastructure mutation requires explicit confirmation."}
+ else if(!d&&ask.some(r=>r.test(cmd))){d="ask";reason="DIAL guard: production/infrastructure mutation requires explicit confirmation."}
 }
 if(tool==="Edit"||tool==="Write"){
  const p=String(ti.file_path||"").replaceAll("\\","/");
- if(/agent-system\/canon\/PROJECT_TRUTH\.md$|agent-system\/registries\/DECISION_LOG\.json$/.test(p)){
+ if(!d&&/agent-system\/canon\/PROJECT_TRUTH\.md$|agent-system\/registries\/DECISION_LOG\.json$/.test(p)){
   d="ask";reason="DIAL guard: canonical truth/decision changes require explicit review.";
  }
+}
+if(consequential){
+ const inputHash=createHash('sha256').update(JSON.stringify(ti)).digest('hex');
+ try{appendJsonl('events/tool-invocations.jsonl',{event:'TOOL_INVOCATION_BEFORE',tool_name:tool,tool_input_sha256:inputHash,packet_id:packetId,task_id:taskId,governed,decision:d||'allow',at:new Date().toISOString()},root);}catch{}
 }
 if(d) console.log(JSON.stringify({hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:d,permissionDecisionReason:reason}}));

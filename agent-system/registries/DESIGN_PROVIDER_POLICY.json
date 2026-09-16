@@ -6,7 +6,7 @@
   "runtime_dependency_forbidden": true,
   "provider_output_requires_quarantine": true,
   "reverse_authority_flow_forbidden": true,
-  "default_enabled": false,
+  "default_enabled": true,
   "stitch_capability_id": "DESIGN-STITCH",
   "qualification_evidence": "operations/external-capabilities/design-stitch/latest.json",
   "live_qualification_required": true,
@@ -41,5 +41,7 @@
       "parity_evidence_required_after_promotion": true,
       "runtime_dependency_forbidden": true
     }
-  }
+  },
+  "readiness_required": true,
+  "readiness_ref": "DEC-033"
 }

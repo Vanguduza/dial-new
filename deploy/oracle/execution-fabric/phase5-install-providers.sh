@@ -36,10 +36,17 @@ After=network-online.target
 Type=simple
 Environment=DIAL_CONTROL_HOME=$CONTROL
 Environment=DIAL_REPO_DIR=$REPO
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE $HERE/dial-venue-guard-daemon.mjs
 Restart=on-failure
 RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=$REPO
+ReadWritePaths=$CONTROL
 [Install]
 WantedBy=default.target
 EOF

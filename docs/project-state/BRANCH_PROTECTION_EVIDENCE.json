@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "repository": "Vanguduza/dial-new",
+  "enforcement_type": "BRANCH_PROTECTION",
+  "enforcement_id": "branch-protection:master",
+  "observed_at": "2026-09-16T03:48:20Z",
+  "exported_by": "Vanguduza",
+  "source": "GITHUB_BRANCH_PROTECTION_API_EXPORT",
+  "source_payload_sha256": "f75d6cf0ac2b25835e554d22bcbc45dc9ee4ca140079a35c32b971565861c975",
+  "observed": {
+    "branch": "master",
+    "required_pull_request": true,
+    "require_code_owner_review": false,
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": false,
+    "required_status_checks": [
+      "project-truth",
+      "verify"
+    ],
+    "require_branches_up_to_date": true,
+    "required_signatures": false,
+    "block_force_pushes": true,
+    "block_deletions": true,
+    "enforce_on_administrators": true
+  }
+}

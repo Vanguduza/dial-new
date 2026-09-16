@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-13T03:17:02.859Z",
+  "generated_at": "2026-09-16T03:59:29.541Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 243,
+  "file_count": 247,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "598ba6c333c6ca021fc0d076fd5e482ac22815069e574849a117f6e21cbf29a4"
+      "sha256": "07e07d0742a5df715d9a625ac4c864b81255326a754e2c5b189b10543189259e"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -178,18 +178,38 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
-      "bytes": 100566,
-      "sha256": "a16181ae561ce0c275806e3a57a573ce32d02142fb4b8f8358cfb46acbaa79c1"
+      "bytes": 101101,
+      "sha256": "98cb054cc9f3b31e9176b34dc375664f3d114a0c5b9b8a5a31f76bc8eeaa9a62"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-      "bytes": 66609,
-      "sha256": "ae50fdca8dd7d98be4f7fc41a3570073db2281ddb1997b07fb4cb8fd2753b694"
+      "bytes": 67075,
+      "sha256": "2e62192c089e89fc0e86bac403734390fcc744ceb4fd1c769d7777bc9f072ece"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_CAPABILITY_READINESS_REV1_CANONICAL.md",
+      "bytes": 2365,
+      "sha256": "83f463378bfa328c26516b1d2e960df6b31f6c1a624e4667c126def6591b2d6f"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
+      "bytes": 21078,
+      "sha256": "51f90449d4f74e25a33f06eb95597d49b0d79c40a6c8a0a6428f07893c964624"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
+      "bytes": 8122,
+      "sha256": "63e56b069d74318583fd4aa3078f6391f20fa7132f11a6aba97e2745efd3f932"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
+      "bytes": 4061,
+      "sha256": "79ac2fee2d23454f312241faa3479ff77cc13bc5e877e63845faa76acc69321d"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",
-      "bytes": 22285,
-      "sha256": "0b366cee0a894ce584f02100e432ae5facf4aac30d0b92e444a0f9aeaa224002"
+      "bytes": 23018,
+      "sha256": "7225277f5949705cb3a812ac035152764659983ada7eb78369b16170c02b3748"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md",

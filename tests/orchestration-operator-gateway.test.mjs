@@ -147,7 +147,7 @@ describe('DIAL unified operator gateway', () => {
       executor: async () => { liveStarted(); await hold; return { event: 'HERMES_OPERATIONAL_TURN_COMPLETED', runtime: 'test-runtime', resolved_model: 'test-model', response: 'done' }; },
     });
     await started;
-    submitExternalWork({ instruction: 'Background work', requestedBy: 'test', metadata: {}, root, repoDir: repo, engineeringKnowledgeResolver: () => null });
+    submitExternalWork({ instruction: 'Background work', requestedBy: 'test', metadata: {}, root, repoDir: repo, engineeringKnowledgeResolver: () => ({ activation_id: 'ska_owner_live_queue_test', execution_allowed: true, resolution_state: 'READY', selected_skills: [], selected_resources: [] }) });
     expect(await processNextExternalWork({ root, repoDir: repo, executor: async () => ({ event: 'HERMES_OPERATIONAL_TURN_COMPLETED' }), developmentGate: () => ({ unblocked: true }) })).toBeNull();
     expect(missionStatus(root).packet_counts.queued).toBe(0);
     releaseLive();

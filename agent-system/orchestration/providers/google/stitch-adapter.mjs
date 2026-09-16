@@ -46,7 +46,7 @@ function envBool(name, fallback = false, env = process.env) {
 }
 
 export function stitchEnabled(env = process.env) {
-  return envBool('DIAL_STITCH_ENABLED', false, env);
+  return envBool('DIAL_STITCH_ENABLED', true, env);
 }
 
 export function stitchLiveTestsEnabled(env = process.env) {

@@ -22,7 +22,7 @@ sudo install -m 0644 "$HERE/slices/micro/dial-survival.slice" /etc/systemd/syste
 sudo install -m 0644 "$HERE/slices/micro/dial-node.slice" /etc/systemd/system/dial-node.slice
 sudo install -m 0644 "$HERE/dropins/ssh-survival.conf" /etc/systemd/system/ssh.service.d/dial-survival.conf
 if [[ -f /lib/systemd/system/ssh.socket || -f /usr/lib/systemd/system/ssh.socket ]]; then
-  sudo install -m 0644 "$HERE/dropins/ssh-survival.conf" /etc/systemd/system/ssh.socket.d/dial-survival.conf
+  sudo install -m 0644 "$HERE/dropins/ssh-socket-survival.conf" /etc/systemd/system/ssh.socket.d/dial-survival.conf
 fi
 
 UBUNTU_UID="$(id -u ubuntu)"

@@ -6,6 +6,7 @@ import { executeOperatorTextCommand, parseOperatorTextCommand } from './operator
 import { callChatControlTool } from './chat-control-bridge.mjs';
 import { classifyOwnerLiveMode } from './owner-live-control.mjs';
 import { buildAttachmentInstruction, collectMissionEventNotifications, collectOwnerSteeringNotifications, persistWhatsAppAttachments } from './whatsapp-owner-input.mjs';
+import { compactProcessedIds, consumeSenderRateLimit } from './whatsapp-delivery-guard.mjs';
 
 export const HERMES_WHATSAPP_OPERATOR_AUTHORITY = 'OWNER_SELF_CHAT_TYPED_DIAL_CONTROL';
 const BRIDGE = process.env.DIAL_HERMES_WHATSAPP_BRIDGE_URL || 'http://127.0.0.1:3011';
@@ -35,10 +36,10 @@ function loadState(root) {
   return readJson(STATE_REL, { schema_version: 3, connected_notice_fingerprint: null, progress_cursor: null, processed: [], last_mission_state: null, last_blocker_hash: null, notification_event_cursor: null, steering_event_cursor: null, chat_id: null }, root);
 }
 function saveState(state, root) {
-  writeJsonAtomic(STATE_REL, { ...state, schema_version: 3, processed: (state.processed || []).slice(-MAX_PROCESSED), updated_at: now() }, root);
+  writeJsonAtomic(STATE_REL, { ...state, schema_version: 4, processed: compactProcessedIds(state.processed, { maxEntries: MAX_PROCESSED }), updated_at: now() }, root);
 }
-function seen(state, messageId) { const h = hash(messageId); return (state.processed || []).includes(h); }
-function remember(state, messageId) { const h = hash(messageId); state.processed = [...(state.processed || []).filter((v) => v !== h), h].slice(-MAX_PROCESSED); }
+function seen(state, messageId) { const h = hash(messageId); return (state.processed || []).some((item) => (typeof item === 'string' ? item : item.id_hash) === h); }
+function remember(state, messageId) { const h = hash(messageId); state.processed = [...compactProcessedIds(state.processed, { maxEntries: MAX_PROCESSED }).filter((item) => item.id_hash !== h), { id_hash: h, at_ms: Date.now() }].slice(-MAX_PROCESSED); }
 function isSelfChat(chatId, ids) { const n = bare(chatId); return Boolean(n && ids.includes(n)); }
 
 async function bridgeHealth(fetchImpl = fetch) {
@@ -94,6 +95,9 @@ export async function hermesWhatsAppOperatorTick({ root, fetchImpl = fetch, stat
       event(root, 'HERMES_WHATSAPP_OPERATOR_REJECTED_NON_SELF_CHAT', { message_id_hash: hash(messageId).slice(0, 24), chat_id_hash: hash(chatId).slice(0, 24) });
       remember(state, messageId); continue;
     }
+    const sender_hash = hash(bare(chatId)).slice(0, 24);
+    const rate = consumeSenderRateLimit({ root, senderHash: sender_hash });
+    if (!rate.ok) { event(root, 'HERMES_WHATSAPP_OPERATOR_RATE_LIMITED', { sender_hash, message_id_hash: hash(messageId).slice(0, 24), retry_after_ms: rate.retry_after_ms }); remember(state, messageId); continue; }
     state.chat_id = chatId;
     try {
       let routed;

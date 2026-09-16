@@ -3,7 +3,9 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 WORKER="${DIAL_WORKER_HOME:-/var/lib/dial-worker}"
-NODE="$(command -v node)"
+SAFE_PATH="$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+NODE="$(PATH="$SAFE_PATH" command -v node)"
+[[ -x "$NODE" && "$("$NODE" -p 'process.versions.node.split(".")[0]')" -ge 22 ]] || { echo "Node 22+ is required from deterministic service PATH" >&2; exit 3; }
 
 test -f /etc/dial/host-role
 grep -q 'ROLE=BACKGROUND_COORDINATOR' /etc/dial/host-role
@@ -22,10 +24,17 @@ Environment=DIAL_WORKER_HOME=$WORKER
 Environment=DIAL_HOST_ROLE_FILE=/etc/dial/host-role
 Environment=DIAL_PRIVATE_MCP_URL_FILE=$WORKER/secrets/private-mcp-url
 Environment=DIAL_PRIVATE_MCP_HEALTH=http://10.0.0.184:9133/health
+Environment=PATH=$SAFE_PATH
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE $HERE/dial-background-coordinator.mjs
 Restart=on-failure
 RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=$REPO
+ReadWritePaths=$WORKER
 [Install]
 WantedBy=default.target
 EOF

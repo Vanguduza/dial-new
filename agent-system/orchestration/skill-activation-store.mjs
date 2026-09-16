@@ -60,6 +60,21 @@ function manifestHash(manifest) {
   return sha256(JSON.stringify(copy));
 }
 
+// GAP-020: stable semantic identity is separate from the packet/activation instance identity.
+// Re-resolving the same selected knowledge for a different packet yields the same content_hash.
+function semanticContentHash(manifest) {
+  return sha256(JSON.stringify({
+    feature_ids: [...(manifest.feature_ids || [])].sort(), task_classes: [...(manifest.task_classes || [])].sort(),
+    policy_version: manifest.policy_version, resolution_state: manifest.resolution_state,
+    mandatory_task_classes: [...(manifest.mandatory_task_classes || [])].sort(),
+    missing_mandatory_task_classes: [...(manifest.missing_mandatory_task_classes || [])].sort(),
+    skills: (manifest.skills || []).map((item) => ({ skill_id: item.skill_id, upstream_commit: item.upstream_commit, content_hash: item.content_hash })).sort((a, b) => a.skill_id.localeCompare(b.skill_id)),
+    resources: (manifest.resources || []).map((item) => ({ resource_id: item.resource_id, source_id: item.source_id, content_hash: item.content_hash || null, registry_fingerprint: item.registry_fingerprint || null })).sort((a, b) => a.resource_id.localeCompare(b.resource_id)),
+    knowledge_context: manifest.knowledge_context || null,
+    dial_guard_capsule: manifest.dial_guard_capsule,
+  }));
+}
+
 export function persistSkillActivation({
   packetId,
   missionId = null,
@@ -133,14 +148,17 @@ export function persistSkillActivation({
     previous_activation_id: previousActivationId,
     re_resolution_reason: reResolutionReason,
     created_at: now(),
+    content_hash: null,
     manifest_sha256: null,
   };
+  manifest = { ...manifest, content_hash: semanticContentHash(manifest) };
   manifest = { ...manifest, manifest_sha256: manifestHash(manifest) };
   writeJsonAtomic(`${rel}/manifest.json`, manifest, root);
   writeJsonAtomic(packetPointerRel(packet), {
     schema_version: 1,
     packet_id: packet,
     activation_id: activationId,
+    content_hash: manifest.content_hash,
     manifest_rel: `${rel}/manifest.json`,
     previous_activation_id: previousActivationId,
     re_resolution_reason: reResolutionReason,
@@ -178,6 +196,7 @@ export function verifySkillActivation(manifest, root = DEFAULT_CONTROL_HOME, rep
   if (!manifest) return { ok: false, failures: ['activation manifest missing'] };
   const failures = [];
   if (manifest.authority !== 'NON_AUTHORITATIVE_ENGINEERING_GUIDANCE') failures.push('activation authority invalid');
+  if (!/^[0-9a-f]{64}$/.test(manifest.content_hash || '') || manifest.content_hash !== semanticContentHash(manifest)) failures.push('activation semantic content hash mismatch');
   if (manifest.manifest_sha256 !== manifestHash(manifest)) failures.push('activation manifest hash mismatch');
   for (const skill of manifest.skills || []) {
     try {
@@ -289,6 +308,7 @@ export function activationSummary(manifest) {
     resolution_state: manifest.resolution_state,
     task_classes: manifest.task_classes,
     manifest_sha256: manifest.manifest_sha256,
+    content_hash: manifest.content_hash,
     execution_allowed: manifest.execution_allowed !== false,
     missing_mandatory_task_classes: manifest.missing_mandatory_task_classes || [],
     selected_skills: (manifest.skills || []).map((s) => ({ skill_id: s.skill_id, provider: s.provider, upstream_commit: s.upstream_commit, content_hash: s.content_hash, runtime_name: s.runtime_name, activation_constraints: s.activation_constraints || [], requires_independent_specialist_review: s.requires_independent_specialist_review === true })),

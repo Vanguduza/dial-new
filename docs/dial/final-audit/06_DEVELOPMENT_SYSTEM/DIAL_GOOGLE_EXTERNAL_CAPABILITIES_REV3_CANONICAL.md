@@ -5,6 +5,8 @@
 **Target repository:** `Vanguduza/dial-new`
 **Canonical base at reconciliation start:** `master@b5939d4e3962f4d1f77e713fda46fc2c8868e63a`
 **Applies to:** Google Antigravity, Google Stitch, Google Pomelli
+
+> **DEC-033 readiness supersession (2026-09-15):** runtime fallback/kill-switch safety remains, but Antigravity and Stitch are no longer setup-optional for DIAL Development System GREEN. Both must be live and selection-ready at certification. Pomelli remains GMPC-owned and human-operated.
 **Authority:** subordinate to DIAL Project Truth, locked Decisions, specialist canon, FRC/security/Product Experience authorities, VEKL 2.2 and AEF Rev 2.
 
 This document consolidates and supersedes the Google-tool integration guidance spread across three earlier artifacts. It does **not** replace AEF Rev 2; it closes the provider-specific integration gap that AEF Rev 2 left open.
@@ -133,9 +135,9 @@ Implementation requirements:
 11. a real low-risk Development Unit is selected by HCX and executed through `hcx-worker-executor.mjs` with current envelope, lease and fencing-token checks before it emits independently verifiable worker evidence and a Development Execution Receipt;
 12. failure reroutes through normal approved workers without weakening acceptance gates.
 
-Kill switch: `DIAL_ANTIGRAVITY_ENABLED=false`.
+Readiness default under `DEC-033`: `DIAL_ANTIGRAVITY_ENABLED=true`. Setting it `false` is an emergency/maintenance kill switch, not a GREEN-ready configuration.
 
-Antigravity may be unavailable, rate-limited or unauthenticated without blocking DIAL development. That fallback property proves resilience only; it does not prove Antigravity integration.
+Under `DEC-033`, Antigravity must be installed, authenticated, live-qualified and selection-ready for a fresh Development System GREEN certificate. After qualification, a transient provider outage may reroute work through the normal fallback path; fallback proves resilience and never converts an unconfigured Antigravity harness into readiness.
 ## 6. Stitch — governed design-generation provider
 
 Stitch is a non-authoritative design provider beneath existing DIAL Design Authority and AEF. Its output is never executable merely because the provider returned HTML.
@@ -158,7 +160,7 @@ Implementation requirements:
 14. one real AEF Development Unit must consume the accepted design evidence;
 15. provider outage must fall back to an approved design path without changing runtime behavior.
 
-Kill switches: `DIAL_STITCH_ENABLED=false` and `DIAL_STITCH_LIVE_TESTS_ENABLED=false`.
+Readiness default under `DEC-033`: `DIAL_STITCH_ENABLED=true`; `DIAL_STITCH_LIVE_TESTS_ENABLED=false` remains the normal non-qualification default. Setting `DIAL_STITCH_ENABLED=false` is an emergency/maintenance kill switch, not a GREEN-ready configuration.
 
 No customer/product runtime may call Stitch to render a required screen or execute a transaction.
 ## 7. Pomelli — GMPC external creative provider

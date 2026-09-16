@@ -11,7 +11,7 @@ sudo install -m 0644 "$HERE/slices/dial-commander.slice" /etc/systemd/system/dia
 
 sudo install -m 0644 "$HERE/dropins/ssh-survival.conf" /etc/systemd/system/ssh.service.d/dial-survival.conf
 if [[ -f /lib/systemd/system/ssh.socket || -f /usr/lib/systemd/system/ssh.socket ]]; then
-  sudo install -m 0644 "$HERE/dropins/ssh-survival.conf" /etc/systemd/system/ssh.socket.d/dial-survival.conf
+  sudo install -m 0644 "$HERE/dropins/ssh-socket-survival.conf" /etc/systemd/system/ssh.socket.d/dial-survival.conf
 fi
 if systemctl list-unit-files dial-desktop-commander.service >/dev/null 2>&1; then
   sudo install -m 0644 "$HERE/dropins/commander-slice.conf" /etc/systemd/system/dial-desktop-commander.service.d/dial-slice.conf

@@ -36,7 +36,12 @@ if (command === 'status') {
   })));
 } else if (command === 'qualify') {
   if (provider === 'antigravity') {
-    print(await qualifyAntigravity({ repoDir, root }));
+    print(await qualifyAntigravity({
+      repoDir,
+      root,
+      probeAllModels: rest.includes('--all-models'),
+      pairingTimeoutMs: Number(arg('--timeout-ms') || 30000),
+    }));
   } else if (provider === 'stitch') {
     print(await qualifyStitch({ root }));
   } else if (provider === 'pomelli') {

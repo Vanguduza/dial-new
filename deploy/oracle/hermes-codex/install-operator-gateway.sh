@@ -44,6 +44,7 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/owner-steering-broker.mjs daemon
 Restart=always
@@ -69,6 +70,8 @@ ConditionPathExists=${HERMES_WA_SESSION}/creds.json
 Type=simple
 Environment=WHATSAPP_MODE=self-chat
 Environment=WHATSAPP_DM_POLICY=closed
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${HERMES_DIR}/scripts/whatsapp-bridge/bridge.js --port 3011 --session ${HERMES_WA_SESSION}
 Restart=always
 RestartSec=5
@@ -109,6 +112,7 @@ Environment=DIAL_HERMES_WHATSAPP_BRIDGE_URL=http://127.0.0.1:3011
 Environment=DIAL_HERMES_WHATSAPP_CREDS=${HERMES_WA_SESSION}/creds.json
 Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-hermes-operator.mjs daemon
 Restart=always
@@ -139,6 +143,7 @@ Environment=DIAL_WHATSAPP_OPERATOR_HOST=127.0.0.1
 Environment=DIAL_WHATSAPP_OPERATOR_PORT=9132
 Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-operator-adapter.mjs serve
 Restart=always

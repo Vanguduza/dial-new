@@ -8,11 +8,14 @@ import {
 } from './state-store.mjs';
 import { checkTaskExecutionEnvelope } from './task-execution-envelope.mjs';
 import { assertFreshKnowledgeBinding } from './knowledge-admission-guard.mjs';
-import { assertWorktreeLease } from './worker-lease-manager.mjs';
+import { assertWorktreeLease, closeWorktreeLease } from './worker-lease-manager.mjs';
 import { loadSkillActivationForPacket } from './skill-activation-store.mjs';
 import { buildWorkerKnowledgeDelivery } from './knowledge-worker-delivery.mjs';
 import { persistExecutionArtifact } from './execution-blackboard.mjs';
-import { antigravityHeadless } from './providers/google/antigravity-adapter.mjs';
+import { antigravityHeadless, recordAntigravityDispatchOutcome } from './providers/google/antigravity-adapter.mjs';
+import { assertModelAvailableForDispatch } from './model-availability-discovery.mjs';
+import { loadRoutingRegistries } from './adaptive-routing-core.mjs';
+import { releaseCompute, settleCompute } from './compute-governor.mjs';
 
 function now() { return new Date().toISOString(); }
 function norm(value) { return String(value || '').replaceAll('\\', '/').replace(/^\.\//, '').replace(/\/\*\*?$/, '').replace(/\/$/, ''); }
@@ -37,6 +40,11 @@ export async function executeSelectedHcxWorker({
   deliveryBuilder = buildWorkerKnowledgeDelivery,
   antigravityRunner = antigravityHeadless,
   artifactPersister = persistExecutionArtifact,
+  modelAvailabilityGuard = assertModelAvailableForDispatch,
+  leaseCloser = closeWorktreeLease,
+  availabilityRecorder = recordAntigravityDispatchOutcome,
+  computeReleaser = releaseCompute,
+  computeSettler = settleCompute,
 } = {}) {
   if (!repoDir || !taskId || !harnessId || !worktreePath) throw new Error('HCX_EXECUTION_INPUTS_REQUIRED');
   const plan = readJson(`execution/tasks/${taskId}/plan.json`, null, root);
@@ -44,6 +52,8 @@ export async function executeSelectedHcxWorker({
   if (!plan || !envelope) throw new Error('HCX_PLAN_OR_ENVELOPE_MISSING');
   const selected = (plan.routing?.selected_workers || []).find((item) => item.harness_id === harnessId);
   if (!selected) throw new Error('HCX_WORKER_NOT_SELECTED');
+  const selectedModelId = selected.model?.model_id === 'provider-managed' && harnessId === 'antigravity-worker' ? 'antigravity-native' : selected.model?.model_id;
+  if (selectedModelId) modelAvailabilityGuard({ modelRegistry: loadRoutingRegistries(repoDir).models, modelId: selectedModelId, health: readJson('state/model-availability.json', {}, root) });
   if (harnessId !== 'antigravity-worker') throw new Error(`HCX_WORKER_EXECUTOR_UNSUPPORTED:${harnessId}`);
   admissionGuard({ repoDir, root, packetId: envelope.packet_id, boundary: 'HCX_WORKER_START' });
   const current = envelopeChecker({ repoDir, root, envelope });
@@ -71,6 +81,7 @@ export async function executeSelectedHcxWorker({
     DIAL_REPO_DIR: worktreePath,
     DIAL_CONTROL_HOME: root,
     DIAL_PACKET_ID: envelope.packet_id,
+    DIAL_GOVERNED_SESSION: '1',
     DIAL_TASK_ID: taskId,
     DIAL_WORKER_ID: identity,
     DIAL_EXECUTION_ENVELOPE_HASH: envelope.envelope_hash,
@@ -96,6 +107,7 @@ export async function executeSelectedHcxWorker({
     const result = await antigravityRunner({
       prompt: boundedPrompt,
       repoDir: worktreePath,
+      model: selectedModelId || null,
       env: workerEnv,
     });
     admissionGuard({ repoDir, root, packetId: envelope.packet_id, boundary: 'HCX_WORKER_RESULT_ADMISSION' });
@@ -103,6 +115,20 @@ export async function executeSelectedHcxWorker({
     const afterCurrent = envelopeChecker({ repoDir, root, envelope: afterEnvelope });
     if (!afterCurrent.ok) throw new Error(`HCX_RESULT_ENVELOPE_STALE:${afterCurrent.reasons.join(',')}`);
     leaseGuard({ root, leaseId, workerId: identity, fencingToken });
+    if (harnessId === 'antigravity-worker' && selectedModelId) {
+      try { availabilityRecorder({ root, modelId: selectedModelId, passed: true, failureClass: null, observedAt: now() }); } catch {}
+    }
+    const reservationId = plan.compute?.reservation?.reservation_id || null;
+    let computeSettlement = null;
+    if (reservationId) {
+      try {
+        computeSettlement = computeSettler({
+          root, reservationId,
+          actualInputTokens: Number(result.usage?.input_tokens || 0),
+          actualOutputTokens: Number(result.usage?.output_tokens || 0),
+        });
+      } catch {}
+    }
     const artifact = artifactPersister({
       root, taskId, workerId: identity, role: 'BUILDER', artifactType: 'HCX_WORKER_RESULT',
       envelopeHash: envelope.envelope_hash,
@@ -133,21 +159,47 @@ export async function executeSelectedHcxWorker({
       artifact_id: artifact.artifact_id,
       artifact_hash: artifact.artifact_hash,
       result_hash: result.result_hash,
+      compute_settlement: computeSettlement ? { reservation_id: computeSettlement.reservation_id, state: computeSettlement.state, actual_input_tokens: computeSettlement.actual_input_tokens, actual_output_tokens: computeSettlement.actual_output_tokens } : null,
       state: 'VERIFYING',
     };
   } catch (error) {
+    const failedAt = now();
+    const failureClass = error?.category || null;
+    let availabilityUpdated = false;
+    if (harnessId === 'antigravity-worker' && selectedModelId && failureClass) {
+      try {
+        availabilityRecorder({ root, modelId: selectedModelId, passed: false, failureClass, observedAt: failedAt });
+        availabilityUpdated = true;
+      } catch {}
+    }
+    let leaseClosed = false;
+    try {
+      leaseCloser({ root, leaseId, state: 'REVOKED', reason: `HCX_WORKER_FAILURE:${failureClass || 'EXECUTION_ERROR'}` });
+      leaseClosed = true;
+    } catch {}
+    const reservationId = plan.compute?.reservation?.reservation_id || null;
+    let computeReleased = false;
+    if (reservationId) {
+      try { computeReleased = Boolean(computeReleaser({ root, reservationId, reason: `HCX_WORKER_FAILURE:${failureClass || 'EXECUTION_ERROR'}` })); } catch {}
+    }
     const latest = readJson(`execution/tasks/${taskId}/envelope.json`, null, root) || envelope;
     if (latest.state !== 'SUPERSEDED') {
       writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, {
         ...latest,
-        state: 'BLOCKED',
+        state: 'SUPERSEDED',
+        superseded_reason: `WORKER_FAILURE:${failureClass || 'EXECUTION_ERROR'}`,
+        superseded_at: failedAt,
         worker_failure: String(error?.message || error).slice(0, 1000),
-        worker_failed_at: now(),
+        worker_failure_class: failureClass,
+        worker_model_id: selectedModelId || null,
+        worker_failed_at: failedAt,
       }, root);
     }
     appendJsonl('events/adaptive-execution.jsonl', {
       event: 'HCX_WORKER_FAILED', task_id: taskId, harness_id: harnessId,
-      worker_id: identity, reason: String(error?.message || error).slice(0, 1000), at: now(),
+      worker_id: identity, model_id: selectedModelId || null, failure_class: failureClass,
+      availability_updated: availabilityUpdated, lease_closed: leaseClosed, compute_released: computeReleased,
+      reason: String(error?.message || error).slice(0, 1000), at: failedAt,
     }, root);
     throw error;
   }

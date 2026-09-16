@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "register_id": "dial-development-system-green-closure-20260915",
+  "as_of_commit": "fa7c655f12faf02a2b33cc15799069526bdda3a6",
+  "truthfulness_note": "Repository implementation status is distinct from live qualification. No row in this register claims that a host, provider, GitHub ruleset, credential or recovery path is live unless current signed evidence exists.",
+  "status_vocabulary": [
+    "RESOLVED_REPOSITORY",
+    "RESOLVED_AUTHORIZATION",
+    "LIVE_APPLY_REQUIRED",
+    "OWNER_ACTION_REQUIRED",
+    "EXTERNAL_GATE"
+  ],
+  "summary": {
+    "total": 19,
+    "by_severity": {
+      "P0": 6,
+      "P1": 11,
+      "P2": 2
+    },
+    "by_status": {
+      "EXTERNAL_GATE": 5,
+      "LIVE_APPLY_REQUIRED": 2,
+      "OWNER_ACTION_REQUIRED": 1,
+      "RESOLVED_AUTHORIZATION": 1,
+      "RESOLVED_REPOSITORY": 10
+    },
+    "open_by_severity": {
+      "P0": 5,
+      "P1": 3,
+      "P2": 0
+    }
+  },
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "title": "Final merged-SHA recovery recertification remains pending",
+      "severity": "P0",
+      "status": "EXTERNAL_GATE",
+      "gate": "EXTERNAL-GATE-RECOVERY-SERVICES-001",
+      "owner_decision_required": false,
+      "evidence": "oracle-admin is individually GREEN and bounded two-way recovery is PROVEN; final same-merged-SHA deployment/report remains a downstream gate"
+    },
+    {
+      "id": "GAP-002",
+      "title": "Exact Claude fallback live capacity is currently limited",
+      "severity": "P0",
+      "status": "EXTERNAL_GATE",
+      "gate": "EXTERNAL-GATE-CLAUDE-CAPACITY-001",
+      "owner_decision_required": false,
+      "evidence": "Claude subscription authentication and exact claude-sonnet-5 identity are proven; latest VEKL symmetry fallback turn classified ACCOUNT_LIMITED after the bounded 180s canary"
+    },
+    {
+      "id": "GAP-003",
+      "title": "Hermes development gate must be requalified",
+      "severity": "P0",
+      "status": "EXTERNAL_GATE",
+      "gate": "EXTERNAL-GATE-HERMES-REQUALIFICATION-001",
+      "owner_decision_required": false,
+      "evidence": "repository orchestration changed; no current control-host gate"
+    },
+    {
+      "id": "GAP-004",
+      "title": "Required vendor and apt pins are complete and fail-closed",
+      "severity": "P0",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "all mandatory supply-chain paths are exact-pinned; development-bootstrap supply-chain test passes and npm audit reports zero vulnerabilities"
+    },
+    {
+      "id": "GAP-005",
+      "title": "Current signed reports for all three hosts and provider execution are absent",
+      "severity": "P0",
+      "status": "EXTERNAL_GATE",
+      "gate": "EXTERNAL-GATE-WHOLE-SYSTEM-EVIDENCE-001",
+      "owner_decision_required": false,
+      "evidence": "aggregate verifier requires four fresh Ed25519-signed reports for the same commit"
+    },
+    {
+      "id": "GAP-010",
+      "title": "Protected-master policy is only partially applied",
+      "severity": "P0",
+      "status": "EXTERNAL_GATE",
+      "gate": "OWNER-GATE-BRANCH-PROTECTION-001",
+      "owner_decision_required": true,
+      "evidence": "fresh native branch-protection API evidence is persisted; strict project-truth+verify checks, PR requirement, admin enforcement, no force-push/deletion are live; signatures and the sole-owner-compatible review policy remain unresolved"
+    },
+    {
+      "id": "GAP-009",
+      "title": "Cloudflare Access ingress has no real configured endpoint",
+      "severity": "P1",
+      "status": "OWNER_ACTION_REQUIRED",
+      "gate": "EXTERNAL-GATE-CLOUDFLARE-ACCESS-001",
+      "owner_decision_required": true,
+      "evidence": "private MCP remains the current path; if public ingress is required, DIAL_MCP_INGRESS_URL must carry a real endpoint"
+    },
+    {
+      "id": "GAP-011",
+      "title": "Hardened systemd controls need final merged-SHA all-host deployment",
+      "severity": "P1",
+      "status": "LIVE_APPLY_REQUIRED",
+      "gate": "EXTERNAL-GATE-SYSTEMD-REINSTALL-001",
+      "owner_decision_required": false,
+      "evidence": "control candidate hardening is live and verified; final merged-SHA deployment to control/worker/admin remains required"
+    },
+    {
+      "id": "GAP-012",
+      "title": "Structural snapshot timer requires final worker deployment",
+      "severity": "P1",
+      "status": "LIVE_APPLY_REQUIRED",
+      "gate": "EXTERNAL-GATE-STRUCTURAL-TIMER-001",
+      "owner_decision_required": false,
+      "evidence": "bounded advisory timer/service is implemented; final exact-SHA worker checkout/timer enablement remains pending"
+    },
+    {
+      "id": "GAP-007",
+      "title": "Historical Project Truth baseline rejected imported commits",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "bounded legacy baseline ends at immutable imported commit 2e291761; local verifier passes"
+    },
+    {
+      "id": "GAP-013",
+      "title": "Material tool use could bypass VEKL without packet id",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "governed sessions fail closed and mission dispatch checks activation programmatically"
+    },
+    {
+      "id": "GAP-016",
+      "title": "Model availability discovery and DEC-032 eligibility diverged",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "discovery is wired to router/dispatch; performance ranks and never excludes subscription-present pairs"
+    },
+    {
+      "id": "GAP-014",
+      "title": "Execution audit receipts lacked before/after and structured tests",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "tool before/after hashes, repository SHA transition and per-test results implemented"
+    },
+    {
+      "id": "GAP-017",
+      "title": "WhatsApp delivery retention and sender rate limits were unbounded",
+      "severity": "P2",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "per-sender sliding window and age/count idempotency GC implemented"
+    },
+    {
+      "id": "GAP-020",
+      "title": "VEKL activation lacked semantic content identity",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "stable semantic content_hash is stored and verified alongside packet identity"
+    },
+    {
+      "id": "GAP-018",
+      "title": "Canonical master confirmation was not recorded",
+      "severity": "P2",
+      "status": "RESOLVED_AUTHORIZATION",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "auth-20260915-owner-master-canonical-confirmation records master without authorizing a rename; Astra NOT_REQUIRED policy is also owner-directed"
+    },
+    {
+      "id": "GAP-021",
+      "title": "dial-truth MCP was missing",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "minimal bounded read-only MCP implemented and registered; live enrollment remains non-blocking evidence"
+    },
+    {
+      "id": "GAP-022",
+      "title": "Control topology and E2 CPU interpretation were stale",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "hosts.json control is 2 logical CPUs/12288 MB and topology comparison accepts E2 logical CPU reporting"
+    },
+    {
+      "id": "GAP-023",
+      "title": "Closure suites were omitted from Vitest",
+      "severity": "P1",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": null,
+      "owner_decision_required": false,
+      "evidence": "development bootstrap, structural reality and frontend experience suites are explicit includes"
+    }
+  ]
+}

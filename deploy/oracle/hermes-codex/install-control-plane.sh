@@ -158,6 +158,7 @@ Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
 Environment=HERMES_HOME=$HERMES_HOME
 Environment=CODEX_HOME=$CODEX_HOME
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE_BIN $DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs daemon
 Restart=on-failure
@@ -165,6 +166,7 @@ RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
+ProtectHome=read-only
 ReadWritePaths=$DIAL_CONTROL_HOME $DIAL_REPO_DIR $HERMES_HOME $CODEX_HOME -$HOME/.claude -$HOME/.config/claude
 [Install]
 WantedBy=default.target
@@ -179,11 +181,16 @@ Type=simple
 Environment=DIAL_REPO_DIR=$DIAL_REPO_DIR
 Environment=DIAL_CONTROL_HOME=$DIAL_CONTROL_HOME
 Environment=HERMES_HOME=$HERMES_HOME
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$HERMES_BIN dashboard --host 127.0.0.1 --port 9119 --no-open
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=$HERMES_HOME
 [Install]
 WantedBy=default.target
 EOF
@@ -197,7 +204,6 @@ if [[ -n "$GATEWAY_UNIT" ]]; then
   mkdir -p "$HOME/.config/systemd/user/${GATEWAY_UNIT}.d"
   cat >"$HOME/.config/systemd/user/${GATEWAY_UNIT}.d/dial-recovery.conf" <<'EOF'
 [Unit]
-StartLimitIntervalSec=0
 [Service]
 Restart=on-failure
 RestartSec=5

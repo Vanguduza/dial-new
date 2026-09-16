@@ -1,0 +1,1853 @@
+{
+  "schema_version": 2,
+  "manifest_id": "dial-development-bootstrap-v2-provider-first",
+  "authority": "DECLARATIVE_DESIRED_STATE_FOR_DEVELOPMENT_HOSTS",
+  "authority_note": "This manifest declares required state; it grants no authority. Host topology comes from deploy/oracle/resource-fabric/hosts.json; host classes from agent-system/orchestration/execution-fabric/constants.mjs; canonical installers under deploy/oracle/execution-fabric and deploy/oracle/hermes-codex remain the mechanism. The bootstrap detects, verifies, converges through pinned channels declared in supply-chain/PINS.json, wraps canonical installers only when they satisfy the same supply-chain rule, and never duplicates them. Secrets never appear here (credentials carry references only).",
+  "canonical_repository": "Vanguduza/dial-new",
+  "canonical_branch": "master",
+  "canonical_branch_note": "master remains the canonical integration branch (PROJECT_CANONICAL_STATE.json canonical_integration_branch). Owner confirmation is recorded in docs/project-state/authorizations/auth-20260915-owner-development-system-green-closure.json; the branch is not renamed.",
+  "protected_master_pin": "certification records origin/master at start and fails STALE if HEAD or origin/master moves before the report is sealed",
+  "control_plane_fingerprint_paths": [
+    "agent-system/orchestration",
+    "agent-system/engineering-knowledge",
+    "deploy/oracle/hermes-codex"
+  ],
+  "topology_authority": "deploy/oracle/resource-fabric/hosts.json",
+  "supply_chain_pins": "ops/development-bootstrap/supply-chain/PINS.json",
+  "readiness_profiles": {
+    "WHOLE_SYSTEM_GREEN": {
+      "requires": [
+        "CORE_DEVELOPMENT_REQUIRED",
+        "OWNER_CONTROL_REQUIRED",
+        "RECOVERY_REQUIRED"
+      ],
+      "note": "the only profile that may print the owner green flag"
+    },
+    "CORE_DEVELOPMENT": {
+      "requires": [
+        "CORE_DEVELOPMENT_REQUIRED"
+      ]
+    },
+    "OWNER_CONTROL": {
+      "requires": [
+        "OWNER_CONTROL_REQUIRED"
+      ]
+    },
+    "RECOVERY": {
+      "requires": [
+        "RECOVERY_REQUIRED"
+      ]
+    },
+    "class_rules": {
+      "OPTIONAL_CAPABILITY": "legacy only; DEC-033 forbids operational development-system capabilities from using this class. Use REFERENCE_ONLY for genuinely non-runtime records.",
+      "REFERENCE_ONLY": "human-operated / web application / documentation; never host software; never counted as missing"
+    }
+  },
+  "roles": {
+    "dial-hermes-control": {
+      "definition": "roles/roles.json#roles.dial-hermes-control",
+      "host_class": "CONTROL_AUTHORITY"
+    },
+    "vekl-worker": {
+      "definition": "roles/roles.json#roles.vekl-worker",
+      "host_class": "BACKGROUND_COORDINATOR"
+    },
+    "oracle-admin": {
+      "definition": "roles/roles.json#roles.oracle-admin",
+      "host_class": "RECOVERY_CONTROL_ONLY"
+    },
+    "provider-container": {
+      "definition": "roles/roles.json#roles.provider-container",
+      "host_class": null
+    }
+  },
+  "packages": [
+    {
+      "id": "pkg.git",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "git",
+      "minimum_version": "2.39.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.git",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (apt-get install git=<pinned>)"
+    },
+    {
+      "id": "pkg.jq",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "jq",
+      "minimum_version": "1.6.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.jq",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (apt-get install jq=<pinned>)"
+    },
+    {
+      "id": "pkg.ripgrep",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "rg",
+      "minimum_version": "13.0.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.ripgrep",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (apt-get install ripgrep=<pinned>)"
+    },
+    {
+      "id": "pkg.sqlite3",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "sqlite3",
+      "minimum_version": "3.37.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.sqlite3",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (apt-get install sqlite3=<pinned>; transaction-consistent Hermes state.db backup)"
+    },
+    {
+      "id": "pkg.openssh",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "ssh",
+      "minimum_version": "8.0.0",
+      "version_args": [
+        "-V"
+      ],
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.openssh-client",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "remediation": "bootstrap --apply (apt-get install openssh-client=<pinned>)"
+    },
+    {
+      "id": "pkg.openssl",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "openssl",
+      "minimum_version": "3.0.0",
+      "version_args": [
+        "version"
+      ],
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.openssl",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (venue-decision signing keys need openssl)"
+    },
+    {
+      "id": "pkg.docker",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "docker",
+      "minimum_version": "24.0.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.docker.io",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "remediation": "bootstrap --apply (Ubuntu docker.io exact package pin from PINS.json; provider-first local sandbox backend)"
+    }
+  ],
+  "runtimes": [
+    {
+      "id": "rt.node",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "node",
+      "minimum_version": "22.13.0",
+      "install_method": "RELEASE_TARBALL_SHA256",
+      "pin_ref": "node",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "official nodejs.org release tarball selected by host architecture and verified against the exact SHA-256 in PINS.json",
+      "config_semantics": "~/.local/bin symlinks and deterministic service PATH",
+      "auth_semantics": "NONE",
+      "probe_semantics": "node --version >= minimum",
+      "remediation": "bootstrap --apply"
+    },
+    {
+      "id": "rt.npm",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "npm",
+      "minimum_version": "10.0.0",
+      "install_method": "PREINSTALLED",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "ships with the pinned nodejs package",
+      "config_semantics": "none",
+      "auth_semantics": "NONE",
+      "probe_semantics": "npm --version >= minimum"
+    },
+    {
+      "id": "rt.python3",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "python3",
+      "minimum_version": "3.10.0",
+      "install_method": "APT_PINNED",
+      "pin_ref": "apt.python3",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "apt-get install python3=<pinned> python3-yaml=<pinned>",
+      "config_semantics": "none",
+      "auth_semantics": "NONE",
+      "probe_semantics": "python3 --version and python3 -c 'import yaml'",
+      "remediation": "bootstrap --apply"
+    },
+    {
+      "id": "rt.codex",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "binary": "codex",
+      "minimum_version": "0.144.0",
+      "install_method": "NPM_EXACT",
+      "pin_ref": "@openai/codex",
+      "package": "@openai/codex",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "npm install -g @openai/codex@<exact> --ignore-scripts with dist.integrity equal to the pin; never @latest",
+      "config_semantics": "~/.codex/config.toml pins model gpt-5.6-sol (install-control-plane.sh), mode 600",
+      "auth_semantics": "PROVIDER_LOGIN: codex login (browser OAuth) by the owner; certified by `codex login status` containing 'Logged in using ChatGPT'",
+      "probe_semantics": "codex --version >= minimum; codex login status; codex-app-server-probe exact identity",
+      "remediation": "bootstrap --apply then bootstrap --auth",
+      "check_ids": [
+        "codex.binary"
+      ]
+    },
+    {
+      "id": "rt.claude-code",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "binary": "claude",
+      "minimum_version": "2.0.0",
+      "install_method": "INSTALLER_SHA256",
+      "pin_ref": "claude-code",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "vendor installer downloaded to a file, SHA-256 verified against PINS.json, executed with the pinned version argument; provider-managed inside provider containers",
+      "config_semantics": ".claude/settings.json hooks, .mcp.json, ~/.claude",
+      "auth_semantics": "PROVIDER_LOGIN: `claude` subscription login by the owner; certified by `claude auth status`",
+      "probe_semantics": "claude --version >= minimum; claude auth status; benign `claude -p` probe turn",
+      "remediation": "bootstrap --apply then bootstrap --auth",
+      "check_ids": [
+        "claude.binary"
+      ]
+    },
+    {
+      "id": "rt.hermes",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "binary": "hermes",
+      "minimum_version": null,
+      "install_method": "SOURCE_ARCHIVE_SHA256",
+      "pin_ref": "hermes-agent",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "immutable release/commit source archive downloaded to a file, SHA-256 verified against PINS.json, then installed non-editably with the exact declared command; never a dynamically resolving installer",
+      "config_semantics": "~/.hermes/config.yaml locked to openai-codex / gpt-5.6-sol / no fallback providers (install-control-plane.sh), hooks mode 700",
+      "auth_semantics": "PROVIDER_LOGIN: hermes auth add openai-codex by the owner; certified by config + hermes doctor",
+      "probe_semantics": "hermes --version; hermes doctor (subordinate, non-mutating)",
+      "remediation": "bootstrap --apply then bootstrap --auth",
+      "check_ids": [
+        "hermes.binary"
+      ]
+    },
+    {
+      "id": "rt.antigravity",
+      "tooling_kind": "CLI",
+      "binary": "agy",
+      "exact_version": "1.2.0",
+      "install_method": "REPO_PINNED_SCRIPT",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "official Antigravity 1.2.0 release tarball selected by architecture, SHA-256 verified from PINS.json, installs antigravity and agy compatibility alias",
+      "config_semantics": ".agents/plugins/dial-governed plus isolated DIAL Antigravity HOME at /var/lib/dial-control/identities/antigravity-worker; owner Google env credentials are explicitly unset",
+      "auth_semantics": "OAUTH_BROWSER sign-in for the dedicated antigravity_worker_account in the isolated Antigravity HOME; no owner Google credential inheritance",
+      "probe_semantics": "agy --version == 1.2.0; isolated-home agy models; per-discovered-model live canaries; HCX selection/execution evidence",
+      "remediation": "bash deploy/oracle/hermes-codex/install-google-antigravity.sh",
+      "pin_ref": "antigravity-cli",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "selection_semantics": "Required worker harness; once live-qualified, include every proven/live-discovered compatible provider-native model pair in execution-pair routing."
+    },
+    {
+      "id": "rt.context7-mcp",
+      "tooling_kind": "MCP_SERVICE",
+      "binary": "dial-context7-mcp",
+      "exact_version": "4.1.1",
+      "install_method": "REPO_PINNED_SCRIPT",
+      "pin_ref": "context7-mcp",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033",
+      "install_semantics": "deploy/oracle/hermes-codex/install-research-mcp.sh installs an integrity-complete npm-ci runtime from the dedicated lockfile; no npx/latest at invocation",
+      "config_semantics": "~/.local/bin/dial-context7-mcp -> locked runtime; optional CONTEXT7_API_KEY read from /var/lib/dial-control/secrets/context7-api.key without argv exposure",
+      "auth_semantics": "public Context7 works anonymously; an optional API key may raise provider limits but absence does not reduce tool correctness",
+      "probe_semantics": "exact version; stdio initialize; tools/list contains resolve-library-id/query-docs; real resolve/query canary"
+    },
+    {
+      "id": "rt.exa-mcp",
+      "tooling_kind": "MCP_SERVICE",
+      "binary": "dial-exa-mcp",
+      "exact_version": "3.4.1",
+      "install_method": "REPO_PINNED_SCRIPT",
+      "pin_ref": "exa-mcp",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033",
+      "install_semantics": "deploy/oracle/hermes-codex/install-research-mcp.sh installs exa-mcp-server 3.4.1 from the integrity-complete dedicated lockfile",
+      "config_semantics": "~/.local/bin/dial-exa-mcp -> locked runtime; only web_search_exa/web_fetch_exa enabled by default",
+      "auth_semantics": "EXA_API_KEY supplied from /var/lib/dial-control/secrets/exa-api.key mode 600 or secure environment; never argv/repository",
+      "probe_semantics": "exact version; stdio initialize; tools/list; real web_search_exa canary"
+    }
+  ],
+  "services": [
+    {
+      "id": "svc.dial-hermes-runtime",
+      "unit": "dial-hermes-runtime.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-control-plane.sh",
+      "workload": "HERMES_RUNTIME",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-hermes-runtime.service"
+      ]
+    },
+    {
+      "id": "svc.dial-hermes-orchestrator",
+      "unit": "dial-hermes-orchestrator.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-external-orchestrator.sh",
+      "workload": "EXTERNAL_QUEUE",
+      "repo_rw_expected": true,
+      "repo_rw_reason": "the external orchestrator hosts the repository writer for admitted units",
+      "check_ids": [
+        "systemd.dial-hermes-orchestrator.service"
+      ]
+    },
+    {
+      "id": "svc.dial-hermes-operations",
+      "unit": "dial-hermes-operations.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-operations-plane.sh",
+      "workload": "DIAGNOSTICS",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-hermes-operations.service"
+      ]
+    },
+    {
+      "id": "svc.dial-chat-control",
+      "unit": "dial-chat-control.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-chat-control-bridge.sh",
+      "workload": "OPERATOR_GATEWAY",
+      "port": 9130,
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-chat-control.service"
+      ]
+    },
+    {
+      "id": "svc.dial-mission-controller",
+      "unit": "dial-mission-controller.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-chat-control-bridge.sh",
+      "workload": "MISSION_CONTROL",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-mission-controller.service"
+      ]
+    },
+    {
+      "id": "svc.dial-owner-steering",
+      "unit": "dial-owner-steering.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "workload": "OWNER_CONTROL",
+      "repo_rw_expected": true,
+      "repo_rw_reason": "owner steer executes the locked chain against the repository at the safe boundary",
+      "check_ids": [
+        "systemd.dial-owner-steering.service"
+      ]
+    },
+    {
+      "id": "svc.dial-hermes-whatsapp-operator",
+      "unit": "dial-hermes-whatsapp-operator.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "workload": "OWNER_CONTROL",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-hermes-whatsapp-operator.service"
+      ],
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "svc.dial-whatsapp-cloud-operator",
+      "unit": "dial-whatsapp-cloud-operator.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "workload": "OWNER_CONTROL",
+      "port": 9132,
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-whatsapp-cloud-operator.service"
+      ],
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "svc.dial-operator-status-publisher",
+      "unit": "dial-operator-status-publisher.timer",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-operator-status-publisher.sh",
+      "workload": "DIAGNOSTICS",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-operator-status-publisher.timer"
+      ]
+    },
+    {
+      "id": "svc.dial-engineering-research",
+      "unit": "dial-engineering-research.timer",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-engineering-research.sh",
+      "workload": "VEKL_RESEARCH",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-engineering-research.timer"
+      ]
+    },
+    {
+      "id": "svc.dial-venue-guard",
+      "unit": "dial-venue-guard.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/execution-fabric/phase5-install-providers.sh",
+      "workload": "HERMES_RUNTIME",
+      "repo_rw_expected": false,
+      "note": "provider-first fabric \u00a714: the signed venue-decision guard must be active or every local execution fails closed",
+      "check_ids": [
+        "systemd.dial-venue-guard.service"
+      ]
+    },
+    {
+      "id": "svc.dial-remote-mcp-relay",
+      "unit": "dial-remote-mcp-relay.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/execution-fabric/phase3-install-relay.sh",
+      "workload": "OPERATOR_GATEWAY",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-remote-mcp-relay.service"
+      ]
+    },
+    {
+      "id": "svc.dial-private-mcp-bind",
+      "unit": "dial-private-mcp-bind.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/execution-fabric/phase3-bind-private-mcp.sh",
+      "workload": "OPERATOR_GATEWAY",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-private-mcp-bind.service"
+      ]
+    },
+    {
+      "id": "svc.hermes-dial-dashboard",
+      "unit": "hermes-dial-dashboard.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-control-plane.sh",
+      "workload": "DIAGNOSTICS",
+      "port": 9119,
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.hermes-dial-dashboard.service"
+      ],
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "svc.dial-hermes-haif",
+      "unit": "dial-hermes-haif.service",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/hermes-codex/install-haif.sh",
+      "workload": "DIAGNOSTICS",
+      "port": 9141,
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-hermes-haif.service"
+      ],
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "svc.dial-recovery-agent",
+      "unit": "dial-recovery-agent.service",
+      "scope": "user",
+      "hosts": [
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "installer": "deploy/oracle/resource-fabric/install-recovery-peer.sh + seed-known-hosts.sh",
+      "workload": "RECOVERY_PEER",
+      "repo_rw_expected": false,
+      "note": "fails closed until known_hosts is seeded (StrictHostKeyChecking=yes)",
+      "check_ids": [
+        "systemd.dial-recovery-agent.service"
+      ]
+    },
+    {
+      "id": "svc.dial-host-agent",
+      "unit": "dial-host-agent.timer",
+      "scope": "user",
+      "hosts": [
+        "dial-hermes-control",
+        "oracle-admin",
+        "vekl-worker"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "installer": "deploy/oracle/resource-fabric/install-host.sh",
+      "workload": "HOST_HEALTH",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-host-agent.timer"
+      ]
+    },
+    {
+      "id": "svc.dial-commander-remote",
+      "unit": "dial-commander-remote.service",
+      "scope": "user",
+      "hosts": [
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "installer": "deploy/oracle/provisioning/bootstrap.sh phase 6",
+      "workload": "BREAK_GLASS",
+      "repo_rw_expected": false,
+      "inactive_means": "OWNER_ACTION_REQUIRED (ConditionPathExists on the device credential until the owner pairs)",
+      "check_ids": [
+        "systemd.dial-commander-remote.service"
+      ]
+    },
+    {
+      "id": "svc.dial-background-coordinator",
+      "unit": "dial-background-coordinator.service",
+      "scope": "user",
+      "hosts": [
+        "vekl-worker"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "deploy/oracle/execution-fabric/phase3-install-coordinator.sh",
+      "workload": "WORKER_JOB",
+      "repo_rw_expected": false,
+      "check_ids": [
+        "systemd.dial-background-coordinator.service"
+      ]
+    },
+    {
+      "id": "svc.dial-worker-agent",
+      "unit": "dial-worker-agent.timer",
+      "scope": "user",
+      "hosts": [
+        "vekl-worker"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "ops/development-bootstrap/workers/install-worker-agent.sh",
+      "workload": "WORKER_JOB",
+      "repo_rw_expected": false,
+      "status_note": "publishes a hash-sealed capability envelope and executes allowlisted jobs",
+      "check_ids": [
+        "systemd.dial-worker-agent.timer"
+      ]
+    },
+    {
+      "id": "svc.dial-structural-snapshot",
+      "unit": "dial-structural-snapshot.timer",
+      "scope": "user",
+      "hosts": [
+        "vekl-worker"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "installer": "ops/development-bootstrap/workers/install-worker-agent.sh",
+      "workload": "STRUCTURAL_SNAPSHOT",
+      "repo_rw_expected": false,
+      "note": "GAP-012: background venue for the advisory structural snapshot producer; Graphify stays fail-closed and never becomes VEKL authority",
+      "check_ids": [
+        "systemd.dial-structural-snapshot.timer"
+      ],
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    }
+  ],
+  "containers": [
+    {
+      "id": "ctr.toolbox",
+      "image": "dial/toolbox:2026.09",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "builder": "deploy/oracle/execution-fabric/phase4-install-sandbox.sh",
+      "note": "provider-first local sandbox image; pinned tag, never :latest"
+    }
+  ],
+  "containers_note": "Provider-first execution uses one pinned local sandbox image on the control host (fabric \u00a78). No other container workloads exist; :latest tags are a finding.",
+  "mcp_servers": [
+    {
+      "id": "mcp.dial-oracle-status",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "dial-oracle-status",
+      "transport": "stdio",
+      "command": "node agent-system/orchestration/claude-oracle-status-mcp.mjs",
+      "purpose": "Read-only Oracle mission/queue/gate/runtime mirror (false-idle prevention)",
+      "clients": [
+        "claude"
+      ],
+      "config_location": ".mcp.json",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "auth_type": "NONE",
+      "health_probe": "dial_oracle_status tool returns available=true",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "REPO_LOCAL",
+      "config_semantics": ".mcp.json + .claude/settings.json enabledMcpjsonServers",
+      "auth_semantics": "NONE",
+      "probe_semantics": "stdio initialize -> tools/list -> tools/call dial_oracle_status",
+      "owner": "DIAL control plane",
+      "security_classification": "PUBLIC_STATUS"
+    },
+    {
+      "id": "mcp.dial-truth",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "dial-truth",
+      "transport": "stdio",
+      "command": "node agent-system/mcp/dial-truth-server.mjs",
+      "purpose": "Read-only bounded canon: get_feature/get_decision/get_module/get_donor/get_evidence/search_canon",
+      "clients": [
+        "claude",
+        "codex"
+      ],
+      "config_location": ".mcp.json",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "auth_type": "NONE",
+      "health_probe": "tools/list contains search_canon; get_feature(SPARE-F001) returns source refs",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "REPO_LOCAL",
+      "config_semantics": ".mcp.json + .claude/settings.json",
+      "auth_semantics": "NONE",
+      "probe_semantics": "stdio initialize -> tools/list -> tools/call get_feature",
+      "owner": "DIAL",
+      "security_classification": "PUBLIC_CANON",
+      "status_note": "IMPLEMENTED (GAP-016): minimal read-only NDJSON stdio server; never a write surface",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "mcp.dial-oracle-control",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "dial-oracle-control",
+      "transport": "stdio",
+      "command": "node agent-system/orchestration/operator-control-stdio.mjs",
+      "purpose": "Mutable typed owner controls (dial_owner_steer, dial_owner_live_turn, dial_submit_instruction, status/gate tools) for local Claude and Codex",
+      "clients": [
+        "claude",
+        "codex"
+      ],
+      "config_location": "client-local scope via install-operator-gateway.sh",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "auth_type": "NONE",
+      "auth_note": "process-env channel identity; bridge bearer token stays server-side",
+      "health_probe": "qualify-control-plane.sh enrollment assertions",
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "install_semantics": "deploy/oracle/hermes-codex/install-operator-gateway.sh",
+      "config_semantics": "client-local MCP enrollment for claude and codex",
+      "auth_semantics": "channel identity from process env; bearer token server-side (600)",
+      "probe_semantics": "stdio tools/list contains dial_owner_steer; dial_project_status answers",
+      "owner": "DIAL control plane",
+      "security_classification": "OWNER_CONTROL"
+    },
+    {
+      "id": "mcp.dial-chat-control-http",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "dial.mcp.oracle-control",
+      "transport": "http",
+      "endpoint": "http://127.0.0.1:9130",
+      "purpose": "Shared typed control authority behind the operator MCPs (21 dial_* tools)",
+      "clients": [
+        "operator-control-stdio",
+        "whatsapp adapters"
+      ],
+      "config_location": "systemd unit dial-chat-control.service",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "auth_type": "NON_INTERACTIVE_SECRET",
+      "secret_refs": [
+        "/var/lib/dial-control/secrets/chat-control.token"
+      ],
+      "health_probe": "GET /health -> dial-chat-control",
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "install_semantics": "deploy/oracle/hermes-codex/install-chat-control-bridge.sh",
+      "config_semantics": "loopback bind 127.0.0.1:9130",
+      "auth_semantics": "bearer token file mode 600, never printed",
+      "probe_semantics": "GET /health returns dial-chat-control",
+      "owner": "DIAL control plane",
+      "security_classification": "OWNER_CONTROL"
+    },
+    {
+      "id": "mcp.github",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "github",
+      "transport": "http",
+      "purpose": "Repository/PR/CI operations from provider containers",
+      "clients": [
+        "claude-code-remote"
+      ],
+      "config_location": "provider-managed (Claude Code Remote harness)",
+      "hosts": [
+        "provider-container"
+      ],
+      "auth_type": "OAUTH_BROWSER",
+      "health_probe": "git ls-remote origin master succeeds with provider credentials",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "PROVIDER_MANAGED",
+      "config_semantics": "provider connector",
+      "auth_semantics": "owner OAuth in the provider console",
+      "probe_semantics": "git ls-remote origin master",
+      "owner": "provider",
+      "security_classification": "REPOSITORY_WRITE"
+    },
+    {
+      "id": "mcp.desktop-commander",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "desktop-commander",
+      "transport": "outbound-device-session",
+      "purpose": "Owner host-administration surface on the recovery plane; never a development dispatch path",
+      "clients": [
+        "owner desktop client"
+      ],
+      "config_location": "deploy/oracle/provisioning/systemd/dial-commander-remote.service",
+      "hosts": [
+        "oracle-admin"
+      ],
+      "auth_type": "DEVICE_CODE",
+      "pinned_version": "0.2.50",
+      "health_probe": "PROCESS_UP/SESSION_VALID/REMOTE_REGISTERED/PING_RESPONDS/COMMAND_EXECUTES",
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "install_semantics": "npm --prefix /opt/dial-recovery/commander install @wonderwhy-er/desktop-commander@0.2.50 (exact) by provisioning phase 6",
+      "config_semantics": "systemd user unit with ConditionPathExists on the device credential",
+      "auth_semantics": "DEVICE_CODE: owner approves a code in a browser (dial-commander-pair); credential 0600 outside the checkout",
+      "probe_semantics": "dial-commander-probe + dial-commander-record-proof (5 criteria)",
+      "owner": "owner",
+      "security_classification": "BREAK_GLASS"
+    },
+    {
+      "id": "mcp.context7",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "context7",
+      "transport": "stdio",
+      "command": "bash deploy/oracle/hermes-codex/research-mcp-runtime/run-context7.sh",
+      "purpose": "version-specific official/library documentation retrieval for VEKL and dependency qualification",
+      "clients": [
+        "claude",
+        "codex",
+        "hermes-tooling"
+      ],
+      "config_location": ".mcp.json",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "auth_type": "NONE",
+      "health_probe": "resolve-library-id + query-docs live canary",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "locked local @upstash/context7-mcp 4.1.1 runtime installed by install-research-mcp.sh on control; provider surfaces consume repository MCP registration or equivalent enrolled connector",
+      "config_semantics": ".mcp.json + .claude/settings.json; fixed local stdio wrapper; no dynamic npm install",
+      "auth_semantics": "anonymous public API is supported; optional key stays outside repo",
+      "probe_semantics": "stdio initialize -> tools/list -> resolve-library-id -> query-docs",
+      "owner": "DIAL",
+      "security_classification": "PUBLIC_ENGINEERING_RESEARCH",
+      "owner_required_ref": "DEC-033"
+    },
+    {
+      "id": "mcp.exa",
+      "tooling_kind": "MCP_SERVICE",
+      "name": "exa",
+      "transport": "stdio",
+      "command": "bash deploy/oracle/hermes-codex/research-mcp-runtime/run-exa.sh",
+      "purpose": "external engineering research discovery/corroboration beneath VEKL authority",
+      "clients": [
+        "claude",
+        "codex",
+        "hermes-tooling"
+      ],
+      "config_location": ".mcp.json",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "auth_type": "API_KEY",
+      "secret_refs": [
+        "/var/lib/dial-control/secrets/exa-api.key"
+      ],
+      "health_probe": "web_search_exa live canary",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "locked local exa-mcp-server 3.4.1 runtime installed by install-research-mcp.sh on control; provider surfaces consume repository MCP registration or equivalent enrolled connector",
+      "config_semantics": ".mcp.json + .claude/settings.json; fixed local stdio wrapper; default tool allowlist web_search_exa/web_fetch_exa",
+      "auth_semantics": "EXA_API_KEY mode-600 server/tooling secret outside repo",
+      "probe_semantics": "stdio initialize -> tools/list -> web_search_exa benign canary",
+      "owner": "DIAL",
+      "security_classification": "PUBLIC_ENGINEERING_RESEARCH",
+      "owner_required_ref": "DEC-033"
+    }
+  ],
+  "providers": [
+    {
+      "id": "prov.claude",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "name": "Claude Code (official CLI, subscription)",
+      "role": "HERMES_FALLBACK_RUNTIME + worker harness + provider-container development",
+      "binary": "claude",
+      "models_exact": [
+        "claude-sonnet-5"
+      ],
+      "models_worker_candidates": [
+        "claude-opus-5",
+        "claude-fable-5-1",
+        "claude-haiku-4-5-20251001"
+      ],
+      "auth_type": "PROVIDER_LOGIN",
+      "auth_probe": "claude auth status",
+      "forbidden_env": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "rt.claude-code",
+      "config_semantics": ".claude/settings.json",
+      "auth_semantics": "owner subscription login; no API key",
+      "probe_semantics": "claude auth status; benign probe turn",
+      "check_ids": [
+        "claude.auth",
+        "claude.exact-model-policy"
+      ]
+    },
+    {
+      "id": "prov.codex",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "name": "OpenAI Codex CLI / App Server (ChatGPT subscription OAuth)",
+      "role": "HERMES_PRIMARY_RUNTIME (exact gpt-5.6-sol)",
+      "binary": "codex",
+      "models_exact": [
+        "gpt-5.6-sol"
+      ],
+      "auth_type": "PROVIDER_LOGIN",
+      "auth_probe": "codex login status contains 'Logged in using ChatGPT'",
+      "forbidden_env": [
+        "OPENAI_API_KEY",
+        "CODEX_API_KEY"
+      ],
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "rt.codex",
+      "config_semantics": "~/.codex/config.toml",
+      "auth_semantics": "owner ChatGPT OAuth; no API key",
+      "probe_semantics": "codex login status; app-server exact identity probe",
+      "check_ids": [
+        "codex.auth",
+        "codex.config-pinned"
+      ]
+    },
+    {
+      "id": "prov.hermes",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "name": "Hermes agent (NousResearch)",
+      "role": "Manager orchestration runtime hosting the locked Sol -> Sonnet chain",
+      "binary": "hermes",
+      "auth_type": "PROVIDER_LOGIN",
+      "auth_probe": "hermes config.yaml provider=openai-codex, default=gpt-5.6-sol, fallback_providers=[]",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "rt.hermes",
+      "config_semantics": "~/.hermes/config.yaml + agent-hooks",
+      "auth_semantics": "hermes auth add openai-codex by the owner",
+      "probe_semantics": "config lock + hermes doctor",
+      "check_ids": [
+        "hermes.auth",
+        "hermes.config"
+      ]
+    },
+    {
+      "id": "prov.xkiro",
+      "tooling_kind": "REMOTE_API",
+      "name": "xKiro HAIF (auxiliary, FREE_ONLY, non-authoritative)",
+      "role": "Bounded auxiliary analysis (classify/summarize/compare); never manager, worker or truth",
+      "auth_type": "API_KEY",
+      "secret_refs": [
+        "/var/lib/dial-control/secrets/xkiro-api.key"
+      ],
+      "auth_probe": "HAIF tenant daemon GET /health + real usage endpoint canary (never printed)",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "deploy/oracle/hermes-codex/install-haif.sh installs the repository-pinned HAIF implementation on dial-hermes-control",
+      "config_semantics": "/var/lib/dial-control/secrets/xkiro-api.key and HAIF control state; FREE_ONLY policy remains enforced",
+      "auth_semantics": "API_KEY stored mode 600/400 outside repository",
+      "probe_semantics": "HAIF tenant daemon health plus real FREE_ONLY usage/canary qualification"
+    },
+    {
+      "id": "prov.google-antigravity",
+      "tooling_kind": "CLI",
+      "name": "Google Antigravity (worker-only harness)",
+      "auth_type": "OAUTH_BROWSER",
+      "auth_probe": "agy sign-in status + DIAL_ANTIGRAVITY_CANARY_OK",
+      "kill_switch": "DIAL_ANTIGRAVITY_ENABLED",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "exact agy 1.2.0 via repository-pinned installer and platform SHA-256 pin",
+      "config_semantics": ".agents/plugins/dial-governed; DIAL_ANTIGRAVITY_ENABLED kill switch; isolated /var/lib/dial-control/identities/antigravity-worker HOME with no owner Google env inheritance",
+      "auth_semantics": "Dedicated antigravity_worker_account Google OAuth/browser sign-in stored only in isolated Antigravity runtime HOME; DIAL persists status/evidence, never token material",
+      "probe_semantics": "agy --version == 1.2.0; isolated-home agy models; per-model canary matrix; guard denial; receipt; orchestrated Unit execution"
+    },
+    {
+      "id": "prov.google-stitch",
+      "tooling_kind": "REMOTE_API",
+      "name": "Google Stitch (design provider, non-authoritative)",
+      "auth_type": "API_KEY",
+      "secret_refs": [
+        "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT (secret store, not repo)"
+      ],
+      "kill_switch": "DIAL_STITCH_ENABLED",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "@google/stitch-sdk 0.3.5 exact dependency installed by repository npm ci",
+      "config_semantics": "fixed https://stitch.googleapis.com/mcp endpoint; DIAL_STITCH_ENABLED enabled by default; secret material remains outside repo",
+      "auth_semantics": "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT injected only in tooling/server scope",
+      "probe_semantics": "authenticated Stitch tool discovery allowlist plus synthetic sandbox screen and orchestrated design Unit proof"
+    },
+    {
+      "id": "prov.google-pomelli",
+      "tooling_kind": "WEB_APPLICATION",
+      "name": "Google Pomelli (GMPC creative, human-operated web app)",
+      "auth_type": "HUMAN_APPROVAL",
+      "hosts": [],
+      "criticality": "OPTIONAL",
+      "readiness_class": "REFERENCE_ONLY",
+      "operation_mode": "HUMAN_OPERATED",
+      "note": "WEB_APPLICATION; not a development harness; no host placement; never reported as missing host software (closure item 9). Governed by DEC-031 and GMPC."
+    },
+    {
+      "id": "prov.astra",
+      "tooling_kind": "REMOTE_API",
+      "name": "Astra models / experimental Astra API",
+      "auth_type": "NONE",
+      "hosts": [],
+      "criticality": "OPTIONAL",
+      "readiness_class": "REFERENCE_ONLY",
+      "policy": "GAP-019: third-party experimental Astra API keys are not general DIAL development infrastructure. Astra available through Codex may be used only when explicitly registry-listed and available (agent-system/registries/MODEL_REGISTRY.json / HARNESS_MODEL_COMPATIBILITY.json) for bounded work where its strengths are required. Never a manager runtime or an authority by implication. Unlisted models stay BLOCKED by default_when_unlisted.",
+      "note": "no host placement, no install, no credential"
+    }
+  ],
+  "plugins": [
+    {
+      "id": "plg.claude-hooks",
+      "tooling_kind": "HOOK",
+      "name": "DIAL Claude Code hooks (.claude/settings.json)",
+      "type": "HOOK",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "REPO_LOCAL (.claude/settings.json)",
+      "config_semantics": "SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PreCompact, Stop wired to agent-system/hooks/*",
+      "auth_semantics": "NONE",
+      "probe_semantics": "tests/hooks-pre-tool-guard.test.mjs pipes tool JSON into the guard and asserts deny/allow; SessionStart injects the Oracle snapshot",
+      "health_probe": "PreToolUse guard denies destructive commands and fails closed under governed execution",
+      "check_ids": [
+        "plugin.claude-hooks"
+      ]
+    },
+    {
+      "id": "plg.claude-skills",
+      "tooling_kind": "SKILL",
+      "name": "DIAL skills (.claude/skills) and read-only subagents (.claude/agents)",
+      "type": "SKILL",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "REPO_LOCAL",
+      "config_semantics": ".claude/skills/*/SKILL.md, .claude/agents/*.md",
+      "auth_semantics": "NONE",
+      "probe_semantics": "npm run agent:skills:check",
+      "check_ids": [
+        "plugin.claude-skills"
+      ]
+    },
+    {
+      "id": "plg.hermes-hooks",
+      "tooling_kind": "HOOK",
+      "name": "Hermes pre/post turn hooks",
+      "type": "HOOK",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "config_location": "~/.hermes/agent-hooks",
+      "install_semantics": "deploy/oracle/hermes-codex/install-control-plane.sh",
+      "config_semantics": "~/.hermes/config.yaml hooks",
+      "auth_semantics": "NONE",
+      "probe_semantics": "hook files present mode 700",
+      "check_ids": [
+        "hermes.hook.dial-pre-turn-context",
+        "hermes.hook.dial-post-turn-checkpoint"
+      ]
+    },
+    {
+      "id": "plg.dial-development-governor",
+      "tooling_kind": "PLUGIN",
+      "name": "dial-development-governor plugin (DEPRECATED)",
+      "type": "PLUGIN",
+      "hosts": [],
+      "criticality": "OPTIONAL",
+      "readiness_class": "REFERENCE_ONLY",
+      "status_note": "DEPRECATED_SUPERSEDED (GAP-016): live hooks are agent-system/hooks/* wired by .claude/settings.json; unique behaviours (prompt scope check, post-tool record, health reviewer) were ported. See dial-development-governor/DEPRECATED.md."
+    }
+  ],
+  "credentials": [
+    {
+      "id": "cred.codex-chatgpt-oauth",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Hermes primary runtime",
+      "auth_type": "PROVIDER_LOGIN",
+      "location": "~/.codex (CLI keychain)",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "codex login status",
+      "expected": "Logged in using ChatGPT",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": true,
+      "owner_action": "codex login (browser) on the control host",
+      "install_semantics": "none (login state)",
+      "config_semantics": "~/.codex",
+      "auth_semantics": "PROVIDER_LOGIN browser OAuth",
+      "probe_semantics": "codex login status",
+      "check_ids": [
+        "codex.auth"
+      ]
+    },
+    {
+      "id": "cred.claude-subscription",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Hermes fallback runtime and worker harness",
+      "auth_type": "PROVIDER_LOGIN",
+      "location": "~/.claude / ~/.config/claude",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "claude auth status",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": true,
+      "owner_action": "claude login on the control host",
+      "install_semantics": "none (login state)",
+      "config_semantics": "~/.claude",
+      "auth_semantics": "PROVIDER_LOGIN subscription",
+      "probe_semantics": "claude auth status",
+      "check_ids": [
+        "claude.auth"
+      ]
+    },
+    {
+      "id": "cred.hermes-openai-codex",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Hermes provider binding",
+      "auth_type": "PROVIDER_LOGIN",
+      "location": "~/.hermes",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "hermes auth list",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": true,
+      "owner_action": "hermes auth add openai-codex",
+      "install_semantics": "none (login state)",
+      "config_semantics": "~/.hermes/config.yaml",
+      "auth_semantics": "PROVIDER_LOGIN",
+      "probe_semantics": "hermes auth list contains openai-codex",
+      "check_ids": [
+        "hermes.auth"
+      ]
+    },
+    {
+      "id": "cred.github",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Repository clone/push and PR workflow",
+      "auth_type": "SSH_KEY",
+      "location": "~/.ssh or credential helper (control host); provider-managed in containers",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "probe": "git ls-remote origin HEAD",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": false,
+      "owner_action": "install deploy key or gh auth login",
+      "install_semantics": "none",
+      "config_semantics": "git remote origin",
+      "auth_semantics": "SSH deploy key / provider OAuth",
+      "probe_semantics": "git ls-remote origin HEAD",
+      "check_ids": [
+        "github.auth-reach"
+      ]
+    },
+    {
+      "id": "cred.chat-control-token",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Operator gateway bearer",
+      "auth_type": "NON_INTERACTIVE_SECRET",
+      "location": "/var/lib/dial-control/secrets/chat-control.token",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "stat mode 600 and GET /health",
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "interactive": false,
+      "owner_action": null,
+      "install_semantics": "install-chat-control-bridge.sh generates it",
+      "config_semantics": "secrets/chat-control.token",
+      "auth_semantics": "NON_INTERACTIVE_SECRET",
+      "probe_semantics": "existence + mode 600 + GET /health",
+      "check_ids": [
+        "security.chat-control-token"
+      ]
+    },
+    {
+      "id": "cred.venue-signing-key",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Signed venue decisions (fabric \u00a714.1)",
+      "auth_type": "NON_INTERACTIVE_SECRET",
+      "location": "/var/lib/dial-control/secrets/venue-ed25519.pem",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "stat mode 600; public key present",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": false,
+      "install_semantics": "phase5-install-providers.sh generates it",
+      "config_semantics": "secrets/venue-ed25519.{pem,pub}",
+      "auth_semantics": "NON_INTERACTIVE_SECRET",
+      "probe_semantics": "existence + mode 600",
+      "check_ids": [
+        "fabric.venue-signing-key"
+      ]
+    },
+    {
+      "id": "cred.private-mcp-capability",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Private MCP binding between control host and background coordinator",
+      "auth_type": "NON_INTERACTIVE_SECRET",
+      "location": "/var/lib/dial-control/secrets/remote-mcp-capability (control); /var/lib/dial-worker/secrets/private-mcp-url (worker)",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker"
+      ],
+      "probe": "stat mode 600; coordinator state mcp.ok=true",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": false,
+      "install_semantics": "phase3-bind-private-mcp.sh / phase3-register-nodes.sh",
+      "config_semantics": "secrets files",
+      "auth_semantics": "NON_INTERACTIVE_SECRET",
+      "probe_semantics": "existence + mode 600 + coordinator health",
+      "check_ids": [
+        "security.private-mcp-capability"
+      ]
+    },
+    {
+      "id": "cred.whatsapp-pairing",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Owner self-chat pairing",
+      "auth_type": "DEVICE_CODE",
+      "location": "~/.hermes/whatsapp/session/creds.json",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "whatsapp-hermes-operator status",
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "interactive": true,
+      "owner_action": "bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground (QR scan)",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "deterministic WhatsApp pairing runtime prepares the exact lock/vendor set before device pairing",
+      "config_semantics": "~/.hermes/whatsapp/session/creds.json mode 600",
+      "auth_semantics": "owner device/QR pairing",
+      "probe_semantics": "whatsapp-hermes-operator status reports PAIRED and benign owner-channel canary succeeds"
+    },
+    {
+      "id": "cred.whatsapp-cloud",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Meta Cloud API adapter",
+      "auth_type": "API_KEY",
+      "location": "/var/lib/dial-control/secrets/whatsapp-operator.json",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "whatsapp-operator-adapter status",
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "interactive": false,
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "operator gateway creates the credential reference; no credential value is stored in repository",
+      "config_semantics": "/var/lib/dial-control/secrets/whatsapp-operator.json mode 600",
+      "auth_semantics": "Meta Cloud API application/token configuration by owner",
+      "probe_semantics": "whatsapp-operator-adapter authenticated status plus benign send/receive canary"
+    },
+    {
+      "id": "cred.xkiro",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "HAIF auxiliary",
+      "auth_type": "API_KEY",
+      "location": "/var/lib/dial-control/secrets/xkiro-api.key",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "haif qualify",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": false,
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "HAIF installer creates the secret reference outside repository",
+      "config_semantics": "/var/lib/dial-control/secrets/xkiro-api.key mode 600/400",
+      "auth_semantics": "xKiro API key",
+      "probe_semantics": "HAIF qualification proves authentication and a real FREE_ONLY route canary"
+    },
+    {
+      "id": "cred.bounded-recovery-identity",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Control host -> E2 bounded recovery (forced command)",
+      "auth_type": "SSH_KEY",
+      "location": "~/.ssh/dial-bounded-recovery (control host); authorized_keys forced command on each E2",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control",
+        "oracle-admin"
+      ],
+      "probe": "install-bounded-recovery-identity.sh --verify; verify-two-way-recovery.sh",
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "interactive": true,
+      "owner_action": "install-bounded-recovery-peer.sh on the control host, then install-bounded-recovery-identity.sh <pub> on each E2 (owner grants the capability)",
+      "install_semantics": "deploy/oracle/resource-fabric/install-bounded-recovery-*.sh",
+      "config_semantics": "forced-command authorized_keys entry",
+      "auth_semantics": "SSH_KEY bound to bounded-recovery-command.sh",
+      "probe_semantics": "verify-two-way-recovery.sh verdict PROVEN",
+      "check_ids": [
+        "recovery.two-way"
+      ]
+    },
+    {
+      "id": "cred.commander-device",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Desktop Commander outbound device session",
+      "auth_type": "DEVICE_CODE",
+      "location": "~ubuntu/.desktop-commander-device/device.json",
+      "required_mode": "600",
+      "hosts": [
+        "oracle-admin"
+      ],
+      "probe": "dial-commander-probe",
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "interactive": true,
+      "owner_action": "sudo -u ubuntu dial-commander-pair (one-time device authorization)",
+      "install_semantics": "provisioning phase 6",
+      "config_semantics": "device credential outside the checkout",
+      "auth_semantics": "DEVICE_CODE RFC 8628 + PKCE",
+      "probe_semantics": "dial-commander-probe criteria",
+      "check_ids": [
+        "desktop-commander.proof"
+      ]
+    },
+    {
+      "id": "cred.worker-ssh",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Control host -> vekl-worker diagnostics job dispatch over SSH (forced command)",
+      "auth_type": "SSH_KEY",
+      "location": "~/.ssh/dial-worker (control host); authorized_keys restricted to workers/vekl-worker-job.mjs",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker"
+      ],
+      "probe": "ssh -o BatchMode=yes vekl-worker true",
+      "criticality": "REQUIRED",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "interactive": true,
+      "owner_action": "generate dedicated key pair; install forced-command authorized_keys entry on vekl-worker",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "install_semantics": "dedicated SSH keypair and forced-command authorized_keys entry installed by canonical worker/recovery tooling",
+      "config_semantics": "control private key remains under ~/.ssh with restrictive mode; worker public key entry is forced-command bounded",
+      "auth_semantics": "SSH_KEY public-key authentication only",
+      "probe_semantics": "BatchMode control-to-worker diagnostic probe plus forced-command/refusal evidence"
+    },
+    {
+      "id": "cred.exa",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Exa local MCP research connector",
+      "auth_type": "API_KEY",
+      "location": "/var/lib/dial-control/secrets/exa-api.key",
+      "required_mode": "600",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "dial-exa-mcp live MCP canary",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "interactive": true,
+      "owner_action": "create/provide Exa API key and place it in the control-plane secret store",
+      "owner_required_ref": "DEC-033",
+      "install_semantics": "install-research-mcp.sh installs only the runtime; secret file is owner-provided outside repository",
+      "config_semantics": "mode-600 file at /var/lib/dial-control/secrets/exa-api.key",
+      "auth_semantics": "Exa API key",
+      "probe_semantics": "web_search_exa benign search succeeds without secret disclosure"
+    }
+  ],
+  "network_dependencies": [
+    {
+      "id": "net.github",
+      "tooling_kind": "NETWORK",
+      "target": "https://github.com",
+      "purpose": "repository, PR, CI",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.github-api",
+      "tooling_kind": "NETWORK",
+      "target": "https://api.github.com",
+      "purpose": "presearch corroboration, MCP",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.npm-registry",
+      "tooling_kind": "NETWORK",
+      "target": "https://registry.npmjs.org",
+      "purpose": "npm ci",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.openai",
+      "tooling_kind": "NETWORK",
+      "target": "https://chatgpt.com",
+      "purpose": "Codex ChatGPT OAuth / App Server",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.anthropic",
+      "tooling_kind": "NETWORK",
+      "target": "https://api.anthropic.com",
+      "purpose": "Claude Code subscription route",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.stackexchange",
+      "tooling_kind": "NETWORK",
+      "target": "https://api.stackexchange.com",
+      "purpose": "presearch corroboration",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities"
+    },
+    {
+      "id": "net.private-mcp",
+      "tooling_kind": "NETWORK",
+      "target": "http://10.0.0.184:9133/health",
+      "purpose": "private MCP bind on the control host (VCN only)",
+      "hosts": [
+        "vekl-worker"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+    },
+    {
+      "id": "net.cloudflare-access",
+      "tooling_kind": "NETWORK",
+      "target": null,
+      "purpose": "authenticated public MCP ingress for remote provider containers (fabric \u00a72.4/\u00a711); private VCN MCP remains separate",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "resolve_via": "DIAL_MCP_INGRESS_URL",
+      "configuration_required": true,
+      "owner_action": "configure the real Cloudflare Access ingress and export DIAL_MCP_INGRESS_URL; no placeholder URL is accepted"
+    }
+  ],
+  "health_checks": [
+    {
+      "id": "hc.repo-clean-canonical",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "repository on canonical lineage with clean tree",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "repo.canonical-state",
+        "repo.required-ancestors"
+      ]
+    },
+    {
+      "id": "hc.control-plane-fingerprint",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "current fingerprint equals the qualified fingerprint in state/external-orchestration-gate.json",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "hermes.control-plane-fingerprint",
+        "hermes.development-gate"
+      ]
+    },
+    {
+      "id": "hc.external-gate",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "state/external-orchestration-gate.json is PRODUCTION_GREEN or valid DEVELOPMENT_READY_FALLBACK",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "hermes.development-gate"
+      ]
+    },
+    {
+      "id": "hc.fabric-qualifier",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "deploy/oracle/execution-fabric/qualify-execution-fabric.sh wrote GREEN for this host",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "fabric.qualifier"
+      ]
+    },
+    {
+      "id": "hc.oracle-status-mirror",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "oracle-runtime-status mirror fresh",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "check_ids": [
+        "hermes.oracle-status-mirror"
+      ]
+    },
+    {
+      "id": "hc.verify",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "npm run verify green on current head",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "vekl.knowledge-check",
+        "vekl.vekl-unit-check",
+        "vekl.vekl-graph-check",
+        "vekl.vekl-architecture-check"
+      ]
+    },
+    {
+      "id": "hc.host-inventory",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "live host facts agree with hosts.json (no silent topology drift)",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "topology.host-inventory-drift"
+      ]
+    },
+    {
+      "id": "hc.recovery-two-way",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "verify-two-way-recovery.sh verdict PROVEN between live hosts",
+      "hosts": [
+        "dial-hermes-control",
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "check_ids": [
+        "recovery.two-way"
+      ]
+    },
+    {
+      "id": "hc.branch-protection",
+      "tooling_kind": "HEALTH_CHECK",
+      "purpose": "exported GitHub ruleset evidence matches docs/project-state/BRANCH_PROTECTION_EXPECTATION.json",
+      "hosts": [
+        "dial-hermes-control",
+        "provider-container"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "check_ids": [
+        "github.branch-protection"
+      ]
+    }
+  ],
+  "certification_gates": [
+    {
+      "id": "gate.repository-verify",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "gate.repository-verify"
+      ]
+    },
+    {
+      "id": "gate.role-guard",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "role.forbidden-workloads-refused",
+        "role.adapter-consistency"
+      ]
+    },
+    {
+      "id": "gate.provider-auth",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "claude.auth",
+        "codex.auth"
+      ]
+    },
+    {
+      "id": "gate.hermes-live-qualification",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "evidence": "deploy/oracle/hermes-codex/qualify-control-plane.sh + soaks + finalize-control-plane.sh",
+      "check_ids": [
+        "hermes.development-gate"
+      ]
+    },
+    {
+      "id": "gate.e2e-selftest",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "selftest.e2e"
+      ]
+    },
+    {
+      "id": "gate.determinism",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "selftest.determinism"
+      ]
+    },
+    {
+      "id": "gate.fault-injection",
+      "tooling_kind": "GATE",
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "selftest.fault-injection"
+      ]
+    },
+    {
+      "id": "gate.secrets-hygiene",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "security.no-tracked-secrets",
+        "security.no-tracked-secret-files",
+        "security.control-home-modes"
+      ]
+    },
+    {
+      "id": "gate.supply-chain",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "supply.lockfile",
+        "supply.pinned-installers",
+        "supply.pins-declared"
+      ]
+    },
+    {
+      "id": "gate.protected-master-pin",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "check_ids": [
+        "certification.protected-master-pin"
+      ]
+    },
+    {
+      "id": "gate.owner-control",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "check_ids": [
+        "systemd.dial-chat-control.service",
+        "systemd.dial-owner-steering.service"
+      ]
+    },
+    {
+      "id": "gate.recovery",
+      "tooling_kind": "GATE",
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "check_ids": [
+        "recovery.two-way",
+        "oracle-admin.role-separation"
+      ]
+    }
+  ]
+}
