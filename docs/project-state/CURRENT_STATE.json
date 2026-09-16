@@ -7,13 +7,15 @@
   ],
   "branch": "gpt/dial-development-system-green-closure-20260915",
   "changed_files": [
-    "deploy/oracle/hermes-codex/run-stitch-provider.sh",
-    "tests/development-bootstrap.test.mjs"
+    "agent-system/orchestration/design-candidate-admission.mjs",
+    "agent-system/orchestration/stitch-design-orchestration.mjs",
+    "tests/orchestration-adaptive-execution.test.mjs",
+    "tests/orchestration-google-capabilities.test.mjs"
   ],
-  "content_diff_sha256": "565e10bd2fb158347ac8b886db212a9ceb078b06ef0cbb8fe3715d5657b9f69f",
-  "observed_at_utc": "2026-09-16T18:50:32.711406+00:00",
+  "content_diff_sha256": "10b49de76bc94941d35ad2775ccb6151e840256412d21424c052cc7236282a34",
+  "observed_at_utc": "2026-09-16T19:26:11.529286+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "7e6ff7587b5c2a2a7c54c9b516a5c3eaffcdab77",
+  "source_parent": "7189987922bc4105081eaaa46474c4b735cf1fcb",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

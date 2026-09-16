@@ -115,14 +115,22 @@ describe('Google external capability boundaries', () => {
     expect(resolved.references[0].projection_text).toContain('clean modern composition');
     expect(resolved.references[0].projection_text).toContain('fake dashboard metrics');
     const contract = resolveStitchFeatureContractProjection({ repoDir, fdep });
-    expect(contract.features[0]).toMatchObject({ feature_id: 'SPARE-F001', outcome: 'Vehicle selection & garage', aggregate: 'VehicleProfile' });
+    expect(contract.features[0]).toMatchObject({ feature_id: 'SPARE-F001', outcome: 'Vehicle selection & garage', provider_projection_scope: 'VISUAL_SAFE_PRODUCT_SEMANTICS_ONLY' });
+    expect(contract.features[0]).not.toHaveProperty('aggregate');
+    expect(contract.features[0]).not.toHaveProperty('commands');
+    expect(contract.internal_contract_fields_withheld).toEqual(expect.arrayContaining(['aggregate','states','commands','queries','permissions','acceptance_contract']));
     const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64) }, surfaceId: 'DIAL_WEB' });
     expect(prompt).toContain('ZERO FABRICATION');
     expect(prompt).toContain('literal VINs');
     expect(prompt).toContain('WCAG compliance');
     expect(prompt).toContain('Generate exactly one composition for this surface only');
     expect(prompt).toContain('Vehicle selection & garage');
+    expect(prompt).toContain('PRIMARY_READY_COMPOSITION_ONLY');
+    expect(prompt).toContain('DIAL AEF implements and certifies the complete FDEP state matrix');
     expect(prompt).toContain('not a governance dashboard');
+    expect(prompt).not.toContain('SelectVehicle');
+    expect(prompt).not.toContain('VehicleProfile');
+    expect(prompt).not.toContain('spare.vehicle-profile');
     expect(prompt).toContain('PREMIUM_SOLUTIONS_ENVIRONMENT');
   });
 
@@ -216,15 +224,23 @@ describe('Google external capability boundaries', () => {
   repoDir,
   root,
   taskId,
-  evidence: { authority_conforms: true, required_states_present: true, change_budget_satisfied: true, donor_semantics_preserved: true, design_candidate_facts: {} },
+  evidence: { authority_conforms: true, required_states_present: false, state_coverage_mode: 'DOWNSTREAM_AEF_REQUIRED', primary_composition_present: true, change_budget_satisfied: true, donor_semantics_preserved: true, design_candidate_facts: {} },
   envelopeGuard: () => ({ ok: true, reasons: [] }),
   fdepGuard: () => ({ ok: true, reasons: [] }),
 });
     const consumed = recordStitchUnitConsumption({ repoDir, root, taskId, workerArtifactId: 'artifact-worker-1', envelopeHash });
     const visualGates = ['V1_STRUCTURAL','V2_GEOMETRY','V3_TYPOGRAPHY','V4_ASSETS','V5_PERCEPTUAL','V6_DELTA_PROVENANCE','V7_RESPONSIVE_IDENTITY','V8_AUTHORITY_SIGNOFF'].map((gate_id) => ({ gate_id, state: 'PASSED' }));
-    const certified = recordStitchScreenAcceptance({ repoDir, root, taskId, certification: { ok: true, status: 'PASSED', task_id: taskId, fdep_hash: fdepHash, content_hash: 'c'.repeat(64), accessibility: true, security: true, state_matrix_coverage: true, vrde_comparable: true, visual_gates: visualGates } });
+    const certification = {
+      ok: true, status: 'PASSED', task_id: taskId, fdep_hash: fdepHash, content_hash: 'c'.repeat(64),
+      hard_gate: { ok: true }, qualitative_gate: { state: 'PASSED' }, visual_gates: visualGates,
+      accessibility: true, performance: true, security: true, domain_truth: true, normalization: true,
+      design_lint: true, parity: true, state_matrix_coverage: true, vrde_comparable: true,
+    };
+    const certified = recordStitchScreenAcceptance({ repoDir, root, taskId, certification });
     const fallback = proveStitchOutageFallback({ repoDir, root });
     expect(accepted.repository_sha).toBe(stage.repository_sha);
+    expect(accepted.state_coverage_mode).toBe('DOWNSTREAM_AEF_REQUIRED');
+    expect(accepted.downstream_state_certification_required).toBe(true);
     expect(consumed.repository_sha).toBe(stage.repository_sha);
     expect(certified.repository_sha).toBe(stage.repository_sha);
     expect(fallback.repository_sha).toBe(stage.repository_sha);

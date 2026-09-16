@@ -99,6 +99,7 @@ export function resolveStitchFeatureContractProjection({ repoDir, fdep } = {}) {
   if (!fs.existsSync(abs)) throw new Error(`STITCH_FEATURE_CONTRACT_SOURCE_MISSING:${rel}`);
   const source = JSON.parse(fs.readFileSync(abs, 'utf8'));
   const rows = Array.isArray(source) ? source : (source.contracts || source.features || []);
+  const withheldFields = ['aggregate','states','commands','queries','events','api_contract','permissions','data_entities','relationships','acceptance_contract'];
   const projected = featureIds.map((featureId) => {
     const row = rows.find((item) => item.feature_id === featureId);
     if (!row) throw new Error(`STITCH_FEATURE_CONTRACT_UNRESOLVED:${featureId}`);
@@ -106,17 +107,18 @@ export function resolveStitchFeatureContractProjection({ repoDir, fdep } = {}) {
       feature_id: row.feature_id,
       module: row.module || null,
       outcome: row.outcome || null,
-      aggregate: row.aggregate || null,
-      states: row.states || [],
-      commands: row.commands || [],
-      queries: row.queries || [],
-      permissions: row.permissions || [],
-      data_entities: row.data_entities || [],
       surfaces: row.surfaces || [],
-      acceptance_contract: row.acceptance_contract || [],
+      provider_projection_scope: 'VISUAL_SAFE_PRODUCT_SEMANTICS_ONLY',
+      internal_contract_fields_withheld: withheldFields,
     };
   });
-  return { source_ref: rel, source_sha256: rawSha256(fs.readFileSync(abs)), features: projected, projection_hash: hashObject(projected) };
+  return {
+    source_ref: rel,
+    source_sha256: rawSha256(fs.readFileSync(abs)),
+    features: projected,
+    internal_contract_fields_withheld: withheldFields,
+    projection_hash: hashObject(projected),
+  };
 }
 
 function stitchSurfaceRows(fdep) {
@@ -138,13 +140,14 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
   const targetSurfaceId = surfaceId || stitchSurfaceRows(fdep)[0].surface_id;
   const targetSurface = stitchSurfaceRows(fdep).find((row) => row.surface_id === targetSurfaceId);
   if (!targetSurface) throw new Error(`STITCH_TARGET_SURFACE_NOT_DECLARED:${targetSurfaceId}`);
-  const targetStateRow = (fdep.surface_state_matrix?.surfaces || []).find((row) => row.surface_id === targetSurfaceId) || { surface_id: targetSurfaceId, states: [] };
   const providerDataPolicy = {
     literal_domain_values_allowed_only_when_present_verbatim_in_governed_projection: true,
     no_fabricated_vin_vehicle_model_year_part_number_price_stock_location_percentage_telemetry_error_code_identity_revision_or_metric: true,
     no_unproven_certification_audit_accessibility_or_test_claims: true,
     data_bearing_ready_state_without_authoritative_values: 'SHOW_FIELD_LABELS_AND_EMPTY_BOUND_REGIONS_ONLY',
-    required_state_variants_without_authoritative_values: 'SHOW_STATE_NAME_AND_STRUCTURAL_TREATMENT_ONLY',
+    provider_visual_scope: 'PRIMARY_READY_COMPOSITION_ONLY',
+    state_matrix_implementation_owner: 'DIAL_AEF_DOWNSTREAM',
+    internal_contract_identifiers_visible_in_ui: false,
     target_surface_id: targetSurfaceId,
   };
   const projection = {
@@ -153,7 +156,6 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     unit_revision_hash: fdep.unit_revision_hash,
     product_design_profile: fdep.product_design_profile,
     target_surface: targetSurface,
-    target_surface_states: targetStateRow,
     visual_reference_spec: fdep.visual_reference_spec,
     visual_authority_projection: visualAuthorityProjection,
     feature_contract_projection: featureContractProjection,
@@ -169,12 +171,12 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     'Return a non-authoritative design candidate only. Project Truth, FRC, Product Experience authority and the governed projections remain superior.',
     'The resolved visual-authority excerpt and feature-contract projection below are one-way projections from canonical DIAL authority. Follow them exactly.',
     'This must look like a real customer-facing DIAL experience, not a governance dashboard, debug console, state matrix, design-system specimen, test report, or engineering diagnostics screen.',
-    'Do not visibly print surface IDs, Unit IDs, hashes, governance labels, archetype names, pattern names, provider names, qualification text, zero-fabrication notices, or acceptance/test metadata in the customer UI.',
+    'Do not visibly print feature IDs, surface IDs, Unit IDs, hashes, governance labels, archetype names, pattern names, provider names, qualification text, zero-fabrication notices, or acceptance/test metadata in the customer UI.',
     'ZERO FABRICATION: do not invent or display literal VINs, vehicle makes/models/years, part or OEM numbers, prices, stock quantities, depot/location names, compatibility percentages, telemetry/latency, error codes, account identities, revision/version/date values, business metrics, or operational facts unless the exact literal value is present in the governed projection JSON.',
     'Do not claim verified business status, official channel status, WCAG compliance, audits, certification, verification, tests passed, security clearance, cache freshness, connectivity quality, delivery state, queue state, or any other achieved/runtime status unless it is explicit governed domain truth.',
-    'Use only domain nouns, actions, permissions and state names present in the feature-contract projection. Do not invent adjacent product functionality.',
-    'The primary composition is the READY customer experience. When authoritative literal data is absent, use labels and empty bound value regions only; never insert example/demo/placeholder/realistic-looking values.',
-    'Required LOADING, EMPTY, ERROR, PERMISSION_DENIED and DEGRADED treatments may appear as coherent state variants for this same surface, but must not turn the composition into a debug/state-matrix dashboard and must not invent causes, codes, timestamps, retry intervals, permission tiers, cache ages or system messages.',
+    'Use only the product-facing outcome and surface semantics present in the visual-safe feature projection. Internal aggregate, command, query, event, API, permission, lifecycle-state, audit and data-entity identifiers are deliberately withheld and must never be invented or rendered.',
+    'Generate the primary normal/READY composition only. Do not render lifecycle controls, state switchers, state matrices, loading/error/permission/degraded variants, or operational status panels. DIAL AEF implements and certifies the complete FDEP state matrix after provider-design admission.',
+    'When authoritative literal data is absent, use only non-data-bearing structure and product-facing labels implied directly by the governed outcome; never insert example/demo/placeholder/realistic-looking values.',
     'Preserve responsive/accessibility intent and the Premium Solutions Environment characteristics: clean modern composition, generous breathing room, restrained typography, sophisticated neutral surfaces, subtle depth, high confidence and human premium polish.',
     'Prefer static self-contained markup: no scripts, inline event handlers, remote assets, remote URLs, iframes, service workers or executable browser behavior. DIAL treats all provider output as non-authoritative evidence and sanitizes it before admission.',
     JSON.stringify(projection),
@@ -318,13 +320,19 @@ export function admitStitchDesignStage({
   const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
   if (!fdepCheck.ok) throw new Error(`STITCH_ADMISSION_STALE_FDEP:${fdepCheck.reasons.join(',')}`);
   if (record.task_id !== taskId || record.envelope_hash !== envelope.envelope_hash || record.candidate.frontend_design_execution_packet_hash !== fdep.content_hash) throw new Error('STITCH_CANDIDATE_BINDING_INVALID');
-  if (evidence.authority_conforms !== true || evidence.required_states_present !== true || evidence.change_budget_satisfied !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
+  const stateCoverageMode = evidence.state_coverage_mode || 'PROVIDER_REQUIRED';
+  const deferredStateCoverage = stateCoverageMode === 'DOWNSTREAM_AEF_REQUIRED';
+  if (evidence.authority_conforms !== true || evidence.change_budget_satisfied !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
+  if (!deferredStateCoverage && evidence.required_states_present !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
+  if (deferredStateCoverage && evidence.primary_composition_present !== true) throw new Error('STITCH_ADMISSION_PRIMARY_COMPOSITION_REQUIRED');
   const normalization = normalizeDesignCandidate({ repoDir, candidate: evidence.design_candidate_facts || {}, fdep, changeBudget: fdep.change_budget });
   if (normalization.status !== 'NORMALIZED') throw new Error(`STITCH_ADMISSION_NORMALIZATION_FAILED:${normalization.violations.join(',')}`);
   const admitted = admitDesignCandidate({
     candidate: record.candidate,
     authorityConforms: evidence.authority_conforms,
     requiredStatesPresent: evidence.required_states_present,
+    stateCoverageMode,
+    primaryCompositionPresent: evidence.primary_composition_present,
     donorSemanticsPreserved: evidence.donor_semantics_preserved !== false,
     designNormalizationEvidence: normalization,
     changeBudgetSatisfied: evidence.change_budget_satisfied,
@@ -341,6 +349,8 @@ export function admitStitchDesignStage({
     envelope_hash: record.envelope_hash,
     fdep_hash: fdep.content_hash,
     normalization_hash: normalization.content_hash,
+    state_coverage_mode: stateCoverageMode,
+    downstream_state_certification_required: deferredStateCoverage,
     admission_manifest: admitted.manifest,
     acceptance_evidence_hash: sha256(evidence),
     accepted_at: now(),
@@ -388,8 +398,13 @@ export function recordStitchScreenAcceptance({ repoDir, root = DEFAULT_CONTROL_H
   if (!accepted || !consumption) throw new Error('STITCH_ACCEPTANCE_REQUIRES_ADMISSION_AND_AEF_CONSUMPTION');
   if (!evidenceHashMatches(consumption) || consumption.repository_sha !== accepted.repository_sha || consumption.task_id !== taskId || consumption.candidate_hash !== accepted.candidate_hash || consumption.accepted_evidence_hash !== accepted.evidence_hash) throw new Error('STITCH_CONSUMPTION_EVIDENCE_STALE_OR_TAMPERED');
   if (certification?.ok !== true || certification?.status !== 'PASSED' || certification?.task_id !== taskId || certification?.fdep_hash !== accepted.fdep_hash) throw new Error('STITCH_SCREEN_CERTIFICATION_NOT_PASSED_OR_BOUND');
-  const required = ['accessibility', 'security', 'state_matrix_coverage', 'vrde_comparable'];
-  if (required.some((key) => certification[key] !== true) || (certification.visual_gates || []).some((gate) => !String(gate.state || '').startsWith('PASSED'))) throw new Error('STITCH_SCREEN_CERTIFICATION_REQUIRED_DIMENSIONS_MISSING');
+  const required = ['accessibility', 'performance', 'security', 'domain_truth', 'normalization', 'design_lint', 'parity', 'state_matrix_coverage', 'vrde_comparable'];
+  const visualGates = certification.visual_gates || [];
+  if (required.some((key) => certification[key] !== true)
+    || certification.hard_gate?.ok !== true
+    || certification.qualitative_gate?.state !== 'PASSED'
+    || visualGates.length === 0
+    || visualGates.some((gate) => !String(gate.state || '').startsWith('PASSED'))) throw new Error('STITCH_SCREEN_CERTIFICATION_REQUIRED_DIMENSIONS_MISSING');
   const proof = proofWithHash({
     schema_version: 1,
     provider: 'google-stitch',
