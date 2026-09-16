@@ -16,3 +16,8 @@ Google Antigravity is a required worker-only harness beneath VEKL/AEF. Exact `ag
 Operational entries previously marked `OPTIONAL_CAPABILITY` are promoted by function: development tools/providers/connectors to `CORE_DEVELOPMENT_REQUIRED`, owner channels/observability to `OWNER_CONTROL_REQUIRED`, and recovery transports to `RECOVERY_REQUIRED`. This includes xKiro HAIF, Stitch, DIAL Truth MCP, Context7, Exa, structural snapshot/Graphify advisory production, declared owner WhatsApp adapters/dashboard, xKiro credentials, worker SSH diagnostics/recovery and declared StackExchange reachability.
 
 `REFERENCE_ONLY` remains valid only for genuinely non-runtime records such as human-operated web/reference capabilities or deprecated historical entries. Pomelli remains GMPC-owned human-operated creative tooling under DEC-031; the experimental Astra API remains distinct from any Astra model that may become available through an authorised Codex subscription and model discovery.
+
+
+## Owner-activated WhatsApp exception — DEC-035
+
+The dedicated Dial Hermes Control WhatsApp channel remains canonically implemented under DEC-034, but DEC-035 makes activation owner-triggered rather than a pre-GREEN readiness requirement. An unpaired channel is OPTIONAL_CAPABILITY / unavailable, not a development GREEN blocker. When activated, all DEC-034 authentication, owner-only and live round-trip gates remain mandatory for that channel.

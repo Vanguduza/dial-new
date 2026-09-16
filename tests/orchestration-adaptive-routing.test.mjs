@@ -257,6 +257,18 @@ describe('DIAL adaptive harness x model routing (DEC-032)', () => {
     expect(shims.card_to_pair['claude-sonnet-worker']).toEqual({ harness_id: 'claude-code', model_id: 'claude-sonnet-5' });
     expect(fs.existsSync(path.join(repoDir, shims.source_registry))).toBe(true);
   });
+
+  it('models the secondary Claude Pro identity as worker-only same-provider capacity', () => {
+    const workers = JSON.parse(fs.readFileSync(path.join(repoDir, 'agent-system/registries/HARNESS_CAPABILITY_REGISTRY.json'), 'utf8')).workers;
+    const primary = workers.find((w) => w.harness_id === 'claude-sonnet-worker');
+    const secondary = workers.find((w) => w.harness_id === 'claude-sonnet-worker-secondary');
+    expect(secondary).toBeTruthy();
+    expect(secondary.manager_runtime_eligible).toBe(false);
+    expect(secondary.model.model_id).toBe('claude-sonnet-5');
+    expect(secondary.identity.independence_class).toBe(primary.identity.independence_class);
+    expect(secondary.identity.worker_identity_hash).not.toBe(primary.identity.worker_identity_hash);
+    expect(secondary.runtime_profile).toMatchObject({ profile_id: 'secondary', health_slot: 'claude_code_secondary' });
+  });
 });
 
 describe('VEKL Pass 2 model-specific projection', () => {

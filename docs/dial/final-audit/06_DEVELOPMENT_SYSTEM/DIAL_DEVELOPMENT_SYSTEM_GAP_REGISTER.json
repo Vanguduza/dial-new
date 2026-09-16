@@ -18,15 +18,15 @@
       "P2": 2
     },
     "by_status": {
-      "EXTERNAL_GATE": 4,
-      "LIVE_APPLY_REQUIRED": 2,
-      "OWNER_ACTION_REQUIRED": 7,
-      "RESOLVED_AUTHORIZATION": 1,
-      "RESOLVED_REPOSITORY": 10
+      "EXTERNAL_GATE": 3,
+      "LIVE_APPLY_REQUIRED": 3,
+      "OWNER_ACTION_REQUIRED": 4,
+      "RESOLVED_AUTHORIZATION": 3,
+      "RESOLVED_REPOSITORY": 11
     },
     "open_by_severity": {
-      "P0": 7,
-      "P1": 6
+      "P0": 6,
+      "P1": 4
     }
   },
   "gaps": [
@@ -41,12 +41,12 @@
     },
     {
       "id": "GAP-002",
-      "title": "Exact Claude fallback live capacity is currently limited",
+      "title": "Exact Claude Sonnet 5 fallback authentication and live capacity are proven",
       "severity": "P0",
-      "status": "EXTERNAL_GATE",
-      "gate": "EXTERNAL-GATE-CLAUDE-CAPACITY-001",
+      "status": "RESOLVED_AUTHORIZATION",
+      "gate": "CLAUDE-FALLBACK-LIVE-PROBE-001",
       "owner_decision_required": false,
-      "evidence": "Claude subscription authentication and exact claude-sonnet-5 identity are proven; latest VEKL symmetry fallback turn classified ACCOUNT_LIMITED after the bounded 180s canary"
+      "evidence": "2026-09-16 fresh primary Claude Max probe: exact claude-sonnet-5 resolved, identity_proven=true, response_ok=true, exit_status=0, runtime state HEALTHY. A separate bounded diagnostic also returned exactly DIAL_CLAUDE_OK with no timeout/error. Secondary Claude Pro remains independent worker-only capacity and does not replace manager authority."
     },
     {
       "id": "GAP-003",
@@ -212,30 +212,30 @@
     },
     {
       "id": "GAP-025",
-      "title": "Google Stitch provider credentials and live governed qualification remain owner-gated",
+      "title": "Google Stitch live generation is proven; governed DIAL acceptance evidence remains to be bound",
       "severity": "P0",
-      "status": "OWNER_ACTION_REQUIRED",
-      "gate": "AUTH-GATE-GOOGLE-STITCH-001",
+      "status": "LIVE_APPLY_REQUIRED",
+      "gate": "LIVE-GATE-GOOGLE-STITCH-GOVERNED-ACCEPTANCE-001",
       "owner_decision_required": false,
-      "evidence": "repository SDK, governed stage/admission/AEF consumption/screen-certification/outage fallback, secure credential writer and runtime injection wrapper are complete; owner must supply supported Stitch API-key or OAuth/access-token credentials and run the live qualification path"
+      "evidence": "2026-09-16 fresh real generation test: authenticated Stitch created a new project in 3.4 s, generated a desktop DIAL System Status screen in 112.8 s, and resolved both HTML and image artifacts. No authentication, quota, permission or generation error occurred. Remaining work is DIAL-side governed artifact admission/visual acceptance/AEF consumption evidence for full INTEGRATED maturity, not provider generation recovery."
     },
     {
       "id": "GAP-026",
-      "title": "Exa functional research MCP canary requires the owner API key",
+      "title": "Exa official remote research MCP is credential-free and live-qualified",
       "severity": "P1",
-      "status": "OWNER_ACTION_REQUIRED",
-      "gate": "AUTH-GATE-EXA-001",
+      "status": "RESOLVED_REPOSITORY",
+      "gate": "MCP-EXA-LIVE-CANARY-001",
       "owner_decision_required": false,
-      "evidence": "exa-mcp-server 3.4.1 exact runtime, secure key writer and MCP initialize/tools-list/web_search_exa functional canary are repository-ready; no Exa credential is admitted on the control host"
+      "evidence": "2026-09-16 live control-host proof: https://mcp.exa.ai/mcp initialized without credentials, exposed only web_search_exa/web_fetch_exa through the DIAL bridge, and a benign search returned official OpenAI documentation. Obsolete local exa-mcp-server/API-key dependency removed."
     },
     {
       "id": "GAP-027",
-      "title": "Dedicated Dial Hermes Control WhatsApp account requires owner pairing and live round-trip proof",
+      "title": "Dedicated Dial Hermes Control WhatsApp pairing is owner-deferred and non-blocking",
       "severity": "P1",
-      "status": "OWNER_ACTION_REQUIRED",
-      "gate": "AUTH-GATE-WHATSAPP-001",
+      "status": "RESOLVED_AUTHORIZATION",
+      "gate": "OPTIONAL-WHATSAPP-ACTIVATION",
       "owner_decision_required": false,
-      "evidence": "DEC-034 repository prerequisites are complete: dedicated bot mode, exactly-one-owner allowlist, sole protected session, no Meta Cloud development credential, durable outbound retries/message-id receipts and exact Dial Hermes Control heading. The legacy self-chat development-control route is retired. GREEN requires configuring/pairing the dedicated Hermes account and a benign owner round-trip."
+      "evidence": "2026-09-16 owner instruction (DEC-035): do not treat WhatsApp as a development GREEN blocker; owner will pair it when desired. DEC-034 implementation/security remains ready and fail-closed while unpaired."
     },
     {
       "id": "GAP-028",

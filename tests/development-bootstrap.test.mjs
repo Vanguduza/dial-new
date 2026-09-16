@@ -187,10 +187,23 @@ describe('DIAL development bootstrap closure', () => {
   it('persists external owner-gate setup as exact, non-secret bootstrap inputs', () => {
     const manifest = loadManifest();
     const byId = Object.fromEntries(manifest.credentials.map((credential) => [credential.id, credential]));
-    expect(byId['cred.stitch']).toMatchObject({ interactive: true, location: '/var/lib/dial-control/secrets/stitch.env', probe: 'dial-stitch live qualification', owner_action: 'bash deploy/oracle/hermes-codex/configure-stitch-provider.sh' });
-    expect(byId['cred.exa']).toMatchObject({ interactive: true, probe: 'dial-exa-mcp live MCP canary', owner_action: 'bash deploy/oracle/hermes-codex/configure-exa-api-key.sh' });
+    expect(byId['cred.stitch']).toMatchObject({ interactive: true, location: '/var/lib/dial-control/secrets/stitch.env', probe: 'dial-stitch authenticated health' });
+    expect(byId['cred.stitch'].owner_action).toContain('gcloud auth login --update-adc');
+    expect(byId['cred.claude-secondary-subscription']).toMatchObject({
+      interactive: true,
+      location: '/var/lib/dial-control/secrets/claude-worker-secondary',
+      required_mode: '700',
+      probe: 'claude secondary auth status',
+      criticality: 'OPTIONAL',
+      readiness_class: 'OPTIONAL_CAPABILITY',
+    });
+    expect(byId['cred.claude-secondary-subscription'].owner_action).toContain('CLAUDE_CONFIG_DIR=/var/lib/dial-control/secrets/claude-worker-secondary');
+    expect(byId['cred.exa']).toBeUndefined();
+    const exa = manifest.mcp_servers.find((server) => server.id === 'mcp.exa');
+    expect(exa).toMatchObject({ auth_type: 'NONE', transport: 'stdio', command: 'bash deploy/oracle/hermes-codex/research-mcp-runtime/run-exa.sh' });
+    expect(exa.secret_refs).toBeUndefined();
     expect(byId['cred.whatsapp-cloud']).toBeUndefined();
-    expect(byId['cred.whatsapp-pairing']).toMatchObject({ interactive: true, probe: 'whatsapp-hermes-operator status', owner_action: 'bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh && bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground' });
+    expect(byId['cred.whatsapp-pairing']).toMatchObject({ interactive: true, probe: 'whatsapp-hermes-operator status', owner_action: 'bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh && bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground', criticality: 'OPTIONAL', readiness_class: 'OPTIONAL_CAPABILITY' });
     expect(byId['cred.whatsapp-pairing'].location).toBe('~/.hermes/whatsapp/dial-hermes-control/session/creds.json');
     expect(byId['cred.whatsapp-pairing'].config_location).toBe('/var/lib/dial-control/secrets/hermes-whatsapp-control.env');
     expect(byId['cred.whatsapp-pairing'].auth_semantics).toContain('dedicated Hermes WhatsApp account');
@@ -199,7 +212,6 @@ describe('DIAL development bootstrap closure', () => {
     fs.writeFileSync(path.join(root, 'config/development-network.env'), 'DIAL_MCP_INGRESS_URL=https://mcp.dial.invalid.example.net/health\n');
     expect(resolveNetworkTarget({ resolve_via: 'DIAL_MCP_INGRESS_URL', target: null }, { controlHome: root, env: {} })).toBe('https://mcp.dial.invalid.example.net/health');
     const scripts = [
-      'deploy/oracle/hermes-codex/configure-exa-api-key.sh',
       'deploy/oracle/hermes-codex/configure-stitch-provider.sh',
       'deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh',
       'deploy/oracle/hermes-codex/run-stitch-provider.sh',
@@ -207,6 +219,9 @@ describe('DIAL development bootstrap closure', () => {
       'deploy/oracle/resource-fabric/verify-secondary-recovery-overlay.sh',
     ].map((rel) => fs.readFileSync(path.join(repoDir, rel), 'utf8')).join('\n');
     expect(scripts).toContain('chmod 600');
+    expect(scripts).toContain('STITCH_AUTH_METHOD');
+    expect(scripts).toContain('gcloud auth application-default print-access-token');
+    expect(scripts).toContain('gcloud auth login --update-adc');
     expect(scripts).toContain('SECONDARY_RECOVERY_OVERLAY_PEERS_REACHABLE');
     expect(scripts).not.toMatch(/curl[^\n|]*\|\s*(?:ba)?sh/i);
   });

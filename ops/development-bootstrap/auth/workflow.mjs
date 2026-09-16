@@ -19,13 +19,13 @@ export const AUTH_STATES = Object.freeze({ CERTIFIED: 'CERTIFIED', HUMAN_LOGIN_R
 const PROBES = {
   'codex login status': { cmd: 'codex', args: ['login', 'status'], expect: /Logged in using ChatGPT/ },
   'claude auth status': { cmd: 'claude', args: ['auth', 'status'], expect: null },
+  'claude secondary auth status': { cmd: 'claude', args: ['auth', 'status'], expect: null, env: { CLAUDE_CONFIG_DIR: '/var/lib/dial-control/secrets/claude-worker-secondary' } },
   'hermes auth list': { cmd: 'hermes', args: ['auth', 'list'], expect: /openai-codex/ },
   'git ls-remote origin HEAD': { cmd: 'git', args: ['ls-remote', '--heads', 'origin', 'master'], expect: null, cwd: 'repo' },
   'whatsapp-hermes-operator status': { cmd: 'node', args: ['agent-system/orchestration/whatsapp-hermes-operator.mjs', 'status'], expect: null, cwd: 'repo' },
   'dial-commander-probe': { cmd: '/usr/local/bin/dial-commander-probe', args: [], expect: /SESSION_VALID/ },
   'install-bounded-recovery-identity.sh --verify; verify-two-way-recovery.sh': { cmd: 'bash', args: ['deploy/oracle/resource-fabric/install-bounded-recovery-identity.sh', '--verify'], expect: null, cwd: 'repo' },
-  'dial-exa-mcp live MCP canary': { cmd: 'node', args: ['ops/development-bootstrap/mcp/probe-exa.mjs'], expect: /\"ok\":true/, cwd: 'repo' },
-  'dial-stitch live qualification': { cmd: 'bash', args: ['deploy/oracle/hermes-codex/run-stitch-provider.sh', 'qualify'], expect: /\"status\":\s*\"INTEGRATED\"/, cwd: 'repo' },
+  'dial-stitch authenticated health': { cmd: 'bash', args: ['deploy/oracle/hermes-codex/run-stitch-provider.sh', 'auth-check'], expect: /\"state\":\s*\"HEALTHY\"[\s\S]*\"authenticated\":\s*true/, cwd: 'repo' },
   'verify bounded recovery channel': { cmd: 'bash', args: ['deploy/oracle/resource-fabric/verify-two-way-recovery.sh', '--target', 'oracle-admin', '--json'], expect: /\"verdict\"\s*:\s*\"(?:PROVEN|PARTIAL)\"/, cwd: 'repo', env: { DIAL_FABRIC_HOST_ID: 'dial-hermes-control' } },
   'ssh BatchMode vekl-worker true': { cmd: 'ssh', args: ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=5', 'vekl-worker', 'true'], expect: null },
 };

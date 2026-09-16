@@ -380,6 +380,46 @@ describe('Google external capability boundaries', () => {
     expect(readJson(`execution/tasks/${taskId}/envelope.json`, null, root).state).toBe('VERIFYING');
   });
 
+  it('executes the secondary Claude Pro pool with its isolated profile and no manager authority', async () => {
+    const root = tempRoot();
+    const taskId = 'task-claude-secondary-selected';
+    const packetId = 'packet-claude-secondary-selected';
+    const worktreePath = repoDir;
+    writeJsonAtomic(`execution/tasks/${taskId}/plan.json`, {
+      routing: { selected_workers: [{
+        harness_id: 'claude-sonnet-worker-secondary',
+        worker_identity_hash: 'claude-sonnet-worker-secondary-pro-current',
+        model: { model_id: 'claude-sonnet-5' },
+        runtime_profile: {
+          profile_id: 'secondary', health_slot: 'claude_code_secondary',
+          config_dir_ref: 'DIAL_CLAUDE_SECONDARY_CONFIG_DIR',
+          default_config_dir: '/var/lib/dial-control/secrets/claude-worker-secondary',
+        },
+      }] },
+    }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, {
+      task_id: taskId, packet_id: packetId, envelope_hash: 'env-secondary',
+      allowed_paths: ['packages/example/**'], denied_paths: ['agent-system/canon/**'], state: 'READY',
+    }, root);
+    let dispatch = null;
+    const result = await executeSelectedHcxWorker({
+      repoDir, root, taskId, harnessId: 'claude-sonnet-worker-secondary', instruction: 'Make the bounded test change.',
+      worktreePath, leaseId: 'lease-secondary', fencingToken: 12,
+      env: { ...process.env, DIAL_CLAUDE_SECONDARY_CONFIG_DIR: '/tmp/isolated-secondary-claude' },
+      admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
+      leaseGuard: () => ({ lease_id: 'lease-secondary', task_id: taskId, worker_id: 'claude-sonnet-worker-secondary-pro-current', worktree_path: worktreePath, write_paths: ['packages/example/**'], denied_paths: ['agent-system/canon/**'], fencing_token: 12 }),
+      activationLoader: () => ({ activation_id: 'act-secondary' }), deliveryBuilder: () => ({ text: 'bounded VEKL worker delivery' }),
+      claudeRunner: async (args) => { dispatch = args; return { provider: 'anthropic-claude-code', result_hash: 'secondary-result', response: 'done', usage: null }; },
+      artifactPersister: () => ({ artifact_id: 'ART-SECONDARY', artifact_hash: 'artifact-secondary' }),
+    });
+    expect(result.ok).toBe(true);
+    expect(dispatch.profileId).toBe('secondary');
+    expect(dispatch.runtimeId).toBe('claude_code_secondary');
+    expect(dispatch.configDir).toBe('/tmp/isolated-secondary-claude');
+    expect(dispatch.prompt).toContain('DIAL HCX CLAUDE WORKER');
+    expect(dispatch.prompt).not.toContain('HERMES FALLBACK RUNTIME');
+  });
+
   it('feeds Antigravity provider failure into model health and revokes the failed lease', async () => {
     const root = tempRoot();
     const taskId = 'task-antigravity-capacity';

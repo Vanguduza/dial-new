@@ -55,14 +55,21 @@ export function certifyMcp({ role, manifest, repoDir }) {
         checks.push(check({ id: `mcp.${m.name}.capability-probe`, domain, title: `${m.name} answers tools/list and dial_oracle_status over stdio`, status: parsed?.ok ? STATUS.PASS : STATUS.FAIL, criticality: m.criticality, evidence: { command: probe.command, tools: parsed?.tools || null, available: parsed?.available ?? null, fresh: parsed?.fresh ?? null, output: parsed ? undefined : probe.output.slice(0, 400) }, remediation: 'node agent-system/orchestration/claude-oracle-status-mcp.mjs must start and answer JSON-RPC' }));
       }
       if (m.name === 'exa' && role === 'dial-hermes-control') {
-        const keyFile = Array.isArray(m.secret_refs) ? m.secret_refs[0] : null;
-        if (!keyFile || !fs.existsSync(keyFile)) {
-          checks.push(check({ id: 'mcp.exa.functional-canary', domain, title: 'Exa MCP credential and live web_search_exa canary', status: STATUS.OWNER_ACTION_REQUIRED, criticality: m.criticality, readiness_class: m.readiness_class, evidence: { credential_file: keyFile, credential_present: false, value: 'never read' }, gate: 'AUTH-GATE-EXA-001', remediation: 'bash deploy/oracle/hermes-codex/configure-exa-api-key.sh' }));
-        } else {
-          const probe = run('node', [path.join(path.dirname(new URL(import.meta.url).pathname), 'probe-exa.mjs')], { timeoutMs: 45000, cwd: repoDir });
-          let parsed = null; try { parsed = JSON.parse(probe.output.split('\n').filter(Boolean).pop()); } catch {}
-          checks.push(check({ id: 'mcp.exa.functional-canary', domain, title: 'Exa MCP credential and live web_search_exa canary', status: probe.ok && parsed?.ok === true ? STATUS.PASS : STATUS.FAIL, criticality: m.criticality, readiness_class: m.readiness_class, evidence: { credential_file: keyFile, credential_present: true, value: 'never read', command: probe.command, tools: parsed?.tools || null, functional_canary: parsed?.functional_canary === true, error: parsed?.error || null }, remediation: 're-run configure-exa-api-key.sh if necessary, then node ops/development-bootstrap/mcp/probe-exa.mjs' }));
-        }
+        const probe = run('node', [path.join(path.dirname(new URL(import.meta.url).pathname), 'probe-exa.mjs')], { timeoutMs: 60000, cwd: repoDir });
+        let parsed = null; try { parsed = JSON.parse(probe.output.split('\n').filter(Boolean).pop()); } catch {}
+        checks.push(check({
+          id: 'mcp.exa.functional-canary', domain,
+          title: 'Exa official remote MCP live web_search_exa canary',
+          status: probe.ok && parsed?.ok === true && parsed?.authentication === 'NONE' ? STATUS.PASS : STATUS.FAIL,
+          criticality: m.criticality, readiness_class: m.readiness_class,
+          evidence: {
+            endpoint: parsed?.endpoint || 'https://mcp.exa.ai/mcp', authentication: parsed?.authentication || null,
+            command: probe.command, tools: parsed?.tools || null, server_name: parsed?.server_name || null,
+            server_version: parsed?.server_version || null, functional_canary: parsed?.functional_canary === true,
+            error: parsed?.error || null,
+          },
+          remediation: 'verify outbound HTTPS to https://mcp.exa.ai/mcp and rerun node ops/development-bootstrap/mcp/probe-exa.mjs',
+        }));
       }
     } else if (m.transport === 'http' && m.endpoint) {
       const health = `${m.endpoint.replace(/\/$/, '')}/health`;

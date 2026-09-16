@@ -152,25 +152,30 @@
       "package": "@upstash/context7-mcp",
       "integrity": "sha512-fUARTIZGVKzlzQKDhKUg4aIQ3yEU/12STdfxJDDnLMSN7yyHiPvNHI05iFwxkv3vC8G76Wp27MwK6Jucl/C5pA==",
       "script": "deploy/oracle/hermes-codex/install-research-mcp.sh",
-      "script_sha256": "03b28cfb581294a38f7fc905ca4426d470f0f86e43e8415b7bd9de30dcd2d158",
+      "script_sha256": "8b28f5986af040306c35d49323bf24a435ad785230713212d632dd450551d443",
       "lockfile": "deploy/oracle/hermes-codex/research-mcp-runtime/package-lock.json",
-      "lockfile_sha256": "4ab7fb742c04e0f1b1d623d4cddc7a63126f67d9ae679c91e1997c9b953e0347",
+      "lockfile_sha256": "6ed2beffc4cd066c74b6419f5bfbbf34bcb53437f34ab1c2699880feefc52cbb",
       "wrapper": "deploy/oracle/hermes-codex/research-mcp-runtime/run-context7.sh",
       "wrapper_sha256": "deeef78ac5278d830d5c86471d5d2c2387bd065d6a02b93a3bc3d2ed8f333874",
       "pin_state": "PINNED"
     },
-    "exa-mcp": {
+    "exa-remote-bridge": {
       "method": "REPO_PINNED_SCRIPT",
-      "version": "3.4.1",
-      "package": "exa-mcp-server",
-      "integrity": "sha512-X6g4J9LXLJZ0uK52G8KE/KCaxpaD+wkEHzjkoDTYkC+afxfm5xqWgih3i0hgTfyufl6PggkLeR0L6rDAxW6ETg==",
+      "version": "1",
+      "endpoint": "https://mcp.exa.ai/mcp",
       "script": "deploy/oracle/hermes-codex/install-research-mcp.sh",
-      "script_sha256": "03b28cfb581294a38f7fc905ca4426d470f0f86e43e8415b7bd9de30dcd2d158",
-      "lockfile": "deploy/oracle/hermes-codex/research-mcp-runtime/package-lock.json",
-      "lockfile_sha256": "4ab7fb742c04e0f1b1d623d4cddc7a63126f67d9ae679c91e1997c9b953e0347",
+      "script_sha256": "8b28f5986af040306c35d49323bf24a435ad785230713212d632dd450551d443",
       "wrapper": "deploy/oracle/hermes-codex/research-mcp-runtime/run-exa.sh",
-      "wrapper_sha256": "cc5d4f847d0bbd2f61c3a8c6f551295885f83c790c801a9ca36e4b6044982bf4",
-      "pin_state": "PINNED"
+      "wrapper_sha256": "5e8edce77042c29235b562f5e1c5213e3fd9f66b1a822102909b624d6e239abc",
+      "bridge": "deploy/oracle/hermes-codex/research-mcp-runtime/exa-remote-stdio-bridge.mjs",
+      "bridge_sha256": "13a71b4e57bcc4d2999102b02702b3eabaee208c7331de6f649d1aaf4988b34d",
+      "allowed_tools": [
+        "web_search_exa",
+        "web_fetch_exa"
+      ],
+      "authentication": "NONE",
+      "pin_state": "PINNED",
+      "evidence": "Repository-owned bridge v1; fixed official Exa MCP endpoint; live initialize/toolset/search canary observed 2026-09-16. Remote provider version is observed, not locally pinned."
     }
   }
 }

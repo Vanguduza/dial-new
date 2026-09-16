@@ -28,6 +28,12 @@ export const STITCH_ALLOWED_TOOLS = Object.freeze([
   'list_design_systems',
   'apply_design_system',
 ]);
+export const STITCH_KNOWN_PROVIDER_TOOLS = Object.freeze([
+  ...STITCH_ALLOWED_TOOLS,
+  'create_design_system_from_design_md',
+  'upload_design_md',
+  'delete_project',
+]);
 
 function envBool(name, fallback = false, env = process.env) {
   const value = env[name];
@@ -84,8 +90,8 @@ export async function stitchHealth({ env = process.env, clientFactory = createSt
     client = created.client;
     const { tools } = await client.listTools();
     const names = (tools || []).map((tool) => tool.name).sort();
-    const unexpected = names.filter((name) => !STITCH_ALLOWED_TOOLS.includes(name));
-    const missing = STITCH_ALLOWED_TOOLS.filter((name) => !names.includes(name));
+    const unexpected = names.filter((name) => !STITCH_KNOWN_PROVIDER_TOOLS.includes(name));
+    const missing = STITCH_KNOWN_PROVIDER_TOOLS.filter((name) => !names.includes(name));
     return {
       state: unexpected.length ? 'QUARANTINED' : 'HEALTHY',
       authenticated: true,
@@ -286,6 +292,7 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
       mcp_url: STITCH_MCP_URL,
       arbitrary_host_override_allowed: false,
       tool_allowlist: STITCH_ALLOWED_TOOLS,
+      known_provider_tools: STITCH_KNOWN_PROVIDER_TOOLS,
     },
     credentials,
     health,

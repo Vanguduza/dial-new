@@ -1,1 +1,1 @@
-{"name":"dial-research-mcp-runtime","private":true,"type":"module","dependencies":{"@upstash/context7-mcp":"4.1.1","exa-mcp-server":"3.4.1"}}
+{"name":"dial-research-mcp-runtime","private":true,"type":"module","dependencies":{"@upstash/context7-mcp":"4.1.1"}}

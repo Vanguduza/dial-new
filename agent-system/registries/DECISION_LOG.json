@@ -811,5 +811,24 @@
       "tests/orchestration-operator-gateway.test.mjs"
     ],
     "reopens_if": "the product owner explicitly replaces the dedicated Hermes WhatsApp owner-control transport with an equal-or-stronger mechanism preserving direct owner-to-Hermes chat, owner-only authentication, non-dropping steering intake, durable delivery evidence, typed/no-shell control, safe-boundary serialization and separation from customer/business WhatsApp"
+  },
+  {
+    "decision_id": "DEC-035",
+    "decided_on": "2026-09-16",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT / OWNER CONTROL / WHATSAPP READINESS",
+    "title": "Dedicated WhatsApp owner control is owner-activated and does not gate DIAL development GREEN",
+    "decision": "Supersede only the pre-GREEN readiness requirement for the dedicated Dial Hermes Control WhatsApp channel. The DEC-034 transport, security, owner-only allowlist, session isolation, durable delivery and no-self-chat requirements remain canonical whenever WhatsApp is enabled, but pairing/activation is deferred until the product owner chooses to use the channel. Claude/Codex and other approved owner-control consoles are sufficient for development-system readiness and GREEN certification while WhatsApp is unpaired.",
+    "consequence": "An unpaired dedicated Dial Hermes Control WhatsApp account is an unavailable optional owner channel, not an AUTH/OWNER_CONTROL blocker and not a reason to withhold DIAL DEVELOPMENT SYSTEM GREEN. The implementation must remain installation-ready and fail closed while unpaired. Once the owner activates WhatsApp, its own pairing, owner-only authentication and live round-trip qualification must pass before that channel is represented as READY.",
+    "supersedes": "DEC-033 readiness requirement and any DEC-034/closure wording that made WhatsApp pairing a prerequisite for GREEN; DEC-034 transport/security semantics remain locked when the channel is enabled",
+    "record": "agent-system/canon/PROJECT_TRUTH.md; ops/development-bootstrap/manifest.json; docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
+    "enforced_by": [
+      "ops/development-bootstrap/manifest.json",
+      "ops/development-bootstrap/verify/certify.mjs",
+      "deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh",
+      "deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh"
+    ],
+    "reopens_if": "the product owner explicitly makes WhatsApp a mandatory pre-GREEN owner-control channel again"
   }
 ]

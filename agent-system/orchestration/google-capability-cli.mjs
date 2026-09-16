@@ -7,6 +7,7 @@ import {
 } from './providers/google/antigravity-adapter.mjs';
 import {
   qualifyStitch,
+  stitchHealth,
 } from './providers/google/stitch-adapter.mjs';
 import {
   ingestPomelliExport,
@@ -34,6 +35,9 @@ if (command === 'status') {
     if (!ids[name]) throw new Error(`unknown provider ${name}`);
     return [name, readCapabilityEvidence(root, ids[name]) || { status: 'NO_EVIDENCE' }];
   })));
+} else if (command === 'health') {
+  if (provider === 'stitch') print(await stitchHealth());
+  else throw new Error('health currently supports stitch');
 } else if (command === 'qualify') {
   if (provider === 'antigravity') {
     print(await qualifyAntigravity({

@@ -344,19 +344,18 @@
       "id": "rt.exa-mcp",
       "tooling_kind": "MCP_SERVICE",
       "binary": "dial-exa-mcp",
-      "exact_version": "3.4.1",
       "install_method": "REPO_PINNED_SCRIPT",
-      "pin_ref": "exa-mcp",
       "hosts": [
         "dial-hermes-control"
       ],
       "criticality": "REQUIRED",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "owner_required_ref": "DEC-033",
-      "install_semantics": "deploy/oracle/hermes-codex/install-research-mcp.sh installs exa-mcp-server 3.4.1 from the integrity-complete dedicated lockfile",
-      "config_semantics": "~/.local/bin/dial-exa-mcp -> locked runtime; only web_search_exa/web_fetch_exa enabled by default",
-      "auth_semantics": "EXA_API_KEY supplied from /var/lib/dial-control/secrets/exa-api.key mode 600 or secure environment; never argv/repository",
-      "probe_semantics": "exact version; stdio initialize; tools/list; real web_search_exa canary"
+      "install_semantics": "install-research-mcp.sh installs a repository-owned stdio bridge that proxies only the fixed official Exa MCP endpoint https://mcp.exa.ai/mcp; no Exa npm runtime is installed",
+      "config_semantics": "~/.local/bin/dial-exa-mcp -> repository-owned stdio bridge -> fixed https://mcp.exa.ai/mcp; only web_search_exa/web_fetch_exa admitted",
+      "auth_semantics": "NONE: Exa official MCP endpoint currently requires no API key; DIAL stores no Exa credential",
+      "probe_semantics": "stdio initialize -> exact two-tool allowlist -> real web_search_exa canary against official remote MCP",
+      "pin_ref": "exa-remote-bridge"
     }
   ],
   "services": [
@@ -919,17 +918,14 @@
         "dial-hermes-control",
         "provider-container"
       ],
-      "auth_type": "API_KEY",
-      "secret_refs": [
-        "/var/lib/dial-control/secrets/exa-api.key"
-      ],
-      "health_probe": "web_search_exa live canary",
+      "auth_type": "NONE",
+      "health_probe": "official remote MCP initialize/tools-list/web_search_exa live canary",
       "criticality": "REQUIRED",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
-      "install_semantics": "locked local exa-mcp-server 3.4.1 runtime installed by install-research-mcp.sh on control; provider surfaces consume repository MCP registration or equivalent enrolled connector",
-      "config_semantics": ".mcp.json + .claude/settings.json; fixed local stdio wrapper; default tool allowlist web_search_exa/web_fetch_exa",
-      "auth_semantics": "EXA_API_KEY mode-600 server/tooling secret outside repo",
-      "probe_semantics": "stdio initialize -> tools/list -> web_search_exa benign canary",
+      "install_semantics": "repository-owned stdio bridge installed by install-research-mcp.sh; bridge connects only to https://mcp.exa.ai/mcp",
+      "config_semantics": ".mcp.json fixed stdio wrapper; bridge endpoint is not runtime-overridable; only web_search_exa/web_fetch_exa are exposed",
+      "auth_semantics": "NONE: official Exa MCP endpoint is credential-free; no Exa secret is admitted or stored",
+      "probe_semantics": "stdio initialize -> tools/list must expose exactly web_search_exa/web_fetch_exa -> benign web_search_exa live canary",
       "owner": "DIAL",
       "security_classification": "PUBLIC_ENGINEERING_RESEARCH",
       "owner_required_ref": "DEC-033"
@@ -1064,9 +1060,9 @@
       "id": "prov.google-stitch",
       "tooling_kind": "REMOTE_API",
       "name": "Google Stitch (design provider, non-authoritative)",
-      "auth_type": "API_KEY",
+      "auth_type": "OAUTH_BROWSER",
       "secret_refs": [
-        "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT (secret store, not repo)"
+        "preferred: gcloud user ADC in isolated CLOUDSDK_CONFIG; alternatives: STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT"
       ],
       "kill_switch": "DIAL_STITCH_ENABLED",
       "hosts": [
@@ -1076,8 +1072,8 @@
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
       "install_semantics": "@google/stitch-sdk 0.3.5 exact dependency installed by repository npm ci",
-      "config_semantics": "fixed https://stitch.googleapis.com/mcp endpoint; DIAL_STITCH_ENABLED enabled by default; secret material remains outside repo",
-      "auth_semantics": "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT injected only in tooling/server scope",
+      "config_semantics": "fixed https://stitch.googleapis.com/mcp endpoint; DIAL_STITCH_ENABLED enabled by default; ADC credentials remain outside repo and bearer tokens are minted in-memory per invocation",
+      "auth_semantics": "preferred STITCH_AUTH_METHOD=adc + GOOGLE_CLOUD_PROJECT uses gcloud ADC to mint a fresh bearer token per invocation; API key and explicit access-token modes remain supported",
       "probe_semantics": "authenticated Stitch tool discovery allowlist plus synthetic sandbox screen and orchestrated design Unit proof"
     },
     {
@@ -1101,6 +1097,31 @@
       "readiness_class": "REFERENCE_ONLY",
       "policy": "GAP-019: third-party experimental Astra API keys are not general DIAL development infrastructure. Astra available through Codex may be used only when explicitly registry-listed and available (agent-system/registries/MODEL_REGISTRY.json / HARNESS_MODEL_COMPATIBILITY.json) for bounded work where its strengths are required. Never a manager runtime or an authority by implication. Unlisted models stay BLOCKED by default_when_unlisted.",
       "note": "no host placement, no install, no credential"
+    },
+    {
+      "id": "prov.claude-secondary-worker",
+      "tooling_kind": "PROVIDER_RUNTIME",
+      "name": "Claude Code secondary Pro worker pool",
+      "role": "HCX worker harness only; never Hermes manager/fallback authority",
+      "binary": "claude",
+      "models_exact": [
+        "claude-sonnet-5"
+      ],
+      "auth_type": "PROVIDER_LOGIN",
+      "auth_probe": "claude secondary auth status",
+      "forbidden_env": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "OPTIONAL",
+      "readiness_class": "OPTIONAL_CAPABILITY",
+      "canon_non_blocking_ref": "DEC-032 additional HCX worker capacity; manager runtime policy remains unchanged",
+      "install_semantics": "reuses exact-qualified rt.claude-code binary",
+      "config_semantics": "isolated CLAUDE_CONFIG_DIR=/var/lib/dial-control/secrets/claude-worker-secondary; no credential sharing with primary Max account",
+      "auth_semantics": "independent owner Claude Pro subscription login; worker-only identity",
+      "probe_semantics": "isolated claude auth status plus exact claude-sonnet-5 canary recorded as claude_code_secondary runtime health"
     }
   ],
   "plugins": [
@@ -1366,20 +1387,21 @@
         "dial-hermes-control"
       ],
       "probe": "whatsapp-hermes-operator status",
-      "criticality": "REQUIRED",
-      "readiness_class": "OWNER_CONTROL_REQUIRED",
+      "criticality": "OPTIONAL",
+      "readiness_class": "OPTIONAL_CAPABILITY",
       "interactive": true,
       "owner_action": "bash deploy/oracle/hermes-codex/configure-hermes-whatsapp-control.sh && bash deploy/oracle/hermes-codex/pair-hermes-whatsapp.sh --foreground",
-      "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
+      "owner_required_ref": "DEC-035 / latest owner instruction",
       "install_semantics": "deterministic pinned Hermes/Baileys pairing runtime prepares the sole Dial Hermes Control bot session; no legacy self-chat development-control path is enrolled or consulted",
       "config_semantics": "mode-600 /var/lib/dial-control/secrets/hermes-whatsapp-control.env contains the single owner allowlist; the only development-control WhatsApp session is ~/.hermes/whatsapp/dial-hermes-control/session",
       "auth_semantics": "dedicated Hermes WhatsApp account/device QR pairing plus exactly one allowlisted owner identity; no Meta Cloud API credential in the development control path",
-      "probe_semantics": "whatsapp-hermes-operator status reports READY, mode=bot, paired=true, owner_count=1 and bridge=connected; live round-trip receipt is required before GREEN",
+      "probe_semantics": "when owner activates the channel, whatsapp-hermes-operator status must report READY, mode=bot, paired=true, owner_count=1 and bridge=connected; unpaired state is optional/deferred and does not block GREEN",
       "check_ids": [
         "whatsapp.channel",
         "systemd.dial-hermes-whatsapp-operator.service"
       ],
-      "config_location": "/var/lib/dial-control/secrets/hermes-whatsapp-control.env"
+      "config_location": "/var/lib/dial-control/secrets/hermes-whatsapp-control.env",
+      "canon_non_blocking_ref": "DEC-035"
     },
     {
       "id": "cred.xkiro",
@@ -1468,46 +1490,46 @@
       "probe_semantics": "BatchMode `ssh vekl-worker true` succeeds through the forced-command/private-VCN path; worker-side refusal is certified separately"
     },
     {
-      "id": "cred.exa",
-      "tooling_kind": "CREDENTIAL",
-      "purpose": "Exa local MCP research connector",
-      "auth_type": "API_KEY",
-      "location": "/var/lib/dial-control/secrets/exa-api.key",
-      "required_mode": "600",
-      "hosts": [
-        "dial-hermes-control"
-      ],
-      "probe": "dial-exa-mcp live MCP canary",
-      "criticality": "REQUIRED",
-      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
-      "interactive": true,
-      "owner_action": "bash deploy/oracle/hermes-codex/configure-exa-api-key.sh",
-      "owner_required_ref": "DEC-033",
-      "install_semantics": "install-research-mcp.sh installs only the runtime; secret file is owner-provided outside repository",
-      "config_semantics": "mode-600 file at /var/lib/dial-control/secrets/exa-api.key",
-      "auth_semantics": "Exa API key",
-      "probe_semantics": "web_search_exa benign search succeeds without secret disclosure"
-    },
-    {
       "id": "cred.stitch",
       "tooling_kind": "CREDENTIAL",
       "purpose": "Google Stitch governed design provider",
-      "auth_type": "API_KEY",
+      "auth_type": "OAUTH_BROWSER",
       "location": "/var/lib/dial-control/secrets/stitch.env",
       "required_mode": "600",
       "hosts": [
         "dial-hermes-control"
       ],
-      "probe": "dial-stitch live qualification",
+      "probe": "dial-stitch authenticated health",
       "criticality": "MANDATORY",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "interactive": true,
-      "owner_action": "bash deploy/oracle/hermes-codex/configure-stitch-provider.sh",
+      "owner_action": "bash deploy/oracle/hermes-codex/configure-stitch-provider.sh; for preferred adc mode authenticate the selected Google account with gcloud auth login --update-adc",
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
-      "install_semantics": "repository SDK/runtime is already exact-installed; owner only supplies supported provider credential through the secure configuration script",
-      "config_semantics": "mode-600 /var/lib/dial-control/secrets/stitch.env loaded only by run-stitch-provider.sh",
-      "auth_semantics": "STITCH_API_KEY or STITCH_ACCESS_TOKEN + GOOGLE_CLOUD_PROJECT; secret never enters repository or argv",
-      "probe_semantics": "run-stitch-provider.sh qualify must return INTEGRATED after live tool discovery, synthetic sandbox and governed proof chain"
+      "install_semantics": "repository SDK/runtime is exact-installed; official gcloud CLI is required only for preferred refreshable ADC mode",
+      "config_semantics": "mode-600 stitch.env selects adc/api-key/access-token; adc uses an isolated CLOUDSDK_CONFIG directory and never persists minted bearer tokens",
+      "auth_semantics": "preferred Google user ADC + GOOGLE_CLOUD_PROJECT; alternatives STITCH_API_KEY or explicit STITCH_ACCESS_TOKEN + project; secrets never enter repository or argv",
+      "probe_semantics": "run-stitch-provider.sh auth-check must prove authenticated HEALTHY MCP discovery; full Stitch integration remains a separate development readiness gate"
+    },
+    {
+      "id": "cred.claude-secondary-subscription",
+      "tooling_kind": "CREDENTIAL",
+      "purpose": "Secondary independent Claude Pro HCX worker pool",
+      "auth_type": "PROVIDER_LOGIN",
+      "location": "/var/lib/dial-control/secrets/claude-worker-secondary",
+      "required_mode": "700",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "probe": "claude secondary auth status",
+      "criticality": "OPTIONAL",
+      "readiness_class": "OPTIONAL_CAPABILITY",
+      "canon_non_blocking_ref": "DEC-032 additional HCX worker capacity; not required for manager continuity",
+      "interactive": true,
+      "owner_action": "CLAUDE_CONFIG_DIR=/var/lib/dial-control/secrets/claude-worker-secondary claude auth login --claudeai",
+      "install_semantics": "none; isolated login state for existing exact-qualified Claude Code binary",
+      "config_semantics": "mode-700 isolated Claude config directory outside git",
+      "auth_semantics": "independent Claude Pro subscription; never reused as primary Max credential",
+      "probe_semantics": "claude auth status under the isolated CLAUDE_CONFIG_DIR; exact Sonnet 5 worker canary is a separate qualification step"
     }
   ],
   "network_dependencies": [

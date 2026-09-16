@@ -13,6 +13,7 @@ import { loadSkillActivationForPacket } from './skill-activation-store.mjs';
 import { buildWorkerKnowledgeDelivery } from './knowledge-worker-delivery.mjs';
 import { persistExecutionArtifact } from './execution-blackboard.mjs';
 import { antigravityHeadless, recordAntigravityDispatchOutcome } from './providers/google/antigravity-adapter.mjs';
+import { runClaudeHcxWorker } from './claude-worker-runner.mjs';
 import { assertModelAvailableForDispatch } from './model-availability-discovery.mjs';
 import { loadRoutingRegistries } from './adaptive-routing-core.mjs';
 import { releaseCompute, settleCompute } from './compute-governor.mjs';
@@ -40,6 +41,7 @@ export async function executeSelectedHcxWorker({
   activationLoader = loadSkillActivationForPacket,
   deliveryBuilder = buildWorkerKnowledgeDelivery,
   antigravityRunner = antigravityHeadless,
+  claudeRunner = runClaudeHcxWorker,
   artifactPersister = persistExecutionArtifact,
   modelAvailabilityGuard = assertModelAvailableForDispatch,
   leaseCloser = closeWorktreeLease,
@@ -55,7 +57,9 @@ export async function executeSelectedHcxWorker({
   if (!selected) throw new Error('HCX_WORKER_NOT_SELECTED');
   const selectedModelId = selected.model?.model_id === 'provider-managed' && harnessId === 'antigravity-worker' ? 'antigravity-native' : selected.model?.model_id;
   if (selectedModelId) modelAvailabilityGuard({ modelRegistry: loadRoutingRegistries(repoDir).models, modelId: selectedModelId, health: readJson('state/model-availability.json', {}, root) });
-  if (harnessId !== 'antigravity-worker') throw new Error(`HCX_WORKER_EXECUTOR_UNSUPPORTED:${harnessId}`);
+  const isAntigravity = harnessId === 'antigravity-worker';
+  const isClaude = harnessId === 'claude-sonnet-worker' || harnessId === 'claude-sonnet-worker-secondary';
+  if (!isAntigravity && !isClaude) throw new Error(`HCX_WORKER_EXECUTOR_UNSUPPORTED:${harnessId}`);
   admissionGuard({ repoDir, root, packetId: envelope.packet_id, boundary: 'HCX_WORKER_START' });
   const current = envelopeChecker({ repoDir, root, envelope });
   if (!current.ok) throw new Error(`HCX_EXECUTION_ENVELOPE_STALE:${current.reasons.join(',')}`);
@@ -98,7 +102,7 @@ export async function executeSelectedHcxWorker({
     'Use it only as derived design input. Project Truth, FRC, Product Experience/FDEP, task envelope and acceptance gates remain superior.',
   ].join('\n') : null;
   const boundedPrompt = [
-    'DIAL HCX ANTIGRAVITY WORKER',
+    isAntigravity ? 'DIAL HCX ANTIGRAVITY WORKER' : 'DIAL HCX CLAUDE WORKER',
     `Task: ${taskId}`,
     `Envelope: ${envelope.envelope_hash}`,
     `Allowed write paths: ${(envelope.allowed_paths || []).join(', ') || 'none'}`,
@@ -114,12 +118,23 @@ export async function executeSelectedHcxWorker({
     event: 'HCX_WORKER_STARTED', task_id: taskId, harness_id: harnessId, worker_id: identity, at: now(),
   }, root);
   try {
-    const result = await antigravityRunner({
-      prompt: boundedPrompt,
-      repoDir: worktreePath,
-      model: selectedModelId || null,
-      env: workerEnv,
-    });
+    const result = isAntigravity
+      ? await antigravityRunner({
+          prompt: boundedPrompt,
+          repoDir: worktreePath,
+          model: selectedModelId || null,
+          env: workerEnv,
+        })
+      : await claudeRunner({
+          prompt: boundedPrompt,
+          repoDir: worktreePath,
+          env: workerEnv,
+          profileId: selected.runtime_profile?.profile_id || 'primary',
+          runtimeId: selected.runtime_profile?.health_slot || 'claude_code',
+          configDir: selected.runtime_profile?.profile_id === 'secondary'
+            ? (env[selected.runtime_profile?.config_dir_ref || 'DIAL_CLAUDE_SECONDARY_CONFIG_DIR'] || selected.runtime_profile?.default_config_dir || '/var/lib/dial-control/secrets/claude-worker-secondary')
+            : null,
+        });
     admissionGuard({ repoDir, root, packetId: envelope.packet_id, boundary: 'HCX_WORKER_RESULT_ADMISSION' });
     const afterEnvelope = readJson(`execution/tasks/${taskId}/envelope.json`, null, root);
     const afterCurrent = envelopeChecker({ repoDir, root, envelope: afterEnvelope });

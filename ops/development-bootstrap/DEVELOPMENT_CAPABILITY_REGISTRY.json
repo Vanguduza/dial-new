@@ -353,12 +353,12 @@
       "type": "REMOTE_API",
       "install_method": "npm @google/stitch-sdk@0.3.5 (exact)",
       "version_policy": "exact",
-      "config_location": "env STITCH_API_KEY/STITCH_ACCESS_TOKEN outside repo",
-      "auth_type": "API_KEY",
+      "config_location": "mode-600 /var/lib/dial-control/secrets/stitch.env plus isolated gcloud ADC config outside repo",
+      "auth_type": "OAUTH_BROWSER",
       "secret_refs": [
-        "secret store"
+        "gcloud user ADC (preferred) or Stitch API key/access token in secret store"
       ],
-      "health_probe": "stitchHealth tool discovery",
+      "health_probe": "run-stitch-provider.sh qualify: fresh ADC bearer token when selected, Stitch tool discovery, synthetic sandbox, governed proof chain",
       "dependencies": [],
       "consumers": [
         "design-provider-router"
@@ -367,7 +367,7 @@
       "failure_impact": "development GREEN blocked for specialist design capability readiness",
       "owner": "owner",
       "status": "AUTH_REQUIRED",
-      "status_evidence": "DEC-033 makes Stitch a required specialist design capability. Repository adapter exists; local credential/live qualification/orchestrated design-tool use are GREEN gates.",
+      "status_evidence": "DEC-033 makes Stitch a required specialist design capability. Preferred auth is same-owner Google user ADC with per-invocation token minting; API key/access-token compatibility remains. Live qualification/orchestrated design-tool use are GREEN gates.",
       "owner_required_ref": "DEC-033"
     },
     {
@@ -633,21 +633,19 @@
     },
     {
       "id": "cap.exa",
-      "name": "Exa local MCP",
+      "name": "Exa official remote MCP through DIAL stdio bridge",
       "authority": "TOOLING_USE_POLICY / DEC-033",
       "purpose": "external engineering research discovery/corroboration",
       "required": true,
       "required_by": "DEC-033",
       "host": "dial-hermes-control + provider execution surfaces",
       "type": "MCP_SERVICE",
-      "install_method": "locked exa-mcp-server@3.4.1 via install-research-mcp.sh",
-      "version_policy": "exact 3.4.1 + lockfile integrity",
-      "config_location": ".mcp.json / ~/.local/lib/dial-research-mcp-runtime",
-      "auth_type": "API_KEY",
-      "secret_refs": [
-        "/var/lib/dial-control/secrets/exa-api.key 0600"
-      ],
-      "health_probe": "web_search_exa benign live canary",
+      "install_method": "repository-owned stdio bridge; provider-managed remote endpoint",
+      "version_policy": "DIAL bridge source is repository/manifest bound; remote provider version is observed at live qualification and tool surface is fail-closed",
+      "config_location": ".mcp.json / deploy/oracle/hermes-codex/research-mcp-runtime/exa-remote-stdio-bridge.mjs",
+      "auth_type": "NONE",
+      "secret_refs": [],
+      "health_probe": "official https://mcp.exa.ai/mcp initialize/tools-list + benign web_search_exa canary",
       "dependencies": [],
       "consumers": [
         "VEKL research",
@@ -655,10 +653,38 @@
         "Codex"
       ],
       "fallback": "web/native provider research does not count as Exa readiness",
-      "failure_impact": "fresh development GREEN blocked until key-backed connector is live and selection-ready",
+      "failure_impact": "fresh development GREEN blocked if official Exa MCP is unreachable or its admitted two-tool surface/canary fails",
       "owner": "DIAL",
-      "status": "AUTH_REQUIRED",
-      "status_evidence": "Exact local runtime is repository-pinned; Exa requires owner-provided API key for functional stdio search."
+      "status": "INTEGRATED",
+      "status_evidence": "2026-09-16 live control-host proof: official Exa MCP initialized without credentials, exposed web_search_exa/web_fetch_exa, and returned official OpenAI documentation in a benign search canary."
+    },
+    {
+      "id": "cap.claude-secondary-worker",
+      "name": "Secondary Claude Pro HCX worker pool",
+      "authority": "DEC-032 + owner instruction 2026-09-16",
+      "purpose": "additional bounded Claude worker capacity only",
+      "required": false,
+      "host": "dial-hermes-control",
+      "type": "PROVIDER_RUNTIME",
+      "install_method": "reuses exact-qualified Claude Code runtime",
+      "version_policy": "same Claude Code version as primary runtime",
+      "config_location": "/var/lib/dial-control/secrets/claude-worker-secondary",
+      "auth_type": "PROVIDER_LOGIN",
+      "secret_refs": [
+        "isolated secondary Claude subscription session"
+      ],
+      "health_probe": "claude auth status + exact claude-sonnet-5 profile probe",
+      "dependencies": [
+        "cap.claude-runtime"
+      ],
+      "consumers": [
+        "HCX adaptive execution workers"
+      ],
+      "fallback": "primary Claude worker and Codex/Antigravity worker pools",
+      "failure_impact": "reduced parallel worker capacity only; manager continuity unchanged",
+      "owner": "owner",
+      "status": "INTEGRATED",
+      "status_evidence": "2026-09-16 isolated Claude Pro profile authenticated through claude.ai; exact claude-sonnet-5 canary resolved identity and response successfully; runtime-health claude_code_secondary=HEALTHY. Worker-only, non-manager capacity."
     }
   ],
   "observed_at_utc": "2026-09-15T08:55:00Z",
