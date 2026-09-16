@@ -42,6 +42,7 @@ import {
   proveStitchOutageFallback,
   recordStitchScreenAcceptance,
   recordStitchUnitConsumption,
+  resolveStitchFeatureContractProjection,
   resolveStitchVisualAuthorityProjection,
 } from '../agent-system/orchestration/stitch-design-orchestration.mjs';
 import { selectDesignStrategy } from '../agent-system/orchestration/design-provider-router.mjs';
@@ -104,7 +105,7 @@ describe('Google external capability boundaries', () => {
     const fdep = {
       task_id: 'prompt-test', unit_lineage_id: 'DU-LIN-test', unit_revision_hash: 'rev-test',
       product_design_profile: { profile: { profile_id: 'dial.spare' } },
-      surface_manifest: { surfaces: [{ surface_id: 'DIAL_WEB' }, { surface_id: 'DIAL_CONSUMER' }, { surface_id: 'WHATSAPP' }] },
+      surface_manifest: { feature_ids: ['SPARE-F001'], surfaces: [{ surface_id: 'DIAL_WEB' }, { surface_id: 'DIAL_CONSUMER' }, { surface_id: 'WHATSAPP' }] },
       surface_state_matrix: { surfaces: [] },
       visual_reference_spec: { references: [{ reference_id: 'PREMIUM_SOLUTIONS_ENVIRONMENT', authority_level: 'CANONICAL_REFERENCE', required_fidelity: 'AUTHORITY_DEFINED' }] },
       presentation_decision: { execution_mode: 'ASSIMILATE' }, change_budget: {}, authority_constraints: { visual_authority_superior: true },
@@ -113,12 +114,46 @@ describe('Google external capability boundaries', () => {
     expect(resolved.references[0]).toMatchObject({ reference_id: 'PREMIUM_SOLUTIONS_ENVIRONMENT', status: 'RESOLVED_CANONICAL_PROJECTION' });
     expect(resolved.references[0].projection_text).toContain('clean modern composition');
     expect(resolved.references[0].projection_text).toContain('fake dashboard metrics');
-    const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64) } });
+    const contract = resolveStitchFeatureContractProjection({ repoDir, fdep });
+    expect(contract.features[0]).toMatchObject({ feature_id: 'SPARE-F001', outcome: 'Vehicle selection & garage', aggregate: 'VehicleProfile' });
+    const prompt = buildStitchDesignPrompt({ repoDir, fdep, brief: { content_hash: 'b'.repeat(64) }, surfaceId: 'DIAL_WEB' });
     expect(prompt).toContain('ZERO FABRICATION');
     expect(prompt).toContain('literal VINs');
-    expect(prompt).toContain('Do not claim WCAG compliance');
-    expect(prompt).toContain('a navigation label alone does not count as surface coverage');
+    expect(prompt).toContain('WCAG compliance');
+    expect(prompt).toContain('Generate exactly one composition for this surface only');
+    expect(prompt).toContain('Vehicle selection & garage');
+    expect(prompt).toContain('not a governance dashboard');
     expect(prompt).toContain('PREMIUM_SOLUTIONS_ENVIRONMENT');
+  });
+
+  it('generates one governed Stitch composition per declared surface and binds them into one candidate', async () => {
+    const root = tempRoot();
+    const taskId = 'stitch-multi-surface-task';
+    const envelopeHash = 'e'.repeat(64);
+    writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, { task_id: taskId, envelope_hash: envelopeHash, state: 'READY' }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, {
+      applicable: true, task_id: taskId, unit_lineage_id: 'unit-stitch-multi', unit_revision_hash: 'revision-stitch-multi', content_hash: 'f'.repeat(64),
+      provenance: { frontend_projection_hash: 'p'.repeat(64) }, product_design_profile: { content_hash: '1'.repeat(64) },
+      surface_manifest: { content_hash: '2'.repeat(64), feature_ids: ['SPARE-F001'], surfaces: [{ surface_id: 'DIAL_WEB' }, { surface_id: 'DIAL_CONSUMER' }, { surface_id: 'WHATSAPP' }] },
+      surface_state_matrix: { content_hash: '3'.repeat(64), surfaces: ['DIAL_WEB','DIAL_CONSUMER','WHATSAPP'].map((surface_id) => ({ surface_id, states: [{ state_id: 'READY', requirement: 'REQUIRED' }, { state_id: 'ERROR', requirement: 'REQUIRED' }] })) },
+      visual_reference_spec: { content_hash: '4'.repeat(64), references: [{ reference_id: 'PREMIUM_SOLUTIONS_ENVIRONMENT', authority_level: 'CANONICAL_REFERENCE', required_fidelity: 'AUTHORITY_DEFINED' }] },
+      presentation_decision: { content_hash: '5'.repeat(64), execution_mode: 'SYNTHESIZE' }, visual_render_determinism_envelope: { content_hash: '6'.repeat(64) },
+      change_budget: { content_hash: '7'.repeat(64), allowed_structural_delta: 'MINIMUM_NECESSARY', new_token_ids: [], new_component_ids: [], new_pattern_ids: [] }, authority_constraints: { project_truth_superior: true, provider_output_authoritative: false },
+    }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/design-brief-bundle.json`, { task_id: taskId, content_hash: 'b'.repeat(64), provenance: { projection_hash: 'p'.repeat(64) } }, root);
+    const calls = [];
+    const adapter = { health: async () => ({ state: 'HEALTHY', authenticated: true }), generate: async (input) => { calls.push(input); const id = `screen-${calls.length}`; return { screen_id: id, html_url: `https://storage.googleapis.com/dial/${id}.html`, image_url: `https://storage.googleapis.com/dial/${id}.png`, response_hash: id }; } };
+    const artifactDownloader = async (url) => url.endsWith('.html') ? { body: Buffer.from('<main><h1>DIAL</h1><div>READY</div><div>ERROR</div></main>'), content_type: 'text/html' } : { body: Buffer.from([1,2,3,4]), content_type: 'image/png' };
+    const stage = await executeStitchDesignStage({ repoDir, root, taskId, adapter, artifactDownloader, envelopeGuard: () => ({ ok: true, reasons: [] }), fdepGuard: () => ({ ok: true, reasons: [] }) });
+    expect(calls).toHaveLength(3);
+    expect(calls.map((call) => call.device_type)).toEqual(['DESKTOP','MOBILE','MOBILE']);
+    expect(calls[0].prompt).toContain('TARGET_SURFACE=DIAL_WEB');
+    expect(calls[1].prompt).toContain('TARGET_SURFACE=DIAL_CONSUMER');
+    expect(calls[2].prompt).toContain('TARGET_SURFACE=WHATSAPP');
+    expect(stage.surface_count).toBe(3);
+    expect(stage.candidate.screen_refs).toHaveLength(3);
+    expect(Object.keys(stage.artifacts.surfaces).sort()).toEqual(['DIAL_CONSUMER','DIAL_WEB','WHATSAPP']);
+    fs.rmSync(root, { recursive: true, force: true });
   });
 
   it('converts active Stitch prototype scaffolding into inert evidence without weakening raw quarantine', () => {
@@ -203,11 +238,13 @@ describe('Google external capability boundaries', () => {
       sdk: { createProject: async () => ({ projectId: 'project-q', generate: async () => ({ screenId: 'screen-q', getHtml: async () => 'https://storage.googleapis.com/dial/q.html', getImage: async () => 'https://storage.googleapis.com/dial/q.png' }) }) },
       credentials: { configured: true },
     });
-    const fetchImpl = async (url) => new Response(String(url).endsWith('.html') ? '<main><h1>Qualification</h1><button disabled>Ready</button></main>' : Buffer.from([9, 8, 7]), { status: 200, headers: { 'content-type': String(url).endsWith('.html') ? 'text/html' : 'image/png' } });
+    const fetchImpl = async (url) => new Response(String(url).endsWith('.html') ? '<main onload="boot()"><h1>Qualification</h1><img src="https://lh3.googleusercontent.com/q"><script>boot()</script><button disabled>Ready</button></main>' : Buffer.from([9, 8, 7]), { status: 200, headers: { 'content-type': String(url).endsWith('.html') ? 'text/html' : 'image/png' } });
     const qualified = await qualifyStitch({ root, repoDir, env: { DIAL_STITCH_ENABLED: 'true', DIAL_STITCH_LIVE_TESTS_ENABLED: 'true', STITCH_API_KEY: 'x'.repeat(20) }, clientFactory, fetchImpl });
     expect(qualified.status).toBe('INTEGRATED');
     expect(qualified.definition_of_done.passed).toBe(true);
     expect(qualified.orchestrated_use.passed).toBe(true);
+    expect(qualified.live_qualification.inert_evidence_transformed).toBe(true);
+    expect(qualified.live_qualification.raw_quarantine_violations).toEqual(expect.arrayContaining(['SCRIPT','EVENT_HANDLER','REMOTE_URL']));
 
     const stale = { ...proofs.visual_acceptance.evidence, repository_sha: '0'.repeat(40) };
     writeJsonAtomic('operations/external-capabilities/design-stitch/proofs/real-screen-acceptance.json', stale, root);

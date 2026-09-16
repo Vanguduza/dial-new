@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import {
   buildDesignCandidateManifest,
   quarantineDesignArtifact,
+  sanitizeDesignArtifactForEvidence,
 } from '../../design-candidate-admission.mjs';
 import {
   now,
@@ -259,19 +260,23 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
       });
       const htmlArtifact = await downloadStitchArtifact(generated.html_url, { fetchImpl, maxBytes: 2_000_000 });
       const imageArtifact = await downloadStitchArtifact(generated.image_url, { fetchImpl, maxBytes: 8_000_000 });
-      const html = Buffer.from(htmlArtifact.body).toString('utf8');
-      const validation = validateStitchArtifact({ html });
-      quarantineProof = validation.ok;
+      const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+      const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+      const validation = sanitization.ok ? validateStitchArtifact({ html: sanitization.content }) : { ok: false, quarantine: sanitization.sanitized_quarantine, manifest: null };
+      quarantineProof = sanitization.ok && validation.ok;
       manifestProof = Boolean(validation.manifest?.candidate_hash);
       liveQualification = {
-        passed: validation.ok,
+        passed: quarantineProof && manifestProof && Boolean(generated.screen_id) && imageArtifact.byte_length > 0,
         project_id_hash: sha256(generated.project_id),
         screen_id_hash: sha256(generated.screen_id),
         html_sha256: htmlArtifact.sha256,
         image_sha256: imageArtifact.sha256,
+        raw_quarantine_violations: sanitization.raw_quarantine?.violations || [],
+        inert_evidence_transformed: sanitization.transformed === true,
+        inert_evidence_hash: sha256(sanitization.content || ''),
         candidate_hash: validation.manifest?.candidate_hash || null,
       };
-      status = validation.ok ? 'LIVE_QUALIFIED' : 'QUARANTINED';
+      status = liveQualification.passed ? 'LIVE_QUALIFIED' : 'QUARANTINED';
     } catch (error) {
       liveQualification = { passed: false, failure_class: error?.category || classifyStitchError(error) };
       status = liveQualification.failure_class === 'AUTH_REQUIRED' ? 'AUTH_REQUIRED' : 'DEGRADED';
