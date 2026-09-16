@@ -222,6 +222,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(scripts).toContain('STITCH_AUTH_METHOD');
     expect(scripts).toContain('gcloud auth application-default print-access-token');
     expect(scripts).toContain('gcloud auth login --update-adc');
+    expect(scripts).toContain('export DIAL_CONTROL_HOME="$CONTROL_HOME"');
+    expect(scripts).toContain('export DIAL_REPO_DIR="$REPO_DIR"');
     expect(scripts).toContain('SECONDARY_RECOVERY_OVERLAY_PEERS_REACHABLE');
     expect(scripts).not.toMatch(/curl[^\n|]*\|\s*(?:ba)?sh/i);
   });

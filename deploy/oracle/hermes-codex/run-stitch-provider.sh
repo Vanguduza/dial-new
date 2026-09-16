@@ -3,6 +3,8 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$HERE/../../.." && pwd)}"
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
+export DIAL_CONTROL_HOME="$CONTROL_HOME"
+export DIAL_REPO_DIR="$REPO_DIR"
 ENV_FILE="${DIAL_STITCH_ENV_FILE:-$CONTROL_HOME/secrets/stitch.env}"
 [[ -r "$ENV_FILE" ]] || { echo "Stitch credential environment is missing: $ENV_FILE" >&2; exit 77; }
 # shellcheck disable=SC1090
