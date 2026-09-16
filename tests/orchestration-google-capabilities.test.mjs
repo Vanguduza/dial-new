@@ -39,6 +39,7 @@ import {
   admitStitchDesignStage,
   buildStitchDesignPrompt,
   executeStitchDesignStage,
+  materializeAcceptedStitchDesignEvidence,
   proveStitchOutageFallback,
   recordStitchScreenAcceptance,
   recordStitchUnitConsumption,
@@ -217,7 +218,7 @@ describe('Google external capability boundaries', () => {
     };
     const artifactDownloader = async (url) => url.endsWith('.html')
       ? { body: Buffer.from('<main><h1>DIAL</h1><button disabled>Ready</button></main>'), content_type: 'text/html' }
-      : { body: Buffer.from([1, 2, 3, 4]), content_type: 'image/png' };
+      : { body: Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 1]), content_type: 'image/png' };
     const stage = await executeStitchDesignStage({ repoDir, root, taskId, adapter, artifactDownloader, envelopeGuard: () => ({ ok: true, reasons: [] }), fdepGuard: () => ({ ok: true, reasons: [] }) });
     expect(stage.route.selected).toBe('STITCH_NEW_DESIGN_THEN_BUILD');
     expect(stage.repository_sha).toMatch(/^[0-9a-f]{40}$/);
@@ -229,7 +230,16 @@ describe('Google external capability boundaries', () => {
   envelopeGuard: () => ({ ok: true, reasons: [] }),
   fdepGuard: () => ({ ok: true, reasons: [] }),
 });
+    expect(() => recordStitchUnitConsumption({ repoDir, root, taskId, workerArtifactId: 'artifact-worker-1', envelopeHash })).toThrow('STITCH_UNIT_CONSUMPTION_REQUIRES_MATERIALIZED_EVIDENCE');
+    const materialized = materializeAcceptedStitchDesignEvidence({ repoDir, root, taskId });
+    expect(materialized.status).toBe('MATERIALIZED_READ_ONLY');
+    expect(materialized.raw_provider_artifacts_materialized).toBe(false);
+    expect(materialized.files.map((file) => file.kind).sort()).toEqual(['INERT_HTML', 'PNG']);
+    expect(materialized.files.every((file) => fs.existsSync(path.join(root, file.rel)))).toBe(true);
+    expect(materialized.files.every((file) => (fs.statSync(path.join(root, file.rel)).mode & 0o777) === 0o400)).toBe(true);
+    expect(materialized.files.some((file) => file.rel.includes('raw'))).toBe(false);
     const consumed = recordStitchUnitConsumption({ repoDir, root, taskId, workerArtifactId: 'artifact-worker-1', envelopeHash });
+    expect(consumed.materialization_evidence_hash).toBe(materialized.evidence_hash);
     const visualGates = ['V1_STRUCTURAL','V2_GEOMETRY','V3_TYPOGRAPHY','V4_ASSETS','V5_PERCEPTUAL','V6_DELTA_PROVENANCE','V7_RESPONSIVE_IDENTITY','V8_AUTHORITY_SIGNOFF'].map((gate_id) => ({ gate_id, state: 'PASSED' }));
     const certification = {
       ok: true, status: 'PASSED', task_id: taskId, fdep_hash: fdepHash, content_hash: 'c'.repeat(64),
@@ -478,6 +488,45 @@ describe('Google external capability boundaries', () => {
     expect(seenEnv.DIAL_WORKTREE_LEASE_ID).toBe('lease-1');
     expect(seenEnv.DIAL_FENCING_TOKEN).toBe('9');
     expect(readJson(`execution/tasks/${taskId}/envelope.json`, null, root).state).toBe('VERIFYING');
+  });
+
+  it('materializes accepted Stitch evidence before HCX can record worker consumption', async () => {
+    const root = tempRoot();
+    const taskId = 'task-stitch-materialized-worker';
+    const packetId = 'packet-stitch-materialized-worker';
+    const worktreePath = repoDir;
+    writeJsonAtomic(`execution/tasks/${taskId}/plan.json`, {
+      routing: { selected_workers: [{ harness_id: 'antigravity-worker', worker_identity_hash: 'antigravity-worker-current' }] },
+    }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, {
+      task_id: taskId, packet_id: packetId, envelope_hash: 'env-stitch-materialized',
+      allowed_paths: ['.dial-qualification/stitch-canary/**'], denied_paths: ['docs/project-state/**'], state: 'READY',
+    }, root);
+    let dispatchPrompt = null;
+    let materializeCalls = 0;
+    let consumptionArgs = null;
+    const result = await executeSelectedHcxWorker({
+      repoDir, root, taskId, harnessId: 'antigravity-worker', instruction: 'Implement the bounded qualification screen.',
+      worktreePath, leaseId: 'lease-stitch-materialized', fencingToken: 13,
+      admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
+      leaseGuard: () => ({ lease_id: 'lease-stitch-materialized', task_id: taskId, worker_id: 'antigravity-worker-current', worktree_path: worktreePath, write_paths: ['.dial-qualification/stitch-canary/**'], denied_paths: ['docs/project-state/**'], fencing_token: 13 }),
+      activationLoader: () => ({ activation_id: 'act-stitch-materialized' }), deliveryBuilder: () => ({ text: 'bounded VEKL worker delivery' }),
+      stitchAcceptedLoader: () => ({ candidate_hash: 'candidate-stitch', evidence_hash: 'accepted-stitch', fdep_hash: 'fdep-stitch' }),
+      stitchEvidenceMaterializer: () => { materializeCalls += 1; return { evidence_hash: 'materialized-stitch', files: [
+        { kind: 'INERT_HTML', surface_id: 'DIAL_WEB', rel: `execution/tasks/${taskId}/stitch-worker-evidence/dial_web.html` },
+        { kind: 'PNG', surface_id: 'DIAL_WEB', rel: `execution/tasks/${taskId}/stitch-worker-evidence/dial_web.png` },
+      ] }; },
+      stitchConsumptionRecorder: (args) => { consumptionArgs = args; return { evidence_hash: 'consumed-stitch', candidate_hash: 'candidate-stitch', materialization_evidence_hash: 'materialized-stitch' }; },
+      antigravityRunner: async ({ prompt }) => { dispatchPrompt = prompt; return { provider: 'google-antigravity', result_hash: 'result-stitch', response: 'implemented', usage: null, conversation_id: 'c-stitch' }; },
+      artifactPersister: () => ({ artifact_id: 'ART-STITCH', artifact_hash: 'artifact-stitch' }),
+    });
+    expect(materializeCalls).toBe(1);
+    expect(dispatchPrompt).toContain('materialized read-only');
+    expect(dispatchPrompt).toContain(path.join(root, `execution/tasks/${taskId}/stitch-worker-evidence/dial_web.html`));
+    expect(dispatchPrompt).toContain(path.join(root, `execution/tasks/${taskId}/stitch-worker-evidence/dial_web.png`));
+    expect(dispatchPrompt).toContain('Raw provider HTML is not available');
+    expect(consumptionArgs).toMatchObject({ taskId, workerArtifactId: 'ART-STITCH', envelopeHash: 'env-stitch-materialized' });
+    expect(result.stitch_design_consumption).toEqual({ evidence_hash: 'consumed-stitch', candidate_hash: 'candidate-stitch', materialization_evidence_hash: 'materialized-stitch' });
   });
 
   it('executes the secondary Claude Pro pool with its isolated profile and no manager authority', async () => {

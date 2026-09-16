@@ -34,6 +34,8 @@ function candidateRel(taskId) { return `execution/tasks/${taskId}/stitch-design-
 function acceptedRel(taskId) { return `execution/tasks/${taskId}/stitch-design-accepted.json`; }
 function consumptionRel(taskId) { return `execution/tasks/${taskId}/stitch-unit-consumption.json`; }
 function certificationRel(taskId) { return `execution/tasks/${taskId}/stitch-screen-certification.json`; }
+function workerEvidenceRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence.json`; }
+function workerEvidenceDirRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence`; }
 function proofWithHash(value) { return { ...value, evidence_hash: sha256({ ...value, evidence_hash: undefined }) }; }
 function evidenceHashMatches(value) { return Boolean(value?.evidence_hash) && value.evidence_hash === sha256({ ...value, evidence_hash: undefined }); }
 function rawSha256(body) { return crypto.createHash('sha256').update(Buffer.from(body)).digest('hex'); }
@@ -372,10 +374,70 @@ export function loadCurrentStitchAcceptedDesign({ repoDir, root = DEFAULT_CONTRO
   return accepted;
 }
 
+function writeReadOnlyEvidenceFile(abs, body) {
+  fs.mkdirSync(path.dirname(abs), { recursive: true, mode: 0o700 });
+  const tmp = `${abs}.tmp-${process.pid}-${crypto.randomUUID()}`;
+  fs.writeFileSync(tmp, body, { mode: 0o400 });
+  fs.chmodSync(tmp, 0o400);
+  fs.renameSync(tmp, abs);
+  fs.chmodSync(abs, 0o400);
+}
+
+export function materializeAcceptedStitchDesignEvidence({ repoDir, root = DEFAULT_CONTROL_HOME, taskId } = {}) {
+  const accepted = loadCurrentStitchAcceptedDesign({ repoDir, root, taskId });
+  const record = readJson(candidateRel(taskId), null, root);
+  if (!accepted || !record?.candidate || !evidenceHashMatches(record)) throw new Error('STITCH_WORKER_EVIDENCE_SOURCE_MISSING_OR_TAMPERED');
+  if (record.repository_sha !== accepted.repository_sha || record.task_id !== taskId || record.candidate.candidate_hash !== accepted.candidate_hash) throw new Error('STITCH_WORKER_EVIDENCE_BINDING_INVALID');
+  const surfaces = record.artifacts?.surfaces || (record.artifacts?.surface_id ? { [record.artifacts.surface_id]: record.artifacts } : {});
+  const entries = Object.entries(surfaces).sort(([a], [b]) => a.localeCompare(b));
+  if (!entries.length) throw new Error('STITCH_WORKER_EVIDENCE_ARTIFACTS_MISSING');
+  const dirRel = workerEvidenceDirRel(taskId);
+  const dirAbs = resolveControlPath(dirRel, root);
+  fs.rmSync(dirAbs, { recursive: true, force: true });
+  fs.mkdirSync(dirAbs, { recursive: true, mode: 0o700 });
+  const files = [];
+  for (const [surfaceId, surface] of entries) {
+    const htmlMeta = surface?.html;
+    const imageMeta = surface?.image;
+    if (htmlMeta?.inert_evidence !== true || !htmlMeta?.rel || !htmlMeta?.sha256 || !imageMeta?.rel || !imageMeta?.sha256) throw new Error(`STITCH_WORKER_EVIDENCE_INCOMPLETE:${surfaceId}`);
+    const htmlBody = fs.readFileSync(resolveControlPath(htmlMeta.rel, root));
+    const imageBody = fs.readFileSync(resolveControlPath(imageMeta.rel, root));
+    if (rawSha256(htmlBody) !== htmlMeta.sha256 || rawSha256(imageBody) !== imageMeta.sha256) throw new Error(`STITCH_WORKER_EVIDENCE_HASH_MISMATCH:${surfaceId}`);
+    const inertCheck = quarantineDesignArtifact({ content: htmlBody.toString('utf8'), mimeType: 'text/html' });
+    if (!inertCheck.ok) throw new Error(`STITCH_WORKER_EVIDENCE_NOT_INERT:${surfaceId}:${inertCheck.violations.join(',')}`);
+    if (imageMeta.content_type !== 'image/png' || imageBody.length < 8 || imageBody.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') throw new Error(`STITCH_WORKER_EVIDENCE_IMAGE_INVALID:${surfaceId}`);
+    const slug = String(surfaceId).toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
+    const htmlRel = `${dirRel}/${slug}.html`;
+    const imageRel = `${dirRel}/${slug}.png`;
+    writeReadOnlyEvidenceFile(resolveControlPath(htmlRel, root), htmlBody);
+    writeReadOnlyEvidenceFile(resolveControlPath(imageRel, root), imageBody);
+    files.push({ surface_id: surfaceId, kind: 'INERT_HTML', rel: htmlRel, sha256: htmlMeta.sha256, bytes: htmlBody.length, content_type: 'text/html' });
+    files.push({ surface_id: surfaceId, kind: 'PNG', rel: imageRel, sha256: imageMeta.sha256, bytes: imageBody.length, content_type: 'image/png' });
+  }
+  const proof = proofWithHash({
+    schema_version: 1,
+    provider: 'google-stitch',
+    repository_sha: accepted.repository_sha,
+    status: 'MATERIALIZED_READ_ONLY',
+    task_id: taskId,
+    candidate_hash: accepted.candidate_hash,
+    accepted_evidence_hash: accepted.evidence_hash,
+    files,
+    raw_provider_artifacts_materialized: false,
+    materialized_at: now(),
+  });
+  writeJsonAtomic(workerEvidenceRel(taskId), proof, root);
+  appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_ACCEPTED_EVIDENCE_MATERIALIZED_FOR_WORKER', task_id: taskId, candidate_hash: accepted.candidate_hash, evidence_hash: proof.evidence_hash, at: proof.materialized_at }, root);
+  return proof;
+}
+
 export function recordStitchUnitConsumption({ repoDir, root = DEFAULT_CONTROL_HOME, taskId, workerArtifactId, envelopeHash } = {}) {
   const accepted = loadCurrentStitchAcceptedDesign({ repoDir, root, taskId, envelopeHash });
   if (!accepted) return null;
   if (!workerArtifactId || !envelopeHash) throw new Error('STITCH_UNIT_CONSUMPTION_BINDING_INVALID');
+  const materialized = readJson(workerEvidenceRel(taskId), null, root);
+  if (!materialized || !evidenceHashMatches(materialized)) throw new Error('STITCH_UNIT_CONSUMPTION_REQUIRES_MATERIALIZED_EVIDENCE');
+  if (materialized.status !== 'MATERIALIZED_READ_ONLY' || materialized.repository_sha !== accepted.repository_sha || materialized.task_id !== taskId || materialized.candidate_hash !== accepted.candidate_hash || materialized.accepted_evidence_hash !== accepted.evidence_hash || materialized.raw_provider_artifacts_materialized !== false || !(materialized.files || []).length) throw new Error('STITCH_UNIT_CONSUMPTION_MATERIALIZATION_BINDING_INVALID');
   const proof = proofWithHash({
     schema_version: 1,
     provider: 'google-stitch',
@@ -384,6 +446,8 @@ export function recordStitchUnitConsumption({ repoDir, root = DEFAULT_CONTROL_HO
     task_id: taskId,
     candidate_hash: accepted.candidate_hash,
     accepted_evidence_hash: accepted.evidence_hash,
+    materialization_evidence_hash: materialized.evidence_hash,
+    materialized_file_hashes: materialized.files.map((file) => file.sha256).sort(),
     worker_artifact_id: workerArtifactId,
     envelope_hash: envelopeHash,
     consumed_at: now(),
