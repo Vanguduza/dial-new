@@ -1,6 +1,0 @@
-{
-  "note": "Floor counts for the feature registries. Raised deliberately to include the adopted GMPC canon extension (65 GMPC features) so the source-of-truth registry cannot silently shrink below the current canonical breadth.",
-  "recorded_at": "2026-09-06",
-  "min_features": 309,
-  "facets_per_feature": 9
-}

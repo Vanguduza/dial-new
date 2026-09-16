@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "authority": "ORACLE_DIAL_RUNTIME_STATUS",
+  "project": "dial",
+  "observed_at": "2026-09-16T02:34:32.286Z",
+  "repository": {
+    "head": "0bc356df34d03114fd9f265d47a614bf5836e153",
+    "branch": "master"
+  },
+  "mission": {
+    "mission_id": "dial-development-root",
+    "state": "BLOCKED_OWNER",
+    "turn_number": 10,
+    "last_packet_id": "4d68ebc9-8e39-4369-8b96-adf3697df588",
+    "last_packet_state": "COMPLETED",
+    "packet_counts": {
+      "queued": 0,
+      "processing": 0,
+      "completed": 9,
+      "failed": 1
+    },
+    "active_packets": [],
+    "owner_blocker": {
+      "type": "OWNER_DECISION",
+      "reason": "fix verified and left uncommitted — this session's tool permissions do not allow git add/commit/push, so an owner or a differently-permissioned step must land it",
+      "observed_at": "2026-09-08T08:40:15.733Z"
+    }
+  },
+  "orchestration": {
+    "queue_state": "IDLE",
+    "active_job_id": null,
+    "queued": 0,
+    "heartbeat_observed_at": "2026-09-16T02:34:32.216Z",
+    "execution_origin": "EXTERNAL_ORACLE_ORCHESTRATOR"
+  },
+  "development": {
+    "unblocked": false,
+    "state": "DEVELOPMENT_BLOCKED",
+    "gate_status": "PRODUCTION_GREEN",
+    "failed_checks": [
+      "qualified_control_plane_unchanged"
+    ]
+  },
+  "runtime": {
+    "policy": "gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",
+    "primary": {
+      "state": "HEALTHY",
+      "requested_model": "gpt-5.6-sol",
+      "resolved_model": "gpt-5.6-sol",
+      "retry_after": null,
+      "attempt_allowed": true,
+      "attempt_reason": null
+    },
+    "fallback": {
+      "state": "HEALTHY",
+      "requested_model": "claude-sonnet-5",
+      "resolved_model": "claude-sonnet-5"
+    },
+    "identity_cache_valid": false
+  },
+  "research": {
+    "state": "READY",
+    "forecast_id": "erf_933fb80c78d540468f5de3ec600c7302",
+    "created_at": "2026-09-15T19:01:51.141Z",
+    "runtime": "codex_app_server",
+    "resolved_model": "gpt-5.6-sol"
+  }
+}
