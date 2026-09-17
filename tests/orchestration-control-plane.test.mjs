@@ -23,7 +23,7 @@ import {
   parseClaudeModelListEvidence,
   parseCodexModelListEvidence,
 } from '../agent-system/orchestration/hermes-plan-models.mjs';
-import { listClaudePlanModels } from '../agent-system/orchestration/claude-code-probe.mjs';
+import { listClaudePlanModels, probeClaudeCode } from '../agent-system/orchestration/claude-code-probe.mjs';
 import { listCodexPlanModels } from '../agent-system/orchestration/codex-app-server-probe.mjs';
 import { ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from '../agent-system/orchestration/state-store.mjs';
 import { buildDialHermesContext, resolveFeatureId } from '../agent-system/orchestration/context-broker.mjs';
@@ -210,6 +210,28 @@ describe('primary Hermes turn identity provenance', () => {
 });
 
 describe('runtime capacity preservation policy', () => {
+  it('isolates the secondary Claude worker profile from primary Max runtime health', () => {
+    const root = temp('dial-claude-secondary');
+    let seen = null;
+    const probe = probeClaudeCode({
+      repoDir: process.cwd(), root,
+      runtimeId: 'claude_code_secondary',
+      configDir: '/var/lib/dial-control/secrets/claude-worker-secondary',
+      profileId: 'secondary',
+      spawn: (_cmd, _args, options) => {
+        seen = options;
+        return { status: 0, signal: null, stderr: '', stdout: JSON.stringify({ result: 'DIAL_CLAUDE_OK', modelUsage: { 'claude-sonnet-5': { inputTokens: 1, outputTokens: 1 } }, session_id: 'secondary-test' }) };
+      },
+    });
+    expect(probe.state).toBe('HEALTHY');
+    expect(probe.runtime_id).toBe('claude_code_secondary');
+    expect(probe.profile_id).toBe('secondary');
+    expect(seen.env.CLAUDE_CONFIG_DIR).toBe('/var/lib/dial-control/secrets/claude-worker-secondary');
+    const runtimes = loadRuntimeHealth(root).runtimes;
+    expect(runtimes.claude_code_secondary).toMatchObject({ state: 'HEALTHY', requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5' });
+    expect(runtimes.claude_code).toBeUndefined();
+  });
+
   it('parses provider reset hints and suppresses repeated calls until the retry boundary', () => {
     const nowMs = Date.parse('2026-09-08T08:00:00Z');
     expect(parseProviderRetryAfter('try again at 9:16 AM', { nowMs })).toBe('2026-09-08T09:16:00.000Z');

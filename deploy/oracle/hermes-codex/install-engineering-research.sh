@@ -28,7 +28,7 @@ Environment=DIAL_CONTROL_HOME=$CONTROL_HOME
 Environment=CODEX_HOME=$CODEX_HOME
 Environment=DIAL_ENGINEERING_RESEARCH_TTL_HOURS=12
 Environment=DIAL_ENGINEERING_RESEARCH_RETRY_MINUTES=30
-Environment=PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/engineering-presearch.mjs refresh
 NoNewPrivileges=true

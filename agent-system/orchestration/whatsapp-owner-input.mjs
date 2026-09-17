@@ -74,7 +74,7 @@ export function persistWhatsAppAttachments(message, { root, allowedRoots } = {})
 export function buildAttachmentInstruction(message, attachments) {
   const caption = genericMediaBody(message?.body) ? '' : clean(message?.body, 12000);
   const lines = [
-    'Authenticated DIAL owner steering material was uploaded through the paired WhatsApp self-chat.',
+    'Authenticated DIAL owner steering material was uploaded through the dedicated Dial Hermes Control WhatsApp channel.',
     caption ? `Owner instruction/caption:\n${caption}` : 'Owner instruction: inspect the attached material fully and use it to steer the current DIAL development work where relevant.',
     'Attachments:',
     ...attachments.map((a) => `- ${a.name} (${a.mime || a.media_type}, ${a.size} bytes, sha256 ${a.sha256.slice(0,16)}…)\n  ${a.path}`),

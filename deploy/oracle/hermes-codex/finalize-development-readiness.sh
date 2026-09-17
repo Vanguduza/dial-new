@@ -29,7 +29,7 @@ npm run verify >/dev/null
 pass "full repository verification is green at $HEAD_SHA"
 
 bash deploy/oracle/hermes-codex/install-engineering-research.sh >/dev/null
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-hermes-whatsapp-operator.service; do
   systemctl --user restart "$unit"
   systemctl --user is-active --quiet "$unit" || fail "$unit did not restart"
 done

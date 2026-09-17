@@ -92,7 +92,8 @@ fi
 if [[ -f $FABRIC/placement.mjs ]]; then
   fail_closed=$(timeout 20 node -e "
 import('file://$FABRIC/placement.mjs').then(m=>{
-  const r=m.evaluatePlacement({task:{task_id:'certify',project:'dial',predicted_memory_mb:64},telemetry:{},nowMs:Date.now()});
+  const hosts=m.loadJson(m.DEFAULT_HOSTS); const policy=m.loadJson(m.DEFAULT_POLICY);
+  const r=m.evaluatePlacement({task:{task_id:'certify',project:'dial',predicted_memory_mb:64,memory_mb:{preferred:64},disk_io:'low',cpu_heavy_duration_seconds:0},hosts,telemetry:{},policy,nowMs:Date.now()});
   console.log(r.selected?'false':'true');
 }).catch(()=>console.log('unverified'))" 2>/dev/null || echo unverified)
 else

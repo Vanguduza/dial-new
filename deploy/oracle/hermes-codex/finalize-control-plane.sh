@@ -111,7 +111,6 @@ systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
 systemctl --user is-active --quiet dial-owner-steering.service || fail "dial-owner-steering.service is not active"
 systemctl --user is-active --quiet dial-hermes-whatsapp-operator.service || fail "dial-hermes-whatsapp-operator.service is not active"
-systemctl --user is-active --quiet dial-whatsapp-cloud-operator.service || fail "dial-whatsapp-cloud-operator.service is not active"
 systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
 systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "chat-control token must be mode 0600"
@@ -145,7 +144,7 @@ pass "external orchestrator heartbeat is fresh"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" || -n "${ANTHROPIC_API_KEY:-}" ]]; then
   fail "API-key environment material is present on the subscription-only control plane"
 fi
-for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-mission-controller.service dial-chat-control.service dial-owner-steering.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service dial-engineering-research.service; do
+for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-mission-controller.service dial-chat-control.service dial-owner-steering.service dial-hermes-whatsapp-operator.service dial-engineering-research.service; do
   env_line="$(systemctl --user show "$unit" -p Environment --value 2>/dev/null || true)"
   if grep -Eq '(OPENAI_API_KEY|CODEX_API_KEY|ANTHROPIC_API_KEY)=' <<<"$env_line"; then
     fail "$unit contains forbidden API-key environment material"

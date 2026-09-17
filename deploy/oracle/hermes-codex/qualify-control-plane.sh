@@ -2,6 +2,7 @@
 set -euo pipefail
 umask 077
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
 DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 QUAL_DIR="$DIAL_CONTROL_HOME/evidence-cache/qualification"
@@ -38,7 +39,6 @@ ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Or
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/owner-live-control.mjs" ]] || fail "DIAL owner-live control module is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/owner-steering-broker.mjs" ]] || fail "DIAL owner steering broker is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-owner-input.mjs" ]] || fail "DIAL WhatsApp owner input module is missing"
-[[ -f "$DIAL_REPO_DIR/agent-system/orchestration/whatsapp-operator-adapter.mjs" ]] || fail "DIAL WhatsApp Cloud operator adapter is missing"
 [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "DIAL chat control bearer token is missing; run install-chat-control-bridge.sh"
 [[ "$(stat -c %a "$DIAL_CONTROL_HOME/secrets/chat-control.token")" == "600" ]] || fail "DIAL chat control bearer token must be mode 0600"
 if [[ -n "${OPENAI_API_KEY:-}" || -n "${CODEX_API_KEY:-}" ]]; then fail "OPENAI_API_KEY/CODEX_API_KEY is present; Hermes primary qualification requires ChatGPT subscription OAuth"; fi
@@ -91,7 +91,6 @@ systemctl --user is-active --quiet dial-chat-control.service || fail "dial-chat-
 systemctl --user is-active --quiet dial-mission-controller.service || fail "dial-mission-controller.service is not active"
 systemctl --user is-active --quiet dial-owner-steering.service || fail "dial-owner-steering.service is not active"
 systemctl --user is-active --quiet dial-hermes-whatsapp-operator.service || fail "dial-hermes-whatsapp-operator.service is not active"
-systemctl --user is-active --quiet dial-whatsapp-cloud-operator.service || fail "dial-whatsapp-cloud-operator.service is not active"
 systemctl --user is-active --quiet dial-engineering-research.timer || fail "dial-engineering-research.timer is not active"
 systemctl --user is-active --quiet dial-engineering-research.path || fail "dial-engineering-research.path is not active"
 CHAT_HEALTH="$(curl -fsS http://127.0.0.1:9130/health)"
@@ -102,10 +101,8 @@ unset CHAT_TOKEN
 jq -e '.result.tools | length >= 21' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control MCP tools are unavailable"
 jq -e '[.result.tools[].name | test("shell|exec|filesystem"; "i")] | any == false' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL chat control exposes a forbidden generic execution primitive"
 jq -e '[.result.tools[].name] | index("dial_skill_status") != null and index("dial_operator_channels") != null and index("dial_submit_instruction") != null and index("dial_owner_steer") != null and index("dial_owner_live_turn") != null' <<<"$CHAT_TOOLS" >/dev/null || fail "DIAL operator control is missing VEKL/status/write typed tools"
-CLOUD_WA_HEALTH="$(curl -fsS http://127.0.0.1:9132/health)"
-jq -e '.service == "dial-whatsapp-operator" and .project == "dial" and (.state == "UNCONFIGURED" or .state == "DISABLED" or .state == "READY") and (has("access_token")|not) and (has("app_secret")|not) and (has("verify_token")|not)' <<<"$CLOUD_WA_HEALTH" >/dev/null || fail "WhatsApp Cloud operator boundary/health is invalid or leaks secret fields"
 HERMES_WA_STATUS="$(node agent-system/orchestration/whatsapp-hermes-operator.mjs status)"
-jq -e '.authority == "OWNER_SELF_CHAT_TYPED_DIAL_CONTROL" and (.paired == true or .paired == false)' <<<"$HERMES_WA_STATUS" >/dev/null || fail "Hermes WhatsApp owner-control status is invalid"
+jq -e '.authority == "OWNER_DEDICATED_HERMES_WHATSAPP_CONTROL" and .state == "READY" and .mode == "bot" and .paired == true and .owner_count == 1 and .bridge == "connected"' <<<"$HERMES_WA_STATUS" >/dev/null || fail "Dial Hermes Control WhatsApp channel is not dedicated/owner-only/live"
 CODEX_MCP="$(codex mcp get dial-oracle-control 2>&1 || true)"
 grep -q 'operator-control-stdio.mjs' <<<"$CODEX_MCP" || fail "Codex dial-oracle-control MCP is not enrolled"
 CLAUDE_MCP="$(claude mcp get dial-oracle-control 2>&1 || true)"

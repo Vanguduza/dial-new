@@ -13,6 +13,14 @@ REV="$(git -C "$DIAL_REPO_DIR" rev-parse HEAD)"
 RUNTIME_DIR="$SHARED_HOME/releases/$REV"
 TMP_DIR="$SHARED_HOME/releases/.${REV}.$$"
 
+check_secret_mode() {
+  local file="$1" mode
+  [[ -e "$file" ]] || return 0
+  mode="$(stat -c '%a' "$file")"
+  [[ "$mode" == "600" || "$mode" == "400" ]] || { echo "ERROR: $file must be mode 600 or 400 (found $mode)" >&2; exit 1; }
+}
+for secret_file in /var/lib/dial-control/secrets/xkiro-api.key /var/lib/dial-control/secrets/haif-r2.env /home/ubuntu/.dde-control/secrets/xkiro-api.key /home/ubuntu/.dde-control/secrets/haif-r2.env; do check_secret_mode "$secret_file"; done
+
 mkdir -p "$SHARED_HOME/releases" "$SYSTEMD_DIR"
 cleanup_tmp() {
   if [[ -e "$TMP_DIR" ]]; then
@@ -49,6 +57,7 @@ Environment=HAIF_CONTROL_ROOT=/var/lib/dial-control
 Environment=HAIF_PROVIDER_ROOT=/var/lib/dial-control/operations/auxiliary/provider
 Environment=HAIF_KEY_FILE=/var/lib/dial-control/secrets/xkiro-api.key
 Environment=HAIF_PORT=9141
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 EnvironmentFile=-/var/lib/dial-control/secrets/haif-r2.env
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE_BIN $SHARED_HOME/current/agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs daemon
@@ -83,6 +92,7 @@ Environment=HAIF_CONTROL_ROOT=/home/ubuntu/.dde-control
 Environment=HAIF_PROVIDER_ROOT=/home/ubuntu/.dde-control/operations/auxiliary/provider
 Environment=HAIF_KEY_FILE=/home/ubuntu/.dde-control/secrets/xkiro-api.key
 Environment=HAIF_PORT=9142
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 EnvironmentFile=-/home/ubuntu/.dde-control/secrets/haif-r2.env
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE_BIN $SHARED_HOME/current/agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs daemon

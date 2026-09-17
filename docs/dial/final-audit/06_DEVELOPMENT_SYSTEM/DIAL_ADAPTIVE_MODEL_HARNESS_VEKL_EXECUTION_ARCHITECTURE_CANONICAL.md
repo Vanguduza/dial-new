@@ -380,7 +380,7 @@ Claude subscription
     ↓
 discover available Claude models
     ↓
-qualify them
+normalize subscription presence and explicit disqualifiers
     ↓
 worker pool
 ```
@@ -392,7 +392,7 @@ Codex subscription
     ↓
 discover available Codex models
     ↓
-qualify them
+normalize subscription presence and explicit disqualifiers
     ↓
 worker pool
 ```
@@ -1418,23 +1418,13 @@ The discovered state should be normalized into the Model Registry.
 
 ---
 
-# 38. Qualification vs Discovery
+# 38. Subscription Presence vs Harness Qualification
 
-A discovered model/harness is not automatically production-qualified.
-
-States should include:
-
-```text
-DISCOVERED
-QUALIFYING
-QUALIFIED
-APPROVED
-DEGRADED
-BLOCKED
-UNAVAILABLE
-```
-
-Worker routing should only use models/harnesses that meet the current qualification policy.
+Per the owner's 2026-09-13 ruling recorded in DEC-032, discovery of a model on an authorised
+subscription confers model eligibility. DIAL does not impose model probation or re-prove provider
+capability. Harness qualification, compatibility, health, quota, task capability, security/data
+class, and explicit owner blocks remain independent hard gates. Learned performance ranks eligible
+pairs and never excludes them.
 
 ---
 
@@ -2364,23 +2354,14 @@ The ledger should record confidence and evidence source for every performance up
 
 ---
 
-# 65. Cold-Start Model Qualification
+# 65. Cold-Start Model Ranking
 
 Newly available models will not have task-history evidence.
 
-DIAL should support controlled exploration.
-
-A new model may be:
-
-```text
-DISCOVERED
-→ QUALIFYING
-→ SHADOW_TESTED
-→ LIMITED_TRAFFIC
-→ QUALIFIED
-```
-
-High-risk work should not become the first test of an unproven model.
+DIAL assigns a subscription-present model ordinary eligible work without probation. With no DIAL
+history, the pair receives the calibrated fleet prior for ranking. Real assigned-job outcomes then
+move it through the task-capability performance hierarchy. Lack of DIAL history is never an
+eligibility or risk-class restriction.
 
 ---
 
@@ -3203,12 +3184,14 @@ Instead:
 
 ```text
 weak evidence
-→ conservative eligibility
-→ proven model preference
-→ limited exploration
+→ unchanged eligibility
+→ calibrated-prior ranking
+→ learn from assigned jobs
 ```
 
-Unknown models may still be tested under low-risk or shadow conditions, but not assumed equal to qualified routes.
+Subscription-present models with no DIAL history remain eligible at every otherwise-permitted risk
+class. They receive the calibrated prior rather than fabricated confidence; performance evidence
+changes their ordering only.
 
 ---
 

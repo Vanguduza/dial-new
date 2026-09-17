@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DIAL protected-master observed GitHub evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "enforcement_type",
+    "enforcement_id",
+    "observed_at",
+    "exported_by",
+    "source",
+    "source_payload_sha256",
+    "observed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "repository": {
+      "const": "Vanguduza/dial-new"
+    },
+    "enforcement_type": {
+      "enum": [
+        "BRANCH_PROTECTION",
+        "RULESET"
+      ]
+    },
+    "enforcement_id": {
+      "type": [
+        "integer",
+        "string"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "exported_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "enum": [
+        "GITHUB_BRANCH_PROTECTION_API_EXPORT",
+        "GITHUB_RULESET_API_EXPORT"
+      ]
+    },
+    "source_payload_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "observed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "required_pull_request",
+        "require_code_owner_review",
+        "required_status_checks",
+        "required_signatures",
+        "block_force_pushes",
+        "block_deletions"
+      ],
+      "properties": {
+        "branch": {
+          "const": "master"
+        },
+        "required_pull_request": {
+          "type": "boolean"
+        },
+        "require_code_owner_review": {
+          "type": "boolean"
+        },
+        "required_approving_review_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dismiss_stale_reviews": {
+          "type": "boolean"
+        },
+        "required_status_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "require_branches_up_to_date": {
+          "type": "boolean"
+        },
+        "required_signatures": {
+          "type": "boolean"
+        },
+        "block_force_pushes": {
+          "type": "boolean"
+        },
+        "block_deletions": {
+          "type": "boolean"
+        },
+        "enforce_on_administrators": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

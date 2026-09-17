@@ -28,6 +28,7 @@ Environment=DIAL_CHAT_CONTROL_HOST=127.0.0.1
 Environment=DIAL_CHAT_CONTROL_PORT=9130
 Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/chat-control-bridge.mjs serve
 Restart=always
@@ -54,6 +55,8 @@ Type=simple
 WorkingDirectory=${REPO_DIR}
 Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/mission-controller.mjs daemon
 Restart=always
 RestartSec=5

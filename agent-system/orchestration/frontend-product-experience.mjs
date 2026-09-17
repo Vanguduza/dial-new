@@ -1,4 +1,5 @@
 import { hashObject, loadRegistry, registryHash } from './knowledge-graph-core.mjs';
+import { sanitizeAndClassifyProviderInput } from './donor-egress-guard.mjs';
 
 export const FRONTEND_INTEGRATION_VERSION = 'dial-frontend-product-experience-1.1';
 
@@ -294,8 +295,13 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
   return projection;
 }
 
-export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerAuthorityRef = null } = {}) {
+export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerAuthorityRef = null, instruction = '' } = {}) {
   if (!projection?.applicable) return null;
+  const intentRaw = String(instruction || '').trim();
+  const intentGuard = sanitizeAndClassifyProviderInput(intentRaw, { requestedClass: 'INTERNAL_SAFE_FOR_APPROVED_PROVIDER' });
+  if (!intentGuard.ok) throw new Error(`DESIGN_BRIEF_PROVIDER_EGRESS_DENIED:${intentGuard.data_class}`);
+  const maxIntentChars = 8000;
+  const boundedIntent = String(intentGuard.sanitized || '').slice(0, maxIntentChars);
   const brief = {
     schema_version: 1,
     artifact_type: 'DesignBriefBundle',
@@ -305,6 +311,15 @@ export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerA
     unit_lineage_id: unit?.unit_lineage_id || null,
     unit_revision_hash: unit?.unit_revision_hash || null,
     owner_authority_ref: ownerAuthorityRef,
+    design_intent: {
+      text: boundedIntent,
+      data_class: intentGuard.data_class,
+      findings: intentGuard.findings || [],
+      source_hash: intentGuard.sanitized_hash,
+      bounded_hash: hashObject(boundedIntent),
+      max_chars: maxIntentChars,
+      truncated: String(intentGuard.sanitized || '').length > maxIntentChars,
+    },
     product_design_profile_hash: projection.product_design_profile.content_hash,
     surface_manifest_hash: projection.surface_manifest.content_hash,
     surface_state_matrix_hash: projection.surface_state_matrix.content_hash,
