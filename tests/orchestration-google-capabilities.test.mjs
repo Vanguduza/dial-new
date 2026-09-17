@@ -226,7 +226,7 @@ describe('Google external capability boundaries', () => {
   repoDir,
   root,
   taskId,
-  evidence: { authority_conforms: true, required_states_present: false, state_coverage_mode: 'DOWNSTREAM_AEF_REQUIRED', primary_composition_present: true, change_budget_satisfied: true, donor_semantics_preserved: true, design_candidate_facts: {} },
+  evidence: { authority_conforms: false, authority_conformance_mode: 'DOWNSTREAM_AEF_REQUIRED', provider_visual_conforms: true, required_states_present: false, state_coverage_mode: 'DOWNSTREAM_AEF_REQUIRED', primary_composition_present: true, change_budget_satisfied: true, donor_semantics_preserved: true, design_candidate_facts: {} },
   envelopeGuard: () => ({ ok: true, reasons: [] }),
   fdepGuard: () => ({ ok: true, reasons: [] }),
 });
@@ -247,11 +247,14 @@ describe('Google external capability boundaries', () => {
       accessibility: true, performance: true, security: true, domain_truth: true, normalization: true,
       design_lint: true, parity: true, state_matrix_coverage: true, vrde_comparable: true,
     };
+    expect(() => recordStitchScreenAcceptance({ repoDir, root, taskId, certification: { ...certification, visual_gates: visualGates.filter((gate) => gate.gate_id !== 'V8_AUTHORITY_SIGNOFF') } })).toThrow('STITCH_SCREEN_CERTIFICATION_REQUIRED_DIMENSIONS_MISSING');
     const certified = recordStitchScreenAcceptance({ repoDir, root, taskId, certification });
     const fallback = proveStitchOutageFallback({ repoDir, root });
     expect(accepted.repository_sha).toBe(stage.repository_sha);
     expect(accepted.state_coverage_mode).toBe('DOWNSTREAM_AEF_REQUIRED');
     expect(accepted.downstream_state_certification_required).toBe(true);
+    expect(accepted.authority_conformance_mode).toBe('DOWNSTREAM_AEF_REQUIRED');
+    expect(accepted.downstream_authority_certification_required).toBe(true);
     expect(consumed.repository_sha).toBe(stage.repository_sha);
     expect(certified.repository_sha).toBe(stage.repository_sha);
     expect(fallback.repository_sha).toBe(stage.repository_sha);

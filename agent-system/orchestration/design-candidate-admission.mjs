@@ -59,6 +59,8 @@ export function buildDesignCandidateManifest({taskId,providerId,unitLineageId,un
 export function admitDesignCandidate({
   candidate,
   authorityConforms,
+  authorityConformanceMode='PROVIDER_REQUIRED',
+  providerVisualConforms=null,
   requiredStatesPresent,
   stateCoverageMode='PROVIDER_REQUIRED',
   primaryCompositionPresent=null,
@@ -69,8 +71,12 @@ export function admitDesignCandidate({
   if(!candidate) throw new Error('candidate required');
   const failures=[];
   const deferred=stateCoverageMode==='DOWNSTREAM_AEF_REQUIRED';
+  const authorityDeferred=authorityConformanceMode==='DOWNSTREAM_AEF_REQUIRED';
   if(!['PROVIDER_REQUIRED','DOWNSTREAM_AEF_REQUIRED'].includes(stateCoverageMode)) failures.push('STATE_COVERAGE_MODE_INVALID');
-  if(authorityConforms!==true) failures.push('DESIGN_AUTHORITY_DRIFT');
+  if(!['PROVIDER_REQUIRED','DOWNSTREAM_AEF_REQUIRED'].includes(authorityConformanceMode)) failures.push('AUTHORITY_CONFORMANCE_MODE_INVALID');
+  if(!authorityDeferred && authorityConforms!==true) failures.push('DESIGN_AUTHORITY_DRIFT');
+  if(authorityDeferred && !candidate.frontend_design_execution_packet_hash) failures.push('AUTHORITY_DEFER_REQUIRES_FDEP');
+  if(authorityDeferred && providerVisualConforms!==true) failures.push('PROVIDER_VISUAL_CONFORMANCE_REQUIRED');
   if(!deferred && requiredStatesPresent!==true) failures.push('REQUIRED_STATES_MISSING');
   if(deferred && !candidate.frontend_design_execution_packet_hash) failures.push('STATE_COVERAGE_DEFER_REQUIRES_FDEP');
   if(deferred && primaryCompositionPresent!==true) failures.push('PRIMARY_COMPOSITION_REQUIRED');
@@ -91,6 +97,9 @@ export function admitDesignCandidate({
     state_coverage_mode:stateCoverageMode,
     required_states_present_at_admission:requiredStatesPresent===true,
     downstream_state_certification_required:deferred,
+    authority_conformance_mode:authorityConformanceMode,
+    authority_conforms_at_admission:authorityConforms===true,
+    downstream_authority_certification_required:authorityDeferred,
     accepted_at:new Date().toISOString(),
   };
   return {ok:true,manifest:{...base,manifest_hash:hashObject({...base,accepted_at:null})}};

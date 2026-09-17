@@ -326,7 +326,9 @@ export function admitStitchDesignStage({
   if (record.task_id !== taskId || record.envelope_hash !== envelope.envelope_hash || record.candidate.frontend_design_execution_packet_hash !== fdep.content_hash) throw new Error('STITCH_CANDIDATE_BINDING_INVALID');
   const stateCoverageMode = evidence.state_coverage_mode || 'PROVIDER_REQUIRED';
   const deferredStateCoverage = stateCoverageMode === 'DOWNSTREAM_AEF_REQUIRED';
-  if (evidence.authority_conforms !== true || evidence.change_budget_satisfied !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
+  const authorityConformanceMode = evidence.authority_conformance_mode || 'PROVIDER_REQUIRED';
+  const deferredAuthorityConformance = authorityConformanceMode === 'DOWNSTREAM_AEF_REQUIRED';
+  if ((!deferredAuthorityConformance && evidence.authority_conforms !== true) || (deferredAuthorityConformance && evidence.provider_visual_conforms !== true) || evidence.change_budget_satisfied !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
   if (!deferredStateCoverage && evidence.required_states_present !== true) throw new Error('STITCH_ADMISSION_ACCEPTANCE_EVIDENCE_INCOMPLETE');
   if (deferredStateCoverage && evidence.primary_composition_present !== true) throw new Error('STITCH_ADMISSION_PRIMARY_COMPOSITION_REQUIRED');
   const normalization = normalizeDesignCandidate({ repoDir, candidate: evidence.design_candidate_facts || {}, fdep, changeBudget: fdep.change_budget });
@@ -334,6 +336,8 @@ export function admitStitchDesignStage({
   const admitted = admitDesignCandidate({
     candidate: record.candidate,
     authorityConforms: evidence.authority_conforms,
+    authorityConformanceMode,
+    providerVisualConforms: evidence.provider_visual_conforms,
     requiredStatesPresent: evidence.required_states_present,
     stateCoverageMode,
     primaryCompositionPresent: evidence.primary_composition_present,
@@ -355,6 +359,8 @@ export function admitStitchDesignStage({
     normalization_hash: normalization.content_hash,
     state_coverage_mode: stateCoverageMode,
     downstream_state_certification_required: deferredStateCoverage,
+    authority_conformance_mode: authorityConformanceMode,
+    downstream_authority_certification_required: deferredAuthorityConformance,
     admission_manifest: admitted.manifest,
     acceptance_evidence_hash: sha256(evidence),
     accepted_at: now(),
@@ -466,10 +472,12 @@ export function recordStitchScreenAcceptance({ repoDir, root = DEFAULT_CONTROL_H
   if (certification?.ok !== true || certification?.status !== 'PASSED' || certification?.task_id !== taskId || certification?.fdep_hash !== accepted.fdep_hash) throw new Error('STITCH_SCREEN_CERTIFICATION_NOT_PASSED_OR_BOUND');
   const required = ['accessibility', 'performance', 'security', 'domain_truth', 'normalization', 'design_lint', 'parity', 'state_matrix_coverage', 'vrde_comparable'];
   const visualGates = certification.visual_gates || [];
+  const requiredVisualGateIds = ['V1_STRUCTURAL','V2_GEOMETRY','V3_TYPOGRAPHY','V4_ASSETS','V5_PERCEPTUAL','V6_DELTA_PROVENANCE','V7_RESPONSIVE_IDENTITY','V8_AUTHORITY_SIGNOFF'];
+  const visualGateMap = new Map(visualGates.map((gate) => [gate.gate_id, gate]));
   if (required.some((key) => certification[key] !== true)
     || certification.hard_gate?.ok !== true
     || certification.qualitative_gate?.state !== 'PASSED'
-    || visualGates.length === 0
+    || requiredVisualGateIds.some((gateId) => !String(visualGateMap.get(gateId)?.state || '').startsWith('PASSED'))
     || visualGates.some((gate) => !String(gate.state || '').startsWith('PASSED'))) throw new Error('STITCH_SCREEN_CERTIFICATION_REQUIRED_DIMENSIONS_MISSING');
   const proof = proofWithHash({
     schema_version: 1,
