@@ -227,7 +227,10 @@ export function recordAntigravityDispatchOutcome({ root, modelId, passed = false
   return { model: nextModel, harness: harnesses.antigravity };
 }
 
-export async function antigravityHeadless({ prompt, repoDir, model = null, effort = 'high', runner = runProcess, timeoutMs = 300000, env = process.env } = {}) {
+export async function antigravityHeadless({
+  prompt, repoDir, model = null, effort = 'high', runner = runProcess, timeoutMs = 300000, env = process.env,
+  executionMode = null, newProject = false, autoApprove = false,
+} = {}) {
   if (!antigravityConfigured(env)) throw Object.assign(new Error('ANTIGRAVITY_DISABLED'), { category: 'DISABLED' });
   if (!prompt || !repoDir) throw new Error('Antigravity prompt and repoDir are required');
   const logFile = path.join(os.tmpdir(), `dial-antigravity-${process.pid}-${Date.now()}.log`);
@@ -238,6 +241,9 @@ export async function antigravityHeadless({ prompt, repoDir, model = null, effor
     '--sandbox',
     '--print-timeout', `${Math.max(1, Math.ceil(timeoutMs / 60000))}m`,
   ];
+  if (executionMode) args.push('--mode', executionMode);
+  if (newProject) args.push('--new-project');
+  if (autoApprove) args.push('--dangerously-skip-permissions');
   if (model) args.push('--model', model);
   else if (effort) args.push('--effort', effort);
   const binary = resolveAntigravityBinary(env);

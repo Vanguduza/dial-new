@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import {
   DEFAULT_CONTROL_HOME,
   appendJsonl,
@@ -26,6 +27,15 @@ function samePaths(a = [], b = []) {
   return JSON.stringify([...new Set(a.map(norm))].sort()) === JSON.stringify([...new Set(b.map(norm))].sort());
 }
 function workerId(card) { return card?.worker_identity_hash || card?.harness_id || null; }
+function inspectWorktreeMutation(worktreePath) {
+  const result = spawnSync('git', ['status', '--porcelain=v1', '--untracked-files=all'], { cwd: worktreePath, encoding: 'utf8' });
+  if (result.status !== 0) throw new Error(`HCX_WORKTREE_STATUS_FAILED:${String(result.stderr || '').trim().slice(0, 300)}`);
+  const changed_paths = String(result.stdout || '').split(/\r?\n/).filter(Boolean).map((line) => {
+    const raw = line.slice(3).trim();
+    return norm(raw.includes(' -> ') ? raw.split(' -> ').pop() : raw);
+  }).filter(Boolean).sort();
+  return { clean: changed_paths.length === 0, changed_paths };
+}
 export async function executeSelectedHcxWorker({
   repoDir,
   root = DEFAULT_CONTROL_HOME,
@@ -52,6 +62,7 @@ export async function executeSelectedHcxWorker({
   stitchAcceptedLoader = loadCurrentStitchAcceptedDesign,
   stitchEvidenceMaterializer = materializeAcceptedStitchDesignEvidence,
   stitchConsumptionRecorder = recordStitchUnitConsumption,
+  worktreeMutationInspector = inspectWorktreeMutation,
 } = {}) {
   if (!repoDir || !taskId || !harnessId || !worktreePath) throw new Error('HCX_EXECUTION_INPUTS_REQUIRED');
   const plan = readJson(`execution/tasks/${taskId}/plan.json`, null, root);
@@ -74,6 +85,9 @@ export async function executeSelectedHcxWorker({
   if (path.resolve(lease.worktree_path || '') !== path.resolve(worktreePath)) throw new Error('HCX_LEASE_WORKTREE_MISMATCH');
   if (!samePaths(lease.write_paths, envelope.allowed_paths)) throw new Error('HCX_LEASE_SCOPE_MISMATCH');
   if (!samePaths(lease.denied_paths, envelope.denied_paths)) throw new Error('HCX_LEASE_DENY_SCOPE_MISMATCH');
+  const writeScoped = (envelope.allowed_paths || []).length > 0;
+  const beforeMutation = worktreeMutationInspector(worktreePath);
+  if (writeScoped && !beforeMutation.clean) throw new Error(`HCX_WORKTREE_NOT_CLEAN:${beforeMutation.changed_paths.join(',')}`);
 
   const activation = activationLoader(envelope.packet_id, root);
   if (!activation) throw new Error('HCX_ACTIVATION_MISSING');
@@ -133,6 +147,9 @@ export async function executeSelectedHcxWorker({
           repoDir: worktreePath,
           model: selectedModelId || null,
           env: workerEnv,
+          executionMode: 'accept-edits',
+          newProject: true,
+          autoApprove: true,
         })
       : await claudeRunner({
           prompt: boundedPrompt,
@@ -149,6 +166,9 @@ export async function executeSelectedHcxWorker({
     const afterCurrent = envelopeChecker({ repoDir, root, envelope: afterEnvelope });
     if (!afterCurrent.ok) throw new Error(`HCX_RESULT_ENVELOPE_STALE:${afterCurrent.reasons.join(',')}`);
     leaseGuard({ root, leaseId, workerId: identity, fencingToken });
+    const afterMutation = worktreeMutationInspector(worktreePath);
+    if (writeScoped && afterMutation.changed_paths.length === 0) throw Object.assign(new Error('HCX_WORKER_NO_MUTATION'), { category: 'NO_MUTATION' });
+    for (const changedPath of afterMutation.changed_paths) leaseGuard({ root, leaseId, workerId: identity, fencingToken, path: changedPath });
     if (harnessId === 'antigravity-worker' && selectedModelId) {
       try { availabilityRecorder({ root, modelId: selectedModelId, passed: true, failureClass: null, observedAt: now() }); } catch {}
     }
@@ -199,6 +219,7 @@ export async function executeSelectedHcxWorker({
       artifact_id: artifact.artifact_id,
       artifact_hash: artifact.artifact_hash,
       result_hash: result.result_hash,
+      changed_paths: afterMutation.changed_paths,
       compute_settlement: computeSettlement ? { reservation_id: computeSettlement.reservation_id, state: computeSettlement.state, actual_input_tokens: computeSettlement.actual_input_tokens, actual_output_tokens: computeSettlement.actual_output_tokens } : null,
       stitch_design_consumption: stitchConsumption ? { evidence_hash: stitchConsumption.evidence_hash, candidate_hash: stitchConsumption.candidate_hash, materialization_evidence_hash: stitchConsumption.materialization_evidence_hash } : null,
       state: 'VERIFYING',

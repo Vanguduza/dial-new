@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ANTIGRAVITY_PINNED_VERSION,
   antigravityBinaryStatus,
+  antigravityHeadless,
   antigravityRuntimeEnv,
   antigravityRuntimeHome,
   qualifyAntigravity,
@@ -50,9 +51,23 @@ import { selectDesignStrategy } from '../agent-system/orchestration/design-provi
 import { quarantineDesignArtifact, sanitizeDesignArtifactForEvidence } from '../agent-system/orchestration/design-candidate-admission.mjs';
 
 const repoDir = process.cwd();
+function mutationInspector(changedPath = 'packages/example/test.ts') {
+  let call = 0;
+  return () => call++ === 0 ? { clean: true, changed_paths: [] } : { clean: false, changed_paths: [changedPath] };
+}
 function tempRoot() { return fs.mkdtempSync(path.join(os.tmpdir(), 'dial-google-cap-')); }
 
 describe('Google external capability boundaries', () => {
+  it('maps HCX edit execution controls into Antigravity CLI flags', async () => {
+    let seen = null;
+    const runner = async (command, args, options) => { seen = { command, args, options }; return { ok: true, code: 0, stdout: JSON.stringify({ status: 'SUCCESS', response: 'done' }), stderr: '', error: null }; };
+    const result = await antigravityHeadless({ prompt: 'test', repoDir, model: 'gemini-3.8-flash-low', runner, timeoutMs: 1000, env: { ...process.env, DIAL_ANTIGRAVITY_ENABLED: 'true', DIAL_ANTIGRAVITY_BIN: '/tmp/agy' }, executionMode: 'accept-edits', newProject: true, autoApprove: true });
+    expect(result.status).toBe('SUCCESS');
+    expect(seen.args).toContain('--sandbox');
+    expect(seen.args).toEqual(expect.arrayContaining(['--mode', 'accept-edits', '--new-project', '--dangerously-skip-permissions', '--model', 'gemini-3.8-flash-low']));
+    expect(seen.options.cwd).toBe(repoDir);
+  });
+
   it('classifies Pomelli as GMPC-owned production creative capability', () => {
     const registry = loadExternalCapabilityRegistry(repoDir);
     const pomelli = registry.capabilities.find((row) => row.capability_id === 'CREATIVE-POMELLI');
@@ -458,6 +473,7 @@ describe('Google external capability boundaries', () => {
       state: 'READY',
     }, root);
     let seenEnv = null;
+    let seenAntigravityArgs = null;
     const result = await executeSelectedHcxWorker({
       repoDir,
       root,
@@ -478,7 +494,10 @@ describe('Google external capability boundaries', () => {
       }),
       activationLoader: () => ({ activation_id: 'act-1' }),
       deliveryBuilder: () => ({ text: 'bounded VEKL worker delivery' }),
-      antigravityRunner: async ({ env }) => {
+      worktreeMutationInspector: mutationInspector(),
+      antigravityRunner: async (args) => {
+        seenAntigravityArgs = args;
+        const { env } = args;
         seenEnv = env;
         return { provider: 'google-antigravity', result_hash: 'result-hash', response: 'done', usage: null, conversation_id: 'c1' };
       },
@@ -490,7 +509,21 @@ describe('Google external capability boundaries', () => {
     expect(seenEnv.DIAL_EXECUTION_ENVELOPE_HASH).toBe('env-hash');
     expect(seenEnv.DIAL_WORKTREE_LEASE_ID).toBe('lease-1');
     expect(seenEnv.DIAL_FENCING_TOKEN).toBe('9');
+    expect(seenAntigravityArgs).toMatchObject({ executionMode: 'accept-edits', newProject: true, autoApprove: true });
     expect(readJson(`execution/tasks/${taskId}/envelope.json`, null, root).state).toBe('VERIFYING');
+  });
+
+  it('refuses write-scoped HCX success when the worker produces no mutation', async () => {
+    const root = tempRoot(); const taskId = 'task-no-mutation'; const packetId = 'packet-no-mutation';
+    writeJsonAtomic(`execution/tasks/${taskId}/plan.json`, { routing: { selected_workers: [{ harness_id: 'antigravity-worker', worker_identity_hash: 'antigravity-worker-current' }] } }, root);
+    writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, { task_id: taskId, packet_id: packetId, envelope_hash: 'env-no-mutation', allowed_paths: ['packages/example/**'], denied_paths: [], state: 'READY' }, root);
+    await expect(executeSelectedHcxWorker({ repoDir, root, taskId, harnessId: 'antigravity-worker', instruction: 'change it', worktreePath: repoDir, leaseId: 'lease-no-mutation', fencingToken: 14,
+      admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
+      leaseGuard: () => ({ lease_id: 'lease-no-mutation', task_id: taskId, worker_id: 'antigravity-worker-current', worktree_path: repoDir, write_paths: ['packages/example/**'], denied_paths: [], fencing_token: 14 }),
+      activationLoader: () => ({ activation_id: 'act-no-mutation' }), deliveryBuilder: () => ({ text: 'delivery' }), worktreeMutationInspector: () => ({ clean: true, changed_paths: [] }),
+      antigravityRunner: async () => ({ provider: 'google-antigravity', result_hash: 'no-mutation', response: 'done', usage: null }), artifactPersister: () => { throw new Error('must not persist'); },
+    })).rejects.toThrow('HCX_WORKER_NO_MUTATION');
+    expect(readJson(`execution/tasks/${taskId}/envelope.json`, null, root).state).toBe('SUPERSEDED');
   });
 
   it('materializes accepted Stitch evidence before HCX can record worker consumption', async () => {
@@ -514,6 +547,7 @@ describe('Google external capability boundaries', () => {
       admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
       leaseGuard: () => ({ lease_id: 'lease-stitch-materialized', task_id: taskId, worker_id: 'antigravity-worker-current', worktree_path: worktreePath, write_paths: ['.dial-qualification/stitch-canary/**'], denied_paths: ['docs/project-state/**'], fencing_token: 13 }),
       activationLoader: () => ({ activation_id: 'act-stitch-materialized' }), deliveryBuilder: () => ({ text: 'bounded VEKL worker delivery' }),
+      worktreeMutationInspector: mutationInspector('.dial-qualification/stitch-canary/index.html'),
       stitchAcceptedLoader: () => ({ candidate_hash: 'candidate-stitch', evidence_hash: 'accepted-stitch', fdep_hash: 'fdep-stitch' }),
       stitchEvidenceMaterializer: () => { materializeCalls += 1; return { evidence_hash: 'materialized-stitch', files: [
         { kind: 'INERT_HTML', surface_id: 'DIAL_WEB', rel: `execution/tasks/${taskId}/stitch-worker-evidence/dial_web.html` },
@@ -561,6 +595,7 @@ describe('Google external capability boundaries', () => {
       admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
       leaseGuard: () => ({ lease_id: 'lease-secondary', task_id: taskId, worker_id: 'claude-sonnet-worker-secondary-pro-current', worktree_path: worktreePath, write_paths: ['packages/example/**'], denied_paths: ['agent-system/canon/**'], fencing_token: 12 }),
       activationLoader: () => ({ activation_id: 'act-secondary' }), deliveryBuilder: () => ({ text: 'bounded VEKL worker delivery' }),
+      worktreeMutationInspector: mutationInspector(),
       claudeRunner: async (args) => { dispatch = args; return { provider: 'anthropic-claude-code', result_hash: 'secondary-result', response: 'done', usage: null }; },
       artifactPersister: () => ({ artifact_id: 'ART-SECONDARY', artifact_hash: 'artifact-secondary' }),
     });
@@ -591,6 +626,7 @@ describe('Google external capability boundaries', () => {
       admissionGuard: () => ({ ok: true }), envelopeChecker: () => ({ ok: true, reasons: [] }), modelAvailabilityGuard: () => ({ ok: true }),
       leaseGuard: () => ({ lease_id: 'lease-capacity', task_id: taskId, worker_id: 'antigravity-worker-current:claude-opus-4-6-thinking', worktree_path: worktreePath, write_paths: ['packages/example/**'], denied_paths: [], fencing_token: 11 }),
       leaseCloser: (args) => { closed.push(args); return { state: args.state }; }, activationLoader: () => ({ activation_id: 'act-capacity' }), deliveryBuilder: () => ({ text: 'delivery' }),
+      worktreeMutationInspector: mutationInspector(),
       antigravityRunner: async () => { const error = new Error('ANTIGRAVITY_CAPACITY_LIMITED'); error.category = 'CAPACITY_LIMITED'; throw error; },
     })).rejects.toThrow(/ANTIGRAVITY_CAPACITY_LIMITED/);
     const availability = readJson('state/model-availability.json', {}, root);
@@ -634,6 +670,7 @@ describe('Google external capability boundaries', () => {
       }),
       activationLoader: () => ({ activation_id: 'act-2' }),
       deliveryBuilder: () => ({ text: 'delivery' }),
+      worktreeMutationInspector: mutationInspector(),
       antigravityRunner: async () => {
         const current = readJson(`execution/tasks/${taskId}/envelope.json`, null, root);
         writeJsonAtomic(`execution/tasks/${taskId}/envelope.json`, {
