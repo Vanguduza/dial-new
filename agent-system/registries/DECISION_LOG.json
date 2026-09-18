@@ -767,5 +767,91 @@
       "tests/orchestration-adaptive-routing.test.mjs"
     ],
     "reopens_if": "the product owner explicitly supersedes this routing model with an equal-or-stronger mechanism preserving VEKL upstream authority, harness/model independence, subscription-wide qualified worker eligibility including manager-grade models, post-selection-only model adaptation, the quality floor before cost ranking, enforceable runtime budgets with output reservation, fail-closed prompt compilation, bounded escalation, evidence-derived performance, and the separation of model capability from tool authorisation"
+  },
+  {
+    "decision_id": "DEC-033",
+    "decided_on": "2026-09-18",
+    "decided_by": "product owner",
+    "status": "PROPOSED",
+    "area": "DEVELOPMENT SYSTEM / VEKL / GRAPHRAG / SECURITY",
+    "title": "VEKL open-world discovery extends the existing source registry without creating a second trust authority",
+    "decision": "Adopt an open-world discovery plane for VEKL that may find and investigate engineering resources absent from the admitted corpus, under two orthogonal axes that are never conflated: a discovery lifecycle (DISCOVERED, TRIAGED, INVESTIGATING, EXPERIMENTAL, QUALIFIED, ADMITTED, with REJECTED, SUPERSEDED, DEPRECATED and QUARANTINED as alternative states) describing how far DIAL has evaluated a resource, and the existing T0-T4 source trust tiers describing what authority class the source actually belongs to. Discovery candidates live in a history-preserving staging ledger, not a second registry; admission writes into ENGINEERING_RESOURCE_SOURCE_REGISTRY and ENGINEERING_RESOURCE_REGISTRY using their existing vocabulary. Trust tiers are assigned fail-closed from provenance alone: T1_OFFICIAL requires verified official publisher provenance, the finding adapter caps the tier it can support, and open-world discovery can never mint T0_DIAL_PROJECT. Unknown means untrusted and requiring investigation, never forbidden.",
+    "consequence": "Discovery, reading, trialling and activation become four distinct acts rather than one. An unknown executable resource may be evaluated only in an ephemeral sandbox holding no DIAL credential, no service-role key, no production secret, no Project Truth or production-database write path and no Oracle control credential, under deny-by-default network and declared CPU, memory, disk, process and time limits; the runner refuses before executing rather than running degraded. Trial success is evidence and never authorization: it cannot raise a trust tier, and admission of anything executable additionally requires an exact revision/version pin, license review, provenance verification, static inspection, dependency review and a trial whose revision matches the pin. Outbound discovery payloads are generated from sanitized engineering intent and refused if they carry secrets, API keys, payment details, customer identifiers, private order data, identifiable Health information, owner credentials or production database content. Retrieval exposes lifecycle state, trust tier, authority role, exact version, source hash, freshness and executable/sensitive eligibility per item, and candidate-plane material is structurally incapable of carrying AUTHORITY. Reassessment may recommend but never rewrites Project Truth or programme priority, and no discovery trigger may reprioritise the Development Plan. Adapters, executable trials and horizon scanning ship disabled; rollback disables adapters and never deletes discovery evidence.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_OPEN_WORLD_DISCOVERY_AND_KNOWLEDGE_QUALIFICATION_REV1.md",
+    "enforced_by": [
+      "agent-system/orchestration/discovery-admission.mjs",
+      "agent-system/orchestration/discovery-architecture-check.mjs",
+      "agent-system/orchestration/discovery-graph-projection.mjs",
+      "agent-system/orchestration/discovery-lifecycle.mjs",
+      "agent-system/orchestration/discovery-sandbox.mjs",
+      "agent-system/orchestration/discovery-sanitizer.mjs",
+      "agent-system/engineering-knowledge/registries/DISCOVERY_CANDIDATE_REGISTRY.json",
+      "agent-system/registries/DISCOVERY_POLICY.json",
+      "tests/orchestration-vekl-discovery.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
+      "docs/project-state/authorizations/auth-20260918-owner-rev31-open-world-guided-design-n8n.json"
+    ],
+    "activation_blocker_refs": [],
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps discovery state and trust tier orthogonal, keeps the T0-T4 vocabulary singular, keeps trial evidence incapable of conferring authority, keeps exact-version provenance mandatory before executable activation, keeps the sandbox free of DIAL credentials, and keeps candidate-plane material out of authority retrieval"
+  },
+  {
+    "decision_id": "DEC-034",
+    "decided_on": "2026-09-18",
+    "decided_by": "product owner",
+    "status": "PROPOSED",
+    "area": "DEVELOPMENT SYSTEM / FRONTEND / DESIGN AUTHORITY / DONOR",
+    "title": "Guided generative frontend extends the existing design authority and separates provenance mode from iteration phase",
+    "decision": "Adopt guided multi-candidate design generation as an extension of the existing design pipeline rather than a replacement for it. The repository's serialized design_mode field keeps its provenance meaning and gains design_provenance_mode as an explicit semantic alias; a new and orthogonal design_iteration_phase carries EXPLORE, CONVERGE and RECONSTRUCT. DONOR_ADAPT and EXPLORE are simultaneously true. Guided generation sits upstream of candidate admission and downstream of Product Truth projection: projectDesignAuthority, quarantineDesignArtifact, buildDesignCandidateManifest, admitDesignCandidate, the Stitch and Figma provider policies and the donor-preservation checks are unchanged, and every legacy call produces byte-identical output including its hashes. A Screen Quality Packet carries frozen Product Truth, a per-phase design-freedom budget, the versioned anti-pattern registry, candidate count and diversity policy, the critic manifest and the acceptance contract.",
+    "consequence": "Creative latitude becomes bounded and enforceable rather than requested in prose. No phase may grant freedom over navigation semantics, business logic, money behaviour, security behaviour or donor semantics; those dimensions are pinned to none, and freedom strictly decreases from EXPLORE through CONVERGE to RECONSTRUCT. EXPLORE produces two to four candidates that must differ materially on declared diversity dimensions and must not differ at all on fixed ones; the later phases produce one. Seven structural critics produce hashed, structured evidence, and any blocking finding rejects: a guided candidate cannot be admitted without critic evidence, cannot be admitted when its critics rejected it, and cannot be admitted on evidence belonging to another candidate, so structural conformance alone can no longer pass a visually degraded screen. Convergence must state what is preserved and may not select a rejected candidate or leave a blocking finding unaddressed. Synthesis emits a regeneration brief and is structurally incapable of carrying artifact fragments. Promotion to visual authority remains an owner or authorised design-authority act; no agent may promote on its own evidence. A promoted authority freezes composition, hierarchy, section order and design tokens, and RECONSTRUCT parity fails on a locked-dimension deviation even when every required action and state is present. Only accepted, evidenced work teaches reusable design knowledge, though anti-pattern findings from rejected work are retained. All six existing prohibited patterns remain enforced and twelve guided anti-patterns are added in one versioned registry rather than copied into prompts.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_GUIDED_CREATIVE_FRONTEND_EVOLUTION_REV1.md",
+    "enforced_by": [
+      "agent-system/orchestration/design-authority-projector.mjs",
+      "agent-system/orchestration/design-candidate-admission.mjs",
+      "agent-system/orchestration/design-convergence.mjs",
+      "agent-system/orchestration/design-critics.mjs",
+      "agent-system/orchestration/design-provider-router.mjs",
+      "agent-system/orchestration/guided-design-architecture-check.mjs",
+      "agent-system/orchestration/screen-quality-packet.mjs",
+      "agent-system/registries/DESIGN_ANTI_PATTERN_REGISTRY.json",
+      "agent-system/registries/DESIGN_PROVIDER_POLICY.json",
+      "tests/orchestration-guided-design.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
+      "docs/project-state/authorizations/auth-20260918-owner-rev31-open-world-guided-design-n8n.json"
+    ],
+    "activation_blocker_refs": [],
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps provenance mode and iteration phase on separate axes, keeps the existing projection, quarantine, admission, donor and promotion behaviour byte-identical for legacy callers, keeps semantic dimensions outside every freedom budget, keeps critic rejection binding on admission, and keeps visual-authority promotion an owner or authorised design-authority act"
+  },
+  {
+    "decision_id": "DEC-035",
+    "decided_on": "2026-09-18",
+    "decided_by": "product owner",
+    "status": "PROPOSED",
+    "area": "DEVELOPMENT SYSTEM / PRODUCT RUNTIME / AUTOMATION / SECURITY",
+    "title": "Self-hosted n8n runtime fabric is adopted for development and production orchestration without becoming domain authority",
+    "decision": "Adopt two self-hosted n8n estates, DIAL_N8N_DEV and DIAL_N8N_PROD, as durable orchestration for the development system and for product business processes. They are named and treated as distinct from VEKL_N8N_CORPUS, which remains knowledge about workflows and executes nothing. The runtime node policy is compiled from the existing n8n-node-capability-map.json and n8n-security-rules.json rather than restated: the compiler refuses to start when an estate names a capability the corpus does not know, production may be stricter than the corpus and never looser, and the runtime never writes the corpus. n8n may receive events, call governed APIs, wait, retry, route, enrich, notify, request approval, trigger integrations, aggregate evidence, schedule and coordinate. It may never author price, money state, beneficiary allocation, account balance, grocery credit truth, inventory truth, final order truth, identity truth, access-control truth or Project Truth.",
+    "consequence": "Every externally visible side effect becomes idempotent by a key over event, workflow, workflow version and effect name, so a duplicate delivery produces one notification, one supplier job, one escalation. Events carry a signed envelope with producer identity, correlation and causation lineage and data classification; a forged signature, a tampered payload, a replay or an out-of-window event is refused before a workflow sees it, and HEALTH_SENSITIVE data class is refused as ordinary workflow context. Failures classify into eight retry classes, and an invalid payment operation, a policy-denied action, a malformed business command and an irreversible effect without an idempotency key are never retried whatever the class says. Failed workflows enter a governed dead-letter path carrying execution, workflow version, triggering event, classification, retry count, correlation, affected aggregate and whether business state was mutated, alerting in production. Every production workflow has an immutable release identity and an editing-in-place check that compares running content against the release that authorised it; promotion may not skip or reorder pipeline stages and requires human approval, test evidence, a promotion source and a rollback version. Secrets never appear in workflow JSON, production egress is deny-by-default with per-release allowlists, runtime URL injection is refused for privileged workflows, and direct mutation of authoritative tables is refused. The estates are isolated across database, encryption key, credential store, webhook domain, service account, network policy, retention, role bindings, promotion path, backups and audit stream; a dev estate holding a production credential fails qualification. Rollback disables workflows at ingress while domain services continue, and n8n is never the only place core business truth exists. Both estates ship behind feature flags, pilots start at low authority risk, and money-sensitive flows are deferred.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_SELF_HOSTED_N8N_AUTOMATION_FABRIC_REV1.md",
+    "enforced_by": [
+      "agent-system/orchestration/n8n-runtime-events.mjs",
+      "agent-system/orchestration/n8n-runtime-node-policy.mjs",
+      "agent-system/orchestration/n8n-runtime-qualification.mjs",
+      "agent-system/orchestration/n8n-runtime-release.mjs",
+      "agent-system/registries/N8N_RUNTIME_POLICY.json",
+      "deploy/n8n/dev/docker-compose.yml",
+      "deploy/n8n/prod/docker-compose.yml",
+      "tests/orchestration-n8n-runtime.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
+      "docs/project-state/authorizations/auth-20260918-owner-rev31-open-world-guided-design-n8n.json"
+    ],
+    "activation_blocker_refs": [
+      "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
+    ],
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
   }
 ]
