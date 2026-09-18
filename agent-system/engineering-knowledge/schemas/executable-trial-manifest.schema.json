@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.local/schemas/executable-trial-manifest.schema.json",
+  "title": "ExecutableTrialManifest",
+  "description": "Evidence of an isolated evaluation of an unknown executable resource. Trial success is evidence, never authorization.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "trial_id",
+    "candidate_id",
+    "artifact",
+    "isolation",
+    "limits",
+    "result",
+    "authority",
+    "manifest_hash"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "trial_id": { "type": "string", "pattern": "^TRIAL-[0-9a-f]{24}$" },
+    "candidate_id": { "type": "string", "pattern": "^DISC-[0-9a-f]{24}$" },
+    "artifact": {
+      "type": "object",
+      "required": ["locator", "exact_revision", "artifact_hash", "dependency_inventory_hash"],
+      "properties": {
+        "locator": { "type": "string" },
+        "exact_revision": { "type": "string", "minLength": 7 },
+        "artifact_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "dependency_inventory_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "dependency_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "isolation": {
+      "type": "object",
+      "required": [
+        "ephemeral",
+        "network",
+        "egress_allowlist",
+        "dial_credentials_present",
+        "production_secrets_present",
+        "service_role_key_present",
+        "project_truth_write_path",
+        "production_database_write_path",
+        "oracle_control_credential_present",
+        "filesystem_root",
+        "sensitive_fixtures_used"
+      ],
+      "properties": {
+        "ephemeral": { "const": true },
+        "network": { "enum": ["DENY", "ALLOWLIST"] },
+        "egress_allowlist": { "type": "array", "items": { "type": "string" } },
+        "dial_credentials_present": { "const": false },
+        "production_secrets_present": { "const": false },
+        "service_role_key_present": { "const": false },
+        "project_truth_write_path": { "const": false },
+        "production_database_write_path": { "const": false },
+        "oracle_control_credential_present": { "const": false },
+        "filesystem_root": { "type": "string" },
+        "sensitive_fixtures_used": { "const": false }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "required": ["max_wall_clock_seconds", "max_cpu_seconds", "max_memory_mb", "max_disk_mb", "max_processes"],
+      "properties": {
+        "max_wall_clock_seconds": { "type": "integer", "minimum": 1 },
+        "max_cpu_seconds": { "type": "integer", "minimum": 1 },
+        "max_memory_mb": { "type": "integer", "minimum": 1 },
+        "max_disk_mb": { "type": "integer", "minimum": 1 },
+        "max_processes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["status", "execution_log_hash", "observations"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL", "REFUSED", "TIMEOUT"] },
+        "execution_log_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "observations": { "type": "array", "items": { "type": "string" } },
+        "refusal_reason": { "type": ["string", "null"] }
+      }
+    },
+    "authority": { "const": "TRIAL_EVIDENCE_NOT_AUTHORIZATION" },
+    "manifest_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

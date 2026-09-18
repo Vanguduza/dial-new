@@ -1,0 +1,75 @@
+# DIAL_N8N_PROD — production workflow runtime.
+#
+# Everything here is a separate object from the development estate: database,
+# encryption key, credential store, webhook host, service account, network,
+# retention and backups. Nothing is shared, and `assertEstateIsolation` fails
+# qualification if anything is.
+#
+# Production is stricter than development, never looser. Outbound access is
+# deny-by-default at the host firewall and the allowlist is declared per
+# workflow release; code execution, filesystem and MCP nodes are denied outright
+# by the projected node policy, not merely discouraged.
+services:
+  n8n-prod-db:
+    image: postgres:16.4-alpine
+    container_name: dial-n8n-prod-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${N8N_PROD_DB_NAME:?set in the environment file}
+      POSTGRES_USER: ${N8N_PROD_DB_USER:?set in the environment file}
+      POSTGRES_PASSWORD: ${N8N_PROD_DB_PASSWORD:?set in the environment file}
+    volumes:
+      - n8n-prod-db:/var/lib/postgresql/data
+    networks: [n8n-prod]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${N8N_PROD_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  n8n-prod:
+    image: n8nio/n8n:1.62.1
+    container_name: dial-n8n-prod
+    restart: unless-stopped
+    depends_on:
+      n8n-prod-db:
+        condition: service_healthy
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_PROD_ENCRYPTION_KEY:?set in the environment file}
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: n8n-prod-db
+      DB_POSTGRESDB_DATABASE: ${N8N_PROD_DB_NAME}
+      DB_POSTGRESDB_USER: ${N8N_PROD_DB_USER}
+      DB_POSTGRESDB_PASSWORD: ${N8N_PROD_DB_PASSWORD}
+      N8N_HOST: ${N8N_PROD_HOST:?set in the environment file}
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: ${N8N_PROD_WEBHOOK_URL:?set in the environment file}
+      N8N_EDITOR_BASE_URL: ${N8N_PROD_WEBHOOK_URL}
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_PROD_ADMIN_USER:?set in the environment file}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PROD_ADMIN_PASSWORD:?set in the environment file}
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      N8N_TEMPLATES_ENABLED: "false"
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "2160"
+      N8N_LOG_LEVEL: info
+      GENERIC_TIMEZONE: ${DIAL_TIMEZONE:-Africa/Harare}
+      N8N_COMMUNITY_PACKAGES_ENABLED: "false"
+      # Workflows are imported as signed releases; editing in the production UI
+      # would break `assertReleaseIntegrity` at the next check.
+      N8N_PUBLIC_API_DISABLED: "true"
+    volumes:
+      - n8n-prod-data:/home/node/.n8n
+    networks: [n8n-prod, n8n-prod-egress]
+    expose: ["5678"]
+
+volumes:
+  n8n-prod-db:
+  n8n-prod-data:
+
+networks:
+  n8n-prod:
+    internal: true
+  n8n-prod-egress:
+    driver: bridge
