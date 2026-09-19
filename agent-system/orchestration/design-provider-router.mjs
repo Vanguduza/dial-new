@@ -4,7 +4,6 @@ export const DESIGN_ITERATION_PHASES = Object.freeze(['EXPLORE','CONVERGE','RECO
 
 const DEFAULT_PREFERENCE = Object.freeze([
   'LOCKED_BASELINE_REPAIR',
-  'DIRECT_DONOR_PORT_AND_TRANSFORM',
   'DIRECT_DIAL_IMPLEMENTATION',
   'STITCH_CODE_TO_DESIGN_THEN_BUILD',
   'STITCH_NEW_DESIGN_THEN_BUILD',
@@ -13,7 +12,6 @@ const STITCH_PREFERENCE = Object.freeze([
   'STITCH_CODE_TO_DESIGN_THEN_BUILD',
   'STITCH_NEW_DESIGN_THEN_BUILD',
   'LOCKED_BASELINE_REPAIR',
-  'DIRECT_DONOR_PORT_AND_TRANSFORM',
   'DIRECT_DIAL_IMPLEMENTATION',
 ]);
 
@@ -27,9 +25,8 @@ export function selectDesignStrategy({
 } = {}) {
   const candidates = [];
   if (directWorkerEligible) candidates.push('DIRECT_DIAL_IMPLEMENTATION');
-  if (['DONOR_ADAPT', 'DONOR_PRESERVE'].includes(designMode) && directWorkerEligible) candidates.push('DIRECT_DONOR_PORT_AND_TRANSFORM');
   if (stitchEnabled && stitchEligible && providerHealth === 'HEALTHY') {
-    candidates.push(designMode === 'NEW_DIAL_DESIGN' ? 'STITCH_NEW_DESIGN_THEN_BUILD' : 'STITCH_CODE_TO_DESIGN_THEN_BUILD');
+    candidates.push(['NEW_DIAL_DESIGN','REFERENCE_INSPIRED_DIAL_NATIVE','DONOR_ADAPT','DONOR_PRESERVE'].includes(designMode) ? 'STITCH_NEW_DESIGN_THEN_BUILD' : 'STITCH_CODE_TO_DESIGN_THEN_BUILD');
   }
   if (!candidates.length) return { ok: false, reason: 'NO_ELIGIBLE_DESIGN_STRATEGY' };
   const ordering = preference === 'STITCH' ? STITCH_PREFERENCE : DEFAULT_PREFERENCE;
@@ -55,8 +52,8 @@ export function evaluateProviderEligibility({ provider, phase, designProvenanceM
   if (provider.qualification_required === true && provider.qualification_evidence_valid !== true) reasons.push('QUALIFICATION_EVIDENCE_MISSING');
   if (provider.health !== 'HEALTHY') reasons.push(`PROVIDER_UNHEALTHY:${provider.health ?? 'UNKNOWN'}`);
   if (!(provider.supported_phases || []).includes(phase)) reasons.push(`PHASE_UNSUPPORTED:${phase}`);
-  if (['DONOR_ADAPT', 'DONOR_PRESERVE'].includes(designProvenanceMode) && !(provider.supported_inputs || []).includes('donor_screen')) {
-    reasons.push('DONOR_INPUT_UNSUPPORTED');
+  if (['REFERENCE_INSPIRED_DIAL_NATIVE','DONOR_ADAPT','DONOR_PRESERVE'].includes(designProvenanceMode) && (provider.supported_inputs || []).includes('donor_screen')) {
+    reasons.push('RAW_EXTERNAL_REPOSITORY_SCREEN_INPUT_FORBIDDEN');
   }
   if (requiresVisualReference && !(provider.supported_inputs || []).includes('image_reference')) reasons.push('VISUAL_REFERENCE_UNSUPPORTED');
   for (const output of requiredOutputs) {
@@ -90,19 +87,18 @@ export function routeGuidedCandidateGeneration({
     else rejected.push({ provider_id: provider.provider_id ?? '<undeclared>', reasons: verdict.reasons });
   }
 
-  // A provider being unavailable must not block the system when another
-  // qualified route preserves the acceptance requirements (§6.10). The direct
-  // DIAL implementation route is that fallback, and it is a real route, not a
-  // relaxation of acceptance.
-  const legacy = selectDesignStrategy({
-    designMode: designProvenanceMode,
-    directWorkerEligible,
-    stitchEnabled: routes.some((r) => r.provider_id === 'google-stitch'),
-    stitchEligible: routes.some((r) => r.provider_id === 'google-stitch'),
-    providerHealth: routes.some((r) => r.provider_id === 'google-stitch') ? 'HEALTHY' : 'UNKNOWN',
-  });
-  if (!routes.length && !legacy.ok) {
-    return { ok: false, reason: 'NO_ELIGIBLE_DESIGN_STRATEGY', routes: [], rejected: rejected.sort((a, b) => a.provider_id.localeCompare(b.provider_id)) };
+  // Canonical frontend design is provider-authored by Stitch. A provider outage
+  // must not silently substitute a direct worker or a second design provider.
+  if (!routes.length) {
+    return {
+      ok: false,
+      reason: 'NO_ELIGIBLE_DESIGN_PROVIDER',
+      outage_behavior: 'WAIT_RETRY_OR_REPORT_UNAVAILABLE',
+      routes: [],
+      fallback_strategy: null,
+      acceptance_preserved: true,
+      rejected: rejected.sort((a, b) => a.provider_id.localeCompare(b.provider_id)),
+    };
   }
 
   const sorted = routes.sort((a, b) => a.provider_id.localeCompare(b.provider_id));
@@ -111,7 +107,7 @@ export function routeGuidedCandidateGeneration({
     design_iteration_phase: designIterationPhase,
     candidate_count: candidateCount,
     routes: sorted,
-    fallback_strategy: legacy.ok ? legacy.selected : null,
+    fallback_strategy: null,
     acceptance_preserved: true,
   };
   return {

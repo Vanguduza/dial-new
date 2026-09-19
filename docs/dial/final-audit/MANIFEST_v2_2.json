@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-19T20:28:00.714Z",
+  "generated_at": "2026-09-19T21:55:47.411Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -15,7 +15,7 @@
   "active_master_prompt": "13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md",
   "base_closure_canon": "00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md",
   "closure_test_report": "20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md",
-  "primary_commerce_frontend_donor": "https://github.com/jatolentino/Shop-Ecommerce",
+  "primary_commerce_frontend_reference": "https://github.com/jatolentino/Shop-Ecommerce",
   "primary_frontend_divisions": [
     "SPARE",
     "GROCERIES"
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 255,
+  "file_count": 256,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "e646ee6dadce1d29ef3a31a93fb10a0a0dabe00528555b6affd8645508306af8"
+      "sha256": "6a3ea1540b0586ad61d674f225ad3f9e9e6988c87fa307bcb551bc93d1b4dfec"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -163,8 +163,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/CLAUDE_CODE_NATIVE_SETUP.md",
-      "bytes": 4878,
-      "sha256": "c4809078f4d3b3b61d6ead85adc44690637276463854805d49b803ddbb760e7f"
+      "bytes": 5281,
+      "sha256": "6f006ecd2170682a51d228d5cee68e2fc08c25f9531407bbe91785a322158981"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/CONTEXT_DRIFT_CONTROLS.md",
@@ -178,8 +178,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
-      "bytes": 101101,
-      "sha256": "98cb054cc9f3b31e9176b34dc375664f3d114a0c5b9b8a5a31f76bc8eeaa9a62"
+      "bytes": 101780,
+      "sha256": "a8bd17a3ccd7ebe893d48158306b93af6d1ad691d45def81c1aad381aee75e66"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
@@ -198,8 +198,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_PRODUCT_INTELLIGENCE_AUTOMATION_ARCHITECTURE_REV_3_1.md",
-      "bytes": 65614,
-      "sha256": "20931a57ded6bf459b5d9e29ce4e3504e7c66ec79bae33e4450cfb17b241f8bc"
+      "bytes": 66228,
+      "sha256": "2f27fa6b18b0b2e18dbe985622716cb613243219045b2f49a1179937b02fbd45"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
@@ -218,8 +218,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_GUIDED_CREATIVE_FRONTEND_EVOLUTION_REV1.md",
-      "bytes": 8789,
-      "sha256": "a204b4f814f2a9ef1d01d0f188ecc91f7d1e2a3d74f10369d6bef58f1aad365c"
+      "bytes": 9479,
+      "sha256": "d5d48dcf3a935866714da266fbf31e793038b3dfb0635e3a194870c4fc72e7c1"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
@@ -250,6 +250,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION.md",
       "bytes": 11811,
       "sha256": "d12fc3bd6b96c35f577b271ecf86ea4e4245a26d902444ee7c2ab76cf89f7f12"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_EXTERNAL_REFERENCE_INSPIRATION_POLICY_20260919.md",
+      "bytes": 2533,
+      "sha256": "246fd77b6be7d3e1bdcd68789ca4a567ffe63ab1c43519a330072b45b602184e"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_OPEN_WORLD_DISCOVERY_AND_KNOWLEDGE_QUALIFICATION_REV1.md",
@@ -348,8 +353,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/donors.md",
-      "bytes": 442,
-      "sha256": "2852041173091314ecae1ae9f704a1385629e0c6de6fb2ccb51724ab3436d82b"
+      "bytes": 756,
+      "sha256": "5833d323650bcb75fcc3d79cc8eba1f5c7fadd359babd357bd458f9293d3484b"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/rules/frontend.md",
@@ -388,8 +393,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-donor-assimilate/SKILL.md",
-      "bytes": 378,
-      "sha256": "57bb284ce5e56c89a5673b100cc2cbc592244d77f001ada4a637f113639d6684"
+      "bytes": 793,
+      "sha256": "90f336f2c929cd28eca5eac6fbc0712786c70f3426647378853068d5541e2807"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/skills/dial-eventuality-audit/SKILL.md",
@@ -513,8 +518,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/CLAUDE.md",
-      "bytes": 2083,
-      "sha256": "cc188dc8f29ebff24cf0772ea6019105afaa560d2a7ecaef05bd456a297f1777"
+      "bytes": 2167,
+      "sha256": "b5713df704755430282e3d4b9b0bf57e15bba42af7d938c85d32a2f07efcd624"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/MASTER_DEVELOPMENT_ENTRY_PROMPT.md",
@@ -528,8 +533,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/REPOSITORY_APPLY_PLAN.md",
-      "bytes": 2003,
-      "sha256": "3352821aea001369bad97dadf9dafff5852c9db41cdf769dd7288ed7e22e50cb"
+      "bytes": 2248,
+      "sha256": "1eec44409a545d049c27d90d85f3bf21d83e3796c45aacfcf8687a6161575ba0"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/SESSION_HANDOFF_TEMPLATE.md",
@@ -538,8 +543,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/TOOLING_USE_POLICY.md",
-      "bytes": 10615,
-      "sha256": "fc8b7fe694a6773233e41badcd263289314cdae98c0c1818d122363e0451c51d"
+      "bytes": 10776,
+      "sha256": "b4d44fc70d924209f905e3a90ac002dde17ab76b04dde7d386e5aad9b66aa788"
     },
     {
       "path": "07_IMPLEMENTATION/DIAL_MASTER_DEVELOPMENT_PLAN_AND_PROMPT_v1_6.md",
@@ -573,18 +578,18 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/DIVISION_DONOR_CUSTOMIZATION_PLAYBOOKS.md",
-      "bytes": 4687,
-      "sha256": "0e3f51672a4d9b12301949c94980e91b86811363292fdf61e106b639d835080d"
+      "bytes": 5266,
+      "sha256": "d31d1abb0b7733a3f8e923f1aeabb1ed7a65776d703db5d66e745a295edc0f9a"
     },
     {
       "path": "11_FEATURE_REALIZATION/DONOR_REGISTRY.json",
-      "bytes": 25310,
-      "sha256": "d29fdf4de23c8eb7343ee17412a23f2465564195cac99c758fc8c4e8fa3c81d0"
+      "bytes": 62098,
+      "sha256": "c0c94b1a94faba0632e8023badcd9eca9c850919d1334de681dc29522521134a"
     },
     {
       "path": "11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md",
-      "bytes": 1693,
-      "sha256": "52cbe1b4107365271226061ce90fafc6216ed874323b8c8bb29acfd62814af98"
+      "bytes": 2049,
+      "sha256": "0d869520264629c3e573ab90a0acd10be62ba15f4b21ebf1a004bb444542b7a1"
     },
     {
       "path": "11_FEATURE_REALIZATION/EVENTUALITY_PLAYBOOK_REGISTRY.json",
@@ -593,8 +598,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_AND_DONOR_ASSIMILATION_MASTER.md",
-      "bytes": 3582,
-      "sha256": "4c50aeb7b5f53f55bc7b9269d446afd4e4507f6cf1588320e2f37b32e243b44b"
+      "bytes": 4020,
+      "sha256": "266951102595779be82d45f076902a3c6c235c641a21ee7aae47c8ea46c1bfd6"
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_MATRIX.md",
@@ -603,8 +608,8 @@
     },
     {
       "path": "11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json",
-      "bytes": 1481718,
-      "sha256": "e03fb00dd1ecc2d3e47d6ee6c475658f6cf72f38e9e53e617c6dcffcd0ef6386"
+      "bytes": 1365204,
+      "sha256": "1d9821d8ef37b4afd0126e20cdf70e16eeb8a3dd160178f0e49b3aa55536b4eb"
     },
     {
       "path": "11_FEATURE_REALIZATION/REALIZATION_LAYER_INDEX.md",
@@ -888,8 +893,8 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/FEATURE_IMPLEMENTATION_CONTRACT_REGISTRY.json",
-      "bytes": 1218997,
-      "sha256": "65dcd5338db21077afe29df921d5e3fa3f10558e3efac0a99e3886f47e75a8ea"
+      "bytes": 1238093,
+      "sha256": "427a03a09c9cbcb191829942a9218730a8a96570e5ca8e223740190b58171a0a"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/01_FEATURE_CONTRACTS/GMPC-F080_ACCEPTANCE_CONTRACT.md",
@@ -953,18 +958,18 @@
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_DOSSIER_AGENT_TOOLING.md",
-      "bytes": 8765,
-      "sha256": "ad3f455a409bbc78bd62b3c2334c917f00f22a695f2a43c2118070fde51b7e1c"
+      "bytes": 9020,
+      "sha256": "065da279bf900cf59a00363e27002d4dde569641b540ed957d969f3f04dfcdc7"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-      "bytes": 2484,
-      "sha256": "6553ebdea7573c67730ed4a2aa1177fd409eb435e620e51ac376958244e73dd1"
+      "bytes": 3034,
+      "sha256": "9f8fd17c9283a4146947313154a2c2ec02caf39a520791e324a272794e032f0a"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json",
-      "bytes": 58211,
-      "sha256": "e6b4ed14c7c1f69753ededabacd3efe7b1b1d6d2ac69fe08068c41123ee40c56"
+      "bytes": 66958,
+      "sha256": "251f4404a01b27b048c053b4d5b0b1ea67b8a22ffa80f6370f7afa10c90a0a1c"
     },
     {
       "path": "20_IMPLEMENTATION_CLOSURE/04_NFR/NFR_BUDGET_REGISTRY.json",

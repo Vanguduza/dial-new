@@ -64,7 +64,7 @@ function rawSha256(body) { return crypto.createHash('sha256').update(Buffer.from
 function repositorySha(repoDir) { try { return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, encoding: 'utf8' }).trim(); } catch { return null; } }
 
 function designModeForFdep(fdep) {
-  if (fdep?.donor_frontend_reuse_projection?.reuse_mode && fdep.donor_frontend_reuse_projection.reuse_mode !== 'REJECT') return 'DONOR_ADAPT';
+  if ((fdep?.external_reference_inspiration_projections || []).length) return 'REFERENCE_INSPIRED_DIAL_NATIVE';
   return fdep?.presentation_decision?.execution_mode === 'SYNTHESIZE' ? 'NEW_DIAL_DESIGN' : 'EXISTING_DIAL_DESIGN';
 }
 
@@ -662,7 +662,7 @@ export function admitStitchDesignStage({
     requiredStatesPresent: evidence.required_states_present,
     stateCoverageMode,
     primaryCompositionPresent: evidence.primary_composition_present,
-    donorSemanticsPreserved: evidence.donor_semantics_preserved !== false,
+    externalReferenceNonAuthorityPreserved: evidence.external_reference_non_authority !== false,
     designNormalizationEvidence: normalization,
     changeBudgetSatisfied: evidence.change_budget_satisfied,
   });

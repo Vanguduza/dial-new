@@ -1,3 +1,7 @@
+# DEC-039 supersession — no donor import/assimilation gate
+
+The import/assimilation process below is historical provenance and is no longer an active DIAL implementation path for external repositories. Under `DEC-039`, external repositories are reference/inspiration only. Research provenance may still pin a revision for reproducibility, but that pin does **not** authorize code/component/asset/schema/business-logic import. Literal third-party dependency adoption requires a separate explicit owner-authorized dependency/adoption qualification.
+
 # Donor Import & Assimilation Gate
 
 v2 closes the donor-design question by separating **adoption-mode closure** from the **time-of-import commit pin**.

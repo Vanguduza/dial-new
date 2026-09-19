@@ -72,26 +72,42 @@ export function productCritic({ candidate, productTruth }) {
   return report({ critic: 'product', candidateId: candidate?.candidate_id, findings });
 }
 
-export function donorCritic({ candidate, productTruth, designProvenanceMode, donorApplicability = null }) {
+export function externalReferenceCritic({ candidate, productTruth, designProvenanceMode, externalReferenceApplicability = null }) {
   const findings = [];
-  if (!['DONOR_ADAPT', 'DONOR_PRESERVE'].includes(designProvenanceMode)) {
-    return report({ critic: 'donor', candidateId: candidate?.candidate_id, findings });
-  }
   const declared = candidate?.declared || {};
-  const preserved = new Set(declared.donor_semantics_preserved || []);
-  for (const constraint of productTruth.donor_constraints || []) {
-    if (!preserved.has(constraint)) findings.push(finding(`DONOR_SEMANTICS_NOT_PRESERVED:${constraint}`, 'BLOCKING', 'donor constraint not carried into the candidate'));
+  const referenceInformed = designProvenanceMode === 'REFERENCE_INSPIRED_DIAL_NATIVE';
+  if (declared.donor_branding_present === true || declared.external_reference_branding_present === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_BRAND_AUTHORITY', 'BLOCKING', 'external repository branding cannot become DIAL brand authority'));
   }
-  if (declared.donor_branding_present === true) {
-    findings.push(finding('DONOR_BRAND_AUTHORITY', 'BLOCKING', 'donor branding retained where DIAL brand authority applies'));
+  if (declared.external_reference_code_imported === true || declared.donor_code_imported === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_CODE_IMPORT', 'BLOCKING', 'external repository code may not be copied, ported, forked or vendored into DIAL production'));
   }
-  if (designProvenanceMode === 'DONOR_PRESERVE' && declared.donor_workflow_reinterpreted === true) {
-    findings.push(finding('DONOR_WORKFLOW_REINTERPRETED', 'BLOCKING', 'DONOR_PRESERVE forbids silently reinterpreting donor workflow'));
+  if (declared.external_reference_assets_imported === true || declared.donor_assets_imported === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_ASSET_IMPORT', 'BLOCKING', 'external repository assets may not be copied into DIAL production'));
   }
-  if (donorApplicability && donorApplicability.applicable === false) {
-    findings.push(finding('DONOR_NOT_APPLICABLE', 'BLOCKING', 'donor material used outside its applicability registry entry'));
+  if (declared.external_reference_schema_imported === true || declared.donor_schema_imported === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_SCHEMA_IMPORT', 'BLOCKING', 'external repository schemas may not become DIAL production schemas'));
   }
-  return report({ critic: 'donor', candidateId: candidate?.candidate_id, findings });
+  if (declared.external_reference_source_of_truth === true || declared.donor_source_of_truth === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_AUTHORITY', 'BLOCKING', 'external repository material cannot be Product Truth, business authority or source of truth'));
+  }
+  if (declared.pixel_copied_from_external_reference === true) {
+    findings.push(finding('EXTERNAL_REFERENCE_PIXEL_COPY', 'BLOCKING', 'reference use must be abstract inspiration rather than pixel copying'));
+  }
+  if (referenceInformed && externalReferenceApplicability?.applicable === false) {
+    findings.push(finding('EXTERNAL_REFERENCE_NOT_APPLICABLE', 'BLOCKING', 'reference material used outside its declared research applicability'));
+  }
+  for (const constraint of productTruth.external_reference_constraints || []) {
+    if ((declared.external_reference_constraints_satisfied || []).includes(constraint) === false) {
+      findings.push(finding(`EXTERNAL_REFERENCE_CONSTRAINT_UNSATISFIED:${constraint}`, 'BLOCKING', 'candidate violates a reference-only boundary'));
+    }
+  }
+  return report({ critic: 'external_reference', candidateId: candidate?.candidate_id, findings });
+}
+
+// Compatibility export for legacy callers; semantics are reference-only under DEC-039.
+export function donorCritic(args={}) {
+  return externalReferenceCritic({ ...args, externalReferenceApplicability: args.donorApplicability || args.externalReferenceApplicability });
 }
 
 export function uxCritic({ candidate }) {
@@ -186,13 +202,14 @@ export function runCritics({
   packet,
   repoDir = DEFAULT_REPO,
   donorApplicability = null,
+  externalReferenceApplicability = null,
   componentRegistryIds = null,
   externalReports = [],
 }) {
   const requested = packet?.critics || CRITICS;
   const runners = {
     product: () => productCritic({ candidate, productTruth }),
-    donor: () => donorCritic({ candidate, productTruth, designProvenanceMode: packet?.design_state?.design_provenance_mode, donorApplicability }),
+    external_reference: () => externalReferenceCritic({ candidate, productTruth, designProvenanceMode: packet?.design_state?.design_provenance_mode, externalReferenceApplicability: externalReferenceApplicability || donorApplicability }),
     ux: () => uxCritic({ candidate }),
     visual: () => visualCritic({ candidate, repoDir }),
     accessibility: () => accessibilityCritic({ candidate }),

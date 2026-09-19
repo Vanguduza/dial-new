@@ -1,12 +1,20 @@
 {
-  "authority_classes": [
-    "OWNER_EXPLICIT"
-  ],
-  "authorization_ids": [
-    "auth-20260919-owner-vekl-reference-inspiration-only"
-  ],
-  "branch": "gpt/vekl-reference-only-reconciliation-20260919",
-  "changed_files": [
+  "schema_version": 1,
+  "authorization_id": "auth-20260919-owner-vekl-reference-inspiration-only",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "37ac67fd76f43acbd02d3df6d127ba2114cc513a1b81a100e3075e7b4dbb8aaa",
+  "owner_instruction_excerpt": "Great results so its safe to commit and merge into master then revist and correct all the vekl work done already. And I think donor repos should only be used for reference and inspiration",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260919-vekl-reference-inspiration-only",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-19T20:40:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/vekl-reference-only-reconciliation-20260919",
+  "authorized_paths": [
     ".claude/rules/donors.md",
     ".claude/skills/dial-donor-assimilate/SKILL.md",
     "CLAUDE.md",
@@ -73,15 +81,33 @@
     "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
     "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_QUALIFICATION_STATUS.json",
     "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/authorizations/auth-20260919-owner-vekl-reference-inspiration-only.json",
     "package.json",
     "tests/orchestration-guided-design.test.mjs",
     "tests/orchestration-vekl-reference-only.test.ts"
   ],
-  "content_diff_sha256": "957c1b4a044def1698664783a33ffa62d5e73a3b2d5d46dc9de4d51975e3f282",
-  "observed_at_utc": "2026-09-19T22:02:33.512411+00:00",
-  "repository": "Vanguduza/dial-new",
-  "schema_version": 2,
-  "source_parent": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
-  "state": "AUTHORIZED_PENDING_COMMIT"
+  "change_classes": [
+    "vekl_reference_policy",
+    "external_repository_non_authority",
+    "donor_semantic_reconciliation",
+    "frontend_reference_inspiration",
+    "graphrag_reference_ontology",
+    "screen_feature_graph_reprojection",
+    "development_unit_reprojection",
+    "research_policy",
+    "design_authority",
+    "verification",
+    "documentation",
+    "project_truth_reconciliation",
+    "manifest_and_scorecard_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
 }

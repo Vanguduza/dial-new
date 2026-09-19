@@ -18,8 +18,9 @@ const eventualities=load("docs/dial/final-audit/11_FEATURE_REALIZATION/EVENTUALI
   .filter(x=>x.module===feature.module || (x.applies_to||[]).includes(feature.module));
 const endpoints=load("docs/dial/final-audit/12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json")
   .filter(x=>x.feature_id===id);
-const donors=load("docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_REGISTRY.json")
-  .filter(x=>(feature.donor_refs||[]).includes(x.donor_id));
+const externalReferences=load("docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_REGISTRY.json")
+  .filter(x=>(feature.donor_refs||[]).includes(x.donor_id))
+  .map(x=>({...x, authority:"NON_AUTHORITATIVE_REFERENCE_ONLY", production_import_allowed:false}));
 const securityProfile=load("docs/dial/final-audit/17_SECURITY/FEATURE_SECURITY_PROFILE_REGISTRY.json")
   .find(x=>x.feature_id===id);
 const securityControls=load("docs/dial/final-audit/17_SECURITY/SECURITY_CONTROL_REGISTRY.json")
@@ -32,13 +33,13 @@ console.log(JSON.stringify({
  mandatory_facets:facets,
  applicable_eventualities:eventualities,
  customer_endpoints:endpoints,
- donors,
+ external_references:externalReferences,
  security_profile:securityProfile,
  applicable_security_controls:securityControls,
  project_truth:truth.slice(0,12000),
  next:[
   "Inspect actual code/test paths before planning.",
-  "Resolve donor exact source paths after pin/import, never from memory.",
+  "Resolve external reference provenance/version for research only; never treat a reference as import authority.",
   "Implement all applicable facets/eventualities/customer/support endpoints.",
   "Do not advance feature gate without evidence.",
   "Implement and verify the SECURITY_PRIVACY facet and applicable security controls."

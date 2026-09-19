@@ -11,7 +11,7 @@
     "customerEndpoints": "docs/dial/final-audit/12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json"
   },
   "source_hashes": {
-    "features": "931b14e8557bb4d03813593cd19e004e00b5b4970c4d78722524b9b3515915b0",
+    "features": "447c55320a289007f9e0ed87b92909c9c356f6b368a86e950728776e94ebac9a",
     "subfeatures": "cd54c6e16614c9c55c3a58ddbac137c059ba4891fa9e01b551e676ad19f22e6c",
     "capabilities": "254c3ef063c95142a6653a3bdc5a2bfae75780711e0353417af03b45a707bbbd",
     "eventualities": "7ccdf77c28d19bf7e515e952a44193ca9836df25b77e7cfdc2decabf2eb780bc",
@@ -90870,5 +90870,5 @@
       "capability_ref_count": 0
     }
   ],
-  "content_hash": "1a5c2cbf9ee7b788853ed621a484857359a5bb3ec85a8d8a67aa1fd5903fcf6f"
+  "content_hash": "dfa359598ec4258c712df2b0666267beb472435c9ee8226484250a17b199f537"
 }

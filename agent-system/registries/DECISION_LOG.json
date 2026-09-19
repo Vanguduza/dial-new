@@ -886,7 +886,9 @@
       "docs/project-state/authorizations/auth-20260918-owner-rev31-open-world-guided-design-n8n.json"
     ],
     "activation_blocker_refs": [],
-    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps provenance mode and iteration phase on separate axes, keeps the existing projection, quarantine, admission, donor and promotion behaviour byte-identical for legacy callers, keeps semantic dimensions outside every freedom budget, keeps critic rejection binding on admission, and keeps visual-authority promotion an owner or authorised design-authority act"
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps provenance mode and iteration phase on separate axes, keeps the existing projection, quarantine, admission, donor and promotion behaviour byte-identical for legacy callers, keeps semantic dimensions outside every freedom budget, keeps critic rejection binding on admission, and keeps visual-authority promotion an owner or authorised design-authority act",
+    "superseded_in_part_by": "DEC-039",
+    "active_interpretation": "Guided generation remains active, but donor adapt/preserve/semantic-preservation clauses are superseded. Reference-informed work is DIAL-native and external repositories carry no implementation/design authority."
   },
   {
     "decision_id": "DEC-038",
@@ -916,5 +918,37 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-19",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / VEKL / EXTERNAL REPOSITORIES / FRONTEND",
+    "title": "External repositories are reference and inspiration only; DIAL-native authority and implementation are mandatory",
+    "decision": "External repositories previously described as donors may be researched only as non-authoritative reference and inspiration. They may contribute abstract patterns, trade-offs, interaction ideas, architecture lessons, anti-patterns, evaluation criteria and public evidence. They may not define Product Truth, screen semantics, business logic, state machines, source-of-truth data, design authority or runtime behavior, and normal VEKL/frontend workflows may not copy, port, fork, vendor, preserve or assimilate their code, components, assets, schemas or business logic into DIAL production. Frontend generation remains DIAL-native: Product Truth and the canonical Screen Registry × Feature Graph define scope, authoritative domain sources hydrate facts, VEKL provides governed design knowledge, Stitch authors DIAL-native candidates, and DDE productionizes accepted experience authority. Any literal third-party code or dependency adoption requires a separate explicit owner-authorized dependency/adoption decision and qualification path; it is never implied by reference research.",
+    "consequence": "Legacy DONOR_ADAPT, DONOR_PRESERVE, donor assimilation, direct donor port and preserve-donor-semantics behavior is superseded wherever it conflicts with this decision. Historical donor documents remain provenance only. Active registries/projectors expose reference-and-inspiration descriptors with no implementation authority, no runtime dependency, no pixel-copy authority and no external VisualAuthority promotion. Figma/Stitch/provider behavior remains governed independently; Stitch remains the sole automatic frontend design provider under the canonical frontend generation architecture.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_EXTERNAL_REFERENCE_INSPIRATION_POLICY_20260919.md",
+    "supersedes_decision_clauses": [
+      "DEC-037:donor-preserve/adapt semantics",
+      "legacy donor assimilation directives"
+    ],
+    "enforced_by": [
+      "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+      "agent-system/registries/DONOR_APPLICABILITY_REGISTRY.json",
+      "agent-system/orchestration/donor-applicability.mjs",
+      "agent-system/orchestration/frontend-donor-projection.mjs",
+      "agent-system/orchestration/unit-knowledge-map-builder.mjs",
+      "agent-system/orchestration/frontend-product-experience.mjs",
+      "agent-system/orchestration/design-authority-projector.mjs",
+      "agent-system/orchestration/design-provider-router.mjs",
+      "agent-system/orchestration/screen-quality-packet.mjs",
+      "agent-system/orchestration/design-critics.mjs",
+      "agent-system/orchestration/vekl-research-seed.mjs",
+      "agent-system/orchestration/vekl-research-harvest.mjs",
+      "agent-system/orchestration/vekl-reference-only-architecture-check.mjs",
+      "tests/orchestration-vekl-reference-only.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly authorizes a specific external dependency/code adoption under a separate qualified dependency/adoption contract or supersedes reference-only policy with an equal-or-stronger authority model"
   }
 ]

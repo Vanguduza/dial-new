@@ -1,14 +1,13 @@
 {
   "schema_version": 1,
-  "registry_version": "dial-aef-1",
+  "registry_version": "dial-aef-2",
   "archetypes": [
     "ROUTINE_CODE_CHANGE",
     "BUG_LOCALIZATION",
     "ARCHITECTURE_CHANGE",
     "MONEY_PATH_CHANGE",
     "AUTHORIZATION_CHANGE",
-    "DONOR_ASSIMILATION",
-    "DONOR_ADAPTATION",
+    "EXTERNAL_REFERENCE_RESEARCH",
     "LOCKED_DESIGN_ENHANCEMENT",
     "VISUAL_REGRESSION",
     "NEW_FRONTEND_DESIGN",

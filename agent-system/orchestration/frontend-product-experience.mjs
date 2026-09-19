@@ -206,7 +206,8 @@ function inferArchetype(text) {
 
 function inferMode({ instruction, visualReferenceSpec, donorProjection }) {
   const t = upper(instruction);
-  if (donorProjection?.reuse_mode && donorProjection.reuse_mode !== 'REJECT') return 'ASSIMILATE';
+  // External repositories are reference/inspiration only under DEC-039; their presence never changes implementation into assimilation.
+  if (donorProjection?.applicable) return 'SYNTHESIZE';
   if (/ENHANCE|MODERN|POLISH|IMPROVE/.test(t)) return 'ENHANCE';
   if (visualReferenceSpec?.references?.length && /RECONSTRUCT|MATCH|EXACT|BENCHMARK|REFERENCE/.test(t)) return 'RECONSTRUCT';
   return visualReferenceSpec?.references?.length ? 'RECONSTRUCT' : 'SYNTHESIZE';
@@ -248,7 +249,7 @@ export function compilePresentationDecision({ repoDir, unit, featureRecord = nul
     template_ids: templateIds,
     exception_policy: 'AI_MAY_PROPOSE_BUT_APPROVED_VISUAL_DELTA_OR_EXPERIENCE_ENHANCEMENT_REQUIRED',
     explanation: {
-      mode: donorProjection?.reuse_mode && donorProjection.reuse_mode !== 'REJECT' ? 'donor projection selected assimilation' : visualReferenceSpec?.references?.length ? 'visual authority exists' : 'no direct visual benchmark; synthesize from governed profile',
+      mode: donorProjection?.applicable ? 'external reference may inform DIAL-native synthesis but has no design or implementation authority' : visualReferenceSpec?.references?.length ? 'visual authority exists' : 'no direct visual benchmark; synthesize from governed profile',
       renderer: renderer_id === 'UNRESOLVED' ? 'no surface-local renderer authority was found; execution must fail closed until resolved' : 'selected from affected paths, instruction, unit paths, or surface-local authority',
       pattern: 'selected from resolved ProductDesignProfile allowlist',
     },

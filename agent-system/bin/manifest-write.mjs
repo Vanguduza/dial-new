@@ -53,7 +53,7 @@ const manifest = {
   active_master_prompt: '13_PROMPTS/DIAL_MASTER_DEVELOPMENT_PROMPT_v2_1.md',
   base_closure_canon: '00_MASTER/DIAL_V2_IMPLEMENTATION_CLOSURE_CANON.md',
   closure_test_report: '20_IMPLEMENTATION_CLOSURE/14_VALIDATION/CLOSURE_TEST_REPORT.md',
-  primary_commerce_frontend_donor: 'https://github.com/jatolentino/Shop-Ecommerce',
+  primary_commerce_frontend_reference: 'https://github.com/jatolentino/Shop-Ecommerce',
   primary_frontend_divisions: ['SPARE', 'GROCERIES'],
   frozen_transition_contracts: [
     '22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md',

@@ -1,3 +1,7 @@
+# DEC-039 note
+
+External repository references are research/inspiration only; this tooling policy does not authorize donor import or porting.
+
 # Tooling Use Policy
 
 Which installed plugin, skill or connector to reach for, and when. The intent is
@@ -53,7 +57,7 @@ draft**, never canon. The closure canon §2 order still governs.
 
 | Trigger | Use |
 |---|---|
-| Pinning, upgrading or first-importing any dependency or donor | **Context7** (`resolve-library-id`, `query-docs`). CT-3 requires exact version and API facts at import; recalled versions are not evidence. |
+| Pinning, upgrading or first-importing an explicitly owner-authorized dependency | **Context7** (`resolve-library-id`, `query-docs`). CT-3 requires exact version and API facts at import; recalled versions are not evidence. |
 | External research the canon does not answer | **Exa**. Record what was found in the decision or donor record — a search result is provenance, not authority. |
 
 ## Browser and E2E

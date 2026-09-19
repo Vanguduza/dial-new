@@ -193,7 +193,7 @@ function roleQuestions(moduleClass, tags) {
     CONTRADICTION_ANALYST: `Identify conflicting sources or versions for ${moduleClass} and evidence needed to resolve them.`,
     ANTI_PATTERN_MINER: `Identify current anti-patterns, unsafe shortcuts, symptoms and safer replacements for ${moduleClass}.`,
     OFFICIAL_DOC_SYNTHESIZER: `Extract exact-version implementation and verification guidance from official documentation for ${moduleClass}.`,
-    OPEN_SOURCE_DONOR_RESEARCHER: `Assess public donor implementations, licenses, versions, provenance and assimilation risks for ${moduleClass}.`,
+    OPEN_SOURCE_DONOR_RESEARCHER: `Assess public external repositories only as non-authoritative reference/inspiration for ${moduleClass}: extract abstract patterns, trade-offs, anti-patterns, test ideas, licence/provenance context and implementation lessons; never recommend code/component/asset/schema/business-logic import or donor assimilation.`,
   };
   return UNION_ALPHA_ROLES.map((role) => `${role}: ${questions[role]}`);
 }

@@ -80,7 +80,8 @@ export function buildDesignCandidateManifest({
 
 export function admitDesignCandidate({
   candidate, authorityConforms, authorityConformanceMode = 'PROVIDER_REQUIRED', providerVisualConforms = null,
-  requiredStatesPresent, stateCoverageMode = 'PROVIDER_REQUIRED', primaryCompositionPresent = null, donorSemanticsPreserved = true,
+  requiredStatesPresent, stateCoverageMode = 'PROVIDER_REQUIRED', primaryCompositionPresent = null,
+  externalReferenceNonAuthorityPreserved = null, donorSemanticsPreserved = null,
   designNormalizationEvidence = null, changeBudgetSatisfied = null, criticEvidence = null,
 } = {}) {
   if (!candidate) throw new Error('candidate required');
@@ -95,7 +96,8 @@ export function admitDesignCandidate({
   if (!deferred && requiredStatesPresent !== true) failures.push('REQUIRED_STATES_MISSING');
   if (deferred && !candidate.frontend_design_execution_packet_hash) failures.push('STATE_COVERAGE_DEFER_REQUIRES_FDEP');
   if (deferred && primaryCompositionPresent !== true) failures.push('PRIMARY_COMPOSITION_REQUIRED');
-  if (donorSemanticsPreserved !== true) failures.push('DONOR_SEMANTICS_NOT_PRESERVED');
+  const externalReferenceBoundaryOk = externalReferenceNonAuthorityPreserved ?? (donorSemanticsPreserved === null ? true : donorSemanticsPreserved);
+  if (externalReferenceBoundaryOk !== true) failures.push('EXTERNAL_REFERENCE_NON_AUTHORITY_VIOLATION');
   if (candidate.frontend_design_execution_packet_hash && designNormalizationEvidence?.status !== 'NORMALIZED') failures.push('DESIGN_NORMALIZATION_REQUIRED');
   if (candidate.change_budget_hash && changeBudgetSatisfied !== true) failures.push('CHANGE_BUDGET_NOT_SATISFIED');
   // A guided candidate carries critic evidence, and a critic rejection is

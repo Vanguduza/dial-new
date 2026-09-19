@@ -27,6 +27,7 @@ export function deriveDevelopmentUnits(repoDir=DEFAULT_REPO){
    const lineage=hashObject({project_identity:policy.project_identity,canonical_feature_membership:featureIds,canonical_realization_facet_membership:facets,canonical_unit_boundary_policy_id:policy.policy_id});
    const applicable=decisionsFor(feature.feature_id,decisions); const decisionHashes=applicable.map(hashObject).sort(); const frcHashes=[hashObject(feature),contractFingerprint(contract)].sort();
    const consumedIds=uniqueSorted(contract?.supporting_capability_refs||[]); const consumedFingerprints=consumedIds.map((id)=>{ const c=byContract.get(id); return {contract_id:contractId(id),fingerprint:c?contractFingerprint(c):hashObject({unresolved_contract_ref:id})}; });
+   const legacyRefs=uniqueSorted(feature.donor_refs||contract?.donor_refs||[]); const externalReferenceRefs=legacyRefs.filter((id)=>/^DONOR-|^REF-/.test(id)); const integrationSourceRefs=legacyRefs.filter((id)=>!externalReferenceRefs.includes(id));
    const produced=[{contract_id:contractId(feature.feature_id),fingerprint:contractFingerprint(contract)}]; const dependencyFingerprints=[...consumedFingerprints,...produced].map((x)=>x.fingerprint).sort();
    const truthSlice=hashObject({project_truth_hash:truth,feature:feature.feature_id,feature_hash:hashObject(feature),contract_hash:contractFingerprint(contract),applicable_decision_hashes:decisionHashes});
    const revision=hashObject({unit_lineage_id:lineage,applicable_project_truth_slice_hash:truthSlice,applicable_locked_decision_hashes:decisionHashes,feature_frc_revision_hashes:frcHashes,technical_stack_fingerprint:stack,dependency_contract_fingerprints:dependencyFingerprints,knowledge_route_policy_version:routePolicyHash,graph_schema_version:GRAPH_SCHEMA_VERSION,unit_schema_version:UNIT_SCHEMA_VERSION});
@@ -38,7 +39,8 @@ export function deriveDevelopmentUnits(repoDir=DEFAULT_REPO){
      contracts_consumed:consumedFingerprints, contracts_produced:produced, contract_fingerprints:dependencyFingerprints,
      applicable_project_truth_slice_hash:truthSlice, applicable_decision_hashes:decisionHashes, applicable_decision_ids:applicable.map((x)=>x.decision_id).sort(), technical_stack_fingerprint:stack,
      implementation_questions:[], knowledge_route_ids:routeIds(feature,contract), knowledge_route_policy_version:routePolicyHash,
-     design_authorities:uiBearing(feature,contract)?['PREMIUM_SOLUTIONS_ENVIRONMENT']:[], eventualities:uniqueSorted(contract?.eventuality_refs||[]), security_controls:contract?.security_profile?[contract.security_profile]:[], donor_refs:uniqueSorted(feature.donor_refs||contract?.donor_refs||[]),
+     design_authorities:uiBearing(feature,contract)?['PREMIUM_SOLUTIONS_ENVIRONMENT']:[], eventualities:uniqueSorted(contract?.eventuality_refs||[]), security_controls:contract?.security_profile?[contract.security_profile]:[],
+     external_reference_refs:externalReferenceRefs, integration_source_refs:integrationSourceRefs, donor_refs:legacyRefs,
      required_resources:[], verification_requirements:{test_paths:uniqueSorted(feature.test_paths||[]),acceptance_contract:contract?.acceptance_contract||[]},
      knowledge_readiness_state:'UNMAPPED', knowledge_blocking_reasons:[], knowledge_exemption:null, graph_revision_hash:null, knowledge_resolution_trace_id:null,
      source_projection:{feature_ref:FEATURE_REL,feature_id:feature.feature_id,feature_hash:hashObject(feature),contract_ref:CONTRACT_REL,contract_hash:contractFingerprint(contract)},
@@ -48,7 +50,7 @@ export function deriveDevelopmentUnits(repoDir=DEFAULT_REPO){
  const byFeature=new Map(units.flatMap((u)=>u.feature_ids.map((id)=>[id,u.unit_lineage_id])));
  for(const u of units){ u.upstream_dependencies=uniqueSorted(u.upstream_dependencies.map((id)=>byFeature.get(id)||id)); }
  for(const u of units){ for(const upstream of u.upstream_dependencies){ const target=units.find((x)=>x.unit_lineage_id===upstream); if(target) target.downstream_consumers=uniqueSorted([...target.downstream_consumers,u.unit_lineage_id]); } }
- return {schema_version:1,policy_version:'vekl-2.2-rev2',unit_boundary_policy_id:policy.policy_id,membership_order:policy.membership_order,project_truth_hash:truth,technical_stack_fingerprint:stack,knowledge_route_policy_hash:routePolicyHash,units};
+ return {schema_version:1,policy_version:'vekl-2.2-rev3-reference-only',unit_boundary_policy_id:policy.policy_id,membership_order:policy.membership_order,project_truth_hash:truth,technical_stack_fingerprint:stack,knowledge_route_policy_hash:routePolicyHash,units};
 }
 
 export function writeDevelopmentUnitRegistry(repoDir=DEFAULT_REPO){ const value=deriveDevelopmentUnits(repoDir); fs.writeFileSync(path.join(repoDir,OUT_REL),JSON.stringify(value,null,2)+'\n'); return value; }

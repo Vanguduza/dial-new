@@ -17,7 +17,7 @@ export const CONVERGENCE_SECTIONS = Object.freeze(['preserve', 'correct', 'impro
 // Candidate diversity must be bounded, not random (§6.11). These are the axes a
 // run may vary; anything else is fixed by Product Truth or the freedom budget.
 export const VARIABLE_DIMENSIONS = Object.freeze(['section_composition', 'imagery_position', 'surface_strategy', 'emphasis', 'typography_proportion']);
-export const FIXED_DIMENSIONS = Object.freeze(['product_truth', 'required_content', 'navigation_semantics', 'donor_semantics', 'money_behavior', 'security_behavior']);
+export const FIXED_DIMENSIONS = Object.freeze(['product_truth', 'required_content', 'navigation_semantics', 'external_reference_constraints', 'money_behavior', 'security_behavior']);
 
 export function evaluateCandidateDiversity({ candidates = [], packet = null, minimumDistinctDimensions = 2 } = {}) {
   const failures = [];

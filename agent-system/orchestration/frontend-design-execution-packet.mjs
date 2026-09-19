@@ -52,8 +52,11 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
     visual_render_determinism_envelope:px.visual_render_determinism_envelope,
     registry_hashes:registryHashes,
     template_ids:px.presentation_decision?.template_ids||[],
-    donor_frontend_reuse_projection:donorProjection || px.donor_frontend_reuse_projections?.[0] || null,
-    donor_frontend_reuse_projections:px.donor_frontend_reuse_projections || (donorProjection?[donorProjection]:[]),
+    external_reference_inspiration_projection:donorProjection || px.external_reference_inspiration_projections?.[0] || null,
+    external_reference_inspiration_projections:px.external_reference_inspiration_projections || (donorProjection?[donorProjection]:[]),
+    // Legacy fields are intentionally empty after DEC-039. External repositories never become reuse authority.
+    donor_frontend_reuse_projection:null,
+    donor_frontend_reuse_projections:[],
     change_budget:budget,
     acceptance:{
       existing_product_experience_hard_gate:true,
@@ -85,6 +88,9 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
       figma_invocation:'EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY',
       automatic_provider_fallback_forbidden:true,
       productionization_may_redesign:false,
+      external_repositories_reference_and_inspiration_only:true,
+      external_repository_code_import_forbidden:true,
+      external_repository_design_authority_forbidden:true,
       autonomous_canon_mutation:false,
     },
     status:px.frontend_generation_context?.completeness?.provider_dispatch_ready === true ? 'READY_FOR_STITCH_VISUAL_GENERATION' : 'READY_AWAITING_SCREEN_TRUTH_COMPLETENESS',

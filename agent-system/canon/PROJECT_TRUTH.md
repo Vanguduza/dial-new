@@ -28,7 +28,7 @@ The former standalone claims Rev 3 document is provenance/history only after inc
 For claims implementation, the v6.1 master maps **330 atomic features to 113 canonical claims-related pages with zero orphan pages**. `MAPPED / SPEC-COMPLETE` is not implementation evidence.
 
 ## Non-negotiable
-- DIAL domains remain SoR; donors never own canonical money/jobs/orders/delivery/auth/compliance.
+- DIAL domains remain SoR; external repositories are non-authoritative reference/inspiration only and never own canonical product truth, design authority, money/jobs/orders/delivery/auth/compliance or runtime behavior.
 - agency-only Spare; no discarded D-51 owned-stock principal.
 - official WhatsApp Cloud API/Flows only.
 - Delivery SoR + locked maps/routing stack.
@@ -36,12 +36,15 @@ For claims implementation, the v6.1 master maps **330 atomic features to 113 can
 - simulation cannot mutate production.
 - human-readable operator refs.
 - generic AI UI prohibited.
-- FixItNow = `PORT-WHOLESALE`; canonical licensed publication for import is `Sachinrajawat/FixItNow` under MIT, pinned to an exact revision with notice/provenance preserved.
+- FixItNow is research/reference only under `DEC-039`; no wholesale port, code import, component import or runtime dependency is implied by its licence or prior donor classification.
 - changed-tree gate inheritance requires migration regression revalidation.
 - E6a Command Centre has no automatic historical green.
 - Command Centre target is full.
-- Corporate donor assimilation follows Corporate OS v1.1.
+- Corporate OS remains DIAL authority; external repositories may inform research and inspiration only and are not assimilated into production.
 
+
+## External repository reference lock — DEC-039
+External repositories previously called donors are **reference and inspiration only**. VEKL may extract abstract patterns, architecture lessons, interaction ideas, visual inspiration, anti-patterns, trade-offs, test ideas and public implementation lessons. It may not copy, port, fork, vendor, preserve or assimilate external code, components, assets, schemas, business logic or pixel layouts into DIAL production. External repositories cannot become Product Truth, business/state-machine authority, source of truth, DesignAuthority or VisualAuthority. Any literal third-party dependency/code adoption requires a separate explicit owner-authorized dependency decision and qualification path. Frontend design remains DIAL-native through the canonical Screen Registry × Feature Graph, authoritative truth hydration, VEKL knowledge, Stitch authorship and DDE production binding.
 
 ## Growth, marketing & promotions lock
 DIAL Growth, Marketing & Promotions Control Centre (GMPC) is a first-class horizontal Corporate commercial operating layer across DIAL divisions.
@@ -60,7 +63,7 @@ Resolve a Feature ID first. Use JIT context. Completion claims require fresh evi
 ### Versioned Engineering Knowledge Layer (VEKL) lock
 DIAL VEKL Rev 2, with the `DEC-024` **VEKL 2.1 resolver amendment**, is the governed federated engineering knowledge and capability layer. Agent Skills are one resource class alongside official docs, repositories, releases, maintainer issues/discussions, package registries, security advisories, qualified tools/plugins/MCPs, DIAL rules/hooks/loops and bounded community corroboration. Every material Oracle packet resolves one persisted Engineering Knowledge Activation Manifest after Feature/JIT context. Hard eligibility is resolved before ranking; Skills have one exact-pin selection owner; optional resources compete only within deterministic `(selection_purpose, selection_role)` slots; complementary roles may coexist; selected resource registry identity is fingerprinted; and descriptor-only context is the default unless a directly relevant authority excerpt is explicitly required. Input order may not change selected resource identities. The same manifest provenance follows Sol→Sonnet failover.
 
-The Oracle research scheduler uses exact project-aware GPT-5.6 Sol, falling back to exact Claude Sonnet 5, to presearch the next 3–5 dependency-safe packets implied by current Project Truth, Development Plan and mission state; this research is read-only, non-authoritative and cannot reprioritise the programme. Executable external capabilities still require exact-version donor/security/conflict/eval/manager qualification; community sources are corroboration/discovery only. No public research receives secrets, payment/customer records or identifiable Health data. Learned wrappers may improve procedure/selection but may not create product requirements, authority, money/Health policy, source-of-truth changes or gate claims. Canon/FRC/security/current code/evidence always win. Active canon: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` (`DEC-020`, amended by `DEC-024`); Rev 1 remains provenance for the immutable-skill foundation (`DEC-019`).
+The Oracle research scheduler uses exact project-aware GPT-5.6 Sol, falling back to exact Claude Sonnet 5, to presearch the next 3–5 dependency-safe packets implied by current Project Truth, Development Plan and mission state; this research is read-only, non-authoritative and cannot reprioritise the programme. Executable external capabilities still require exact-version dependency/security/conflict/eval/manager qualification; community sources are corroboration/discovery only. No public research receives secrets, payment/customer records or identifiable Health data. Learned wrappers may improve procedure/selection but may not create product requirements, authority, money/Health policy, source-of-truth changes or gate claims. Canon/FRC/security/current code/evidence always win. Active canon: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` (`DEC-020`, amended by `DEC-024`); Rev 1 remains provenance for the immutable-skill foundation (`DEC-019`).
 
 ### Technical cohesion + product telemetry lock
 `DEC-024` makes **one canonical authority per concern** a machine-checkable DIAL law. `agent-system/registries/TECHNICAL_COHESION_AUTHORITY_REGISTRY.json` is only an enforcement projection of canon, never an independent source of truth. Supporting tools may observe, execute or present through typed contracts but may not silently promote themselves into business authority.
@@ -78,7 +81,7 @@ PostHog is adopted through the DIAL-owned `@dial/product-telemetry` boundary for
 
 ## Final realization layer
 The 309 top-level features are anchors, not the completeness boundary.
-Every feature must implement its 9 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints where exposed, donor/source transformation and support/escalation requirements.
+Every feature must implement its 9 realization facets, applicable supporting capabilities, eventuality playbooks, customer/operator endpoints where exposed, external-reference non-authority constraints and support/escalation requirements.
 The 65 `GMPC-F*` anchors are the adopted Growth, Marketing & Promotions Control Centre extension; their 195 atomic feature-to-page mappings remain the lower-level implementation completeness boundary in the GMPC canon.
 
 For Dial Health high-consequence domains, the specialist v6.1 atomic feature/page contracts and Health-specific security, clinical-safety, claims, money, privacy and regulatory gates additionally apply.
@@ -156,7 +159,7 @@ DIAL VEKL 2.2 REV 2 (`DEC-026`) is the canonical development-knowledge topology 
 
 Every repository-writing HCX worker requires an isolated worktree plus a repository-wide non-overlapping path lease and current fencing token, rechecked at consequential write and integration. Owner steer or knowledge/Unit supersession revokes affected envelopes/leases and makes late worker results non-admissible. Role context is projected from the existing seven VEKL capsules; no second knowledge capsule authority is created.
 
-Donor applicability is a derived enforcement projection of existing DIAL donor canon. External design providers including Stitch remain non-authoritative, but under `DEC-033` any such provider retained in the active development system is readiness-required: it must be locally configured/authenticated/live-qualified and selection-ready before Development System GREEN. DIAL design/Product Experience authority remains canonical, provider egress is classified, generated output is quarantined before candidate admission, and accepted design is still not implementation evidence. Deterministic verification, security/FRC/Product Experience gates and Unit completion remain above worker confidence or multi-agent consensus. Every admitted material execution emits an immutable Development Execution Receipt linked to its KRT, envelope, route, compute, leases, worker artifacts and acceptance evidence. A2A and Temporal remain deferred until separately owner-authorized.
+External-reference applicability is a derived, non-authoritative research projection under `DEC-039`; it never authorizes code, component, asset, schema, business-logic or visual copying. External design providers including Stitch remain non-authoritative, but under `DEC-033` any such provider retained in the active development system is readiness-required: it must be locally configured/authenticated/live-qualified and selection-ready before Development System GREEN. DIAL design/Product Experience authority remains canonical, provider egress is classified, generated output is quarantined before candidate admission, and accepted design is still not implementation evidence. Deterministic verification, security/FRC/Product Experience gates and Unit completion remain above worker confidence or multi-agent consensus. Every admitted material execution emits an immutable Development Execution Receipt linked to its KRT, envelope, route, compute, leases, worker artifacts and acceptance evidence. A2A and Temporal remain deferred until separately owner-authorized.
 
 Canonical specification: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md`.
 

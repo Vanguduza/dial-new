@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dial.local/schemas/frontend/FRONTEND_CONTRACTS.schema.json",
   "title": "DIAL Frontend Product Experience Contracts",
-  "description": "Machine-readable contracts for the Rev 1.1 Product Experience integration. These schemas validate specialist frontend artifacts; Project Truth, FRC, domain/security authority, VEKL and the Adaptive Execution Fabric remain superior.",
+  "description": "Machine-readable contracts for the canonical DIAL frontend Product Experience architecture. Project Truth, Screen Registry × Feature Graph, domain/security authority and VEKL remain superior; external repositories are reference/inspiration only under DEC-039.",
   "type": "object",
   "$defs": {
     "BaseArtifact": {
@@ -498,6 +498,88 @@
             },
             "artifact_type": {
               "const": "DonorFrontendReuseProjection"
+            }
+          }
+        }
+      ],
+      "deprecated": true,
+      "description": "LEGACY/HISTORICAL ONLY. DEC-039 supersedes donor reuse/assimilation semantics; active workflows use ExternalReferenceInspirationProjection."
+    },
+    "ExternalReferenceInspirationProjection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "use_mode",
+            "source_reference_hash",
+            "production_import_allowed",
+            "runtime_dependency_allowed",
+            "source_of_truth_allowed",
+            "design_authority_allowed"
+          ],
+          "properties": {
+            "use_mode": {
+              "const": "REFERENCE_AND_INSPIRATION_ONLY"
+            },
+            "inspiration_topics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "anti_patterns_and_exclusions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "reference_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "production_import_allowed": {
+              "const": false
+            },
+            "runtime_dependency_allowed": {
+              "const": false
+            },
+            "source_of_truth_allowed": {
+              "const": false
+            },
+            "design_authority_allowed": {
+              "const": false
+            },
+            "visual_authority_promotion_allowed": {
+              "const": false
+            },
+            "semantic_preservation_required": {
+              "const": false
+            },
+            "pixel_copy_allowed": {
+              "const": false
+            },
+            "provider_projection": {
+              "enum": [
+                "ABSTRACT_SYNTHESIZED_DESCRIPTORS_ONLY"
+              ]
+            },
+            "artifact_type": {
+              "const": "ExternalReferenceInspirationProjection"
+            },
+            "source_reference_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "provenance": {
+              "type": "object"
             }
           }
         }
@@ -1250,6 +1332,9 @@
     },
     {
       "$ref": "#/$defs/DonorFrontendReuseProjection"
+    },
+    {
+      "$ref": "#/$defs/ExternalReferenceInspirationProjection"
     },
     {
       "$ref": "#/$defs/ApprovedVisualDelta"

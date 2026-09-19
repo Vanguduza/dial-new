@@ -82,7 +82,7 @@ function baseDeclared(overrides = {}) {
       product_truth: productTruth.product_truth_hash,
       required_content: ['SEARCH', 'GARAGE', 'CATEGORIES'],
       navigation_semantics: ['GARAGE_IS_PERSISTENT', 'SEARCH_IS_PRIMARY'],
-      donor_semantics: null,
+      external_reference_constraints: [],
       money_behavior: 'PRICING_SERVICE',
       security_behavior: 'NO_RAW_SUPPLIER_IDS_IN_UI',
     },
@@ -116,23 +116,24 @@ function explorePacket(overrides = {}) {
 }
 
 describe('provenance mode and iteration phase are separate axes', () => {
-  it('lets DONOR_ADAPT and EXPLORE both be true', () => {
-    const p = projectDesignAuthority({ unitMap, designMode: 'DONOR_ADAPT', designIterationPhase: 'EXPLORE', repoDir });
-    expect(p.design_provenance_mode).toBe('DONOR_ADAPT');
+  it('lets reference-inspired DIAL-native provenance and EXPLORE both be true', () => {
+    const p = projectDesignAuthority({ unitMap, designMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', designIterationPhase: 'EXPLORE', repoDir });
+    expect(p.design_provenance_mode).toBe('REFERENCE_INSPIRED_DIAL_NATIVE');
     expect(p.design_iteration_phase).toBe('EXPLORE');
-    // design_mode keeps carrying provenance, exactly as it always has.
-    expect(p.design_mode).toBe('DONOR_ADAPT');
+    expect(p.design_mode).toBe('REFERENCE_INSPIRED_DIAL_NATIVE');
   });
 
   it('keeps the two vocabularies disjoint and refuses a value from the wrong axis', () => {
     for (const mode of DESIGN_PROVENANCE_MODES) expect(DESIGN_ITERATION_PHASES).not.toContain(mode);
     expect(() => projectDesignAuthority({ unitMap, designMode: 'CONVERGE', repoDir })).toThrow(/unknown design provenance mode/);
-    expect(() => projectDesignAuthority({ unitMap, designIterationPhase: 'DONOR_ADAPT', repoDir })).toThrow(/unknown design iteration phase/);
+    expect(() => projectDesignAuthority({ unitMap, designIterationPhase: 'REFERENCE_INSPIRED_DIAL_NATIVE', repoDir })).toThrow(/unknown design iteration phase/);
   });
 
-  it('leaves legacy projections byte-identical when no phase is supplied', () => {
+  it('canonicalizes legacy donor modes into reference-inspired DIAL-native provenance', () => {
     const legacy = projectDesignAuthority({ unitMap, designMode: 'DONOR_PRESERVE', repoDir });
     expect(Object.keys(legacy)).not.toContain('design_iteration_phase');
+    expect(legacy.design_mode).toBe('REFERENCE_INSPIRED_DIAL_NATIVE');
+    expect(legacy.legacy_design_mode_input).toBe('DONOR_PRESERVE');
     expect(legacy.prohibited_patterns).toEqual([...ENFORCED_BASELINE_PATTERNS]);
     expect(renderDesignMarkdown(legacy)).not.toMatch(/Iteration phase/);
   });
@@ -151,9 +152,11 @@ describe('existing design authority remains intact', () => {
     expect(q.violations).toEqual(expect.arrayContaining(['EVENT_HANDLER', 'IFRAME', 'REMOTE_URL']));
   });
 
-  it('keeps the legacy strategy router unchanged', () => {
+  it('has no direct external-repository port strategy', () => {
     expect(selectDesignStrategy({ designMode: 'NEW_DIAL_DESIGN' }).selected).toBe('DIRECT_DIAL_IMPLEMENTATION');
-    expect(selectDesignStrategy({ designMode: 'DONOR_ADAPT' }).selected).toBe('DIRECT_DONOR_PORT_AND_TRANSFORM');
+    const ref = selectDesignStrategy({ designMode: 'REFERENCE_INSPIRED_DIAL_NATIVE' });
+    expect(ref.selected).toBe('DIRECT_DIAL_IMPLEMENTATION');
+    expect(ref.candidates).not.toContain('DIRECT_DONOR_PORT_AND_TRANSFORM');
     expect(selectDesignStrategy({ designMode: 'NEW_DIAL_DESIGN', directWorkerEligible: false })).toEqual({ ok: false, reason: 'NO_ELIGIBLE_DESIGN_STRATEGY' });
   });
 });
@@ -194,7 +197,7 @@ describe('screen quality packet', () => {
     const packet = explorePacket();
     expect(packet.ok).toBe(true);
     expect(packet.packet.authority.product_truth_hash).toBe(productTruth.product_truth_hash);
-    expect(packet.packet.critics).toEqual(['accessibility', 'donor', 'implementation', 'product', 'responsive', 'ux', 'visual']);
+    expect(packet.packet.critics).toEqual(['accessibility', 'external_reference', 'implementation', 'product', 'responsive', 'ux', 'visual']);
     expect(packet.packet.prohibited_patterns).toEqual(expect.arrayContaining([...ENFORCED_BASELINE_PATTERNS]));
   });
 
@@ -204,9 +207,9 @@ describe('screen quality packet', () => {
     expect(explorePacket({ designIterationPhase: 'CONVERGE', candidateCount: 3 }).failures).toContain('CONVERGE_REQUIRES_SINGLE_CANDIDATE');
   });
 
-  it('requires the donor critic in donor provenance modes', () => {
-    const result = explorePacket({ designProvenanceMode: 'DONOR_PRESERVE', critics: ['product', 'visual', 'accessibility', 'implementation'] });
-    expect(result.failures).toContain('DONOR_CRITIC_REQUIRED_FOR_DONOR_MODE');
+  it('requires the external-reference critic for reference-inspired provenance', () => {
+    const result = explorePacket({ designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', critics: ['product', 'visual', 'accessibility', 'implementation'] });
+    expect(result.failures).toContain('EXTERNAL_REFERENCE_CRITIC_REQUIRED');
   });
 
   it('refuses a packet missing a mandatory critic or Product Truth', () => {
@@ -275,26 +278,26 @@ describe('critics reject what conformance alone would pass', () => {
     expect(evidence.blocking_findings.map((f) => f.finding_id)).toContain('CANDIDATE_STRUCTURE_UNDECLARED');
   });
 
-  it('enforces donor semantics only in donor modes', () => {
-    const donorPacket = buildScreenQualityPacket({
+  it('enforces external repositories as non-authoritative inspiration only', () => {
+    const refPacket = buildScreenQualityPacket({
       repoDir, productTruth: buildProductTruthPacket({
         feature_ids: ['SPARE-F002'], unit_lineage_id: 'U', unit_revision_hash: 'r', user_goal: 'g',
-        required_actions: ['SEARCH_PART'], required_states: ['RESULTS'], donor_constraints: ['DONOR_SEARCH_FLOW'],
+        required_actions: ['SEARCH_PART'], required_states: ['RESULTS'], external_reference_constraints: ['NO_EXTERNAL_IMPLEMENTATION_REUSE'],
       }).product_truth,
       authority: { design_authority_projection_hash: exploreProjection.projection_hash },
-      designProvenanceMode: 'DONOR_PRESERVE', designIterationPhase: 'EXPLORE', candidateCount: 2,
+      designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', designIterationPhase: 'EXPLORE', candidateCount: 2,
     }).packet;
     const truth2 = buildProductTruthPacket({
       feature_ids: ['SPARE-F002'], unit_lineage_id: 'U', unit_revision_hash: 'r', user_goal: 'g',
-      required_actions: ['SEARCH_PART'], required_states: ['RESULTS'], donor_constraints: ['DONOR_SEARCH_FLOW'],
+      required_actions: ['SEARCH_PART'], required_states: ['RESULTS'], external_reference_constraints: ['NO_EXTERNAL_IMPLEMENTATION_REUSE'],
     }).product_truth;
-    const stripped = {
-      candidate_id: 'DESIGN-donor', product_truth_hash: truth2.product_truth_hash,
-      declared: { actions: ['SEARCH_PART'], states: ['RESULTS'], donor_semantics_preserved: [], donor_branding_present: true, donor_workflow_reinterpreted: true, displayed_values: [] },
+    const violating = {
+      candidate_id: 'DESIGN-reference', product_truth_hash: truth2.product_truth_hash,
+      declared: { actions: ['SEARCH_PART'], states: ['RESULTS'], external_reference_constraints_satisfied: [], external_reference_branding_present: true, external_reference_code_imported: true, displayed_values: [] },
     };
-    const evidence = runCritics({ candidate: stripped, productTruth: truth2, packet: donorPacket, repoDir });
+    const evidence = runCritics({ candidate: violating, productTruth: truth2, packet: refPacket, repoDir });
     const ids = evidence.blocking_findings.map((f) => f.finding_id);
-    expect(ids).toEqual(expect.arrayContaining(['DONOR_SEMANTICS_NOT_PRESERVED:DONOR_SEARCH_FLOW', 'DONOR_BRAND_AUTHORITY', 'DONOR_WORKFLOW_REINTERPRETED']));
+    expect(ids).toEqual(expect.arrayContaining(['EXTERNAL_REFERENCE_CONSTRAINT_UNSATISFIED:NO_EXTERNAL_IMPLEMENTATION_REUSE', 'EXTERNAL_REFERENCE_BRAND_AUTHORITY', 'EXTERNAL_REFERENCE_CODE_IMPORT']));
   });
 
   it('accepts an external aesthetic critic through the same contract', () => {
@@ -470,22 +473,28 @@ describe('provider routing stays fail-closed', () => {
     expect(verdict.reasons).toContain(expected);
   });
 
-  it('refuses a provider that cannot take donor input in donor mode', () => {
+  it('refuses raw external-repository screen input in reference-inspired mode', () => {
     const verdict = evaluateProviderEligibility({
-      provider: { ...qualified, supported_inputs: ['structured_prompt'] },
-      phase: 'EXPLORE', designProvenanceMode: 'DONOR_PRESERVE', requiredOutputs: ['design_artifact'],
+      provider: qualified,
+      phase: 'EXPLORE', designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', requiredOutputs: ['design_artifact'],
     });
-    expect(verdict.reasons).toContain('DONOR_INPUT_UNSUPPORTED');
+    expect(verdict.reasons).toContain('RAW_EXTERNAL_REPOSITORY_SCREEN_INPUT_FORBIDDEN');
+    const abstractOnly = evaluateProviderEligibility({
+      provider: { ...qualified, supported_inputs: ['structured_prompt', 'image_reference'] },
+      phase: 'EXPLORE', designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', requiredOutputs: ['design_artifact'],
+    });
+    expect(abstractOnly.eligible).toBe(true);
   });
 
-  it('keeps working through a provider outage without relaxing acceptance', () => {
+  it('fails closed on provider outage without silently substituting a direct worker', () => {
     const result = routeGuidedCandidateGeneration({
       designProvenanceMode: 'NEW_DIAL_DESIGN', designIterationPhase: 'EXPLORE',
       providers: [{ ...qualified, health: 'DOWN' }], directWorkerEligible: true,
     });
-    expect(result.ok).toBe(true);
+    expect(result.ok).toBe(false);
     expect(result.routes).toHaveLength(0);
-    expect(result.fallback_strategy).toBe('DIRECT_DIAL_IMPLEMENTATION');
+    expect(result.fallback_strategy).toBe(null);
+    expect(result.outage_behavior).toBe('WAIT_RETRY_OR_REPORT_UNAVAILABLE');
     expect(result.acceptance_preserved).toBe(true);
   });
 
@@ -495,7 +504,7 @@ describe('provider routing stays fail-closed', () => {
       providers: [{ ...qualified, health: 'DOWN' }], directWorkerEligible: false,
     });
     expect(result.ok).toBe(false);
-    expect(result.reason).toBe('NO_ELIGIBLE_DESIGN_STRATEGY');
+    expect(result.reason).toBe('NO_ELIGIBLE_DESIGN_PROVIDER');
   });
 
   it('routes deterministically', () => {
