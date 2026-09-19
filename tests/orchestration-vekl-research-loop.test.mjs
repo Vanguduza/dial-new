@@ -149,7 +149,7 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     const claim = await loop.invoke('claim', { request_id: 'request-claim-web-1', worker_id: 'chatgpt-dev' });
     const searched = await loop.invoke('search', { request_id: 'request-search-web-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, search_query: 'current evidence' });
     expect(searched.state).toBe('SEARCH_RESULTS');
-    expect(searched.adapter).toBe('EXA_MCP_PUBLIC');
+    expect(searched.adapter).toBe('PUBLIC_SEARCH');
     expect(searched.content).toContain('https://example.com/doc');
     const fetched = await loop.invoke('fetch-read', { request_id: 'request-read-web-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, url: 'https://example.com/doc' });
     expect(fetched.state).toBe('FETCHED');

@@ -19,6 +19,8 @@ const ALLOWED_TRUTH_CLASSES = new Set(['VERIFIED_FACT', 'VERIFIED_DERIVED_FACT',
 function clone(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
 function moduleKey(featureRecord = {}, screens = []) {
   const raw = String(featureRecord?.module || screens?.[0]?.module || '').toUpperCase();
+  const aliases = Object.freeze({ PLAT: 'PLATFORM', CORP: 'CORPORATE', PROJ: 'PROJECTS', ASST: 'ASSIST' });
+  if (aliases[raw]) return aliases[raw];
   const known = ['SPARE','TECH','GROCERIES','LAUNDRY','VHUB','CARE','ASSIST','PROJECTS','FLEET','HEALTH','CORPORATE','PLATFORM','GMPC','DKRF','HOME'];
   return known.find((id) => raw === id || raw.startsWith(`${id} `) || raw.startsWith(`${id}_`) || raw.startsWith(`${id}-`)) || (raw || null);
 }

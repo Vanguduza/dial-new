@@ -3,17 +3,18 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
+    "auth-20260919-owner-canonical-frontend-generation-architecture",
     "auth-20260919-owner-master-merge-full-current-scope"
   ],
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/MASTER_MERGE_AUTHORIZATION_20260919.md"
+    "agent-system/orchestration/frontend-generation-architecture.mjs",
+    "tests/orchestration-vekl-research-loop.test.mjs"
   ],
-  "content_diff_sha256": "24058af2cc1687eaecd5d364a929c24ef4fe8ad29a2ad0d0b44f6514a2fb87b0",
-  "observed_at_utc": "2026-09-19T20:28:21.973857+00:00",
+  "content_diff_sha256": "59ac22b9beef18e50852e03e7104f841145280f22e931b71b277ebc5db6d1781",
+  "observed_at_utc": "2026-09-19T20:35:02.250576+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "8c4089e1b37b3c2e9a1048f2113a814556a9f758",
+  "source_parent": "cf18fa0d4a0ade33d584aaa74a8c2468fd84a442",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
