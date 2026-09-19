@@ -26,6 +26,8 @@ ExecStartPre=/usr/bin/rm -f ${STATE_DIR}/.s.PGSQL.5432
 ExecStart=/usr/bin/ssh -NT -o BatchMode=yes -o ExitOnForwardFailure=yes -o StreamLocalBindUnlink=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L ${STATE_DIR}/.s.PGSQL.5432:/var/run/postgresql/.s.PGSQL.5432 ${WORKER}
 Restart=always
 RestartSec=3
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
+Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
