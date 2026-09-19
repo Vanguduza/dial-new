@@ -22,12 +22,14 @@ async function claimOne(pool) {
   try {
     await db.query('BEGIN');
     const found = await db.query(
-      `SELECT * FROM vekl_research_packets
-       WHERE state IN ('READY','RETRY')
-         AND NOT (resume ? 'groq_first_pass')
-         AND (lease_expires_at IS NULL OR lease_expires_at <= now())
-       ORDER BY ordinal
-       FOR UPDATE SKIP LOCKED
+      `SELECT p.* FROM vekl_research_packets p
+       JOIN vekl_research_missions m ON m.mission_id=p.mission_id
+       WHERE m.state='READY'
+         AND p.state IN ('READY','RETRY')
+         AND NOT (p.resume ? 'groq_first_pass')
+         AND (p.lease_expires_at IS NULL OR p.lease_expires_at <= now())
+       ORDER BY p.ordinal
+       FOR UPDATE OF p SKIP LOCKED
        LIMIT 1`,
     );
     if (!found.rows[0]) {
