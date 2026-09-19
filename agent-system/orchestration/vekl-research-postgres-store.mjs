@@ -29,25 +29,25 @@ export class VeklPostgresResearchStore {
     this.executionHostRole = executionHostRole || 'unknown';
   }
   async getRequest(id) { const r = await this.client.query(SQL.getRequest, [id]); return r.rows[0] || null; }
-  async putRequest(v) { await this.client.query(SQL.putRequest, [v.request_id, v.action, v.input_hash, v.response, v.created_at_ms]); }
+  async putRequest(v) { await this.client.query(SQL.putRequest, [v.request_id, v.action, v.input_hash, JSON.stringify(v.response), v.created_at_ms]); }
   async claimNext(v) { const leaseId = crypto.randomUUID(); const r = await this.client.query(SQL.lease, [v.now_ms, v.worker_id, leaseId, v.lease_expires_ms]); return normalizeLease(r.rows[0]); }
   async getLease(id) { const r = await this.client.query(SQL.getLease, [id]); return normalizeLease(r.rows[0]); }
-  async event(kind, v) { const r = await this.client.query(SQL.event, [v.lease_id, kind, v, v.at_ms]); return { state: 'RECORDED', event_id: r.rows[0].event_id }; }
+  async event(kind, v) { const r = await this.client.query(SQL.event, [v.lease_id, kind, JSON.stringify(v), v.at_ms]); return { state: 'RECORDED', event_id: r.rows[0].event_id }; }
   recordSearch(v) { return this.event('SEARCH', v); }
   recordRead(v) { return this.event('FETCH_READ', v); }
   async persistEvidence(v) {
     const db = this.client.totalCount === undefined ? this.client : await this.client.connect();
     await db.query('BEGIN');
     try {
-      const r = await db.query(SQL.evidence, [v.lease_id, v.packet_hash, v.worker_id, v.kind, v.claims, v.sources, v.evidence_hash, v.at_ms]);
-      for (const source of v.sources || []) await db.query(SQL.source, [source.content_hash, source.url, source.source_kind || 'PUBLIC_WEB', source.trust_tier || null, source.observed_at, source.metadata || {}]);
-      for (const candidate of v.discovery_candidates || []) await db.query(SQL.discovery, [v.lease_id, candidate.candidate_id, candidate.lifecycle_state || 'DISCOVERED', candidate.trust_tier || 'T3_COMMUNITY_CORROBORATION', candidate.evidence_refs || [v.evidence_hash]]);
+      const r = await db.query(SQL.evidence, [v.lease_id, v.packet_hash, v.worker_id, v.kind, JSON.stringify(v.claims), JSON.stringify(v.sources), v.evidence_hash, v.at_ms]);
+      for (const source of v.sources || []) await db.query(SQL.source, [source.content_hash, source.url, source.source_kind || 'PUBLIC_WEB', source.trust_tier || null, source.observed_at, JSON.stringify(source.metadata || {})]);
+      for (const candidate of v.discovery_candidates || []) await db.query(SQL.discovery, [v.lease_id, candidate.candidate_id, candidate.lifecycle_state || 'DISCOVERED', candidate.trust_tier || 'T3_COMMUNITY_CORROBORATION', JSON.stringify(candidate.evidence_refs || [v.evidence_hash])]);
       await db.query('COMMIT');
       return { state: 'VALIDATED_PERSISTED', evidence_hash: r.rows[0].evidence_hash };
     } catch (error) { await db.query('ROLLBACK'); throw error; }
     finally { if (db !== this.client) db.release(); }
   }
-  async transition(state, v) { const r = await this.client.query(SQL.transition, [v.lease_id, state, { reason: v.reason || null, at_ms: v.at_ms }]); return { state: r.rows[0]?.state || state }; }
+  async transition(state, v) { const r = await this.client.query(SQL.transition, [v.lease_id, state, JSON.stringify({ reason: v.reason || null, at_ms: v.at_ms })]); return { state: r.rows[0]?.state || state }; }
   complete(v) { return this.transition('COMPLETE', v); }
   retry(v) { return this.transition('RETRY', v); }
   refuse(v) { return this.transition('REFUSED', v); }
