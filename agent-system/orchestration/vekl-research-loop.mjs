@@ -7,7 +7,16 @@ export const RESEARCH_LOOP_ACTIONS = Object.freeze([
 export const RESEARCH_LOOP_AUTHORITY = 'NON_AUTHORITATIVE_ENGINEERING_RESEARCH';
 export const DEFAULT_LEASE_MS = 15 * 60 * 1000;
 
-const sha = (value) => crypto.createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
+function canonicalize(value) {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonicalize(value[key])]));
+  }
+  return value;
+}
+const sha = (value) => crypto.createHash('sha256')
+  .update(typeof value === 'string' ? value : JSON.stringify(canonicalize(value)))
+  .digest('hex');
 const clone = (value) => structuredClone(value);
 const publicUrl = (value) => {
   try {

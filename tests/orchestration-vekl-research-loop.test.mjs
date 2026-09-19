@@ -32,6 +32,16 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     expect(claim.packet.authority).toBe('NON_AUTHORITATIVE_ENGINEERING_RESEARCH');
   });
 
+
+  it('keeps packet hashes stable across JSONB-style object key reordering', () => {
+    const a = immutableDuPacket(packet());
+    const reordered = packet();
+    reordered.contract_bindings = [{ fingerprint: 'f'.repeat(64), contract_id: 'FRC:F-1' }];
+    reordered.discovery_workload = { mode: 'OPEN_WORLD_BOUNDED' };
+    const b = immutableDuPacket(reordered);
+    expect(b.packet_hash).toBe(a.packet_hash);
+  });
+
   it('is idempotent, leased, resumable and validates before persistence', async () => {
     const store = new Store(); const loop = new VeklResearchLoop({ store, clock: () => 1000 });
     const input = { request_id: 'request-claim-2', worker_id: 'chatgpt-dev' };

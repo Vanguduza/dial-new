@@ -11,16 +11,23 @@ TIMER_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-groq-research.timer"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "vekl-worker" ]] || fail "must run on vekl-worker"
-[[ -s "$SECRET_DIR/groq-api.key" ]] || fail "Groq API key is required"
+[[ -s "$SECRET_DIR/groq-api.key" && -s "$SECRET_DIR/groq-zdr-enabled" ]] || fail "Groq API key and ZDR marker are required"
 [[ -f "$MIGRATION" && -f "$SERVICE_SRC" && -f "$TIMER_SRC" ]] || fail "research runtime files missing"
 
-mkdir -p "$PG_RUNTIME"
-npm install --prefix "$PG_RUNTIME" pg@8.16.3 --no-audit --no-fund >/dev/null
+mkdir -p "$PG_RUNTIME/node_modules"
+if [[ -f /usr/share/nodejs/pg/package.json ]]; then
+  ln -sfn /usr/share/nodejs/pg "$PG_RUNTIME/node_modules/pg"
+elif command -v npm >/dev/null 2>&1; then
+  npm install --prefix "$PG_RUNTIME" pg@8.16.3 --no-audit --no-fund >/dev/null
+else
+  fail "node-postgres unavailable: install OS package node-pg or provide npm"
+fi
+node -e "const pg=require('$PG_RUNTIME/node_modules/pg'); if(typeof pg.Pool!=='function') process.exit(1)" || fail "node-postgres validation failed"
 
-sudo -n -u postgres psql -X -v ON_ERROR_STOP=1 -d dial_vekl -f "$MIGRATION" >/dev/null
+sudo -n -u postgres psql -X -v ON_ERROR_STOP=1 -d dial_vekl < "$MIGRATION" >/dev/null
 sudo -n -u postgres psql -XAt -d postgres -c "select 1 from pg_roles where rolname='dial_research_loop'" | grep -qx 1 || \
   sudo -n -u postgres createuser --login --no-superuser --no-createdb --no-createrole --no-inherit dial_research_loop
-sudo -n -u postgres psql -X -v ON_ERROR_STOP=1 -d dial_vekl -c "GRANT CONNECT ON DATABASE dial_vekl TO dial_research_loop; GRANT USAGE ON SCHEMA public TO dial_research_loop; GRANT SELECT,INSERT,UPDATE ON TABLE vekl_research_missions,vekl_research_packets,vekl_research_coverage,vekl_research_idempotency,vekl_research_events,vekl_research_evidence,vekl_research_sources,vekl_research_discovery_links,vekl_research_artifact_links TO dial_research_loop; GRANT USAGE,SELECT ON SEQUENCE vekl_research_events_event_id_seq TO dial_research_loop;" >/dev/null
+sudo -n -u postgres psql -X -v ON_ERROR_STOP=1 -d dial_vekl -c "GRANT CONNECT ON DATABASE dial_vekl TO dial_research_loop; GRANT USAGE ON SCHEMA public TO dial_research_loop; GRANT SELECT,INSERT,UPDATE,DELETE ON TABLE vekl_research_missions,vekl_research_packets,vekl_research_coverage,vekl_research_idempotency,vekl_research_events,vekl_research_evidence,vekl_research_sources,vekl_research_discovery_links,vekl_research_artifact_links TO dial_research_loop; GRANT USAGE,SELECT ON SEQUENCE vekl_research_events_event_id_seq TO dial_research_loop;" >/dev/null
 
 PG_IDENT=/etc/postgresql/16/main/pg_ident.conf
 PG_HBA=/etc/postgresql/16/main/pg_hba.conf
@@ -36,8 +43,9 @@ sudo -n install -m 0644 "$SERVICE_SRC" /etc/systemd/system/dial-vekl-groq-resear
 sudo -n install -m 0644 "$TIMER_SRC" /etc/systemd/system/dial-vekl-groq-research.timer
 sudo -n mkdir -p "$CONTROL_HOME/knowledge/research/groq-harvest" "$CONTROL_HOME/operations/research/providers"
 sudo -n chown -R ubuntu:ubuntu "$CONTROL_HOME/knowledge/research/groq-harvest" "$CONTROL_HOME/operations/research/providers"
+systemctl --user disable --now dial-vekl-gptoss-producer.timer >/dev/null 2>&1 || true
 sudo -n systemctl daemon-reload
-sudo -n systemctl enable dial-vekl-groq-research.timer >/dev/null
+sudo -n systemctl enable --now dial-vekl-groq-research.timer >/dev/null
 
 echo DIAL_VEKL_GROQ_RESEARCH_RUNTIME_READY
 echo provider=groq
