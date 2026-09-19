@@ -1,9 +1,0 @@
-[Unit]
-Description=DIAL micro-node service slice
-
-[Slice]
-MemoryAccounting=yes
-CPUAccounting=yes
-MemoryHigh=512M
-MemoryMax=640M
-CPUWeight=800
