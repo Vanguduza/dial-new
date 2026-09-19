@@ -23,6 +23,13 @@ import {
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
 import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 import { engineeringResearchStatus } from './engineering-presearch.mjs';
+import {
+  runUnionAlphaResearchBatch,
+  unionAlphaResearchStatus,
+} from './providers/openrouter/union-alpha-research-adapter.mjs';
+import {
+  finalizeUnionAlphaResearchMission,
+} from './vekl-research-harvest.mjs';
 import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
 import { ownerInstructionProvenance } from './project-truth-authority.mjs';
 import { supersedeActiveExecutionTasks } from './task-execution-envelope.mjs';
@@ -217,6 +224,9 @@ const TOOL_DEFS = Object.freeze([
   ['dial_skill_status', 'Backward-compatible VEKL status alias: read skills plus federated engineering-resource activation for a packet/current mission.', { packet_id: { type: 'string' } }],
   ['dial_engineering_knowledge_status', 'Read VEKL v2 skills, federated resource/source counts, current packet activation provenance and ahead-of-work research linkage.', { packet_id: { type: 'string' } }],
   ['dial_engineering_research_status', 'Read the current project-aware VEKL ahead-of-work forecast and passive resource-cache index.', {}],
+  ['dial_union_alpha_research_status', 'Read the bounded Union Alpha VEKL full-research mission status without exposing provider credentials.', {}],
+  ['dial_union_alpha_research_batch', 'Execute one idempotent PUBLIC_RESEARCH_ONLY Union Alpha research batch. Private unit bindings stay inside DIAL and are never included in the provider packet.', { batch: { type: 'object' }, bindings: { type: 'array' } }],
+  ['dial_union_alpha_research_finalize', 'Run the canonical coverage audit for one Union Alpha VEKL full-research mission and compile per-unit research only if every mandatory coverage gate passes.', { mission_id: { type: 'string' } }],
   ['dial_runtime_capacity_status', 'Read Sol capacity-preservation state, exact-identity cache validity, provider cooldown and recent model-call suppression/usage evidence.', {}],
   ['dial_operator_channels', 'Read DIAL operator-channel health for the typed control bridge and WhatsApp owner adapter without exposing credentials.', {}],
 ]);
@@ -231,6 +241,8 @@ const REQUIRED_ARGS = Object.freeze({
   dial_reprioritize: ['directive', 'request_id'],
   dial_approve_gate: ['gate_id', 'request_id'],
   dial_reject_gate: ['gate_id', 'request_id'],
+  dial_union_alpha_research_batch: ['batch'],
+  dial_union_alpha_research_finalize: ['mission_id'],
 });
 export const CHAT_CONTROL_TOOLS = TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } }));
 
@@ -287,6 +299,22 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
   else if (name === 'dial_evidence') result = readJson('operations/projects/dial/latest/evidence_prepare.json', { state: 'NO_EVIDENCE_PREPARED' }, root);
   else if (name === 'dial_skill_status' || name === 'dial_engineering_knowledge_status') result = engineeringKnowledgeStatus({ repoDir: project.repo_dir, root, packetId: clean(args.packet_id, 180) || null });
   else if (name === 'dial_engineering_research_status') result = engineeringResearchStatus(root);
+  else if (name === 'dial_union_alpha_research_status') result = unionAlphaResearchStatus(root);
+  else if (name === 'dial_union_alpha_research_batch') {
+    result = await runUnionAlphaResearchBatch({
+      batch: args.batch,
+      bindings: Array.isArray(args.bindings) ? args.bindings : [],
+      repoDir: project.repo_dir,
+      root,
+    });
+  }
+  else if (name === 'dial_union_alpha_research_finalize') {
+    result = finalizeUnionAlphaResearchMission({
+      repoDir: project.repo_dir,
+      root,
+      missionId: clean(args.mission_id, 160),
+    });
+  }
   else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
   else if (name === 'dial_operator_channels') result = {
     authority: CHAT_CONTROL_AUTHORITY, project: 'dial',

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-contract-schemas-1.1",
+  "registry_version": "frontend-contract-schemas-1.2",
   "required_contracts": [
     "ProductDesignProfile",
     "FrontendDesignExecutionPacket",
@@ -22,7 +22,11 @@
     "TemplateArtifact",
     "DesignLintReport",
     "DesignCodeParityStatus",
-    "CertificationEvidence"
+    "CertificationEvidence",
+    "CreativeDirectionProfile",
+    "DesignFreedomBudget",
+    "CreativeExplorationPlan",
+    "CreativeScreenGenerationStrategy"
   ],
   "common_required_fields": [
     "schema_version",

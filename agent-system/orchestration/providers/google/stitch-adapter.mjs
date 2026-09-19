@@ -317,3 +317,88 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
     status,
   });
 }
+
+
+export async function generateStitchVariantSet({
+  title,
+  seedPrompt,
+  explorePrompt,
+  variantOptions = { aspects: ['LAYOUT', 'COLOR_SCHEME', 'IMAGES', 'TEXT_FONT'], creativeRange: 'EXPLORE', variantCount: 3 },
+  deviceType = 'MOBILE',
+  modelId = 'GEMINI_3_1_PRO',
+  env = process.env,
+  clientFactory = createStitchClient,
+} = {}) {
+  if (!stitchEnabled(env)) throw Object.assign(new Error('STITCH_DISABLED'), { category: 'DISABLED' });
+  if (!String(seedPrompt || '').trim()) throw new Error('STITCH_SEED_PROMPT_REQUIRED');
+  let client;
+  try {
+    const created = clientFactory(env);
+    client = created.client;
+    const sdk = created.sdk;
+    const project = await sdk.createProject(String(title || `DIAL creative ${Date.now()}`));
+    const seed = await project.generate(String(seedPrompt), deviceType, modelId);
+    const variants = await seed.variants(String(explorePrompt || seedPrompt), variantOptions, deviceType, modelId);
+    const rows = [];
+    for (const screen of variants) {
+      rows.push({
+        project_id: project.projectId,
+        screen_id: screen.screenId,
+        html_url: await screen.getHtml(),
+        image_url: await screen.getImage(),
+      });
+    }
+    return {
+      provider: 'google-stitch',
+      project_id: project.projectId,
+      seed_screen_id: seed.screenId,
+      variant_options: variantOptions,
+      variants: rows,
+      response_hash: sha256({
+        project_id: project.projectId,
+        seed_screen_id: seed.screenId,
+        variant_options: variantOptions,
+        variants: rows,
+      }),
+    };
+  } catch (error) {
+    error.category ||= classifyStitchError(error);
+    throw error;
+  } finally {
+    try { await client?.close(); } catch {}
+  }
+}
+
+export async function refineStitchScreen({
+  projectId,
+  screenId,
+  prompt,
+  deviceType = 'MOBILE',
+  modelId = 'GEMINI_3_1_PRO',
+  env = process.env,
+  clientFactory = createStitchClient,
+} = {}) {
+  if (!stitchEnabled(env)) throw Object.assign(new Error('STITCH_DISABLED'), { category: 'DISABLED' });
+  if (!projectId || !screenId || !String(prompt || '').trim()) throw new Error('STITCH_REFINE_INPUT_REQUIRED');
+  let client;
+  try {
+    const created = clientFactory(env);
+    client = created.client;
+    const screen = created.sdk.project(projectId).screen(screenId);
+    const refined = await screen.edit(String(prompt), deviceType, modelId);
+    return {
+      provider: 'google-stitch',
+      project_id: projectId,
+      source_screen_id: screenId,
+      screen_id: refined.screenId,
+      html_url: await refined.getHtml(),
+      image_url: await refined.getImage(),
+      response_hash: sha256({ project_id: projectId, source_screen_id: screenId, screen_id: refined.screenId }),
+    };
+  } catch (error) {
+    error.category ||= classifyStitchError(error);
+    throw error;
+  } finally {
+    try { await client?.close(); } catch {}
+  }
+}

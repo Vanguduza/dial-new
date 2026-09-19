@@ -931,7 +931,8 @@
             "visual_render_determinism_envelope",
             "registry_hashes",
             "acceptance",
-            "authority_constraints"
+            "authority_constraints",
+            "creative_screen_generation"
           ],
           "properties": {
             "task_id": {
@@ -988,6 +989,240 @@
             },
             "artifact_type": {
               "const": "FrontendDesignExecutionPacket"
+            },
+            "creative_screen_generation": {
+              "type": "object",
+              "required": [
+                "strategy_version",
+                "surfaces",
+                "content_hash"
+              ],
+              "properties": {
+                "strategy_version": {
+                  "type": "string"
+                },
+                "surfaces": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/CreativeScreenGenerationStrategy"
+                  }
+                },
+                "content_hash": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CreativeDirectionProfile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "strategy_version",
+            "surface_id",
+            "execution_mode",
+            "immutable_anchors",
+            "creative_degrees_of_freedom",
+            "prohibited_creativity",
+            "anti_generic_requirements"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "CreativeDirectionProfile"
+            },
+            "strategy_version": {
+              "type": "string"
+            },
+            "surface_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "execution_mode": {
+              "enum": [
+                "RECONSTRUCT",
+                "SYNTHESIZE",
+                "ENHANCE",
+                "ASSIMILATE"
+              ]
+            },
+            "immutable_anchors": {
+              "type": "object"
+            },
+            "creative_degrees_of_freedom": {
+              "type": "object"
+            },
+            "prohibited_creativity": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "anti_generic_requirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "DesignFreedomBudget": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "strategy_version",
+            "execution_mode",
+            "freedom_level",
+            "provider_creative_range",
+            "candidate_count",
+            "dimensions",
+            "hard_limits",
+            "convergence_policy"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "DesignFreedomBudget"
+            },
+            "strategy_version": {
+              "type": "string"
+            },
+            "execution_mode": {
+              "enum": [
+                "RECONSTRUCT",
+                "SYNTHESIZE",
+                "ENHANCE",
+                "ASSIMILATE"
+              ]
+            },
+            "freedom_level": {
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "MEDIUM_HIGH"
+              ]
+            },
+            "provider_creative_range": {
+              "enum": [
+                "REFINE",
+                "EXPLORE",
+                "REIMAGINE"
+              ]
+            },
+            "candidate_count": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 8
+            },
+            "dimensions": {
+              "type": "object"
+            },
+            "hard_limits": {
+              "type": "object"
+            },
+            "convergence_policy": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "CreativeExplorationPlan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "strategy_version",
+            "phases",
+            "provider_variant_options",
+            "candidates",
+            "convergence"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "CreativeExplorationPlan"
+            },
+            "strategy_version": {
+              "type": "string"
+            },
+            "phases": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "EXPLORE",
+                  "CONVERGE",
+                  "RECONSTRUCT"
+                ]
+              }
+            },
+            "provider_variant_options": {
+              "type": "object"
+            },
+            "candidates": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object"
+              }
+            },
+            "convergence": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "CreativeScreenGenerationStrategy": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "strategy_version",
+            "phase_contract",
+            "creative_direction_profile",
+            "design_freedom_budget",
+            "exploration_plan",
+            "authority_constraints"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "CreativeScreenGenerationStrategy"
+            },
+            "strategy_version": {
+              "type": "string"
+            },
+            "phase_contract": {
+              "type": "object"
+            },
+            "creative_direction_profile": {
+              "$ref": "#/$defs/CreativeDirectionProfile"
+            },
+            "design_freedom_budget": {
+              "$ref": "#/$defs/DesignFreedomBudget"
+            },
+            "exploration_plan": {
+              "$ref": "#/$defs/CreativeExplorationPlan"
+            },
+            "authority_constraints": {
+              "type": "object"
             }
           }
         }
@@ -1057,6 +1292,18 @@
     },
     {
       "$ref": "#/$defs/FrontendDesignExecutionPacket"
+    },
+    {
+      "$ref": "#/$defs/CreativeDirectionProfile"
+    },
+    {
+      "$ref": "#/$defs/DesignFreedomBudget"
+    },
+    {
+      "$ref": "#/$defs/CreativeExplorationPlan"
+    },
+    {
+      "$ref": "#/$defs/CreativeScreenGenerationStrategy"
     }
   ]
 }

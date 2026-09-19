@@ -1,6 +1,7 @@
 import { DEFAULT_CONTROL_HOME, readJson, writeJsonAtomic } from './state-store.mjs';
 import { findUnit, hashObject } from './knowledge-graph-core.mjs';
 import { buildDesignBriefBundle, buildFrontendProductExperienceProjection, frontendRegistryHashes } from './frontend-product-experience.mjs';
+import { buildCreativeScreenGenerationStrategy, CREATIVE_STRATEGY_VERSION } from './frontend-creative-strategy.mjs';
 
 function now(){return new Date().toISOString();}
 function uniq(v){return [...new Set((v||[]).filter(Boolean).map(String))].sort();}
@@ -75,10 +76,20 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
     provenance:{unit_map_hash:unitMap.map_hash,frontend_projection_hash:px.projection_hash||null,knowledge_resolution:'VEKL_PRODUCT_EXPERIENCE',authority_flow:'PROJECT_TRUTH_TO_FRC_TO_UNIT_TO_VEKL_TO_FDEP'},
     created_at:now(),
   };
-  const packet={...content,content_hash:hashObject({...content,created_at:null})};
   const brief=buildDesignBriefBundle({projection:px,unit,taskId,ownerAuthorityRef,instruction});
-  writeJsonAtomic(`execution/tasks/${taskId}/frontend-design-execution-packet.json`,packet,root);
-  if(brief) writeJsonAtomic(`execution/tasks/${taskId}/design-brief-bundle.json`,brief,root);
+  const creativeSurfaces=Object.fromEntries((content.surface_manifest?.surfaces||[]).map((surface)=>{
+    const strategy=buildCreativeScreenGenerationStrategy({fdep:content,brief,surfaceId:surface.surface_id});
+    return [surface.surface_id,strategy];
+  }));
+  content.creative_screen_generation={
+    strategy_version:CREATIVE_STRATEGY_VERSION,
+    surfaces:creativeSurfaces,
+    content_hash:hashObject(Object.fromEntries(Object.entries(creativeSurfaces).map(([id,strategy])=>[id,strategy.content_hash]))),
+  };
+  const packet={...content,content_hash:hashObject({...content,created_at:null})};
+  writeJsonAtomic('execution/tasks/'+taskId+'/frontend-design-execution-packet.json',packet,root);
+  if(brief) writeJsonAtomic('execution/tasks/'+taskId+'/design-brief-bundle.json',brief,root);
+  writeJsonAtomic('execution/tasks/'+taskId+'/creative-screen-generation.json',content.creative_screen_generation,root);
   return packet;
 }
 

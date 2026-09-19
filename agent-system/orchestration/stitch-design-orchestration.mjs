@@ -27,10 +27,13 @@ import {
   sanitizeDesignArtifactForEvidence,
 } from './design-candidate-admission.mjs';
 import { normalizeDesignCandidate } from './frontend-design-normalizer.mjs';
+import { evaluateCreativeCandidate, selectCreativeCandidate } from './frontend-creative-strategy.mjs';
 import { sha256 } from './providers/google/external-capability-core.mjs';
 
 function now() { return new Date().toISOString(); }
 function candidateRel(taskId) { return `execution/tasks/${taskId}/stitch-design-candidate.json`; }
+function creativeExplorationRel(taskId) { return `execution/tasks/${taskId}/stitch-creative-exploration.json`; }
+function creativeConvergenceRel(taskId) { return `execution/tasks/${taskId}/stitch-creative-convergence.json`; }
 function acceptedRel(taskId) { return `execution/tasks/${taskId}/stitch-design-accepted.json`; }
 function consumptionRel(taskId) { return `execution/tasks/${taskId}/stitch-unit-consumption.json`; }
 function certificationRel(taskId) { return `execution/tasks/${taskId}/stitch-screen-certification.json`; }
@@ -136,12 +139,13 @@ function safeSurfaceSlug(surfaceId) {
   return String(surfaceId || 'surface').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'surface';
 }
 
-export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null } = {}) {
+export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null, stage = 'EXPLORE', candidateDirection = null } = {}) {
   const visualAuthorityProjection = resolveStitchVisualAuthorityProjection({ repoDir, fdep });
   const featureContractProjection = resolveStitchFeatureContractProjection({ repoDir, fdep });
   const targetSurfaceId = surfaceId || stitchSurfaceRows(fdep)[0].surface_id;
   const targetSurface = stitchSurfaceRows(fdep).find((row) => row.surface_id === targetSurfaceId);
   if (!targetSurface) throw new Error(`STITCH_TARGET_SURFACE_NOT_DECLARED:${targetSurfaceId}`);
+  const creativeStrategy = fdep.creative_screen_generation?.surfaces?.[targetSurfaceId] || null;
   const providerDataPolicy = {
     literal_domain_values_allowed_only_when_present_verbatim_in_governed_projection: true,
     no_fabricated_vin_vehicle_model_year_part_number_price_stock_location_percentage_telemetry_error_code_identity_revision_or_metric: true,
@@ -167,10 +171,16 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     provider_data_policy: providerDataPolicy,
     design_brief_hash: brief?.content_hash || null,
     governed_design_intent: brief?.design_intent || null,
+    creative_stage: stage,
+    creative_screen_generation: creativeStrategy,
+    candidate_direction: candidateDirection,
   };
   return [
     'DIAL governed Stitch design provider stage.',
-    `TARGET_SURFACE=${targetSurfaceId}. Generate exactly one composition for this surface only.`,
+    'CREATIVE_STAGE='+stage+'. TARGET_SURFACE='+targetSurfaceId+'. Generate exactly one composition for this surface only.',
+    'This is guided creativity, not template filling. Make deliberate professional visual decisions wherever the CreativeDirectionProfile and DesignFreedomBudget permit freedom; preserve every immutable product, domain, accessibility and authority constraint.',
+    'Do not collapse the result into a generic safe average. Establish a clear focal hierarchy, intentional spatial rhythm, distinctive product character and a coherent visual idea suited to this exact surface.',
+    candidateDirection ? 'CANDIDATE_DIRECTION='+JSON.stringify(candidateDirection)+'. Push this direction far enough to be meaningfully distinguishable while remaining inside the freedom budget.' : 'Use the exploration plan to establish a strong initial direction that can produce meaningfully distinct variants.',
     'Return a non-authoritative design candidate only. Project Truth, FRC, Product Experience authority and the governed projections remain superior.',
     'The resolved visual-authority excerpt, visual-safe feature projection and governed design intent below are one-way projections from canonical DIAL authority. Follow them exactly.',
     'Treat governed_design_intent.text as the bounded task brief. Do not add product mechanics, labels, controls or runtime claims that are absent from that intent and the visual-safe feature projection.',
@@ -211,6 +221,9 @@ export async function executeStitchDesignStage({
   const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
   const brief = readJson(`execution/tasks/${taskId}/design-brief-bundle.json`, null, root);
   if (!envelope || !fdep || fdep.applicable === false || !brief) throw new Error('STITCH_STAGE_GOVERNED_FRONTEND_TASK_REQUIRED');
+  if (fdep.creative_screen_generation?.surfaces && Object.keys(fdep.creative_screen_generation.surfaces).length) {
+    return executeStitchCreativeExplorationStage({ repoDir, root, taskId, env, adapter, artifactDownloader, envelopeGuard, fdepGuard });
+  }
   const envelopeCheck = envelopeGuard({ repoDir, root, envelope });
   if (!envelopeCheck?.ok) throw new Error(`STITCH_STAGE_STALE_ENVELOPE:${(envelopeCheck?.reasons || []).join(',')}`);
   const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
@@ -302,6 +315,297 @@ export async function executeStitchDesignStage({
   writeJsonAtomic(`execution/design/candidates/${candidate.candidate_id}.json`, record, root);
   appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_DESIGN_CANDIDATE_QUARANTINED', task_id: taskId, candidate_id: candidate.candidate_id, candidate_hash: candidate.candidate_hash, route_hash: route.selection_hash, at: record.observed_at }, root);
   return record;
+}
+
+
+export async function executeStitchCreativeExplorationStage({
+  repoDir,
+  root = DEFAULT_CONTROL_HOME,
+  taskId,
+  env = process.env,
+  adapter = null,
+  artifactDownloader = downloadStitchArtifact,
+  envelopeGuard = checkTaskExecutionEnvelope,
+  fdepGuard = checkFrontendDesignExecutionPacket,
+} = {}) {
+  if (!repoDir || !taskId) throw new Error('STITCH_CREATIVE_EXPLORATION_INPUTS_REQUIRED');
+  const envelope = readJson('execution/tasks/'+taskId+'/envelope.json', null, root);
+  const fdep = readJson('execution/tasks/'+taskId+'/frontend-design-execution-packet.json', null, root);
+  const brief = readJson('execution/tasks/'+taskId+'/design-brief-bundle.json', null, root);
+  if (!envelope || !fdep || fdep.applicable === false || !brief) throw new Error('STITCH_CREATIVE_GOVERNED_FRONTEND_TASK_REQUIRED');
+  const envelopeCheck = envelopeGuard({ repoDir, root, envelope });
+  if (!envelopeCheck?.ok) throw new Error('STITCH_CREATIVE_STALE_ENVELOPE:'+(envelopeCheck?.reasons || []).join(','));
+  const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
+  if (!fdepCheck?.ok) throw new Error('STITCH_CREATIVE_STALE_FDEP:'+(fdepCheck?.reasons || []).join(','));
+
+  const stitch = adapter || new StitchAdapter({ enabled: true, env });
+  const health = await stitch.health();
+  const route = selectDesignStrategy({
+    designMode: designModeForFdep(fdep),
+    stitchEnabled: true,
+    stitchEligible: true,
+    directWorkerEligible: true,
+    providerHealth: health?.state,
+    preference: 'STITCH',
+  });
+  if (!route.ok || !String(route.selected || '').startsWith('STITCH_')) {
+    throw Object.assign(new Error('STITCH_CREATIVE_NOT_SELECTION_READY:'+(route.reason || route.selected || health?.state)), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  }
+  if (typeof stitch.variants !== 'function') throw new Error('STITCH_CREATIVE_VARIANTS_UNAVAILABLE');
+
+  const designProjectionHash = fdep.provenance?.frontend_projection_hash || brief.provenance?.projection_hash;
+  if (!designProjectionHash) throw new Error('STITCH_CREATIVE_DESIGN_PROJECTION_HASH_REQUIRED');
+
+  const surfaces = {};
+  const providerResponses = [];
+  for (const surface of stitchSurfaceRows(fdep)) {
+    const surfaceId = surface.surface_id;
+    const slug = safeSurfaceSlug(surfaceId);
+    const strategy = fdep.creative_screen_generation?.surfaces?.[surfaceId];
+    if (!strategy) throw new Error('STITCH_CREATIVE_STRATEGY_MISSING:'+surfaceId);
+    const lenses = strategy.exploration_plan?.candidates || [];
+    const variantOptions = strategy.exploration_plan?.provider_variant_options;
+    if (!lenses.length || !variantOptions?.variantCount) throw new Error('STITCH_CREATIVE_EXPLORATION_PLAN_INVALID:'+surfaceId);
+    const seedPrompt = buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId, stage: 'EXPLORE' });
+    const explorePrompt = [
+      buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId, stage: 'EXPLORE' }),
+      'Generate a set of meaningfully distinct candidates. Each candidate must remain inside the exact same immutable anchors and product semantics.',
+      'Candidate lenses to deliberately separate:',
+      JSON.stringify(lenses),
+      'Do not merely recolor or reorder the same composition. Vary hierarchy, rhythm, art direction and product expression while preserving functional truth.',
+    ].join('\n');
+    const generated = await stitch.variants({
+      project_title: 'DIAL '+fdep.unit_lineage_id+' '+surfaceId+' '+taskId+' creative exploration',
+      seed_prompt: seedPrompt,
+      explore_prompt: explorePrompt,
+      variant_options: variantOptions,
+      device_type: stitchDeviceType(surfaceId),
+      model_id: 'GEMINI_3_1_PRO',
+      design_projection_hash: designProjectionHash,
+    });
+    const rows = generated.variants || [];
+    if (rows.length < Number(strategy.design_freedom_budget?.convergence_policy?.minimum_distinct_candidates || variantOptions.variantCount)) {
+      throw new Error('STITCH_CREATIVE_VARIANT_COUNT_INSUFFICIENT:'+surfaceId+':'+rows.length);
+    }
+    const variants = [];
+    for (let i = 0; i < Math.min(rows.length, lenses.length); i += 1) {
+      const row = rows[i];
+      const lens = lenses[i];
+      const htmlArtifact = await artifactDownloader(row.html_url, { maxBytes: 2_000_000 });
+      const imageArtifact = await artifactDownloader(row.image_url, { maxBytes: 8_000_000 });
+      const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+      const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+      const rawStored = persistPrivateArtifact(root, taskId, 'explore-'+slug+'-'+lens.candidate_id+'-raw.html', Buffer.from(htmlArtifact.body));
+      if (!sanitization.ok) throw new Error('STITCH_CREATIVE_VARIANT_QUARANTINED:'+surfaceId+':'+lens.candidate_id+':'+sanitization.sanitized_quarantine.violations.join(','));
+      const html = sanitization.content;
+      const htmlStored = persistPrivateArtifact(root, taskId, 'explore-'+slug+'-'+lens.candidate_id+'.html', Buffer.from(html, 'utf8'));
+      const imageStored = persistPrivateArtifact(root, taskId, 'explore-'+slug+'-'+lens.candidate_id+'-image.bin', Buffer.from(imageArtifact.body));
+      variants.push({
+        candidate_id: lens.candidate_id,
+        candidate_direction: lens,
+        project_id: row.project_id || generated.project_id,
+        screen_id: row.screen_id,
+        project_id_hash: sha256(row.project_id || generated.project_id),
+        screen_id_hash: sha256(row.screen_id),
+        artifacts: {
+          raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
+          html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
+          image: { ...imageStored, content_type: imageArtifact.content_type || null },
+        },
+      });
+    }
+    surfaces[surfaceId] = {
+      surface_id: surfaceId,
+      strategy_hash: strategy.content_hash,
+      creative_direction_hash: strategy.creative_direction_profile?.content_hash || null,
+      freedom_budget_hash: strategy.design_freedom_budget?.content_hash || null,
+      exploration_plan_hash: strategy.exploration_plan?.content_hash || null,
+      variants,
+    };
+    providerResponses.push({ surface_id: surfaceId, response_hash: generated.response_hash || null, project_id_hash: sha256(generated.project_id) });
+  }
+
+  const repoSha = repositorySha(repoDir);
+  if (!repoSha) throw new Error('STITCH_CREATIVE_REPOSITORY_SHA_UNAVAILABLE');
+  const record = proofWithHash({
+    schema_version: 1,
+    provider: 'google-stitch',
+    repository_sha: repoSha,
+    status: 'CREATIVE_EXPLORATION_READY_FOR_CRITIC',
+    task_id: taskId,
+    envelope_hash: envelope.envelope_hash,
+    fdep_hash: fdep.content_hash,
+    route,
+    strategy_version: fdep.creative_screen_generation?.strategy_version || null,
+    strategy_hash: fdep.creative_screen_generation?.content_hash || null,
+    surfaces,
+    provider_response_hash: hashObject(providerResponses),
+    observed_at: now(),
+  });
+  writeJsonAtomic(creativeExplorationRel(taskId), record, root);
+  appendJsonl('events/adaptive-execution.jsonl', {
+    event: 'STITCH_CREATIVE_EXPLORATION_READY',
+    task_id: taskId,
+    strategy_hash: record.strategy_hash,
+    evidence_hash: record.evidence_hash,
+    at: record.observed_at,
+  }, root);
+  return record;
+}
+
+export async function convergeStitchCreativeStage({
+  repoDir,
+  root = DEFAULT_CONTROL_HOME,
+  taskId,
+  criticEvidence,
+  env = process.env,
+  adapter = null,
+  artifactDownloader = downloadStitchArtifact,
+  envelopeGuard = checkTaskExecutionEnvelope,
+  fdepGuard = checkFrontendDesignExecutionPacket,
+} = {}) {
+  if (!repoDir || !taskId || !criticEvidence || typeof criticEvidence !== 'object') throw new Error('STITCH_CREATIVE_CONVERGENCE_INPUTS_REQUIRED');
+  const exploration = readJson(creativeExplorationRel(taskId), null, root);
+  const envelope = readJson('execution/tasks/'+taskId+'/envelope.json', null, root);
+  const fdep = readJson('execution/tasks/'+taskId+'/frontend-design-execution-packet.json', null, root);
+  const brief = readJson('execution/tasks/'+taskId+'/design-brief-bundle.json', null, root);
+  if (!exploration || !envelope || !fdep || !brief) throw new Error('STITCH_CREATIVE_EXPLORATION_OR_GOVERNANCE_MISSING');
+  if (!evidenceHashMatches(exploration)) throw new Error('STITCH_CREATIVE_EXPLORATION_TAMPERED');
+  const currentSha = repositorySha(repoDir);
+  if (!currentSha || exploration.repository_sha !== currentSha || exploration.fdep_hash !== fdep.content_hash || exploration.envelope_hash !== envelope.envelope_hash) {
+    throw new Error('STITCH_CREATIVE_EXPLORATION_STALE');
+  }
+  const envelopeCheck = envelopeGuard({ repoDir, root, envelope });
+  if (!envelopeCheck?.ok) throw new Error('STITCH_CREATIVE_CONVERGENCE_STALE_ENVELOPE:'+(envelopeCheck?.reasons || []).join(','));
+  const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
+  if (!fdepCheck?.ok) throw new Error('STITCH_CREATIVE_CONVERGENCE_STALE_FDEP:'+(fdepCheck?.reasons || []).join(','));
+
+  const stitch = adapter || new StitchAdapter({ enabled: true, env });
+  const health = await stitch.health();
+  if (health?.state !== 'HEALTHY') throw Object.assign(new Error('STITCH_CREATIVE_CONVERGENCE_PROVIDER_UNAVAILABLE:'+health?.state), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  if (typeof stitch.refine !== 'function') throw new Error('STITCH_CREATIVE_REFINE_UNAVAILABLE');
+
+  const designProjectionHash = fdep.provenance?.frontend_projection_hash || brief.provenance?.projection_hash;
+  const finalSurfaceArtifacts = {};
+  const generatedSurfaces = [];
+  const selections = {};
+  for (const [surfaceId, surfaceRecord] of Object.entries(exploration.surfaces || {}).sort(([a],[b]) => a.localeCompare(b))) {
+    const evidenceRows = Array.isArray(criticEvidence[surfaceId]) ? criticEvidence[surfaceId] : criticEvidence[surfaceId]?.evaluations;
+    if (!Array.isArray(evidenceRows)) throw new Error('STITCH_CREATIVE_CRITIC_EVIDENCE_MISSING:'+surfaceId);
+    const evaluations = evidenceRows.map((row) => evaluateCreativeCandidate({
+      candidate_id: row.candidate_id,
+      metrics: row.metrics,
+      hard_gates: row.hard_gates,
+    }));
+    const selection = selectCreativeCandidate({ evaluations });
+    if (!selection.selected) throw new Error('STITCH_CREATIVE_NO_ELIGIBLE_CANDIDATE:'+surfaceId);
+    const selectedVariant = (surfaceRecord.variants || []).find((row) => row.candidate_id === selection.selected);
+    if (!selectedVariant) throw new Error('STITCH_CREATIVE_SELECTED_VARIANT_MISSING:'+surfaceId+':'+selection.selected);
+    const selectedEvaluation = evaluations.find((row) => row.candidate_id === selection.selected);
+    const strategy = fdep.creative_screen_generation?.surfaces?.[surfaceId];
+    const convergencePrompt = [
+      buildStitchDesignPrompt({
+        repoDir,
+        fdep,
+        brief,
+        surfaceId,
+        stage: 'CONVERGE',
+        candidateDirection: selectedVariant.candidate_direction,
+      }),
+      'Refine this selected candidate rather than redesigning from scratch.',
+      'Preserve the strongest distinctive characteristics of the selected direction; do not regress toward an averaged generic layout.',
+      'Critic evidence for the selected candidate:',
+      JSON.stringify(selectedEvaluation),
+      'Resolve any weakness visible in the critic metrics while preserving all hard gates and immutable anchors.',
+    ].join('\n');
+    const refined = await stitch.refine({
+      project_id: selectedVariant.project_id,
+      screen_id: selectedVariant.screen_id,
+      prompt: convergencePrompt,
+      device_type: stitchDeviceType(surfaceId),
+      model_id: 'GEMINI_3_1_PRO',
+      design_projection_hash: designProjectionHash,
+    });
+    const htmlArtifact = await artifactDownloader(refined.html_url, { maxBytes: 2_000_000 });
+    const imageArtifact = await artifactDownloader(refined.image_url, { maxBytes: 8_000_000 });
+    const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+    const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+    const slug = safeSurfaceSlug(surfaceId);
+    const rawStored = persistPrivateArtifact(root, taskId, 'candidate-'+slug+'-raw.html', Buffer.from(htmlArtifact.body));
+    if (!sanitization.ok) throw new Error('STITCH_CREATIVE_CONVERGED_QUARANTINED:'+surfaceId+':'+sanitization.sanitized_quarantine.violations.join(','));
+    const html = sanitization.content;
+    const htmlStored = persistPrivateArtifact(root, taskId, 'candidate-'+slug+'.html', Buffer.from(html, 'utf8'));
+    const imageStored = persistPrivateArtifact(root, taskId, 'candidate-'+slug+'-image.bin', Buffer.from(imageArtifact.body));
+    finalSurfaceArtifacts[surfaceId] = {
+      surface_id: surfaceId,
+      device_type: stitchDeviceType(surfaceId),
+      screen_id_hash: refined.screen_id ? sha256(refined.screen_id) : null,
+      raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
+      html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
+      image: { ...imageStored, content_type: imageArtifact.content_type || null },
+      creative_selection: {
+        selected_candidate_id: selection.selected,
+        selection_hash: selection.content_hash,
+        selected_score: selection.selected_score,
+        selected_quality_floor: selection.selected_quality_floor,
+      },
+    };
+    generatedSurfaces.push({ surface_id: surfaceId, screen_id: refined.screen_id, response_hash: refined.response_hash || null, html });
+    selections[surfaceId] = { selection, critic_evidence_hash: sha256(evidenceRows) };
+  }
+
+  const aggregateHtml = generatedSurfaces.map((row) => '<!-- '+row.surface_id+' -->\n'+row.html).join('\n');
+  const aggregateQuarantine = quarantineDesignArtifact({ content: aggregateHtml, mimeType: 'text/html' });
+  if (!aggregateQuarantine.ok) throw new Error('STITCH_CREATIVE_AGGREGATE_QUARANTINED:'+aggregateQuarantine.violations.join(','));
+  const candidate = buildDesignCandidateManifest({
+    taskId,
+    providerId: 'google-stitch',
+    unitLineageId: fdep.unit_lineage_id,
+    unitRevisionHash: fdep.unit_revision_hash,
+    designAuthorityProjectionHash: designProjectionHash,
+    rawContent: aggregateHtml,
+    quarantine: aggregateQuarantine,
+    screenRefs: generatedSurfaces.map((row) => row.screen_id).filter(Boolean),
+    fdepHash: fdep.content_hash,
+    designBriefHash: brief.content_hash,
+    changeBudgetHash: fdep.change_budget?.content_hash || null,
+    presentationDecisionHash: fdep.presentation_decision?.content_hash || null,
+    vrdeHash: fdep.visual_render_determinism_envelope?.content_hash || null,
+  });
+  const convergence = proofWithHash({
+    schema_version: 1,
+    provider: 'google-stitch',
+    repository_sha: currentSha,
+    status: 'QUARANTINED_SAFE_REVIEW_REQUIRED',
+    task_id: taskId,
+    envelope_hash: envelope.envelope_hash,
+    candidate,
+    creative_strategy: {
+      strategy_version: fdep.creative_screen_generation?.strategy_version || null,
+      strategy_hash: fdep.creative_screen_generation?.content_hash || null,
+      exploration_evidence_hash: exploration.evidence_hash,
+      selections,
+      critic_evidence_hash: sha256(criticEvidence),
+    },
+    provider_response_hash: hashObject(generatedSurfaces.map((row) => ({ surface_id: row.surface_id, response_hash: row.response_hash }))),
+    surface_count: generatedSurfaces.length,
+    artifacts: generatedSurfaces.length === 1
+      ? { ...finalSurfaceArtifacts[generatedSurfaces[0].surface_id], surfaces: finalSurfaceArtifacts }
+      : { surfaces: finalSurfaceArtifacts },
+    observed_at: now(),
+  });
+  writeJsonAtomic(creativeConvergenceRel(taskId), convergence, root);
+  writeJsonAtomic(candidateRel(taskId), convergence, root);
+  writeJsonAtomic('execution/design/candidates/'+candidate.candidate_id+'.json', convergence, root);
+  appendJsonl('events/adaptive-execution.jsonl', {
+    event: 'STITCH_CREATIVE_CANDIDATE_CONVERGED',
+    task_id: taskId,
+    candidate_id: candidate.candidate_id,
+    candidate_hash: candidate.candidate_hash,
+    strategy_hash: convergence.creative_strategy.strategy_hash,
+    at: convergence.observed_at,
+  }, root);
+  return convergence;
 }
 
 export function admitStitchDesignStage({
