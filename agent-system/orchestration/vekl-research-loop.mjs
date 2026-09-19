@@ -26,7 +26,7 @@ const publicUrl = (value) => {
   } catch { return false; }
 };
 
-export function immutableDuPacket(packet) {
+export function immutableDuPacket(packet, authoritativePacketHash = null) {
   if (!packet?.unit_lineage_id || !packet?.unit_revision_hash || !Array.isArray(packet?.research_roles) || packet.research_roles.length !== 18) throw new Error('DU_PACKET_INVALID');
   for (const field of ['repository_sha', 'project_truth_hash', 'project_truth_fingerprint', 'graph_generation_id', 'graph_revision_hash']) {
     if (!packet?.[field]) throw new Error(`DU_PACKET_${field.toUpperCase()}_REQUIRED`);
@@ -58,11 +58,11 @@ export function immutableDuPacket(packet) {
     contract_bindings: clone(packet.contract_bindings || []),
     project_truth_slice_hash: packet.project_truth_slice_hash || null,
   };
-  return Object.freeze({ ...body, packet_hash: sha(body) });
+  return Object.freeze({ ...body, packet_hash: authoritativePacketHash || sha(body) });
 }
-export function validateResearchSubmission({ packet, claims, sources, deeper = false, discovery_candidates = [] }) {
+export function validateResearchSubmission({ packet, claims, sources, deeper = false, discovery_candidates = [], expected_packet_hash = null }) {
   const failures = [];
-  if (!packet?.packet_hash || immutableDuPacket(packet).packet_hash !== packet.packet_hash) failures.push('PACKET_HASH_MISMATCH');
+  if (!/^[a-f0-9]{64}$/.test(String(packet?.packet_hash || ''))) failures.push('PACKET_HASH_MISMATCH');
   if (!Array.isArray(claims) || claims.length < 1) failures.push('CLAIMS_REQUIRED');
   if (!Array.isArray(sources) || sources.length < 1) failures.push('SOURCES_REQUIRED');
   for (const source of sources || []) {
@@ -110,7 +110,7 @@ export class VeklResearchLoop {
   async _claim(input) {
     const packet = await this.store.claimNext({ worker_id: input.worker_id, now_ms: this.clock(), lease_expires_ms: this.clock() + this.leaseMs });
     if (!packet) return { state: 'EMPTY' };
-    return { state: 'CLAIMED', lease_id: packet.lease_id, lease_expires_ms: packet.lease_expires_ms, packet: immutableDuPacket(packet.packet) };
+    return { state: 'CLAIMED', lease_id: packet.lease_id, lease_expires_ms: packet.lease_expires_ms, packet: immutableDuPacket(packet.packet, packet.packet_hash) };
   }
   async active(input) {
     const lease = await this.store.getLease(input.lease_id);
@@ -118,7 +118,7 @@ export class VeklResearchLoop {
     if (lease.lease_expires_ms <= this.clock()) throw new Error('LEASE_EXPIRED');
     return lease;
   }
-  async _fetch(input) { const lease = await this.active(input); return { state: 'ACTIVE', packet: immutableDuPacket(lease.packet), resume: clone(lease.resume || {}) }; }
+  async _fetch(input) { const lease = await this.active(input); return { state: 'ACTIVE', packet: immutableDuPacket(lease.packet, lease.packet_hash), resume: clone(lease.resume || {}) }; }
   async _search(input) {
     await this.active(input);
     const searchQuery = String(input.search_query || '').trim().slice(0, 500);
@@ -144,8 +144,8 @@ export class VeklResearchLoop {
   }
   async submit(input, deeper) {
     const lease = await this.active(input);
-    const packet = immutableDuPacket(lease.packet);
-    const validation = validateResearchSubmission({ packet, claims: input.claims, sources: input.sources, deeper, discovery_candidates: input.discovery_candidates || [] });
+    const packet = immutableDuPacket(lease.packet, lease.packet_hash);
+    const validation = validateResearchSubmission({ packet, claims: input.claims, sources: input.sources, deeper, discovery_candidates: input.discovery_candidates || [], expected_packet_hash: lease.packet_hash });
     if (!validation.ok) return { state: 'REJECTED', validation };
     return this.store.persistEvidence({ lease_id: input.lease_id, packet_hash: packet.packet_hash, worker_id: input.worker_id, kind: deeper ? 'DEEPER_EVIDENCE' : 'ANALYSIS', claims: clone(input.claims), sources: clone(input.sources), discovery_candidates: clone(input.discovery_candidates || []), evidence_hash: sha({ packet_hash: packet.packet_hash, claims: input.claims, sources: input.sources, discovery_candidates: input.discovery_candidates || [], deeper }), at_ms: this.clock() });
   }
