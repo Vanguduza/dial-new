@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 const SQL = Object.freeze({
   getRequest: 'SELECT response FROM vekl_research_idempotency WHERE request_id = $1',
   putRequest: 'INSERT INTO vekl_research_idempotency(request_id, action, input_hash, response, created_at) VALUES($1,$2,$3,$4,to_timestamp($5/1000.0)) ON CONFLICT (request_id) DO NOTHING',
-  lease: `WITH candidate AS (SELECT packet_id FROM vekl_research_packets WHERE state IN ('READY','RETRY') AND (lease_expires_at IS NULL OR lease_expires_at <= to_timestamp($1/1000.0)) ORDER BY ordinal FOR UPDATE SKIP LOCKED LIMIT 1) UPDATE vekl_research_packets p SET state='LEASED',worker_id=$2,lease_id=$3,lease_expires_at=to_timestamp($4/1000.0) FROM candidate WHERE p.packet_id=candidate.packet_id RETURNING p.*`,
+  lease: `WITH candidate AS (SELECT packet_id FROM vekl_research_packets WHERE (state IN ('READY','RETRY') OR (state='LEASED' AND lease_expires_at <= to_timestamp($1/1000.0))) AND (lease_expires_at IS NULL OR lease_expires_at <= to_timestamp($1/1000.0)) ORDER BY ordinal FOR UPDATE SKIP LOCKED LIMIT 1) UPDATE vekl_research_packets p SET state='LEASED',worker_id=$2,lease_id=$3,lease_expires_at=to_timestamp($4/1000.0) FROM candidate WHERE p.packet_id=candidate.packet_id RETURNING p.*`,
   getLease: 'SELECT * FROM vekl_research_packets WHERE lease_id = $1',
   event: 'INSERT INTO vekl_research_events(lease_id,event_kind,payload,created_at) VALUES($1,$2,$3,to_timestamp($4/1000.0)) RETURNING event_id',
   evidence: 'INSERT INTO vekl_research_evidence(lease_id,packet_hash,worker_id,evidence_kind,claims,sources,evidence_hash,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,to_timestamp($8/1000.0)) ON CONFLICT(evidence_hash) DO UPDATE SET evidence_hash=EXCLUDED.evidence_hash RETURNING evidence_hash',
