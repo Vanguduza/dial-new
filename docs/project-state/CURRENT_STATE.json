@@ -3,17 +3,21 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260919-owner-explicit-vekl-browser-fabric-certification"
+    "auth-20260919-owner-canonical-screen-feature-graph"
   ],
-  "branch": "gpt/vekl-browser-fabric-certified-v2-20260919",
+  "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION.md",
-    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION_20260919.md"
+    "agent-system/bin/build-screen-feature-graph.mjs",
+    "agent-system/orchestration/screen-feature-graph.mjs",
+    "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
+    "agent-system/registries/SCREEN_REGISTRY.json",
+    "docs/dial/architecture/CANONICAL_SCREEN_FEATURE_GRAPH.md",
+    "tests/screen-feature-graph.test.ts"
   ],
-  "content_diff_sha256": "c0622b68dfe0efbe30cbfb6df644acbd2711b541646884333b31374b14bd5a9a",
-  "observed_at_utc": "2026-09-19T13:33:50.048666+00:00",
+  "content_diff_sha256": "f2b1dccfde0561d97bf6982395a021118dc179a2b1d326c2493f3f6293fef64b",
+  "observed_at_utc": "2026-09-19T18:22:59.756098+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "ef5943bfbab39079c73c3eb9eb4f71ab18e5d1aa",
+  "source_parent": "ef39984a911162e71966132f91d3765dfb2b3aa9",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

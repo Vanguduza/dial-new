@@ -1,5 +1,6 @@
 import { hashObject, loadRegistry, registryHash } from './knowledge-graph-core.mjs';
 import { sanitizeAndClassifyProviderInput } from './donor-egress-guard.mjs';
+import { buildScreenFeatureProjection, SCREEN_FEATURE_GRAPH_REF, SCREEN_REGISTRY_REF } from './screen-feature-graph.mjs';
 
 export const FRONTEND_INTEGRATION_VERSION = 'dial-frontend-product-experience-1.1';
 
@@ -13,6 +14,8 @@ const REGISTRIES = Object.freeze({
   templates: 'agent-system/registries/FRONTEND_TEMPLATE_REGISTRY.json',
   visualDeterminism: 'agent-system/registries/FRONTEND_VISUAL_DETERMINISM_POLICY.json',
   schemas: 'agent-system/registries/FRONTEND_CONTRACT_SCHEMA_REGISTRY.json',
+  screens: SCREEN_REGISTRY_REF,
+  screenFeatureGraph: SCREEN_FEATURE_GRAPH_REF,
 });
 
 export const SURFACE_STATE_IDS = Object.freeze([
@@ -268,6 +271,8 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
   if (!applicable) return { applicable: false, state: 'NOT_APPLICABLE', integration_version: FRONTEND_INTEGRATION_VERSION };
   const product_design_profile = resolveProductDesignProfile({ repoDir, unit, featureRecord });
   const surface_manifest = buildSurfaceManifest({ unit, featureRecord, contractRecord });
+  const screen_feature_projection = buildScreenFeatureProjection({ repoDir, featureRecord, surfaceManifest: surface_manifest });
+  if (screen_feature_projection.status !== 'RESOLVED') throw new Error(screen_feature_projection.status);
   const surface_state_matrix = buildSurfaceStateMatrix({ surfaceManifest: surface_manifest, contractRecord });
   const visual_reference_spec = buildVisualReferenceSpec({ unit, featureRecord, contractRecord });
   const presentation_decision = compilePresentationDecision({ repoDir, unit, featureRecord, contractRecord, instruction, affectedPaths, productDesignProfile: product_design_profile, visualReferenceSpec: visual_reference_spec, donorProjection });
@@ -279,6 +284,7 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
     integration_version: FRONTEND_INTEGRATION_VERSION,
     product_design_profile,
     surface_manifest,
+    screen_feature_projection,
     surface_state_matrix,
     visual_reference_spec,
     presentation_decision,
@@ -322,6 +328,7 @@ export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerA
     },
     product_design_profile_hash: projection.product_design_profile.content_hash,
     surface_manifest_hash: projection.surface_manifest.content_hash,
+    screen_feature_projection_hash: projection.screen_feature_projection.content_hash,
     surface_state_matrix_hash: projection.surface_state_matrix.content_hash,
     visual_reference_spec_hash: projection.visual_reference_spec.content_hash,
     presentation_decision_hash: projection.presentation_decision.content_hash,
