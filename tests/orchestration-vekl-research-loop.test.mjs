@@ -51,8 +51,27 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     const rejected = await loop.invoke('submit-analysis', { request_id: 'request-submit-1', worker_id: 'chatgpt-dev', lease_id: 'lease-1', claims: [], sources: [] });
     expect(rejected.state).toBe('REJECTED');
     expect(store.evidence).toHaveLength(0);
-    const accepted = await loop.invoke('submit-analysis', { request_id: 'request-submit-2', worker_id: 'chatgpt-dev', lease_id: 'lease-1', claims: [{ text: 'Fact', classification: 'FACTUAL', source_refs: ['s1'] }], sources: [{ url: 'https://example.com/evidence', content_hash: 'd'.repeat(64), observed_at: '2026-09-19T00:00:00Z', depth: 'PRIMARY' }] });
+    const accepted = await loop.invoke('submit-analysis', { request_id: 'request-submit-2', worker_id: 'chatgpt-dev', lease_id: 'lease-1', claims: [{ text: 'Fact', classification: 'FACTUAL', source_refs: ['https://example.com/evidence'] }], sources: [{ ref: 'source:' + 'd'.repeat(64), url: 'https://example.com/evidence', content_hash: 'd'.repeat(64), observed_at: '2026-09-19T00:00:00Z', depth: 'PRIMARY' }] });
     expect(accepted.state).toBe('VALIDATED_PERSISTED');
+  });
+
+  it('returns bounded public search and fetch evidence through the research connector', async () => {
+    const store = new Store();
+    const loop = new VeklResearchLoop({
+      store,
+      clock: () => Date.parse('2026-09-19T00:00:00Z'),
+      searchAdapter: async () => ({ results: [{ url: 'https://example.com/doc', title: 'Doc' }] }),
+      fetchAdapter: async () => ({ url: 'https://example.com/doc', sha256: 'e'.repeat(64), content_type: 'text/html', excerpt: 'bounded public evidence' }),
+    });
+    const claim = await loop.invoke('claim', { request_id: 'request-claim-web-1', worker_id: 'chatgpt-dev' });
+    const searched = await loop.invoke('search', { request_id: 'request-search-web-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, search_query: 'current evidence' });
+    expect(searched.state).toBe('SEARCH_RESULTS');
+    expect(searched.adapter).toBe('EXA_MCP_PUBLIC');
+    expect(searched.content).toContain('https://example.com/doc');
+    const fetched = await loop.invoke('fetch-read', { request_id: 'request-read-web-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, url: 'https://example.com/doc' });
+    expect(fetched.state).toBe('FETCHED');
+    expect(fetched.source.content_hash).toBe('e'.repeat(64));
+    expect(fetched.excerpt).toBe('bounded public evidence');
   });
 
   it('refuses arbitrary SQL, Project Truth mutation, expired leases and Hermes persistence', async () => {

@@ -197,7 +197,7 @@ function cleanHtml(text) {
     .trim(), 12000);
 }
 
-async function fetchOfficial(url, fetchImpl = fetch) {
+export async function fetchOfficial(url, fetchImpl = fetch) {
   if (!publicHttpsUrl(url)) return null;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12000);
@@ -227,7 +227,7 @@ async function fetchOfficial(url, fetchImpl = fetch) {
   }
 }
 
-async function exaSearch(query, fetchImpl = fetch) {
+export async function exaSearch(query, fetchImpl = fetch) {
   let sessionId = null;
   async function rpc(message) {
     const headers = {

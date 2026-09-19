@@ -7,18 +7,15 @@
   ],
   "branch": "gpt/vekl-research-open-world-integration-20260919",
   "changed_files": [
-    "agent-system/orchestration/providers/research/research-provider-router.mjs",
+    "agent-system/mcp/dial-research-server.mjs",
+    "agent-system/orchestration/providers/openrouter/union-alpha-research-adapter.mjs",
     "agent-system/orchestration/vekl-research-loop.mjs",
-    "deploy/oracle/hermes-codex/install-vekl-research-loop.sh",
-    "deploy/oracle/vekl-worker/dial-vekl-groq-research.service",
-    "deploy/oracle/vekl-worker/install-research-loop.sh",
-    "deploy/oracle/vekl-worker/vekl-gptoss-research-producer.mjs",
     "tests/orchestration-vekl-research-loop.test.mjs"
   ],
-  "content_diff_sha256": "6c9e70ad8800f184d353511e19ef246a2f05d67c7ea86602b64fab6e290c893c",
-  "observed_at_utc": "2026-09-19T05:51:50.147425+00:00",
+  "content_diff_sha256": "a13d7054728ac0f5e466076267ecc3862fb377fe12bf8b2123e8a3e30c13cd5c",
+  "observed_at_utc": "2026-09-19T05:55:06.725567+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "dc88d52af94f57118e61ec4fcf20b27ea2dfb701",
+  "source_parent": "1b863ce6a342c26062b727b72024d41f0fa140dc",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

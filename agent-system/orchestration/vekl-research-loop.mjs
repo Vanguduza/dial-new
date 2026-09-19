@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { exaSearch, fetchOfficial } from './providers/openrouter/union-alpha-research-adapter.mjs';
 
 export const RESEARCH_LOOP_ACTIONS = Object.freeze([
   'claim', 'fetch', 'search', 'fetch-read', 'submit-analysis',
@@ -69,9 +70,11 @@ export function validateResearchSubmission({ packet, claims, sources, deeper = f
     if (!source.content_hash || !/^[a-f0-9]{64}$/.test(source.content_hash)) failures.push('SOURCE_HASH_REQUIRED');
     if (!source.observed_at) failures.push('SOURCE_FRESHNESS_REQUIRED');
   }
+  const suppliedRefs = new Set((sources || []).flatMap((source) => [source.ref, source.url, source.content_hash].filter(Boolean)));
   for (const claim of claims || []) {
     if (!claim.text || !['FACTUAL', 'INFERENTIAL'].includes(claim.classification)) failures.push('CLAIM_INVALID');
     if (!Array.isArray(claim.source_refs) || claim.source_refs.length < 1) failures.push('CLAIM_SOURCE_REQUIRED');
+    else if (claim.source_refs.some((ref) => !suppliedRefs.has(ref))) failures.push('CLAIM_SOURCE_NOT_PROVIDED');
   }
   for (const candidate of discovery_candidates) {
     if (!/^DISC-[0-9a-f]{24}$/.test(String(candidate?.candidate_id || ''))) failures.push('DISCOVERY_CANDIDATE_ID_INVALID');
@@ -84,11 +87,13 @@ export function validateResearchSubmission({ packet, claims, sources, deeper = f
 }
 
 export class VeklResearchLoop {
-  constructor({ store, clock = () => Date.now(), leaseMs = DEFAULT_LEASE_MS } = {}) {
+  constructor({ store, clock = () => Date.now(), leaseMs = DEFAULT_LEASE_MS, searchAdapter = exaSearch, fetchAdapter = fetchOfficial } = {}) {
     if (!store) throw new Error('AUTHORITATIVE_VEKL_POSTGRES_STORE_REQUIRED');
     this.store = store;
     this.clock = clock;
     this.leaseMs = leaseMs;
+    this.searchAdapter = searchAdapter;
+    this.fetchAdapter = fetchAdapter;
   }
   async invoke(action, input = {}) {
     if (!RESEARCH_LOOP_ACTIONS.includes(action)) throw new Error('RESEARCH_ACTION_NOT_ALLOWED');
@@ -116,13 +121,26 @@ export class VeklResearchLoop {
   async _fetch(input) { const lease = await this.active(input); return { state: 'ACTIVE', packet: immutableDuPacket(lease.packet), resume: clone(lease.resume || {}) }; }
   async _search(input) {
     await this.active(input);
-    if (!String(input.search_query || '').trim()) throw new Error('SEARCH_QUERY_REQUIRED');
-    return this.store.recordSearch({ lease_id: input.lease_id, search_query: String(input.search_query).slice(0, 500), adapter: input.adapter || 'governed-search', at_ms: this.clock() });
+    const searchQuery = String(input.search_query || '').trim().slice(0, 500);
+    if (!searchQuery) throw new Error('SEARCH_QUERY_REQUIRED');
+    const content = await this.searchAdapter(searchQuery);
+    if (!content) throw new Error('SEARCH_NO_PUBLIC_RESULTS');
+    const text = typeof content === 'string' ? content : JSON.stringify(content);
+    const result = { state: 'SEARCH_RESULTS', adapter: 'EXA_MCP_PUBLIC', search_query: searchQuery, content: text.slice(0, 16000), content_hash: sha(text), observed_at: new Date(this.clock()).toISOString(), authority: RESEARCH_LOOP_AUTHORITY };
+    await this.store.recordSearch({ lease_id: input.lease_id, search_query: searchQuery, adapter: result.adapter, result_hash: result.content_hash, at_ms: this.clock() });
+    return result;
   }
   async _fetch_read(input) {
     await this.active(input);
     if (!publicUrl(input.url)) throw new Error('PUBLIC_HTTPS_URL_REQUIRED');
-    return this.store.recordRead({ lease_id: input.lease_id, url: input.url, content_hash: input.content_hash, at_ms: this.clock() });
+    const fetched = await this.fetchAdapter(input.url);
+    if (!fetched?.url || !fetched?.sha256 || !fetched?.excerpt) throw new Error('PUBLIC_FETCH_FAILED');
+    if (!publicUrl(fetched.url)) throw new Error('PUBLIC_FETCH_REDIRECT_TARGET_REQUIRED');
+    if (input.content_hash && input.content_hash !== fetched.sha256) throw new Error('FETCH_CONTENT_HASH_MISMATCH');
+    const observedAt = new Date(this.clock()).toISOString();
+    const source = { ref: 'source:' + fetched.sha256, url: fetched.url, content_hash: fetched.sha256, observed_at: observedAt, depth: 'PRIMARY', source_kind: 'PUBLIC_WEB', trust_tier: null };
+    await this.store.recordRead({ lease_id: input.lease_id, url: fetched.url, content_hash: fetched.sha256, source_ref: source.ref, at_ms: this.clock() });
+    return { state: 'FETCHED', source, content_type: fetched.content_type || null, excerpt: String(fetched.excerpt).slice(0, 12000), authority: RESEARCH_LOOP_AUTHORITY };
   }
   async submit(input, deeper) {
     const lease = await this.active(input);
