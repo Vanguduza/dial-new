@@ -24,4 +24,3 @@ Install only on a worker with `DIAL_HOST_ROLE=vekl-worker bash deploy/oracle/exe
 ## Certification
 
 Certification requires 309 current units, every applicable dimension verified/admitted or explicitly not applicable, shared-artifact deduplication, contradiction retention, admitted-only GraphRAG, deterministic retrieval, fresh capsules and all repository tests green. The phrase indicating final success is forbidden while the provider window or worker connectivity is blocked.
-

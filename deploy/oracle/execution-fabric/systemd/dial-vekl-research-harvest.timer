@@ -10,4 +10,3 @@ Unit=dial-vekl-research-harvest.service
 
 [Install]
 WantedBy=timers.target
-

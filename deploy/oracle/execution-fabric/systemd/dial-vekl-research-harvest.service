@@ -16,4 +16,3 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/var/lib/dial-worker/research-harvest
 UMask=0077
-

@@ -7,12 +7,16 @@
   ],
   "branch": "gpt/vekl-research-open-world-integration-20260919",
   "changed_files": [
-    "deploy/oracle/hermes-codex/install-vekl-research-loop.sh"
+    "deploy/n8n/dev/install-hermes-dev.sh",
+    "deploy/oracle/execution-fabric/systemd/dial-vekl-research-harvest.service",
+    "deploy/oracle/execution-fabric/systemd/dial-vekl-research-harvest.timer",
+    "docs/orchestration/DIAL_VEKL_RESEARCH_HARVEST_OPERATIONS_RUNBOOK.md",
+    "docs/orchestration/DIAL_VEKL_UNION_ALPHA_RESEARCH_HARVEST_ARCHITECTURE_REV_1.md"
   ],
-  "content_diff_sha256": "4ee5d227e5b557b8d157dcdffa7837e530c6696fbbd311c8f0a1a9c4b8494551",
-  "observed_at_utc": "2026-09-19T06:24:58.369198+00:00",
+  "content_diff_sha256": "7bc890e7d1af362cb294e25c418919882b0619e364111e33bcf9a1825ca2f4cd",
+  "observed_at_utc": "2026-09-19T06:29:14.240598+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "f22c2f487340a7807eea3bf9bf08e0c3605ace30",
+  "source_parent": "7e926357fee824484b4ea009736a4191962cea45",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

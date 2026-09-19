@@ -25,4 +25,3 @@ Only a fully verified mission may be admitted. Admission preserves provider/mode
 ## Operations surfaces
 
 `vekl-research-controller.mjs` exposes `create`, `start`, `pause`, `resume`, `status`, `retry`, `coverage`, `verify`, `admit`, `graph-compile`, `capsule-build`, and `certify` JSON operations. In the current blocked state, graph/capsule operations refuse because there is no verified admitted research.
-

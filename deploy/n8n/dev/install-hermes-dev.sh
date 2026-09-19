@@ -141,4 +141,3 @@ echo "editor=http://127.0.0.1:5678"
 echo "database_host=vekl-worker"
 echo "database=dial_n8n_dev"
 echo "database_tunnel=127.0.0.1:${TUNNEL_PORT}"
-
