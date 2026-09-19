@@ -7,14 +7,33 @@ const roles = Array.from({ length: 18 }, (_, i) => `ROLE_${i + 1}`);
 const packet = () => ({ unit_lineage_id: 'DU-001', unit_revision_hash: 'a'.repeat(64), feature_ids: ['F-1'], research_roles: roles, research_dimensions: ['OFFICIAL_DOCUMENTATION'], questions: ['current evidence?'], discovery_workload: { mode: 'OPEN_WORLD_BOUNDED' }, guided_frontend_context: { applicable: false }, n8n_architecture_context: { applicable: false }, repository_sha: 'b'.repeat(40), project_truth_hash: 'c'.repeat(64), project_truth_fingerprint: 'd'.repeat(64), graph_generation_id: 'KG-test', graph_revision_hash: 'e'.repeat(64), contract_bindings: [{ contract_id: 'FRC:F-1', fingerprint: 'f'.repeat(64) }] });
 
 class Store {
-  constructor() { this.requests = new Map(); this.lease = null; this.evidence = []; }
+  constructor() { this.requests = new Map(); this.lease = null; this.evidence = []; this.events = []; }
   getRequest(id) { return this.requests.get(id); }
   putRequest(v) { this.requests.set(v.request_id, v); }
-  claimNext(v) { this.lease = { ...v, lease_id: 'lease-1', packet: packet(), resume: {} }; return this.lease; }
+  claimNext(v) {
+    this.lease = { ...v, packet_id: 'DU-RSCH-test', packet_hash: immutableDuPacket(packet()).packet_hash, lease_id: 'lease-1', packet: packet(), resume: {} };
+    this.events.push({ event_kind: 'CLAIM', payload: { lease_id: 'lease-1', packet_id: this.lease.packet_id, packet_hash: this.lease.packet_hash, worker_id: v.worker_id } });
+    return this.lease;
+  }
   getLease() { return this.lease; }
-  recordSearch(v) { return { state: 'RECORDED', ...v }; }
-  recordRead(v) { return { state: 'RECORDED', ...v }; }
-  persistEvidence(v) { this.evidence.push(v); return { state: 'VALIDATED_PERSISTED', evidence_hash: v.evidence_hash }; }
+  event(kind, v) { this.events.push({ event_kind: kind, ...v }); return { state: 'RECORDED', event_id: this.events.length }; }
+  recordSearch(v) { this.events.push({ event_kind: 'SEARCH', ...v }); return { state: 'RECORDED', ...v }; }
+  recordRead(v) { this.events.push({ event_kind: 'FETCH_READ', ...v }); return { state: 'RECORDED', ...v }; }
+  completionBundle() {
+    const issued = immutableDuPacket(this.lease.packet);
+    return {
+      packet_id: 'DU-RSCH-test',
+      packet_hash: issued.packet_hash,
+      packet_json: this.lease.packet,
+      resume: {},
+      state: 'LEASED',
+      worker_id: this.lease.worker_id,
+      lease_id: this.lease.lease_id,
+      evidence: this.evidence.map((v) => ({ evidence_kind: v.kind, claims: v.claims, sources: v.sources, evidence_hash: v.evidence_hash })),
+      events: this.events.map((e) => ({ event_kind: e.event_kind, payload: e })),
+    };
+  }
+  persistEvidence(v) { this.evidence.push(v); this.events.push({ event_kind: v.kind === 'DEEPER_EVIDENCE' ? 'DEEPER_EVIDENCE_SUBMITTED' : 'ANALYSIS_SUBMITTED', ...v }); return { state: 'VALIDATED_PERSISTED', evidence_hash: v.evidence_hash }; }
   complete() { return { state: 'COMPLETE' }; }
   retry() { return { state: 'RETRY' }; }
   refuse() { return { state: 'REFUSED' }; }
@@ -69,6 +88,8 @@ describe('server-side ChatGPT developer-mode research loop', () => {
   it('allows the Postgres lease selector to reclaim expired leases', () => {
     expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain("state='LEASED'");
     expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain('lease_expires_at <= to_timestamp($1/1000.0)');
+    expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain("e.evidence_kind='GROQ_RESEARCH'");
+    expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain("e.evidence_kind='DEEPER_EVIDENCE'");
   });
 
   it('is idempotent, leased, resumable and validates before persistence', async () => {
@@ -82,6 +103,39 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     expect(store.evidence).toHaveLength(0);
     const accepted = await loop.invoke('submit-analysis', { request_id: 'request-submit-2', worker_id: 'chatgpt-dev', lease_id: 'lease-1', claims: [{ text: 'Fact', classification: 'FACTUAL', source_refs: ['https://example.com/evidence'] }], sources: [{ ref: 'source:' + 'd'.repeat(64), url: 'https://example.com/evidence', content_hash: 'd'.repeat(64), observed_at: '2026-09-19T00:00:00Z', depth: 'PRIMARY' }] });
     expect(accepted.state).toBe('VALIDATED_PERSISTED');
+  });
+
+  it('blocks terminal completion until the complete evidence/event contract exists', async () => {
+    const store = new Store();
+    const loop = new VeklResearchLoop({ store, clock: () => Date.parse('2026-09-19T00:00:00Z') });
+    const claim = await loop.invoke('claim', { request_id: 'request-gate-claim-1', worker_id: 'chatgpt-dev' });
+    await loop.invoke('fetch', { request_id: 'request-gate-fetch-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id });
+    const blocked = await loop.invoke('complete', { request_id: 'request-gate-complete-1', worker_id: 'chatgpt-dev', lease_id: claim.lease_id });
+    expect(blocked.state).toBe('COMPLETION_GATE_BLOCKED');
+    expect(blocked.missing).toEqual(expect.arrayContaining(['GROQ_RESEARCH','ANALYSIS','DEEPER_EVIDENCE','SEARCH','FETCH_READ']));
+  });
+
+  it('passes terminal completion only after Groq, analysis, deeper evidence, search and fetch-read', async () => {
+    const store = new Store();
+    const loop = new VeklResearchLoop({
+      store,
+      clock: () => Date.parse('2026-09-19T00:00:00Z'),
+      searchAdapter: async () => ({ results: [{ url: 'https://example.com/doc', title: 'Doc' }] }),
+      fetchAdapter: async () => ({ url: 'https://example.com/doc', sha256: 'e'.repeat(64), content_type: 'text/html', excerpt: 'bounded public evidence' }),
+    });
+    const claim = await loop.invoke('claim', { request_id: 'request-gate-claim-2', worker_id: 'chatgpt-dev' });
+    const issued = claim.packet;
+    store.evidence.push({ kind: 'GROQ_RESEARCH', claims: [], sources: [] });
+    await loop.invoke('fetch', { request_id: 'request-gate-fetch-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id });
+    await loop.invoke('search', { request_id: 'request-gate-search-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, search_query: 'evidence' });
+    const read = await loop.invoke('fetch-read', { request_id: 'request-gate-read-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, url: 'https://example.com/doc' });
+    const source = read.source;
+    const claimBody = [{ text: 'Fact', classification: 'FACTUAL', source_refs: [source.ref] }];
+    await loop.invoke('submit-analysis', { request_id: 'request-gate-analysis-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, claims: claimBody, sources: [source] });
+    await loop.invoke('submit-deeper-evidence', { request_id: 'request-gate-deep-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id, claims: claimBody, sources: [source] });
+    const done = await loop.invoke('complete', { request_id: 'request-gate-complete-2', worker_id: 'chatgpt-dev', lease_id: claim.lease_id });
+    expect(done.state).toBe('COMPLETE');
+    expect(issued.packet_hash).toMatch(/^[a-f0-9]{64}$/);
   });
 
   it('returns bounded public search and fetch evidence through the research connector', async () => {

@@ -156,7 +156,7 @@ async function persistSuccess(pool, row, record, subjectId) {
 
     await db.query(
       `UPDATE vekl_research_coverage
-       SET status='SYNTHESIZED',
+       SET status='FIRST_PASS_RESEARCHED',
            reason='GROQ_OPEN_WORLD_FIRST_PASS',
            artifact_refs=CASE
              WHEN artifact_refs ? $4 THEN artifact_refs

@@ -290,6 +290,36 @@ describe('trial is not activation', () => {
   });
 });
 
+describe('reference knowledge lightweight qualification', () => {
+  it('qualifies official non-executable reference knowledge without executable ceremony', () => {
+    const ref = candidate({
+      adapter: 'OFFICIAL_DOC_INDEX',
+      resourceClasses: ['OFFICIAL_DOC'],
+      taskClasses: ['ARCHITECTURE_RESEARCH'],
+      provenance: {
+        publisher_identity: 'PostgreSQL Global Development Group',
+        official_publisher_verified: true,
+        canonical_locator_on_publisher_domain_or_repo: true,
+        content_hash: '9'.repeat(64),
+      },
+    });
+    const result = qualifyCandidate({ policy, candidate: ref, freshnessState: 'CURRENT' });
+    expect(result.ok).toBe(true);
+    expect(result.manifest.qualification_track).toBe('REFERENCE_LIGHTWEIGHT_V1');
+    expect(result.manifest.risk_class).toBe('REFERENCE_KNOWLEDGE');
+    expect(result.manifest.reference.publisher_verified).toBe(true);
+    expect(result.manifest.reference.task_relevance_verified).toBe(true);
+    expect(result.manifest.executable.is_executable).toBe(false);
+  });
+
+  it('keeps passive discovery enabled while executable trials remain gated', () => {
+    expect(policy.feature_flags.discovery_adapters_enabled).toBe(true);
+    expect(policy.feature_flags.reference_auto_qualification_enabled).toBe(true);
+    expect(policy.feature_flags.reference_auto_admission_enabled).toBe(true);
+    expect(policy.feature_flags.executable_trials_enabled).toBe(false);
+  });
+});
+
 describe('executable admission', () => {
   it('refuses a mutable reference however good the trial was', () => {
     const mutable = candidate({ resourceClasses: ['MCP_SERVER'], executable: true });

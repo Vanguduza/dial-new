@@ -1,0 +1,12 @@
+[Unit]
+Description=Schedule DIAL VEKL reference discovery promotion
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=120s
+AccuracySec=15s
+Persistent=true
+Unit=dial-vekl-reference-promoter.service
+
+[Install]
+WantedBy=timers.target

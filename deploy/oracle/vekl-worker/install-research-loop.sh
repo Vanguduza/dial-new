@@ -8,11 +8,16 @@ PG_RUNTIME=/home/ubuntu/.local/share/dial-vekl-runtime
 MIGRATION="$REPO/deploy/oracle/vekl-worker/migrations/0050_research_loop.sql"
 SERVICE_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-groq-research.service"
 TIMER_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-groq-research.timer"
+DEEP_SERVICE_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-chatgpt-deep-dispatcher.service"
+DEEP_TIMER_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-chatgpt-deep-dispatcher.timer"
+REFERENCE_SERVICE_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-reference-promoter.service"
+REFERENCE_TIMER_SRC="$REPO/deploy/oracle/vekl-worker/dial-vekl-reference-promoter.timer"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "vekl-worker" ]] || fail "must run on vekl-worker"
 [[ -s "$SECRET_DIR/groq-api.key" && -s "$SECRET_DIR/groq-zdr-enabled" ]] || fail "Groq API key and ZDR marker are required"
 [[ -f "$MIGRATION" && -f "$SERVICE_SRC" && -f "$TIMER_SRC" ]] || fail "research runtime files missing"
+[[ -f "$DEEP_SERVICE_SRC" && -f "$DEEP_TIMER_SRC" && -f "$REFERENCE_SERVICE_SRC" && -f "$REFERENCE_TIMER_SRC" ]] || fail "VEKL dispatcher/promoter runtime files missing"
 
 mkdir -p "$PG_RUNTIME/node_modules"
 if [[ -f /usr/share/nodejs/pg/package.json ]]; then
@@ -41,11 +46,17 @@ PGHOST=/var/run/postgresql psql -XAt -U dial_research_loop -d dial_vekl -c 'sele
 
 sudo -n install -m 0644 "$SERVICE_SRC" /etc/systemd/system/dial-vekl-groq-research.service
 sudo -n install -m 0644 "$TIMER_SRC" /etc/systemd/system/dial-vekl-groq-research.timer
+sudo -n install -m 0644 "$DEEP_SERVICE_SRC" /etc/systemd/system/dial-vekl-chatgpt-deep-dispatcher.service
+sudo -n install -m 0644 "$DEEP_TIMER_SRC" /etc/systemd/system/dial-vekl-chatgpt-deep-dispatcher.timer
+sudo -n install -m 0644 "$REFERENCE_SERVICE_SRC" /etc/systemd/system/dial-vekl-reference-promoter.service
+sudo -n install -m 0644 "$REFERENCE_TIMER_SRC" /etc/systemd/system/dial-vekl-reference-promoter.timer
 sudo -n mkdir -p "$CONTROL_HOME/knowledge/research/groq-harvest" "$CONTROL_HOME/operations/research/providers"
 sudo -n chown -R ubuntu:ubuntu "$CONTROL_HOME/knowledge/research/groq-harvest" "$CONTROL_HOME/operations/research/providers"
 systemctl --user disable --now dial-vekl-gptoss-producer.timer >/dev/null 2>&1 || true
 sudo -n systemctl daemon-reload
 sudo -n systemctl enable --now dial-vekl-groq-research.timer >/dev/null
+sudo -n systemctl enable --now dial-vekl-chatgpt-deep-dispatcher.timer >/dev/null
+sudo -n systemctl enable --now dial-vekl-reference-promoter.timer >/dev/null
 
 echo DIAL_VEKL_GROQ_RESEARCH_RUNTIME_READY
 echo provider=groq

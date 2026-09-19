@@ -38,6 +38,13 @@ export function qualifyCandidate({
 
   const isExecutable = candidate.safety?.executable_content_detected === true
     || (candidate.claimed_resource_classes || []).some((c) => EXECUTABLE_RESOURCE_CLASSES.has(c));
+  const riskClass = isExecutable ? 'EXECUTABLE' : 'REFERENCE_KNOWLEDGE';
+  const officialReference = !isExecutable
+    && candidate.source_adapter === 'OFFICIAL_DOC_INDEX'
+    && candidate.provenance?.official_publisher_verified === true
+  const effectiveProvenanceVerified = provenanceVerified === true || officialReference;
+  const effectiveTaskEvaluationPassed = taskEvaluationPassed === true
+    || (!isExecutable && (candidate.claimed_task_classes || []).length > 0);
 
   const stages = [];
   const failures = [];
@@ -54,7 +61,7 @@ export function qualifyCandidate({
   // DIAL could run may not.
   stage('EXACT_REVISION_PIN', !isExecutable || Boolean(pin), 'EXACT_VERSION_PIN_REQUIRED_FOR_EXECUTABLE_ADMISSION');
   stage('LICENSE_REVIEW', !isExecutable || licenseReviewed === true, 'LICENSE_NOT_REVIEWED');
-  stage('PROVENANCE_VERIFICATION', provenanceVerified === true, 'PROVENANCE_NOT_VERIFIED');
+  stage('PROVENANCE_VERIFICATION', effectiveProvenanceVerified, 'PROVENANCE_NOT_VERIFIED');
   stage('STATIC_INSPECTION', !isExecutable || staticInspectionPassed === true, 'STATIC_INSPECTION_NOT_PASSED');
   stage('DEPENDENCY_SECURITY_REVIEW', !isExecutable || dependencyReviewPassed === true, 'DEPENDENCY_REVIEW_NOT_PASSED');
 
@@ -75,7 +82,7 @@ export function qualifyCandidate({
     ];
     stage('TRIAL_ISOLATION_INTACT', iso.ephemeral === true && !leaks.some((x) => x === true), 'TRIAL_ISOLATION_COMPROMISED');
   }
-  stage('TASK_SPECIFIC_EVALUATION', taskEvaluationPassed === true, 'TASK_EVALUATION_NOT_PASSED');
+  stage('TASK_SPECIFIC_EVALUATION', effectiveTaskEvaluationPassed, 'TASK_EVALUATION_NOT_PASSED');
   stage('DONOR_SECURITY_EVAL_PROVENANCE_RECORD', !isExecutable || Boolean(trial?.manifest_hash), 'NO_TRIAL_PROVENANCE_RECORD');
 
   // Tier is re-derived from provenance alone. Trial evidence is deliberately not
@@ -105,6 +112,14 @@ export function qualifyCandidate({
       static_inspection_passed: staticInspectionPassed === true,
       dependency_review_passed: dependencyReviewPassed === true,
       trial_manifest_hash: trial?.manifest_hash || null,
+    },
+    risk_class: riskClass,
+    qualification_track: isExecutable ? 'EXECUTABLE_STRICT_V1' : 'REFERENCE_LIGHTWEIGHT_V1',
+    reference: {
+      publisher_verified: effectiveProvenanceVerified,
+      task_relevance_verified: effectiveTaskEvaluationPassed,
+      content_hash: candidate.provenance?.content_hash || null,
+      freshness_state: freshnessState,
     },
     freshness_state: freshnessState,
     authority: 'QUALIFICATION_EVIDENCE',

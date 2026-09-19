@@ -119,7 +119,11 @@ export class VeklResearchLoop {
     if (lease.lease_expires_ms <= this.clock()) throw new Error('LEASE_EXPIRED');
     return lease;
   }
-  async _fetch(input) { const lease = await this.active(input); return { state: 'ACTIVE', packet: immutableDuPacket(lease.packet, lease.packet_hash), resume: clone(lease.resume || {}) }; }
+  async _fetch(input) {
+    const lease = await this.active(input);
+    await this.store.event('FETCH', { lease_id: input.lease_id, packet_id: lease.packet_id, packet_hash: lease.packet_hash, worker_id: input.worker_id, at_ms: this.clock() });
+    return { state: 'ACTIVE', packet: immutableDuPacket(lease.packet, lease.packet_hash), resume: clone(lease.resume || {}) };
+  }
   async _search(input) {
     await this.active(input);
     const searchQuery = String(input.search_query || '').trim().slice(0, 500);
@@ -152,7 +156,51 @@ export class VeklResearchLoop {
   }
   async _submit_analysis(input) { return this.submit(input, false); }
   async _submit_deeper_evidence(input) { return this.submit(input, true); }
-  async _complete(input) { const lease = await this.active(input); return this.store.complete({ lease_id: lease.lease_id, worker_id: input.worker_id, at_ms: this.clock() }); }
+  async _complete(input) {
+    const lease = await this.active(input);
+    const bundle = await this.store.completionBundle(lease.lease_id);
+    if (!bundle) throw new Error('COMPLETION_PACKET_NOT_FOUND');
+    const evidence = Array.isArray(bundle.evidence) ? bundle.evidence : [];
+    const events = Array.isArray(bundle.events) ? bundle.events : [];
+    const kinds = new Set(evidence.map((x) => x.evidence_kind));
+    const eventKinds = new Set(events.map((x) => x.event_kind));
+    const missing = [];
+    for (const kind of ['GROQ_RESEARCH','ANALYSIS','DEEPER_EVIDENCE']) if (!kinds.has(kind)) missing.push(kind);
+    for (const kind of ['CLAIM','FETCH','SEARCH','FETCH_READ']) if (!eventKinds.has(kind)) missing.push(kind);
+    const resume = bundle.resume || {};
+    if (Array.isArray(resume.blocking_contradictions) && resume.blocking_contradictions.length) missing.push('UNRESOLVED_BLOCKING_CONTRADICTIONS');
+    const packet = immutableDuPacket(bundle.packet_json, bundle.packet_hash);
+    const deeper = evidence.filter((x) => x.evidence_kind === 'DEEPER_EVIDENCE');
+    const chatgptEvidence = evidence.filter((x) => x.evidence_kind === 'ANALYSIS' || x.evidence_kind === 'DEEPER_EVIDENCE');
+    const readHashes = new Set(events.filter((x) => x.event_kind === 'FETCH_READ').map((x) => x.payload?.content_hash).filter(Boolean));
+    for (const item of chatgptEvidence) {
+      for (const source of Array.isArray(item.sources) ? item.sources : []) {
+        if (!readHashes.has(source.content_hash)) missing.push('SOURCE_NOT_FETCH_READ:' + source.content_hash);
+      }
+    }
+    const obligationRefs = new Set(
+      deeper.flatMap((x) => Array.isArray(x.claims) ? x.claims : [])
+        .flatMap((claim) => Array.isArray(claim.obligation_refs) ? claim.obligation_refs : [])
+    );
+    if (packet.guided_frontend_context?.applicable) {
+      for (const req of packet.guided_frontend_context.evidence_required || []) {
+        if (!obligationRefs.has(req)) missing.push('FRONTEND_OBLIGATION:' + req);
+      }
+    }
+    if (packet.n8n_architecture_context?.applicable) {
+      for (const req of packet.n8n_architecture_context.evidence_required || []) {
+        if (!obligationRefs.has(req)) missing.push('N8N_OBLIGATION:' + req);
+      }
+    }
+    if (missing.length) {
+      const gate = { ok: false, state: 'COMPLETION_GATE_BLOCKED', packet_id: bundle.packet_id, packet_hash: bundle.packet_hash, missing: [...new Set(missing)].sort() };
+      await this.store.event('COMPLETION_GATE_BLOCKED', { lease_id: lease.lease_id, packet_id: bundle.packet_id, packet_hash: bundle.packet_hash, worker_id: input.worker_id, missing: gate.missing, at_ms: this.clock() });
+      return gate;
+    }
+    const gate = { ok: true, packet_id: bundle.packet_id, packet_hash: bundle.packet_hash, checked_at: new Date(this.clock()).toISOString() };
+    await this.store.event('COMPLETION_GATE_PASSED', { lease_id: lease.lease_id, ...gate, worker_id: input.worker_id, at_ms: this.clock() });
+    return this.store.complete({ lease_id: lease.lease_id, worker_id: input.worker_id, at_ms: this.clock(), completion_gate: gate });
+  }
   async _retry(input) { const lease = await this.active(input); return this.store.retry({ lease_id: lease.lease_id, worker_id: input.worker_id, reason: String(input.reason || 'retry requested').slice(0, 500), at_ms: this.clock() }); }
   async _refuse(input) { const lease = await this.active(input); return this.store.refuse({ lease_id: lease.lease_id, worker_id: input.worker_id, reason: String(input.reason || '').slice(0, 500), at_ms: this.clock() }); }
 }

@@ -28,31 +28,86 @@
     "DEPRECATED",
     "QUARANTINED"
   ],
-  "terminal_states": ["REJECTED", "SUPERSEDED", "DEPRECATED"],
-  "admitted_states": ["ADMITTED"],
-  "authority_bearing_states": ["ADMITTED"],
+  "terminal_states": [
+    "REJECTED",
+    "SUPERSEDED",
+    "DEPRECATED"
+  ],
+  "admitted_states": [
+    "ADMITTED"
+  ],
+  "authority_bearing_states": [
+    "ADMITTED"
+  ],
   "lifecycle_transitions": {
-    "DISCOVERED": ["TRIAGED", "REJECTED", "QUARANTINED"],
-    "TRIAGED": ["INVESTIGATING", "REJECTED", "QUARANTINED"],
-    "INVESTIGATING": ["EXPERIMENTAL", "QUALIFIED", "REJECTED", "QUARANTINED"],
-    "EXPERIMENTAL": ["QUALIFIED", "REJECTED", "QUARANTINED"],
-    "QUALIFIED": ["ADMITTED", "REJECTED", "QUARANTINED"],
-    "ADMITTED": ["SUPERSEDED", "DEPRECATED", "QUARANTINED"],
-    "QUARANTINED": ["INVESTIGATING", "REJECTED"],
+    "DISCOVERED": [
+      "TRIAGED",
+      "REJECTED",
+      "QUARANTINED"
+    ],
+    "TRIAGED": [
+      "INVESTIGATING",
+      "REJECTED",
+      "QUARANTINED"
+    ],
+    "INVESTIGATING": [
+      "EXPERIMENTAL",
+      "QUALIFIED",
+      "REJECTED",
+      "QUARANTINED"
+    ],
+    "EXPERIMENTAL": [
+      "QUALIFIED",
+      "REJECTED",
+      "QUARANTINED"
+    ],
+    "QUALIFIED": [
+      "ADMITTED",
+      "REJECTED",
+      "QUARANTINED"
+    ],
+    "ADMITTED": [
+      "SUPERSEDED",
+      "DEPRECATED",
+      "QUARANTINED"
+    ],
+    "QUARANTINED": [
+      "INVESTIGATING",
+      "REJECTED"
+    ],
     "REJECTED": [],
     "SUPERSEDED": [],
     "DEPRECATED": []
   },
   "transition_evidence_required": {
-    "TRIAGED": ["triage_note"],
-    "INVESTIGATING": ["provenance_probe"],
-    "EXPERIMENTAL": ["trial_manifest_hash"],
-    "QUALIFIED": ["qualification_manifest_hash"],
-    "ADMITTED": ["qualification_manifest_hash", "owner_or_delegated_authority"],
-    "REJECTED": ["disposition_reason"],
-    "QUARANTINED": ["disposition_reason"],
-    "SUPERSEDED": ["superseded_by"],
-    "DEPRECATED": ["disposition_reason"]
+    "TRIAGED": [
+      "triage_note"
+    ],
+    "INVESTIGATING": [
+      "provenance_probe"
+    ],
+    "EXPERIMENTAL": [
+      "trial_manifest_hash"
+    ],
+    "QUALIFIED": [
+      "qualification_manifest_hash"
+    ],
+    "ADMITTED": [
+      "qualification_manifest_hash",
+      "owner_or_delegated_authority"
+    ],
+    "REJECTED": [
+      "disposition_reason"
+    ],
+    "QUARANTINED": [
+      "disposition_reason"
+    ],
+    "SUPERSEDED": [
+      "superseded_by"
+    ],
+    "DEPRECATED": [
+      "disposition_reason"
+    ]
   },
   "trust_tiers": [
     "T0_DIAL_PROJECT",
@@ -69,17 +124,24 @@
     },
     "T1_OFFICIAL": {
       "open_world_assignable": true,
-      "requires_all": ["official_publisher_verified", "canonical_locator_on_publisher_domain_or_repo"],
+      "requires_all": [
+        "official_publisher_verified",
+        "canonical_locator_on_publisher_domain_or_repo"
+      ],
       "trial_success_sufficient": false
     },
     "T2_MAINTAINER_COMMUNITY": {
       "open_world_assignable": true,
-      "requires_all": ["maintainer_identity_linked"],
+      "requires_all": [
+        "maintainer_identity_linked"
+      ],
       "trial_success_sufficient": false
     },
     "T3_COMMUNITY_CORROBORATION": {
       "open_world_assignable": true,
-      "requires_all": ["independent_corroboration_count_at_least_2"],
+      "requires_all": [
+        "independent_corroboration_count_at_least_2"
+      ],
       "trial_success_sufficient": false
     },
     "T4_COMMUNITY_SIGNAL": {
@@ -96,25 +158,94 @@
     "T4_COMMUNITY_SIGNAL": "SIGNAL"
   },
   "trigger_classes": [
-    { "trigger_id": "REACTIVE", "description": "explicit engineering task with insufficient admitted coverage", "may_reprioritise_development_plan": false },
-    { "trigger_id": "GAP_DRIVEN", "description": "low coverage, stale evidence or missing resource class", "may_reprioritise_development_plan": false },
-    { "trigger_id": "FRESHNESS", "description": "admitted knowledge exceeded its freshness TTL", "may_reprioritise_development_plan": false },
-    { "trigger_id": "COMPETITIVE_REPLACEMENT", "description": "known resource deprecated, blocked, costly or underperforming", "may_reprioritise_development_plan": false },
-    { "trigger_id": "HORIZON_SCAN", "description": "bounded scheduled scan of high-velocity domains", "may_reprioritise_development_plan": false, "scheduled": true }
+    {
+      "trigger_id": "REACTIVE",
+      "description": "explicit engineering task with insufficient admitted coverage",
+      "may_reprioritise_development_plan": false
+    },
+    {
+      "trigger_id": "GAP_DRIVEN",
+      "description": "low coverage, stale evidence or missing resource class",
+      "may_reprioritise_development_plan": false
+    },
+    {
+      "trigger_id": "FRESHNESS",
+      "description": "admitted knowledge exceeded its freshness TTL",
+      "may_reprioritise_development_plan": false
+    },
+    {
+      "trigger_id": "COMPETITIVE_REPLACEMENT",
+      "description": "known resource deprecated, blocked, costly or underperforming",
+      "may_reprioritise_development_plan": false
+    },
+    {
+      "trigger_id": "HORIZON_SCAN",
+      "description": "bounded scheduled scan of high-velocity domains",
+      "may_reprioritise_development_plan": false,
+      "scheduled": true
+    }
   ],
   "source_adapters": [
-    { "adapter_id": "WEB_SEARCH", "authority_by_default": false, "max_provisional_tier": "T4_COMMUNITY_SIGNAL" },
-    { "adapter_id": "GITHUB_SEARCH", "authority_by_default": false, "max_provisional_tier": "T4_COMMUNITY_SIGNAL" },
-    { "adapter_id": "PACKAGE_REGISTRY", "authority_by_default": false, "max_provisional_tier": "T2_MAINTAINER_COMMUNITY" },
-    { "adapter_id": "OFFICIAL_DOC_INDEX", "authority_by_default": false, "max_provisional_tier": "T1_OFFICIAL" },
-    { "adapter_id": "RELEASE_FEED", "authority_by_default": false, "max_provisional_tier": "T1_OFFICIAL" },
-    { "adapter_id": "ISSUE_DISCUSSION", "authority_by_default": false, "max_provisional_tier": "T2_MAINTAINER_COMMUNITY" },
-    { "adapter_id": "SECURITY_ADVISORY_FEED", "authority_by_default": false, "max_provisional_tier": "T1_OFFICIAL" },
-    { "adapter_id": "PLUGIN_MCP_DIRECTORY", "authority_by_default": false, "max_provisional_tier": "T3_COMMUNITY_CORROBORATION" },
-    { "adapter_id": "CURATED_TECHNICAL_LIST", "authority_by_default": false, "max_provisional_tier": "T4_COMMUNITY_SIGNAL" },
-    { "adapter_id": "DESIGN_RESOURCE_INDEX", "authority_by_default": false, "max_provisional_tier": "T3_COMMUNITY_CORROBORATION" },
-    { "adapter_id": "PROMPT_RESOURCE_INDEX", "authority_by_default": false, "max_provisional_tier": "T4_COMMUNITY_SIGNAL" },
-    { "adapter_id": "COMMUNITY_SIGNAL", "authority_by_default": false, "max_provisional_tier": "T4_COMMUNITY_SIGNAL" }
+    {
+      "adapter_id": "WEB_SEARCH",
+      "authority_by_default": false,
+      "max_provisional_tier": "T4_COMMUNITY_SIGNAL"
+    },
+    {
+      "adapter_id": "GITHUB_SEARCH",
+      "authority_by_default": false,
+      "max_provisional_tier": "T4_COMMUNITY_SIGNAL"
+    },
+    {
+      "adapter_id": "PACKAGE_REGISTRY",
+      "authority_by_default": false,
+      "max_provisional_tier": "T2_MAINTAINER_COMMUNITY"
+    },
+    {
+      "adapter_id": "OFFICIAL_DOC_INDEX",
+      "authority_by_default": false,
+      "max_provisional_tier": "T1_OFFICIAL"
+    },
+    {
+      "adapter_id": "RELEASE_FEED",
+      "authority_by_default": false,
+      "max_provisional_tier": "T1_OFFICIAL"
+    },
+    {
+      "adapter_id": "ISSUE_DISCUSSION",
+      "authority_by_default": false,
+      "max_provisional_tier": "T2_MAINTAINER_COMMUNITY"
+    },
+    {
+      "adapter_id": "SECURITY_ADVISORY_FEED",
+      "authority_by_default": false,
+      "max_provisional_tier": "T1_OFFICIAL"
+    },
+    {
+      "adapter_id": "PLUGIN_MCP_DIRECTORY",
+      "authority_by_default": false,
+      "max_provisional_tier": "T3_COMMUNITY_CORROBORATION"
+    },
+    {
+      "adapter_id": "CURATED_TECHNICAL_LIST",
+      "authority_by_default": false,
+      "max_provisional_tier": "T4_COMMUNITY_SIGNAL"
+    },
+    {
+      "adapter_id": "DESIGN_RESOURCE_INDEX",
+      "authority_by_default": false,
+      "max_provisional_tier": "T3_COMMUNITY_CORROBORATION"
+    },
+    {
+      "adapter_id": "PROMPT_RESOURCE_INDEX",
+      "authority_by_default": false,
+      "max_provisional_tier": "T4_COMMUNITY_SIGNAL"
+    },
+    {
+      "adapter_id": "COMMUNITY_SIGNAL",
+      "authority_by_default": false,
+      "max_provisional_tier": "T4_COMMUNITY_SIGNAL"
+    }
   ],
   "sensitive_outbound_denylist": [
     "SECRET",
@@ -185,18 +316,35 @@
     "GOVERNED_ACTIVATION_ELIGIBILITY"
   ],
   "reassessment": {
-    "states": ["CURRENT", "STALE", "SUPERSEDED", "DEPRECATED", "REVOKED"],
+    "states": [
+      "CURRENT",
+      "STALE",
+      "SUPERSEDED",
+      "DEPRECATED",
+      "REVOKED"
+    ],
     "may_rewrite_project_truth": false,
     "may_change_programme_priority": false,
     "default_review_interval_hours": 720
   },
   "feature_flags": {
-    "discovery_adapters_enabled": false,
+    "discovery_adapters_enabled": true,
     "executable_trials_enabled": false,
-    "horizon_scan_enabled": false
+    "horizon_scan_enabled": true,
+    "reference_auto_qualification_enabled": true,
+    "reference_auto_admission_enabled": true
   },
   "rollback": {
     "mode": "DISABLE_ADAPTERS_KEEP_EVIDENCE",
     "discovery_evidence_deletion_forbidden": true
-  }
+  },
+  "reference_admission_pipeline": [
+    "DISCOVERY",
+    "PUBLISHER_DOMAIN_PROVENANCE",
+    "TASK_RELEVANCE",
+    "FRESHNESS_VERSION",
+    "CONTENT_HASH",
+    "QUALIFICATION",
+    "REFERENCE_REGISTRY_ADMISSION"
+  ]
 }

@@ -12,21 +12,64 @@ const root = process.env.DIAL_RESEARCH_HARVEST_HOME || '/var/lib/dial-control';
 const sha = (v) => crypto.createHash('sha256').update(typeof v === 'string' ? v : JSON.stringify(v)).digest('hex');
 export const OWNER_FIRST_RESEARCH_TASK = 'Owner-mandated first ChatGPT research task: consolidate and expand GPT-SOL harvest work from baseline 0d783d65 to current VEKL open-world discovery, guided frontend design, and n8n automation architecture. Preserve cited evidence and do not fabricate execution or results.';
 
-function contexts(subject) {
+export function inferResearchContexts(subject, unit = {}, binding = {}) {
   const tags = new Set(subject.technology_tags || []);
   const moduleClass = subject.module_class || '';
+  const searchable = JSON.stringify({
+    subject: {
+      topic: subject.topic,
+      module_class: subject.module_class,
+      technology_tags: subject.technology_tags,
+      source_hints: subject.source_hints,
+    },
+    unit: {
+      objective: unit.objective,
+      task_classes: unit.task_classes,
+      contracts_consumed: unit.contracts_consumed,
+      contracts_produced: unit.contracts_produced,
+      dependencies: unit.dependencies,
+      acceptance: unit.acceptance,
+      evidence_requirements: unit.evidence_requirements,
+    },
+    binding: {
+      feature_ids: binding.feature_ids,
+      contract_bindings: binding.contract_bindings,
+    },
+  }).toLowerCase();
   const frontend = tags.has('React') || tags.has('Android') || moduleClass.includes('CLIENT');
-  const automation = tags.has('n8n') || moduleClass === 'PLATFORM_AUTOMATION_CLOUD';
+  const automationSignals = [
+    ['N8N_TAG', /n8n/],
+    ['SCHEDULED_WORK', /schedule|cron|timer|periodic|recurring|batch/],
+    ['ASYNC_OR_EVENT', /async|event[-_ ]driven|event bus|event handler|queue|worker|background/],
+    ['NOTIFICATION', /notification|email|sms|whatsapp|push message/],
+    ['RECONCILIATION', /reconcil|settlement|matching|ledger sync/],
+    ['INGESTION', /ingest|import|harvest|crawl|feed|etl|pipeline/],
+    ['RETRY_OR_IDEMPOTENCY', /retry|idempoten|dead[-_ ]letter|backoff/],
+    ['CALLBACK_OR_WEBHOOK', /callback|webhook/],
+    ['INTEGRATION_FLOW', /integration|orchestrat|workflow|automation|external service/],
+    ['LIFECYCLE_JOB', /lifecycle|state machine|provision|activation|deactivation/],
+  ];
+  const automationReasons = automationSignals.filter(([, rx]) => rx.test(searchable)).map(([reason]) => reason);
+  if (moduleClass === 'PLATFORM_AUTOMATION_CLOUD') automationReasons.push('AUTOMATION_MODULE_CLASS');
+  const automation = automationReasons.length > 0;
   return {
     guided_frontend_context: {
       applicable: frontend,
       design_provenance_mode: ['NEW_DIAL_DESIGN', 'DONOR_ADAPT', 'DONOR_PRESERVE', 'LOCKED_BASELINE_REPAIR'],
       design_iteration_phase: ['EXPLORE', 'CONVERGE', 'RECONSTRUCT'],
       evidence_required: ['SCREEN_QUALITY_PACKET', 'STRUCTURED_CRITICS', 'FREEDOM_BUDGET', 'DONOR_APPLICABILITY', 'VISUAL_AUTHORITY'],
+      critic_taxonomy: ['HIERARCHY','COMPOSITION','ACCESSIBILITY','RESPONSIVENESS','BRAND_COHERENCE','INTERACTION_CLARITY','IMPLEMENTATION_PARITY'],
+      freedom_budget_dimensions: ['LAYOUT_COMPOSITION','VISUAL_TREATMENT','MICRO_INTERACTIONS','ILLUSTRATION','TYPOGRAPHIC_EXPRESSION'],
+      donor_applicability_criteria: ['FEATURE_FIT','UX_FIT','LICENSE','PROVENANCE','SECURITY','ADAPT_VS_PRESERVE'],
+      visual_authority_requirements: ['GOLDEN_SCREEN_OR_OWNER_ACCEPTED_REFERENCE','VISUAL_AUTHORITY_FREEZE','IMPLEMENTATION_PARITY_EVIDENCE'],
+      reconstruction_requirements: ['VISUAL_TO_FUNCTIONAL_MAPPING','INTERACTION_BINDING','RESPONSIVE_PARITY','NO_DEAD_CONTROLS'],
+      stitch_provider_evidence: ['PROVIDER_PROVENANCE','SCREEN_OUTPUT_HASH','ORCHESTRATED_EXECUTION','OUTAGE_FALLBACK'],
       authority: 'PROJECT_TRUTH_GOVERNED_NON_AUTHORITATIVE_RESEARCH',
     },
     n8n_architecture_context: {
       applicable: automation,
+      applicability_reasons: [...new Set(automationReasons)].sort(),
+      classifier: 'SEMANTIC_CAPABILITY_INFERENCE_V2',
       knowledge_plane: 'VEKL_N8N_CORPUS',
       runtime_estates: ['DIAL_N8N_DEV', 'DIAL_N8N_PROD'],
       evidence_required: ['NODE_CAPABILITY_POLICY', 'WORKFLOW_SECURITY', 'IDEMPOTENCY', 'RELEASE_IDENTITY', 'DEV_PROD_ISOLATION', 'TENANT_ISOLATION', 'DONOR_PATTERN_PROVENANCE'],
@@ -44,8 +87,8 @@ function flattenUnits(manifest) {
     for (const binding of batch.bindings || []) {
       const subject = subjects.get(binding.subject_id);
       if (!subject) throw new Error('SUBJECT_BINDING_MISSING:' + binding.subject_id);
-      const context = contexts(subject);
       const unit = unitById.get(binding.unit_lineage_id);
+      const context = inferResearchContexts(subject, unit, binding);
       const packet = immutableDuPacket({
         mission_id: manifest.mission_id,
         unit_lineage_id: binding.unit_lineage_id,
@@ -174,7 +217,9 @@ async function seed() {
   }
 }
 
-seed().catch((error) => {
-  console.error(error?.stack || String(error));
-  process.exitCode = 1;
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seed().catch((error) => {
+    console.error(error?.stack || String(error));
+    process.exitCode = 1;
+  });
+}

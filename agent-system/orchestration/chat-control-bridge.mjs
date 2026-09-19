@@ -27,6 +27,7 @@ import { unionAlphaResearchStatus } from './providers/openrouter/union-alpha-res
 import { researchProviderStatus, runResearchBatch } from './providers/research/research-provider-router.mjs';
 import { VeklResearchLoop } from './vekl-research-loop.mjs';
 import { createVeklResearchStore } from './vekl-research-db-client.mjs';
+import { VeklResearchMonitor } from './vekl-research-monitor.mjs';
 import {
   finalizeUnionAlphaResearchMission,
 } from './vekl-research-harvest.mjs';
@@ -56,11 +57,18 @@ const RESEARCH_LOOP_TOOL_ACTIONS = Object.freeze({
   dial_research_refuse_unit: 'refuse',
 });
 let researchLoopRuntime = null;
+let veklMonitorRuntime = null;
 function getResearchLoopRuntime() {
   if (researchLoopRuntime) return researchLoopRuntime;
   const { pool, store } = createVeklResearchStore();
   researchLoopRuntime = { pool, loop: new VeklResearchLoop({ store }) };
   return researchLoopRuntime;
+}
+function getVeklMonitorRuntime() {
+  if (veklMonitorRuntime) return veklMonitorRuntime;
+  const { pool } = createVeklResearchStore();
+  veklMonitorRuntime = { pool, monitor: new VeklResearchMonitor({ pool }) };
+  return veklMonitorRuntime;
 }
 const EVENT_FILES = [
   'events/mission-control.jsonl',
@@ -248,6 +256,10 @@ const TOOL_DEFS = Object.freeze([
   ['dial_union_alpha_research_status', 'Read the bounded Union Alpha VEKL full-research mission status without exposing provider credentials.', {}],
   ['dial_union_alpha_research_batch', 'Execute one idempotent PUBLIC_RESEARCH_ONLY Union Alpha research batch. Private unit bindings stay inside DIAL and are never included in the provider packet.', { batch: { type: 'object' }, bindings: { type: 'array' } }],
   ['dial_union_alpha_research_finalize', 'Run the canonical coverage audit for one Union Alpha VEKL full-research mission and compile per-unit research only if every mandatory coverage gate passes.', { mission_id: { type: 'string' } }],
+  ['dial_vekl_monitor_snapshot', 'Read a complete live read-only VEKL research snapshot from authoritative dial_vekl.', {}],
+  ['dial_vekl_monitor_timeline', 'Read bounded VEKL research events after a numeric cursor.', { cursor: { type: 'integer', minimum: 0 }, limit: { type: 'integer', minimum: 1, maximum: 200 } }],
+  ['dial_vekl_monitor_packet', 'Read one VEKL packet with evidence, discovery links and event history.', { packet_id: { type: 'string' }, ordinal: { type: 'integer', minimum: 1, maximum: 309 } }],
+  ['dial_vekl_monitor_alerts', 'Read current VEKL invariant, lease and pipeline alerts.', {}],
   ['dial_runtime_capacity_status', 'Read Sol capacity-preservation state, exact-identity cache validity, provider cooldown and recent model-call suppression/usage evidence.', {}],
   ['dial_operator_channels', 'Read DIAL operator-channel health for the typed control bridge and WhatsApp owner adapter without exposing credentials.', {}],
 ]);
@@ -359,6 +371,10 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     const runtime = getResearchLoopRuntime();
     result = await runtime.loop.invoke(RESEARCH_LOOP_TOOL_ACTIONS[name], args);
   }
+  else if (name === 'dial_vekl_monitor_snapshot') result = await getVeklMonitorRuntime().monitor.snapshot();
+  else if (name === 'dial_vekl_monitor_timeline') result = await getVeklMonitorRuntime().monitor.timeline({ cursor: args.cursor, limit: args.limit });
+  else if (name === 'dial_vekl_monitor_packet') result = await getVeklMonitorRuntime().monitor.packet({ packet_id: clean(args.packet_id, 180) || null, ordinal: args.ordinal });
+  else if (name === 'dial_vekl_monitor_alerts') result = await getVeklMonitorRuntime().monitor.alerts();
   else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
   else if (name === 'dial_operator_channels') result = {
     authority: CHAT_CONTROL_AUTHORITY, project: 'dial',
