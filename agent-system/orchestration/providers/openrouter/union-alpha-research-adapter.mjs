@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { appendJsonl, DEFAULT_CONTROL_HOME, readJson, writeJsonAtomic } from '../../state-store.mjs';
+import { browserSearch, browserRenderedRead } from '../../browser-acquisition-client.mjs';
 
 export const UNION_ALPHA_MODEL_ID = 'stealth/union-alpha';
 export const UNION_ALPHA_DATA_CLASS = 'PUBLIC_RESEARCH_ONLY';
@@ -277,6 +278,58 @@ export async function exaSearch(query, fetchImpl = fetch) {
   return bounded(JSON.stringify(result?.result || result || {}), 16000);
 }
 
+export async function searchPublicWithBrowserFallback(query, fetchImpl = fetch) {
+  try {
+    const result = await exaSearch(query, fetchImpl);
+    return { state: 'PRIMARY_ROUTE_OK', acquisition_method: 'EXA_SEARCH', content: result, fallback_cause: null };
+  } catch (error) {
+    const fallback = await browserSearch(query, fetchImpl);
+    return {
+      state: 'DEGRADED_ROUTE_USED',
+      acquisition_method: 'BROWSER_SEARCH',
+      content: fallback.excerpt,
+      content_hash: fallback.content_hash,
+      candidate_id: fallback.candidate_id,
+      links: fallback.links || [],
+      observed_at: fallback.observed_at,
+      final_url: fallback.final_url,
+      fallback_cause: bounded(error?.message || error, 300),
+      normalized_evidence: fallback,
+    };
+  }
+}
+
+export async function fetchPublicWithBrowserFallback(url, fetchImpl = fetch) {
+  const direct = await fetchOfficial(url, fetchImpl);
+  if (direct) {
+    return {
+      state: 'PRIMARY_ROUTE_OK',
+      acquisition_method: 'DIRECT_FETCH',
+      url: direct.url,
+      final_url: direct.url,
+      content_type: direct.content_type,
+      sha256: direct.sha256,
+      excerpt: direct.excerpt,
+      content_hash: direct.sha256,
+      observed_at: now(),
+    };
+  }
+  const rendered = await browserRenderedRead(url, fetchImpl);
+  return {
+    state: 'DEGRADED_ROUTE_USED',
+    acquisition_method: 'BROWSER_RENDERED',
+    url: rendered.final_url,
+    final_url: rendered.final_url,
+    content_type: 'text/html',
+    sha256: rendered.content_hash,
+    content_hash: rendered.content_hash,
+    excerpt: rendered.excerpt,
+    observed_at: rendered.observed_at,
+    normalized_evidence: rendered,
+    fallback_cause: 'DIRECT_FETCH_INCOMPLETE',
+  };
+}
+
 function context7Query({ repoDir, technology, query }) {
   if (!repoDir || !technology) return null;
   const wrapper = path.join(repoDir, CONTEXT7_WRAPPER);
@@ -356,25 +409,45 @@ export async function gatherPublicEvidence(packet, { repoDir, fetchImpl = fetch 
   const evidence = {
     official: [],
     exa: [],
+    browser: [],
     context7: [],
+    acquisition_routes: [],
     retrieval_errors: [],
   };
   const urls = [...new Set(packet.subjects.flatMap((subject) =>
     (subject.source_hints || []).map((hint) => hint.url).filter(Boolean)))].slice(0, 6);
   for (const url of urls) {
     const row = await fetchOfficial(url, fetchImpl);
-    if (row) evidence.official.push(row);
+    if (row) {
+      evidence.official.push(row);
+      evidence.acquisition_routes.push({ method: 'DIRECT_FETCH', url: row.url, content_hash: row.sha256 });
+    } else {
+      try {
+        const rendered = await browserRenderedRead(url, fetchImpl);
+        evidence.browser.push(rendered);
+        evidence.acquisition_routes.push({ method: 'BROWSER_RENDERED', url: rendered.final_url, content_hash: rendered.content_hash, fallback_cause: 'DIRECT_FETCH_INCOMPLETE' });
+      } catch (error) {
+        evidence.retrieval_errors.push({ adapter: 'BROWSER_RENDERED', error: bounded(error?.message || error, 300) });
+      }
+    }
   }
   const queries = [...new Set(packet.subjects.flatMap((subject) =>
     subject.search_queries || []))].slice(0, 3);
   for (const query of queries) {
     try {
-      evidence.exa.push({ query, result: await exaSearch(query, fetchImpl) });
+      const result = await exaSearch(query, fetchImpl);
+      evidence.exa.push({ query, result });
+      evidence.acquisition_routes.push({ method: 'EXA_SEARCH', query, state: 'PRIMARY_ROUTE_OK' });
     } catch (error) {
-      evidence.retrieval_errors.push({
-        adapter: 'EXA',
-        error: bounded(error?.message || error, 300),
-      });
+      const errorText = bounded(error?.message || error, 300);
+      evidence.retrieval_errors.push({ adapter: 'EXA', error: errorText });
+      try {
+        const fallback = await browserSearch(query, fetchImpl);
+        evidence.browser.push({ query, ...fallback, degraded_from: 'EXA_SEARCH', degraded_reason: errorText });
+        evidence.acquisition_routes.push({ method: 'BROWSER_SEARCH', query, state: 'DEGRADED_ROUTE_USED', fallback_cause: errorText, content_hash: fallback.content_hash });
+      } catch (browserError) {
+        evidence.retrieval_errors.push({ adapter: 'BROWSER_SEARCH', error: bounded(browserError?.message || browserError, 300) });
+      }
     }
   }
   const technologies = [...new Set(packet.subjects.flatMap((subject) =>
@@ -607,6 +680,8 @@ export async function runUnionAlphaResearchBatch({
     retrieval: {
       official_count: evidence.official.length,
       exa_count: evidence.exa.length,
+      browser_count: evidence.browser.length,
+      acquisition_routes: evidence.acquisition_routes,
       context7_count: evidence.context7.length,
       errors: evidence.retrieval_errors,
       evidence_hash: sha(evidence),

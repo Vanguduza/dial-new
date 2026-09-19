@@ -1,0 +1,26 @@
+[Unit]
+Description=DIAL VEKL Browser Acquisition Fabric
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dial-browser
+Group=dial-browser
+EnvironmentFile=/etc/dial-browser/runtime.env
+WorkingDirectory=/opt/dial-browser-runtime
+ExecStart=/usr/bin/node /opt/dial-browser-runtime/server.mjs
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/opt/dial-browser-runtime
+ReadWritePaths=/var/lib/dial-browser /var/log/dial-browser
+MemoryMax=1400M
+CPUQuota=150%
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target

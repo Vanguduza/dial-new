@@ -32,7 +32,48 @@ const SQL = Object.freeze({
   event: 'INSERT INTO vekl_research_events(lease_id,event_kind,payload,created_at) VALUES($1,$2,$3,to_timestamp($4/1000.0)) RETURNING event_id',
   evidence: 'INSERT INTO vekl_research_evidence(lease_id,packet_hash,worker_id,evidence_kind,claims,sources,evidence_hash,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,to_timestamp($8/1000.0)) ON CONFLICT(evidence_hash) DO UPDATE SET evidence_hash=EXCLUDED.evidence_hash RETURNING evidence_hash',
   source: 'INSERT INTO vekl_research_sources(source_hash,url,source_kind,trust_tier,observed_at,metadata) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(source_hash) DO NOTHING',
-  discovery: 'INSERT INTO vekl_research_discovery_links(packet_id,candidate_id,lifecycle_state,trust_tier,evidence_refs) SELECT packet_id,$2,$3,$4,$5 FROM vekl_research_packets WHERE lease_id=$1 ON CONFLICT(packet_id,candidate_id) DO UPDATE SET lifecycle_state=EXCLUDED.lifecycle_state,trust_tier=EXCLUDED.trust_tier,evidence_refs=EXCLUDED.evidence_refs',
+  discovery: `INSERT INTO vekl_research_discovery_links(packet_id,candidate_id,lifecycle_state,trust_tier,evidence_refs)
+    SELECT packet_id,$2,$3,$4,$5 FROM vekl_research_packets WHERE lease_id=$1
+    ON CONFLICT(packet_id,candidate_id) DO UPDATE SET
+      lifecycle_state=CASE
+        WHEN vekl_research_discovery_links.lifecycle_state IN ('REJECTED','SUPERSEDED','DEPRECATED','QUARANTINED')
+          THEN vekl_research_discovery_links.lifecycle_state
+        WHEN EXCLUDED.lifecycle_state IN ('REJECTED','SUPERSEDED','DEPRECATED','QUARANTINED')
+          THEN EXCLUDED.lifecycle_state
+        WHEN (CASE EXCLUDED.lifecycle_state
+          WHEN 'DISCOVERED' THEN 10 WHEN 'TRIAGED' THEN 20 WHEN 'INVESTIGATING' THEN 30
+          WHEN 'EXPERIMENTAL' THEN 40 WHEN 'QUALIFIED' THEN 50 WHEN 'ADMITTED' THEN 60 ELSE 0 END)
+          >
+          (CASE vekl_research_discovery_links.lifecycle_state
+          WHEN 'DISCOVERED' THEN 10 WHEN 'TRIAGED' THEN 20 WHEN 'INVESTIGATING' THEN 30
+          WHEN 'EXPERIMENTAL' THEN 40 WHEN 'QUALIFIED' THEN 50 WHEN 'ADMITTED' THEN 60 ELSE 0 END)
+          THEN EXCLUDED.lifecycle_state
+        ELSE vekl_research_discovery_links.lifecycle_state
+      END,
+      trust_tier=CASE
+        WHEN vekl_research_discovery_links.trust_tier IS NULL THEN EXCLUDED.trust_tier
+        WHEN EXCLUDED.trust_tier IS NULL THEN vekl_research_discovery_links.trust_tier
+        WHEN substring(vekl_research_discovery_links.trust_tier from '^T([1-4])_')::int
+             <= substring(EXCLUDED.trust_tier from '^T([1-4])_')::int
+          THEN vekl_research_discovery_links.trust_tier
+        ELSE EXCLUDED.trust_tier
+      END,
+      evidence_refs=(
+        SELECT COALESCE(jsonb_agg(DISTINCT ref), '[]'::jsonb)
+        FROM (
+          SELECT value AS ref
+          FROM jsonb_array_elements(
+            CASE WHEN jsonb_typeof(vekl_research_discovery_links.evidence_refs)='array'
+              THEN vekl_research_discovery_links.evidence_refs ELSE '[]'::jsonb END
+          )
+          UNION
+          SELECT value AS ref
+          FROM jsonb_array_elements(
+            CASE WHEN jsonb_typeof(EXCLUDED.evidence_refs)='array'
+              THEN EXCLUDED.evidence_refs ELSE '[]'::jsonb END
+          )
+        ) merged_refs
+      )`,
   transition: 'UPDATE vekl_research_packets SET state=$2,worker_id=NULL,lease_id=NULL,lease_expires_at=NULL,resume=COALESCE(resume,\'{}\'::jsonb) || $3::jsonb WHERE lease_id=$1 RETURNING packet_id,state',
   completionBundle: `SELECT p.packet_id,p.packet_hash,p.packet_json,p.resume,p.state,p.worker_id,p.lease_id,p.lease_expires_at,
     COALESCE((SELECT jsonb_agg(jsonb_build_object(

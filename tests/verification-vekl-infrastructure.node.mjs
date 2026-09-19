@@ -5,6 +5,7 @@ import { inferResearchContexts } from '../agent-system/orchestration/vekl-resear
 import { qualifyCandidate } from '../agent-system/orchestration/discovery-admission.mjs';
 import { buildDiscoveryCandidate, loadDiscoveryPolicy } from '../agent-system/orchestration/discovery-lifecycle.mjs';
 import { COVERAGE_STATUSES } from '../agent-system/orchestration/vekl-research-contracts.mjs';
+import { VEKL_RESEARCH_FIXED_SQL } from '../agent-system/orchestration/vekl-research-postgres-store.mjs';
 
 const roles=Array.from({length:18},(_,i)=>'ROLE_'+(i+1));
 const basePacket=()=>({
@@ -105,4 +106,15 @@ test('reference knowledge gets lightweight qualification while executable remain
 
 test('coverage contract exposes staged maturity',()=>{
   for(const s of ['FIRST_PASS_RESEARCHED','ANALYZED','DEEP_EVIDENCE_COMPLETE','QUALIFIED','ADMITTED']) assert(COVERAGE_STATUSES.includes(s));
+});
+
+
+test('discovery evidence upsert is monotonic for lifecycle, trust and evidence refs',()=>{
+  const sql=VEKL_RESEARCH_FIXED_SQL.discovery;
+  assert(sql.includes("WHEN 'ADMITTED' THEN 60"));
+  assert(sql.includes("vekl_research_discovery_links.lifecycle_state"));
+  assert(sql.includes("substring(vekl_research_discovery_links.trust_tier"));
+  assert(sql.includes("jsonb_agg(DISTINCT ref)"));
+  assert(sql.includes("UNION"));
+  assert(!sql.includes("DO UPDATE SET lifecycle_state=EXCLUDED.lifecycle_state,trust_tier=EXCLUDED.trust_tier,evidence_refs=EXCLUDED.evidence_refs"));
 });

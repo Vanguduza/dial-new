@@ -11,10 +11,44 @@ const common = {
 const schemas = Object.freeze({
   claim: { properties: { ...common }, required: ['request_id', 'worker_id'] },
   fetch: { properties: { ...common }, required: ['request_id', 'worker_id', 'lease_id'] },
-  search: { properties: { ...common, search_query: { type: 'string', minLength: 1, maxLength: 500 }, adapter: { type: 'string', maxLength: 120 } }, required: ['request_id', 'worker_id', 'lease_id', 'search_query'] },
-  'fetch-read': { properties: { ...common, url: { type: 'string', format: 'uri' }, content_hash: { type: 'string', pattern: '^[a-f0-9]{64}$', description: 'Optional expected SHA-256 for revalidation. The connector computes and returns the authoritative observed hash.' } }, required: ['request_id', 'worker_id', 'lease_id', 'url'] },
-  'submit-analysis': { properties: { ...common, claims: { type: 'array', minItems: 1 }, sources: { type: 'array', minItems: 1 }, discovery_candidates: { type: 'array' } }, required: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'] },
-  'submit-deeper-evidence': { properties: { ...common, claims: { type: 'array', minItems: 1 }, sources: { type: 'array', minItems: 1 }, discovery_candidates: { type: 'array' } }, required: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'] },
+  search: {
+    properties: {
+      ...common,
+      search_query: { type: 'string', minLength: 1, maxLength: 500 },
+      adapter: { type: 'string', maxLength: 120 },
+    },
+    required: ['request_id', 'worker_id', 'lease_id', 'search_query'],
+  },
+  'fetch-read': {
+    properties: {
+      ...common,
+      url: { type: 'string', format: 'uri' },
+      content_hash: {
+        type: 'string',
+        pattern: '^[a-f0-9]{64}$',
+        description: 'Optional expected SHA-256 for revalidation. The connector computes and returns the authoritative observed hash.',
+      },
+      acquisition_method: {
+        type: 'string',
+        enum: ['DIRECT_FETCH', 'BROWSER_RENDERED', 'STAGEHAND_NAVIGATION'],
+        description: 'Optional bounded acquisition route. Omit for normal direct-fetch routing.',
+      },
+      instruction: {
+        type: 'string',
+        maxLength: 1600,
+        description: 'Bounded semantic extraction instruction used only with STAGEHAND_NAVIGATION.',
+      },
+    },
+    required: ['request_id', 'worker_id', 'lease_id', 'url'],
+  },
+  'submit-analysis': {
+    properties: { ...common, claims: { type: 'array', minItems: 1 }, sources: { type: 'array', minItems: 1 }, discovery_candidates: { type: 'array' } },
+    required: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  },
+  'submit-deeper-evidence': {
+    properties: { ...common, claims: { type: 'array', minItems: 1 }, sources: { type: 'array', minItems: 1 }, discovery_candidates: { type: 'array' } },
+    required: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  },
   complete: { properties: { ...common }, required: ['request_id', 'worker_id', 'lease_id'] },
   retry: { properties: { ...common, reason: { type: 'string', maxLength: 500 } }, required: ['request_id', 'worker_id', 'lease_id'] },
   refuse: { properties: { ...common, reason: { type: 'string', minLength: 1, maxLength: 500 } }, required: ['request_id', 'worker_id', 'lease_id', 'reason'] },
