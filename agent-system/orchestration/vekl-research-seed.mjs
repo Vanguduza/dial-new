@@ -76,7 +76,8 @@ function flattenUnits(manifest) {
 async function seed() {
   const baseManifest = buildResearchHarvestManifest({ repoDir, root });
   const { manifest_hash: _baseHash, ...baseWithoutHash } = baseManifest;
-  const manifest = { ...baseWithoutHash, provider_binding: { provider: 'groq', model_id: 'openai/gpt-oss-120b', credential_location: 'VEKL_WORKER_ONLY', zdr_required: true }, model_id: 'openai/gpt-oss-120b', union_alpha_execution: 'NEVER_EXECUTED_NO_RESULTS' };
+  const revisionMissionId = `vekl-full-research-${sha(`${baseManifest.repository_sha}|${baseManifest.project_truth_hash}|${baseManifest.development_unit_registry_hash}|${baseManifest.graph_revision_hash || 'NO_GRAPH_REVISION'}`).slice(0, 20)}`;
+  const manifest = { ...baseWithoutHash, mission_id: revisionMissionId, provider_binding: { provider: 'groq', model_id: 'openai/gpt-oss-120b', credential_location: 'VEKL_WORKER_ONLY', zdr_required: true }, model_id: 'openai/gpt-oss-120b', union_alpha_execution: 'NEVER_EXECUTED_NO_RESULTS' };
   manifest.manifest_hash = sha(manifest);
   const coverage = buildResearchCoverageManifest({ repoDir, root, missionId: manifest.mission_id, providerState: 'READY' });
   const rows = flattenUnits(manifest);
@@ -91,20 +92,28 @@ async function seed() {
   try {
     await client.query('BEGIN');
     await client.query("SELECT pg_advisory_xact_lock(hashtext('dial-vekl-canonical-research-seed'))");
-    const existing = await client.query('SELECT count(*)::int AS missions,(SELECT count(*)::int FROM vekl_research_evidence) AS evidence,(SELECT count(*)::int FROM vekl_research_packets WHERE state=$1) AS complete FROM vekl_research_missions', ['COMPLETE']);
-    if (existing.rows[0].evidence !== 0 || existing.rows[0].complete !== 0) throw new Error('NONEMPTY_ISSUED_RESEARCH_MISSION_REPLACEMENT_PROHIBITED');
-    if (existing.rows[0].missions > 1) throw new Error('MULTIPLE_RESEARCH_MISSIONS_REPLACEMENT_PROHIBITED');
-    if (existing.rows[0].missions === 1) {
-      await client.query('DELETE FROM vekl_research_events');
-      await client.query('DELETE FROM vekl_research_idempotency');
-      await client.query('DELETE FROM vekl_research_sources');
-      await client.query('DELETE FROM vekl_research_missions');
+    const sameManifest = await client.query(
+      'SELECT mission_id,state FROM vekl_research_missions WHERE manifest_hash=$1 FOR UPDATE',
+      [manifest.manifest_hash],
+    );
+    if (sameManifest.rows[0] && sameManifest.rows[0].mission_id !== manifest.mission_id) {
+      throw new Error('MANIFEST_HASH_MISSION_ID_COLLISION');
     }
     await client.query(
-      'INSERT INTO vekl_research_missions(mission_id,repository_sha,project_truth_hash,graph_generation_id,graph_revision_hash,provider,model_id,state,manifest_json,manifest_hash) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-      [manifest.mission_id, manifest.repository_sha, manifest.project_truth_hash, manifest.graph_generation_id, manifest.graph_revision_hash, 'groq', 'openai/gpt-oss-120b', 'READY', manifest, manifest.manifest_hash],
+      "UPDATE vekl_research_missions SET state='SUPERSEDED' WHERE state='READY' AND manifest_hash<>$1",
+      [manifest.manifest_hash],
     );
-
+    await client.query(
+      "UPDATE vekl_research_packets SET state='BLOCKED',worker_id=NULL,lease_id=NULL,lease_expires_at=NULL WHERE mission_id IN (SELECT mission_id FROM vekl_research_missions WHERE state='SUPERSEDED') AND state IN ('READY','RETRY','LEASED')",
+    );
+    if (!sameManifest.rows[0]) {
+      await client.query(
+        'INSERT INTO vekl_research_missions(mission_id,repository_sha,project_truth_hash,graph_generation_id,graph_revision_hash,provider,model_id,state,manifest_json,manifest_hash) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+        [manifest.mission_id, manifest.repository_sha, manifest.project_truth_hash, manifest.graph_generation_id, manifest.graph_revision_hash, 'groq', 'openai/gpt-oss-120b', 'READY', manifest, manifest.manifest_hash],
+      );
+    } else {
+      await client.query("UPDATE vekl_research_missions SET state='READY',updated_at=now() WHERE mission_id=$1", [manifest.mission_id]);
+    }
     let ordinal = 0;
     for (const row of rows) {
       ordinal += 1;

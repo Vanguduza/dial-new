@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { immutableDuPacket, RESEARCH_LOOP_ACTIONS, VeklResearchLoop } from '../agent-system/orchestration/vekl-research-loop.mjs';
+import { immutableDuPacket, RESEARCH_LOOP_ACTIONS, validateResearchSubmission, VeklResearchLoop } from '../agent-system/orchestration/vekl-research-loop.mjs';
 import { researchToolDefinitions } from '../agent-system/mcp/dial-research-server.mjs';
 import { VeklPostgresResearchStore, VEKL_RESEARCH_FIXED_SQL } from '../agent-system/orchestration/vekl-research-postgres-store.mjs';
 
@@ -40,6 +40,35 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     reordered.discovery_workload = { mode: 'OPEN_WORLD_BOUNDED' };
     const b = immutableDuPacket(reordered);
     expect(b.packet_hash).toBe(a.packet_hash);
+  });
+
+  it('rejects evidence bound to a different authoritative packet hash', () => {
+    const issued = immutableDuPacket(packet());
+    const result = validateResearchSubmission({
+      packet: issued,
+      expected_packet_hash: '0'.repeat(64),
+      claims: [{ text: 'Fact', classification: 'FACTUAL', source_refs: ['https://example.com/evidence'] }],
+      sources: [{ ref: 'source:' + 'd'.repeat(64), url: 'https://example.com/evidence', content_hash: 'd'.repeat(64), observed_at: '2026-09-19T00:00:00Z', depth: 'PRIMARY' }],
+    });
+    expect(result.ok).toBe(false);
+    expect(result.failures).toContain('PACKET_HASH_MISMATCH');
+  });
+
+  it('requires every claim source ref to be supplied by the evidence packet', () => {
+    const issued = immutableDuPacket(packet());
+    const result = validateResearchSubmission({
+      packet: issued,
+      expected_packet_hash: issued.packet_hash,
+      claims: [{ text: 'Fact', classification: 'FACTUAL', source_refs: ['source:' + 'a'.repeat(64)] }],
+      sources: [{ ref: 'source:' + 'b'.repeat(64), url: 'https://example.com/evidence', content_hash: 'b'.repeat(64), observed_at: '2026-09-19T00:00:00Z', depth: 'PRIMARY' }],
+    });
+    expect(result.ok).toBe(false);
+    expect(result.failures).toContain('CLAIM_SOURCE_NOT_PROVIDED');
+  });
+
+  it('allows the Postgres lease selector to reclaim expired leases', () => {
+    expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain("state='LEASED'");
+    expect(VEKL_RESEARCH_FIXED_SQL.lease).toContain('lease_expires_at <= to_timestamp($1/1000.0)');
   });
 
   it('is idempotent, leased, resumable and validates before persistence', async () => {

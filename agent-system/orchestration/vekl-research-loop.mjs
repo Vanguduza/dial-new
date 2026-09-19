@@ -63,6 +63,7 @@ export function immutableDuPacket(packet, authoritativePacketHash = null) {
 export function validateResearchSubmission({ packet, claims, sources, deeper = false, discovery_candidates = [], expected_packet_hash = null }) {
   const failures = [];
   if (!/^[a-f0-9]{64}$/.test(String(packet?.packet_hash || ''))) failures.push('PACKET_HASH_MISMATCH');
+  if (expected_packet_hash && packet?.packet_hash !== expected_packet_hash) failures.push('PACKET_HASH_MISMATCH');
   if (!Array.isArray(claims) || claims.length < 1) failures.push('CLAIMS_REQUIRED');
   if (!Array.isArray(sources) || sources.length < 1) failures.push('SOURCES_REQUIRED');
   for (const source of sources || []) {
