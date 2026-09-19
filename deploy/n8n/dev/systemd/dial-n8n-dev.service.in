@@ -1,0 +1,17 @@
+[Unit]
+Description=DIAL n8n DEV and external task runner on Hermes
+Requires=dial-n8n-dev-db-tunnel.service
+After=dial-n8n-dev-db-tunnel.service docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory="@REPO_DIR@/deploy/n8n/dev"
+ExecStartPre="@REPO_DIR@/deploy/n8n/dev/verify.sh" --database-only --quiet
+ExecStart=/usr/bin/docker compose --env-file %h/.config/dial/n8n-dev/runtime.env up -d --wait --remove-orphans
+ExecStop=/usr/bin/docker compose --env-file %h/.config/dial/n8n-dev/runtime.env down
+TimeoutStartSec=180
+TimeoutStopSec=90
+
+[Install]
+WantedBy=default.target

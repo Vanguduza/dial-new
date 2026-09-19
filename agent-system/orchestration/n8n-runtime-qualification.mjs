@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { loadRuntimePolicy, compileRuntimeNodePolicy, evaluateWorkflowNodes, assertProductionNotLooserThanDev, classifyNodeType, loadCorpusKnowledge } from './n8n-runtime-node-policy.mjs';
 import { applyEffect, buildDeadLetter, buildDomainEvent, buildRuntimeStatusReport, classifyFailure, createEffectLedger, retryDecision, verifyDomainEvent } from './n8n-runtime-events.mjs';
 import { assertEstateIsolation, assertReleaseIntegrity, buildWorkflowRelease, evaluateEgressPolicy, promoteWorkflow, scanWorkflowForSecrets, workflowContentHash } from './n8n-runtime-release.mjs';
+import { inspectN8nDevDeployment } from './n8n-dev-deployment-contract.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
@@ -232,6 +233,10 @@ export function qualifyN8nRuntime({ estate = 'DEV', deploymentDescriptorRel = nu
     gate('N8N-RT-G41', exists('deploy/n8n/dev/docker-compose.yml') && exists('deploy/n8n/prod/docker-compose.yml') && exists('deploy/n8n/shared/README.md'),
       'deployment descriptors exist for both estates');
     gate('N8N-RT-G42', exists('tests/orchestration-n8n-runtime.test.mjs'), 'negative-test suite present');
+    const devDeployment = inspectN8nDevDeployment({ repoDir: repo });
+    gate('N8N-RT-G43', devDeployment.ok,
+      devDeployment.ok ? 'DEV is pinned to Hermes with an external runner and worker-hosted PostgreSQL over loopback SSH'
+        : devDeployment.failures.join('; '));
 
     // ── live estate state: reported, never assumed ──────────────────────────
     const descriptor = deploymentDescriptorRel && exists(deploymentDescriptorRel)

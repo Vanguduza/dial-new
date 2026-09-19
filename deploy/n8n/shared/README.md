@@ -1,7 +1,8 @@
 # DIAL n8n runtime fabric — deployment
 
-Two estates, never one. `DIAL_N8N_DEV` and `DIAL_N8N_PROD` may sit on the same
-physical VM at first, but they do not share a database, an encryption key, a
+Two estates, never one. `DIAL_N8N_DEV` runs on Hermes with its PostgreSQL
+database native on vekl-worker; this repository does not alter the PROD
+placement. The estates do not share a database, an encryption key, a
 credential store, a webhook domain, a service account or a backup target. The
 list is enforced by `assertEstateIsolation` in
 `agent-system/orchestration/n8n-runtime-release.mjs`, against
@@ -18,6 +19,9 @@ naming in `N8N_RUNTIME_POLICY.json` exists to prevent.
 ```
 deploy/n8n/dev/docker-compose.yml     DIAL_N8N_DEV
 deploy/n8n/dev/.env.example           dev variable names — no values
+deploy/n8n/dev/bootstrap.sh           DEV-only convergent Hermes bootstrap
+deploy/n8n/dev/verify.sh              live health and worker database proof
+deploy/n8n/dev/systemd/               persistent DEV service templates
 deploy/n8n/prod/docker-compose.yml    DIAL_N8N_PROD
 deploy/n8n/prod/.env.example          prod variable names — no values
 deploy/n8n/shared/estate-descriptor.example.json
@@ -38,13 +42,14 @@ or sharing a credential id with prod, fails qualification.
 
 ## Version pinning
 
-Both estates pin the same n8n image tag. Upgrading is a deliberate change to
-these files with a fresh qualification run, not a `:latest` drift.
+DEV pins both n8n and its external task runner to `2.39.7`. Upgrading either is
+a deliberate change with a fresh qualification run, not a `:latest` drift.
 
 ## Standing an estate up
 
-Bringing an estate up is an Oracle/owner action, not something this repository
-performs or can observe. `agent:n8n-dev:qualification` and
+Bringing an estate up is an owner-authorized operator action. The DEV bootstrap
+is inert until explicitly invoked and its details are in `../dev/README.md`.
+`agent:n8n-dev:qualification` and
 `agent:n8n-prod:qualification` qualify the **contract** — node policy projection,
 release identity, event verification, idempotency, isolation declarations. They
 report the live estate as `UNVERIFIED_FROM_REPOSITORY` unless handed a

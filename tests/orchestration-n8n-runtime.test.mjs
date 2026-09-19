@@ -5,6 +5,7 @@
 // unapproved node, an arbitrary host, direct money-state mutation, a version
 // change without promotion, a transient dependency failure, and an irreversible
 // effect retried without an idempotency key. Each has a test below.
+import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   assertProductionNotLooserThanDev, classifyNodeType, compileRuntimeNodePolicy,
@@ -19,11 +20,42 @@ import {
   evaluateEgressPolicy, promoteWorkflow, scanWorkflowForSecrets, workflowContentHash,
 } from '../agent-system/orchestration/n8n-runtime-release.mjs';
 import { qualifyN8nRuntime } from '../agent-system/orchestration/n8n-runtime-qualification.mjs';
+import { inspectN8nDevDeployment } from '../agent-system/orchestration/n8n-dev-deployment-contract.mjs';
 
 const repoDir = process.cwd();
 const policy = loadRuntimePolicy(repoDir);
 const corpus = loadCorpusKnowledge(repoDir);
 const SECRET = 'test-signing-secret';
+
+describe('DEV deployment topology', () => {
+  it('keeps n8n and its pinned external runner on Hermes and PostgreSQL on the worker', () => {
+    expect(inspectN8nDevDeployment({ repoDir }).ok).toBe(true);
+  });
+
+  it('fails closed if DEV regains an embedded PostgreSQL container', () => {
+    const result = inspectN8nDevDeployment({
+      repoDir,
+      readFile(file, encoding) {
+        const content = fs.readFileSync(file, encoding);
+        return file.endsWith('docker-compose.yml') ? `${content}\n  postgres:\n    image: postgres:16\n` : content;
+      },
+    });
+    expect(result.failures).toContain('DEV_EMBEDS_POSTGRES');
+  });
+
+  it('fails closed if the SSH forward is exposed beyond loopback', () => {
+    const result = inspectN8nDevDeployment({
+      repoDir,
+      readFile(file, encoding) {
+        const content = fs.readFileSync(file, encoding);
+        return file.endsWith('dial-n8n-dev-db-tunnel.service.in')
+          ? content.replace('127.0.0.1:@TUNNEL_PORT@', '0.0.0.0:@TUNNEL_PORT@')
+          : content;
+      },
+    });
+    expect(result.failures).toContain('DB_TUNNEL_NOT_LOOPBACK_ONLY');
+  });
+});
 
 const notifyWorkflow = (extraNodes = []) => ({
   name: 'spare-supplier-availability-notification',
