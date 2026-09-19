@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-19T04:24:20.402Z",
+  "generated_at": "2026-09-19T20:16:24.225Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 253,
+  "file_count": 255,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -240,6 +240,16 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_2_2_REV2_CANONICAL_IMPLEMENTATION_ADDENDUM.md",
       "bytes": 3954,
       "sha256": "73b82802a9e27be4eccda5a34eb368b1b430396ad5dbb929782d99cb53f8a14d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION_20260919.md",
+      "bytes": 11547,
+      "sha256": "7d58bcc348a9ddd14521f30ad2a1b6fb695472aef771e9dbb9f34061026c29f5"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION.md",
+      "bytes": 11811,
+      "sha256": "d12fc3bd6b96c35f577b271ecf86ea4e4245a26d902444ee7c2ab76cf89f7f12"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_OPEN_WORLD_DISCOVERY_AND_KNOWLEDGE_QUALIFICATION_REV1.md",
