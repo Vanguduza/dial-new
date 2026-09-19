@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { buildResearchCoverageManifest, buildResearchHarvestManifest, finalizeUnionAlphaResearchMission } from './vekl-research-harvest.mjs';
 import { DEFAULT_CONTROL_HOME, readJson, writeJsonAtomic } from './state-store.mjs';
+import { researchProviderStatus } from './providers/research/research-provider-router.mjs';
 
 const ROOT = process.env.DIAL_RESEARCH_HARVEST_HOME || DEFAULT_CONTROL_HOME;
 const REPO = process.env.DIAL_REPO_DIR || process.cwd();
@@ -18,7 +19,8 @@ function create() {
 }
 function command(name, arg) {
   const state = current() || create();
-  if (name === 'create' || name === 'status') return state;
+  if (name === 'create') return state;
+  if (name === 'status') return { ...state, provider_execution: researchProviderStatus({ root: ROOT }) };
   if (name === 'start' || name === 'resume') return save({ ...state, state: 'READY', paused: false, pause_reason: null });
   if (name === 'pause') return save({ ...state, state: 'PAUSED', paused: true, pause_reason: arg || 'operator request' });
   if (name === 'retry') return save({ ...state, retry_requests: [...new Set([...(state.retry_requests || []), arg || '*'])].sort(), state: state.paused ? 'PAUSED' : 'READY' });

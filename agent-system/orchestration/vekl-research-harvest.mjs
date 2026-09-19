@@ -27,11 +27,12 @@ const RESOURCE_REGISTRY =
 const PROJECT_TRUTH = 'agent-system/canon/PROJECT_TRUTH.md';
 export const RESEARCH_MISSION_SCHEMA = 1;
 export const UNIT_BATCH_SIZE = 6;
+export const RESEARCH_ROLES = UNION_ALPHA_ROLES; // historical name retained for artifact compatibility
 
 const PLATFORM_GROUPS = Object.freeze([
   {
     id: 'WEB_FRONTEND',
-    topic: 'Current web frontend, responsive UX, accessibility and browser verification engineering',
+    topic: 'Current guided multi-candidate frontend, design critics, quality packets, responsive UX, accessibility and browser verification engineering',
     technologies: ['Next.js', 'React', 'TypeScript', 'Playwright', 'Vitest', 'Zod'],
     source_ids: [
       'official.nextjs', 'official.react', 'official.typescript',
@@ -78,7 +79,7 @@ const PLATFORM_GROUPS = Object.freeze([
   },
   {
     id: 'AUTOMATION_CLOUD',
-    topic: 'Current workflow automation, cloud edge, deployment and recovery engineering',
+    topic: 'Current self-hosted n8n runtime architecture, signed events, idempotency, release qualification, cloud edge, deployment and recovery engineering',
     technologies: ['n8n', 'Cloudflare', 'Oracle Cloud'],
     source_ids: ['official.n8n', 'official.cloudflare', 'official.oracle'],
   },
@@ -218,6 +219,13 @@ function unitSubject(unit, feature, resources) {
       role_scope: [...UNION_ALPHA_ROLES],
       source_hints: sourceHintsForIds(resources, sourceIds),
       search_queries: searchQueriesFor(moduleClass, tags),
+      discovery_workload: {
+        mode: 'OPEN_WORLD_BOUNDED',
+        lifecycle: 'DISCOVERED_TO_QUALIFIED',
+        trust_assignment: 'PROVENANCE_FAIL_CLOSED',
+        required_outputs: ['candidate_sources', 'provenance', 'freshness', 'version', 'contradictions'],
+        authority: 'NON_AUTHORITATIVE_DISCOVERY_EVIDENCE',
+      },
     },
     binding: {
       unit_lineage_id: unit.unit_lineage_id,
@@ -308,6 +316,13 @@ export function buildResearchHarvestManifest({
     module_classes: moduleClasses,
     required_roles: [...UNION_ALPHA_ROLES],
     provider_binding: { provider: 'openrouter', model_id: 'stealth/union-alpha', fallback: 'PROHIBITED', paid_inference: 'PROHIBITED' },
+    execution_contract: {
+      selection: 'PROVIDER_NEUTRAL_CREDENTIAL_GATED',
+      active_provider: null,
+      groq_activation: 'APPROVED_CREDENTIAL_REQUIRED',
+      historical_result_policy: 'PRESERVE_AND_NEVER_FABRICATE',
+      adapter: 'agent-system/orchestration/providers/research/research-provider-router.mjs',
+    },
     source_requirements: { preferred: ['OFFICIAL_DOC', 'MAINTAINER_REPOSITORY', 'SECURITY_ADVISORY'], corroboration_only: ['COMMUNITY'], citation_required: true },
     prohibited_data_classes: ['PRIVATE_REPOSITORY_CONTENT', 'SECRET', 'CUSTOMER_DATA', 'PAYMENT_DATA', 'IDENTIFIABLE_HEALTH_DATA', 'PRODUCTION_IDENTIFIER'],
     output_schema: 'ResearchArtifact@1',
@@ -601,6 +616,8 @@ export function researchHarvestStatus({
     current: readJson('knowledge/research/union-alpha/current.json', null, root),
   };
 }
+
+export const finalizeResearchMission = finalizeUnionAlphaResearchMission;
 
 async function main() {
   const command = process.argv[2] || 'manifest';

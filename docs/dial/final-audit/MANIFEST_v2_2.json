@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-16T16:15:58.117Z",
+  "generated_at": "2026-09-19T04:24:20.402Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 248,
+  "file_count": 253,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "a00fa1d11a55ba29aad1f8f0d7d6016a9d4a1078ddc1a6d7d7241f1f0992668b"
+      "sha256": "526d1f3382b724f25f50c94ea6f21c41f6d9f4b7830ec1c6dc7cc5e420fd0b55"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -197,6 +197,11 @@
       "sha256": "ab2681c64ac7e2850fbe41f295efdc6770b99dac02aa91a5752e7d20a87684ca"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_PRODUCT_INTELLIGENCE_AUTOMATION_ARCHITECTURE_REV_3_1.md",
+      "bytes": 65614,
+      "sha256": "20931a57ded6bf459b5d9e29ce4e3504e7c66ec79bae33e4450cfb17b241f8bc"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
       "bytes": 11895,
       "sha256": "023e94699b9efcd42dd372ddd0a3fbfd4f0380a91eb8d936f83d7a68b7a7082d"
@@ -212,6 +217,21 @@
       "sha256": "7225277f5949705cb3a812ac035152764659983ada7eb78369b16170c02b3748"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_GUIDED_CREATIVE_FRONTEND_EVOLUTION_REV1.md",
+      "bytes": 8789,
+      "sha256": "a204b4f814f2a9ef1d01d0f188ecc91f7d1e2a3d74f10369d6bef58f1aad365c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
+      "bytes": 15201,
+      "sha256": "d693ad1bb6b72924786dfb8af4412da1bbdef077b58f89f6e5563250a049d08c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_SELF_HOSTED_N8N_AUTOMATION_FABRIC_REV1.md",
+      "bytes": 8518,
+      "sha256": "ccd4481fcd2a7842b68c40f0305b76b95b9283b610ade8b354517b2d8dbc3125"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md",
       "bytes": 17761,
       "sha256": "19bd121884dda1ebe1371cc893fc4ccacbbf02db0176b612d538fa9ae1638030"
@@ -220,6 +240,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_2_2_REV2_CANONICAL_IMPLEMENTATION_ADDENDUM.md",
       "bytes": 3954,
       "sha256": "73b82802a9e27be4eccda5a34eb368b1b430396ad5dbb929782d99cb53f8a14d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_OPEN_WORLD_DISCOVERY_AND_KNOWLEDGE_QUALIFICATION_REV1.md",
+      "bytes": 8346,
+      "sha256": "add2eadeb4fab3c0d122f02e0ac097e1c3a5d451987aa91c8be07c86d167b6cb"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_ZIE619_N8N_WORKFLOW_CORPUS_REV2_CANONICAL.md",

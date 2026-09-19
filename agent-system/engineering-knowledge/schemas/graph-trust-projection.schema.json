@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.local/schemas/graph-trust-projection.schema.json",
+  "title": "GraphTrustProjection",
+  "description": "Per-item retrieval metadata that lets a resolver tell admitted authority from candidate-plane material.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "resource_id",
+    "plane",
+    "lifecycle_state",
+    "trust_tier",
+    "authority_role",
+    "freshness_state",
+    "executable_eligibility",
+    "sensitive_data_eligibility",
+    "task_classes"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "resource_id": { "type": "string" },
+    "plane": { "enum": ["CANONICAL_ADMITTED", "DISCOVERY_CANDIDATE"] },
+    "lifecycle_state": { "type": "string" },
+    "trust_tier": { "type": "string", "pattern": "^T[0-4]_" },
+    "authority_role": { "enum": ["AUTHORITY", "CORROBORATION", "SIGNAL"] },
+    "exact_version": { "type": ["string", "null"] },
+    "source_hash": { "type": ["string", "null"] },
+    "admitted_at": { "type": ["string", "null"] },
+    "freshness_state": { "enum": ["CURRENT", "STALE", "SUPERSEDED", "DEPRECATED", "REVOKED", "UNKNOWN"] },
+    "executable_eligibility": { "enum": ["ELIGIBLE", "INELIGIBLE"] },
+    "sensitive_data_eligibility": { "enum": ["ELIGIBLE", "INELIGIBLE"] },
+    "task_classes": { "type": "array", "items": { "type": "string" } }
+  }
+}

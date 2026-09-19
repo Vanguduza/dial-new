@@ -1,0 +1,73 @@
+# DIAL_N8N_DEV — development workflow runtime.
+#
+# Isolated from DIAL_N8N_PROD by construction: its own database, its own
+# encryption key, its own credential store, its own webhook host, its own
+# network and its own backups. Production credentials never reach this estate.
+#
+# The image tag is pinned. `:latest` would mean the qualified control surface
+# and the running one drift apart silently on the next pull.
+services:
+  n8n-dev-db:
+    image: postgres:16.4-alpine
+    container_name: dial-n8n-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${N8N_DEV_DB_NAME:?set in the environment file}
+      POSTGRES_USER: ${N8N_DEV_DB_USER:?set in the environment file}
+      POSTGRES_PASSWORD: ${N8N_DEV_DB_PASSWORD:?set in the environment file}
+    volumes:
+      - n8n-dev-db:/var/lib/postgresql/data
+    networks: [n8n-dev]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${N8N_DEV_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  n8n-dev:
+    image: n8nio/n8n:1.62.1
+    container_name: dial-n8n-dev
+    restart: unless-stopped
+    depends_on:
+      n8n-dev-db:
+        condition: service_healthy
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_DEV_ENCRYPTION_KEY:?set in the environment file}
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: n8n-dev-db
+      DB_POSTGRESDB_DATABASE: ${N8N_DEV_DB_NAME}
+      DB_POSTGRESDB_USER: ${N8N_DEV_DB_USER}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DEV_DB_PASSWORD}
+      N8N_HOST: ${N8N_DEV_HOST:?set in the environment file}
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: ${N8N_DEV_WEBHOOK_URL:?set in the environment file}
+      N8N_EDITOR_BASE_URL: ${N8N_DEV_WEBHOOK_URL}
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_DEV_ADMIN_USER:?set in the environment file}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_DEV_ADMIN_PASSWORD:?set in the environment file}
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      N8N_TEMPLATES_ENABLED: "false"
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "336"
+      N8N_LOG_LEVEL: info
+      GENERIC_TIMEZONE: ${DIAL_TIMEZONE:-Africa/Harare}
+      # Community nodes are not installable at runtime: a node that has not been
+      # through corpus qualification is not eligible in either estate.
+      N8N_COMMUNITY_PACKAGES_ENABLED: "false"
+    volumes:
+      - n8n-dev-data:/home/node/.n8n
+    networks: [n8n-dev, n8n-dev-egress]
+    # The management surface stays on the operator network; it is not published
+    # to the host.
+    expose: ["5678"]
+
+volumes:
+  n8n-dev-db:
+  n8n-dev-data:
+
+networks:
+  n8n-dev:
+    internal: true
+  n8n-dev-egress:
+    driver: bridge

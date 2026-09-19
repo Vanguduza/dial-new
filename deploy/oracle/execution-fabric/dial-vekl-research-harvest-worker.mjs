@@ -226,7 +226,7 @@ async function executeBatch(manifest, state, batch) {
     },
     bindings: batch.bindings,
   };
-  const record = await mcpCall('dial_union_alpha_research_batch', payload);
+  const record = await mcpCall('dial_research_harvest_batch', payload);
   atomicJson(resultFile(batch.batch_id), sanitizeLocalResult(record));
   state.completed_batches = [...new Set([
     ...(state.completed_batches || []),
@@ -250,7 +250,7 @@ async function executeBatch(manifest, state, batch) {
 async function finalize(manifest, state) {
   state.phase = 'COVERAGE_AUDIT';
   saveState(state);
-  const coverage = await mcpCall('dial_union_alpha_research_finalize', {
+  const coverage = await mcpCall('dial_research_harvest_finalize', {
     mission_id: manifest.mission_id,
   });
   state.coverage_hash = coverage.coverage_hash || null;

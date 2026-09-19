@@ -1,3 +1,4 @@
+// @ts-nocheck -- native ESM orchestration modules intentionally have no declaration files.
 import { test, expect } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
