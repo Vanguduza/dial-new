@@ -7,13 +7,13 @@
   ],
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/dial/final-audit/MANIFEST_v2_2.json",
     "docs/project-state/MASTER_MERGE_AUTHORIZATION_20260919.md"
   ],
-  "content_diff_sha256": "fdd8f086b9f9ecfc4efdf5f09695735b1309ff8c799d3f3ef61d2f8faab856ad",
-  "observed_at_utc": "2026-09-19T20:26:18.678296+00:00",
+  "content_diff_sha256": "24058af2cc1687eaecd5d364a929c24ef4fe8ad29a2ad0d0b44f6514a2fb87b0",
+  "observed_at_utc": "2026-09-19T20:28:21.973857+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "aff6ba4bace63057b2f31576a6a23440d4d2be7f",
+  "source_parent": "8c4089e1b37b3c2e9a1048f2113a814556a9f758",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
