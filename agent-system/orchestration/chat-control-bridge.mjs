@@ -23,11 +23,20 @@ import {
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
 import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 import { engineeringResearchStatus } from './engineering-presearch.mjs';
+import { unionAlphaResearchStatus } from './providers/openrouter/union-alpha-research-adapter.mjs';
+import { researchProviderStatus, runResearchBatch } from './providers/research/research-provider-router.mjs';
+import { VeklResearchLoop } from './vekl-research-loop.mjs';
+import { createVeklResearchStore } from './vekl-research-db-client.mjs';
+import { VeklResearchMonitor } from './vekl-research-monitor.mjs';
+import {
+  finalizeUnionAlphaResearchMission,
+} from './vekl-research-harvest.mjs';
 import { runtimeCapacityStatus } from './runtime-capacity-status.mjs';
 import { ownerInstructionProvenance } from './project-truth-authority.mjs';
 import { supersedeActiveExecutionTasks } from './task-execution-envelope.mjs';
 import { executeOwnerLiveTurn } from './owner-live-control.mjs';
 import { ownerSteeringStatus, submitOwnerSteer } from './owner-steering-broker.mjs';
+import { researchToolDefinitions } from '../mcp/dial-research-server.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
@@ -36,6 +45,31 @@ const DEFAULT_HOST = process.env.DIAL_CHAT_CONTROL_HOST || '127.0.0.1';
 const DEFAULT_PORT = Number(process.env.DIAL_CHAT_CONTROL_PORT || 9130);
 const WRITE_TOOLS = new Set(['dial_submit_instruction', 'dial_owner_steer', 'dial_owner_live_turn', 'dial_pause_mission', 'dial_resume_mission', 'dial_reprioritize', 'dial_approve_gate', 'dial_reject_gate']);
 const OWNER_AUTHORITY_CHANNELS = new Set(['claude', 'codex', 'whatsapp']);
+const RESEARCH_LOOP_TOOL_ACTIONS = Object.freeze({
+  dial_research_claim_unit: 'claim',
+  dial_research_fetch_unit: 'fetch',
+  dial_research_record_search: 'search',
+  dial_research_record_read: 'fetch-read',
+  dial_research_submit_analysis: 'submit-analysis',
+  dial_research_submit_deeper_evidence: 'submit-deeper-evidence',
+  dial_research_complete_unit: 'complete',
+  dial_research_retry_unit: 'retry',
+  dial_research_refuse_unit: 'refuse',
+});
+let researchLoopRuntime = null;
+let veklMonitorRuntime = null;
+function getResearchLoopRuntime() {
+  if (researchLoopRuntime) return researchLoopRuntime;
+  const { pool, store } = createVeklResearchStore();
+  researchLoopRuntime = { pool, loop: new VeklResearchLoop({ store }) };
+  return researchLoopRuntime;
+}
+function getVeklMonitorRuntime() {
+  if (veklMonitorRuntime) return veklMonitorRuntime;
+  const { pool } = createVeklResearchStore();
+  veklMonitorRuntime = { pool, monitor: new VeklResearchMonitor({ pool }) };
+  return veklMonitorRuntime;
+}
 const EVENT_FILES = [
   'events/mission-control.jsonl',
   'events/external-orchestrator.jsonl',
@@ -50,7 +84,6 @@ const EVENT_FILES = [
   'events/owner-steering.jsonl',
   'events/engineering-research.jsonl',
 ];
-
 function now() { return new Date().toISOString(); }
 function clean(value, max = 8000) { return String(value ?? '').trim().slice(0, max); }
 function sha(value) { return crypto.createHash('sha256').update(String(value ?? '')).digest('hex'); }
@@ -217,6 +250,16 @@ const TOOL_DEFS = Object.freeze([
   ['dial_skill_status', 'Backward-compatible VEKL status alias: read skills plus federated engineering-resource activation for a packet/current mission.', { packet_id: { type: 'string' } }],
   ['dial_engineering_knowledge_status', 'Read VEKL v2 skills, federated resource/source counts, current packet activation provenance and ahead-of-work research linkage.', { packet_id: { type: 'string' } }],
   ['dial_engineering_research_status', 'Read the current project-aware VEKL ahead-of-work forecast and passive resource-cache index.', {}],
+  ['dial_research_harvest_status', 'Read the provider-neutral bounded VEKL full-research mission and credential-gated execution status without exposing provider credentials.', {}],
+  ['dial_research_harvest_batch', 'Execute one idempotent PUBLIC_RESEARCH_ONLY research batch through the approved provider. Private unit bindings stay inside DIAL and are never included in the provider packet.', { batch: { type: 'object' }, bindings: { type: 'array' }, provider: { type: 'string', enum: ['auto', 'groq', 'union-alpha'] } }],
+  ['dial_research_harvest_finalize', 'Run the canonical provider-neutral coverage audit for one VEKL full-research mission and compile per-unit research only if every mandatory coverage gate passes.', { mission_id: { type: 'string' } }],
+  ['dial_union_alpha_research_status', 'Read the bounded Union Alpha VEKL full-research mission status without exposing provider credentials.', {}],
+  ['dial_union_alpha_research_batch', 'Execute one idempotent PUBLIC_RESEARCH_ONLY Union Alpha research batch. Private unit bindings stay inside DIAL and are never included in the provider packet.', { batch: { type: 'object' }, bindings: { type: 'array' } }],
+  ['dial_union_alpha_research_finalize', 'Run the canonical coverage audit for one Union Alpha VEKL full-research mission and compile per-unit research only if every mandatory coverage gate passes.', { mission_id: { type: 'string' } }],
+  ['dial_vekl_monitor_snapshot', 'Read a complete live read-only VEKL research snapshot from authoritative dial_vekl.', {}],
+  ['dial_vekl_monitor_timeline', 'Read bounded VEKL research events after a numeric cursor.', { cursor: { type: 'integer', minimum: 0 }, limit: { type: 'integer', minimum: 1, maximum: 200 } }],
+  ['dial_vekl_monitor_packet', 'Read one VEKL packet with evidence, discovery links and event history.', { packet_id: { type: 'string' }, ordinal: { type: 'integer', minimum: 1, maximum: 309 } }],
+  ['dial_vekl_monitor_alerts', 'Read current VEKL invariant, lease and pipeline alerts.', {}],
   ['dial_runtime_capacity_status', 'Read Sol capacity-preservation state, exact-identity cache validity, provider cooldown and recent model-call suppression/usage evidence.', {}],
   ['dial_operator_channels', 'Read DIAL operator-channel health for the typed control bridge and WhatsApp owner adapter without exposing credentials.', {}],
 ]);
@@ -231,8 +274,28 @@ const REQUIRED_ARGS = Object.freeze({
   dial_reprioritize: ['directive', 'request_id'],
   dial_approve_gate: ['gate_id', 'request_id'],
   dial_reject_gate: ['gate_id', 'request_id'],
+  dial_research_harvest_batch: ['batch'],
+  dial_research_harvest_finalize: ['mission_id'],
+  dial_union_alpha_research_batch: ['batch'],
+  dial_union_alpha_research_finalize: ['mission_id'],
+  dial_research_claim_unit: ['request_id', 'worker_id'],
+  dial_research_fetch_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_record_search: ['request_id', 'worker_id', 'lease_id', 'search_query'],
+  dial_research_record_read: ['request_id', 'worker_id', 'lease_id', 'url', 'content_hash'],
+  dial_research_submit_analysis: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  dial_research_submit_deeper_evidence: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  dial_research_complete_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_retry_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_refuse_unit: ['request_id', 'worker_id', 'lease_id', 'reason'],
 });
-export const CHAT_CONTROL_TOOLS = TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } }));
+export const CHAT_CONTROL_TOOLS = Object.freeze([
+  ...TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } })),
+  ...researchToolDefinitions().map((definition) => {
+    const action = definition.name.slice('dial_research_'.length).replaceAll('_', '-');
+    const alias = Object.entries(RESEARCH_LOOP_TOOL_ACTIONS).find(([, value]) => value === action)?.[0];
+    return { ...definition, name: alias || definition.name };
+  }),
+]);
 
 export async function callChatControlTool(name, args = {}, root, operator = {}) {
   const project = ensureDialOnly(root); ensureDialMission({ root, repoDir: project.repo_dir });
@@ -287,6 +350,31 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
   else if (name === 'dial_evidence') result = readJson('operations/projects/dial/latest/evidence_prepare.json', { state: 'NO_EVIDENCE_PREPARED' }, root);
   else if (name === 'dial_skill_status' || name === 'dial_engineering_knowledge_status') result = engineeringKnowledgeStatus({ repoDir: project.repo_dir, root, packetId: clean(args.packet_id, 180) || null });
   else if (name === 'dial_engineering_research_status') result = engineeringResearchStatus(root);
+  else if (name === 'dial_research_harvest_status' || name === 'dial_union_alpha_research_status') result = { ...unionAlphaResearchStatus(root), execution: researchProviderStatus({ root }) };
+  else if (name === 'dial_research_harvest_batch' || name === 'dial_union_alpha_research_batch') {
+    result = await runResearchBatch({
+      batch: args.batch,
+      bindings: Array.isArray(args.bindings) ? args.bindings : [],
+      repoDir: project.repo_dir,
+      root,
+      provider: args.provider || 'auto',
+    });
+  }
+  else if (name === 'dial_research_harvest_finalize' || name === 'dial_union_alpha_research_finalize') {
+    result = finalizeUnionAlphaResearchMission({
+      repoDir: project.repo_dir,
+      root,
+      missionId: clean(args.mission_id, 160),
+    });
+  }
+  else if (Object.hasOwn(RESEARCH_LOOP_TOOL_ACTIONS, name)) {
+    const runtime = getResearchLoopRuntime();
+    result = await runtime.loop.invoke(RESEARCH_LOOP_TOOL_ACTIONS[name], args);
+  }
+  else if (name === 'dial_vekl_monitor_snapshot') result = await getVeklMonitorRuntime().monitor.snapshot();
+  else if (name === 'dial_vekl_monitor_timeline') result = await getVeklMonitorRuntime().monitor.timeline({ cursor: args.cursor, limit: args.limit });
+  else if (name === 'dial_vekl_monitor_packet') result = await getVeklMonitorRuntime().monitor.packet({ packet_id: clean(args.packet_id, 180) || null, ordinal: args.ordinal });
+  else if (name === 'dial_vekl_monitor_alerts') result = await getVeklMonitorRuntime().monitor.alerts();
   else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
   else if (name === 'dial_operator_channels') result = {
     authority: CHAT_CONTROL_AUTHORITY, project: 'dial',
@@ -297,6 +385,11 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     owner_live: readJson('state/owner-live-interrupt.json', { state: 'IDLE' }, root),
     operator_surface: { tools: CHAT_CONTROL_TOOLS.length, arbitrary_shell: false, channels: OPERATOR_CHANNELS.filter((item) => item !== 'unknown') },
   };
+  else if (name.startsWith('dial_research_') && !name.startsWith('dial_research_harvest_')) {
+    const runtime = getResearchLoopRuntime();
+    const action = RESEARCH_LOOP_TOOL_ACTIONS[name] || name.slice('dial_research_'.length).replaceAll('_', '-');
+    result = await runtime.loop.invoke(action, args);
+  }
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
   saveIdempotentResult(name, args, result, root);
   auditTool(root, name, args, result, operatorContext);

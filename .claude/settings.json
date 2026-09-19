@@ -34,6 +34,17 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/agent-system/hooks/post-tool-audit.mjs\""
+          }
+        ]
+      }
+    ],
     "PreCompact": [
       {
         "hooks": [
@@ -68,6 +79,9 @@
     ]
   },
   "enabledMcpjsonServers": [
-    "dial-oracle-status"
+    "dial-oracle-status",
+    "dial-truth",
+    "context7",
+    "exa"
   ]
 }

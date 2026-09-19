@@ -38,9 +38,9 @@ function classify(stderr = '', stdout = '') {
   return 'PROCESS_FAILED';
 }
 
-export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 90000 } = {}) {
+export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 90000, runtimeId = 'claude_code', configDir = null, profileId = 'primary', spawn = spawnSync } = {}) {
   const startedAt = now();
-  const result = spawnSync(CLAUDE_BIN, [
+  const result = spawn(CLAUDE_BIN, [
     '-p', 'Reply with exactly DIAL_CLAUDE_OK. Do not use tools.',
     '--model', REQUESTED_MODEL,
     '--effort', 'low',
@@ -58,6 +58,7 @@ export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 9000
       ...process.env,
       DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
       DIAL_REPO_DIR: repoDir,
+      ...(configDir ? { CLAUDE_CONFIG_DIR: configDir } : {}),
     },
   });
 
@@ -76,6 +77,8 @@ export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 9000
 
   const probe = {
     event: 'CLAUDE_CODE_PROBE',
+    runtime_id: runtimeId,
+    profile_id: profileId,
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
@@ -89,9 +92,10 @@ export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 9000
     finished_at: now(),
   };
 
-  writeJsonAtomic('runtime-health/claude-code-probe.json', probe, root);
+  const probeFile = runtimeId === 'claude_code' ? 'runtime-health/claude-code-probe.json' : `runtime-health/${runtimeId.replaceAll('_', '-')}-probe.json`;
+  writeJsonAtomic(probeFile, probe, root);
   appendJsonl('events/runtime-probes.jsonl', probe, root);
-  recordRuntimeHealth('claude_code', {
+  recordRuntimeHealth(runtimeId, {
     state,
     requested_model: REQUESTED_MODEL,
     resolved_model: resolvedModel,
@@ -104,6 +108,8 @@ export function probeClaudeCode({ repoDir = DEFAULT_REPO, root, timeoutMs = 9000
       session_id: probe.session_id,
       used_models: usedModels,
       toolchain_usable: state === 'HEALTHY' && responseOk && identityProven,
+      profile_id: profileId,
+      config_isolated: Boolean(configDir),
     },
   }, root);
 
@@ -231,7 +237,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.stdout.write(`${JSON.stringify(listed, null, 2)}\n`);
     if (listed.source === 'unavailable') process.exitCode = 1;
   } else {
-    const probe = probeClaudeCode({ repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO });
+    const secondary = process.argv.includes('--secondary');
+    const probe = probeClaudeCode({
+      repoDir: process.env.DIAL_REPO_DIR || DEFAULT_REPO,
+      runtimeId: secondary ? 'claude_code_secondary' : 'claude_code',
+      configDir: secondary ? (process.env.DIAL_CLAUDE_SECONDARY_CONFIG_DIR || '/var/lib/dial-control/secrets/claude-worker-secondary') : null,
+      profileId: secondary ? 'secondary' : 'primary',
+    });
     process.stdout.write(`${JSON.stringify(probe, null, 2)}\n`);
     if (probe.state !== 'HEALTHY') process.exitCode = 1;
   }

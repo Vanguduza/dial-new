@@ -2,6 +2,7 @@
 Description=DIAL Desktop Commander remote device (outbound session, oracle-admin recovery plane)
 Documentation=https://github.com/wonderwhy-er/DesktopCommanderMCP
 After=network-online.target
+StartLimitIntervalSec=0
 Wants=network-online.target
 
 # This unit is legitimate only because `desktop-commander remote` genuinely is a
@@ -21,7 +22,6 @@ ConditionPathExists=%h/.desktop-commander-device/device.json
 # dead until someone logs in and resets it. With Restart=always and RestartSec=10s
 # that is reachable whenever the outbound session flaps. Zero means never give up;
 # the memory protections below are what stop a restart loop from being expensive.
-StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -71,11 +71,16 @@ OOMScoreAdjust=-500
 
 NoNewPrivileges=true
 PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.desktop-commander-device
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ProtectControlGroups=true
 ProtectKernelTunables=true
 RestrictSUIDSGID=true
 
 Environment=NODE_OPTIONS=--max-old-space-size=192
+Environment=PATH=%h/.local/bin:%h/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 
 [Install]
 WantedBy=default.target

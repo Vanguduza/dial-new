@@ -83,6 +83,8 @@ The governing principles are:
 
 ---
 
+> **Readiness amendment — DEC-033:** DEC-033 supersedes only the setup/readiness optionality of enrolled development capabilities in this Rev 2 document. Stitch and Antigravity must be configured/live-qualified for Development System GREEN; their authority boundaries and fallback semantics remain unchanged.
+
 # 1. Reconciliation basis
 
 The original v1.1 proposal contained a strong adaptive-fabric idea, but it was authored against an older repository topology and assumed that DIAL still needed to reconcile a richer non-canonical branch into an older canonical development substrate.
@@ -196,7 +198,7 @@ It covers:
 - donor applicability;
 - donor slicing and sanitization;
 - provider-neutral design strategy selection;
-- Stitch as one optional design provider;
+- Stitch as one non-authoritative design provider (setup/readiness required by DEC-033);
 - design candidate quarantine/admission;
 - deterministic verification before AI review;
 - targeted independent review;
@@ -346,7 +348,7 @@ HCX may reuse implementation patterns from HAIF—performance ledgers, quota res
 
 ## 5.8 Stitch
 
-Stitch is one optional provider of development-time design capabilities.
+Stitch is a non-authoritative provider of development-time design capabilities; DEC-033 supersedes only its former setup optionality and requires it to be selection-ready before Development System GREEN.
 
 Potential roles:
 
@@ -3088,7 +3090,7 @@ Recommended:
 ```env
 DIAL_DEV_HCX_ENABLED=false
 DIAL_DEV_MULTI_HARNESS_ENABLED=false
-DIAL_STITCH_ENABLED=false
+DIAL_STITCH_ENABLED=true
 DIAL_STITCH_LIVE_TESTS_ENABLED=false
 DIAL_EMPIRICAL_ROUTING_ENABLED=false
 DIAL_COMPETITIVE_CELL_ENABLED=false
@@ -3664,7 +3666,7 @@ Implement:
 
 Exit:
 
-- Stitch optional;
+- Stitch non-authoritative and readiness-required under DEC-033;
 - no provider output executes directly;
 - no reverse authority flow.
 

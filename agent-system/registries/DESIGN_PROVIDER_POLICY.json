@@ -2,11 +2,11 @@
   "schema_version": 1,
   "policy_version": "dial-aef-design-provider-3-frontend-1.1",
   "authority": "DEVELOPMENT_PROVIDER_POLICY",
-  "stitch_optional": true,
+  "stitch_optional": false,
   "runtime_dependency_forbidden": true,
   "provider_output_requires_quarantine": true,
   "reverse_authority_flow_forbidden": true,
-  "default_enabled": false,
+  "default_enabled": true,
   "stitch_capability_id": "DESIGN-STITCH",
   "qualification_evidence": "operations/external-capabilities/design-stitch/latest.json",
   "live_qualification_required": true,
@@ -23,7 +23,7 @@
   },
   "providers": {
     "google-stitch": {
-      "optional": true,
+      "optional": false,
       "capability_id": "DESIGN-STITCH",
       "authority": "NON_AUTHORITATIVE_CANDIDATE",
       "live_qualification_required": true,
@@ -41,5 +41,7 @@
       "parity_evidence_required_after_promotion": true,
       "runtime_dependency_forbidden": true
     }
-  }
+  },
+  "readiness_required": true,
+  "readiness_ref": "DEC-033"
 }

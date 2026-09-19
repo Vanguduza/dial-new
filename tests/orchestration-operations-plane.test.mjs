@@ -164,7 +164,7 @@ describe('deterministic auxiliary operations', () => {
     const result = serviceRecovery(project, runner);
     expect(result.ok).toBe(true);
     expect(result.action_taken).toBe(true);
-    expect(restarted).toEqual(['dial-hermes-runtime.service', 'dial-hermes-whatsapp-operator.service', 'dial-whatsapp-cloud-operator.service']);
+    expect(restarted).toEqual(['dial-hermes-runtime.service', 'dial-hermes-whatsapp-operator.service']);
     expect(restarted).not.toContain('dial-hermes-operations.service');
     expect(restarted).not.toContain('hermes-gateway.service');
     expect(result.development_authority).toBe(false);

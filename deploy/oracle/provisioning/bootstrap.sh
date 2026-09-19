@@ -27,13 +27,18 @@ DIAL_REPO_URL="${DIAL_REPO_URL:-https://github.com/Vanguduza/dial-new.git}"
 # deploy/oracle/provisioning, so phases 6 and 7 installed nothing from it and the
 # host ended up without dial-host-certify or the Commander scripts. This branch is
 # a superset of that one. Repoint it once the work merges.
-DIAL_REPO_REF="${DIAL_REPO_REF:-claude/oracle-e2-recovery-rebuild-3yotjc}"
-COMMANDER_PKG="${COMMANDER_PKG:-@wonderwhy-er/desktop-commander@0.2.50}"
-NODE_MAJOR="${NODE_MAJOR:-22}"
+DIAL_REPO_REF="${DIAL_REPO_REF:-}"
+COMMANDER_VERSION="${COMMANDER_VERSION:-0.2.50}"
+COMMANDER_PKG="@wonderwhy-er/desktop-commander@$COMMANDER_VERSION"
+COMMANDER_INTEGRITY="${COMMANDER_INTEGRITY:-sha512-dld1s+C+f/TZSKOcCMUsT6yDKbGq/WYzxaqvfRHEs4NQH/vAa8Ze9ek6YbvVspxloF7/oh3J+CbLEwV6J6ylaA==}"
+NODE_VERSION="${NODE_VERSION:-22.23.2}"
+NODE_ARM64_SHA256="${NODE_ARM64_SHA256:-fff4078c5def658577f92c88db7db3bc0072924bfb93fe52c1e744a54e94abb8}"
+NODE_X64_SHA256="${NODE_X64_SHA256:-d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307}"
 ADMIN_USER=ubuntu
 SWAP_MB="${SWAP_MB:-1024}"
 
 mkdir -p "$STATE_DIR" "$LOG_DIR" "$ETC_DIR" "$RECOVERY_ROOT" "$FABRIC_STATE"
+chown root:$ADMIN_USER "$ETC_DIR"
 chmod 750 "$ETC_DIR" "$LOG_DIR"; chmod 700 "$FABRIC_STATE"
 exec > >(tee -a "$LOG") 2>&1
 
@@ -58,7 +63,51 @@ soft() { # soft <phase-name> <function>
 }
 
 retry() { local n=0; until "$@"; do n=$((n+1)); [[ $n -ge 5 ]] && return 1; sleep $((n*6)); done; }
-apt_i() { DEBIAN_FRONTEND=noninteractive apt-get install -y -o DPkg::Lock::Timeout=300 "$@"; }
+
+# Exact Ubuntu 24.04 package pins. Keep these in lock-step with
+# ops/development-bootstrap/supply-chain/PINS.json; tests assert equality.
+declare -A APT_PINS=(
+  [openssh-server]='1:9.6p1-3ubuntu13.19'
+  [curl]='8.5.0-2ubuntu10.13'
+  [ca-certificates]='20260601~24.04.1'
+  [git]='1:2.43.0-1ubuntu7.3'
+  [jq]='1.7.1-3ubuntu0.24.04.2'
+  [unzip]='6.0-28ubuntu4.1'
+  [rsync]='3.2.7-1ubuntu1.5'
+  [lsof]='4.95.0-1build3'
+  [procps]='2:4.0.4-4ubuntu3.3'
+  [iproute2]='6.1.0-1ubuntu6.4'
+  [net-tools]='2.10-0.1ubuntu4.4'
+  [xz-utils]='5.6.1+really5.4.5-1ubuntu0.3'
+)
+apt_i() {
+  local specs=() pkg ver
+  for pkg in "$@"; do
+    ver="${APT_PINS[$pkg]:-}"
+    [[ -n "$ver" ]] || { say "missing exact APT pin for $pkg"; return 3; }
+    specs+=("$pkg=$ver")
+  done
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o DPkg::Lock::Timeout=300 "${specs[@]}"
+}
+install_pinned_node() {
+  local arch node_arch sha url tmp target
+  arch="$(uname -m)"
+  case "$arch" in
+    aarch64|arm64) node_arch=arm64; sha="$NODE_ARM64_SHA256" ;;
+    x86_64|amd64) node_arch=x64; sha="$NODE_X64_SHA256" ;;
+    *) say "unsupported Node architecture: $arch"; return 3 ;;
+  esac
+  url="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${node_arch}.tar.xz"
+  tmp="$(mktemp /tmp/dial-node.XXXXXX.tar.xz)"
+  retry curl --proto '=https' --tlsv1.2 -fsSL -o "$tmp" "$url" || { rm -f "$tmp"; return 1; }
+  echo "$sha  $tmp" | sha256sum -c - >/dev/null || { rm -f "$tmp"; say "Node SHA-256 verification failed"; return 1; }
+  target="$RECOVERY_ROOT/node-v$NODE_VERSION"
+  rm -rf "$target" && install -d -m 755 "$target"
+  tar -xJf "$tmp" --strip-components=1 -C "$target" || { rm -f "$tmp"; return 1; }
+  rm -f "$tmp"
+  for b in node npm npx corepack; do [[ -x "$target/bin/$b" ]] && ln -sfn "$target/bin/$b" "/usr/local/bin/$b"; done
+  [[ "$(/usr/local/bin/node --version)" == "v$NODE_VERSION" ]]
+}
 
 # =========================================================== PHASE 0 baseline
 say "PHASE 0 — baseline"
@@ -167,7 +216,7 @@ if phase2; then phase 2 OK; else phase 2 DEGRADED "Oracle Cloud Agent not active
 
 # ========================================== PHASE 3 base packages, Node, limits
 phase3() {
-  apt_i curl ca-certificates git jq unzip rsync lsof procps iproute2 net-tools || return 1
+  apt_i curl ca-certificates git jq unzip rsync lsof procps iproute2 net-tools xz-utils || return 1
 
   # Journald caps — a 1 GB host must not lose its disk to logs.
   mkdir -p /etc/systemd/journald.conf.d
@@ -190,16 +239,10 @@ CONF
   fi
   fact swap_total_mb "$(free -m | awk '/^Swap:/{print $2}')"
 
-  # Node from the NodeSource apt repo with a pinned keyring — deliberately not
-  # curl-piped into a shell.
-  if ! command -v node >/dev/null 2>&1 || [[ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null)" != "$NODE_MAJOR" ]]; then
-    install -d -m 755 /usr/share/keyrings
-    retry curl -fsSL -o /tmp/nodesource.key https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key || return 1
-    gpg --batch --yes --dearmor -o /usr/share/keyrings/nodesource.gpg /tmp/nodesource.key
-    rm -f /tmp/nodesource.key
-    echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" \
-      > /etc/apt/sources.list.d/nodesource.list
-    retry apt-get update -o DPkg::Lock::Timeout=300 && apt_i nodejs || return 1
+  # Node comes only from the official release tarball with an architecture-specific
+  # SHA-256 pinned above; no NodeSource repository and no executable pipe-to-shell.
+  if ! command -v node >/dev/null 2>&1 || [[ "$(node --version 2>/dev/null)" != "v$NODE_VERSION" ]]; then
+    install_pinned_node || return 1
   fi
   fact node_version "$(node --version 2>/dev/null || echo absent)"
   fact npm_version  "$(npm  --version 2>/dev/null || echo absent)"
@@ -212,11 +255,16 @@ soft 3 phase3
 # ============================================= PHASE 4 DIAL recovery checkout
 phase4() {
   install -d -m 755 -o $ADMIN_USER -g $ADMIN_USER "$RECOVERY_ROOT"
+  [[ "$DIAL_REPO_REF" =~ ^[0-9a-fA-F]{40}$ ]] || { say "DIAL_REPO_REF must be the exact 40-hex merged master SHA"; return 3; }
   if [[ -d $REPO_DIR/.git ]]; then
     sudo -u $ADMIN_USER git -C "$REPO_DIR" fetch --depth 1 origin "$DIAL_REPO_REF" || return 1
-    sudo -u $ADMIN_USER git -C "$REPO_DIR" checkout -B "$DIAL_REPO_REF" FETCH_HEAD || return 1
+    sudo -u $ADMIN_USER git -C "$REPO_DIR" checkout --detach FETCH_HEAD || return 1
   else
-    retry sudo -u $ADMIN_USER git clone --depth 1 --branch "$DIAL_REPO_REF" "$DIAL_REPO_URL" "$REPO_DIR" || return 1
+    install -d -m 755 -o $ADMIN_USER -g $ADMIN_USER "$REPO_DIR"
+    sudo -u $ADMIN_USER git -C "$REPO_DIR" init -q || return 1
+    sudo -u $ADMIN_USER git -C "$REPO_DIR" remote add origin "$DIAL_REPO_URL" || return 1
+    retry sudo -u $ADMIN_USER git -C "$REPO_DIR" fetch --depth 1 origin "$DIAL_REPO_REF" || return 1
+    sudo -u $ADMIN_USER git -C "$REPO_DIR" checkout --detach FETCH_HEAD || return 1
   fi
   fact dial_repo_ref "$DIAL_REPO_REF"
   # Run as the owner: git refuses a repo owned by another user ("dubious ownership"),
@@ -333,7 +381,7 @@ CONF
   # which that key has an unrestricted shell.
   if [[ -f $fab/bounded-recovery-command.sh ]]; then
     install -m 755 -o root -g root "$fab/bounded-recovery-command.sh" /usr/local/bin/dial-bounded-recovery
-    install -m 640 -o root -g $ADMIN_USER /dev/null /var/log/dial-bounded-recovery.log
+    install -m 660 -o root -g $ADMIN_USER /dev/null /var/log/dial-bounded-recovery.log
     fact bounded_recovery_command_installed true
     fact bounded_recovery_key_authorized \
       "$(sudo -u $ADMIN_USER bash "$fab/install-bounded-recovery-identity.sh" --verify >/dev/null 2>&1 \
@@ -389,8 +437,20 @@ phase6() {
   # npx resolving a tag at start time. No inbound port is opened: `remote` is an
   # outbound device session to the Commander service.
   install -d -m 755 -o $ADMIN_USER -g $ADMIN_USER "$RECOVERY_ROOT/commander"
-  if [[ ! -x $RECOVERY_ROOT/commander/node_modules/.bin/desktop-commander ]]; then
-    retry sudo -u $ADMIN_USER npm --prefix "$RECOVERY_ROOT/commander" install --no-fund --no-audit "$COMMANDER_PKG" || return 1
+  local commander_spec commander_lock_hash commander_marker commander_integrity commander_locked_version
+  commander_spec="$REPO_DIR/deploy/oracle/provisioning/commander-runtime"
+  [[ -f "$commander_spec/package.json" && -f "$commander_spec/package-lock.json" ]] || { say "canonical Commander lock files are missing"; return 1; }
+  commander_integrity="$(jq -r '.packages["node_modules/@wonderwhy-er/desktop-commander"].integrity // empty' "$commander_spec/package-lock.json")"
+  commander_locked_version="$(jq -r '.packages["node_modules/@wonderwhy-er/desktop-commander"].version // empty' "$commander_spec/package-lock.json")"
+  [[ "$commander_integrity" == "$COMMANDER_INTEGRITY" && "$commander_locked_version" == "$COMMANDER_VERSION" ]] || { say "Desktop Commander lock does not match canonical version/integrity"; return 1; }
+  commander_lock_hash="$(sha256sum "$commander_spec/package-lock.json" | awk '{print $1}')"
+  commander_marker="$RECOVERY_ROOT/commander/.package-lock.sha256"
+  install -m 0644 -o $ADMIN_USER -g $ADMIN_USER "$commander_spec/package.json" "$RECOVERY_ROOT/commander/package.json"
+  install -m 0644 -o $ADMIN_USER -g $ADMIN_USER "$commander_spec/package-lock.json" "$RECOVERY_ROOT/commander/package-lock.json"
+  if [[ ! -x $RECOVERY_ROOT/commander/node_modules/.bin/desktop-commander || ! -f "$commander_marker" || "$(cat "$commander_marker" 2>/dev/null || true)" != "$commander_lock_hash" ]]; then
+    retry sudo -u $ADMIN_USER npm --prefix "$RECOVERY_ROOT/commander" ci --ignore-scripts --no-fund --no-audit || return 1
+    printf '%s' "$commander_lock_hash" >"$commander_marker"
+    chown $ADMIN_USER:$ADMIN_USER "$commander_marker"; chmod 0644 "$commander_marker"
   fi
   fact commander_package "$COMMANDER_PKG"
   fact commander_transport "outbound persistent remote device (no inbound port)"

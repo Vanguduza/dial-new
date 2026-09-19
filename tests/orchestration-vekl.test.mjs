@@ -123,6 +123,7 @@ describe('VEKL immutable activation and failover symmetry', () => {
     const skill = createSnapshot(root);
     const manifest = persistSkillActivation({ packetId: 'packet-12345678', missionId: 'dial-development-root', featureIds: ['TEST-F001'], plan: { policy_version: 'vekl-1.0', task_classes: ['ANDROID_UI_IMPLEMENTATION'], resolution_state: 'SELECTED_APPROVED_SKILLS', selected_skills: [{ ...skill, upstream_commit: skill.production_pin, reason: 'fixture', mode: 'GUIDANCE_ONLY' }], rejected: [], relevant_bundles: ['dial-android-screen'] }, root });
     expect(verifySkillActivation(manifest, root).ok).toBe(true);
+    expect(manifest.content_hash).toMatch(/^[0-9a-f]{64}$/);
     chmodSync(path.join(root, skill.snapshot_rel), 0o755); chmodSync(path.join(root, skill.snapshot_rel, 'SKILL.md'), 0o644);
     writeFileSync(path.join(root, skill.snapshot_rel, 'SKILL.md'), '# tampered\n');
     expect(verifySkillActivation(manifest, root).ok).toBe(false);

@@ -64,6 +64,8 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     engineeringKnowledge = { policy_version: 'vekl-1.0', activation_id: null, resolution_state: 'NOT_APPLICABLE_QUALIFICATION_CANARY', selected_skills: [] };
   } else {
     skillActivation = engineeringKnowledgeResolver({ repoDir, root, packetId: id, instruction: text, metadata: safeMetadata });
+    if (!skillActivation?.activation_id) throw new Error('VEKL_ACTIVATION_REQUIRED_BEFORE_QUEUE');
+    if (skillActivation.execution_allowed === false) throw new Error(`VEKL_ACTIVATION_BLOCKED:${skillActivation.resolution_state || 'UNKNOWN'}`);
     engineeringKnowledge = activationSummary(skillActivation);
   }
   const job = {

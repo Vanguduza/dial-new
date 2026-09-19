@@ -1,7 +1,9 @@
 import { Stitch, StitchToolClient } from '@google/stitch-sdk';
+import { execFileSync } from 'node:child_process';
 import {
   buildDesignCandidateManifest,
   quarantineDesignArtifact,
+  sanitizeDesignArtifactForEvidence,
 } from '../../design-candidate-admission.mjs';
 import {
   now,
@@ -9,6 +11,7 @@ import {
   safeSecretStatus,
   sha256,
 } from './external-capability-core.mjs';
+import { readJson } from '../../state-store.mjs';
 
 export const STITCH_CAPABILITY_ID = 'DESIGN-STITCH';
 export const STITCH_MCP_URL = 'https://stitch.googleapis.com/mcp';
@@ -25,6 +28,12 @@ export const STITCH_ALLOWED_TOOLS = Object.freeze([
   'update_design_system',
   'list_design_systems',
   'apply_design_system',
+]);
+export const STITCH_KNOWN_PROVIDER_TOOLS = Object.freeze([
+  ...STITCH_ALLOWED_TOOLS,
+  'create_design_system_from_design_md',
+  'upload_design_md',
+  'delete_project',
 ]);
 
 function envBool(name, fallback = false, env = process.env) {
@@ -46,7 +55,7 @@ function envBool(name, fallback = false, env = process.env) {
 }
 
 export function stitchEnabled(env = process.env) {
-  return envBool('DIAL_STITCH_ENABLED', false, env);
+  return envBool('DIAL_STITCH_ENABLED', true, env);
 }
 
 export function stitchLiveTestsEnabled(env = process.env) {
@@ -82,8 +91,8 @@ export async function stitchHealth({ env = process.env, clientFactory = createSt
     client = created.client;
     const { tools } = await client.listTools();
     const names = (tools || []).map((tool) => tool.name).sort();
-    const unexpected = names.filter((name) => !STITCH_ALLOWED_TOOLS.includes(name));
-    const missing = STITCH_ALLOWED_TOOLS.filter((name) => !names.includes(name));
+    const unexpected = names.filter((name) => !STITCH_KNOWN_PROVIDER_TOOLS.includes(name));
+    const missing = STITCH_KNOWN_PROVIDER_TOOLS.filter((name) => !names.includes(name));
     return {
       state: unexpected.length ? 'QUARANTINED' : 'HEALTHY',
       authenticated: true,
@@ -139,15 +148,19 @@ export function validateStitchArtifact({ html, taskId = 'qualification', unitLin
     screenRefs: [],
   });
   return { ok: true, quarantine, manifest };
-}const STITCH_ARTIFACT_HOSTS = [
+}const STITCH_ARTIFACT_SUFFIX_HOSTS = [
   'storage.googleapis.com',
   'stitch.googleapis.com',
   'googleusercontent.com',
 ];
+const STITCH_ARTIFACT_EXACT_HOSTS = new Set([
+  'contribution.usercontent.google.com',
+]);
 
 function allowedArtifactHost(hostname) {
   const host = String(hostname || '').toLowerCase();
-  return STITCH_ARTIFACT_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+  return STITCH_ARTIFACT_EXACT_HOSTS.has(host)
+    || STITCH_ARTIFACT_SUFFIX_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
 }
 
 export async function downloadStitchArtifact(url, { fetchImpl = globalThis.fetch, maxBytes = 5_000_000 } = {}) {
@@ -167,6 +180,36 @@ export async function downloadStitchArtifact(url, { fetchImpl = globalThis.fetch
   };
 }
 
+export const STITCH_PROOF_RELS = Object.freeze({
+  visual_acceptance: 'operations/external-capabilities/design-stitch/proofs/real-screen-acceptance.json',
+  orchestrated_use: 'operations/external-capabilities/design-stitch/proofs/aef-unit-consumption.json',
+  outage_fallback: 'operations/external-capabilities/design-stitch/proofs/outage-fallback.json',
+});
+
+function gitHead(repoDir) {
+  try { return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, encoding: 'utf8' }).trim(); } catch { return null; }
+}
+
+function validProof(value, kind, repositorySha) {
+  if (!value || value.schema_version !== 1 || value.provider !== 'google-stitch' || value.status !== 'PASSED') return false;
+  if (!repositorySha || value.repository_sha !== repositorySha) return false;
+  if (kind === 'visual_acceptance') return Boolean(value.task_id && value.candidate_hash && value.fdep_hash && value.certification_hash);
+  if (kind === 'orchestrated_use') return Boolean(value.task_id && value.candidate_hash && value.worker_artifact_id && value.envelope_hash);
+  if (kind === 'outage_fallback') return Boolean(value.selection_hash && String(value.selected || '').startsWith('DIRECT_'));
+  return false;
+}
+
+export function stitchQualificationProofStatus(root, repoDir = process.env.DIAL_REPO_DIR || process.cwd()) {
+  const repositorySha = gitHead(repoDir);
+  const proofs = Object.fromEntries(Object.entries(STITCH_PROOF_RELS).map(([kind, rel]) => [kind, readJson(rel, null, root)]));
+  return {
+    repository_sha: repositorySha,
+    visual_acceptance: { passed: validProof(proofs.visual_acceptance, 'visual_acceptance', repositorySha), evidence: proofs.visual_acceptance },
+    orchestrated_use: { passed: validProof(proofs.orchestrated_use, 'orchestrated_use', repositorySha), evidence: proofs.orchestrated_use },
+    outage_fallback: { passed: validProof(proofs.outage_fallback, 'outage_fallback', repositorySha), evidence: proofs.outage_fallback },
+  };
+}
+
 function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcceptance = false, orchestratedProof = false, outageFallback = false } = {}) {
   const checks = {
     implementation: true,
@@ -182,14 +225,19 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
   return { passed: Object.values(checks).every(Boolean), checks, missing: Object.entries(checks).filter(([, ok]) => !ok).map(([id]) => id) };
 }export async function qualifyStitch({
   root,
+  repoDir = process.env.DIAL_REPO_DIR || process.cwd(),
   env = process.env,
   clientFactory = createStitchClient,
   fetchImpl = globalThis.fetch,
-  visualAcceptance = false,
-  orchestratedProof = false,
-  outageFallback = false,
+  visualAcceptance = null,
+  orchestratedProof = null,
+  outageFallback = null,
 } = {}) {
   const observedAt = now();
+  const proofStatus = root ? stitchQualificationProofStatus(root, repoDir) : null;
+  const effectiveVisualAcceptance = visualAcceptance ?? proofStatus?.visual_acceptance?.passed ?? false;
+  const effectiveOrchestratedProof = orchestratedProof ?? proofStatus?.orchestrated_use?.passed ?? false;
+  const effectiveOutageFallback = outageFallback ?? proofStatus?.outage_fallback?.passed ?? false;
   const credentials = stitchCredentialStatus(env);
   const health = await stitchHealth({ env, clientFactory });
   let status = 'IMPLEMENTED';
@@ -212,19 +260,23 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
       });
       const htmlArtifact = await downloadStitchArtifact(generated.html_url, { fetchImpl, maxBytes: 2_000_000 });
       const imageArtifact = await downloadStitchArtifact(generated.image_url, { fetchImpl, maxBytes: 8_000_000 });
-      const html = Buffer.from(htmlArtifact.body).toString('utf8');
-      const validation = validateStitchArtifact({ html });
-      quarantineProof = validation.ok;
+      const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+      const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+      const validation = sanitization.ok ? validateStitchArtifact({ html: sanitization.content }) : { ok: false, quarantine: sanitization.sanitized_quarantine, manifest: null };
+      quarantineProof = sanitization.ok && validation.ok;
       manifestProof = Boolean(validation.manifest?.candidate_hash);
       liveQualification = {
-        passed: validation.ok,
+        passed: quarantineProof && manifestProof && Boolean(generated.screen_id) && imageArtifact.byte_length > 0,
         project_id_hash: sha256(generated.project_id),
         screen_id_hash: sha256(generated.screen_id),
         html_sha256: htmlArtifact.sha256,
         image_sha256: imageArtifact.sha256,
+        raw_quarantine_violations: sanitization.raw_quarantine?.violations || [],
+        inert_evidence_transformed: sanitization.transformed === true,
+        inert_evidence_hash: sha256(sanitization.content || ''),
         candidate_hash: validation.manifest?.candidate_hash || null,
       };
-      status = validation.ok ? 'LIVE_QUALIFIED' : 'QUARANTINED';
+      status = liveQualification.passed ? 'LIVE_QUALIFIED' : 'QUARANTINED';
     } catch (error) {
       liveQualification = { passed: false, failure_class: error?.category || classifyStitchError(error) };
       status = liveQualification.failure_class === 'AUTH_REQUIRED' ? 'AUTH_REQUIRED' : 'DEGRADED';
@@ -235,9 +287,9 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
     liveScreen: liveQualification.passed,
     quarantine: quarantineProof,
     manifest: manifestProof,
-    visualAcceptance,
-    orchestratedProof,
-    outageFallback,
+    visualAcceptance: effectiveVisualAcceptance,
+    orchestratedProof: effectiveOrchestratedProof,
+    outageFallback: effectiveOutageFallback,
   });
   if (dod.passed) status = 'INTEGRATED';
   return persistCapabilityEvidence(root, STITCH_CAPABILITY_ID, {
@@ -249,13 +301,104 @@ function stitchDod({ authenticated, liveScreen, quarantine, manifest, visualAcce
       mcp_url: STITCH_MCP_URL,
       arbitrary_host_override_allowed: false,
       tool_allowlist: STITCH_ALLOWED_TOOLS,
+      known_provider_tools: STITCH_KNOWN_PROVIDER_TOOLS,
     },
     credentials,
     health,
     authentication: { verified: health.authenticated === true },
     live_qualification: liveQualification,
-    orchestrated_use: { passed: Boolean(orchestratedProof) },
+    orchestrated_use: { passed: Boolean(effectiveOrchestratedProof), evidence_hash: proofStatus?.orchestrated_use?.evidence?.evidence_hash || null },
+    qualification_proofs: proofStatus ? {
+      visual_acceptance: { passed: proofStatus.visual_acceptance.passed, evidence_hash: proofStatus.visual_acceptance.evidence?.evidence_hash || null },
+      orchestrated_use: { passed: proofStatus.orchestrated_use.passed, evidence_hash: proofStatus.orchestrated_use.evidence?.evidence_hash || null },
+      outage_fallback: { passed: proofStatus.outage_fallback.passed, evidence_hash: proofStatus.outage_fallback.evidence?.evidence_hash || null },
+    } : null,
     definition_of_done: dod,
     status,
   });
+}
+
+
+export async function generateStitchVariantSet({
+  title,
+  seedPrompt,
+  explorePrompt,
+  variantOptions = { aspects: ['LAYOUT', 'COLOR_SCHEME', 'IMAGES', 'TEXT_FONT'], creativeRange: 'EXPLORE', variantCount: 3 },
+  deviceType = 'MOBILE',
+  modelId = 'GEMINI_3_1_PRO',
+  env = process.env,
+  clientFactory = createStitchClient,
+} = {}) {
+  if (!stitchEnabled(env)) throw Object.assign(new Error('STITCH_DISABLED'), { category: 'DISABLED' });
+  if (!String(seedPrompt || '').trim()) throw new Error('STITCH_SEED_PROMPT_REQUIRED');
+  let client;
+  try {
+    const created = clientFactory(env);
+    client = created.client;
+    const sdk = created.sdk;
+    const project = await sdk.createProject(String(title || `DIAL creative ${Date.now()}`));
+    const seed = await project.generate(String(seedPrompt), deviceType, modelId);
+    const variants = await seed.variants(String(explorePrompt || seedPrompt), variantOptions, deviceType, modelId);
+    const rows = [];
+    for (const screen of variants) {
+      rows.push({
+        project_id: project.projectId,
+        screen_id: screen.screenId,
+        html_url: await screen.getHtml(),
+        image_url: await screen.getImage(),
+      });
+    }
+    return {
+      provider: 'google-stitch',
+      project_id: project.projectId,
+      seed_screen_id: seed.screenId,
+      variant_options: variantOptions,
+      variants: rows,
+      response_hash: sha256({
+        project_id: project.projectId,
+        seed_screen_id: seed.screenId,
+        variant_options: variantOptions,
+        variants: rows,
+      }),
+    };
+  } catch (error) {
+    error.category ||= classifyStitchError(error);
+    throw error;
+  } finally {
+    try { await client?.close(); } catch {}
+  }
+}
+
+export async function refineStitchScreen({
+  projectId,
+  screenId,
+  prompt,
+  deviceType = 'MOBILE',
+  modelId = 'GEMINI_3_1_PRO',
+  env = process.env,
+  clientFactory = createStitchClient,
+} = {}) {
+  if (!stitchEnabled(env)) throw Object.assign(new Error('STITCH_DISABLED'), { category: 'DISABLED' });
+  if (!projectId || !screenId || !String(prompt || '').trim()) throw new Error('STITCH_REFINE_INPUT_REQUIRED');
+  let client;
+  try {
+    const created = clientFactory(env);
+    client = created.client;
+    const screen = created.sdk.project(projectId).screen(screenId);
+    const refined = await screen.edit(String(prompt), deviceType, modelId);
+    return {
+      provider: 'google-stitch',
+      project_id: projectId,
+      source_screen_id: screenId,
+      screen_id: refined.screenId,
+      html_url: await refined.getHtml(),
+      image_url: await refined.getImage(),
+      response_hash: sha256({ project_id: projectId, source_screen_id: screenId, screen_id: refined.screenId }),
+    };
+  } catch (error) {
+    error.category ||= classifyStitchError(error);
+    throw error;
+  } finally {
+    try { await client?.close(); } catch {}
+  }
 }

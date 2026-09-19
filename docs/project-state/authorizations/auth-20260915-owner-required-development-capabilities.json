@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260915-owner-required-development-capabilities",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "f1150a4ead302ba526406737a9561074681a75df7b2e492fc25a0412ffe73ed9",
+  "owner_instruction_excerpt": "When was antigravity locked as optional? It is a requirement and should be considered for use with its model pairings during harness selection. All tools and resources that are included in the development system that you have marked as optional need to be fully setup locally and actually be readily available for selection",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260915-required-development-capabilities",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-15T10:12:17+00:00",
+  "base_sha": "2e291761cd07951c6c75a2674f11e86185a1551f",
+  "branch_scope": "gpt/dial-development-system-green-closure-20260915",
+  "authorized_paths": [
+    "agent-system/canon/PROJECT_TRUTH.md",
+    "agent-system/registries/*.json",
+    "agent-system/orchestration/providers/google/*.mjs",
+    "ops/development-bootstrap/**",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/**",
+    "docs/project-state/authorizations/*.json"
+  ],
+  "change_classes": [
+    "owner_override_of_capability_optionality",
+    "development_readiness_policy",
+    "harness_selection_policy",
+    "tooling_bootstrap_policy"
+  ],
+  "owner_overrides": [
+    {
+      "overridden": "Prior interpretation of DEC-031 fallback language as permission to classify Antigravity and other enrolled development capabilities as OPTIONAL_CAPABILITY/non-blocking for DIAL development GREEN.",
+      "ruling": "Antigravity is required, must be installed/authenticated/live-qualified and considered with its supported model pairings during harness selection. Every operational tool/resource enrolled in the DIAL development system must be fully set up on its designated execution surface and selection-ready; runtime fallback is resilience, not setup optionality.",
+      "effect": "Operational OPTIONAL_CAPABILITY entries are promoted into CORE_DEVELOPMENT_REQUIRED, OWNER_CONTROL_REQUIRED or RECOVERY_REQUIRED according to function. Reference-only/deprecated records remain non-runtime and are not falsely treated as locally installable software."
+    }
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": true,
+  "reusable": false,
+  "revoked": false
+}

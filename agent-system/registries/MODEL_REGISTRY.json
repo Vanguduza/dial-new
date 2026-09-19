@@ -163,7 +163,7 @@
         "state": "PRESENT",
         "basis": "SUBSCRIPTION_PRESENCE",
         "confirmed_by": "DISCOVERY",
-        "prior_record": "Seed entry. No DIAL execution evidence exists. Must pass §65 cold-start before routable, and high-risk work may not be its first test."
+        "prior_record": "Seed entry. No DIAL execution evidence exists; subscription presence still confers eligibility and performance will be learned from assigned work."
       },
       "registry_entry_kind": "SUBSCRIPTION_SEED"
     },
@@ -250,7 +250,7 @@
         "state": "PRESENT",
         "basis": "SUBSCRIPTION_PRESENCE",
         "confirmed_by": "DISCOVERY",
-        "prior_record": "Seed entry. Candidate for the economical tier in §13 escalation once qualified."
+        "prior_record": "Seed entry. Subscription presence confers eligibility; assigned-job outcomes determine its future place in the performance ranking."
       },
       "registry_entry_kind": "SUBSCRIPTION_SEED"
     },

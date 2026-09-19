@@ -125,7 +125,7 @@ export async function runClaudeHermesFallback({
       ...process.env,
       DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
       DIAL_REPO_DIR: repoDir,
-      ...(packetId ? { DIAL_PACKET_ID: packetId } : {}),
+      ...(packetId ? { DIAL_PACKET_ID: packetId, DIAL_GOVERNED_SESSION: '1' } : {}),
       ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
     },
   });

@@ -1,0 +1,30 @@
+[Unit]
+Description=DIAL VEKL Groq open-world research first-pass worker
+After=network-online.target postgresql@16-main.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/dial-vekl-research-runtime
+Environment=DIAL_REPO_DIR=/home/ubuntu/dial-vekl-research-runtime
+Environment=DIAL_CONTROL_HOME=/var/lib/dial-control
+Environment=DIAL_HOST_ROLE=vekl-worker
+Environment=DIAL_RESEARCH_DB_AUTHORITATIVE=1
+Environment=GROQ_API_KEY_FILE=/var/lib/dial-worker/secrets/groq-api.key
+Environment=GROQ_ZDR_MARKER=/var/lib/dial-worker/secrets/groq-zdr-enabled
+Environment=DIAL_VEKL_PG_PACKAGE=/home/ubuntu/.local/share/dial-vekl-runtime/node_modules/pg
+Environment=PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/node /home/ubuntu/dial-vekl-research-runtime/deploy/oracle/vekl-worker/vekl-gptoss-research-producer.mjs
+Nice=10
+CPUQuota=35%
+MemoryMax=420M
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/home/ubuntu/dial-vekl-research-runtime /var/lib/dial-worker/secrets
+ReadWritePaths=/var/lib/dial-control
+
+[Install]
+WantedBy=multi-user.target

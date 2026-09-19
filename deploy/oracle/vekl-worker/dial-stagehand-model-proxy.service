@@ -1,0 +1,27 @@
+[Unit]
+Description=DIAL Stagehand Groq model proxy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/dial-vekl-research-runtime
+Environment=GROQ_API_KEY_FILE=/var/lib/dial-worker/secrets/groq-api.key
+Environment=GROQ_ZDR_MARKER_FILE=/var/lib/dial-worker/secrets/groq-zdr-enabled
+Environment=DIAL_STAGEHAND_MODEL=openai/gpt-oss-20b
+Environment=DIAL_STAGEHAND_MODEL_PROXY_PORT=9152
+ExecStart=/usr/bin/node /home/ubuntu/dial-vekl-research-runtime/deploy/oracle/vekl-worker/stagehand-model-proxy.mjs
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/home/ubuntu/dial-vekl-research-runtime /var/lib/dial-worker/secrets
+MemoryMax=192M
+CPUQuota=40%
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

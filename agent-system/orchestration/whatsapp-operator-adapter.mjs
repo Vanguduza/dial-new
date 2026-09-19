@@ -6,6 +6,7 @@ import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJs
 import { executeOperatorTextCommand, parseOperatorTextCommand } from './operator-text-router.mjs';
 import { callChatControlTool } from './chat-control-bridge.mjs';
 import { classifyOwnerLiveMode } from './owner-live-control.mjs';
+import { consumeSenderRateLimit, gcProcessedMessageFiles } from './whatsapp-delivery-guard.mjs';
 
 export const WHATSAPP_OPERATOR_AUTHORITY = 'OWNER_ONLY_TYPED_DIAL_CONTROL';
 export const WHATSAPP_OPERATOR_CONFIG_REL = 'secrets/whatsapp-operator.json';
@@ -131,6 +132,11 @@ export async function processWhatsAppMessage(message, { root, config, fetchImpl 
     recordEvent(root, 'WHATSAPP_OPERATOR_DUPLICATE_REPLAY', { sender_hash, message_id_hash: hash(message.id).slice(0, 24) });
     return { accepted: true, duplicate: true };
   }
+  const rate = consumeSenderRateLimit({ root, senderHash: sender_hash });
+  if (!rate.ok) {
+    recordEvent(root, 'WHATSAPP_OPERATOR_RATE_LIMITED', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), retry_after_ms: rate.retry_after_ms });
+    return { accepted: false, rate_limited: true, retry_after_ms: rate.retry_after_ms };
+  }
 
   const commandText = message.type === 'text' ? message.text : 'help';
   recordEvent(root, 'WHATSAPP_OPERATOR_COMMAND_RECEIVED', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), message_type: message.type });
@@ -168,6 +174,7 @@ export async function processWhatsAppMessage(message, { root, config, fetchImpl 
   recordEvent(root, 'WHATSAPP_OPERATOR_COMMAND_COMPLETED', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), command: record.command });
   await sendWhatsAppText({ config, to: sender, text: record.reply, fetchImpl });
   writeJsonAtomic(rel, { ...record, reply_sent: true, reply_sent_at: now() }, root);
+  gcProcessedMessageFiles({ root });
   recordEvent(root, 'WHATSAPP_OPERATOR_REPLY_SENT', { sender_hash, message_id_hash: hash(message.id).slice(0, 24), command: record.command });
   return { accepted: true, command: record.command };
 }

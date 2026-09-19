@@ -10,6 +10,7 @@ import { decideEscalation, failureFingerprint, shouldDeEscalate, buildHandoffSta
 import { calibratedPrior, calibratedSmoothingWeight, evaluateSkillRetention, projectLedgerForRouting, recordExecutionOutcome } from '../agent-system/orchestration/model-performance-ledger.mjs';
 import { attributeOutcome, buildVeklImprovementSignal } from '../agent-system/orchestration/outcome-attribution.mjs';
 import { checkAdaptiveRoutingArchitecture } from '../agent-system/orchestration/adaptive-routing-architecture-check.mjs';
+import { assertModelAvailableForDispatch, discoverModelAvailability } from '../agent-system/orchestration/model-availability-discovery.mjs';
 
 const repoDir = process.cwd();
 const temp = (n) => fs.mkdtempSync(path.join(os.tmpdir(), `dial-routing-${n}-`));
@@ -64,6 +65,16 @@ describe('DIAL adaptive harness x model routing (DEC-032)', () => {
     const route = selectExecutionPair({ repoDir, registries: loadRoutingRegistries(repoDir), taskRequirements: LOW });
     expect(route.ok).toBe(false);
     expect(['STALE_DISCOVERY', 'DISCOVERY_UNAVAILABLE']).toContain(route.reason);
+  });
+
+  it('normalizes live subscription presence for routing and rechecks it at dispatch', () => {
+    const registry = loadRoutingRegistries(repoDir).models;
+    const observed_at = new Date().toISOString();
+    const health = { models: { 'claude-fable-5-1': { subscription_present: true, availability: 'AVAILABLE', observed_at, resolved_version: 'claude-fable-5-1' } } };
+    const discovered = discoverModelAvailability({ modelRegistry: registry, health });
+    expect(discovered.registry.models.find((model) => model.model_id === 'claude-fable-5-1').qualification.state).toBe('PRESENT');
+    expect(assertModelAvailableForDispatch({ modelRegistry: registry, modelId: 'claude-fable-5-1', health }).ok).toBe(true);
+    expect(() => assertModelAvailableForDispatch({ modelRegistry: registry, modelId: 'claude-fable-5-1', health, nowMs: Date.parse(observed_at) + 3_600_001 })).toThrow('REFUSED_STALE_MODEL_DISCOVERY');
   });
 
   it('admits every subscription model without making it earn access', () => {
@@ -245,6 +256,18 @@ describe('DIAL adaptive harness x model routing (DEC-032)', () => {
     expect(shims.retired).toBe(false);
     expect(shims.card_to_pair['claude-sonnet-worker']).toEqual({ harness_id: 'claude-code', model_id: 'claude-sonnet-5' });
     expect(fs.existsSync(path.join(repoDir, shims.source_registry))).toBe(true);
+  });
+
+  it('models the secondary Claude Pro identity as worker-only same-provider capacity', () => {
+    const workers = JSON.parse(fs.readFileSync(path.join(repoDir, 'agent-system/registries/HARNESS_CAPABILITY_REGISTRY.json'), 'utf8')).workers;
+    const primary = workers.find((w) => w.harness_id === 'claude-sonnet-worker');
+    const secondary = workers.find((w) => w.harness_id === 'claude-sonnet-worker-secondary');
+    expect(secondary).toBeTruthy();
+    expect(secondary.manager_runtime_eligible).toBe(false);
+    expect(secondary.model.model_id).toBe('claude-sonnet-5');
+    expect(secondary.identity.independence_class).toBe(primary.identity.independence_class);
+    expect(secondary.identity.worker_identity_hash).not.toBe(primary.identity.worker_identity_hash);
+    expect(secondary.runtime_profile).toMatchObject({ profile_id: 'secondary', health_slot: 'claude_code_secondary' });
   });
 });
 

@@ -157,7 +157,7 @@ continuity_soak(){
   [[ -f "$DIAL_CONTROL_HOME/secrets/chat-control.token" ]] || fail "chat-control token missing"
   token_hash_before="$(sha256 "$DIAL_CONTROL_HOME/secrets/chat-control.token")"
 
-  for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-owner-steering.service dial-hermes-whatsapp-operator.service dial-whatsapp-cloud-operator.service; do
+  for unit in dial-hermes-runtime.service dial-hermes-orchestrator.service dial-hermes-operations.service dial-chat-control.service dial-mission-controller.service dial-owner-steering.service dial-hermes-whatsapp-operator.service; do
     systemctl --user restart "$unit"
     wait_active "$unit"
   done
@@ -268,7 +268,7 @@ reboot_post(){
   wait_active dial-mission-controller.service
   wait_active dial-owner-steering.service
   wait_active dial-hermes-whatsapp-operator.service
-  wait_active dial-whatsapp-cloud-operator.service
+  wait_active
   pass "persistent runtime, orchestration, typed operator channels and mission services active after reboot"
 
   repo_head="$(jq -r '.repo_head' "$marker")"

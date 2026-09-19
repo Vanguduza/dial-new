@@ -12,7 +12,8 @@
     "skills",
     "dial_guard_capsule",
     "created_at",
-    "resources"
+    "resources",
+    "content_hash"
   ],
   "properties": {
     "schema_version": {
@@ -72,6 +73,10 @@
         "string",
         "null"
       ]
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "created_at": {
       "type": "string"

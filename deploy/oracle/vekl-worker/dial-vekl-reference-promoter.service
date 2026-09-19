@@ -1,0 +1,19 @@
+[Unit]
+Description=DIAL VEKL low-risk reference discovery promoter
+After=network-online.target postgresql@16-main.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/dial-vekl-research-runtime
+Environment=DIAL_VEKL_PG_PACKAGE=/home/ubuntu/.local/share/dial-vekl-runtime/node_modules/pg
+ExecStart=/usr/bin/node /home/ubuntu/dial-vekl-research-runtime/deploy/oracle/vekl-worker/vekl-reference-promoter.mjs
+Nice=10
+CPUQuota=15%
+MemoryMax=96M
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/home/ubuntu/dial-vekl-research-runtime

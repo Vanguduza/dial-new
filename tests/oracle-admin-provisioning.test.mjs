@@ -121,9 +121,17 @@ describe('bootstrap phase contract', () => {
     expect(s).not.toMatch(/ufw --force enable/);
   });
 
-  it('pins the Commander package to an exact version, never a floating tag', () => {
+  it('pins the Commander package to an exact lockfile/integrity-bound version, never a floating tag', () => {
     const s = src();
-    expect(s).toMatch(/@wonderwhy-er\/desktop-commander@\d+\.\d+\.\d+/);
+    const runtimePackage = JSON.parse(fs.readFileSync(path.join(ROOT, 'deploy/oracle/provisioning/commander-runtime/package.json'), 'utf8'));
+    const runtimeLock = JSON.parse(fs.readFileSync(path.join(ROOT, 'deploy/oracle/provisioning/commander-runtime/package-lock.json'), 'utf8'));
+    const locked = runtimeLock.packages?.['node_modules/@wonderwhy-er/desktop-commander'];
+    expect(s).toMatch(/COMMANDER_VERSION="\$\{COMMANDER_VERSION:-0\.2\.50\}"/);
+    expect(s).toMatch(/COMMANDER_PKG="@wonderwhy-er\/desktop-commander@\$COMMANDER_VERSION"/);
+    expect(s).toMatch(/npm --prefix "\$RECOVERY_ROOT\/commander" ci --ignore-scripts/);
+    expect(runtimePackage.dependencies?.['@wonderwhy-er/desktop-commander']).toBe('0.2.50');
+    expect(locked?.version).toBe('0.2.50');
+    expect(locked?.integrity).toMatch(/^sha512-/);
     expect(s).not.toMatch(/desktop-commander@latest/);
   });
 

@@ -117,11 +117,15 @@ export function pairCompatible({ compatibility, harnessId, model } = {}) {
     return { ok: false, reason: 'PAIR_NOT_COMPATIBLE', detail: `${harnessId} does not support route ${model?.subscription_source}` };
   }
   const proven = (entry.proven_pairs || []).includes(model?.model_id);
-  const candidate = (entry.candidate_pairs || []).includes(model?.model_id);
+  const explicitlyCandidate = (entry.candidate_pairs || []).includes(model?.model_id);
+  const liveDiscovered = entry.allow_live_discovered_models === true
+    && model?.registry_entry_kind === 'LIVE_DISCOVERY'
+    && model?.identity?.discovery_source === 'ANTIGRAVITY_MODEL_DISCOVERY';
+  const candidate = explicitlyCandidate || liveDiscovered;
   if (!proven && !candidate) {
-    return { ok: false, reason: 'PAIR_NOT_COMPATIBLE', detail: `${model?.model_id} is neither proven nor candidate on ${harnessId}` };
+    return { ok: false, reason: 'PAIR_NOT_COMPATIBLE', detail: `${model?.model_id} is neither proven nor live-discovered compatible on ${harnessId}` };
   }
-  return { ok: true, proven, candidate };
+  return { ok: true, proven, candidate, live_discovered: liveDiscovered };
 }
 
 /** Generates every compatible pair. Blocking happens here, ranking later. */
