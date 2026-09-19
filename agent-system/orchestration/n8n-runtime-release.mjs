@@ -199,7 +199,7 @@ export function assertReleaseIntegrity({ release, runningWorkflow }) {
   return { ok: failures.length === 0, failures, expected: release?.content_hash ?? null, actual };
 }
 
-export function assertEstateIsolation({ policy = null, repoDir = DEFAULT_REPO, dev = {}, prod = {} } = {}) {
+export function assertEstateIsolation({ policy = null, repoDir = DEFAULT_REPO, dev = {}, prod = {}, thirdPartyEstates = [] } = {}) {
   const p = policy || loadRuntimePolicy(repoDir);
   const failures = [];
   const compare = {
@@ -216,17 +216,48 @@ export function assertEstateIsolation({ policy = null, repoDir = DEFAULT_REPO, d
   };
   for (const requirement of p.isolation_requirements || []) {
     if (requirement === 'separate_execution_retention') {
-      if (Number(dev.execution_retention_days) === Number(prod.execution_retention_days)) failures.push(`ISOLATION_VIOLATION:${requirement}`);
+      if (Number(dev.execution_retention_days) === Number(prod.execution_retention_days)) failures.push('ISOLATION_VIOLATION:' + requirement);
       continue;
     }
-    const [a, b] = compare[requirement] || [];
-    if (a === undefined || b === undefined) { failures.push(`ISOLATION_UNDECLARED:${requirement}`); continue; }
-    if (a === b) failures.push(`ISOLATION_VIOLATION:${requirement}`);
+    const pair = compare[requirement] || [];
+    const a = pair[0], b = pair[1];
+    if (a === undefined || b === undefined) { failures.push('ISOLATION_UNDECLARED:' + requirement); continue; }
+    if (a === b) failures.push('ISOLATION_VIOLATION:' + requirement);
   }
-  // The rule that matters most, stated on its own so it cannot be lost in a list.
+
+  const tenancy = p.tenancy || {};
+  for (const row of [['DEV', dev], ['PROD', prod]]) {
+    const name = row[0], estate = row[1];
+    for (const field of tenancy.required_descriptor_fields || []) {
+      if (estate[field] === undefined || estate[field] === null || estate[field] === '') failures.push('TENANCY_UNDECLARED:' + name + ':' + field);
+    }
+    if (tenancy.expected_owner && estate.estate_owner !== tenancy.expected_owner) failures.push('ESTATE_OWNER_MISMATCH:' + name);
+    if (tenancy.expected_tenant_id && estate.tenant_id !== tenancy.expected_tenant_id) failures.push('TENANT_ID_MISMATCH:' + name);
+  }
+
   const devCreds = new Set(dev.credential_ids || []);
   const shared = (prod.credential_ids || []).filter((c) => devCreds.has(c));
-  if (shared.length) failures.push(...shared.map((c) => `SHARED_CREDENTIAL:${c}`));
+  if (shared.length) failures.push(...shared.map((c) => 'SHARED_CREDENTIAL:' + c));
   if (dev.has_production_credentials === true) failures.push('DEV_HOLDS_PRODUCTION_CREDENTIALS');
+
+  if (tenancy.third_party_state_sharing_forbidden === true) {
+    const dialEstates = [['DEV', dev], ['PROD', prod]];
+    for (const third of thirdPartyEstates || []) {
+      const thirdName = third.estate_id || third.estate_owner || 'THIRD_PARTY';
+      for (const row of dialEstates) {
+        const dialName = row[0], dial = row[1];
+        const dialDb = dial.database_host && dial.database ? dial.database_host + '/' + dial.database : null;
+        const thirdDb = third.database_host && third.database ? third.database_host + '/' + third.database : null;
+        if (dialDb && thirdDb && dialDb === thirdDb) failures.push('THIRD_PARTY_STATE_SHARED:' + dialName + ':' + thirdName + ':database_identity');
+        for (const field of ['encryption_key_id','credential_store','service_account','role_binding','backup_target','audit_stream']) {
+          if (dial[field] != null && third[field] != null && dial[field] === third[field]) failures.push('THIRD_PARTY_STATE_SHARED:' + dialName + ':' + thirdName + ':' + field);
+        }
+        const dialIds = new Set(dial.credential_ids || []);
+        for (const credential of third.credential_ids || []) {
+          if (dialIds.has(credential)) failures.push('THIRD_PARTY_CREDENTIAL_SHARED:' + dialName + ':' + thirdName + ':' + credential);
+        }
+      }
+    }
+  }
   return { ok: failures.length === 0, failures: [...new Set(failures)].sort() };
 }

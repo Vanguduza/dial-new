@@ -403,8 +403,8 @@ describe('network and database boundaries', () => {
 
 describe('estate isolation', () => {
   const separated = {
-    dev: { database: 'n8n_dev', encryption_key_id: 'k-dev', credential_store: 's-dev', webhook_domain: 'hooks-dev', service_account: 'sa-dev', network_policy: 'np-dev', role_binding: 'rb-dev', backup_target: 'bk-dev', audit_stream: 'a-dev', promotion_path: 'export', execution_retention_days: 14, credential_ids: ['dev-smtp'], has_production_credentials: false },
-    prod: { database: 'n8n_prod', encryption_key_id: 'k-prod', credential_store: 's-prod', webhook_domain: 'hooks', service_account: 'sa-prod', network_policy: 'np-prod', role_binding: 'rb-prod', backup_target: 'bk-prod', audit_stream: 'a-prod', promotion_path: 'import', execution_retention_days: 90, credential_ids: ['prod-smtp'] },
+    dev: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n_dev', encryption_key_id: 'k-dev', credential_store: 's-dev', webhook_domain: 'hooks-dev', service_account: 'sa-dev', network_policy: 'np-dev', role_binding: 'rb-dev', backup_target: 'bk-dev', audit_stream: 'a-dev', promotion_path: 'export', execution_retention_days: 14, credential_ids: ['dev-smtp'], has_production_credentials: false },
+    prod: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n_prod', encryption_key_id: 'k-prod', credential_store: 's-prod', webhook_domain: 'hooks', service_account: 'sa-prod', network_policy: 'np-prod', role_binding: 'rb-prod', backup_target: 'bk-prod', audit_stream: 'a-prod', promotion_path: 'import', execution_retention_days: 90, credential_ids: ['prod-smtp'] },
   };
 
   it('accepts properly separated estates', () => {
@@ -428,6 +428,25 @@ describe('estate isolation', () => {
   it('refuses a dev estate holding production credentials at all', () => {
     const result = assertEstateIsolation({ policy, repoDir, dev: { ...separated.dev, has_production_credentials: true }, prod: separated.prod });
     expect(result.failures).toContain('DEV_HOLDS_PRODUCTION_CREDENTIALS');
+  });
+
+
+  it('refuses any shared state with a third-party VAN n8n tenant', () => {
+    const van = {
+      estate_id: 'VAN_N8N', tenant_id: 'VAN', estate_owner: 'VAN',
+      database_host: 'vekl-worker', database: 'n8n_dev',
+      encryption_key_id: 'van-key', credential_store: 'van-store', service_account: 'van-sa',
+      role_binding: 'van-rb', backup_target: 'van-backup', audit_stream: 'van-audit',
+      credential_ids: ['van-only'],
+    };
+    const result = assertEstateIsolation({ policy, repoDir, ...separated, thirdPartyEstates: [van] });
+    expect(result.ok).toBe(false);
+    expect(result.failures).toContain('THIRD_PARTY_STATE_SHARED:DEV:VAN_N8N:database_identity');
+  });
+
+  it('requires explicit DIAL tenancy and estate ownership metadata', () => {
+    const result = assertEstateIsolation({ policy, repoDir, dev: { ...separated.dev, tenant_id: 'VAN' }, prod: separated.prod });
+    expect(result.failures).toContain('TENANT_ID_MISMATCH:DEV');
   });
 
   it('names an undeclared isolation requirement rather than passing it', () => {

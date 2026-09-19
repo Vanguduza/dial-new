@@ -58,7 +58,18 @@
     "SCHEDULE_JOB",
     "COORDINATE_MULTI_SYSTEM_PROCESS"
   ],
-  "capability_classes": ["HTTP", "DB", "FILE", "CODE", "AI", "MESSAGING", "CLOUD", "CONTROL", "INTEGRATION", "HUMAN"],
+  "capability_classes": [
+    "HTTP",
+    "DB",
+    "FILE",
+    "CODE",
+    "AI",
+    "MESSAGING",
+    "CLOUD",
+    "CONTROL",
+    "INTEGRATION",
+    "HUMAN"
+  ],
   "high_risk_capabilities": [
     "SHELL_EXECUTION",
     "CODE_EXECUTION",
@@ -94,8 +105,17 @@
       "estate_id": "DIAL_N8N_DEV",
       "environment": "DEV",
       "prod_credentials_permitted": false,
-      "denied_capabilities": ["SHELL_EXECUTION", "SSH"],
-      "approval_required_capabilities": ["CODE_EXECUTION", "FILESYSTEM", "DATABASE", "AI_AGENT", "MCP_CLIENT"],
+      "denied_capabilities": [
+        "SHELL_EXECUTION",
+        "SSH"
+      ],
+      "approval_required_capabilities": [
+        "CODE_EXECUTION",
+        "FILESYSTEM",
+        "DATABASE",
+        "AI_AGENT",
+        "MCP_CLIENT"
+      ],
       "outbound_network_default": "ALLOWLIST",
       "execution_retention_days": 14
     },
@@ -103,8 +123,18 @@
       "estate_id": "DIAL_N8N_PROD",
       "environment": "PROD",
       "prod_credentials_permitted": true,
-      "denied_capabilities": ["SHELL_EXECUTION", "SSH", "CODE_EXECUTION", "FILESYSTEM", "MCP_CLIENT"],
-      "approval_required_capabilities": ["DATABASE", "AI_AGENT", "HTTP_CALL"],
+      "denied_capabilities": [
+        "SHELL_EXECUTION",
+        "SSH",
+        "CODE_EXECUTION",
+        "FILESYSTEM",
+        "MCP_CLIENT"
+      ],
+      "approval_required_capabilities": [
+        "DATABASE",
+        "AI_AGENT",
+        "HTTP_CALL"
+      ],
       "outbound_network_default": "DENY",
       "execution_retention_days": 90
     }
@@ -125,23 +155,71 @@
   "event_contract": {
     "envelope_version": 1,
     "required_fields": [
-      "event_id", "event_type", "event_version", "occurred_at", "producer",
-      "aggregate_type", "aggregate_id", "correlation_id", "data_class", "payload", "signature"
+      "event_id",
+      "event_type",
+      "event_version",
+      "occurred_at",
+      "producer",
+      "aggregate_type",
+      "aggregate_id",
+      "correlation_id",
+      "data_class",
+      "payload",
+      "signature"
     ],
-    "data_classes": ["BUSINESS", "OPERATIONAL", "DEVELOPMENT", "HEALTH_SENSITIVE"],
-    "data_classes_denied_in_workflows": ["HEALTH_SENSITIVE"],
+    "data_classes": [
+      "BUSINESS",
+      "OPERATIONAL",
+      "DEVELOPMENT",
+      "HEALTH_SENSITIVE"
+    ],
+    "data_classes_denied_in_workflows": [
+      "HEALTH_SENSITIVE"
+    ],
     "signature_algorithm": "HMAC_SHA256",
     "replay_window_seconds": 900
   },
   "retry_classes": {
-    "TRANSIENT": { "retryable": true, "max_attempts": 5, "backoff": "EXPONENTIAL" },
-    "RATE_LIMIT": { "retryable": true, "max_attempts": 8, "backoff": "EXPONENTIAL_WITH_JITTER" },
-    "AUTH_EXPIRED": { "retryable": true, "max_attempts": 2, "backoff": "IMMEDIATE_AFTER_REFRESH" },
-    "DEPENDENCY_UNAVAILABLE": { "retryable": true, "max_attempts": 5, "backoff": "EXPONENTIAL" },
-    "VALIDATION_FAILURE": { "retryable": false, "max_attempts": 0, "backoff": "NONE" },
-    "POLICY_DENIED": { "retryable": false, "max_attempts": 0, "backoff": "NONE" },
-    "PERMANENT_BUSINESS_FAILURE": { "retryable": false, "max_attempts": 0, "backoff": "NONE" },
-    "UNKNOWN": { "retryable": false, "max_attempts": 0, "backoff": "NONE" }
+    "TRANSIENT": {
+      "retryable": true,
+      "max_attempts": 5,
+      "backoff": "EXPONENTIAL"
+    },
+    "RATE_LIMIT": {
+      "retryable": true,
+      "max_attempts": 8,
+      "backoff": "EXPONENTIAL_WITH_JITTER"
+    },
+    "AUTH_EXPIRED": {
+      "retryable": true,
+      "max_attempts": 2,
+      "backoff": "IMMEDIATE_AFTER_REFRESH"
+    },
+    "DEPENDENCY_UNAVAILABLE": {
+      "retryable": true,
+      "max_attempts": 5,
+      "backoff": "EXPONENTIAL"
+    },
+    "VALIDATION_FAILURE": {
+      "retryable": false,
+      "max_attempts": 0,
+      "backoff": "NONE"
+    },
+    "POLICY_DENIED": {
+      "retryable": false,
+      "max_attempts": 0,
+      "backoff": "NONE"
+    },
+    "PERMANENT_BUSINESS_FAILURE": {
+      "retryable": false,
+      "max_attempts": 0,
+      "backoff": "NONE"
+    },
+    "UNKNOWN": {
+      "retryable": false,
+      "max_attempts": 0,
+      "backoff": "NONE"
+    }
   },
   "never_retry": [
     "INVALID_PAYMENT_OPERATION",
@@ -151,8 +229,17 @@
   ],
   "dead_letter": {
     "required_fields": [
-      "execution_id", "workflow_id", "workflow_version", "triggering_event_id", "failure_class",
-      "retry_count", "last_error", "correlation_id", "affected_aggregate", "business_state_mutated", "recommended_operator_action"
+      "execution_id",
+      "workflow_id",
+      "workflow_version",
+      "triggering_event_id",
+      "failure_class",
+      "retry_count",
+      "last_error",
+      "correlation_id",
+      "affected_aggregate",
+      "business_state_mutated",
+      "recommended_operator_action"
     ],
     "prod_alert_required": true
   },
@@ -210,11 +297,51 @@
     "HERMES_NOTIFICATION"
   ],
   "production_pilots": [
-    { "pilot_id": "SPARE_SUPPLIER_AVAILABILITY_NOTIFICATION", "product": "DIAL_A_SPARE", "authority_risk": "LOW" },
-    { "pilot_id": "TECH_APPOINTMENT_NOTIFICATION", "product": "DIAL_A_TECH", "authority_risk": "LOW" },
-    { "pilot_id": "GROCERIES_ROUND_REMINDER", "product": "DIAL_GROCERIES", "authority_risk": "LOW" },
-    { "pilot_id": "LOGISTICS_DELIVERY_STATUS_NOTIFICATION", "product": "DIAL_LOGISTICS", "authority_risk": "LOW" },
-    { "pilot_id": "CARE_SERVICE_DUE_REMINDER", "product": "DIAL_CARE", "authority_risk": "LOW" }
+    {
+      "pilot_id": "SPARE_SUPPLIER_AVAILABILITY_NOTIFICATION",
+      "product": "DIAL_A_SPARE",
+      "authority_risk": "LOW"
+    },
+    {
+      "pilot_id": "TECH_APPOINTMENT_NOTIFICATION",
+      "product": "DIAL_A_TECH",
+      "authority_risk": "LOW"
+    },
+    {
+      "pilot_id": "GROCERIES_ROUND_REMINDER",
+      "product": "DIAL_GROCERIES",
+      "authority_risk": "LOW"
+    },
+    {
+      "pilot_id": "LOGISTICS_DELIVERY_STATUS_NOTIFICATION",
+      "product": "DIAL_LOGISTICS",
+      "authority_risk": "LOW"
+    },
+    {
+      "pilot_id": "CARE_SERVICE_DUE_REMINDER",
+      "product": "DIAL_CARE",
+      "authority_risk": "LOW"
+    }
   ],
-  "money_sensitive_workflows_deferred": true
+  "money_sensitive_workflows_deferred": true,
+  "tenancy": {
+    "expected_owner": "DIAL",
+    "expected_tenant_id": "DIAL",
+    "third_party_state_sharing_forbidden": true,
+    "required_descriptor_fields": [
+      "tenant_id",
+      "estate_owner",
+      "database_host",
+      "database"
+    ],
+    "third_party_isolation_fields": [
+      "database_identity",
+      "encryption_key_id",
+      "credential_store",
+      "service_account",
+      "role_binding",
+      "backup_target",
+      "audit_stream"
+    ]
+  }
 }

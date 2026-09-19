@@ -7,6 +7,7 @@ import {
   runUnionAlphaResearchBatch,
   sanitizeUnionAlphaProviderPacket,
   validateUnionAlphaResult,
+  gatherPublicEvidence,
 } from '../openrouter/union-alpha-research-adapter.mjs';
 import { DEFAULT_CONTROL_HOME, readJson, writeJsonAtomic, appendJsonl } from '../../state-store.mjs';
 
@@ -29,9 +30,13 @@ function approvedKey(root, env = process.env) {
   if (!key && env.GROQ_API_KEY_FILE) {
     const secrets = path.resolve(root, 'secrets');
     const target = path.resolve(env.GROQ_API_KEY_FILE);
-    if (!target.startsWith(`${secrets}${path.sep}`)) return { approved: false, reason: 'CREDENTIAL_FILE_OUTSIDE_CONTROL_SECRETS', approval: null, key: null };
+    const controlSecret = target.startsWith(`${secrets}${path.sep}`);
+    const workerLocalSecret = env.DIAL_HOST_ROLE === 'vekl-worker' &&
+      approval.credential_reference === 'worker-local-groq-key' &&
+      target === '/var/lib/dial-worker/secrets/groq-api.key';
+    if (!controlSecret && !workerLocalSecret) return { approved: false, reason: 'CREDENTIAL_FILE_OUTSIDE_APPROVED_SECRET_BOUNDARY', approval: null, key: null };
     key = fs.readFileSync(target, 'utf8').trim();
-    source = 'control_key_file';
+    source = workerLocalSecret ? 'vekl_worker_local_key_file' : 'control_key_file';
   }
   if (!key) return { approved: false, reason: 'APPROVED_CREDENTIAL_NOT_CONFIGURED', approval: null, key: null };
   return { approved: true, reason: null, approval, key, source };
@@ -48,7 +53,15 @@ export function researchProviderStatus({ root = DEFAULT_CONTROL_HOME, env = proc
   };
 }
 
-function prompt(packet) {
+function normalizeOpenWorldEvidence(evidence) {
+  const official = (evidence?.official || []).map((row) => ({ ref: row.url, ...row }));
+  const exa = (evidence?.exa || []).map((row) => ({ ref: 'exa:' + sha({ query: row.query, result: row.result }).slice(0, 24), ...row }));
+  const context7 = (evidence?.context7 || []).map((row) => ({ ref: 'context7:' + sha({ library_id: row.library_id, excerpt: row.excerpt }).slice(0, 24), ...row }));
+  const refs = [...official, ...exa, ...context7].map((row) => row.ref);
+  return { official, exa, context7, retrieval_errors: evidence?.retrieval_errors || [], refs };
+}
+
+function prompt(packet, openWorldEvidence = null) {
   const roles = Object.fromEntries(UNION_ALPHA_ROLES.map((role) => [role, { findings: [], risks: [], recommendations: [], unknowns: [] }]));
   return [
     'DIAL public engineering research. You are subordinate evidence, never product or architecture authority.',
@@ -56,9 +69,14 @@ function prompt(packet) {
     'For open-world discovery report provenance, exact version/revision, freshness, contradictions, and candidate sources; discovery and trial never confer authority.',
     'For guided frontend work assess EXPLORE, CONVERGE, and RECONSTRUCT separately; preserve semantic invariants, apply declared freedom budgets, and provide evidence for all mandatory critics.',
     'For n8n distinguish the non-executable VEKL corpus from DEV and PROD runtimes; assess node provenance, secret/egress/database controls, event integrity, idempotency, and estate isolation.',
-    'Do not invent citations or claim research was performed when evidence is absent. Return JSON only in this shape:',
+    'Do not invent citations or claim research was performed when evidence is absent. Every finding source_refs entry must be one of the supplied source_hint ids/URLs or an open_world_evidence ref.',
+    'Treat Exa as discovery/corroboration unless its result points to an authoritative source. Context7 is documentation evidence, not product authority. Preserve contradictions rather than averaging them away.',
+    'Return JSON only in this shape:',
     JSON.stringify({ schema_version: 1, batch_id: packet.batch_id, subjects: [{ subject_id: 'supplied subject_id', roles, cross_role_synthesis: { implementation_patterns: [], anti_patterns: [], verification_focus: [], unresolved_contradictions: [] } }], batch_contradictions: [] }),
+    '--- SANITIZED PACKET ---',
     JSON.stringify(packet),
+    '--- OPEN WORLD EVIDENCE ---',
+    JSON.stringify(openWorldEvidence),
   ].join('\n');
 }
 
@@ -77,17 +95,19 @@ export async function runResearchBatch({ batch, bindings = [], repoDir, root = D
   if (!credential.approved) throw Object.assign(new Error(`GROQ_${credential.reason}`), { category: 'AUTH_REQUIRED' });
   const packet = sanitizeUnionAlphaProviderPacket(batch);
   const packetHash = sha(packet);
+  const retrieved = await gatherPublicEvidence(packet, { repoDir, fetchImpl });
+  const openWorldEvidence = normalizeOpenWorldEvidence(retrieved);
   const artifactRel = `knowledge/research/provider-neutral/artifacts/${packet.mission_id}/${packet.batch_id}.json`;
   const existing = readJson(artifactRel, null, root);
   if (existing?.provider_packet_hash === packetHash && existing?.evidence_hash) return { ...existing, idempotent_replay: true };
-  const response = await fetchImpl(GROQ_URL, { method: 'POST', headers: { authorization: `Bearer ${credential.key}`, 'content-type': 'application/json' }, body: JSON.stringify({ model: GROQ_RESEARCH_MODEL_ID, messages: [{ role: 'system', content: 'Return valid JSON only.' }, { role: 'user', content: prompt(packet) }], response_format: { type: 'json_object' }, temperature: 0.15 }) });
+  const response = await fetchImpl(GROQ_URL, { method: 'POST', headers: { authorization: `Bearer ${credential.key}`, 'content-type': 'application/json' }, body: JSON.stringify({ model: GROQ_RESEARCH_MODEL_ID, messages: [{ role: 'system', content: 'Return valid JSON only.' }, { role: 'user', content: prompt(packet, openWorldEvidence) }], response_format: { type: 'json_object' }, temperature: 0.15 }) });
   const raw = await response.text();
   if (!response.ok) throw Object.assign(new Error(`GROQ_HTTP_${response.status}`), { category: [401, 403].includes(response.status) ? 'AUTH_REQUIRED' : response.status === 429 ? 'CAPACITY_LIMITED' : 'PROVIDER_ERROR', detail: bounded(raw) });
   const payload = JSON.parse(raw);
   const result = extractJson(payload?.choices?.[0]?.message?.content);
-  const check = validateUnionAlphaResult(result, packet);
+  const check = validateUnionAlphaResult(result, packet, openWorldEvidence.refs);
   if (!check.ok) throw Object.assign(new Error(`RESEARCH_RESULT_REJECTED:${check.reason}`), { category: 'INVALID_OUTPUT' });
-  const record = { schema_version: 1, authority: 'NON_AUTHORITATIVE_ENGINEERING_GUIDANCE', provider: 'groq', model_id: GROQ_RESEARCH_MODEL_ID, data_class: UNION_ALPHA_DATA_CLASS, provider_packet_hash: packetHash, mission_id: packet.mission_id, batch_id: packet.batch_id, batch_kind: packet.batch_kind, subject_bindings: bindings, request_hash: sha({ model: GROQ_RESEARCH_MODEL_ID, packet }), response_hash: sha(raw), result, usage: payload?.usage || null, credential_approval: { credential_reference: credential.approval.credential_reference, approval_id: credential.approval.approval_id || null }, completed_at: now() };
+  const record = { schema_version: 1, authority: 'NON_AUTHORITATIVE_ENGINEERING_GUIDANCE', provider: 'groq', model_id: GROQ_RESEARCH_MODEL_ID, data_class: UNION_ALPHA_DATA_CLASS, provider_packet_hash: packetHash, mission_id: packet.mission_id, batch_id: packet.batch_id, batch_kind: packet.batch_kind, subject_bindings: bindings, open_world_evidence: openWorldEvidence, open_world_evidence_hash: sha(openWorldEvidence), request_hash: sha({ model: GROQ_RESEARCH_MODEL_ID, packet, open_world_evidence_hash: sha(openWorldEvidence) }), response_hash: sha(raw), result, usage: payload?.usage || null, credential_approval: { credential_reference: credential.approval.credential_reference, approval_id: credential.approval.approval_id || null }, completed_at: now() };
   record.evidence_hash = sha(record);
   writeJsonAtomic(artifactRel, record, root);
   appendJsonl('events/engineering-research.jsonl', { event: 'RESEARCH_BATCH_COMPLETED', provider: 'groq', mission_id: packet.mission_id, batch_id: packet.batch_id, evidence_hash: record.evidence_hash, at: record.completed_at }, root);

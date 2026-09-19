@@ -4,7 +4,7 @@ import { researchToolDefinitions } from '../agent-system/mcp/dial-research-serve
 import { VeklPostgresResearchStore, VEKL_RESEARCH_FIXED_SQL } from '../agent-system/orchestration/vekl-research-postgres-store.mjs';
 
 const roles = Array.from({ length: 18 }, (_, i) => `ROLE_${i + 1}`);
-const packet = () => ({ unit_lineage_id: 'DU-001', unit_revision_hash: 'a'.repeat(64), feature_ids: ['F-1'], research_roles: roles, questions: ['current evidence?'], discovery_workload: { mode: 'OPEN_WORLD_BOUNDED' }, repository_sha: 'b'.repeat(40), project_truth_hash: 'c'.repeat(64) });
+const packet = () => ({ unit_lineage_id: 'DU-001', unit_revision_hash: 'a'.repeat(64), feature_ids: ['F-1'], research_roles: roles, research_dimensions: ['OFFICIAL_DOCUMENTATION'], questions: ['current evidence?'], discovery_workload: { mode: 'OPEN_WORLD_BOUNDED' }, guided_frontend_context: { applicable: false }, n8n_architecture_context: { applicable: false }, repository_sha: 'b'.repeat(40), project_truth_hash: 'c'.repeat(64), project_truth_fingerprint: 'd'.repeat(64), graph_generation_id: 'KG-test', graph_revision_hash: 'e'.repeat(64), contract_bindings: [{ contract_id: 'FRC:F-1', fingerprint: 'f'.repeat(64) }] });
 
 class Store {
   constructor() { this.requests = new Map(); this.lease = null; this.evidence = []; }
@@ -51,7 +51,7 @@ describe('server-side ChatGPT developer-mode research loop', () => {
     await expect(loop.invoke('fetch', { request_id: 'request-fetch-2', worker_id: 'chatgpt-dev', lease_id: 'lease-1' })).rejects.toThrow('LEASE_EXPIRED');
     await expect(loop.invoke('search', { request_id: 'request-search-1', worker_id: 'chatgpt-dev', lease_id: 'lease-1', sql: 'select 1' })).rejects.toThrow('ARBITRARY_SQL_PROHIBITED');
     await expect(loop.invoke('retry', { request_id: 'request-retry-1', worker_id: 'chatgpt-dev', lease_id: 'lease-1', project_truth_patch: {} })).rejects.toThrow('PROJECT_TRUTH_MUTATION_PROHIBITED');
-    expect(() => new VeklPostgresResearchStore({ client: {}, hostRole: 'hermes', databaseRole: 'AUTHORITATIVE_VEKL' })).toThrow('VEKL_POSTGRES_MUST_RUN_ON_VEKL_WORKER');
+    expect(() => new VeklPostgresResearchStore({ client: {}, databaseHostRole: 'hermes', databaseRole: 'AUTHORITATIVE_VEKL' })).toThrow('VEKL_POSTGRES_DATABASE_MUST_BE_ON_VEKL_WORKER');
     expect(Object.values(VEKL_RESEARCH_FIXED_SQL).every((sql) => /\$1/.test(sql))).toBe(true);
   });
 });

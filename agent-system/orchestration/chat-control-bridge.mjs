@@ -25,6 +25,8 @@ import { engineeringKnowledgeStatus } from './engineering-knowledge-broker.mjs';
 import { engineeringResearchStatus } from './engineering-presearch.mjs';
 import { unionAlphaResearchStatus } from './providers/openrouter/union-alpha-research-adapter.mjs';
 import { researchProviderStatus, runResearchBatch } from './providers/research/research-provider-router.mjs';
+import { VeklResearchLoop } from './vekl-research-loop.mjs';
+import { createVeklResearchStore } from './vekl-research-db-client.mjs';
 import {
   finalizeUnionAlphaResearchMission,
 } from './vekl-research-harvest.mjs';
@@ -33,6 +35,7 @@ import { ownerInstructionProvenance } from './project-truth-authority.mjs';
 import { supersedeActiveExecutionTasks } from './task-execution-envelope.mjs';
 import { executeOwnerLiveTurn } from './owner-live-control.mjs';
 import { ownerSteeringStatus, submitOwnerSteer } from './owner-steering-broker.mjs';
+import { researchToolDefinitions } from '../mcp/dial-research-server.mjs';
 
 export const CHAT_CONTROL_AUTHORITY = 'DIAL_OPERATOR_CONTROL_SURFACE_ONLY';
 export const OPERATOR_CHANNELS = Object.freeze(['claude', 'codex', 'whatsapp', 'local_cli', 'unknown']);
@@ -41,6 +44,24 @@ const DEFAULT_HOST = process.env.DIAL_CHAT_CONTROL_HOST || '127.0.0.1';
 const DEFAULT_PORT = Number(process.env.DIAL_CHAT_CONTROL_PORT || 9130);
 const WRITE_TOOLS = new Set(['dial_submit_instruction', 'dial_owner_steer', 'dial_owner_live_turn', 'dial_pause_mission', 'dial_resume_mission', 'dial_reprioritize', 'dial_approve_gate', 'dial_reject_gate']);
 const OWNER_AUTHORITY_CHANNELS = new Set(['claude', 'codex', 'whatsapp']);
+const RESEARCH_LOOP_TOOL_ACTIONS = Object.freeze({
+  dial_research_claim_unit: 'claim',
+  dial_research_fetch_unit: 'fetch',
+  dial_research_record_search: 'search',
+  dial_research_record_read: 'fetch-read',
+  dial_research_submit_analysis: 'submit-analysis',
+  dial_research_submit_deeper_evidence: 'submit-deeper-evidence',
+  dial_research_complete_unit: 'complete',
+  dial_research_retry_unit: 'retry',
+  dial_research_refuse_unit: 'refuse',
+});
+let researchLoopRuntime = null;
+function getResearchLoopRuntime() {
+  if (researchLoopRuntime) return researchLoopRuntime;
+  const { pool, store } = createVeklResearchStore();
+  researchLoopRuntime = { pool, loop: new VeklResearchLoop({ store }) };
+  return researchLoopRuntime;
+}
 const EVENT_FILES = [
   'events/mission-control.jsonl',
   'events/external-orchestrator.jsonl',
@@ -55,7 +76,6 @@ const EVENT_FILES = [
   'events/owner-steering.jsonl',
   'events/engineering-research.jsonl',
 ];
-
 function now() { return new Date().toISOString(); }
 function clean(value, max = 8000) { return String(value ?? '').trim().slice(0, max); }
 function sha(value) { return crypto.createHash('sha256').update(String(value ?? '')).digest('hex'); }
@@ -246,8 +266,24 @@ const REQUIRED_ARGS = Object.freeze({
   dial_research_harvest_finalize: ['mission_id'],
   dial_union_alpha_research_batch: ['batch'],
   dial_union_alpha_research_finalize: ['mission_id'],
+  dial_research_claim_unit: ['request_id', 'worker_id'],
+  dial_research_fetch_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_record_search: ['request_id', 'worker_id', 'lease_id', 'search_query'],
+  dial_research_record_read: ['request_id', 'worker_id', 'lease_id', 'url', 'content_hash'],
+  dial_research_submit_analysis: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  dial_research_submit_deeper_evidence: ['request_id', 'worker_id', 'lease_id', 'claims', 'sources'],
+  dial_research_complete_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_retry_unit: ['request_id', 'worker_id', 'lease_id'],
+  dial_research_refuse_unit: ['request_id', 'worker_id', 'lease_id', 'reason'],
 });
-export const CHAT_CONTROL_TOOLS = TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } }));
+export const CHAT_CONTROL_TOOLS = Object.freeze([
+  ...TOOL_DEFS.map(([name, description, properties]) => ({ name, description, inputSchema: { type: 'object', properties, additionalProperties: false, required: REQUIRED_ARGS[name] || [] } })),
+  ...researchToolDefinitions().map((definition) => {
+    const action = definition.name.slice('dial_research_'.length).replaceAll('_', '-');
+    const alias = Object.entries(RESEARCH_LOOP_TOOL_ACTIONS).find(([, value]) => value === action)?.[0];
+    return { ...definition, name: alias || definition.name };
+  }),
+]);
 
 export async function callChatControlTool(name, args = {}, root, operator = {}) {
   const project = ensureDialOnly(root); ensureDialMission({ root, repoDir: project.repo_dir });
@@ -319,6 +355,10 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
       missionId: clean(args.mission_id, 160),
     });
   }
+  else if (Object.hasOwn(RESEARCH_LOOP_TOOL_ACTIONS, name)) {
+    const runtime = getResearchLoopRuntime();
+    result = await runtime.loop.invoke(RESEARCH_LOOP_TOOL_ACTIONS[name], args);
+  }
   else if (name === 'dial_runtime_capacity_status') result = runtimeCapacityStatus({ repoDir: project.repo_dir, root });
   else if (name === 'dial_operator_channels') result = {
     authority: CHAT_CONTROL_AUTHORITY, project: 'dial',
@@ -329,6 +369,11 @@ export async function callChatControlTool(name, args = {}, root, operator = {}) 
     owner_live: readJson('state/owner-live-interrupt.json', { state: 'IDLE' }, root),
     operator_surface: { tools: CHAT_CONTROL_TOOLS.length, arbitrary_shell: false, channels: OPERATOR_CHANNELS.filter((item) => item !== 'unknown') },
   };
+  else if (name.startsWith('dial_research_') && !name.startsWith('dial_research_harvest_')) {
+    const runtime = getResearchLoopRuntime();
+    const action = RESEARCH_LOOP_TOOL_ACTIONS[name] || name.slice('dial_research_'.length).replaceAll('_', '-');
+    result = await runtime.loop.invoke(action, args);
+  }
   else throw new Error(`unknown DIAL chat-control tool: ${name}`);
   saveIdempotentResult(name, args, result, root);
   auditTool(root, name, args, result, operatorContext);

@@ -352,7 +352,7 @@ function context7Query({ repoDir, technology, query }) {
   };
 }
 
-async function gatherPublicEvidence(packet, { repoDir, fetchImpl = fetch } = {}) {
+export async function gatherPublicEvidence(packet, { repoDir, fetchImpl = fetch } = {}) {
   const evidence = {
     official: [],
     exa: [],
@@ -443,14 +443,14 @@ function promptFor(packet, evidence) {
   ].join('\n');
 }
 
-export function validateUnionAlphaResult(result, packet) {
+export function validateUnionAlphaResult(result, packet, extraSourceRefs = []) {
   if (!result || result.schema_version !== 1 ||
       result.batch_id !== packet.batch_id ||
       !Array.isArray(result.subjects)) {
     return { ok: false, reason: 'RESULT_SHAPE_INVALID' };
   }
   const expected = new Set(packet.subjects.map((subject) => subject.subject_id));
-  const sourceRefs = new Set(packet.subjects.flatMap((subject) => (subject.source_hints || []).flatMap((hint) => [hint.source_id, hint.url].filter(Boolean))));
+  const sourceRefs = new Set([...packet.subjects.flatMap((subject) => (subject.source_hints || []).flatMap((hint) => [hint.source_id, hint.url].filter(Boolean))), ...(extraSourceRefs || [])]);
   const seen = new Set();
   for (const subject of result.subjects) {
     if (!expected.has(subject?.subject_id) || seen.has(subject.subject_id)) {

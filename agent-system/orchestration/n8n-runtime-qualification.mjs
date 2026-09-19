@@ -201,14 +201,14 @@ export function qualifyN8nRuntime({ estate = 'DEV', deploymentDescriptorRel = nu
     // ── estate isolation ────────────────────────────────────────────────────
     const isolated = assertEstateIsolation({
       policy,
-      dev: { database: 'n8n_dev', encryption_key_id: 'key-dev', credential_store: 'store-dev', webhook_domain: 'hooks-dev.dial.local', service_account: 'sa-dev', network_policy: 'np-dev', role_binding: 'rb-dev', backup_target: 'bk-dev', audit_stream: 'audit-dev', promotion_path: 'dev->prod', execution_retention_days: 14, credential_ids: ['dev-smtp'], has_production_credentials: false },
-      prod: { database: 'n8n_prod', encryption_key_id: 'key-prod', credential_store: 'store-prod', webhook_domain: 'hooks.dial.local', service_account: 'sa-prod', network_policy: 'np-prod', role_binding: 'rb-prod', backup_target: 'bk-prod', audit_stream: 'audit-prod', promotion_path: 'release-import', execution_retention_days: 90, credential_ids: ['prod-smtp'] },
+      dev: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n_dev', encryption_key_id: 'key-dev', credential_store: 'store-dev', webhook_domain: 'hooks-dev.dial.local', service_account: 'sa-dev', network_policy: 'np-dev', role_binding: 'rb-dev', backup_target: 'bk-dev', audit_stream: 'audit-dev', promotion_path: 'dev->prod', execution_retention_days: 14, credential_ids: ['dev-smtp'], has_production_credentials: false },
+      prod: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n_prod', encryption_key_id: 'key-prod', credential_store: 'store-prod', webhook_domain: 'hooks.dial.local', service_account: 'sa-prod', network_policy: 'np-prod', role_binding: 'rb-prod', backup_target: 'bk-prod', audit_stream: 'audit-prod', promotion_path: 'release-import', execution_retention_days: 90, credential_ids: ['prod-smtp'] },
     });
     gate('N8N-RT-G35', isolated.ok, isolated.ok ? 'a correctly separated pair of estates passes isolation' : isolated.failures.join('; '));
     const shared = assertEstateIsolation({
       policy,
-      dev: { database: 'n8n', encryption_key_id: 'key', credential_store: 'store', webhook_domain: 'h', service_account: 'sa', network_policy: 'np', role_binding: 'rb', backup_target: 'bk', audit_stream: 'a', promotion_path: 'p', execution_retention_days: 14, credential_ids: ['prod-smtp'], has_production_credentials: true },
-      prod: { database: 'n8n', encryption_key_id: 'key', credential_store: 'store', webhook_domain: 'h', service_account: 'sa', network_policy: 'np', role_binding: 'rb', backup_target: 'bk', audit_stream: 'a', promotion_path: 'p', execution_retention_days: 14, credential_ids: ['prod-smtp'] },
+      dev: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n', encryption_key_id: 'key', credential_store: 'store', webhook_domain: 'h', service_account: 'sa', network_policy: 'np', role_binding: 'rb', backup_target: 'bk', audit_stream: 'a', promotion_path: 'p', execution_retention_days: 14, credential_ids: ['prod-smtp'], has_production_credentials: true },
+      prod: { tenant_id: 'DIAL', estate_owner: 'DIAL', database_host: 'vekl-worker', database: 'n8n', encryption_key_id: 'key', credential_store: 'store', webhook_domain: 'h', service_account: 'sa', network_policy: 'np', role_binding: 'rb', backup_target: 'bk', audit_stream: 'a', promotion_path: 'p', execution_retention_days: 14, credential_ids: ['prod-smtp'] },
     });
     gate('N8N-RT-G36', shared.ok === false
       && shared.failures.includes('DEV_HOLDS_PRODUCTION_CREDENTIALS')
@@ -229,7 +229,7 @@ export function qualifyN8nRuntime({ estate = 'DEV', deploymentDescriptorRel = nu
       && (policy.production_pilots || []).every((p) => p.authority_risk === 'LOW'),
       'pilots start with low-authority-risk workflows, not money flows');
 
-    gate('N8N-RT-G41', exists('deploy/n8n/dev/docker-compose.yml') && exists('deploy/n8n/prod/docker-compose.yml') && exists('deploy/n8n/shared/README.md'),
+    gate('N8N-RT-G41', exists('deploy/n8n/dev/docker-compose.yml') && exists('deploy/n8n/dev/install-hermes-dev.sh') && exists('deploy/n8n/prod/docker-compose.yml') && exists('deploy/n8n/shared/README.md'),
       'deployment descriptors exist for both estates');
     gate('N8N-RT-G42', exists('tests/orchestration-n8n-runtime.test.mjs'), 'negative-test suite present');
 

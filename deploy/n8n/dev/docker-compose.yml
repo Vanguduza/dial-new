@@ -1,73 +1,120 @@
-# DIAL_N8N_DEV — development workflow runtime.
-#
-# Isolated from DIAL_N8N_PROD by construction: its own database, its own
-# encryption key, its own credential store, its own webhook host, its own
-# network and its own backups. Production credentials never reach this estate.
-#
-# The image tag is pinned. `:latest` would mean the qualified control surface
-# and the running one drift apart silently on the next pull.
-services:
-  n8n-dev-db:
-    image: postgres:16.4-alpine
-    container_name: dial-n8n-dev-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${N8N_DEV_DB_NAME:?set in the environment file}
-      POSTGRES_USER: ${N8N_DEV_DB_USER:?set in the environment file}
-      POSTGRES_PASSWORD: ${N8N_DEV_DB_PASSWORD:?set in the environment file}
-    volumes:
-      - n8n-dev-db:/var/lib/postgresql/data
-    networks: [n8n-dev]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${N8N_DEV_DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+name: dial-n8n-dev
 
+services:
   n8n-dev:
-    image: n8nio/n8n:1.62.1
+    image: docker.n8n.io/n8nio/n8n:2.39.7
     container_name: dial-n8n-dev
     restart: unless-stopped
-    depends_on:
-      n8n-dev-db:
-        condition: service_healthy
+    network_mode: host
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export DB_POSTGRESDB_PASSWORD="$$(cat /run/secrets/db_password)"
+        export N8N_ENCRYPTION_KEY="$$(cat /run/secrets/encryption_key)"
+        export N8N_RUNNERS_AUTH_TOKEN="$$(cat /run/secrets/runner_auth_token)"
+        exec /sbin/tini -- /docker-entrypoint.sh
     environment:
-      N8N_ENCRYPTION_KEY: ${N8N_DEV_ENCRYPTION_KEY:?set in the environment file}
       DB_TYPE: postgresdb
-      DB_POSTGRESDB_HOST: n8n-dev-db
-      DB_POSTGRESDB_DATABASE: ${N8N_DEV_DB_NAME}
-      DB_POSTGRESDB_USER: ${N8N_DEV_DB_USER}
-      DB_POSTGRESDB_PASSWORD: ${N8N_DEV_DB_PASSWORD}
-      N8N_HOST: ${N8N_DEV_HOST:?set in the environment file}
-      N8N_PROTOCOL: https
-      WEBHOOK_URL: ${N8N_DEV_WEBHOOK_URL:?set in the environment file}
-      N8N_EDITOR_BASE_URL: ${N8N_DEV_WEBHOOK_URL}
-      N8N_BASIC_AUTH_ACTIVE: "true"
-      N8N_BASIC_AUTH_USER: ${N8N_DEV_ADMIN_USER:?set in the environment file}
-      N8N_BASIC_AUTH_PASSWORD: ${N8N_DEV_ADMIN_PASSWORD:?set in the environment file}
+      DB_POSTGRESDB_HOST: 127.0.0.1
+      DB_POSTGRESDB_PORT: "${N8N_DEV_DB_TUNNEL_PORT:-15432}"
+      DB_POSTGRESDB_DATABASE: dial_n8n_dev
+      DB_POSTGRESDB_USER: dial_n8n_dev
+      N8N_RUNNERS_MODE: external
+      N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 127.0.0.1
+      N8N_HOST: 127.0.0.1
+      N8N_PORT: "5678"
+      N8N_LISTEN_ADDRESS: 127.0.0.1
+      N8N_PROTOCOL: http
+      N8N_EDITOR_BASE_URL: http://127.0.0.1:5678/
+      WEBHOOK_URL: "${N8N_DEV_WEBHOOK_URL:-http://127.0.0.1:5678/}"
+      GENERIC_TIMEZONE: "${DIAL_TIMEZONE:-Africa/Harare}"
+      TZ: "${DIAL_TIMEZONE:-Africa/Harare}"
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "336"
+      EXECUTIONS_DATA_PRUNE_MAX_COUNT: "10000"
+      EXECUTIONS_TIMEOUT: "900"
+      EXECUTIONS_TIMEOUT_MAX: "3600"
+      N8N_CONCURRENCY_PRODUCTION_LIMIT: "${N8N_DEV_CONCURRENCY_LIMIT:-1}"
+      N8N_LOG_LEVEL: info
+      N8N_LOG_OUTPUT: console
+      N8N_METRICS: "true"
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
       N8N_TEMPLATES_ENABLED: "false"
-      EXECUTIONS_DATA_PRUNE: "true"
-      EXECUTIONS_DATA_MAX_AGE: "336"
-      N8N_LOG_LEVEL: info
-      GENERIC_TIMEZONE: ${DIAL_TIMEZONE:-Africa/Harare}
-      # Community nodes are not installable at runtime: a node that has not been
-      # through corpus qualification is not eligible in either estate.
+      N8N_PERSONALIZATION_ENABLED: "false"
       N8N_COMMUNITY_PACKAGES_ENABLED: "false"
+      N8N_UNVERIFIED_PACKAGES_ENABLED: "false"
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "true"
+      N8N_BLOCK_FILE_ACCESS_TO_N8N_FILES: "true"
+      N8N_RESTRICT_FILE_ACCESS_TO: /files
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_GIT_NODE_DISABLE_BARE_REPOS: "true"
+      N8N_GIT_NODE_ENABLE_HOOKS: "false"
+      N8N_SSRF_PROTECTION_ENABLED: "true"
+      N8N_SSRF_BLOCKED_IP_RANGES: default,100.64.0.0/10
+      NODES_EXCLUDE: '["n8n-nodes-base.executeCommand","n8n-nodes-base.ssh"]'
+    secrets:
+      - db_password
+      - encryption_key
+      - runner_auth_token
     volumes:
-      - n8n-dev-data:/home/node/.n8n
-    networks: [n8n-dev, n8n-dev-egress]
-    # The management surface stays on the operator network; it is not published
-    # to the host.
-    expose: ["5678"]
+      - n8n-dev-state:/home/node/.n8n
+      - n8n-dev-transient:/files
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5678/healthz >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 45s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: "${N8N_DEV_MEMORY_LIMIT:-1536m}"
+    cpus: "${N8N_DEV_CPU_LIMIT:-0.75}"
+    pids_limit: 256
+
+  n8n-dev-runner:
+    image: n8nio/runners:2.39.7
+    container_name: dial-n8n-dev-runner
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      n8n-dev:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export N8N_RUNNERS_AUTH_TOKEN="$$(cat /run/secrets/runner_auth_token)"
+        exec tini -- /usr/local/bin/task-runner-launcher javascript python
+    environment:
+      N8N_RUNNERS_TASK_BROKER_URI: http://127.0.0.1:5679
+      N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: "15"
+      N8N_RUNNERS_MAX_CONCURRENCY: "${N8N_DEV_RUNNER_CONCURRENCY:-1}"
+      N8N_RUNNERS_LAUNCHER_LOG_LEVEL: info
+      NO_COLOR: "1"
+    secrets:
+      - runner_auth_token
+    healthcheck:
+      test: ["CMD-SHELL", "kill -0 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: "${N8N_DEV_RUNNER_MEMORY_LIMIT:-512m}"
+    cpus: "${N8N_DEV_RUNNER_CPU_LIMIT:-0.25}"
+    pids_limit: 128
 
 volumes:
-  n8n-dev-db:
-  n8n-dev-data:
+  n8n-dev-state:
+    name: dial_n8n_dev_state
+  n8n-dev-transient:
+    name: dial_n8n_dev_transient
 
-networks:
-  n8n-dev:
-    internal: true
-  n8n-dev-egress:
-    driver: bridge
+secrets:
+  db_password:
+    file: "${DIAL_N8N_DEV_SECRETS_DIR:?set DIAL_N8N_DEV_SECRETS_DIR}/db_password"
+  encryption_key:
+    file: "${DIAL_N8N_DEV_SECRETS_DIR:?set DIAL_N8N_DEV_SECRETS_DIR}/encryption_key"
+  runner_auth_token:
+    file: "${DIAL_N8N_DEV_SECRETS_DIR:?set DIAL_N8N_DEV_SECRETS_DIR}/runner_auth_token"

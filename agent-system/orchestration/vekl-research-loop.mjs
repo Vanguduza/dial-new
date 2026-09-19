@@ -18,25 +18,39 @@ const publicUrl = (value) => {
 
 export function immutableDuPacket(packet) {
   if (!packet?.unit_lineage_id || !packet?.unit_revision_hash || !Array.isArray(packet?.research_roles) || packet.research_roles.length !== 18) throw new Error('DU_PACKET_INVALID');
+  for (const field of ['repository_sha', 'project_truth_hash', 'project_truth_fingerprint', 'graph_generation_id', 'graph_revision_hash']) {
+    if (!packet?.[field]) throw new Error(`DU_PACKET_${field.toUpperCase()}_REQUIRED`);
+  }
+  if (!Array.isArray(packet.feature_ids) || !Array.isArray(packet.research_dimensions) || !packet.research_dimensions.length) throw new Error('DU_PACKET_COVERAGE_BINDINGS_REQUIRED');
+  if (!Array.isArray(packet.contract_bindings) || !packet.contract_bindings.length) throw new Error('DU_PACKET_CONTRACT_BINDINGS_REQUIRED');
+  if (!packet.discovery_workload || !packet.guided_frontend_context || !packet.n8n_architecture_context) throw new Error('DU_PACKET_RESEARCH_CONTEXT_REQUIRED');
   if (packet.authority === 'PROJECT_TRUTH' || packet.may_mutate_project_truth === true) throw new Error('PROJECT_TRUTH_AUTHORITY_PROHIBITED');
   const body = {
     schema_version: 1,
     packet_kind: 'IMMUTABLE_DU_RESEARCH_PACKET',
     authority: RESEARCH_LOOP_AUTHORITY,
+    mission_id: packet.mission_id || null,
     unit_lineage_id: packet.unit_lineage_id,
     unit_revision_hash: packet.unit_revision_hash,
     feature_ids: [...new Set(packet.feature_ids || [])].sort(),
     research_roles: [...packet.research_roles],
+    research_dimensions: clone(packet.research_dimensions || []),
     questions: clone(packet.questions || []),
+    provider_subject: clone(packet.provider_subject || null),
     discovery_workload: clone(packet.discovery_workload || {}),
     guided_frontend_context: clone(packet.guided_frontend_context || null),
     n8n_architecture_context: clone(packet.n8n_architecture_context || null),
     repository_sha: packet.repository_sha,
     project_truth_hash: packet.project_truth_hash,
+    project_truth_fingerprint: packet.project_truth_fingerprint,
+    graph_generation_id: packet.graph_generation_id,
+    graph_revision_hash: packet.graph_revision_hash,
+    contract_bindings: clone(packet.contract_bindings || []),
+    project_truth_slice_hash: packet.project_truth_slice_hash || null,
   };
   return Object.freeze({ ...body, packet_hash: sha(body) });
 }
-export function validateResearchSubmission({ packet, claims, sources, deeper = false }) {
+export function validateResearchSubmission({ packet, claims, sources, deeper = false, discovery_candidates = [] }) {
   const failures = [];
   if (!packet?.packet_hash || immutableDuPacket(packet).packet_hash !== packet.packet_hash) failures.push('PACKET_HASH_MISMATCH');
   if (!Array.isArray(claims) || claims.length < 1) failures.push('CLAIMS_REQUIRED');
@@ -49,6 +63,12 @@ export function validateResearchSubmission({ packet, claims, sources, deeper = f
   for (const claim of claims || []) {
     if (!claim.text || !['FACTUAL', 'INFERENTIAL'].includes(claim.classification)) failures.push('CLAIM_INVALID');
     if (!Array.isArray(claim.source_refs) || claim.source_refs.length < 1) failures.push('CLAIM_SOURCE_REQUIRED');
+  }
+  for (const candidate of discovery_candidates) {
+    if (!/^DISC-[0-9a-f]{24}$/.test(String(candidate?.candidate_id || ''))) failures.push('DISCOVERY_CANDIDATE_ID_INVALID');
+    if (!['DISCOVERED','TRIAGED','INVESTIGATING','EXPERIMENTAL','QUALIFIED','ADMITTED','REJECTED','SUPERSEDED','DEPRECATED','QUARANTINED'].includes(candidate?.lifecycle_state)) failures.push('DISCOVERY_LIFECYCLE_INVALID');
+    if (!/^T[1-4]_/.test(String(candidate?.trust_tier || ''))) failures.push('DISCOVERY_TRUST_TIER_INVALID');
+    if (!Array.isArray(candidate?.evidence_refs)) failures.push('DISCOVERY_EVIDENCE_REFS_REQUIRED');
   }
   if (deeper && !(sources || []).some((source) => source.depth === 'PRIMARY' || source.depth === 'CORROBORATING')) failures.push('DEEPER_EVIDENCE_REQUIRED');
   return { ok: failures.length === 0, failures: [...new Set(failures)].sort() };
@@ -98,9 +118,9 @@ export class VeklResearchLoop {
   async submit(input, deeper) {
     const lease = await this.active(input);
     const packet = immutableDuPacket(lease.packet);
-    const validation = validateResearchSubmission({ packet, claims: input.claims, sources: input.sources, deeper });
+    const validation = validateResearchSubmission({ packet, claims: input.claims, sources: input.sources, deeper, discovery_candidates: input.discovery_candidates || [] });
     if (!validation.ok) return { state: 'REJECTED', validation };
-    return this.store.persistEvidence({ lease_id: input.lease_id, packet_hash: packet.packet_hash, worker_id: input.worker_id, kind: deeper ? 'DEEPER_EVIDENCE' : 'ANALYSIS', claims: clone(input.claims), sources: clone(input.sources), evidence_hash: sha({ packet_hash: packet.packet_hash, claims: input.claims, sources: input.sources, deeper }), at_ms: this.clock() });
+    return this.store.persistEvidence({ lease_id: input.lease_id, packet_hash: packet.packet_hash, worker_id: input.worker_id, kind: deeper ? 'DEEPER_EVIDENCE' : 'ANALYSIS', claims: clone(input.claims), sources: clone(input.sources), discovery_candidates: clone(input.discovery_candidates || []), evidence_hash: sha({ packet_hash: packet.packet_hash, claims: input.claims, sources: input.sources, discovery_candidates: input.discovery_candidates || [], deeper }), at_ms: this.clock() });
   }
   async _submit_analysis(input) { return this.submit(input, false); }
   async _submit_deeper_evidence(input) { return this.submit(input, true); }

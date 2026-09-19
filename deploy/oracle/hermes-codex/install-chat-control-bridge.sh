@@ -26,6 +26,7 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=DIAL_CHAT_CONTROL_HOST=127.0.0.1
 Environment=DIAL_CHAT_CONTROL_PORT=9130
+EnvironmentFile=-${CONTROL_HOME}/secrets/vekl-research.env
 Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
