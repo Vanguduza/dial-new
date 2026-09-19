@@ -49,18 +49,11 @@ done
 cd "$REPO"
 COUNTS="$(PGHOST="$STATE_DIR" psql -XAt -U dial_research_loop -d dial_vekl -c "select (select count(*) from vekl_research_missions),(select count(*) from vekl_research_packets),(select count(*) from vekl_research_coverage),(select count(*) from vekl_research_evidence);")"
 IFS='|' read -r MISSIONS PACKETS CELLS EVIDENCE <<<"$COUNTS"
-if [[ "$MISSIONS" == "0" && "$PACKETS" == "0" && "$CELLS" == "0" ]]; then
-  DIAL_VEKL_PG_SOCKET_DIR="$STATE_DIR" \
-  DIAL_VEKL_DATABASE=dial_vekl \
-  DIAL_VEKL_DATABASE_USER=dial_research_loop \
-  DIAL_VEKL_DATABASE_HOST_ROLE=vekl-worker \
-  DIAL_VEKL_DATABASE_ROLE=AUTHORITATIVE_VEKL \
-  node agent-system/orchestration/vekl-research-seed.mjs
-elif [[ "$MISSIONS" == "1" && "$PACKETS" == "309" && "$CELLS" == "5253" ]]; then
-  echo "Existing canonical VEKL research mission preserved (evidence=$EVIDENCE)."
-else
-  fail "unexpected research database state: missions=$MISSIONS packets=$PACKETS cells=$CELLS evidence=$EVIDENCE"
-fi
+echo "VEKL research DB before seed: missions=$MISSIONS packets=$PACKETS cells=$CELLS evidence=$EVIDENCE"
+
+# Seeding is revision-aware and transactional. Existing issued missions/evidence
+# are preserved as history while the current canonical DU revision becomes READY.
+DIAL_VEKL_PG_SOCKET_DIR="$STATE_DIR" DIAL_VEKL_DATABASE=dial_vekl DIAL_VEKL_DATABASE_USER=dial_research_loop DIAL_VEKL_DATABASE_HOST_ROLE=vekl-worker DIAL_VEKL_DATABASE_ROLE=AUTHORITATIVE_VEKL node agent-system/orchestration/vekl-research-seed.mjs
 
 if systemctl --user cat dial-chat-control.service >/dev/null 2>&1; then
   mkdir -p "$UNIT_DIR/dial-chat-control.service.d"
