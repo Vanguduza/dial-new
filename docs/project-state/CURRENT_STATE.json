@@ -3,17 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260919-owner-vekl-generated-registry-refresh"
+    "auth-20260919-owner-master-merge-full-current-scope"
   ],
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "docs/project-state/authorizations/auth-20260919-owner-vekl-generated-registry-refresh.json"
+    "docs/project-state/MASTER_MERGE_AUTHORIZATION_20260919.md",
+    "docs/project-state/authorizations/auth-20260919-owner-master-merge-full-current-scope.json"
   ],
-  "content_diff_sha256": "6dbd5f5b73bf1dd6e405f97eddd267fe987fb93ebe677ab1de51a1b0365c4788",
-  "observed_at_utc": "2026-09-19T20:20:35.028277+00:00",
+  "content_diff_sha256": "5336d6d344e73f608f139309499bc148dc36146c5b5268f1f79775c6e3f4bc10",
+  "observed_at_utc": "2026-09-19T20:22:51.453656+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "839f3986742ea24a782b3eee66e8a4754823a804",
+  "source_parent": "29678681ad0384448354d2b443ceea67e045df70",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
