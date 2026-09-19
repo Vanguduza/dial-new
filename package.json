@@ -38,7 +38,7 @@
     "agent:v2-closure-check": "node agent-system/bin/v2-closure-check.mjs",
     "agent:manifest-check": "node agent-system/bin/manifest-check.mjs",
     "agent:manifest-write": "node agent-system/bin/manifest-write.mjs",
-    "verify": "npm run typecheck && npm run preview:sync --silent && npm run schema:check && npm run agent:manifest-check && npm run agent:skills:check && npm run agent:knowledge:check && npm run agent:vekl:unit-check && npm run agent:vekl:graph-check && npm run agent:vekl:orphan-check && npm run agent:decision-evolution:check && npm run agent:vekl:task-class-coherence && npm run agent:vekl:signal-calibration && npm run agent:vekl:architecture-check && npm run agent:vekl:retrieval-eval && npm run agent:vekl:n8n-check && npm run agent:vekl:discovery-check && npm run agent:design:guided-check && npm run agent:n8n-dev:qualification && npm run agent:n8n-prod:qualification && npm run agent:aef:architecture-check && npm run agent:routing:architecture-check && npm run agent:aef:donor-check && npm run agent:google-capabilities:check && npm run agent:cohesion-check && npm run agent:drift-check && npm run agent:project-truth:verify && npm run agent:gate-ladder && npm run agent:v2-closure-check && npm run agent:realization-coverage && npm run agent:security-coverage && npm run agent:contract-specificity && npm run agent:source-map && npm run agent:boundary-check && npm run agent:manifest-current && npm run agent:scorecard-current && npm run test",
+    "verify": "npm run typecheck && npm run preview:sync --silent && npm run schema:check && npm run agent:manifest-check && npm run agent:skills:check && npm run agent:knowledge:check && npm run agent:vekl:unit-check && npm run agent:vekl:graph-check && npm run agent:vekl:orphan-check && npm run agent:decision-evolution:check && npm run agent:vekl:task-class-coherence && npm run agent:vekl:signal-calibration && npm run agent:vekl:architecture-check && npm run agent:vekl:retrieval-eval && npm run agent:vekl:n8n-check && npm run agent:vekl:discovery-check && npm run agent:design:guided-check && npm run agent:screen-feature-graph && npm run agent:n8n-dev:qualification && npm run agent:n8n-prod:qualification && npm run agent:aef:architecture-check && npm run agent:routing:architecture-check && npm run agent:aef:donor-check && npm run agent:google-capabilities:check && npm run agent:cohesion-check && npm run agent:drift-check && npm run agent:project-truth:verify && npm run agent:gate-ladder && npm run agent:v2-closure-check && npm run agent:realization-coverage && npm run agent:security-coverage && npm run agent:contract-specificity && npm run agent:source-map && npm run agent:boundary-check && npm run agent:manifest-current && npm run agent:scorecard-current && npm run test",
     "agent:gate-ladder": "node agent-system/bin/gate-ladder-check.mjs",
     "agent:contract-specificity": "node agent-system/bin/contract-specificity.mjs",
     "agent:manifest-current": "node agent-system/bin/manifest-write.mjs --check",
@@ -152,7 +152,9 @@
     "test:vekl-research-loop": "vitest run tests/orchestration-vekl-research-loop.test.mjs",
     "agent:research-loop:mcp-tools": "node agent-system/mcp/dial-research-server.mjs",
     "test:vekl-infrastructure": "node --test tests/verification-vekl-infrastructure.node.mjs",
-    "test:vekl-browser-fabric": "node --test tests/verification-vekl-browser-fabric.node.mjs"
+    "test:vekl-browser-fabric": "node --test tests/verification-vekl-browser-fabric.node.mjs",
+    "agent:screen-feature-graph": "node agent-system/bin/build-screen-feature-graph.mjs --check",
+    "test:screen-feature-graph": "vitest run tests/screen-feature-graph.test.ts"
   },
   "dependencies": {
     "@google/stitch-sdk": "0.3.5",
