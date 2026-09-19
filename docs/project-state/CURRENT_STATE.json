@@ -7,13 +7,13 @@
   ],
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "docs/project-state/MASTER_MERGE_AUTHORIZATION_20260919.md",
-    "docs/project-state/authorizations/auth-20260919-owner-master-merge-full-current-scope.json"
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+    "docs/project-state/MASTER_MERGE_AUTHORIZATION_20260919.md"
   ],
-  "content_diff_sha256": "5336d6d344e73f608f139309499bc148dc36146c5b5268f1f79775c6e3f4bc10",
-  "observed_at_utc": "2026-09-19T20:22:51.453656+00:00",
+  "content_diff_sha256": "fdd8f086b9f9ecfc4efdf5f09695735b1309ff8c799d3f3ef61d2f8faab856ad",
+  "observed_at_utc": "2026-09-19T20:26:18.678296+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "29678681ad0384448354d2b443ceea67e045df70",
+  "source_parent": "aff6ba4bace63057b2f31576a6a23440d4d2be7f",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
