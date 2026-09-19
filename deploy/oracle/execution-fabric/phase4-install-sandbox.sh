@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
+PINS="$REPO_ROOT/ops/development-bootstrap/supply-chain/PINS.json"
+DOCKER_APT_VERSION="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["pins"]["apt"]["packages"]["docker.io"])' "$PINS")"
+[[ -n "$DOCKER_APT_VERSION" && "$DOCKER_APT_VERSION" != "None" ]] || { echo "missing docker.io supply-chain pin" >&2; exit 3; }
 
 if ! command -v docker >/dev/null 2>&1; then
   sudo apt-get update -y
-  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "docker.io=$DOCKER_APT_VERSION"
 fi
 sudo install -d -m 0755 /etc/docker
 if [[ ! -f /etc/docker/daemon.json ]]; then

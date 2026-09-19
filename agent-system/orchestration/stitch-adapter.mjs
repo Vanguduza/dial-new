@@ -1,4 +1,9 @@
-import { generateStitchScreen, stitchHealth } from './providers/google/stitch-adapter.mjs';
+import {
+  generateStitchScreen,
+  generateStitchVariantSet,
+  refineStitchScreen,
+  stitchHealth,
+} from './providers/google/stitch-adapter.mjs';
 
 class GoogleStitchTransport {
   constructor({ env = process.env } = {}) { this.env = env; }
@@ -10,6 +15,27 @@ class GoogleStitchTransport {
       title: input.project_title || 'DIAL governed design',
       prompt,
       deviceType: input.device_type || 'DESKTOP',
+      env: this.env,
+    });
+  }
+  async variants(input = {}) {
+    return generateStitchVariantSet({
+      title: input.project_title || 'DIAL governed creative exploration',
+      seedPrompt: input.seed_prompt,
+      explorePrompt: input.explore_prompt,
+      variantOptions: input.variant_options,
+      deviceType: input.device_type || 'MOBILE',
+      modelId: input.model_id || 'GEMINI_3_1_PRO',
+      env: this.env,
+    });
+  }
+  async refine(input = {}) {
+    return refineStitchScreen({
+      projectId: input.project_id,
+      screenId: input.screen_id,
+      prompt: input.prompt,
+      deviceType: input.device_type || 'MOBILE',
+      modelId: input.model_id || 'GEMINI_3_1_PRO',
       env: this.env,
     });
   }
@@ -32,6 +58,30 @@ export class StitchAdapter {
     if (typeof this.transport?.generate !== 'function') throw new Error('STITCH_TRANSPORT_UNAVAILABLE');
     if (!input?.design_projection_hash) throw new Error('DESIGN_AUTHORITY_PROJECTION_REQUIRED');
     const result = await this.transport.generate({ ...input, project_id: this.projectId });
+    return {
+      ...result,
+      design_projection_hash: input.design_projection_hash,
+      provider_authority: 'NON_AUTHORITATIVE_DESIGN_PROVIDER',
+      requires_dial_admission: true,
+    };
+  }
+  async variants(input) {
+    if (!this.enabled) throw new Error('STITCH_DISABLED');
+    if (typeof this.transport?.variants !== 'function') throw new Error('STITCH_VARIANT_TRANSPORT_UNAVAILABLE');
+    if (!input?.design_projection_hash) throw new Error('DESIGN_AUTHORITY_PROJECTION_REQUIRED');
+    const result = await this.transport.variants(input);
+    return {
+      ...result,
+      design_projection_hash: input.design_projection_hash,
+      provider_authority: 'NON_AUTHORITATIVE_DESIGN_PROVIDER',
+      requires_dial_admission: true,
+    };
+  }
+  async refine(input) {
+    if (!this.enabled) throw new Error('STITCH_DISABLED');
+    if (typeof this.transport?.refine !== 'function') throw new Error('STITCH_REFINE_TRANSPORT_UNAVAILABLE');
+    if (!input?.design_projection_hash) throw new Error('DESIGN_AUTHORITY_PROJECTION_REQUIRED');
+    const result = await this.transport.refine(input);
     return {
       ...result,
       design_projection_hash: input.design_projection_hash,

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260919-owner-vekl-generated-registry-refresh",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "37ac67fd76f43acbd02d3df6d127ba2114cc513a1b81a100e3075e7b4dbb8aaa",
+  "owner_instruction_excerpt": "Great results so its safe to commit and merge into master then revist and correct all the vekl work done already. And I think donor repos should only be used for reference and inspiration",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260919-vekl-generated-refresh",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-19T20:20:00Z",
+  "base_sha": "839f3986742ea24a782b3eee66e8a4754823a804",
+  "branch_scope": "gpt/canonical-screen-feature-graph-20260919",
+  "authorized_paths": [
+    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json"
+  ],
+  "change_classes": [
+    "generated_registry_refresh",
+    "merge_readiness"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

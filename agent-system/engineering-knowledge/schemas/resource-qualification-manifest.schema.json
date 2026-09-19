@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.local/schemas/resource-qualification-manifest.schema.json",
+  "title": "ResourceQualificationManifest",
+  "description": "The evidence bundle that lets a discovery candidate be admitted into the existing VEKL source/resource registries.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "qualification_id",
+    "candidate_id",
+    "assigned_trust_tier",
+    "tier_justification",
+    "pipeline_stages_completed",
+    "executable",
+    "authority",
+    "manifest_hash"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "qualification_id": { "type": "string", "pattern": "^QUAL-[0-9a-f]{24}$" },
+    "candidate_id": { "type": "string", "pattern": "^DISC-[0-9a-f]{24}$" },
+    "assigned_trust_tier": {
+      "enum": ["T1_OFFICIAL", "T2_MAINTAINER_COMMUNITY", "T3_COMMUNITY_CORROBORATION", "T4_COMMUNITY_SIGNAL"]
+    },
+    "tier_justification": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "pipeline_stages_completed": { "type": "array", "items": { "type": "string" } },
+    "executable": {
+      "type": "object",
+      "required": ["is_executable", "exact_revision_pinned", "license_reviewed", "static_inspection_passed", "dependency_review_passed", "trial_manifest_hash"],
+      "properties": {
+        "is_executable": { "type": "boolean" },
+        "exact_revision_pinned": { "type": "boolean" },
+        "license_reviewed": { "type": "boolean" },
+        "static_inspection_passed": { "type": "boolean" },
+        "dependency_review_passed": { "type": "boolean" },
+        "trial_manifest_hash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "freshness_state": { "enum": ["CURRENT", "STALE", "SUPERSEDED", "DEPRECATED", "REVOKED"] },
+    "authority": { "const": "QUALIFICATION_EVIDENCE" },
+    "manifest_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

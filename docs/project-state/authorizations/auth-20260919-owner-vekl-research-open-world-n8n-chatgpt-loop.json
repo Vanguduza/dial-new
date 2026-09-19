@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260919-owner-vekl-research-open-world-n8n-chatgpt-loop",
+  "project": "dial",
+  "authority": "OWNER_DELEGATED_AUTONOMY",
+  "owner_instruction_sha256": "734f745094abcd08ffe72092f5207f6cf445dcd8b5f5302bf3b539cd91597dba",
+  "owner_instruction_excerpt": "Preserve and integrate GPT-SOL research harvest work; expand with open-world discovery, guided frontend and automations; install self-hosted DIAL n8n with durable DB/storage on vekl-worker; run Groq-powered VEKL research and autonomous ChatGPT research/analysis loop via DIAL MCP/Desktop Commander.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260919-vekl-research-open-world-n8n-loop",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-19T04:10:00Z",
+  "base_sha": "0d783d65b73ff4c97f1ae8370a754c8bcdea353a",
+  "branch_scope": "gpt/vekl-research-open-world-integration-20260919",
+  "authorized_paths": [
+    ".claude/*",
+    ".mcp.json",
+    ".github/*",
+    "agent-system/**",
+    "apps/**",
+    "deploy/**",
+    "docs/**",
+    "ops/**",
+    "package.json",
+    "package-lock.json",
+    "tests/**",
+    "vitest.config.ts"
+  ],
+  "change_classes": [
+    "vekl_research_harvest",
+    "open_world_discovery",
+    "guided_frontend_design",
+    "n8n_automation_fabric",
+    "groq_research_execution",
+    "chatgpt_research_analysis_loop",
+    "runtime_hardening",
+    "verification",
+    "deployment",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": true,
+  "reusable": false,
+  "revoked": false
+}

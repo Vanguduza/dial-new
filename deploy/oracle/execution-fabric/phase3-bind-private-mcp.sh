@@ -21,10 +21,16 @@ Environment=DIAL_CONTROL_HOME=$CONTROL
 Environment=DIAL_PRIVATE_MCP_BIND=$BIND
 Environment=DIAL_PRIVATE_MCP_PORT=$PORT
 Environment=DIAL_PRIVATE_MCP_UPSTREAM=http://127.0.0.1:9131
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE $HERE/dial-private-mcp-bind.mjs
 Restart=on-failure
 RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=$CONTROL
 [Install]
 WantedBy=default.target
 EOF

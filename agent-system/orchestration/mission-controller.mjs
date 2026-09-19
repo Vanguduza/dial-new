@@ -75,6 +75,9 @@ export function missionControllerTick({ root, developmentGate = evaluateDevelopm
     requestedBy: 'mission_controller',
     metadata: { mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, priority: 50, generated_by: 'MISSION_CONTROLLER', ...(ownerAuthorityRoot ? { owner_authority_root: ownerAuthorityRoot } : {}) },
   });
+  if (!queued?.engineering_knowledge?.activation_id) {
+    throw new Error('MISSION_DISPATCH_REFUSED: submitter returned no programmatically verified VEKL activation');
+  }
   writeJsonAtomic(`missions/${DIAL_ROOT_MISSION_ID}.json`, { ...mission, turn_number: turn, last_packet_id: queued.job_id, last_packet_state: 'QUEUED', last_progress_at: now(), updated_at: now() }, root);
   appendJsonl('events/mission-control.jsonl', { event: 'MISSION_TURN_ENQUEUED', mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, packet_id: queued.job_id, at: now() }, root);
   return { action: 'ENQUEUED', packet_id: queued.job_id, mission_turn: turn };

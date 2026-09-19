@@ -15,12 +15,15 @@ Requires=dial-chat-control.service
 
 [Service]
 Type=simple
+Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE $CONTROL/operator-channels/remote-mcp-relay.mjs
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
+ProtectHome=read-only
 ReadWritePaths=$CONTROL
 
 [Install]

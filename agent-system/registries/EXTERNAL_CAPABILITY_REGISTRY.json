@@ -27,7 +27,7 @@
       "transport": "agy --print --output-format json",
       "credential_profile": "google-antigravity-user-or-cloud-project",
       "kill_switch": "DIAL_ANTIGRAVITY_ENABLED",
-      "default_enabled": false,
+      "default_enabled": true,
       "required_proofs": [
         "implementation",
         "authentication",
@@ -44,7 +44,11 @@
         "PRODUCTION_SECRET_ACCESS",
         "PRODUCTION_RUNTIME_DEPENDENCY",
         "MONEY_AUTHORITY"
-      ]
+      ],
+      "readiness_required": true,
+      "readiness_ref": "DEC-033",
+      "required_for_development_green": true,
+      "owner_required_ref": "DEC-033"
     },
     {
       "capability_id": "DESIGN-STITCH",
@@ -58,7 +62,7 @@
       "credential_profile": "stitch-api-key-or-oauth",
       "kill_switch": "DIAL_STITCH_ENABLED",
       "live_test_switch": "DIAL_STITCH_LIVE_TESTS_ENABLED",
-      "default_enabled": false,
+      "default_enabled": true,
       "required_proofs": [
         "implementation",
         "authentication",
@@ -76,7 +80,11 @@
         "CUSTOMER_RUNTIME_DEPENDENCY",
         "PRODUCTION_SECRET_EMBEDDING",
         "MONEY_AUTHORITY"
-      ]
+      ],
+      "readiness_required": true,
+      "readiness_ref": "DEC-033",
+      "required_for_development_green": true,
+      "owner_required_ref": "DEC-033"
     },
     {
       "capability_id": "CREATIVE-POMELLI",
@@ -133,7 +141,9 @@
         "GMPC-F202",
         "GMPC-F209"
       ],
-      "integration_rule": "Provider availability is reported here; creative truth, approvals, publication, expiry and revocation remain GMPC-owned."
+      "integration_rule": "Provider availability is reported here; creative truth, approvals, publication, expiry and revocation remain GMPC-owned.",
+      "required_for_development_green": false,
+      "development_system_scope": false
     }
   ]
 }

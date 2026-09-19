@@ -6,6 +6,27 @@
       "args": [
         "agent-system/orchestration/claude-oracle-status-mcp.mjs"
       ]
+    },
+    "dial-truth": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "agent-system/mcp/dial-truth-server.mjs"
+      ]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "deploy/oracle/hermes-codex/research-mcp-runtime/run-context7.sh"
+      ]
+    },
+    "exa": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "deploy/oracle/hermes-codex/research-mcp-runtime/run-exa.sh"
+      ]
     }
   }
 }

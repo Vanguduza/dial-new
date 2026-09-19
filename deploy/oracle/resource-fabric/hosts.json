@@ -9,8 +9,8 @@
       "immutable_role": true,
       "oci_shape": "VM.Standard.A1.Flex",
       "architecture": "arm64",
-      "cpu_total": 4,
-      "memory_total_mb": 24576,
+      "cpu_total": 2,
+      "memory_total_mb": 12288,
       "private_ip": "10.0.0.184",
       "roles": [
         "HERMES_CONTROL",
@@ -33,10 +33,10 @@
         "dial-recovery-agent.service",
         "dial-host-agent.timer"
       ],
-      "control_reservation_mb": 8192,
-      "development_pool_mb": 14336,
-      "background_pool_mb": 2048,
-      "emergency_headroom_mb": 2048,
+      "control_reservation_mb": 6144,
+      "development_pool_mb": 4096,
+      "background_pool_mb": 1024,
+      "emergency_headroom_mb": 1024,
       "max_concurrent_heavy_jobs": 1,
       "transports": {
         "direct_ssh": true,
@@ -56,7 +56,7 @@
       "immutable_role": true,
       "oci_shape": "VM.Standard.E2.1.Micro",
       "architecture": "x86_64",
-      "cpu_total": 1,
+      "cpu_total": 2,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.51",
       "roles": [
@@ -93,7 +93,8 @@
         "npm10",
         "python3",
         "git"
-      ]
+      ],
+      "ocpu_total": 1
     },
     {
       "host_id": "oracle-admin",
@@ -101,7 +102,7 @@
       "immutable_role": true,
       "oci_shape": "VM.Standard.E2.1.Micro",
       "architecture": "x86_64",
-      "cpu_total": 1,
+      "cpu_total": 2,
       "memory_total_mb": 1024,
       "private_ip": "10.0.0.123",
       "roles": [
@@ -149,7 +150,8 @@
         "npm10",
         "python3",
         "git"
-      ]
+      ],
+      "ocpu_total": 1
     }
   ]
 }

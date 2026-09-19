@@ -19,6 +19,7 @@ import {
   hashObject, loadRoutingRegistries, modelRoutable, nowIso,
 } from './adaptive-routing-core.mjs';
 import { calibratedPrior, calibratedSmoothingWeight } from './model-performance-ledger.mjs';
+import { discoverModelAvailability } from './model-availability-discovery.mjs';
 
 const RISK_ORDER = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
@@ -202,7 +203,9 @@ export function selectExecutionPair({
   currentPair = null,
   nowMs = Date.now(),
 } = {}) {
-  const reg = registries || loadRoutingRegistries(repoDir);
+  const loaded = registries || loadRoutingRegistries(repoDir);
+  const discovery = discoverModelAvailability({ modelRegistry: loaded.models, health, nowMs });
+  const reg = { ...loaded, models: discovery.registry };
   const policy = reg.policy;
   const riskClass = taskRequirements.risk_class || 'LOW';
   const archetype = taskRequirements.task_archetype || null;

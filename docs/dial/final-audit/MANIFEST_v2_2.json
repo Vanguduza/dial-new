@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-13T03:17:02.859Z",
+  "generated_at": "2026-09-19T20:28:00.714Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,12 +24,12 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 243,
+  "file_count": 255,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
       "bytes": 11143,
-      "sha256": "598ba6c333c6ca021fc0d076fd5e482ac22815069e574849a117f6e21cbf29a4"
+      "sha256": "e646ee6dadce1d29ef3a31a93fb10a0a0dabe00528555b6affd8645508306af8"
     },
     {
       "path": "00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_1.md",
@@ -178,18 +178,58 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_EXECUTION_FABRIC_REV2_CANONICAL.md",
-      "bytes": 100566,
-      "sha256": "a16181ae561ce0c275806e3a57a573ce32d02142fb4b8f8358cfb46acbaa79c1"
+      "bytes": 101101,
+      "sha256": "98cb054cc9f3b31e9176b34dc375664f3d114a0c5b9b8a5a31f76bc8eeaa9a62"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
-      "bytes": 66609,
-      "sha256": "ae50fdca8dd7d98be4f7fc41a3570073db2281ddb1997b07fb4cb8fd2753b694"
+      "bytes": 67075,
+      "sha256": "2e62192c089e89fc0e86bac403734390fcc744ceb4fd1c769d7777bc9f072ece"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_CAPABILITY_READINESS_REV1_CANONICAL.md",
+      "bytes": 2811,
+      "sha256": "70b05ce2d965cb6c56b62a961f0e32f8efd69f29b3e3e0c007bcce2ec9b7ec5b"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
+      "bytes": 30086,
+      "sha256": "ab2681c64ac7e2850fbe41f295efdc6770b99dac02aa91a5752e7d20a87684ca"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_PRODUCT_INTELLIGENCE_AUTOMATION_ARCHITECTURE_REV_3_1.md",
+      "bytes": 65614,
+      "sha256": "20931a57ded6bf459b5d9e29ce4e3504e7c66ec79bae33e4450cfb17b241f8bc"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
+      "bytes": 11895,
+      "sha256": "023e94699b9efcd42dd372ddd0a3fbfd4f0380a91eb8d936f83d7a68b7a7082d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
+      "bytes": 4061,
+      "sha256": "79ac2fee2d23454f312241faa3479ff77cc13bc5e877e63845faa76acc69321d"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_GOOGLE_EXTERNAL_CAPABILITIES_REV3_CANONICAL.md",
-      "bytes": 22285,
-      "sha256": "0b366cee0a894ce584f02100e432ae5facf4aac30d0b92e444a0f9aeaa224002"
+      "bytes": 23018,
+      "sha256": "7225277f5949705cb3a812ac035152764659983ada7eb78369b16170c02b3748"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_GUIDED_CREATIVE_FRONTEND_EVOLUTION_REV1.md",
+      "bytes": 8789,
+      "sha256": "a204b4f814f2a9ef1d01d0f188ecc91f7d1e2a3d74f10369d6bef58f1aad365c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_REV_3_1_IMPLEMENTATION_EVIDENCE.md",
+      "bytes": 15201,
+      "sha256": "d693ad1bb6b72924786dfb8af4412da1bbdef077b58f89f6e5563250a049d08c"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_SELF_HOSTED_N8N_AUTOMATION_FABRIC_REV1.md",
+      "bytes": 8518,
+      "sha256": "ccd4481fcd2a7842b68c40f0305b76b95b9283b610ade8b354517b2d8dbc3125"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_TECHNICAL_COHESION_AUDIT_2026-09-08.md",
@@ -200,6 +240,21 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_2_2_REV2_CANONICAL_IMPLEMENTATION_ADDENDUM.md",
       "bytes": 3954,
       "sha256": "73b82802a9e27be4eccda5a34eb368b1b430396ad5dbb929782d99cb53f8a14d"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION_20260919.md",
+      "bytes": 11547,
+      "sha256": "7d58bcc348a9ddd14521f30ad2a1b6fb695472aef771e9dbb9f34061026c29f5"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION.md",
+      "bytes": 11811,
+      "sha256": "d12fc3bd6b96c35f577b271ecf86ea4e4245a26d902444ee7c2ab76cf89f7f12"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_OPEN_WORLD_DISCOVERY_AND_KNOWLEDGE_QUALIFICATION_REV1.md",
+      "bytes": 8346,
+      "sha256": "add2eadeb4fab3c0d122f02e0ac097e1c3a5d451987aa91c8be07c86d167b6cb"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VEKL_ZIE619_N8N_WORKFLOW_CORPUS_REV2_CANONICAL.md",
@@ -215,6 +270,11 @@
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_GOOGLE_SKILLS_HERMES_v1.md",
       "bytes": 40373,
       "sha256": "2ec20e46ea6bd9612bb6fb479a7f236e35653a92b6b1c737778c93cd196d8c35"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/evidence/closure-execution-receipt-20260916.json",
+      "bytes": 203619,
+      "sha256": "cf86e8f7760bc84078025ffc85676d4c380fd2c83c0bba5ff35ddca3557ecf4f"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",

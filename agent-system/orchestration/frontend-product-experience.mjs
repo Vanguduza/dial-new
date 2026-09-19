@@ -1,4 +1,7 @@
 import { hashObject, loadRegistry, registryHash } from './knowledge-graph-core.mjs';
+import { sanitizeAndClassifyProviderInput } from './donor-egress-guard.mjs';
+import { buildScreenFeatureProjection, SCREEN_FEATURE_GRAPH_REF, SCREEN_REGISTRY_REF } from './screen-feature-graph.mjs';
+import { compileFrontendGenerationContext, resolveFrontendTargetScreenId, FRONTEND_GENERATION_REFS } from './frontend-generation-architecture.mjs';
 
 export const FRONTEND_INTEGRATION_VERSION = 'dial-frontend-product-experience-1.1';
 
@@ -12,6 +15,10 @@ const REGISTRIES = Object.freeze({
   templates: 'agent-system/registries/FRONTEND_TEMPLATE_REGISTRY.json',
   visualDeterminism: 'agent-system/registries/FRONTEND_VISUAL_DETERMINISM_POLICY.json',
   schemas: 'agent-system/registries/FRONTEND_CONTRACT_SCHEMA_REGISTRY.json',
+  screens: SCREEN_REGISTRY_REF,
+  screenFeatureGraph: SCREEN_FEATURE_GRAPH_REF,
+  generationPolicy: FRONTEND_GENERATION_REFS.policy,
+  truthSources: FRONTEND_GENERATION_REFS.truthSources,
 });
 
 export const SURFACE_STATE_IDS = Object.freeze([
@@ -41,7 +48,17 @@ function chooseProfileId({ unit, featureRecord }) {
   if (explicit) return explicit;
   const text = upper([featureRecord?.module, featureRecord?.feature_id, featureRecord?.app_family, ...(unit?.feature_ids || [])].join(' '));
   if (/GROC/.test(text)) return 'dial.groceries';
-  if (/LOGISTICS|DELIVERY|DRIVER/.test(text)) return 'dial.logistics';
+  if (/LAUNDRY/.test(text)) return 'dial.laundry';
+  if (/VHUB|VEHICLE HUB|GARAGE/.test(text)) return 'dial.vhub';
+  if (/ASSIST|ROADSIDE/.test(text)) return 'dial.assist';
+  if (/PROJECT/.test(text)) return 'dial.projects';
+  if (/FLEET/.test(text)) return 'dial.fleet';
+  if (/HEALTH|CLINICAL|PHARMACY|HOSPITAL/.test(text)) return 'dial.health';
+  if (/CORPORATE|HR|WMS|TREASURY/.test(text)) return 'dial.corporate';
+  if (/GMPC|CAMPAIGN|PROMOTION/.test(text)) return 'dial.gmpc';
+  if (/DKRF|KNOWLEDGE|RETRIEVAL/.test(text)) return 'dial.dkrf';
+  if (/PLATFORM|COMMAND CENTRE|SUPPLIER OS|CUSTOMER 360/.test(text)) return 'dial.platform';
+  if (/LOGISTICS|DELIVERY|DRIVER|COURIER/.test(text)) return 'dial.logistics';
   if (/CARE/.test(text)) return 'dial.care';
   if (/SPARE|PART|CATALOG|GTR|AUTO/.test(text)) return 'dial.spare';
   if (/TECH|REPAIR|SERVICE/.test(text)) return 'dial.tech';
@@ -262,15 +279,40 @@ export function compileVisualRenderDeterminismEnvelope({ repoDir, presentationDe
   return artifact;
 }
 
-export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null } = {}) {
+export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null, targetScreenId = null, requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {} } = {}) {
   const applicable = (unit?.knowledge_route_ids || []).includes('PRODUCT_EXPERIENCE') || (unit?.design_authorities || []).length > 0;
   if (!applicable) return { applicable: false, state: 'NOT_APPLICABLE', integration_version: FRONTEND_INTEGRATION_VERSION };
   const product_design_profile = resolveProductDesignProfile({ repoDir, unit, featureRecord });
   const surface_manifest = buildSurfaceManifest({ unit, featureRecord, contractRecord });
+  const screen_feature_projection = buildScreenFeatureProjection({ repoDir, featureRecord, surfaceManifest: surface_manifest });
+  if (screen_feature_projection.status !== 'RESOLVED') throw new Error(screen_feature_projection.status);
+  const target_screen_resolution = targetScreenId
+    ? { status: 'EXPLICIT', target_screen_id: targetScreenId, candidates: screen_feature_projection.screen_refs || [] }
+    : resolveFrontendTargetScreenId({ screenFeatureProjection: screen_feature_projection, instruction, affectedPaths });
+  const resolved_target_screen_id = targetScreenId || target_screen_resolution.target_screen_id || null;
   const surface_state_matrix = buildSurfaceStateMatrix({ surfaceManifest: surface_manifest, contractRecord });
   const visual_reference_spec = buildVisualReferenceSpec({ unit, featureRecord, contractRecord });
   const presentation_decision = compilePresentationDecision({ repoDir, unit, featureRecord, contractRecord, instruction, affectedPaths, productDesignProfile: product_design_profile, visualReferenceSpec: visual_reference_spec, donorProjection });
   const visual_render_determinism_envelope = compileVisualRenderDeterminismEnvelope({ repoDir, presentationDecision: presentation_decision });
+  const frontend_generation_context = compileFrontendGenerationContext({
+    repoDir,
+    unit,
+    featureRecord,
+    contractRecord,
+    targetScreenId: resolved_target_screen_id,
+    requestedTruth,
+    hydratedTruth,
+    capabilityOverrides,
+    frontendProjection: {
+      product_design_profile,
+      surface_manifest,
+      screen_feature_projection,
+      surface_state_matrix,
+      visual_reference_spec,
+      presentation_decision,
+      visual_render_determinism_envelope,
+    },
+  });
   const registry_hashes = frontendRegistryHashes(repoDir);
   const projection = {
     applicable: true,
@@ -278,6 +320,9 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
     integration_version: FRONTEND_INTEGRATION_VERSION,
     product_design_profile,
     surface_manifest,
+    screen_feature_projection,
+    target_screen_resolution,
+    frontend_generation_context,
     surface_state_matrix,
     visual_reference_spec,
     presentation_decision,
@@ -294,8 +339,13 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
   return projection;
 }
 
-export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerAuthorityRef = null } = {}) {
+export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerAuthorityRef = null, instruction = '' } = {}) {
   if (!projection?.applicable) return null;
+  const intentRaw = String(instruction || '').trim();
+  const intentGuard = sanitizeAndClassifyProviderInput(intentRaw, { requestedClass: 'INTERNAL_SAFE_FOR_APPROVED_PROVIDER' });
+  if (!intentGuard.ok) throw new Error(`DESIGN_BRIEF_PROVIDER_EGRESS_DENIED:${intentGuard.data_class}`);
+  const maxIntentChars = 8000;
+  const boundedIntent = String(intentGuard.sanitized || '').slice(0, maxIntentChars);
   const brief = {
     schema_version: 1,
     artifact_type: 'DesignBriefBundle',
@@ -305,8 +355,19 @@ export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerA
     unit_lineage_id: unit?.unit_lineage_id || null,
     unit_revision_hash: unit?.unit_revision_hash || null,
     owner_authority_ref: ownerAuthorityRef,
+    design_intent: {
+      text: boundedIntent,
+      data_class: intentGuard.data_class,
+      findings: intentGuard.findings || [],
+      source_hash: intentGuard.sanitized_hash,
+      bounded_hash: hashObject(boundedIntent),
+      max_chars: maxIntentChars,
+      truncated: String(intentGuard.sanitized || '').length > maxIntentChars,
+    },
     product_design_profile_hash: projection.product_design_profile.content_hash,
     surface_manifest_hash: projection.surface_manifest.content_hash,
+    screen_feature_projection_hash: projection.screen_feature_projection.content_hash,
+    frontend_generation_context_hash: projection.frontend_generation_context.content_hash,
     surface_state_matrix_hash: projection.surface_state_matrix.content_hash,
     visual_reference_spec_hash: projection.visual_reference_spec.content_hash,
     presentation_decision_hash: projection.presentation_decision.content_hash,
@@ -319,6 +380,11 @@ export function buildDesignBriefBundle({ projection, unit, taskId = null, ownerA
       required_state_coverage: true,
       normalization_required: true,
       composite_certification_required: true,
+      screen_feature_graph_required: true,
+      truth_hydration_required_before_provider_dispatch: true,
+      stitch_primary_provider: true,
+      figma_explicit_only: true,
+      interaction_motion_enrichment_required_after_visual_freeze: true,
     },
     provenance: { projection_hash: projection.projection_hash },
   };

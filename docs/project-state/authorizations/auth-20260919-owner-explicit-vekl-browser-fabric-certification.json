@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260919-owner-explicit-vekl-browser-fabric-certification",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "2af0af2d0e6df54e45ca061de54f76c2f1cffa5d76fa4f9d2c3ce115d1ce2dc2",
+  "owner_instruction_excerpt": "Integrate Stagehand and Browser Harness fully into DIAL VEKL and achieve full certification.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260919-vekl-browser-fabric-full-certification",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-19T12:00:00Z",
+  "base_sha": "59a039e8ec6fb4e4ca3470de5644f3660e2eadec",
+  "branch_scope": "gpt/vekl-browser-fabric-certified-v2-20260919",
+  "authorized_paths": [
+    "agent-system/**",
+    "deploy/**",
+    "docs/**",
+    "tests/**",
+    "package.json",
+    "package-lock.json",
+    "vitest.config.ts"
+  ],
+  "change_classes": [
+    "open_world_discovery",
+    "browser_acquisition_fabric",
+    "stagehand_semantic_research",
+    "chatgpt_research_analysis_loop",
+    "runtime_hardening",
+    "verification",
+    "deployment",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

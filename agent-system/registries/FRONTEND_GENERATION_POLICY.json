@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "policy_version": "canonical-frontend-generation-1.0",
+  "authority": "CANONICAL_FRONTEND_GENERATION_ARCHITECTURE",
+  "automatic_design_provider": "google-stitch",
+  "figma_policy": "EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY",
+  "automatic_provider_fallback_forbidden": true,
+  "stages": [
+    {
+      "stage_id": "TARGET_RESOLUTION",
+      "input": [
+        "generation_request"
+      ],
+      "output": [
+        "business_unit",
+        "application",
+        "actor",
+        "screen_id",
+        "requested_state"
+      ]
+    },
+    {
+      "stage_id": "SCREEN_FEATURE_GRAPH_INJECTION",
+      "input": [
+        "SCREEN_REGISTRY",
+        "SCREEN_FEATURE_GRAPH"
+      ],
+      "output": [
+        "screen_feature_projection"
+      ],
+      "ordering": "BEFORE_TRUTH_HYDRATION"
+    },
+    {
+      "stage_id": "FEATURE_GRAPH_EXPANSION",
+      "output": [
+        "features",
+        "subfeatures",
+        "actions",
+        "queries",
+        "commands",
+        "events",
+        "eventualities",
+        "capabilities"
+      ]
+    },
+    {
+      "stage_id": "TRUTH_HYDRATION",
+      "output": [
+        "ScreenTruthEnvelope",
+        "CapabilityEnvelope"
+      ],
+      "policy": "AUTHORITATIVE_SOURCES_ONLY"
+    },
+    {
+      "stage_id": "SCREEN_PACKET_COMPLETENESS",
+      "output": [
+        "CompletenessGate"
+      ],
+      "policy": "FAIL_CLOSED_FOR_MISSING_REQUIRED_TRUTH"
+    },
+    {
+      "stage_id": "VEKL_DESIGN_AUTHORITY",
+      "output": [
+        "DesignAuthority",
+        "ApplicableArchetypes",
+        "FreedomBudget",
+        "AntiPatterns"
+      ]
+    },
+    {
+      "stage_id": "STITCH_VISUAL_GENERATION",
+      "provider": "google-stitch",
+      "output": [
+        "coded_candidate",
+        "rendered_preview",
+        "assets",
+        "structure_map"
+      ]
+    },
+    {
+      "stage_id": "VISUAL_CRITIQUE_CONVERGENCE",
+      "output": [
+        "accepted_visual_candidate"
+      ]
+    },
+    {
+      "stage_id": "VISUAL_AUTHORITY_FREEZE",
+      "output": [
+        "VisualAuthorityArtifact"
+      ]
+    },
+    {
+      "stage_id": "STITCH_INTERACTION_MOTION_ENRICHMENT",
+      "provider": "google-stitch",
+      "input": [
+        "VisualAuthorityArtifact",
+        "FrontendGenerationContext",
+        "CapabilityEnvelope"
+      ],
+      "output": [
+        "enriched_code",
+        "InteractionIntentMap",
+        "GestureMap",
+        "MotionSpec",
+        "AdvancedComponentDecisionSet"
+      ]
+    },
+    {
+      "stage_id": "INTERACTION_ACCEPTANCE",
+      "output": [
+        "InteractionAcceptanceMatrix"
+      ]
+    },
+    {
+      "stage_id": "EXPERIENCE_AUTHORITY_FREEZE",
+      "output": [
+        "ExperienceAuthorityArtifact"
+      ]
+    },
+    {
+      "stage_id": "DDE_PRODUCTIONIZATION",
+      "output": [
+        "ProductionBindingContract",
+        "production_components"
+      ],
+      "policy": "PRESERVE_EXPERIENCE_AUTHORITY_NO_REDESIGN"
+    },
+    {
+      "stage_id": "PARITY_CERTIFICATION",
+      "output": [
+        "visual_parity",
+        "interaction_parity",
+        "functional_parity"
+      ]
+    }
+  ],
+  "truth_classes": {
+    "VERIFIED_FACT": "may_display_as_fact",
+    "VERIFIED_DERIVED_FACT": "may_display_with_derivation_provenance",
+    "CREATIVE_PRESENTATION": "may_invent_when_non_factual",
+    "DESIGN_PROPOSAL_FACT": "blocked_from_production_until_verified"
+  },
+  "interaction_rules": {
+    "preserve_approved_visual_composition": true,
+    "interaction_invention_allowed": true,
+    "capability_invention_forbidden": true,
+    "gratuitous_motion_forbidden": true,
+    "reduced_motion_required": true,
+    "accessibility_required": true,
+    "performance_budget_required": true
+  },
+  "authority_flow": [
+    "PRODUCT_TRUTH",
+    "SCREEN_FEATURE_GRAPH",
+    "DOMAIN_TRUTH",
+    "VEKL_DESIGN_KNOWLEDGE",
+    "STITCH_VISUAL_AUTHORITY",
+    "STITCH_INTERACTION_AUTHORITY",
+    "DDE_PRODUCTION_BINDING"
+  ],
+  "reverse_authority_flow_forbidden": true
+}

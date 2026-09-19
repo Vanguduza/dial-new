@@ -6,7 +6,14 @@ After=network-online.target
 Type=oneshot
 Slice=dial-recovery.slice
 Environment=DIAL_FABRIC_STATE=%h/.local/state/dial-fabric
-ExecStart=/usr/bin/env node %h/dial-new/deploy/oracle/resource-fabric/host-agent.mjs --publish
+Environment=DIAL_REPO_DIR=%h/dial-new
+EnvironmentFile=-/etc/dial-recovery/fabric.env
+Environment=PATH=%h/.local/bin:%h/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
+ExecStart=/usr/bin/env node ${DIAL_REPO_DIR}/deploy/oracle/resource-fabric/host-agent.mjs --publish
 OOMScoreAdjust=-500
 NoNewPrivileges=true
 PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.local/state/dial-fabric -/var/lib/dial-recovery/fabric
