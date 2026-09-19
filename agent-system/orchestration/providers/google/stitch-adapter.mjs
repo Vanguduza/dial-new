@@ -195,7 +195,7 @@ function validProof(value, kind, repositorySha) {
   if (!repositorySha || value.repository_sha !== repositorySha) return false;
   if (kind === 'visual_acceptance') return Boolean(value.task_id && value.candidate_hash && value.fdep_hash && value.certification_hash);
   if (kind === 'orchestrated_use') return Boolean(value.task_id && value.candidate_hash && value.worker_artifact_id && value.envelope_hash);
-  if (kind === 'outage_fallback') return Boolean(value.selection_hash && String(value.selected || '').startsWith('DIRECT_'));
+  if (kind === 'outage_fallback') return Boolean(value.selection_hash && value.selected == null && value.automatic_fallback === false && String(value.outage_behavior || '').startsWith('WAIT_RETRY_OR_REPORT_UNAVAILABLE'));
   return false;
 }
 
@@ -401,4 +401,37 @@ export async function refineStitchScreen({
   } finally {
     try { await client?.close(); } catch {}
   }
+}
+
+export async function enrichStitchInteractionMotion({
+  visualAuthority,
+  interactionMotionPacket,
+  prompt,
+  deviceType = 'MOBILE',
+  modelId = 'GEMINI_3_1_PRO',
+  env = process.env,
+  clientFactory = createStitchClient,
+} = {}) {
+  if (visualAuthority?.status !== 'FROZEN') throw new Error('STITCH_INTERACTION_PASS_REQUIRES_FROZEN_VISUAL_AUTHORITY');
+  if (interactionMotionPacket?.provider !== 'google-stitch' || interactionMotionPacket?.phase !== 'INTERACTION_AND_MOTION_ENRICHMENT') throw new Error('STITCH_INTERACTION_PACKET_REQUIRED');
+  if (interactionMotionPacket.visual_authority_hash !== visualAuthority.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_HASH_MISMATCH');
+  const projectId = visualAuthority.project_id;
+  const screenId = visualAuthority.screen_refs?.[0] || null;
+  if (!projectId || !screenId) throw new Error('STITCH_INTERACTION_SOURCE_SCREEN_REQUIRED');
+  const refined = await refineStitchScreen({ projectId, screenId, prompt, deviceType, modelId, env, clientFactory });
+  return {
+    ...refined,
+    phase: 'INTERACTION_AND_MOTION_ENRICHMENT',
+    visual_authority_hash: visualAuthority.content_hash,
+    interaction_motion_packet_hash: interactionMotionPacket.packet_hash,
+    preservation_contract: 'PRESERVE_APPROVED_COMPOSITION_MINIMUM_NECESSARY_STRUCTURAL_ADJUSTMENT',
+    response_hash: sha256({
+      provider: 'google-stitch',
+      project_id: refined.project_id,
+      source_screen_id: refined.source_screen_id,
+      screen_id: refined.screen_id,
+      visual_authority_hash: visualAuthority.content_hash,
+      interaction_motion_packet_hash: interactionMotionPacket.packet_hash,
+    }),
+  };
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-contract-schemas-1.2",
+  "registry_version": "frontend-contract-schemas-2.0",
   "required_contracts": [
     "ProductDesignProfile",
     "FrontendDesignExecutionPacket",
@@ -26,7 +26,26 @@
     "CreativeDirectionProfile",
     "DesignFreedomBudget",
     "CreativeExplorationPlan",
-    "CreativeScreenGenerationStrategy"
+    "CreativeScreenGenerationStrategy",
+    "CanonicalScreenRegistry",
+    "ScreenFeatureGraph",
+    "ScreenFeatureProjection",
+    "FrontendGenerationContext",
+    "FrontendTruthSourceProfile",
+    "ScreenTruthEnvelope",
+    "CapabilityEnvelope",
+    "FrontendAcceptanceContract",
+    "StitchVisualProductionPacket",
+    "VisualAuthorityArtifact",
+    "InteractionMotionEnrichmentPacket",
+    "InteractionIntentMap",
+    "GestureMap",
+    "MotionSpec",
+    "AdvancedComponentDecisionSet",
+    "InteractionAcceptanceMatrix",
+    "ExperienceAuthorityArtifact",
+    "ProductionBindingContract",
+    "TruthLiteralLint"
   ],
   "common_required_fields": [
     "schema_version",

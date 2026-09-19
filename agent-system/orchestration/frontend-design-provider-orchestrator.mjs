@@ -1,8 +1,91 @@
 import { hashObject } from './knowledge-graph-core.mjs';
+import { buildStitchVisualProductionPacket, buildInteractionMotionEnrichmentPacket } from './frontend-generation-architecture.mjs';
+import { loadRegistry } from './knowledge-graph-core.mjs';
 import { buildDesignCandidateManifest, quarantineDesignArtifact } from './design-candidate-admission.mjs';
 import { normalizeDesignCandidate } from './frontend-design-normalizer.mjs';
 
 export const FIGMA_AUTHORITY_STATES=Object.freeze(['NON_AUTHORITATIVE_CANDIDATE','REFINEMENT_SOURCE','PROMOTION_PENDING','PROMOTED_VISUAL_AUTHORITY']);
+
+export function selectCanonicalFrontendDesignProvider({ repoDir, requestedProvider = null, explicitProviderRequest = false, providerHealth = {} } = {}) {
+  if (!repoDir) throw new Error('FRONTEND_PROVIDER_SELECTION_REQUIRES_REPO');
+  const policy = loadRegistry(repoDir, 'agent-system/registries/DESIGN_PROVIDER_POLICY.json');
+  const requested = requestedProvider || policy.automatic_design_provider || policy.primary_design_provider;
+  let result;
+  if (requested === 'figma') {
+    result = !explicitProviderRequest
+      ? { ok: false, selected: null, reason: 'FIGMA_EXPLICIT_INVOCATION_REQUIRED', automatic_fallback: false }
+      : { ok: true, selected: 'figma', reason: 'EXPLICIT_AUTHORIZED_REQUEST', automatic_fallback: false };
+  } else if (requested !== 'google-stitch') {
+    result = { ok: false, selected: null, reason: `FRONTEND_PROVIDER_NOT_ALLOWED:${requested}`, automatic_fallback: false };
+  } else {
+    const health = providerHealth['google-stitch'] || providerHealth.stitch || 'UNKNOWN';
+    result = ['UNAVAILABLE','DISABLED','AUTH_REQUIRED','CAPACITY_LIMITED'].includes(String(health).toUpperCase())
+      ? { ok: false, selected: null, reason: `STITCH_${String(health).toUpperCase()}`, automatic_fallback: false, outage_behavior: 'WAIT_RETRY_OR_REPORT_UNAVAILABLE' }
+      : { ok: true, selected: 'google-stitch', reason: requestedProvider ? 'EXPLICIT_STITCH_REQUEST' : 'CANONICAL_AUTOMATIC_PROVIDER', automatic_fallback: false };
+  }
+  return { ...result, selection_hash: hashObject({ requested, explicitProviderRequest, providerHealth, result }) };
+}
+
+export function buildCanonicalStitchVisualPacket({ fdep, brief, qualityPacket = null, blindReferenceMode = false } = {}) {
+  if (!fdep?.frontend_generation_context) throw new Error('FDEP_FRONTEND_GENERATION_CONTEXT_REQUIRED');
+  return buildStitchVisualProductionPacket({ generationContext: fdep.frontend_generation_context, designBrief: brief, qualityPacket, blindReferenceMode });
+}
+
+export function renderStitchVisualProductionPrompt({ packet } = {}) {
+  if (!packet?.packet_hash) throw new Error('STITCH_VISUAL_PACKET_REQUIRED');
+  const truth = (packet.verified_truth || []).map((x) => `${x.path || x.fact_id}=${JSON.stringify(x.value)} [${x.source_id}]`).join('\n');
+  const archetypes = (packet.design_authority?.applicable_archetypes || []).map((x) => `${x.archetype_id}:${x.reuse_mode || 'GUIDANCE'}`).join(', ');
+  return [
+    'DIAL — STITCH VISUAL GENERATION PASS',
+    `Target screen: ${packet.target_screen?.screen_id}.`,
+    `Screen role: ${packet.target_screen?.role_boundary?.role || 'DOMAIN_TASK_SURFACE'}.`,
+    `Business unit: ${packet.business_unit_context?.module}.`,
+    `Applications/platforms: ${(packet.platform_context?.applications || []).map((x) => `${x.application_id}[${(x.platform_targets || []).join('/')}]`).join(', ')}.`,
+    `Features: ${(packet.feature_context?.feature_ids || []).join(', ')}.`,
+    `Actions: ${(packet.target_screen?.action_refs || []).join(', ')}.`,
+    `Required states: ${(packet.target_screen?.state_contract?.required || []).join(', ')}.`,
+    `Applicable design archetypes: ${archetypes || 'none; use governed product profile'}.`,
+    `Reference policy: ${packet.reference_policy}.`,
+    'VERIFIED FACTS (only these supplied literals may be stated as factual):',
+    truth || '(No runtime literals supplied; omit unknown values rather than inventing them.)',
+    'SCREEN ROLE BOUNDARIES:',
+    `Responsibilities: ${(packet.target_screen?.role_boundary?.responsibilities || []).join(', ')}.`,
+    `Prohibited: ${(packet.target_screen?.role_boundary?.prohibited_responsibilities || []).join(', ')}.`,
+    ...packet.instructions,
+    `Packet hash: ${packet.packet_hash}.`,
+  ].join('\n');
+}
+
+export function buildCanonicalInteractionMotionPacket({ fdep, visualAuthority } = {}) {
+  if (!fdep?.frontend_generation_context) throw new Error('FDEP_FRONTEND_GENERATION_CONTEXT_REQUIRED');
+  return buildInteractionMotionEnrichmentPacket({ generationContext: fdep.frontend_generation_context, visualAuthority });
+}
+
+export function renderInteractionMotionPrompt({ packet } = {}) {
+  if (!packet?.packet_hash) throw new Error('INTERACTION_MOTION_PACKET_REQUIRED');
+  return [
+    'DIAL — INTERACTION & MOTION ENRICHMENT PASS',
+    `Target screen: ${packet.target_screen_id}.`,
+    'The approved visual composition is frozen. Preserve it.',
+    `Preserve: ${(packet.preserve || []).join(', ')}.`,
+    `Allowed design decisions: ${(packet.allowed_design_decisions || []).join(', ')}.`,
+    `Allowed domain actions: ${(packet.capability_envelope?.allowed_interaction_actions || []).join(', ')}.`,
+    `Supported capabilities: ${(packet.capability_envelope?.capabilities || []).filter((x) => x.supported).map((x) => x.capability_id).join(', ')}.`,
+    ...packet.rules,
+    `Required outputs: ${(packet.required_outputs || []).join(', ')}.`,
+    `Packet hash: ${packet.packet_hash}.`,
+  ].join('\n');
+}
+
+export function buildInteractionAcceptanceMatrix({ interactionArtifact = {}, checks = {} } = {}) {
+  const required = ['no_dead_controls','capability_backed','touch_targets','accessibility_semantics','reduced_motion','performance','state_restoration','gesture_conflicts_clear'];
+  const rows = required.map((id) => ({ check_id: id, passed: checks[id] === true, evidence_ref: checks[`${id}_evidence_ref`] || null }));
+  const failed = rows.filter((x) => !x.passed).map((x) => x.check_id);
+  const artifact = { schema_version: 1, artifact_type: 'InteractionAcceptanceMatrix', status: failed.length ? 'REJECTED' : 'PASSED', passed: failed.length === 0, rows, failures: failed, interaction_artifact_hash: interactionArtifact.content_hash || interactionArtifact.response_hash || null };
+  artifact.content_hash = hashObject({ ...artifact, content_hash: null });
+  return artifact;
+}
+
 
 export function providerPromptFromDesignBrief({brief,fdep}={}){
   if(!brief||!fdep) throw new Error('provider design brief and FDEP required');
@@ -15,11 +98,12 @@ export function providerPromptFromDesignBrief({brief,fdep}={}){
     `Archetype: ${fdep.presentation_decision?.archetype_id}.`,
     `Pattern policy selection: ${fdep.presentation_decision?.pattern_id}.`,
     `Surfaces: ${surfaces||'authority-defined'}.`,
+    `Canonical screen graph context: ${fdep.frontend_generation_context?.content_hash || 'legacy/unresolved'}.`,
     `Required whole-surface states: ${states||'see SurfaceStateMatrix'}.`,
     'Do not invent product truth, prices, permissions, domain rules, security policy, tokens, or component identities.',
     'Preserve approved visual authority exactly where the packet declares CANONICAL_REFERENCE.',
     `Design brief hash: ${brief.content_hash}. FDEP hash: ${fdep.content_hash}.`,
-  ].join('\n');
+  ].join('\\n');
 }
 
 export function bindProviderCandidate({repoDir,providerId,taskId,unitLineageId,unitRevisionHash,rawContent,screenRefs=[],fdep,brief,candidateSemantics={}}={}){

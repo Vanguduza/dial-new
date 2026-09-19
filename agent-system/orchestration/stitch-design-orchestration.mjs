@@ -15,6 +15,20 @@ import { hashObject } from './knowledge-graph-core.mjs';
 import { checkTaskExecutionEnvelope } from './task-execution-envelope.mjs';
 import { checkFrontendDesignExecutionPacket } from './frontend-design-execution-packet.mjs';
 import { selectDesignStrategy } from './design-provider-router.mjs';
+import {
+  selectCanonicalFrontendDesignProvider,
+  buildCanonicalStitchVisualPacket,
+  renderStitchVisualProductionPrompt,
+  buildCanonicalInteractionMotionPacket,
+  renderInteractionMotionPrompt,
+  buildInteractionAcceptanceMatrix,
+} from './frontend-design-provider-orchestrator.mjs';
+import {
+  freezeVisualAuthorityArtifact,
+  freezeExperienceAuthorityArtifact,
+  buildProductionBindingContract,
+  lintCandidateFacts,
+} from './frontend-generation-architecture.mjs';
 import { StitchAdapter } from './stitch-adapter.mjs';
 import {
   STITCH_PROOF_RELS,
@@ -39,6 +53,11 @@ function consumptionRel(taskId) { return `execution/tasks/${taskId}/stitch-unit-
 function certificationRel(taskId) { return `execution/tasks/${taskId}/stitch-screen-certification.json`; }
 function workerEvidenceRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence.json`; }
 function workerEvidenceDirRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence`; }
+function visualAuthorityRel(taskId) { return `execution/tasks/${taskId}/visual-authority.json`; }
+function interactionMotionRel(taskId) { return `execution/tasks/${taskId}/stitch-interaction-motion.json`; }
+function interactionAcceptanceRel(taskId) { return `execution/tasks/${taskId}/interaction-acceptance.json`; }
+function experienceAuthorityRel(taskId) { return `execution/tasks/${taskId}/experience-authority.json`; }
+function productionBindingRel(taskId) { return `execution/tasks/${taskId}/production-binding-contract.json`; }
 function proofWithHash(value) { return { ...value, evidence_hash: sha256({ ...value, evidence_hash: undefined }) }; }
 function evidenceHashMatches(value) { return Boolean(value?.evidence_hash) && value.evidence_hash === sha256({ ...value, evidence_hash: undefined }); }
 function rawSha256(body) { return crypto.createHash('sha256').update(Buffer.from(body)).digest('hex'); }
@@ -146,6 +165,10 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
   const targetSurface = stitchSurfaceRows(fdep).find((row) => row.surface_id === targetSurfaceId);
   if (!targetSurface) throw new Error(`STITCH_TARGET_SURFACE_NOT_DECLARED:${targetSurfaceId}`);
   const creativeStrategy = fdep.creative_screen_generation?.surfaces?.[targetSurfaceId] || null;
+  const canonicalPacket = fdep.frontend_generation_context?.content_hash
+    ? buildCanonicalStitchVisualPacket({ fdep, brief, blindReferenceMode: false })
+    : null;
+  const canonicalPrompt = canonicalPacket ? renderStitchVisualProductionPrompt({ packet: canonicalPacket }) : null;
   const providerDataPolicy = {
     literal_domain_values_allowed_only_when_present_verbatim_in_governed_projection: true,
     no_fabricated_vin_vehicle_model_year_part_number_price_stock_location_percentage_telemetry_error_code_identity_revision_or_metric: true,
@@ -173,10 +196,14 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     governed_design_intent: brief?.design_intent || null,
     creative_stage: stage,
     creative_screen_generation: creativeStrategy,
+    canonical_frontend_generation_context_hash: fdep.frontend_generation_context?.content_hash || null,
+    canonical_stitch_visual_packet_hash: canonicalPacket?.packet_hash || null,
+    canonical_target_screen_id: fdep.frontend_generation_context?.screen_context?.target_screen_id || null,
     candidate_direction: candidateDirection,
   };
   return [
     'DIAL governed Stitch design provider stage.',
+    ...(canonicalPrompt ? [canonicalPrompt] : []),
     'CREATIVE_STAGE='+stage+'. TARGET_SURFACE='+targetSurfaceId+'. Generate exactly one composition for this surface only.',
     'This is guided creativity, not template filling. Make deliberate professional visual decisions wherever the CreativeDirectionProfile and DesignFreedomBudget permit freedom; preserve every immutable product, domain, accessibility and authority constraint.',
     'Do not collapse the result into a generic safe average. Establish a clear focal hierarchy, intentional spatial rhythm, distinctive product character and a coherent visual idea suited to this exact surface.',
@@ -231,15 +258,9 @@ export async function executeStitchDesignStage({
 
   const stitch = adapter || new StitchAdapter({ enabled: true, env });
   const health = await stitch.health();
-  const route = selectDesignStrategy({
-    designMode: designModeForFdep(fdep),
-    stitchEnabled: true,
-    stitchEligible: true,
-    directWorkerEligible: true,
-    providerHealth: health?.state,
-    preference: 'STITCH',
-  });
-  if (!route.ok || !String(route.selected || '').startsWith('STITCH_')) throw Object.assign(new Error(`STITCH_STAGE_NOT_SELECTION_READY:${route.reason || route.selected || health?.state}`), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  const providerRoute = selectCanonicalFrontendDesignProvider({ repoDir, providerHealth: { stitch: health?.state } });
+  if (!providerRoute.ok || providerRoute.selected !== 'google-stitch') throw Object.assign(new Error(`STITCH_STAGE_NOT_SELECTION_READY:${providerRoute.reason || health?.state}`), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  const route = { ...providerRoute, provider: 'google-stitch', selected: designModeForFdep(fdep) === 'NEW_DIAL_DESIGN' ? 'STITCH_NEW_DESIGN_THEN_BUILD' : 'STITCH_CODE_TO_DESIGN_THEN_BUILD' };
 
   const designProjectionHash = fdep.provenance?.frontend_projection_hash || brief.provenance?.projection_hash;
   if (!designProjectionHash) throw new Error('STITCH_STAGE_DESIGN_PROJECTION_HASH_REQUIRED');
@@ -268,6 +289,7 @@ export async function executeStitchDesignStage({
       surface_id: surfaceId,
       device_type: stitchDeviceType(surfaceId),
       screen_id_hash: generated.screen_id ? sha256(generated.screen_id) : null,
+      provider_locator: { project_id: generated.project_id || null, screen_id: generated.screen_id || null },
       raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
       html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
       image: { ...imageStored, content_type: imageArtifact.content_type || null },
@@ -340,17 +362,11 @@ export async function executeStitchCreativeExplorationStage({
 
   const stitch = adapter || new StitchAdapter({ enabled: true, env });
   const health = await stitch.health();
-  const route = selectDesignStrategy({
-    designMode: designModeForFdep(fdep),
-    stitchEnabled: true,
-    stitchEligible: true,
-    directWorkerEligible: true,
-    providerHealth: health?.state,
-    preference: 'STITCH',
-  });
-  if (!route.ok || !String(route.selected || '').startsWith('STITCH_')) {
-    throw Object.assign(new Error('STITCH_CREATIVE_NOT_SELECTION_READY:'+(route.reason || route.selected || health?.state)), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  const providerRoute = selectCanonicalFrontendDesignProvider({ repoDir, providerHealth: { stitch: health?.state } });
+  if (!providerRoute.ok || providerRoute.selected !== 'google-stitch') {
+    throw Object.assign(new Error('STITCH_CREATIVE_NOT_SELECTION_READY:'+(providerRoute.reason || health?.state)), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
   }
+  const route = { ...providerRoute, provider: 'google-stitch', selected: designModeForFdep(fdep) === 'NEW_DIAL_DESIGN' ? 'STITCH_NEW_DESIGN_THEN_BUILD' : 'STITCH_CODE_TO_DESIGN_THEN_BUILD' };
   if (typeof stitch.variants !== 'function') throw new Error('STITCH_CREATIVE_VARIANTS_UNAVAILABLE');
 
   const designProjectionHash = fdep.provenance?.frontend_projection_hash || brief.provenance?.projection_hash;
@@ -540,6 +556,7 @@ export async function convergeStitchCreativeStage({
       surface_id: surfaceId,
       device_type: stitchDeviceType(surfaceId),
       screen_id_hash: refined.screen_id ? sha256(refined.screen_id) : null,
+      provider_locator: { project_id: refined.project_id || selectedVariant.project_id || null, screen_id: refined.screen_id || null },
       raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
       html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
       image: { ...imageStored, content_type: imageArtifact.content_type || null },
@@ -800,16 +817,171 @@ export function recordStitchScreenAcceptance({ repoDir, root = DEFAULT_CONTROL_H
   return proof;
 }
 
-export function proveStitchOutageFallback({ repoDir = process.env.DIAL_REPO_DIR || process.cwd(), root = DEFAULT_CONTROL_HOME } = {}) {
-  const route = selectDesignStrategy({
-    designMode: 'NEW_DIAL_DESIGN',
-    stitchEnabled: true,
-    stitchEligible: true,
-    directWorkerEligible: true,
-    providerHealth: 'UNAVAILABLE',
-    preference: 'STITCH',
+export function freezeAcceptedStitchVisualAuthority({
+  repoDir,
+  root = DEFAULT_CONTROL_HOME,
+  taskId,
+  surfaceId = null,
+  promotedBy,
+  promotionAuthority,
+  critique = { verdict: 'PASS' },
+} = {}) {
+  if (!repoDir || !taskId) throw new Error('STITCH_VISUAL_FREEZE_INPUTS_REQUIRED');
+  const accepted = loadCurrentStitchAcceptedDesign({ repoDir, root, taskId });
+  const record = readJson(candidateRel(taskId), null, root);
+  const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
+  if (!accepted || !record?.candidate || !fdep?.frontend_generation_context) throw new Error('STITCH_VISUAL_FREEZE_GOVERNED_INPUTS_MISSING');
+  const surfaces = record.artifacts?.surfaces || (record.artifacts?.surface_id ? { [record.artifacts.surface_id]: record.artifacts } : {});
+  const ids = Object.keys(surfaces).sort();
+  const selectedSurface = surfaceId || (ids.length === 1 ? ids[0] : null);
+  if (!selectedSurface || !surfaces[selectedSurface]) throw new Error('STITCH_VISUAL_AUTHORITY_SURFACE_SELECTION_REQUIRED');
+  const artifact = surfaces[selectedSurface];
+  if (!artifact.provider_locator?.project_id || !artifact.provider_locator?.screen_id) throw new Error('STITCH_VISUAL_AUTHORITY_PROVIDER_LOCATOR_REQUIRED');
+  const frozen = freezeVisualAuthorityArtifact({
+    generationContext: fdep.frontend_generation_context,
+    candidate: {
+      provider: 'google-stitch',
+      project_id: artifact.provider_locator.project_id,
+      screen_id: artifact.provider_locator.screen_id,
+      response_hash: record.provider_response_hash || record.candidate.candidate_hash,
+      code_artifact_ref: artifact.html?.rel || null,
+      rendered_preview_ref: artifact.image?.rel || null,
+      structure_map_ref: null,
+    },
+    critique,
+    promotedBy,
+    promotionAuthority,
   });
-  if (!route.ok || !String(route.selected || '').startsWith('DIRECT_')) throw new Error('STITCH_OUTAGE_FALLBACK_NOT_PROVEN');
+  if (!frozen.ok) throw new Error(`STITCH_VISUAL_AUTHORITY_FREEZE_FAILED:${frozen.failures.join(',')}`);
+  const proof = proofWithHash({
+    ...frozen.visual_authority,
+    repository_sha: accepted.repository_sha,
+    task_id: taskId,
+    surface_id: selectedSurface,
+    accepted_candidate_hash: accepted.candidate_hash,
+    frozen_at: now(),
+  });
+  writeJsonAtomic(visualAuthorityRel(taskId), proof, root);
+  appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_VISUAL_AUTHORITY_FROZEN', task_id: taskId, surface_id: selectedSurface, visual_authority_hash: proof.content_hash, at: proof.frozen_at }, root);
+  return proof;
+}
+
+export async function executeStitchInteractionMotionStage({
+  repoDir,
+  root = DEFAULT_CONTROL_HOME,
+  taskId,
+  env = process.env,
+  adapter = null,
+  artifactDownloader = downloadStitchArtifact,
+  fdepGuard = checkFrontendDesignExecutionPacket,
+} = {}) {
+  if (!repoDir || !taskId) throw new Error('STITCH_INTERACTION_STAGE_INPUTS_REQUIRED');
+  const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
+  const visualAuthority = readJson(visualAuthorityRel(taskId), null, root);
+  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN') throw new Error('STITCH_INTERACTION_STAGE_REQUIRES_FROZEN_VISUAL_AUTHORITY');
+  const currentSha = repositorySha(repoDir);
+  if (!currentSha || visualAuthority.repository_sha !== currentSha || !evidenceHashMatches(visualAuthority)) throw new Error('STITCH_VISUAL_AUTHORITY_STALE_OR_TAMPERED');
+  const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
+  if (!fdepCheck?.ok) throw new Error(`STITCH_INTERACTION_STALE_FDEP:${(fdepCheck?.reasons || []).join(',')}`);
+  const packet = buildCanonicalInteractionMotionPacket({ fdep, visualAuthority });
+  const prompt = renderInteractionMotionPrompt({ packet });
+  const stitch = adapter || new StitchAdapter({ enabled: true, env });
+  const health = await stitch.health();
+  const providerRoute = selectCanonicalFrontendDesignProvider({ repoDir, providerHealth: { stitch: health?.state } });
+  if (!providerRoute.ok || providerRoute.selected !== 'google-stitch') throw Object.assign(new Error(`STITCH_INTERACTION_PROVIDER_NOT_READY:${providerRoute.reason || health?.state}`), { category: health?.failure_class || 'PROVIDER_UNAVAILABLE' });
+  if (typeof stitch.refine !== 'function') throw new Error('STITCH_INTERACTION_REFINE_UNAVAILABLE');
+  const refined = await stitch.refine({
+    project_id: visualAuthority.project_id,
+    screen_id: visualAuthority.screen_refs?.[0],
+    prompt,
+    device_type: stitchDeviceType(visualAuthority.surface_id || 'DIAL_CONSUMER'),
+    model_id: 'GEMINI_3_1_PRO',
+    design_projection_hash: fdep.provenance?.frontend_projection_hash || fdep.frontend_generation_context.content_hash,
+  });
+  const htmlArtifact = await artifactDownloader(refined.html_url, { maxBytes: 2_000_000 });
+  const imageArtifact = await artifactDownloader(refined.image_url, { maxBytes: 8_000_000 });
+  const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+  const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
+  const rawStored = persistPrivateArtifact(root, taskId, 'interaction-motion-raw.html', Buffer.from(htmlArtifact.body));
+  if (!sanitization.ok) throw new Error(`STITCH_INTERACTION_QUARANTINED:${sanitization.sanitized_quarantine.violations.join(',')}`);
+  const htmlStored = persistPrivateArtifact(root, taskId, 'interaction-motion.html', Buffer.from(sanitization.content, 'utf8'));
+  const imageStored = persistPrivateArtifact(root, taskId, 'interaction-motion-image.bin', Buffer.from(imageArtifact.body));
+  const record = proofWithHash({
+    schema_version: 1,
+    provider: 'google-stitch',
+    phase: 'INTERACTION_AND_MOTION_ENRICHMENT',
+    repository_sha: currentSha,
+    status: 'QUARANTINED_SAFE_REVIEW_REQUIRED',
+    task_id: taskId,
+    surface_id: visualAuthority.surface_id,
+    visual_authority_hash: visualAuthority.content_hash,
+    interaction_motion_packet_hash: packet.packet_hash,
+    provider_locator: { project_id: refined.project_id || visualAuthority.project_id, screen_id: refined.screen_id },
+    artifacts: {
+      raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
+      html: { ...htmlStored, content_type: htmlArtifact.content_type || null, inert_evidence: true, transformation_hash: sanitization.transformation_hash },
+      image: { ...imageStored, content_type: imageArtifact.content_type || null },
+    },
+    required_structured_outputs: packet.required_outputs.filter((x) => x !== 'enriched_code'),
+    provider_response_hash: refined.response_hash || null,
+    observed_at: now(),
+  });
+  writeJsonAtomic(interactionMotionRel(taskId), record, root);
+  appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_INTERACTION_MOTION_READY_FOR_REVIEW', task_id: taskId, visual_authority_hash: visualAuthority.content_hash, evidence_hash: record.evidence_hash, at: record.observed_at }, root);
+  return record;
+}
+
+export function acceptStitchInteractionMotionStage({
+  repoDir,
+  root = DEFAULT_CONTROL_HOME,
+  taskId,
+  interactionArtifact,
+  checks,
+  promotedBy = 'SYSTEM_AFTER_ACCEPTANCE',
+  promotionAuthority = 'AUTHORIZED_DESIGN_AUTHORITY',
+} = {}) {
+  if (!repoDir || !taskId || !interactionArtifact) throw new Error('STITCH_INTERACTION_ACCEPTANCE_INPUTS_REQUIRED');
+  const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
+  const visualAuthority = readJson(visualAuthorityRel(taskId), null, root);
+  const stage = readJson(interactionMotionRel(taskId), null, root);
+  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN' || !stage || !evidenceHashMatches(stage)) throw new Error('STITCH_INTERACTION_ACCEPTANCE_GOVERNED_INPUTS_MISSING');
+  if (stage.visual_authority_hash !== visualAuthority.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_BINDING_INVALID');
+  const candidateFacts = interactionArtifact.candidate_facts || [];
+  const truthLint = lintCandidateFacts({ generationContext: fdep.frontend_generation_context, candidateFacts });
+  if (truthLint.status !== 'PASSED') throw new Error(`STITCH_INTERACTION_TRUTH_LINT_FAILED:${truthLint.findings.map((x) => x.finding_id).join(',')}`);
+  const acceptance = buildInteractionAcceptanceMatrix({ interactionArtifact, checks });
+  if (!acceptance.passed) throw new Error(`STITCH_INTERACTION_ACCEPTANCE_FAILED:${acceptance.failures.join(',')}`);
+  const freeze = freezeExperienceAuthorityArtifact({
+    generationContext: fdep.frontend_generation_context,
+    visualAuthority,
+    interactionArtifact,
+    acceptance,
+    promotedBy,
+    promotionAuthority,
+  });
+  if (!freeze.ok) throw new Error(`STITCH_EXPERIENCE_AUTHORITY_FREEZE_FAILED:${freeze.failures.join(',')}`);
+  const experience = proofWithHash({ ...freeze.experience_authority, repository_sha: stage.repository_sha, task_id: taskId, interaction_stage_evidence_hash: stage.evidence_hash, truth_lint_hash: truthLint.content_hash, frozen_at: now() });
+  writeJsonAtomic(interactionAcceptanceRel(taskId), acceptance, root);
+  writeJsonAtomic(experienceAuthorityRel(taskId), experience, root);
+  appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_EXPERIENCE_AUTHORITY_FROZEN', task_id: taskId, experience_authority_hash: experience.content_hash, at: experience.frozen_at }, root);
+  return { acceptance, truth_lint: truthLint, experience_authority: experience };
+}
+
+export function compileStitchProductionBindingContract({ repoDir, root = DEFAULT_CONTROL_HOME, taskId, bindings = {} } = {}) {
+  if (!repoDir || !taskId) throw new Error('STITCH_PRODUCTION_BINDING_INPUTS_REQUIRED');
+  const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
+  const experienceAuthority = readJson(experienceAuthorityRel(taskId), null, root);
+  if (!fdep?.frontend_generation_context || experienceAuthority?.status !== 'FROZEN') throw new Error('STITCH_PRODUCTION_BINDING_REQUIRES_FROZEN_EXPERIENCE_AUTHORITY');
+  const contract = buildProductionBindingContract({ generationContext: fdep.frontend_generation_context, experienceAuthority, bindings });
+  writeJsonAtomic(productionBindingRel(taskId), contract, root);
+  return contract;
+}
+
+export function proveStitchOutageFallback({ repoDir = process.env.DIAL_REPO_DIR || process.cwd(), root = DEFAULT_CONTROL_HOME } = {}) {
+  const route = selectCanonicalFrontendDesignProvider({ repoDir, providerHealth: { stitch: 'UNAVAILABLE' } });
+  if (route.ok || route.selected != null || route.automatic_fallback !== false || route.outage_behavior !== 'WAIT_RETRY_OR_REPORT_UNAVAILABLE') {
+    throw new Error('STITCH_OUTAGE_NO_SUBSTITUTION_NOT_PROVEN');
+  }
   const repoSha = repositorySha(repoDir);
   if (!repoSha) throw new Error('STITCH_FALLBACK_REPOSITORY_SHA_UNAVAILABLE');
   const proof = proofWithHash({
@@ -818,14 +990,20 @@ export function proveStitchOutageFallback({ repoDir = process.env.DIAL_REPO_DIR 
     repository_sha: repoSha,
     status: 'PASSED',
     simulated_provider_state: 'UNAVAILABLE',
-    selected: route.selected,
+    selected: null,
+    automatic_fallback: false,
+    outage_behavior: route.outage_behavior,
+    reason: route.reason,
     selection_hash: route.selection_hash,
     runtime_dependency_created: false,
+    provider_substitution_performed: false,
+    acceptance_preserved: true,
     observed_at: now(),
   });
   writeJsonAtomic(STITCH_PROOF_RELS.outage_fallback, proof, root);
   return proof;
 }
+
 
 async function main() {
   const [command, ...args] = process.argv.slice(2);

@@ -105,6 +105,7 @@ export function buildScreenQualityPacket({
   creativeDirection = [],
   requestedFreedom = {},
   references = {},
+  generationContext = null,
   candidateCount = 3,
   diversityDimensions = DEFAULT_DIVERSITY_DIMENSIONS,
   critics = CRITICS,
@@ -114,6 +115,11 @@ export function buildScreenQualityPacket({
   if (!DESIGN_ITERATION_PHASES.includes(designIterationPhase)) failures.push(`UNKNOWN_ITERATION_PHASE:${designIterationPhase}`);
   if (!productTruth?.product_truth_hash) failures.push('PRODUCT_TRUTH_REQUIRED');
   if (!authority.design_authority_projection_hash) failures.push('DESIGN_AUTHORITY_PROJECTION_HASH_REQUIRED');
+  if (generationContext) {
+    if (!generationContext.content_hash) failures.push('GENERATION_CONTEXT_HASH_REQUIRED');
+    if (!generationContext.screen_context?.screens?.length) failures.push('GENERATION_CONTEXT_SCREEN_REQUIRED');
+    if (!generationContext.authority_refs?.screen_feature_graph_hash) failures.push('SCREEN_FEATURE_GRAPH_HASH_REQUIRED');
+  }
 
   // §6.8: EXPLORE must produce 2–4 materially different candidates; the later
   // phases converge on one, so more than one artefact there is a contradiction.
@@ -165,6 +171,18 @@ export function buildScreenQualityPacket({
       design_provenance_mode: designProvenanceMode,
       design_iteration_phase: designIterationPhase,
     },
+    generation_context: generationContext ? {
+      generation_context_hash: generationContext.content_hash,
+      screen_feature_graph_hash: generationContext.authority_refs?.screen_feature_graph_hash || null,
+      screen_registry_hash: generationContext.authority_refs?.screen_registry_hash || null,
+      target_screen_id: generationContext.screen_context?.target_screen_id || null,
+      application_refs: [...new Set((generationContext.platform_context?.applications || []).map((x) => x.application_id))].sort(),
+      feature_refs: [...new Set(generationContext.feature_context?.feature_ids || [])].sort(),
+      truth_envelope_hash: generationContext.truth?.screen_truth_envelope?.content_hash || null,
+      capability_envelope_hash: generationContext.capability_envelope?.content_hash || null,
+      screen_role_boundaries: (generationContext.screen_context?.screens || []).map((x) => ({ screen_id: x.screen_id, role_boundary: x.role_boundary })),
+      provider_dispatch_ready: generationContext.completeness?.provider_dispatch_ready === true,
+    } : null,
     design_grammar: { ...designGrammar },
     creative_direction: { personality: [...creativeDirection].sort() },
     design_freedom: freedom.budget,

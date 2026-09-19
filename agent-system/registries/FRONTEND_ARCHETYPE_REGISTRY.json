@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-archetypes-1.1",
+  "registry_version": "frontend-archetypes-2.0",
   "archetypes": [
     {
       "archetype_id": "TRANSACTIONAL_WORKSPACE",
@@ -97,6 +97,69 @@
       ],
       "density": "AUTHORITY_DEFINED",
       "scroll_policy": "AUTHORITY_DEFINED"
+    },
+    {
+      "archetype_id": "DIAL_COMMERCE_DISCOVERY_EDITORIAL_HERO_V1",
+      "authority_class": "OWNER_APPROVED_ARCHETYPE",
+      "reuse_mode": "GRAMMAR_NOT_PIXEL_COPY",
+      "strength": "HIGH_WHEN_APPLICABLE",
+      "intents": [
+        "COMMERCE_DISCOVERY",
+        "AUTOMOTIVE_PARTS_DISCOVERY",
+        "STORE_HOME",
+        "CATALOG_ENTRY"
+      ],
+      "applicability": {
+        "SPARE": "HIGH",
+        "GROCERIES": "MEDIUM_HIGH",
+        "TECH": "MEDIUM",
+        "CARE": "LOW_MEDIUM",
+        "LOGISTICS": "LOW",
+        "OPERATIONAL": "NONE"
+      },
+      "regions": [
+        "FIXED_UTILITY_HEADER",
+        "CONTEXT_SWITCH",
+        "CONTEXTUAL_VISUAL_HERO",
+        "HERO_TO_SURFACE_DISSOLVE",
+        "CONTEXT_OVERLAP",
+        "SEARCH_BRIDGE",
+        "SINGLE_ROW_CATEGORY_RAIL",
+        "DOMINANT_MERCHANDISING_MOMENT",
+        "SECONDARY_COLLECTION",
+        "STABLE_BOTTOM_NAVIGATION"
+      ],
+      "composition_grammar": [
+        "large contextual image may lead the page when the screen has a meaningful selected context",
+        "hero imagery dissolves or fades into the page surface rather than ending as a hard isolated card",
+        "context identity and a compact switch action may cross the hero/content boundary",
+        "search is elevated directly after the hero transition and may expose supported multimodal search",
+        "categories use one horizontally scrollable domain-specific rail rather than a dense generic grid",
+        "one dominant merchandising moment is followed by quieter supporting collections",
+        "domain-specific iconography and imagery are structural rather than decorative"
+      ],
+      "variable_authority": [
+        "hero_subject",
+        "crop",
+        "overlap_depth",
+        "headline_language",
+        "search_affordances",
+        "category_representation",
+        "merchandising_composition",
+        "supporting_sections",
+        "type_scale",
+        "visual_motifs",
+        "context_actions"
+      ],
+      "forbidden_copy_behavior": [
+        "PIXEL_COPY_ACROSS_UNRELATED_PRODUCTS",
+        "FABRICATED_DOMAIN_FACTS",
+        "GENERIC_CARD_SOUP"
+      ],
+      "density": "STANDARD",
+      "scroll_policy": "VERTICAL_WITH_HORIZONTAL_CATEGORY_RAIL",
+      "owner_approved": true,
+      "owner_approval_ref": "owner:2026-09-19:favorite-spare-discovery-screen"
     }
   ]
 }

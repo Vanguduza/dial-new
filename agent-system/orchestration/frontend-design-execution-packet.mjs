@@ -43,6 +43,9 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
     triage_result_hash:triage.triage_result_hash,
     product_design_profile:px.product_design_profile,
     surface_manifest:px.surface_manifest,
+    screen_feature_projection:px.screen_feature_projection,
+    target_screen_resolution:px.target_screen_resolution || null,
+    frontend_generation_context:px.frontend_generation_context,
     surface_state_matrix:px.surface_state_matrix,
     visual_reference_spec:px.visual_reference_spec,
     presentation_decision:px.presentation_decision,
@@ -60,9 +63,17 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
       performance:true,
       security:true,
       domain_truth:true,
+      screen_feature_graph:true,
+      frontend_generation_context:true,
+      truth_hydration_before_provider_dispatch:true,
       state_matrix_coverage:true,
+      interaction_motion_enrichment:true,
+      visual_authority_freeze:true,
+      experience_authority_freeze:true,
       design_lint:true,
-      parity:true,
+      visual_parity:true,
+      interaction_parity:true,
+      functional_parity:true,
     },
     authority_constraints:{
       project_truth_superior:true,
@@ -70,10 +81,14 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
       domain_security_superior:true,
       visual_authority_superior:true,
       provider_output_authoritative:false,
+      automatic_design_provider:'google-stitch',
+      figma_invocation:'EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY',
+      automatic_provider_fallback_forbidden:true,
+      productionization_may_redesign:false,
       autonomous_canon_mutation:false,
     },
-    status:'READY',
-    provenance:{unit_map_hash:unitMap.map_hash,frontend_projection_hash:px.projection_hash||null,knowledge_resolution:'VEKL_PRODUCT_EXPERIENCE',authority_flow:'PROJECT_TRUTH_TO_FRC_TO_UNIT_TO_VEKL_TO_FDEP'},
+    status:px.frontend_generation_context?.completeness?.provider_dispatch_ready === true ? 'READY_FOR_STITCH_VISUAL_GENERATION' : 'READY_AWAITING_SCREEN_TRUTH_COMPLETENESS',
+    provenance:{unit_map_hash:unitMap.map_hash,frontend_projection_hash:px.projection_hash||null,screen_feature_graph_hash:px.frontend_generation_context?.authority_refs?.screen_feature_graph_hash||null,frontend_generation_context_hash:px.frontend_generation_context?.content_hash||null,knowledge_resolution:'VEKL_PRODUCT_EXPERIENCE',authority_flow:'PROJECT_TRUTH_TO_SCREEN_FEATURE_GRAPH_TO_DOMAIN_TRUTH_TO_VEKL_TO_FDEP_TO_STITCH'},
     created_at:now(),
   };
   const brief=buildDesignBriefBundle({projection:px,unit,taskId,ownerAuthorityRef,instruction});
@@ -103,6 +118,9 @@ export function checkFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTROL
   const stored=readJson(`execution/tasks/${packet.task_id}/frontend-design-execution-packet.json`,null,root);
   if(!stored||stored.content_hash!==packet.content_hash) reasons.push('FDEP_POINTER_CHANGED');
   if(stored?.status==='SUPERSEDED') reasons.push('FDEP_SUPERSEDED');
+  if(!packet.screen_feature_projection?.content_hash) reasons.push('SCREEN_FEATURE_PROJECTION_MISSING');
+  if(!packet.frontend_generation_context?.content_hash) reasons.push('FRONTEND_GENERATION_CONTEXT_MISSING');
+  if(packet.frontend_generation_context?.authority_refs?.screen_feature_graph_hash !== packet.registry_hashes?.screenFeatureGraph?.hash) reasons.push('SCREEN_FEATURE_GRAPH_BINDING_MISMATCH');
   return {ok:reasons.length===0,state:reasons.length?'REFUSED_STALE_FRONTEND_PACKET':'CURRENT',reasons};
 }
 

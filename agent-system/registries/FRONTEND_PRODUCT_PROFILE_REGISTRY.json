@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-product-profiles-1.1",
+  "registry_version": "frontend-product-profiles-2.0",
   "authority_model": "PROJECT_TRUTH_AND_PRODUCT_VISUAL_AUTHORITY_SUPERIOR",
   "inheritance_rules": {
     "base_profile": "dial.global",
@@ -109,6 +109,112 @@
       "brand_family": "DIAL_VAN",
       "density_default": "COMFORTABLE",
       "motion_policy": "CHARACTERFUL_BUT_TASK_SAFE"
+    },
+    {
+      "profile_id": "dial.laundry",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_LAUNDRY",
+      "pattern_allowlist_add": [
+        "EDITORIAL_COMPOSITION"
+      ],
+      "density_default": "COMFORTABLE"
+    },
+    {
+      "profile_id": "dial.vhub",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_VEHICLE_HUB",
+      "pattern_allowlist_add": [
+        "PREMIUM_AUTOMOTIVE",
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.assist",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_ASSIST",
+      "pattern_allowlist_add": [
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.projects",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_PROJECTS",
+      "pattern_allowlist_add": [
+        "EDITORIAL_COMPOSITION",
+        "DENSE_SAAS"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.fleet",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_FLEET",
+      "pattern_allowlist_add": [
+        "TECHNICAL_INDUSTRIAL",
+        "DENSE_SAAS"
+      ],
+      "density_default": "COMPACT"
+    },
+    {
+      "profile_id": "dial.health",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_HEALTH",
+      "pattern_allowlist_add": [
+        "EDITORIAL_COMPOSITION"
+      ],
+      "density_default": "STANDARD"
+    },
+    {
+      "profile_id": "dial.corporate",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_CORPORATE",
+      "pattern_allowlist_add": [
+        "DENSE_SAAS"
+      ],
+      "density_default": "COMPACT"
+    },
+    {
+      "profile_id": "dial.platform",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_PLATFORM",
+      "pattern_allowlist_add": [
+        "DENSE_SAAS",
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "OPERATIONAL"
+    },
+    {
+      "profile_id": "dial.gmpc",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_GMPC",
+      "pattern_allowlist_add": [
+        "DENSE_SAAS",
+        "EDITORIAL_COMPOSITION"
+      ],
+      "density_default": "OPERATIONAL"
+    },
+    {
+      "profile_id": "dial.dkrf",
+      "extends": "dial.global",
+      "status": "ACTIVE",
+      "brand_family": "DIAL_DKRF",
+      "pattern_allowlist_add": [
+        "DENSE_SAAS",
+        "TECHNICAL_INDUSTRIAL"
+      ],
+      "density_default": "OPERATIONAL"
     }
   ]
 }

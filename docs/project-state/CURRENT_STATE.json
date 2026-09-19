@@ -3,21 +3,33 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260919-owner-canonical-screen-feature-graph"
+    "auth-20260919-owner-canonical-frontend-generation-architecture"
   ],
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
-    "agent-system/bin/build-screen-feature-graph.mjs",
-    "agent-system/orchestration/screen-feature-graph.mjs",
-    "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
-    "agent-system/registries/SCREEN_REGISTRY.json",
-    "docs/dial/architecture/CANONICAL_SCREEN_FEATURE_GRAPH.md",
-    "tests/screen-feature-graph.test.ts"
+    "agent-system/orchestration/frontend-design-execution-packet.mjs",
+    "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+    "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+    "agent-system/orchestration/frontend-generation-architecture.mjs",
+    "agent-system/orchestration/frontend-product-experience.mjs",
+    "agent-system/orchestration/providers/google/stitch-adapter.mjs",
+    "agent-system/orchestration/screen-quality-packet.mjs",
+    "agent-system/orchestration/stitch-design-orchestration.mjs",
+    "agent-system/registries/DESIGN_PROVIDER_POLICY.json",
+    "agent-system/registries/FRONTEND_ARCHETYPE_REGISTRY.json",
+    "agent-system/registries/FRONTEND_CONTRACT_SCHEMA_REGISTRY.json",
+    "agent-system/registries/FRONTEND_GENERATION_POLICY.json",
+    "agent-system/registries/FRONTEND_PRODUCT_PROFILE_REGISTRY.json",
+    "agent-system/registries/FRONTEND_TRUTH_SOURCE_REGISTRY.json",
+    "docs/dial/architecture/CANONICAL_FRONTEND_GENERATION_ARCHITECTURE.md",
+    "docs/project-state/authorizations/auth-20260919-owner-canonical-frontend-generation-architecture.json",
+    "package.json",
+    "tests/frontend-generation-architecture.test.ts"
   ],
-  "content_diff_sha256": "f2b1dccfde0561d97bf6982395a021118dc179a2b1d326c2493f3f6293fef64b",
-  "observed_at_utc": "2026-09-19T18:22:59.756098+00:00",
+  "content_diff_sha256": "60f2b375c1b2b858a56b55acd64baa2025a184fe741be3d5c7b4c2188d025759",
+  "observed_at_utc": "2026-09-19T19:50:37.789692+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "ef39984a911162e71966132f91d3765dfb2b3aa9",
+  "source_parent": "16e1fb1579235329576318ad1450a30fa325f401",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

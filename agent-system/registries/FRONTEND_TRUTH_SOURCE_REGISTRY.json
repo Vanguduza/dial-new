@@ -1,0 +1,991 @@
+{
+  "schema_version": 1,
+  "registry_version": "frontend-truth-sources-1.1",
+  "authority": "DOMAIN_TRUTH_HYDRATION_POLICY",
+  "global_sources": [
+    {
+      "source_id": "IDENTITY_SESSION",
+      "authority": "identity",
+      "domains": [
+        "actor",
+        "permissions",
+        "session"
+      ],
+      "required_when": [
+        "AUTHENTICATED_OR_PROTECTED_ACTION"
+      ]
+    },
+    {
+      "source_id": "PRICING",
+      "authority": "pricing",
+      "domains": [
+        "money",
+        "price",
+        "promotion"
+      ],
+      "required_when": [
+        "PRICE_OR_PROMOTION_DISPLAYED"
+      ]
+    },
+    {
+      "source_id": "PAYMENTS",
+      "authority": "payments",
+      "domains": [
+        "payment_method",
+        "payment_state"
+      ],
+      "required_when": [
+        "PAYMENT_ACTION_PRESENT"
+      ]
+    },
+    {
+      "source_id": "DELIVERY_SOR",
+      "authority": "delivery",
+      "domains": [
+        "delivery",
+        "route",
+        "eta",
+        "pod",
+        "cod",
+        "custody"
+      ],
+      "required_when": [
+        "DELIVERY_OR_TRACKING_PRESENT"
+      ]
+    },
+    {
+      "source_id": "SUPPORT_OS",
+      "authority": "support",
+      "domains": [
+        "help",
+        "case",
+        "escalation"
+      ],
+      "required_when": [
+        "HELP_OR_ISSUE_SURFACE_PRESENT"
+      ]
+    }
+  ],
+  "modules": {
+    "SPARE": {
+      "module": "SPARE",
+      "truth_sources": [
+        {
+          "source_id": "EPC_VEHICLE_CATALOG",
+          "authority": "catalogue/vehicle",
+          "domains": [
+            "make",
+            "model",
+            "generation",
+            "model_year",
+            "engine",
+            "chassis_code",
+            "epc_hierarchy",
+            "oem_reference",
+            "supersession"
+          ]
+        },
+        {
+          "source_id": "PARTS_CATALOG",
+          "authority": "catalogue/parts",
+          "domains": [
+            "product_identity",
+            "manufacturer",
+            "sku",
+            "specifications",
+            "images"
+          ]
+        },
+        {
+          "source_id": "FITMENT",
+          "authority": "catalogue/fitment",
+          "domains": [
+            "compatibility",
+            "fitment_confidence",
+            "fitment_evidence"
+          ]
+        },
+        {
+          "source_id": "INVENTORY",
+          "authority": "inventory",
+          "domains": [
+            "availability",
+            "stock_state"
+          ]
+        },
+        {
+          "source_id": "PRICING",
+          "authority": "pricing",
+          "domains": [
+            "price",
+            "promotion"
+          ]
+        },
+        {
+          "source_id": "VISUAL_ASSET_REGISTRY",
+          "authority": "catalogue/visual",
+          "domains": [
+            "vehicle_imagery",
+            "product_imagery",
+            "epc_diagrams",
+            "provenance"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "vehicle_or_search_context",
+        "catalogue",
+        "fitment",
+        "commerce"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "TECH": {
+      "module": "TECH",
+      "truth_sources": [
+        {
+          "source_id": "SERVICE_CATALOG",
+          "authority": "tech/catalogue",
+          "domains": [
+            "service_category",
+            "trade",
+            "diagnostic_path",
+            "service_scope"
+          ]
+        },
+        {
+          "source_id": "TECHNICIAN_NETWORK",
+          "authority": "network/technician",
+          "domains": [
+            "provider_capability",
+            "availability",
+            "quality_state"
+          ]
+        },
+        {
+          "source_id": "JOB_SOR",
+          "authority": "jobs",
+          "domains": [
+            "job_state",
+            "allowed_actions",
+            "evidence",
+            "appointment"
+          ]
+        },
+        {
+          "source_id": "ASSET_CONTEXT",
+          "authority": "asset",
+          "domains": [
+            "asset_identity",
+            "asset_type",
+            "service_history"
+          ]
+        },
+        {
+          "source_id": "PRICING",
+          "authority": "pricing",
+          "domains": [
+            "quote",
+            "price",
+            "variation"
+          ]
+        },
+        {
+          "source_id": "SAFETY",
+          "authority": "tech/safety",
+          "domains": [
+            "risk",
+            "ppe",
+            "permit",
+            "loto"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "service",
+        "job",
+        "provider",
+        "asset"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "GROCERIES": {
+      "module": "GROCERIES",
+      "truth_sources": [
+        {
+          "source_id": "GROCERY_CATALOG",
+          "authority": "groceries/catalogue",
+          "domains": [
+            "product",
+            "brand",
+            "pack_size",
+            "category",
+            "image"
+          ]
+        },
+        {
+          "source_id": "MERCHANT_CATALOG",
+          "authority": "groceries/merchant",
+          "domains": [
+            "store",
+            "merchant_offer",
+            "assortment"
+          ]
+        },
+        {
+          "source_id": "INVENTORY",
+          "authority": "inventory",
+          "domains": [
+            "availability",
+            "stock_state"
+          ]
+        },
+        {
+          "source_id": "PRICING",
+          "authority": "pricing",
+          "domains": [
+            "price",
+            "promotion"
+          ]
+        },
+        {
+          "source_id": "ROUNDS",
+          "authority": "groceries/rounds",
+          "domains": [
+            "plan",
+            "membership",
+            "entitlement",
+            "vote",
+            "allocation",
+            "delivery_zone"
+          ]
+        },
+        {
+          "source_id": "SUBSTITUTION",
+          "authority": "groceries/substitution",
+          "domains": [
+            "substitution_policy",
+            "approval_state"
+          ]
+        },
+        {
+          "source_id": "SHOPPER",
+          "authority": "groceries/shopper",
+          "domains": [
+            "pick_state",
+            "receipt",
+            "handoff"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "catalogue",
+        "merchant",
+        "basket_or_round",
+        "fulfilment"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "LAUNDRY": {
+      "module": "LAUNDRY",
+      "truth_sources": [
+        {
+          "source_id": "LAUNDRY_SERVICE_CATALOG",
+          "authority": "laundry/catalogue",
+          "domains": [
+            "service",
+            "garment_category",
+            "treatment",
+            "price_basis"
+          ]
+        },
+        {
+          "source_id": "LAUNDRY_ORDER",
+          "authority": "laundry",
+          "domains": [
+            "order",
+            "item",
+            "intake",
+            "production_state",
+            "qc_state"
+          ]
+        },
+        {
+          "source_id": "LAUNDRY_FACILITY",
+          "authority": "laundry/facility",
+          "domains": [
+            "facility",
+            "capacity",
+            "queue"
+          ]
+        },
+        {
+          "source_id": "PRICING",
+          "authority": "pricing",
+          "domains": [
+            "price",
+            "promotion"
+          ]
+        },
+        {
+          "source_id": "DELIVERY_SOR",
+          "authority": "delivery/laundry-custody",
+          "domains": [
+            "pickup",
+            "return_delivery",
+            "custody",
+            "proof"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "service",
+        "order",
+        "facility",
+        "custody"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "VHUB": {
+      "module": "VHUB",
+      "truth_sources": [
+        {
+          "source_id": "VEHICLE_PROFILE",
+          "authority": "vehicles/vehicle-hub",
+          "domains": [
+            "vehicle",
+            "ownership_context",
+            "garage"
+          ]
+        },
+        {
+          "source_id": "EPC_VEHICLE_CATALOG",
+          "authority": "catalogue/vehicle",
+          "domains": [
+            "make",
+            "model",
+            "generation",
+            "engine",
+            "chassis_code"
+          ]
+        },
+        {
+          "source_id": "SERVICE_HISTORY",
+          "authority": "vehicles/history",
+          "domains": [
+            "service_history",
+            "maintenance",
+            "reminders"
+          ]
+        },
+        {
+          "source_id": "DOCUMENTS",
+          "authority": "documents",
+          "domains": [
+            "vehicle_documents",
+            "evidence"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "vehicle",
+        "history"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "CARE": {
+      "module": "CARE",
+      "truth_sources": [
+        {
+          "source_id": "CARE_PLAN_CATALOG",
+          "authority": "care",
+          "domains": [
+            "tier",
+            "plan_version",
+            "benefit",
+            "limit",
+            "exclusion"
+          ]
+        },
+        {
+          "source_id": "ENTITLEMENT",
+          "authority": "care/entitlements",
+          "domains": [
+            "eligibility",
+            "entitlement",
+            "usage"
+          ]
+        },
+        {
+          "source_id": "ASSET_CONTEXT",
+          "authority": "asset",
+          "domains": [
+            "covered_asset",
+            "fleet_or_household_relationship"
+          ]
+        },
+        {
+          "source_id": "BILLING",
+          "authority": "subscriptions/billing",
+          "domains": [
+            "billing_state",
+            "renewal",
+            "nonrenewal"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "plan",
+        "entitlement",
+        "asset",
+        "billing"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "ASSIST": {
+      "module": "ASSIST",
+      "truth_sources": [
+        {
+          "source_id": "ASSIST_INCIDENT",
+          "authority": "assist",
+          "domains": [
+            "incident",
+            "severity",
+            "state",
+            "allowed_actions"
+          ]
+        },
+        {
+          "source_id": "VEHICLE_PROFILE",
+          "authority": "vehicles/vehicle-hub",
+          "domains": [
+            "vehicle"
+          ]
+        },
+        {
+          "source_id": "LOCATION",
+          "authority": "geo",
+          "domains": [
+            "location",
+            "zone"
+          ]
+        },
+        {
+          "source_id": "PROVIDER_NETWORK",
+          "authority": "network",
+          "domains": [
+            "provider",
+            "capability",
+            "assignment"
+          ]
+        },
+        {
+          "source_id": "SAFETY",
+          "authority": "assist/safety",
+          "domains": [
+            "safety_state",
+            "escalation"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "incident",
+        "vehicle",
+        "location",
+        "provider"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "PROJECTS": {
+      "module": "PROJECTS",
+      "truth_sources": [
+        {
+          "source_id": "PROJECT_SOR",
+          "authority": "projects",
+          "domains": [
+            "project",
+            "scope",
+            "milestone",
+            "state"
+          ]
+        },
+        {
+          "source_id": "QUOTE_VARIATION",
+          "authority": "projects/commercial",
+          "domains": [
+            "quote",
+            "variation",
+            "approval"
+          ]
+        },
+        {
+          "source_id": "PROVIDER_NETWORK",
+          "authority": "network",
+          "domains": [
+            "provider",
+            "trade",
+            "assignment"
+          ]
+        },
+        {
+          "source_id": "EVIDENCE",
+          "authority": "evidence",
+          "domains": [
+            "document",
+            "photo",
+            "signoff"
+          ]
+        },
+        {
+          "source_id": "BUDGET",
+          "authority": "projects/finance",
+          "domains": [
+            "budget",
+            "cost",
+            "funding"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "project",
+        "milestone",
+        "commercial",
+        "provider"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "FLEET": {
+      "module": "FLEET",
+      "truth_sources": [
+        {
+          "source_id": "FLEET_ASSET",
+          "authority": "fleet",
+          "domains": [
+            "fleet",
+            "asset",
+            "vehicle",
+            "assignment"
+          ]
+        },
+        {
+          "source_id": "MAINTENANCE",
+          "authority": "fleet/maintenance",
+          "domains": [
+            "maintenance_plan",
+            "work_due",
+            "history"
+          ]
+        },
+        {
+          "source_id": "PROVIDER_NETWORK",
+          "authority": "network",
+          "domains": [
+            "supplier",
+            "technician",
+            "performance"
+          ]
+        },
+        {
+          "source_id": "FLEET_FINANCE",
+          "authority": "fleet/finance",
+          "domains": [
+            "cost",
+            "budget",
+            "invoice"
+          ]
+        },
+        {
+          "source_id": "TELEMATICS",
+          "authority": "fleet/telematics",
+          "domains": [
+            "telemetry",
+            "odometer",
+            "location"
+          ],
+          "required_when": [
+            "TELEMATICS_ENABLED"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "fleet",
+        "asset",
+        "maintenance",
+        "finance"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "HEALTH": {
+      "module": "HEALTH",
+      "truth_sources": [
+        {
+          "source_id": "HEALTH_IDENTITY_CONSENT",
+          "authority": "health/identity",
+          "domains": [
+            "patient_identity",
+            "consent",
+            "delegation"
+          ]
+        },
+        {
+          "source_id": "CLINICAL_RECORD",
+          "authority": "health/clinical",
+          "domains": [
+            "clinical_record",
+            "encounter",
+            "referral"
+          ]
+        },
+        {
+          "source_id": "MEDICINE_CATALOG",
+          "authority": "health/pharmacy",
+          "domains": [
+            "medicine",
+            "availability",
+            "dispensing"
+          ]
+        },
+        {
+          "source_id": "PRESCRIPTION",
+          "authority": "health/prescription",
+          "domains": [
+            "prescription",
+            "state"
+          ]
+        },
+        {
+          "source_id": "APPOINTMENT",
+          "authority": "health/appointments",
+          "domains": [
+            "appointment",
+            "queue"
+          ]
+        },
+        {
+          "source_id": "CLAIMS",
+          "authority": "health/claims",
+          "domains": [
+            "claim",
+            "medical_aid",
+            "transaction_state"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "identity_and_consent",
+        "clinical_or_pharmacy_context",
+        "safety"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "CORPORATE": {
+      "module": "CORPORATE",
+      "truth_sources": [
+        {
+          "source_id": "ORG_HR",
+          "authority": "corporate/hr",
+          "domains": [
+            "organisation",
+            "position",
+            "employee",
+            "leave",
+            "attendance",
+            "payroll"
+          ]
+        },
+        {
+          "source_id": "CORPORATE_FINANCE",
+          "authority": "corporate/finance",
+          "domains": [
+            "accounting",
+            "ap",
+            "ar",
+            "budget",
+            "treasury"
+          ]
+        },
+        {
+          "source_id": "PROCUREMENT",
+          "authority": "corporate/procurement",
+          "domains": [
+            "vendor",
+            "requisition",
+            "purchase"
+          ]
+        },
+        {
+          "source_id": "WMS",
+          "authority": "corporate/wms",
+          "domains": [
+            "inventory",
+            "warehouse",
+            "movement",
+            "count"
+          ]
+        },
+        {
+          "source_id": "ASSETS_FACILITIES",
+          "authority": "corporate/assets",
+          "domains": [
+            "asset",
+            "facility"
+          ]
+        },
+        {
+          "source_id": "GRC",
+          "authority": "corporate/grc",
+          "domains": [
+            "compliance",
+            "audit",
+            "sod",
+            "doa"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "operator_role",
+        "corporate_domain"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "PLATFORM": {
+      "module": "PLATFORM",
+      "truth_sources": [
+        {
+          "source_id": "ORDER_FULFILMENT",
+          "authority": "platform/order-fulfilment",
+          "domains": [
+            "order",
+            "fulfilment",
+            "exception"
+          ]
+        },
+        {
+          "source_id": "CUSTOMER360",
+          "authority": "platform/customer360",
+          "domains": [
+            "customer",
+            "relationship",
+            "activity"
+          ]
+        },
+        {
+          "source_id": "SUPPLIER_OS",
+          "authority": "platform/supplier",
+          "domains": [
+            "supplier",
+            "relationship",
+            "settlement_projection"
+          ]
+        },
+        {
+          "source_id": "RCE",
+          "authority": "platform/resolution",
+          "domains": [
+            "case",
+            "claim",
+            "guarantee",
+            "remedy"
+          ]
+        },
+        {
+          "source_id": "FINANCE",
+          "authority": "platform/finance",
+          "domains": [
+            "treasury",
+            "economics",
+            "reconciliation"
+          ]
+        },
+        {
+          "source_id": "NETWORK",
+          "authority": "platform/network",
+          "domains": [
+            "capacity",
+            "liquidity",
+            "zone",
+            "activation"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "operator_control",
+        "canonical_sor"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "GMPC": {
+      "module": "GMPC",
+      "truth_sources": [
+        {
+          "source_id": "COMMERCIAL_MEMORY",
+          "authority": "gmpc",
+          "domains": [
+            "campaign",
+            "promotion",
+            "creative",
+            "audience",
+            "supplier_funding"
+          ]
+        },
+        {
+          "source_id": "EXPERIMENT",
+          "authority": "gmpc/experiments",
+          "domains": [
+            "experiment",
+            "assignment",
+            "measurement"
+          ]
+        },
+        {
+          "source_id": "SEO_DISCOVERY",
+          "authority": "gmpc/discovery",
+          "domains": [
+            "search_demand",
+            "indexability",
+            "schema",
+            "feed"
+          ]
+        },
+        {
+          "source_id": "PERFORMANCE",
+          "authority": "gmpc/measurement",
+          "domains": [
+            "campaign_performance",
+            "attribution"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "commercial_object",
+        "measurement"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "DKRF": {
+      "module": "DKRF",
+      "truth_sources": [
+        {
+          "source_id": "KNOWLEDGE_CORPUS",
+          "authority": "dkrf",
+          "domains": [
+            "knowledge_item",
+            "source",
+            "provenance",
+            "freshness"
+          ]
+        },
+        {
+          "source_id": "RETRIEVAL",
+          "authority": "dkrf/retrieval",
+          "domains": [
+            "query",
+            "result",
+            "ranking",
+            "evidence"
+          ]
+        },
+        {
+          "source_id": "GRAPHRAG",
+          "authority": "vekl/graphrag",
+          "domains": [
+            "entity",
+            "relationship",
+            "capsule"
+          ]
+        },
+        {
+          "source_id": "KNOWLEDGE_POLICY",
+          "authority": "dkrf/policy",
+          "domains": [
+            "visibility",
+            "scope",
+            "explainability"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "feature",
+        "knowledge",
+        "retrieval",
+        "evidence"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    },
+    "HOME": {
+      "module": "HOME",
+      "truth_sources": [
+        {
+          "source_id": "IDENTITY_SESSION",
+          "authority": "identity",
+          "domains": [
+            "actor",
+            "permissions",
+            "session"
+          ]
+        },
+        {
+          "source_id": "CUSTOMER360",
+          "authority": "platform/customer360",
+          "domains": [
+            "customer",
+            "relationship",
+            "recent_activity"
+          ]
+        },
+        {
+          "source_id": "HOME_EXPERIENCE",
+          "authority": "home/product-experience",
+          "domains": [
+            "enabled_units",
+            "home_navigation",
+            "owner_approved_merchandising"
+          ]
+        },
+        {
+          "source_id": "NOTIFICATION_ATTENTION",
+          "authority": "platform/attention",
+          "domains": [
+            "notification_state",
+            "attention_priority"
+          ]
+        }
+      ],
+      "core_domains": [
+        "screen",
+        "actor",
+        "enabled_units",
+        "navigation",
+        "attention"
+      ],
+      "missing_required_truth_policy": "FAIL_CLOSED_AT_PROVIDER_DISPATCH"
+    }
+  }
+}
