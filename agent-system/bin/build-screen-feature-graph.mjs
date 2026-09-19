@@ -38,6 +38,31 @@ const PLATFORM_PROFILES = Object.freeze({
   DIAL_BUSINESS_INTERNAL: { channel_class: 'INTERNAL_BUSINESS_APP', platform_targets: ['INTERNAL_WEB'], authority_ref: 'DIAL_CLIENT_APP_ARCHITECTURE' },
 });
 
+const APPLICATION_PROFILES = Object.freeze([
+  { application_id: 'DIAL_CONSUMER_ANDROID', display_name: 'DIAL Consumer — Android', application_class: 'CUSTOMER_APP', primary_users: ['CUSTOMERS'], platform_targets: ['ANDROID'], app_family_refs: ['DIAL_CONSUMER'], module_scope: ['SPARE','TECH','GROCERIES','LAUNDRY','VHUB','CARE','ASSIST','PROJECTS'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_CONSUMER_IOS', display_name: 'DIAL Consumer — iOS', application_class: 'CUSTOMER_APP', primary_users: ['CUSTOMERS'], platform_targets: ['IOS'], app_family_refs: ['DIAL_CONSUMER'], module_scope: ['SPARE','TECH','GROCERIES','LAUNDRY','VHUB','CARE','ASSIST','PROJECTS'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_CONSUMER_WEB', display_name: 'DIAL Consumer — responsive web', application_class: 'CUSTOMER_APP', primary_users: ['CUSTOMERS'], platform_targets: ['WEB'], app_family_refs: ['DIAL_WEB'], module_scope: ['SPARE','TECH','GROCERIES','LAUNDRY','VHUB','CARE','ASSIST','PROJECTS'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_CONSUMER_WHATSAPP', display_name: 'DIAL Consumer — WhatsApp companion', application_class: 'CONVERSATIONAL_COMPANION', primary_users: ['CUSTOMERS'], platform_targets: ['WHATSAPP'], app_family_refs: ['WHATSAPP'], module_scope: ['SPARE','TECH','GROCERIES','LAUNDRY','VHUB','CARE','ASSIST','PROJECTS'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'CHANNEL_DEPENDENT' },
+  { application_id: 'DIAL_PUBLIC_WEB', display_name: 'DIAL public web home', application_class: 'PUBLIC_WEB', primary_users: ['GUESTS','CUSTOMERS'], platform_targets: ['WEB'], explicit_capability_refs: ['HOME-S001','HOME-S002','HOME-S003','HOME-S004','HOME-S005'], native_screen_refs: ['SCREEN:HOME:PUBLIC_DIAL_SERVICE_ROUTER_LANDING'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','DIAL_HOME_SERVICE_ROUTER_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_HEALTH_ANDROID', display_name: 'Dial Health — Android', application_class: 'SPECIALIST_CUSTOMER_APP', primary_users: ['PATIENTS','FAMILIES'], platform_targets: ['ANDROID'], app_family_refs: ['DIAL_HEALTH'], module_scope: ['HEALTH'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_HEALTH_IOS', display_name: 'Dial Health — iOS', application_class: 'SPECIALIST_CUSTOMER_APP', primary_users: ['PATIENTS','FAMILIES'], platform_targets: ['IOS'], app_family_refs: ['DIAL_HEALTH'], module_scope: ['HEALTH'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_HEALTH_WEB', display_name: 'Dial Health — web', application_class: 'SPECIALIST_CUSTOMER_APP', primary_users: ['PATIENTS','FAMILIES'], platform_targets: ['WEB'], app_family_refs: ['DIAL_HEALTH_WEB'], module_scope: ['HEALTH'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_HEALTH_WHATSAPP', display_name: 'Dial Health — WhatsApp', application_class: 'SPECIALIST_CONVERSATIONAL', primary_users: ['PATIENTS','FAMILIES'], platform_targets: ['WHATSAPP'], app_family_refs: ['WHATSAPP_HEALTH'], module_scope: ['HEALTH'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'CHANNEL_DEPENDENT' },
+  { application_id: 'DIAL_BUSINESS_WEB', display_name: 'DIAL Business — web workspace', application_class: 'BUSINESS_CLIENT', primary_users: ['B2B_CUSTOMERS','FLEET_MANAGERS','PROJECT_CLIENTS'], platform_targets: ['WEB'], app_family_refs: ['DIAL_BUSINESS','DIAL_BUSINESS_WEB'], module_scope: ['FLEET','PROJECTS','VHUB'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_BUSINESS_MOBILE_COMPANION', display_name: 'DIAL Business — native mobile companion', application_class: 'BUSINESS_CLIENT_COMPANION', primary_users: ['B2B_CUSTOMERS'], platform_targets: ['NATIVE_MOBILE_WHERE_JUSTIFIED'], app_family_refs: ['DIAL_BUSINESS'], module_scope: ['FLEET','PROJECTS','VHUB'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE'], screen_requirement: 'OPTIONAL_REUSE' },
+  { application_id: 'TECHNICIAN_ANDROID', display_name: 'Technician Android', application_class: 'OPERATIONAL_PROVIDER_APP', primary_users: ['FIELD_TECHNICIANS'], platform_targets: ['ANDROID','JETPACK_COMPOSE'], explicit_feature_refs: ['TECH-F011'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'COURIER_ANDROID', display_name: 'Courier Android', application_class: 'OPERATIONAL_PROVIDER_APP', primary_users: ['COURIERS'], platform_targets: ['ANDROID','JETPACK_COMPOSE'], capability_family_refs: ['COURIER_ANDROID'], explicit_feature_refs: ['SPARE-F011','GROC-F011','GROC-F013','LAUN-F003','LAUN-F012','HEALTH-F016'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'SUPPLIER_MERCHANT_WEB', display_name: 'Supplier / Merchant Web', application_class: 'OPERATIONAL_PROVIDER_APP', primary_users: ['SPARE_SUPPLIERS','GROCERY_MERCHANTS'], platform_targets: ['WEB'], capability_family_refs: ['SUPPLIER_WEB'], explicit_feature_refs: ['SPARE-F014','GROC-F001','GROC-F004','GROC-F005','GROC-F018'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'GROCERY_SHOPPER', display_name: 'Grocery Shopper', application_class: 'FIELD_OPERATIONS_APP', primary_users: ['DIAL_SHOPPERS'], platform_targets: ['NATIVE_OR_PWA_AFTER_FIELD_VALIDATION'], explicit_feature_refs: ['GROC-F006'], authority_refs: ['OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'LAUNDRY_FACILITY', display_name: 'Laundry Facility', application_class: 'FACILITY_OPERATIONS_APP', primary_users: ['INTAKE_STAFF','PRODUCTION_STAFF','QC_STAFF'], platform_targets: ['TABLET','WEB'], explicit_feature_refs: ['LAUN-F004','LAUN-F005','LAUN-F006','LAUN-F008','LAUN-F009','LAUN-F010','LAUN-F011','LAUN-F016','LAUN-F017','LAUN-F018'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'WAREHOUSE_ANDROID', display_name: 'Warehouse Android', application_class: 'INTERNAL_OPERATIONS_APP', primary_users: ['WAREHOUSE_STAFF'], platform_targets: ['ANDROID'], explicit_feature_refs: ['CORP-F013'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'STAFF_WEB', display_name: 'Staff Web', application_class: 'INTERNAL_STAFF_APP', primary_users: ['EMPLOYEES','MANAGERS'], platform_targets: ['WEB'], app_family_refs: ['STAFF_WEB'], module_scope: ['CORPORATE'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'COMMAND_CENTRE', display_name: 'Command Centre', application_class: 'OPERATOR_CONTROL_PLANE', primary_users: ['DIAL_OPERATORS','LEADERS'], platform_targets: ['WEB'], app_family_refs: ['COMMAND_CENTRE'], authority_refs: ['DIAL_CLIENT_APP_ARCHITECTURE','OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+  { application_id: 'DIAL_HEALTH_PROVIDER_SURFACES', display_name: 'Dial Health provider surfaces', application_class: 'SPECIALIST_PROVIDER_APP', primary_users: ['CLINICIANS','PHARMACIES','FACILITIES'], platform_targets: ['SPECIALIST_PROVIDER_SURFACE'], explicit_feature_refs: ['HEALTH-F002','HEALTH-F003','HEALTH-F004'], authority_refs: ['OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN'], screen_requirement: 'REQUIRED' },
+]);
+
+const KNOWN_NON_SCREEN_FAMILIES = Object.freeze(new Set(['ALL','ALL_CUSTOMER_APPS','CHATWOOT','DEVELOPMENT_SYSTEM','POS','SERVER','SUPPORT','ANDROID','IOS']));
+
 function classifyScreen(label = '') {
   const t = String(label).toUpperCase();
   if (/HOME\/ENTRY/.test(t)) return 'HOME_ENTRY';
@@ -54,7 +79,7 @@ function classifyScreen(label = '') {
 }
 
 function makeIndexBag() {
-  const names = ['screen_to_features', 'feature_to_screens', 'screen_to_subfeatures', 'subfeature_to_screens', 'screen_to_capabilities', 'capability_to_screens', 'screen_to_eventualities', 'eventuality_to_screens', 'screen_to_actions', 'action_to_screens', 'screen_to_queries', 'query_to_screens', 'screen_to_commands', 'command_to_screens', 'screen_to_events', 'event_to_screens', 'screen_to_app_families', 'app_family_to_screens', 'screen_to_app_surfaces', 'app_surface_to_screens', 'screen_to_routes', 'route_to_screens', 'screen_to_modules', 'module_to_screens'];
+  const names = ['screen_to_features', 'feature_to_screens', 'screen_to_subfeatures', 'subfeature_to_screens', 'screen_to_capabilities', 'capability_to_screens', 'screen_to_eventualities', 'eventuality_to_screens', 'screen_to_actions', 'action_to_screens', 'screen_to_queries', 'query_to_screens', 'screen_to_commands', 'command_to_screens', 'screen_to_events', 'event_to_screens', 'screen_to_app_families', 'app_family_to_screens', 'screen_to_app_surfaces', 'app_surface_to_screens', 'screen_to_routes', 'route_to_screens', 'screen_to_modules', 'module_to_screens', 'screen_to_applications', 'application_to_screens', 'feature_to_applications', 'application_to_features', 'capability_to_applications', 'application_to_capabilities'];
   return Object.fromEntries(names.map((n) => [n, new Map()]));
 }
 
@@ -181,6 +206,42 @@ export function buildCanonicalScreenFeatureGraph() {
     }
   }
 
+  const supplementalScreens = [
+    {
+      screen_id: 'SCREEN:HOME:PUBLIC_DIAL_SERVICE_ROUTER_LANDING',
+      module: 'HOME',
+      title: 'Public DIAL service-router landing',
+      screen_kind: 'HOME_ENTRY',
+      branch_spaces: [],
+      feature_refs: [],
+      subfeature_refs: [],
+      supporting_capability_refs: ['HOME-S001','HOME-S002','HOME-S003','HOME-S004','HOME-S005'],
+      eventuality_refs: [],
+      app_family_refs: ['DIAL_WEB'],
+      app_surface_refs: [],
+      route_refs: ['/'],
+      action_refs: ['route_to_service','search_or_describe_intent','continue_active_work','check_service_availability','sign_in_when_required','open_support'],
+      query_refs: [], command_refs: [], event_refs: [], source_realization_refs: [],
+      authority_kind: 'CAPABILITY_AND_INFORMATION_ARCHITECTURE_AUTHORITY',
+      source_authority_refs: ['docs/dial/final-audit/12_CLIENT_EXPERIENCE/DIAL_CLIENT_APP_ARCHITECTURE.md','docs/dial/final-audit/16_HOME_IDENTITY_WHATSAPP/DIAL_HOME_SERVICE_ROUTER_ARCHITECTURE.md'],
+    },
+  ];
+  for (const s of supplementalScreens) {
+    if (screens.has(s.screen_id)) throw new Error(`DUPLICATE_SUPPLEMENTAL_SCREEN:${s.screen_id}`);
+    screens.set(s.screen_id, {
+      ...s,
+      branch_spaces: new Set(s.branch_spaces), feature_refs: new Set(s.feature_refs), subfeature_refs: new Set(s.subfeature_refs),
+      supporting_capability_refs: new Set(s.supporting_capability_refs), eventuality_refs: new Set(s.eventuality_refs), app_family_refs: new Set(s.app_family_refs),
+      app_surface_refs: new Set(s.app_surface_refs), route_refs: new Set(s.route_refs), action_refs: new Set(s.action_refs), query_refs: new Set(s.query_refs),
+      command_refs: new Set(s.command_refs), event_refs: new Set(s.event_refs), source_realization_refs: new Set(s.source_realization_refs),
+    });
+    s.supporting_capability_refs.forEach((x) => { add(idx.screen_to_capabilities, s.screen_id, x); add(idx.capability_to_screens, x, s.screen_id); });
+    s.app_family_refs.forEach((x) => { add(idx.screen_to_app_families, s.screen_id, x); add(idx.app_family_to_screens, x, s.screen_id); });
+    s.route_refs.forEach((x) => { add(idx.screen_to_routes, s.screen_id, x); add(idx.route_to_screens, x, s.screen_id); });
+    s.action_refs.forEach((x) => { add(idx.screen_to_actions, s.screen_id, x); add(idx.action_to_screens, x, s.screen_id); });
+    add(idx.screen_to_modules, s.screen_id, s.module); add(idx.module_to_screens, s.module, s.screen_id);
+  }
+
   const orphanSubfeatures = subfeatures.filter((x) => !featureById.has(x.parent_feature_id)).map((x) => x.subfeature_id);
   const missingCapabilities = uniq(features.flatMap((f) => (f.supporting_capability_refs || []).filter((x) => !capabilityIds.has(x))));
   const missingEventualities = uniq(features.flatMap((f) => (f.applicable_eventuality_refs || []).filter((x) => !eventualityIds.has(x))));
@@ -220,6 +281,50 @@ export function buildCanonicalScreenFeatureGraph() {
     feature_refs: [...x.feature_refs].sort(),
   })).sort((a, b) => a.app_surface_id.localeCompare(b.app_surface_id));
 
+  const featureScreens = (featureId) => idx.feature_to_screens.get(featureId) || new Set();
+  const applicationRows = APPLICATION_PROFILES.map((profile) => {
+    const featureRefs = new Set(profile.explicit_feature_refs || []);
+    for (const f of features) {
+      const familyMatch = (profile.app_family_refs || []).some((x) => (f.app_families || []).includes(x));
+      const moduleMatch = !(profile.module_scope || []).length || profile.module_scope.includes(f.module);
+      if (familyMatch && moduleMatch) featureRefs.add(f.feature_id);
+    }
+    const screenRefs = new Set(profile.native_screen_refs || []);
+    for (const featureId of featureRefs) for (const screenId of featureScreens(featureId)) screenRefs.add(screenId);
+    const capabilityRefs = new Set(profile.explicit_capability_refs || []);
+    const capabilityFamilies = uniq([...(profile.capability_family_refs || []), ...(profile.app_family_refs || [])]);
+    for (const capability of capabilities) {
+      if (capabilityFamilies.some((x) => (capability.app_families || []).includes(x))) capabilityRefs.add(capability.capability_id);
+    }
+    for (const screenId of screenRefs) add(idx.screen_to_applications, screenId, profile.application_id);
+    for (const screenId of screenRefs) add(idx.application_to_screens, profile.application_id, screenId);
+    for (const featureId of featureRefs) { add(idx.feature_to_applications, featureId, profile.application_id); add(idx.application_to_features, profile.application_id, featureId); }
+    for (const capabilityId of capabilityRefs) { add(idx.capability_to_applications, capabilityId, profile.application_id); add(idx.application_to_capabilities, profile.application_id, capabilityId); }
+    const coverage_state = screenRefs.size
+      ? 'BOUND_TO_CANONICAL_SCREENS'
+      : capabilityRefs.size
+        ? 'CAPABILITY_ONLY_NO_CANONICAL_SCREEN_MAPPING'
+        : profile.screen_requirement === 'OPTIONAL_REUSE'
+          ? 'OPTIONAL_NO_DEDICATED_SCREEN_MAPPING'
+          : 'NO_CANONICAL_SCREEN_MAPPING';
+    return { ...profile, feature_refs: [...featureRefs].sort(), screen_refs: [...screenRefs].sort(), supporting_capability_refs: [...capabilityRefs].sort(), coverage_state };
+  }).sort((a,b) => a.application_id.localeCompare(b.application_id));
+
+  for (const screen of screenRows) screen.application_refs = [...(idx.screen_to_applications.get(screen.screen_id) || [])].sort();
+
+  const allDeclaredFamilies = uniq([
+    ...features.flatMap((f) => f.app_families || []),
+    ...capabilities.flatMap((c) => c.app_families || []),
+  ]);
+  const profileFamilies = new Set(APPLICATION_PROFILES.flatMap((x) => [...(x.app_family_refs || []), ...(x.capability_family_refs || [])]));
+  const declaredChannelFamilies = allDeclaredFamilies.map((family) => ({
+    family_id: family,
+    classification: PLATFORM_PROFILES[family]?.channel_class || (profileFamilies.has(family) ? 'APPLICATION_BOUND_FAMILY' : (KNOWN_NON_SCREEN_FAMILIES.has(family) ? 'NON_SCREEN_OR_SCOPE_FAMILY' : 'UNCLASSIFIED')),
+    platform_targets: PLATFORM_PROFILES[family]?.platform_targets || [],
+    feature_ref_count: features.filter((f) => (f.app_families || []).includes(family)).length,
+    capability_ref_count: capabilities.filter((c) => (c.app_families || []).includes(family)).length,
+  }));
+
   const sourceHashes = Object.fromEntries(Object.entries(INPUTS).map(([k, p]) => [k, hash(readJson(p))]));
   const stats = {
     feature_count: features.length,
@@ -231,13 +336,16 @@ export function buildCanonicalScreenFeatureGraph() {
     source_screen_reference_count: features.reduce((n, f) => n + (f.screens || []).length, 0),
     canonical_screen_count: screenRows.length,
     app_surface_count: appSurfaceRows.length,
+    application_platform_count: applicationRows.length,
+    declared_channel_family_count: declaredChannelFamilies.length,
     screen_feature_realization_count: realizations.length,
   };
   const gaps = {
     orphan_subfeature_refs: orphanSubfeatures,
     missing_supporting_capability_refs: missingCapabilities,
     missing_eventuality_refs: missingEventualities,
-    unclassified_app_families: uniq(features.flatMap((f) => (f.app_families || []).filter((x) => !PLATFORM_PROFILES[x]))),
+    unclassified_app_families: declaredChannelFamilies.filter((x) => x.classification === 'UNCLASSIFIED').map((x) => x.family_id),
+    application_screen_coverage_gaps: applicationRows.filter((x) => x.screen_requirement === 'REQUIRED' && x.coverage_state !== 'BOUND_TO_CANONICAL_SCREENS').map((x) => x.application_id),
   };
 
   const registry = {
@@ -250,6 +358,8 @@ export function buildCanonicalScreenFeatureGraph() {
     gaps,
     screens: screenRows,
     app_surfaces: appSurfaceRows,
+    application_platforms: applicationRows,
+    declared_channel_families: declaredChannelFamilies,
   };
   registry.content_hash = hash({ ...registry, content_hash: null });
 

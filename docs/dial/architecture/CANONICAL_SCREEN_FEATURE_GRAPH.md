@@ -93,6 +93,18 @@ Platform profiles are derived from the current client architecture:
 
 Unknown future app-family values remain explicitly unclassified and fail the completeness gate until a platform profile is added.
 
+## Application/platform layer
+
+The registry carries **20 explicit DIAL application/platform nodes** so screen authority is not flattened into generic channel labels. The set covers the DIAL Consumer Android/iOS/web/WhatsApp surfaces, public web home, Dial Health Android/iOS/web/WhatsApp, DIAL Business web/mobile companion, Technician Android, Courier Android, Supplier/Merchant Web, Grocery Shopper, Laundry Facility, Warehouse Android, Staff Web, Command Centre and Dial Health provider surfaces.
+
+Each application node resolves to canonical screen, feature and supporting-capability references. The graph also emits the reverse indexes `screen_to_applications`, `feature_to_applications` and `capability_to_applications`, so a frontend task can start from either a screen, a feature or an application and reach the same authority set.
+
+The current source registries declare 22 channel/scope families. All are classified; non-screen scopes such as `SERVER`, `SUPPORT`, `CHATWOOT`, `DEVELOPMENT_SYSTEM`, `ALL` and `ALL_CUSTOMER_APPS` remain visible but are not misrepresented as applications.
+
+The public DIAL home is capability-authoritative rather than Feature-ID-authoritative. Its canonical root screen is therefore bound directly to `HOME-S001` through `HOME-S005` and the locked Home/Service Router information architecture instead of fabricating a Feature ID.
+
+Courier Android reuses the shared DIAL Delivery state authority. It projects the existing delivery/custody feature contracts from Spare, Groceries, Laundry and Health plus courier payment/custody capability rather than creating a second courier-owned delivery state machine.
+
 ## Screen-feature realization edge
 
 Each declared feature-to-screen occurrence produces a `ScreenFeatureRealization` record carrying the source feature's:
@@ -257,3 +269,21 @@ npm run agent:screen-feature-graph
 ```
 
 A clean rebuild must be byte-identical.
+
+## Current certified graph size
+
+The deterministic build currently resolves:
+
+- 309 canonical features;
+- 2,781 subfeatures;
+- 128 supporting capabilities;
+- 254 eventualities;
+- 180 customer endpoint contracts;
+- 239 shared-platform functions in source provenance;
+- 1,579 declared feature-to-screen realizations;
+- 428 canonical screen nodes;
+- 40 module × app-family surface projections;
+- 20 explicit application/platform nodes;
+- 22 declared channel/scope families.
+
+The completeness gate is green only when there are zero orphan subfeatures, zero missing supporting-capability references, zero missing eventuality references, zero unclassified app families and zero required application/platform screen-coverage gaps.

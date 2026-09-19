@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { test, expect } from 'vitest';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { buildCanonicalScreenFeatureGraph } from '../agent-system/bin/build-screen-feature-graph.mjs';
-import { buildScreenFeatureProjection, getFeaturesForScreen, getScreensForFeature, loadCanonicalScreenGraph } from '../agent-system/orchestration/screen-feature-graph.mjs';
+import { buildScreenFeatureProjection, getApplicationsForFeature, getApplicationsForScreen, getFeaturesForApplication, getFeaturesForScreen, getScreensForApplication, getScreensForFeature, loadCanonicalScreenGraph } from '../agent-system/orchestration/screen-feature-graph.mjs';
 import { buildSurfaceManifest } from '../agent-system/orchestration/frontend-product-experience.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -22,10 +23,13 @@ test('canonical screen graph covers every declared feature screen reference with
   expect(registry.stats.screen_feature_realization_count).toBe(expectedRefs);
   expect(registry.stats.canonical_screen_count).toBeGreaterThan(0);
   expect(registry.stats.app_surface_count).toBeGreaterThan(0);
+  expect(registry.stats.application_platform_count).toBe(20);
+  expect(registry.stats.declared_channel_family_count).toBe(22);
   expect(registry.gaps.orphan_subfeature_refs).toEqual([]);
   expect(registry.gaps.missing_supporting_capability_refs).toEqual([]);
   expect(registry.gaps.missing_eventuality_refs).toEqual([]);
   expect(registry.gaps.unclassified_app_families).toEqual([]);
+  expect(registry.gaps.application_screen_coverage_gaps).toEqual([]);
   expect(graph.screen_registry_hash).toBe(registry.content_hash);
 });
 
@@ -80,4 +84,35 @@ test('direct lookups work in both directions for a canonical Spare screen', () =
   expect(screens.length).toBeGreaterThan(0);
   const first = screens[0];
   expect(getFeaturesForScreen({ repoDir, screenId: first.screen_id })).toContain('SPARE-F001');
+});
+
+test('all canonical DIAL application/platform nodes are screen-bound with bidirectional indexes', () => {
+  const { registry, graph } = loadCanonicalScreenGraph(repoDir);
+  expect(registry.application_platforms).toHaveLength(20);
+  for (const application of registry.application_platforms) {
+    if (application.screen_requirement === 'REQUIRED') expect(application.screen_refs.length).toBeGreaterThan(0);
+    for (const screenId of application.screen_refs) {
+      expect(graph.indexes.application_to_screens[application.application_id]).toContain(screenId);
+      expect(graph.indexes.screen_to_applications[screenId]).toContain(application.application_id);
+      const screen = registry.screens.find((x) => x.screen_id === screenId);
+      expect(screen?.application_refs).toContain(application.application_id);
+    }
+  }
+});
+
+test('public web home is a canonical capability-authority screen instead of a fabricated feature', () => {
+  const screens = getScreensForApplication({ repoDir, applicationId: 'DIAL_PUBLIC_WEB' });
+  expect(screens).toHaveLength(1);
+  expect(screens[0].screen_id).toBe('SCREEN:HOME:PUBLIC_DIAL_SERVICE_ROUTER_LANDING');
+  expect(screens[0].feature_refs).toEqual([]);
+  expect(screens[0].supporting_capability_refs).toEqual(['HOME-S001','HOME-S002','HOME-S003','HOME-S004','HOME-S005']);
+  expect(getApplicationsForScreen({ repoDir, screenId: screens[0].screen_id })).toContain('DIAL_PUBLIC_WEB');
+});
+
+test('courier Android resolves shared delivery feature authority instead of creating a second delivery state machine', () => {
+  const expected = ['SPARE-F011','GROC-F011','GROC-F013','LAUN-F003','LAUN-F012','HEALTH-F016'].sort();
+  const features = getFeaturesForApplication({ repoDir, applicationId: 'COURIER_ANDROID' });
+  expect(features).toEqual(expected);
+  expect(getScreensForApplication({ repoDir, applicationId: 'COURIER_ANDROID' }).length).toBeGreaterThan(0);
+  for (const featureId of expected) expect(getApplicationsForFeature({ repoDir, featureId })).toContain('COURIER_ANDROID');
 });

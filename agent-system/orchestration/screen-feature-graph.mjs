@@ -36,6 +36,32 @@ export function getFeaturesForScreen({ repoDir, screenId } = {}) {
   return graph.indexes?.screen_to_features?.[screenId] || [];
 }
 
+export function getScreensForApplication({ repoDir, applicationId } = {}) {
+  if (!repoDir || !applicationId) throw new Error('application screen lookup requires repoDir and applicationId');
+  const { registry, graph } = loadCanonicalScreenGraph(repoDir);
+  const ids = graph.indexes?.application_to_screens?.[applicationId] || [];
+  const byId = new Map(registry.screens.map((x) => [x.screen_id, x]));
+  return ids.map((id) => byId.get(id)).filter(Boolean);
+}
+
+export function getApplicationsForScreen({ repoDir, screenId } = {}) {
+  if (!repoDir || !screenId) throw new Error('screen application lookup requires repoDir and screenId');
+  const { graph } = loadCanonicalScreenGraph(repoDir);
+  return graph.indexes?.screen_to_applications?.[screenId] || [];
+}
+
+export function getFeaturesForApplication({ repoDir, applicationId } = {}) {
+  if (!repoDir || !applicationId) throw new Error('application feature lookup requires repoDir and applicationId');
+  const { graph } = loadCanonicalScreenGraph(repoDir);
+  return graph.indexes?.application_to_features?.[applicationId] || [];
+}
+
+export function getApplicationsForFeature({ repoDir, featureId } = {}) {
+  if (!repoDir || !featureId) throw new Error('feature application lookup requires repoDir and featureId');
+  const { graph } = loadCanonicalScreenGraph(repoDir);
+  return graph.indexes?.feature_to_applications?.[featureId] || [];
+}
+
 export function buildScreenFeatureProjection({ repoDir, featureRecord = null, surfaceManifest = null } = {}) {
   const featureId = featureRecord?.feature_id || null;
   const { registry, graph } = loadCanonicalScreenGraph(repoDir);
@@ -50,6 +76,7 @@ export function buildScreenFeatureProjection({ repoDir, featureRecord = null, su
     screen_kind: s.screen_kind,
     app_family_refs: s.app_family_refs,
     app_surface_refs: s.app_surface_refs,
+    application_refs: graph.indexes?.screen_to_applications?.[s.screen_id] || [],
     route_refs: s.route_refs,
     feature_refs: s.feature_refs,
     subfeature_refs: s.subfeature_refs,
@@ -81,6 +108,7 @@ export function buildScreenFeatureProjection({ repoDir, featureRecord = null, su
       event_refs: uniq(screens.flatMap((x) => x.event_refs)),
       app_family_refs: uniq(screens.flatMap((x) => x.app_family_refs)),
       app_surface_refs: uniq(screens.flatMap((x) => x.app_surface_refs)),
+      application_refs: uniq(screens.flatMap((x) => x.application_refs)),
       route_refs: uniq(screens.flatMap((x) => x.route_refs)),
     },
     authority: {

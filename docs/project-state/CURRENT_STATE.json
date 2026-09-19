@@ -8,19 +8,16 @@
   "branch": "gpt/canonical-screen-feature-graph-20260919",
   "changed_files": [
     "agent-system/bin/build-screen-feature-graph.mjs",
-    "agent-system/orchestration/frontend-product-experience.mjs",
     "agent-system/orchestration/screen-feature-graph.mjs",
     "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
     "agent-system/registries/SCREEN_REGISTRY.json",
     "docs/dial/architecture/CANONICAL_SCREEN_FEATURE_GRAPH.md",
-    "docs/project-state/authorizations/auth-20260919-owner-canonical-screen-feature-graph.json",
-    "package.json",
     "tests/screen-feature-graph.test.ts"
   ],
-  "content_diff_sha256": "efd69bee10f8874e12c3f37920e8bc8ed8b7fd2442070e156b4a9b65cba22941",
-  "observed_at_utc": "2026-09-19T17:58:38.644855+00:00",
+  "content_diff_sha256": "f2b1dccfde0561d97bf6982395a021118dc179a2b1d326c2493f3f6293fef64b",
+  "observed_at_utc": "2026-09-19T18:22:59.756098+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "351ae0dfc32e1a0e22d890ec7abe4fdaeb8e961e",
+  "source_parent": "ef39984a911162e71966132f91d3765dfb2b3aa9",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
