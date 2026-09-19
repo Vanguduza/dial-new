@@ -5,6 +5,7 @@ import { inferResearchContexts } from '../agent-system/orchestration/vekl-resear
 import { qualifyCandidate } from '../agent-system/orchestration/discovery-admission.mjs';
 import { buildDiscoveryCandidate, loadDiscoveryPolicy } from '../agent-system/orchestration/discovery-lifecycle.mjs';
 import { COVERAGE_STATUSES } from '../agent-system/orchestration/vekl-research-contracts.mjs';
+import { VEKL_RESEARCH_FIXED_SQL } from '../agent-system/orchestration/vekl-research-postgres-store.mjs';
 
 const roles=Array.from({length:18},(_,i)=>'ROLE_'+(i+1));
 const basePacket=()=>({
@@ -105,4 +106,39 @@ test('reference knowledge gets lightweight qualification while executable remain
 
 test('coverage contract exposes staged maturity',()=>{
   for(const s of ['FIRST_PASS_RESEARCHED','ANALYZED','DEEP_EVIDENCE_COMPLETE','QUALIFIED','ADMITTED']) assert(COVERAGE_STATUSES.includes(s));
+});
+
+
+test('discovery evidence upsert is monotonic for lifecycle, trust and evidence refs',()=>{
+  const sql=VEKL_RESEARCH_FIXED_SQL.discovery;
+  assert(sql.includes("WHEN 'ADMITTED' THEN 60"));
+  assert(sql.includes("vekl_research_discovery_links.lifecycle_state"));
+  assert(sql.includes("substring(vekl_research_discovery_links.trust_tier"));
+  assert(sql.includes("jsonb_agg(DISTINCT ref)"));
+  assert(sql.includes("UNION"));
+  assert(!sql.includes("DO UPDATE SET lifecycle_state=EXCLUDED.lifecycle_state,trust_tier=EXCLUDED.trust_tier,evidence_refs=EXCLUDED.evidence_refs"));
+});
+
+
+test("completion gate accepts valid evidence across retry leases and ignores stale invalid evidence",async()=>{
+  const s=new Store();
+  const l=new VeklResearchLoop({
+    store:s,clock:()=>1000,
+    searchAdapter:async()=>({content:"result",acquisition_method:"EXA_SEARCH"}),
+    fetchAdapter:async()=>({url:"https://example.com/current",sha256:"9".repeat(64),content_type:"text/plain",excerpt:"evidence"})
+  });
+  const c=await l.invoke("claim",{request_id:"req-claim-retry-01",worker_id:"chatgpt-deep"});
+  s.evidence.push(
+    {lease_id:"OLD-BAD",evidence_kind:"ANALYSIS",claims:[],sources:[{content_hash:"1".repeat(64)}],evidence_hash:"2".repeat(64)},
+    {lease_id:"OLD-GOOD",evidence_kind:"ANALYSIS",claims:[],sources:[{content_hash:"3".repeat(64)}],evidence_hash:"4".repeat(64)},
+    {lease_id:"L1",evidence_kind:"GROQ_RESEARCH",claims:[],sources:[],evidence_hash:"8".repeat(64)}
+  );
+  s.events.push({lease_id:"OLD-GOOD",event_kind:"FETCH_READ",payload:{lease_id:"OLD-GOOD",content_hash:"3".repeat(64)}});
+  await l.invoke("fetch",{request_id:"req-fetch-retry-01",worker_id:"chatgpt-deep",lease_id:c.lease_id});
+  await l.invoke("search",{request_id:"req-search-retry-01",worker_id:"chatgpt-deep",lease_id:c.lease_id,search_query:"test"});
+  const rd=await l.invoke("fetch-read",{request_id:"req-read-retry-01",worker_id:"chatgpt-deep",lease_id:c.lease_id,url:"https://example.com/current"});
+  const claims=[{text:"Fact",classification:"FACTUAL",source_refs:[rd.source.ref]}];
+  await l.invoke("submit-deeper-evidence",{request_id:"req-deeper-retry-01",worker_id:"chatgpt-deep",lease_id:c.lease_id,claims,sources:[rd.source]});
+  const done=await l.invoke("complete",{request_id:"req-complete-retry-01",worker_id:"chatgpt-deep",lease_id:c.lease_id});
+  assert.equal(done.state,"COMPLETE");
 });

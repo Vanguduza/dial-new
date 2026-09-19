@@ -16,7 +16,6 @@ try {
       JOIN vekl_research_packets p ON p.packet_id=dl.packet_id
       JOIN vekl_research_missions m ON m.mission_id=p.mission_id
       WHERE m.state='READY' AND dl.lifecycle_state IN ('DISCOVERED','TRIAGED','INVESTIGATING','QUALIFIED')
-        AND dl.trust_tier='T1_OFFICIAL'
       ORDER BY p.ordinal LIMIT 100 FOR UPDATE OF dl SKIP LOCKED`);
     const sources=await db.query(`SELECT source_hash,url,source_kind,trust_tier,observed_at FROM vekl_research_sources WHERE trust_tier='T1_OFFICIAL'`);
     const byCandidate=new Map(sources.rows.map(s=>['DISC-'+sha(s.url).slice(0,24),s]));
@@ -25,6 +24,16 @@ try {
       const source=byCandidate.get(row.candidate_id);
       if (!source || !/^https:\/\//.test(source.url) || !/^[a-f0-9]{64}$/.test(source.source_hash)) continue;
       const evidence={risk_class:'REFERENCE_KNOWLEDGE',qualification_track:'REFERENCE_LIGHTWEIGHT_V1',publisher_domain_verified:true,task_relevance:'BOUND_TO_CANONICAL_DU_PACKET',freshness_observed_at:source.observed_at,content_hash:source.source_hash,authority:'ENGINEERING_GUIDANCE_ONLY'};
+      if (row.trust_tier !== 'T1_OFFICIAL') {
+        await db.query(
+          `UPDATE vekl_research_discovery_links SET trust_tier='T1_OFFICIAL',evidence_refs=CASE WHEN evidence_refs ? $3 THEN evidence_refs ELSE evidence_refs||jsonb_build_array($3::text) END WHERE packet_id=$1 AND candidate_id=$2`,
+          [row.packet_id,row.candidate_id,source.source_hash],
+        );
+        await db.query(
+          `INSERT INTO vekl_research_events(lease_id,event_kind,payload) VALUES(NULL,'REFERENCE_DISCOVERY_TRUST_REPAIRED',$1)`,
+          [{packet_id:row.packet_id,candidate_id:row.candidate_id,from_trust_tier:row.trust_tier,to_trust_tier:'T1_OFFICIAL',reason:'VERIFIED_OFFICIAL_SOURCE_MATCH',source_hash:source.source_hash,...evidence}],
+        );
+      }
       const lifecycle = ['TRIAGED','INVESTIGATING','QUALIFIED','ADMITTED'];
       let previous = row.lifecycle_state;
       const start = Math.max(0, lifecycle.indexOf(previous) + 1);

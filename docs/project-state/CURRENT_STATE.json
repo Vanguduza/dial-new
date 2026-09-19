@@ -3,16 +3,36 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260919-owner-explicit-vekl-research-open-world-loop"
+    "auth-20260919-owner-explicit-vekl-browser-fabric-certification"
   ],
-  "branch": "gpt/vekl-research-open-world-integration-20260919",
+  "branch": "gpt/vekl-browser-fabric-certified-v2-20260919",
   "changed_files": [
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json"
+    "agent-system/mcp/dial-research-server.mjs",
+    "agent-system/orchestration/browser-acquisition-client.mjs",
+    "agent-system/orchestration/providers/openrouter/union-alpha-research-adapter.mjs",
+    "agent-system/orchestration/vekl-research-loop.mjs",
+    "agent-system/orchestration/vekl-research-monitor.mjs",
+    "agent-system/orchestration/vekl-research-postgres-store.mjs",
+    "deploy/oracle/hermes-codex/systemd/dial-browser-fabric-tunnel.service",
+    "deploy/oracle/trading-core/dial-browser/install.sh",
+    "deploy/oracle/trading-core/dial-browser/package.json",
+    "deploy/oracle/trading-core/dial-browser/runtime.env.example",
+    "deploy/oracle/trading-core/dial-browser/server.mjs",
+    "deploy/oracle/trading-core/dial-browser/systemd/dial-browser-fabric.service",
+    "deploy/oracle/vekl-worker/dial-stagehand-model-proxy.service",
+    "deploy/oracle/vekl-worker/stagehand-model-proxy.mjs",
+    "deploy/oracle/vekl-worker/vekl-reference-promoter.mjs",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_BROWSER_ACQUISITION_CERTIFICATION_20260919.md",
+    "docs/project-state/authorizations/auth-20260919-owner-explicit-vekl-browser-fabric-certification.json",
+    "package.json",
+    "tests/verification-vekl-browser-fabric.node.mjs",
+    "tests/verification-vekl-infrastructure.node.mjs"
   ],
-  "content_diff_sha256": "365ec594e5314f63b8e8f456db9fd153289aefe97587df1abe7f4d97f54982dd",
-  "observed_at_utc": "2026-09-19T07:46:08.555340+00:00",
+  "content_diff_sha256": "63a793c3d822ff4954e983278f64f87990e1426b00b554433f4f7a938ecc5e39",
+  "observed_at_utc": "2026-09-19T13:08:20.850763+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "b5aee7d8e98c03ca2663fc329345d3f0afb89ed3",
+  "source_parent": "59a039e8ec6fb4e4ca3470de5644f3660e2eadec",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

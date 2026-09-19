@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
-import { exaSearch, fetchOfficial } from './providers/openrouter/union-alpha-research-adapter.mjs';
+import { searchPublicWithBrowserFallback, fetchPublicWithBrowserFallback } from './providers/openrouter/union-alpha-research-adapter.mjs';
+import { stagehandSemanticExtract, browserRenderedRead } from './browser-acquisition-client.mjs';
 
 export const RESEARCH_LOOP_ACTIONS = Object.freeze([
   'claim', 'fetch', 'search', 'fetch-read', 'submit-analysis',
@@ -88,7 +89,7 @@ export function validateResearchSubmission({ packet, claims, sources, deeper = f
 }
 
 export class VeklResearchLoop {
-  constructor({ store, clock = () => Date.now(), leaseMs = DEFAULT_LEASE_MS, searchAdapter = exaSearch, fetchAdapter = fetchOfficial } = {}) {
+  constructor({ store, clock = () => Date.now(), leaseMs = DEFAULT_LEASE_MS, searchAdapter = searchPublicWithBrowserFallback, fetchAdapter = fetchPublicWithBrowserFallback } = {}) {
     if (!store) throw new Error('AUTHORITATIVE_VEKL_POSTGRES_STORE_REQUIRED');
     this.store = store;
     this.clock = clock;
@@ -128,24 +129,101 @@ export class VeklResearchLoop {
     await this.active(input);
     const searchQuery = String(input.search_query || '').trim().slice(0, 500);
     if (!searchQuery) throw new Error('SEARCH_QUERY_REQUIRED');
-    const content = await this.searchAdapter(searchQuery);
-    if (!content) throw new Error('SEARCH_NO_PUBLIC_RESULTS');
-    const text = typeof content === 'string' ? content : JSON.stringify(content);
-    const result = { state: 'SEARCH_RESULTS', adapter: 'EXA_MCP_PUBLIC', search_query: searchQuery, content: text.slice(0, 16000), content_hash: sha(text), observed_at: new Date(this.clock()).toISOString(), authority: RESEARCH_LOOP_AUTHORITY };
-    await this.store.recordSearch({ lease_id: input.lease_id, search_query: searchQuery, adapter: result.adapter, result_hash: result.content_hash, at_ms: this.clock() });
+    const acquired = await this.searchAdapter(searchQuery);
+    if (!acquired) throw new Error('SEARCH_NO_PUBLIC_RESULTS');
+    const text = typeof acquired === 'string' ? acquired : String(acquired.content || JSON.stringify(acquired));
+    const result = {
+      state: 'SEARCH_RESULTS',
+      adapter: acquired.acquisition_method || 'PUBLIC_SEARCH',
+      search_query: searchQuery,
+      content: text.slice(0, 16000),
+      content_hash: acquired.content_hash || sha(text),
+      observed_at: acquired.observed_at || new Date(this.clock()).toISOString(),
+      authority: RESEARCH_LOOP_AUTHORITY,
+      acquisition_state: acquired.state || 'PRIMARY_ROUTE_OK',
+      fallback_cause: acquired.fallback_cause || null,
+      candidate_id: acquired.candidate_id || null,
+      links: acquired.links || [],
+    };
+    await this.store.recordSearch({ lease_id: input.lease_id, search_query: searchQuery, adapter: result.adapter, result_hash: result.content_hash, acquisition_state: result.acquisition_state, fallback_cause: result.fallback_cause, candidate_id: result.candidate_id, at_ms: this.clock() });
     return result;
   }
   async _fetch_read(input) {
     await this.active(input);
     if (!publicUrl(input.url)) throw new Error('PUBLIC_HTTPS_URL_REQUIRED');
-    const fetched = await this.fetchAdapter(input.url);
-    if (!fetched?.url || !fetched?.sha256 || !fetched?.excerpt) throw new Error('PUBLIC_FETCH_FAILED');
-    if (!publicUrl(fetched.url)) throw new Error('PUBLIC_FETCH_REDIRECT_TARGET_REQUIRED');
-    if (input.content_hash && input.content_hash !== fetched.sha256) throw new Error('FETCH_CONTENT_HASH_MISMATCH');
-    const observedAt = new Date(this.clock()).toISOString();
-    const source = { ref: 'source:' + fetched.sha256, url: fetched.url, content_hash: fetched.sha256, observed_at: observedAt, depth: 'PRIMARY', source_kind: 'PUBLIC_WEB', trust_tier: null };
-    await this.store.recordRead({ lease_id: input.lease_id, url: fetched.url, content_hash: fetched.sha256, source_ref: source.ref, at_ms: this.clock() });
-    return { state: 'FETCHED', source, content_type: fetched.content_type || null, excerpt: String(fetched.excerpt).slice(0, 12000), authority: RESEARCH_LOOP_AUTHORITY };
+    const requestedMethod = String(input.acquisition_method || '').trim();
+    let fetched;
+    if (requestedMethod === 'STAGEHAND_NAVIGATION') {
+      const semantic = await stagehandSemanticExtract(input.url, String(input.instruction || 'Extract the engineering evidence relevant to this Development Unit.').slice(0, 1600));
+      fetched = {
+        state: 'DEGRADED_ROUTE_USED',
+        acquisition_method: 'STAGEHAND_NAVIGATION',
+        url: semantic.final_url,
+        final_url: semantic.final_url,
+        content_type: 'application/json',
+        sha256: semantic.content_hash,
+        content_hash: semantic.content_hash,
+        excerpt: semantic.excerpt,
+        observed_at: semantic.observed_at,
+        candidate_id: semantic.candidate_id,
+        normalized_evidence: semantic,
+      };
+    } else if (requestedMethod === 'BROWSER_RENDERED') {
+      const rendered = await browserRenderedRead(input.url);
+      fetched = {
+        state: 'DEGRADED_ROUTE_USED',
+        acquisition_method: 'BROWSER_RENDERED',
+        url: rendered.final_url,
+        final_url: rendered.final_url,
+        content_type: 'text/html',
+        sha256: rendered.content_hash,
+        content_hash: rendered.content_hash,
+        excerpt: rendered.excerpt,
+        observed_at: rendered.observed_at,
+        candidate_id: rendered.candidate_id,
+        normalized_evidence: rendered,
+      };
+    } else {
+      fetched = await this.fetchAdapter(input.url);
+    }
+    const contentHash = fetched?.sha256 || fetched?.content_hash;
+    const finalUrl = fetched?.url || fetched?.final_url;
+    if (!finalUrl || !contentHash || !fetched?.excerpt) throw new Error('PUBLIC_FETCH_FAILED');
+    if (!publicUrl(finalUrl)) throw new Error('PUBLIC_FETCH_REDIRECT_TARGET_REQUIRED');
+    if (input.content_hash && input.content_hash !== contentHash) throw new Error('FETCH_CONTENT_HASH_MISMATCH');
+    const observedAt = fetched.observed_at || new Date(this.clock()).toISOString();
+    const acquisitionMethod = fetched.acquisition_method || requestedMethod || 'DIRECT_FETCH';
+    const source = {
+      ref: 'source:' + contentHash,
+      url: finalUrl,
+      content_hash: contentHash,
+      observed_at: observedAt,
+      depth: 'PRIMARY',
+      source_kind: 'PUBLIC_WEB',
+      trust_tier: null,
+      acquisition_method: acquisitionMethod,
+    };
+    await this.store.recordRead({
+      lease_id: input.lease_id,
+      url: finalUrl,
+      content_hash: contentHash,
+      source_ref: source.ref,
+      acquisition_method: acquisitionMethod,
+      acquisition_state: fetched.state || 'PRIMARY_ROUTE_OK',
+      fallback_cause: fetched.fallback_cause || null,
+      candidate_id: fetched.candidate_id || null,
+      at_ms: this.clock(),
+    });
+    return {
+      state: 'FETCHED',
+      source,
+      content_type: fetched.content_type || null,
+      excerpt: String(fetched.excerpt).slice(0, 12000),
+      authority: RESEARCH_LOOP_AUTHORITY,
+      acquisition_state: fetched.state || 'PRIMARY_ROUTE_OK',
+      fallback_cause: fetched.fallback_cause || null,
+      candidate_id: fetched.candidate_id || null,
+    };
   }
   async submit(input, deeper) {
     const lease = await this.active(input);
@@ -171,15 +249,24 @@ export class VeklResearchLoop {
     if (Array.isArray(resume.blocking_contradictions) && resume.blocking_contradictions.length) missing.push('UNRESOLVED_BLOCKING_CONTRADICTIONS');
     const packet = immutableDuPacket(bundle.packet_json, bundle.packet_hash);
     const deeper = evidence.filter((x) => x.evidence_kind === 'DEEPER_EVIDENCE');
-    const chatgptEvidence = evidence.filter((x) => x.evidence_kind === 'ANALYSIS' || x.evidence_kind === 'DEEPER_EVIDENCE');
-    const readHashes = new Set(events.filter((x) => x.event_kind === 'FETCH_READ').map((x) => x.payload?.content_hash).filter(Boolean));
-    for (const item of chatgptEvidence) {
-      for (const source of Array.isArray(item.sources) ? item.sources : []) {
-        if (!readHashes.has(source.content_hash)) missing.push('SOURCE_NOT_FETCH_READ:' + source.content_hash);
-      }
+    const chatgptEvidence = evidence.filter((x) => x.evidence_kind === "ANALYSIS" || x.evidence_kind === "DEEPER_EVIDENCE");
+    const readHashesByLease = new Map();
+    for (const event of events.filter((x) => x.event_kind === "FETCH_READ")) {
+      const eventLease = event.lease_id || event.payload?.lease_id || null;
+      if (!eventLease) continue;
+      if (!readHashesByLease.has(eventLease)) readHashesByLease.set(eventLease, new Set());
+      if (event.payload?.content_hash) readHashesByLease.get(eventLease).add(event.payload.content_hash);
     }
+    const sourceBackedEvidence = chatgptEvidence.filter((item) => {
+      const evidenceLease = item.lease_id || lease.lease_id;
+      const readHashes = readHashesByLease.get(evidenceLease) || new Set();
+      const itemSources = Array.isArray(item.sources) ? item.sources : [];
+      return itemSources.length > 0 && itemSources.every((source) => readHashes.has(source.content_hash));
+    });
+    if (!sourceBackedEvidence.some((x) => x.evidence_kind === "ANALYSIS")) missing.push("SOURCE_BACKED_ANALYSIS_REQUIRED");
+    if (!sourceBackedEvidence.some((x) => x.evidence_kind === "DEEPER_EVIDENCE")) missing.push("SOURCE_BACKED_DEEPER_EVIDENCE_REQUIRED");
     const obligationRefs = new Set(
-      deeper.flatMap((x) => Array.isArray(x.claims) ? x.claims : [])
+      sourceBackedEvidence.filter((x) => x.evidence_kind === "DEEPER_EVIDENCE").flatMap((x) => Array.isArray(x.claims) ? x.claims : [])
         .flatMap((claim) => Array.isArray(claim.obligation_refs) ? claim.obligation_refs : [])
     );
     if (packet.guided_frontend_context?.applicable) {
