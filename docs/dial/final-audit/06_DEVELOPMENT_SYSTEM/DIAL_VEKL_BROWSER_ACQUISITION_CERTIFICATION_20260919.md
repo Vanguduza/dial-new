@@ -202,3 +202,39 @@ The DIAL VEKL Browser Acquisition Fabric is certified for production research us
 - services are boot-persistent and healthy.
 
 Groq provider quotas remain an external throughput constraint. They are handled with bounded retries and fail-closed behavior and do not change VEKL authority semantics.
+
+
+## Final end-to-end Stagehand completion proof
+
+A second live certification pass completed packet `DU-RSCH-699a25c9f11aea6347ee6587` end to end using browser-acquired semantic evidence.
+
+Immutable packet hash:
+
+`9e0fca9d7d23bc4fd79070b038921575efc516b0313420fa107cb82172b9095b`
+
+Live sequence on lease `48200445-a6d8-4fe0-96f7-3b3cb82e9bf8`:
+
+`CLAIM → FETCH → STAGEHAND_NAVIGATION/FETCH_READ → ANALYSIS → SEARCH → DEEPER_EVIDENCE → COMPLETION_GATE_PASSED → COMPLETE`
+
+The Stagehand evidence used the MDN ARIA reference and was persisted as:
+
+- source hash: `3530068aac2b99a19b73a44469e5bbe82cc2817a87c2a0ec7cc1b0ad9fa625e9`
+- acquisition method: `STAGEHAND_NAVIGATION`
+- discovery candidate: `DISC-11dc06e41cf496dd6e5ddf16`
+- analysis evidence: `604b0abf27c85d06a94131e07686c55b8579928da905496de637404be7942313`
+- deeper evidence: `08d24f5b1fda653cae23bc97b6bfbc8083a1bf5fb5d863e171ce82af657ca274`
+
+The completion gate initially failed closed while stale evidence from earlier leases lacked matching `FETCH_READ` provenance. The gate was hardened to evaluate source-read provenance by evidence lease across retry history. Fresh verification now includes a dedicated cross-retry monotonicity test.
+
+Fresh certification totals:
+
+- VEKL infrastructure verification: **7/7 PASS**
+- VEKL browser-fabric verification: **5/5 PASS**
+- live Stagehand semantic extraction: **PASS**
+- forced Exa HTTP 429 → `BROWSER_SEARCH` degraded route: **PASS**
+- DIAL/VAN runtime ownership isolation: **PASS**
+- Browser Fabric, Stagehand proxy, MCP, SSH tunnels, PostgreSQL, Groq timer and DIAL n8n DEV health: **PASS**
+
+The packet is now `COMPLETE` with persisted `completion_gate.ok=true`.
+
+This closes the remaining Stagehand semantic-provider and full-loop certification gap.
