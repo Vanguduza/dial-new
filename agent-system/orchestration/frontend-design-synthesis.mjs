@@ -122,6 +122,7 @@ export function renderDesignSynthesisPromptBlock(synthesis={}){
     `Discovery/merchandising should occupy at least ${synthesis.composition_budget?.discovery_and_merchandising_min_percent??0}% of meaningful Home content when applicable; system assurance/policy material may occupy at most ${synthesis.composition_budget?.system_assurance_max_percent??15}% and should usually be implicit.`,
     forbidden?`Never make these dominant customer sections: ${forbidden}.`:'',
     visual.hero_visual_required?'Hero discovery / strong image-led value moment is REQUIRED unless authoritative content makes it impossible.':'Hero imagery is contextual rather than mandatory.',
+    visual.hero_visual_required?'HARD VISUAL GATE: the primary hero must contain a real provider-generated or provider-curated grocery/lifestyle image in the rendered output (not only gradient, iconography, illustration glyphs or typography). Generic imagery is CREATIVE_PRESENTATION; it must not imply merchant, origin, availability, freshness, price or delivery facts.':'',
     `Imagery priority: ${visual.imagery_priority||'CONTEXTUAL'}.`,
     (visual.hero_must_support||[]).length?`Hero must support: ${visual.hero_must_support.map(titleCase).join(', ')}.`:'',
     (visual.hero_must_not_imply||[]).length?`Hero must not imply: ${visual.hero_must_not_imply.map(titleCase).join(', ')}.`:'',
@@ -135,6 +136,8 @@ export function renderDesignSynthesisPromptBlock(synthesis={}){
     validation||'- none',
     'DO NOT render feature IDs, screen IDs, graph references, packet hashes, state simulators, preflight controls, acceptance matrices, debug/status panels, engineering labels or provenance.',
     'Do not turn every feature into a card, section, badge, or navigation destination.',
+    'Do not substitute guarantees, policies, technical trust claims, fulfilment mechanics, feature explainers or state/debug controls for the required customer discovery zones.',
+    'When authoritative catalogue/runtime values are absent, prefer generic product/category presentation and visual placeholders over invented brands, prices, stock states, merchant/origin claims, delivery times or popularity metrics.',
     'Translate the supplied product knowledge into a clean, visually authored, customer-centric product composition. Functionality should emerge through meaningful affordances and flows, not through a visible requirements inventory.',
   ].filter(Boolean).join('\n');
 }

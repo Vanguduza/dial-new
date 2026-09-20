@@ -3,48 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260920-owner-frontend-design-synthesis",
-    "auth-20260920-owner-frontend-semantic-scope-corrections",
-    "auth-20260920-owner-vekl-interaction-motion-design-acuity"
+    "auth-20260920-owner-frontend-design-synthesis"
   ],
   "branch": "gpt/vekl-interaction-motion-design-acuity-20260920",
   "changed_files": [
-    "agent-system/bin/build-screen-feature-graph.mjs",
-    "agent-system/canon/PROJECT_TRUTH.md",
-    "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
-    "agent-system/orchestration/frontend-design-synthesis-check.mjs",
     "agent-system/orchestration/frontend-design-synthesis.mjs",
-    "agent-system/orchestration/frontend-generation-architecture-check.mjs",
-    "agent-system/orchestration/frontend-generation-architecture.mjs",
-    "agent-system/orchestration/frontend-product-experience.mjs",
-    "agent-system/orchestration/interaction-motion-architecture-check.mjs",
-    "agent-system/orchestration/screen-feature-graph.mjs",
-    "agent-system/orchestration/stitch-design-orchestration.mjs",
-    "agent-system/registries/DECISION_LOG.json",
-    "agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json",
-    "agent-system/registries/FRONTEND_CONTRACT_SCHEMA_REGISTRY.json",
-    "agent-system/registries/FRONTEND_DESIGN_SYNTHESIS_POLICY.json",
-    "agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json",
-    "agent-system/registries/FRONTEND_GENERATION_POLICY.json",
-    "agent-system/registries/FRONTEND_PRODUCT_PROFILE_REGISTRY.json",
-    "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
-    "agent-system/registries/SCREEN_REGISTRY.json",
-    "agent-system/schemas/frontend/FRONTEND_CONTRACTS.schema.json",
-    "docs/dial/architecture/CANONICAL_FRONTEND_GENERATION_ARCHITECTURE.md",
-    "docs/dial/architecture/FRONTEND_APPLICATION_FEATURE_SEMANTIC_COMPILATION_REV1.md",
-    "docs/dial/architecture/FRONTEND_DESIGN_SYNTHESIS_AND_RENDERABILITY_REV1.md",
-    "docs/project-state/authorizations/auth-20260920-owner-frontend-design-synthesis.json",
-    "docs/project-state/authorizations/auth-20260920-owner-frontend-semantic-scope-corrections.json",
-    "package.json",
-    "tests/frontend-design-synthesis.test.ts",
-    "tests/frontend-generation-architecture.test.ts",
-    "tests/groceries-frontend-semantic-compiler.test.ts",
-    "tests/interaction-motion-intelligence.test.ts"
+    "agent-system/orchestration/stitch-design-orchestration.mjs"
   ],
-  "content_diff_sha256": "9383a9db1a41bc034a9774636f6cb4f7dc486d585571d53d4050bc03ae4953c1",
-  "observed_at_utc": "2026-09-20T08:57:54.965839+00:00",
+  "content_diff_sha256": "10a2cb0929a60d7b6123e7668343e419063fb7ee3f90cfc6b07cb8695267f30f",
+  "observed_at_utc": "2026-09-20T09:05:41.079553+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "f952a1af572308c749b51334869e9c06254a494d",
+  "source_parent": "5b60e42c506833ffad5c23dc4de4662f69ca1b88",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

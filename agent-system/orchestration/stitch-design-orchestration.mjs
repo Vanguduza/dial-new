@@ -224,7 +224,7 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     'Generate the primary normal/READY composition only. Do not render lifecycle controls, state switchers, state matrices, loading/error/permission/degraded variants, or operational status panels. DIAL AEF implements and certifies the complete FDEP state matrix after provider-design admission.',
     'When authoritative literal data is absent, use only non-data-bearing structure and product-facing labels implied directly by the governed outcome; never insert example/demo/placeholder/realistic-looking values.',
     'Preserve responsive/accessibility intent and the Premium Solutions Environment characteristics: clean modern composition, generous breathing room, restrained typography, sophisticated neutral surfaces, subtle depth, high confidence and human premium polish.',
-    'Prefer static self-contained markup: no scripts, inline event handlers, remote assets, remote URLs, iframes, service workers or executable browser behavior. DIAL treats all provider output as non-authoritative evidence and sanitizes it before admission.',
+    'Prefer static markup with no scripts, inline event handlers, iframes, service workers or executable browser behavior. Provider-generated/provider-curated visual image assets are allowed when the Design Synthesis visual-storytelling contract requires imagery; do not use arbitrary third-party remote URLs or let image content imply unverified business facts. DIAL treats provider output as non-authoritative evidence and sanitizes it before admission.',
     JSON.stringify(projection),
   ].join('\n');
 }
