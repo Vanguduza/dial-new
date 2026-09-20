@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "policy_version": "canonical-frontend-generation-1.1-design-acuity",
+  "policy_version": "canonical-frontend-generation-1.3-design-synthesis",
   "authority": "CANONICAL_FRONTEND_GENERATION_ARCHITECTURE",
   "automatic_design_provider": "google-stitch",
   "figma_policy": "EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY",
@@ -20,6 +20,19 @@
       ]
     },
     {
+      "stage_id": "APPLICATION_ACTOR_SCOPE_RESOLUTION",
+      "input": [
+        "generation_request",
+        "SCREEN_REGISTRY.application_platforms"
+      ],
+      "output": [
+        "target_application_id",
+        "actor_scope",
+        "platform_scope"
+      ],
+      "policy": "ONE_TARGET_APPLICATION_FOR_SCREEN_GENERATION_UNLESS_EXPLICIT_MULTI_PLATFORM_TASK"
+    },
+    {
       "stage_id": "SCREEN_FEATURE_GRAPH_INJECTION",
       "input": [
         "SCREEN_REGISTRY",
@@ -29,6 +42,22 @@
         "screen_feature_projection"
       ],
       "ordering": "BEFORE_TRUTH_HYDRATION"
+    },
+    {
+      "stage_id": "FEATURE_SEMANTIC_HYDRATION",
+      "input": [
+        "SCREEN_FEATURE_GRAPH",
+        "FEATURE_REALIZATION_REGISTRY",
+        "FRONTEND_DOMAIN_SEMANTIC_REGISTRY"
+      ],
+      "output": [
+        "FeatureSemanticEnvelope",
+        "ScreenFeatureEdgeRoles",
+        "SubsystemBoundaries",
+        "ProductPositioning",
+        "DomainBrandAuthority"
+      ],
+      "policy": "SEMANTICS_AND_EDGE_ROLES_BEFORE_PROVIDER_CONTEXT_EXPANSION"
     },
     {
       "stage_id": "FEATURE_GRAPH_EXPANSION",
@@ -57,6 +86,24 @@
         "CompletenessGate"
       ],
       "policy": "FAIL_CLOSED_FOR_MISSING_REQUIRED_TRUTH"
+    },
+    {
+      "stage_id": "DESIGN_SYNTHESIS_COMPILATION",
+      "input": [
+        "FrontendGenerationContext",
+        "FeatureSemanticEnvelope",
+        "DomainBrandAuthority",
+        "ScreenRole",
+        "InteractionDesignPreflightSeed"
+      ],
+      "output": [
+        "FrontendDesignSynthesisBrief",
+        "RenderabilityChannels",
+        "CompositionBudget",
+        "VisualStorytellingContract",
+        "FeatureToExperienceMap"
+      ],
+      "policy": "TRANSLATE_REQUIREMENTS_TO_EXPERIENCE_BEFORE_PROVIDER_RENDERING"
     },
     {
       "stage_id": "VEKL_DESIGN_AUTHORITY",
@@ -98,6 +145,29 @@
       "output": [
         "accepted_visual_candidate"
       ]
+    },
+    {
+      "stage_id": "DESIGN_SYNTHESIS_LINT",
+      "input": [
+        "provider_candidate",
+        "FrontendDesignSynthesisBrief"
+      ],
+      "output": [
+        "DesignSynthesisLint"
+      ],
+      "policy": "FAIL_CLOSED_ON_FEATURE_DUMP_DEBUG_UI_OR_MISSING_REQUIRED_VISUAL_STORYTELLING"
+    },
+    {
+      "stage_id": "PROVIDER_TRUTH_LITERAL_LINT",
+      "input": [
+        "provider_candidate",
+        "dial-visual-truth-claims",
+        "ScreenTruthEnvelope"
+      ],
+      "output": [
+        "TruthLiteralLint"
+      ],
+      "policy": "FAIL_CLOSED_BEFORE_VISUAL_AUTHORITY_FREEZE"
     },
     {
       "stage_id": "VISUAL_AUTHORITY_FREEZE",
@@ -198,14 +268,28 @@
     "open_world_discovery_bridge_required": true,
     "bounded_structural_delta_allowed": true,
     "major_structural_delta_requires_visual_reconvergence": true,
-    "interaction_acceptance_required_before_experience_freeze": true
+    "interaction_acceptance_required_before_experience_freeze": true,
+    "target_application_scope_required": true,
+    "feature_edge_role_scope_required": true,
+    "provider_truth_claim_contract_required": true,
+    "truth_literal_lint_before_visual_freeze": true,
+    "design_synthesis_required_before_visual_generation": true,
+    "validation_only_material_customer_visible_forbidden": true,
+    "feature_inventory_rendering_forbidden": true,
+    "design_synthesis_lint_before_visual_freeze": true
   },
   "authority_flow": [
     "PRODUCT_TRUTH",
     "SCREEN_FEATURE_GRAPH",
+    "APPLICATION_ACTOR_SCOPE",
+    "FEATURE_SEMANTICS",
     "DOMAIN_TRUTH",
+    "DESIGN_SYNTHESIS",
     "VEKL_DESIGN_KNOWLEDGE",
     "VEKL_INTERACTION_DESIGN_PREFLIGHT",
+    "STITCH_VISUAL_CANDIDATE",
+    "DESIGN_SYNTHESIS_LINT",
+    "TRUTH_LITERAL_LINT",
     "STITCH_VISUAL_AUTHORITY",
     "VEKL_INTERACTION_MOTION_INTELLIGENCE",
     "STITCH_INTERACTION_AUTHORITY",

@@ -79,6 +79,7 @@ export function buildScreenFeatureProjection({ repoDir, featureRecord = null, su
     application_refs: graph.indexes?.screen_to_applications?.[s.screen_id] || [],
     route_refs: s.route_refs,
     feature_refs: s.feature_refs,
+    feature_edges: s.feature_edges || [],
     subfeature_refs: s.subfeature_refs,
     supporting_capability_refs: s.supporting_capability_refs,
     eventuality_refs: s.eventuality_refs,

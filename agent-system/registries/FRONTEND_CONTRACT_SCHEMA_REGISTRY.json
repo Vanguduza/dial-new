@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-contract-schemas-2.2-design-acuity",
+  "registry_version": "frontend-contract-schemas-2.4-design-synthesis",
   "required_contracts": [
     "ProductDesignProfile",
     "FrontendDesignExecutionPacket",
@@ -55,7 +55,12 @@
     "ResponsiveInteractionPlan",
     "StateBehaviorMatrix",
     "StructuralDeltaDecision",
-    "InteractionRiskRegister"
+    "InteractionRiskRegister",
+    "FrontendDomainSemanticProfile",
+    "FeatureSemanticEnvelope",
+    "VisualTruthClaimsContract",
+    "FrontendDesignSynthesisBrief",
+    "DesignSynthesisLint"
   ],
   "common_required_fields": [
     "schema_version",

@@ -82,7 +82,8 @@ test('canonical frontend generation context begins with the Screen Registry × F
   const context = px.frontend_generation_context;
   expect(context.screen_context.target_screen_id).toBe(targetScreenId);
   expect(context.feature_context.feature_ids).toContain('SPARE-F001');
-  expect(context.platform_context.applications.map((x) => x.application_id)).toEqual(expect.arrayContaining(['DIAL_CONSUMER_ANDROID','DIAL_CONSUMER_IOS','DIAL_CONSUMER_WEB','DIAL_CONSUMER_WHATSAPP']));
+  expect(context.platform_context.target_application_id).toBe('DIAL_CONSUMER_WEB');
+  expect(context.platform_context.applications.map((x) => x.application_id)).toEqual(['DIAL_CONSUMER_WEB']);
   expect(context.authority_refs.screen_feature_graph_hash).toMatch(/^[0-9a-f]{64}$/);
   expect(context.design_authority.archetype_refs).toContain('DIAL_COMMERCE_DISCOVERY_EDITORIAL_HERO_V1');
   expect(context.screen_context.screens[0].role_boundary.role).toBe('DISCOVERY_NAVIGATION_CONTEXT_AND_LIGHT_MERCHANDISING');
@@ -143,6 +144,8 @@ test('approved visual authority flows into a separate Stitch interaction and mot
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'p1',screen_id:'s1',response_hash:'a'.repeat(64),html_url:'stitch://html',image_url:'stitch://image'},
     critique:{verdict:'PASS'},
+    truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}),
+    designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},
     promotedBy:'owner',
     promotionAuthority:'OWNER',
   });
@@ -189,7 +192,7 @@ test('productionization emits an explicit binding contract and forbids redesign'
   const frozen = freezeVisualAuthorityArtifact({
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'p1',screen_id:'s1',response_hash:'a'.repeat(64)},
-    critique:{verdict:'PASS'}, promotedBy:'owner', promotionAuthority:'OWNER',
+    critique:{verdict:'PASS'}, truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}), designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)}, promotedBy:'owner', promotionAuthority:'OWNER',
   }).visual_authority;
   const acceptance = {passed:true,content_hash:'c'.repeat(64)};
   const exp = freezeExperienceAuthorityArtifact({
@@ -210,7 +213,7 @@ test('interaction/motion orchestration sends the frozen Stitch screen through a 
   const frozen = freezeVisualAuthorityArtifact({
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'project-1',screen_id:'screen-1',response_hash:'d'.repeat(64)},
-    critique:{verdict:'PASS'}, promotedBy:'owner', promotionAuthority:'OWNER',
+    critique:{verdict:'PASS'}, truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}), designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)}, promotedBy:'owner', promotionAuthority:'OWNER',
   }).visual_authority;
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'dial-interaction-motion-'));
   const taskId='task-interaction-motion';

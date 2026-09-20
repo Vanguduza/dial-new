@@ -94,6 +94,18 @@ Intent recognition distinguishes home/entry, detail/state, search/browse, tracki
 
 The resolver never creates a new screen to satisfy an ambiguous prompt.
 
+## Target application, actor and feature-semantic resolution
+
+A canonical screen may belong to several DIAL applications and may be referenced by many features. That raw union is graph truth, but it is not a valid provider packet. Before provider dispatch DIAL resolves one target application/actor/platform for the requested screen unless the task explicitly asks for a multi-platform exercise. An unresolved application context blocks dispatch.
+
+The Screen Registry × Feature Graph now carries screen-feature edge roles. Governed relations may be `PRIMARY_CAPABILITY`, `DIRECT_INTERACTION`, `STATUS_SUMMARY`, `DISCOVERY_ENTRY`, `CONTEXT_ONLY`, `DEEP_LINK_ONLY` or `NOT_EXPOSED`. `UNCLASSIFIED_CONTEXT` is not permission to expose a feature; when a module has an active semantic policy it blocks provider completeness.
+
+`FeatureSemanticEnvelope` binds those graph edges to Feature Realization outcomes, domain subsystem identity, semantic invariants and non-equivalence guards. This prevents provider context from treating every related feature's queries, commands and lifecycle actions as controls on the target screen. Provider-facing interactions are a screen-safe projection; authoritative domain commands remain domain authority.
+
+Module-specific semantics and product/brand authority are projected from `FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json`. The registry is an enforcement projection of Product Truth and owner-approved design authority, not a competing business source of truth. Canonical detail: `docs/dial/architecture/FRONTEND_APPLICATION_FEATURE_SEMANTIC_COMPILATION_REV1.md`.
+
+For Groceries, this explicitly separates general shopping, Pantry, Scheduled Basket and Grocery Rounds. `GROC-F013` is planned/recurring basket-route delivery. `GROC-F019..F034` are governed Grocery Rounds; the two may not be conflated. Groceries Home is general grocery/household commerce, not a fresh-produce speciality store, and uses the owner-approved orange + black + warm-white identity with Shopping mode retained as a first-class Home concept.
+
 ## FrontendGenerationContext
 
 The central compiled artifact is `FrontendGenerationContext`.
@@ -108,10 +120,11 @@ It contains:
   - aggregate;
   - business/completion rules.
 - `PlatformContext`
-  - canonical DIAL applications;
-  - platform targets;
+  - resolved target application ID;
+  - candidate application refs retained for provenance;
+  - target platform;
   - application class;
-  - primary actors.
+  - primary actor scope.
 - `ActorContext`
   - exposure;
   - actor classes.
@@ -123,18 +136,18 @@ It contains:
   - required/conditional states;
   - application refs.
 - `FeatureContext`
-  - features;
-  - subfeatures;
-  - actions;
-  - queries;
-  - commands;
-  - events;
-  - eventualities;
-  - workflow.
+  - provider-visible features;
+  - complete screen feature refs for provenance;
+  - screen-feature edge roles;
+  - `FeatureSemanticEnvelope`;
+  - design-safe interaction intents;
+  - subfeatures/eventualities/workflow;
+  - domain queries/commands/events only when the target screen policy explicitly requires them.
 - `ScreenTruthEnvelope`.
 - `CapabilityEnvelope`.
 - `DesignAuthority`
   - product design profile;
+  - module product/brand authority;
   - presentation decision;
   - visual reference authority;
   - applicable owner-approved archetypes.
@@ -374,17 +387,19 @@ Hard policy:
 
 Static literals may remain only when they are verified immutable content. Runtime values such as vehicle, price, availability, fitment or state must bind to canonical data sources.
 
-## Truth literal lint
+## Provider truth-claim contract and TruthLiteralLint
 
-Before production acceptance, factual-looking candidate content is checked against the `ScreenTruthEnvelope`.
+Truth-literal validation is now a **pre-VisualAuthority hard gate**, not merely a late production check. Stitch visual output must embed a non-executable `dial-visual-truth-claims` JSON contract listing every displayed runtime/business factual literal that needs authority: prices, stock, store/merchant identity, locations, ETAs/slots, order identifiers, discounts/savings, member counts, balances, entitlements, maturity dates, operational status and equivalent claims.
 
-A candidate literal is:
+DIAL extracts the contract from the raw provider artifact before script sanitization and evaluates every claim against `ScreenTruthEnvelope` using `TruthLiteralLint`. A candidate literal is:
 
-- verified and matching;
+- verified and matching → allowed;
 - verified but mismatched → blocking;
-- unverified → blocking until removed or verified.
+- unverified → blocking until removed or authoritatively hydrated.
 
-This allows a richly detailed screen when the packet actually contains rich catalogue/EPC truth while preventing Stitch from manufacturing that detail.
+A missing or invalid truth-claim contract also blocks VisualAuthority promotion. The provider result may remain quarantined design evidence, but `VisualAuthorityArtifact` cannot freeze without a persisted `PASSED` truth lint.
+
+This allows richly detailed designs when packets actually contain authoritative catalogue/domain truth while preventing Stitch from manufacturing realistic-looking facts.
 
 ## FDEP integration
 

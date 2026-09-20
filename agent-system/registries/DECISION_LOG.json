@@ -979,5 +979,56 @@
       "docs/project-state/authorizations/auth-20260920-owner-vekl-interaction-motion-design-acuity.json"
     ],
     "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger system that keeps interaction/motion first-class, preserves Product Truth and Screen Registry × Feature Graph authority, maintains context-sensitive pattern selection, requires accessibility/performance/reduced-motion/state evidence, prevents silent redesign after visual freeze and keeps external references non-authoritative"
+  },
+  {
+    "decision_id": "DEC-041",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / FRONTEND / SCREEN FEATURE SEMANTICS / PROVIDER TRUTH",
+    "title": "Frontend generation resolves one application context, semantic screen-feature edges and provider truth claims before VisualAuthority",
+    "decision": "A canonical screen/provider packet must not inherit the raw union of all applications, actors, commands or feature workflows that reference that screen. DIAL resolves one target application/actor/platform unless the owner explicitly requests multi-platform generation, compiles screen-feature edge roles and admitted domain subsystem semantics, applies module product/brand authority, and gives the design provider only screen-safe interaction intent. For Groceries, normal shopping, Pantry, Scheduled Basket and Grocery Rounds are explicitly distinct. GROC-F013 is planned/recurring basket-route delivery; GROC-F019..F034 are the Grocery Rounds domain governed by the existing Grocery Rounds master/credit decisions. DIAL Groceries is broad grocery and household commerce, with orange/black/warm-white owner-approved identity, Shopping mode on Home and green only as a supporting semantic colour. Stitch must serialize displayed runtime/business factual literals in a machine-readable truth-claims contract, and a passed TruthLiteralLint is mandatory before VisualAuthority freeze.",
+    "consequence": "The Screen Registry × Feature Graph carries screen-feature edge-role metadata and the generation compiler consumes it. Customer Android Home no longer receives courier, merchant, shopper, web, iOS or WhatsApp provider context merely because those applications share graph relationships. Deep/internal features can constrain or route the screen without exposing their commands. Feature IDs are accompanied by subsystem meaning/non-equivalence guards. Provider fabrication of prices, stores, locations, ETAs, order IDs, balances, member counts, savings, entitlements, maturity dates or other runtime facts prevents authority promotion when not present in ScreenTruthEnvelope. DEC-039 reference-only and DEC-040 first-class interaction/motion remain in force.",
+    "record": "docs/dial/architecture/FRONTEND_APPLICATION_FEATURE_SEMANTIC_COMPILATION_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json",
+      "agent-system/registries/FRONTEND_GENERATION_POLICY.json",
+      "agent-system/registries/FRONTEND_PRODUCT_PROFILE_REGISTRY.json",
+      "agent-system/bin/build-screen-feature-graph.mjs",
+      "agent-system/orchestration/screen-feature-graph.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/frontend-product-experience.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "tests/groceries-frontend-semantic-compiler.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-frontend-semantic-scope-corrections.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger system that keeps target-application scoping deterministic, keeps screen-feature relation semantics explicit, preserves Grocery Rounds/Scheduled Basket non-equivalence, preserves domain product/brand authority and fails VisualAuthority promotion on unverified provider factual literals"
+  },
+  {
+    "decision_id": "DEC-042",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / FRONTEND / VEKL / DESIGN SYNTHESIS / RENDERABILITY",
+    "title": "Frontend providers synthesize product knowledge into composed experiences instead of rendering feature inventories",
+    "decision": "DIAL inserts a mandatory knowledge-to-design synthesis layer before Stitch visual generation. Every provider-relevant item is classified as customer-renderable content, background product semantics, design-constraint-only or validation-only. Feature graph relations are transformed into customer goals/experience opportunities before visible components are chosen. Screen-purpose composition budgets determine what deserves visual prominence. Internal feature/screen IDs, preflight/state simulators, acceptance/debug/provenance material are never customer content. For discovery Home surfaces, customer value, imagery, discovery and relevant content must dominate policy/system exposition. Raw provider output is checked by DesignSynthesisLint before VisualAuthority and must also pass TruthLiteralLint.",
+    "consequence": "Stitch receives a synthesis-first prompt rather than a raw feature dump. Functional completeness is expressed through real interactions and state behavior while visual hierarchy remains customer-centric and professionally authored. Groceries Home reserves primary real estate for hero discovery, Shopping mode, search, categories, popular/relevant products and continuity; approval ceiling, substitutions, cold-chain and deep Grocery Rounds mechanics may constrain behavior without becoming main Home sections. Consumer screens are not forced into enterprise dashboard patterns merely to appear professional.",
+    "record": "docs/dial/architecture/FRONTEND_DESIGN_SYNTHESIS_AND_RENDERABILITY_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/FRONTEND_DESIGN_SYNTHESIS_POLICY.json",
+      "agent-system/orchestration/frontend-design-synthesis.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "agent-system/orchestration/frontend-design-synthesis-check.mjs",
+      "tests/frontend-design-synthesis.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-frontend-design-synthesis.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger architecture that preserves renderability separation, feature-to-experience synthesis, screen-purpose composition budgets, validation-only non-rendering and fail-closed visual synthesis validation before VisualAuthority"
   }
 ]

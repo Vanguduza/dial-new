@@ -3,21 +3,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { buildFrontendProductExperienceProjection } from '../agent-system/orchestration/frontend-product-experience.mjs';
-import { freezeVisualAuthorityArtifact, buildStitchVisualProductionPacket, buildInteractionMotionEnrichmentPacket } from '../agent-system/orchestration/frontend-generation-architecture.mjs';
+import { freezeVisualAuthorityArtifact, buildStitchVisualProductionPacket, buildInteractionMotionEnrichmentPacket, lintCandidateFacts } from '../agent-system/orchestration/frontend-generation-architecture.mjs';
 import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence, validateInteractionArtifactAgainstIntelligence } from '../agent-system/orchestration/interaction-motion-intelligence.mjs';
 import { extractInteractionContractFromHtml } from '../agent-system/orchestration/stitch-design-orchestration.mjs';
 
 const repoDir=path.resolve(process.cwd());
 const features=JSON.parse(fs.readFileSync(path.join(repoDir,'docs/dial/final-audit/11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json'),'utf8'));
 const unit=(featureId)=>({unit_lineage_id:`DU-TEST-${featureId}`,unit_revision_hash:'rev1',feature_ids:[featureId],knowledge_route_ids:['PRODUCT_EXPERIENCE']});
-function projection(featureId,targetScreenId,instruction){
+function projection(featureId,targetScreenId,instruction,affectedPaths=['apps/test/Screen.tsx']){
   const feature=features.find((x)=>x.feature_id===featureId);
-  return buildFrontendProductExperienceProjection({repoDir,unit:unit(featureId),featureRecord:feature,targetScreenId,instruction,affectedPaths:['apps/test/Screen.tsx']});
+  return buildFrontendProductExperienceProjection({repoDir,unit:unit(featureId),featureRecord:feature,targetScreenId,instruction,affectedPaths});
 }
 function frozen(ctx){
   return freezeVisualAuthorityArtifact({
     generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},
-    critique:{verdict:'PASS'},promotedBy:'test',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'
+    critique:{verdict:'PASS'},truthLiteralLint:lintCandidateFacts({generationContext:ctx,candidateFacts:[]}),designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},promotedBy:'test',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'
   }).visual_authority;
 }
 const ids=(rows)=>new Set((rows||[]).map((x)=>x.pattern_id));
@@ -36,7 +36,7 @@ function completeArtifact(intel){
 
 describe('VEKL interaction/motion design acuity',()=>{
   test('Android commerce discovery selects native/responsive/feedback knowledge without professional-desktop pattern soup',()=>{
-    const px=projection('SPARE-F001','SCREEN:SPARE:SPARE_HOME_ENTRY','Design the DIAL A SPARE discovery home');
+    const px=projection('SPARE-F001','SCREEN:SPARE:SPARE_HOME_ENTRY','Design the DIAL A SPARE Android discovery home',['apps/android/spare/HomeScreen.kt']);
     const pf=compileInteractionDesignPreflight({repoDir,generationContext:px.frontend_generation_context});
     const selected=ids([...(pf.required_considerations||[]),...(pf.strong_candidates||[]),...(pf.additional_candidates||[])]);
     expect(selected).toContain('PATTERN_PREDICTIVE_BACK');

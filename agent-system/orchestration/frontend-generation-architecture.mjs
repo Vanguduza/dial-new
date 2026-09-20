@@ -8,6 +8,8 @@ export const FRONTEND_GENERATION_REFS = Object.freeze({
   truthSources: 'agent-system/registries/FRONTEND_TRUTH_SOURCE_REGISTRY.json',
   archetypes: 'agent-system/registries/FRONTEND_ARCHETYPE_REGISTRY.json',
   capabilities: 'docs/dial/final-audit/11_FEATURE_REALIZATION/SUPPORTING_CAPABILITY_REGISTRY.json',
+  featureRealizations: 'docs/dial/final-audit/11_FEATURE_REALIZATION/FEATURE_REALIZATION_REGISTRY.json',
+  domainSemantics: 'agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json',
 });
 
 const uniq = (xs = []) => [...new Set((xs || []).filter(Boolean).map(String))].sort();
@@ -32,6 +34,138 @@ function buildArtifact(type, id, body) {
 
 export function loadFrontendGenerationPolicy(repoDir) { return loadRegistry(repoDir, FRONTEND_GENERATION_REFS.policy); }
 export function loadFrontendTruthSourceRegistry(repoDir) { return loadRegistry(repoDir, FRONTEND_GENERATION_REFS.truthSources); }
+export function loadFrontendDomainSemanticRegistry(repoDir) { return loadRegistry(repoDir, FRONTEND_GENERATION_REFS.domainSemantics, { modules: {} }); }
+
+export function resolveDomainSemanticProfile({ repoDir, module } = {}) {
+  const registry = loadFrontendDomainSemanticRegistry(repoDir);
+  const profile = registry.modules?.[module] || null;
+  if (!profile) return null;
+  return buildArtifact('FrontendDomainSemanticProfile', 'domain-semantics:' + module, {
+    module,
+    registry_version: registry.registry_version,
+    product_positioning: profile.product_positioning || null,
+    product_scope_statement: profile.product_scope_statement || null,
+    category_scope: clone(profile.category_scope || []),
+    freshness_positioning: profile.freshness_positioning || null,
+    brand_authority: clone(profile.brand_authority || null),
+    shopping_mode: clone(profile.shopping_mode || null),
+    subsystems: clone(profile.subsystems || {}),
+    screen_policies: clone(profile.screen_policies || {}),
+    provenance: {
+      registry_ref: FRONTEND_GENERATION_REFS.domainSemantics,
+      registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.domainSemantics),
+    },
+  });
+}
+
+function inferRequestedPlatform({ presentationDecision = null, instruction = '', affectedPaths = [] } = {}) {
+  const renderer = String(presentationDecision?.renderer_id || '').toUpperCase();
+  const text = (String(instruction || '') + ' ' + (affectedPaths || []).join(' ')).toUpperCase();
+  if (renderer === 'JETPACK_COMPOSE' || /ANDROID|\.KT\b|COMPOSE/.test(text)) return 'ANDROID';
+  if (/\bIOS\b|SWIFT|SWIFTUI/.test(text)) return 'IOS';
+  if (/WHATSAPP/.test(text)) return 'WHATSAPP';
+  if (renderer === 'REACT_TYPESCRIPT' || /\bWEB\b|\.TSX?\b|REACT|VITE/.test(text)) return 'WEB';
+  return null;
+}
+
+function resolveTargetApplication({ registry, graph, screens = [], featureRecord = null, presentationDecision = null, instruction = '', affectedPaths = [], explicitApplicationId = null } = {}) {
+  const candidateIds = uniq(screens.flatMap((screen) => graph.indexes?.screen_to_applications?.[screen.screen_id] || []));
+  const all = new Map((registry.application_platforms || []).map((x) => [x.application_id, x]));
+  if (explicitApplicationId) {
+    if (!candidateIds.includes(explicitApplicationId)) throw new Error('TARGET_APPLICATION_OUTSIDE_SCREEN_AUTHORITY:' + explicitApplicationId);
+    const app = all.get(explicitApplicationId);
+    if (!app) throw new Error('TARGET_APPLICATION_UNKNOWN:' + explicitApplicationId);
+    return { status:'EXPLICIT', target_application_id:explicitApplicationId, candidate_application_ids:candidateIds, application:app };
+  }
+  const requestedPlatform = inferRequestedPlatform({ presentationDecision, instruction, affectedPaths });
+  const text = (String(instruction || '') + ' ' + (affectedPaths || []).join(' ')).toUpperCase();
+  const customerFacing = String(featureRecord?.exposure || '').toUpperCase() === 'CUSTOMER'
+    || screens.some((x) => x.screen_kind === 'HOME_ENTRY' || x.screen_kind === 'SEARCH_RESULTS');
+  const operationalSignal = /COURIER|MERCHANT|SUPPLIER|SHOPPER|WAREHOUSE|STAFF|COMMAND CENTRE|COMMAND_CENTER/.test(text);
+  const scored = candidateIds.map((id) => {
+    const app = all.get(id);
+    if (!app) return { id, score:-999 };
+    let score = 0;
+    const platforms = (app.platform_targets || []).map((x) => String(x).toUpperCase());
+    if (requestedPlatform) score += platforms.includes(requestedPlatform) ? 60 : -80;
+    if (text.includes(String(id).toUpperCase()) || text.includes(String(app.display_name || '').toUpperCase())) score += 200;
+    if (customerFacing && !operationalSignal) {
+      if (app.application_class === 'CUSTOMER_APP') score += 50;
+      if ((app.primary_users || []).includes('CUSTOMERS')) score += 50;
+    }
+    if (operationalSignal && app.application_class !== 'CUSTOMER_APP') score += 25;
+    if ((app.module_scope || []).includes(screens[0]?.module)) score += 10;
+    if (featureRecord?.feature_id && (app.feature_refs || []).includes(featureRecord.feature_id)) score += 5;
+    return { id, score };
+  }).sort((a,b)=>b.score-a.score || a.id.localeCompare(b.id));
+  const top = scored[0];
+  const ties = top ? scored.filter((x)=>x.score===top.score) : [];
+  if (!top || top.score < 0 || ties.length !== 1) {
+    return { status:'AMBIGUOUS', target_application_id:null, candidate_application_ids:candidateIds, application:null, scores:scored };
+  }
+  return { status:'RESOLVED_FROM_TASK_CONTEXT', target_application_id:top.id, candidate_application_ids:candidateIds, application:all.get(top.id), scores:scored };
+}
+
+function buildFeatureSemanticEnvelope({ repoDir, module, screen, featureRecord = null, targetApplication = null } = {}) {
+  const registry = loadFrontendDomainSemanticRegistry(repoDir);
+  const moduleProfile = registry.modules?.[module] || {};
+  const sourceFeatures = loadRegistry(repoDir, FRONTEND_GENERATION_REFS.featureRealizations, []);
+  const byId = new Map((sourceFeatures || []).map((x)=>[x.feature_id,x]));
+  const screenPolicy = moduleProfile.screen_policies?.[screen?.screen_id] || {};
+  const roleOverrides = screenPolicy.feature_edge_roles || {};
+  const graphEdgeRoles = Object.fromEntries((screen?.feature_edges || []).map((x)=>[x.feature_id,x.edge_role]));
+  const subsystemEntries = Object.entries(moduleProfile.subsystems || {});
+  const subsystemFor = (featureId) => subsystemEntries.find(([,v]) => (v.feature_refs || []).includes(featureId)) || null;
+  const features = uniq(screen?.feature_refs || []).map((featureId) => {
+    const source = byId.get(featureId) || {};
+    const subsystemEntry = subsystemFor(featureId);
+    const subsystem = subsystemEntry?.[0] || null;
+    const subsystemPolicy = subsystemEntry?.[1] || {};
+    let role = graphEdgeRoles[featureId] || roleOverrides[featureId] || (featureId === featureRecord?.feature_id ? 'PRIMARY_CAPABILITY' : 'CONTEXT_ONLY');
+    if (targetApplication?.application_class === 'CUSTOMER_APP' && String(source.exposure || '').toUpperCase() === 'INTERNAL') role = 'NOT_EXPOSED';
+    return {
+      feature_id: featureId,
+      outcome: source.outcome || null,
+      aggregate: source.aggregate || null,
+      exposure: source.exposure || null,
+      primary_route: source.primary_route || null,
+      app_families: uniq(source.app_families || []),
+      subsystem,
+      edge_role: role,
+      provider_visible: role !== 'NOT_EXPOSED',
+      semantic_invariants: clone(subsystemPolicy.semantic_invariants || []),
+      semantic_guards: clone(subsystemPolicy.semantic_guards || []),
+      source_ref: FRONTEND_GENERATION_REFS.featureRealizations,
+    };
+  });
+  return buildArtifact('FeatureSemanticEnvelope', 'feature-semantics:' + (screen?.screen_id || module || 'unknown'), {
+    module,
+    screen_id: screen?.screen_id || null,
+    target_application_id: targetApplication?.application_id || null,
+    product_positioning: moduleProfile.product_positioning || null,
+    product_scope_statement: moduleProfile.product_scope_statement || null,
+    category_scope: clone(moduleProfile.category_scope || []),
+    freshness_positioning: moduleProfile.freshness_positioning || null,
+    features,
+    subsystem_semantics: subsystemEntries.map(([subsystem_id,policy])=>({
+      subsystem_id,
+      feature_refs: uniq(policy.feature_refs || []),
+      semantic_invariants: clone(policy.semantic_invariants || []),
+      semantic_guards: clone(policy.semantic_guards || []),
+    })),
+    screen_feature_edges: features.map((x)=>({ feature_id:x.feature_id, role:x.edge_role, subsystem:x.subsystem, provider_visible:x.provider_visible })),
+    provider_interaction_intents: clone(screenPolicy.provider_interaction_intents || []),
+    provider_command_policy: screenPolicy.provider_command_policy || 'DOMAIN_COMMANDS_ONLY_WHEN_DIRECTLY_REQUIRED',
+    provider_action_policy: screenPolicy.provider_action_policy || 'DOMAIN_ACTIONS_ONLY_WHEN_DIRECTLY_REQUIRED',
+    screen_policy: clone(screenPolicy),
+    provenance: {
+      registry_ref: FRONTEND_GENERATION_REFS.domainSemantics,
+      registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.domainSemantics),
+      feature_registry_ref: FRONTEND_GENERATION_REFS.featureRealizations,
+      feature_registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.featureRealizations),
+    },
+  });
+}
 
 export function resolveTruthSourceProfile({ repoDir, module } = {}) {
   if (!repoDir || !module) throw new Error('truth source profile requires repoDir and module');
@@ -169,10 +303,12 @@ export function buildScreenTruthEnvelope({ repoDir, module, featureRecord = null
   });
 }
 
-function buildCapabilityEnvelope({ repoDir, screens = [], capabilityOverrides = {} } = {}) {
+function buildCapabilityEnvelope({ repoDir, screens = [], featureRecords = null, allowedInteractionActions = null, domainCommands = null, capabilityOverrides = {} } = {}) {
   const registry = loadRegistry(repoDir, FRONTEND_GENERATION_REFS.capabilities, []);
   const byId = new Map((registry || []).map((x) => [x.capability_id, x]));
-  const capabilityIds = uniq(screens.flatMap((x) => x.capability_refs || x.supporting_capability_refs || []));
+  const capabilityIds = featureRecords
+    ? uniq(featureRecords.flatMap((x) => x.supporting_capability_refs || []))
+    : uniq(screens.flatMap((x) => x.capability_refs || x.supporting_capability_refs || []));
   const capabilities = capabilityIds.map((id) => {
     const source = byId.get(id);
     return {
@@ -186,8 +322,8 @@ function buildCapabilityEnvelope({ repoDir, screens = [], capabilityOverrides = 
       source: source ? 'SUPPORTING_CAPABILITY_REGISTRY' : 'MISSING',
     };
   });
-  const actions = uniq(screens.flatMap((x) => x.action_refs || []));
-  const commands = uniq(screens.flatMap((x) => x.command_refs || []));
+  const actions = allowedInteractionActions == null ? uniq(screens.flatMap((x) => x.action_refs || [])) : uniq(allowedInteractionActions);
+  const commands = domainCommands == null ? uniq(screens.flatMap((x) => x.command_refs || [])) : uniq(domainCommands);
   return buildArtifact('CapabilityEnvelope', `capabilities:${hashObject(screens.map((x) => x.screen_id)).slice(0, 16)}`, {
     status: capabilities.every((x) => x.known) ? 'RESOLVED' : 'BLOCKED_MISSING_CAPABILITY_AUTHORITY',
     capabilities,
@@ -240,6 +376,8 @@ export function evaluateFrontendGenerationCompleteness(context, { requireTargetS
   if (requireTargetScreen && !context?.screen_context?.target_screen_id) failures.push('TARGET_SCREEN_REQUIRED');
   if (!context?.feature_context?.feature_ids?.length && context?.screen_context?.module !== 'HOME') failures.push('NO_FEATURE_AUTHORITY');
   if (!context?.platform_context?.applications?.length) failures.push('NO_APPLICATION_PLATFORM_MAPPING');
+  if (!context?.platform_context?.target_application_id) failures.push('TARGET_APPLICATION_REQUIRED');
+  if (context?.feature_context?.semantic_envelope && (context.feature_context.screen_feature_edges || []).some((x)=>x.role === 'UNCLASSIFIED_CONTEXT')) failures.push('UNCLASSIFIED_SCREEN_FEATURE_EDGE');
   if (context?.truth?.screen_truth_envelope?.unknown_verified_sources?.length) failures.push('UNKNOWN_VERIFIED_TRUTH_SOURCE');
   if (context?.truth?.screen_truth_envelope?.missing_required_fact_keys?.length) failures.push('MISSING_REQUIRED_TRUTH');
   if (context?.capability_envelope?.status !== 'RESOLVED') failures.push('CAPABILITY_AUTHORITY_INCOMPLETE');
@@ -285,7 +423,7 @@ export function resolveFrontendTargetScreenId({ screenFeatureProjection, instruc
 
 export function compileFrontendGenerationContext({
   repoDir, unit, featureRecord = null, contractRecord = null, frontendProjection = null, targetScreenId = null,
-  requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {},
+  requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {}, instruction = '', affectedPaths = [], targetApplicationId = null,
 } = {}) {
   if (!repoDir || !unit) throw new Error('frontend generation context requires repoDir and unit');
   const { registry, graph } = loadCanonicalScreenGraph(repoDir);
@@ -301,22 +439,45 @@ export function compileFrontendGenerationContext({
   if (!module) throw new Error('FRONTEND_MODULE_UNRESOLVED');
   if (featureRecord?.module && moduleKey(featureRecord, []) !== module) throw new Error(`TARGET_SCREEN_MODULE_MISMATCH:${featureRecord.module}:${module}`);
 
-  const applicationIds = uniq(allScreens.flatMap((x) => graph.indexes?.screen_to_applications?.[x.screen_id] || []));
-  const applicationById = new Map((registry.application_platforms || []).map((x) => [x.application_id, x]));
-  const applications = applicationIds.map((id) => applicationById.get(id)).filter(Boolean).map((x) => ({
+  const appResolution = resolveTargetApplication({
+    registry, graph, screens: allScreens, featureRecord,
+    presentationDecision: frontendProjection?.presentation_decision,
+    instruction, affectedPaths, explicitApplicationId: targetApplicationId,
+  });
+  const applications = (appResolution.application ? [appResolution.application] : []).map((x) => ({
     application_id: x.application_id, display_name: x.display_name, application_class: x.application_class,
     primary_users: uniq(x.primary_users || []), platform_targets: uniq(x.platform_targets || []),
+    app_family_refs: uniq(x.app_family_refs || []), module_scope: uniq(x.module_scope || []),
   }));
   const screenRows = allScreens.map((s) => ({
     screen_id: s.screen_id, title: s.title, screen_kind: s.screen_kind, module: s.module, route_refs: uniq(s.route_refs || []),
-    feature_refs: uniq(s.feature_refs || []), subfeature_refs: uniq(s.subfeature_refs || []), capability_refs: uniq(s.supporting_capability_refs || []),
+    feature_refs: uniq(s.feature_refs || []), feature_edges: clone(s.feature_edges || []), subfeature_refs: uniq(s.subfeature_refs || []), capability_refs: uniq(s.supporting_capability_refs || []),
     eventuality_refs: uniq(s.eventuality_refs || []), action_refs: uniq(s.action_refs || []), query_refs: uniq(s.query_refs || []),
     command_refs: uniq(s.command_refs || []), event_refs: uniq(s.event_refs || []), application_refs: uniq(graph.indexes?.screen_to_applications?.[s.screen_id] || []),
     state_contract: clone(s.state_contract || {}), role_boundary: screenRoleBoundary(s),
   }));
 
+  const domainSemantics = resolveDomainSemanticProfile({ repoDir, module });
+  const featureSemanticEnvelope = buildFeatureSemanticEnvelope({
+    repoDir, module, screen: screenRows[0], featureRecord, targetApplication: appResolution.application,
+  });
+  const sourceFeatureRegistry = loadRegistry(repoDir, FRONTEND_GENERATION_REFS.featureRealizations, []);
+  const sourceFeatureById = new Map((sourceFeatureRegistry || []).map((x)=>[x.feature_id,x]));
+  const semanticPolicyActive = Boolean(domainSemantics);
+  const directFeatureIds = featureSemanticEnvelope.screen_feature_edges
+    .filter((x)=>['PRIMARY_CAPABILITY','DIRECT_INTERACTION'].includes(x.role))
+    .map((x)=>x.feature_id);
+  const directFeatureRecords = directFeatureIds.map((id)=>sourceFeatureById.get(id)).filter(Boolean);
+  const providerInteractionIntents = semanticPolicyActive
+    ? (featureSemanticEnvelope.provider_interaction_intents || [])
+    : uniq(screenRows.flatMap((x)=>x.action_refs || []));
   const truthEnvelope = buildScreenTruthEnvelope({ repoDir, module, featureRecord, contractRecord, requestedTruth, hydratedTruth });
-  const capabilityEnvelope = buildCapabilityEnvelope({ repoDir, screens: screenRows, capabilityOverrides });
+  const capabilityEnvelope = buildCapabilityEnvelope({
+    repoDir, screens: screenRows, featureRecords: semanticPolicyActive ? directFeatureRecords : null,
+    allowedInteractionActions: providerInteractionIntents,
+    domainCommands: semanticPolicyActive ? [] : null,
+    capabilityOverrides,
+  });
   const archetypes = selectArchetypes({ repoDir, module, screens: screenRows, presentationDecision: frontendProjection?.presentation_decision });
   const acceptance = buildAcceptanceContract({ screens: screenRows, truthEnvelope, capabilityEnvelope });
 
@@ -327,9 +488,19 @@ export function compileFrontendGenerationContext({
     business_unit_context: {
       module, branch_space: featureRecord?.branch_space || null, feature_id: featureRecord?.feature_id || null,
       outcome: featureRecord?.outcome || null, canonical_owner: featureRecord?.canonical_owner || null, aggregate: featureRecord?.aggregate || null,
+      product_positioning: domainSemantics?.product_positioning || null,
+      product_scope_statement: domainSemantics?.product_scope_statement || null,
+      category_scope: clone(domainSemantics?.category_scope || []),
+      freshness_positioning: domainSemantics?.freshness_positioning || null,
+      shopping_mode: clone(domainSemantics?.shopping_mode || null),
       business_rules: uniq([featureRecord?.eventuality_requirement, featureRecord?.support_requirement, featureRecord?.command_centre_requirement, ...(featureRecord?.completion_contract || [])]),
     },
-    platform_context: { applications },
+    platform_context: {
+      target_application_id: appResolution.target_application_id,
+      resolution: appResolution.status,
+      candidate_application_ids: appResolution.candidate_application_ids,
+      applications,
+    },
     actor_context: { exposure: featureRecord?.exposure || null, actor_classes: uniq(applications.flatMap((x) => x.primary_users || [])) },
     screen_context: {
       target_screen_id: targetScreenId || (screenRows.length === 1 ? screenRows[0].screen_id : null),
@@ -337,10 +508,18 @@ export function compileFrontendGenerationContext({
       module, screens: screenRows,
     },
     feature_context: {
-      feature_ids: uniq(screenRows.flatMap((x) => x.feature_refs)), subfeature_refs: uniq(screenRows.flatMap((x) => x.subfeature_refs)),
-      actions: uniq(screenRows.flatMap((x) => x.action_refs)), queries: uniq(screenRows.flatMap((x) => x.query_refs)),
-      commands: uniq(screenRows.flatMap((x) => x.command_refs)), events: uniq(screenRows.flatMap((x) => x.event_refs)),
-      eventuality_refs: uniq(screenRows.flatMap((x) => x.eventuality_refs)), workflow: uniq(featureRecord?.workflow || []),
+      feature_ids: semanticPolicyActive ? featureSemanticEnvelope.features.filter((x)=>x.provider_visible).map((x)=>x.feature_id) : uniq(screenRows.flatMap((x)=>x.feature_refs)),
+      all_screen_feature_ids: uniq(screenRows.flatMap((x) => x.feature_refs)),
+      screen_feature_edges: clone(featureSemanticEnvelope.screen_feature_edges),
+      semantic_envelope: semanticPolicyActive ? featureSemanticEnvelope : null,
+      subfeature_refs: uniq(screenRows.flatMap((x) => x.subfeature_refs)),
+      actions: uniq(providerInteractionIntents),
+      queries: semanticPolicyActive ? [] : uniq(screenRows.flatMap((x)=>x.query_refs)),
+      commands: semanticPolicyActive ? [] : uniq(screenRows.flatMap((x)=>x.command_refs)),
+      events: semanticPolicyActive ? [] : uniq(screenRows.flatMap((x)=>x.event_refs)),
+      eventuality_refs: uniq(screenRows.flatMap((x) => x.eventuality_refs)),
+      workflow: uniq(featureRecord?.workflow || []),
+      command_scope_policy: semanticPolicyActive ? 'PRIMARY_AND_DIRECT_INTERACTION_ONLY' : 'LEGACY_SCREEN_GRAPH_SCOPE',
     },
     truth: { truth_source_profile: resolveTruthSourceProfile({ repoDir, module }), screen_truth_envelope: truthEnvelope },
     capability_envelope: capabilityEnvelope,
@@ -349,6 +528,7 @@ export function compileFrontendGenerationContext({
       visual_reference_spec_hash: frontendProjection?.visual_reference_spec?.content_hash || null,
       presentation_decision_hash: frontendProjection?.presentation_decision?.content_hash || null,
       archetype_refs: archetypes.map((x) => x.archetype_id), applicable_archetypes: archetypes,
+      domain_brand_authority: clone(domainSemantics?.brand_authority || null),
       design_provider: 'google-stitch', figma_policy: 'EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY',
     },
     acceptance_contract: acceptance,
@@ -357,6 +537,8 @@ export function compileFrontendGenerationContext({
       generation_policy_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.policy),
       truth_source_registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.truthSources),
       archetype_registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.archetypes),
+      domain_semantic_registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.domainSemantics),
+      feature_realization_registry_hash: registryHash(repoDir, FRONTEND_GENERATION_REFS.featureRealizations),
     },
   };
   context.completeness = evaluateFrontendGenerationCompleteness(context);
@@ -365,7 +547,7 @@ export function compileFrontendGenerationContext({
   return context;
 }
 
-export function buildStitchVisualProductionPacket({ generationContext, designBrief, qualityPacket = null, interactionPreflight = null, blindReferenceMode = false } = {}) {
+export function buildStitchVisualProductionPacket({ generationContext, designBrief, qualityPacket = null, interactionPreflight = null, designSynthesis = null, blindReferenceMode = false } = {}) {
   if (!generationContext?.content_hash) throw new Error('FRONTEND_GENERATION_CONTEXT_REQUIRED');
   const completeness = evaluateFrontendGenerationCompleteness(generationContext);
   if (!completeness.provider_dispatch_ready) throw new Error(`FRONTEND_PACKET_INCOMPLETE:${completeness.failures.join(',')}`);
@@ -382,11 +564,14 @@ export function buildStitchVisualProductionPacket({ generationContext, designBri
     truth_policy: clone(generationContext.truth.screen_truth_envelope.truth_class_policy),
     capability_envelope: clone(generationContext.capability_envelope), design_authority: clone(generationContext.design_authority),
     interaction_design_preflight: clone(interactionPreflight),
+    design_synthesis: clone(designSynthesis),
     acceptance_contract: clone(generationContext.acceptance_contract),
     reference_policy: blindReferenceMode ? 'REFERENCE_IMAGE_ACCESS_FORBIDDEN' : 'ONLY_DECLARED_VISUAL_AUTHORITY',
     instructions: [
       'Treat the packet as compiled product execution context, not as a layout prescription.',
       'Functional requirements specify truths, actions and states; they do not prescribe one component per requirement.',
+      'Use the DesignSynthesisBrief to translate knowledge into a coherent experience before selecting visible sections or components.',
+      'Do not expose validation, preflight, graph, provenance or internal policy material as customer-facing content.',
       'Exercise substantial creative authority over composition, hierarchy, imagery, iconography, typography, merchandising and visual storytelling within the declared freedom and archetype grammar.',
       'Do not invent product, operational, compatibility, pricing, inventory, legal, security or performance facts.',
       'Unknown facts must be omitted, deferred, or represented without fabricated values.',
@@ -400,12 +585,16 @@ export function buildStitchVisualProductionPacket({ generationContext, designBri
   return packet;
 }
 
-export function freezeVisualAuthorityArtifact({ generationContext, candidate, critique = {}, promotedBy, promotionAuthority } = {}) {
+export function freezeVisualAuthorityArtifact({ generationContext, candidate, critique = {}, truthLiteralLint = null, designSynthesisLint = null, promotedBy, promotionAuthority } = {}) {
   const failures = [];
   if (!generationContext?.content_hash) failures.push('GENERATION_CONTEXT_REQUIRED');
   if (!candidate?.candidate_hash && !candidate?.response_hash) failures.push('CANDIDATE_HASH_REQUIRED');
   if (!['OWNER', 'AUTHORIZED_DESIGN_AUTHORITY'].includes(promotionAuthority)) failures.push('VISUAL_AUTHORITY_PROMOTION_REQUIRES_OWNER_OR_AUTHORIZED_DESIGN_AUTHORITY');
   if (critique.verdict && !['PASS', 'ACCEPT'].includes(String(critique.verdict).toUpperCase())) failures.push('CRITIQUE_NOT_ACCEPTED');
+  if (!truthLiteralLint?.content_hash) failures.push('TRUTH_LITERAL_LINT_REQUIRED');
+  else if (truthLiteralLint.status !== 'PASSED') failures.push('TRUTH_LITERAL_LINT_REJECTED');
+  if (!designSynthesisLint?.content_hash) failures.push('DESIGN_SYNTHESIS_LINT_REQUIRED');
+  else if (designSynthesisLint.status !== 'PASSED') failures.push('DESIGN_SYNTHESIS_LINT_REJECTED');
   if (failures.length) return { ok: false, failures: uniq(failures), visual_authority: null };
   const visual = buildArtifact('VisualAuthorityArtifact', `visual-authority:${generationContext.screen_context.target_screen_id}`, {
     status: 'FROZEN', generation_context_hash: generationContext.content_hash, screen_id: generationContext.screen_context.target_screen_id,
@@ -413,7 +602,7 @@ export function freezeVisualAuthorityArtifact({ generationContext, candidate, cr
     candidate_hash: candidate.candidate_hash || candidate.response_hash, code_artifact_ref: candidate.code_artifact_ref || candidate.html_url || null,
     rendered_preview_ref: candidate.rendered_preview_ref || candidate.image_url || null, structure_map_ref: candidate.structure_map_ref || null,
     composition_locked: true, hierarchy_locked: true, section_order_locked: true, imagery_strategy_locked: true,
-    design_tokens_ref: candidate.design_tokens_ref || null, critique_hash: critique.content_hash || hashObject(critique || {}),
+    design_tokens_ref: candidate.design_tokens_ref || null, critique_hash: critique.content_hash || hashObject(critique || {}), truth_literal_lint_hash: truthLiteralLint.content_hash, design_synthesis_lint_hash: designSynthesisLint.content_hash,
     promoted_by: promotedBy || null, promotion_authority: promotionAuthority,
     allowed_post_freeze_change: 'INTERACTION_ENRICHMENT_WITH_MINIMUM_NECESSARY_STRUCTURAL_ADJUSTMENT',
   });

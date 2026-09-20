@@ -10,6 +10,7 @@ import {
   freezeExperienceAuthorityArtifact,
   buildProductionBindingContract,
   resolveTruthSourceProfile,
+  lintCandidateFacts,
 } from './frontend-generation-architecture.mjs';
 import { selectCanonicalFrontendDesignProvider } from './frontend-design-provider-orchestrator.mjs';
 import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence } from './interaction-motion-intelligence.mjs';
@@ -70,7 +71,7 @@ try {
   const visualPacket=buildStitchVisualProductionPacket({generationContext:ctx,designBrief:{content_hash:'brief'},interactionPreflight:preflight,blindReferenceMode:true});
   gate('FGA-G16',visualPacket.provider==='google-stitch' && visualPacket.reference_policy==='REFERENCE_IMAGE_ACCESS_FORBIDDEN' && visualPacket.target_screen?.screen_id==='SCREEN:SPARE:SPARE_HOME_ENTRY' && visualPacket.interaction_design_preflight?.content_hash===preflight.content_hash,'Stitch visual generation receives screen/feature/platform truth plus interaction-readiness preflight');
 
-  const frozen=freezeVisualAuthorityArtifact({generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},critique:{verdict:'PASS'},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'});
+  const frozen=freezeVisualAuthorityArtifact({generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},critique:{verdict:'PASS'},truthLiteralLint:lintCandidateFacts({generationContext:ctx,candidateFacts:[]}),designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'});
   const intelligence=compileInteractionMotionIntelligence({repoDir:repo,generationContext:ctx,visualAuthority:frozen.visual_authority,preflight});
   gate('FGA-G17',intelligence.expert_role==='PRINCIPAL_PRODUCT_DESIGN_ENGINEER_AND_INTERACTION_MOTION_SPECIALIST' && intelligence.required_outputs?.includes('DesignAcuityAssessment') && intelligence.required_outputs?.includes('ResponsiveInteractionPlan') && intelligence.decision_contract?.rationale_required===true,'post-freeze interaction intelligence requires expert design-acuity analysis and rationale');
   const interaction=buildInteractionMotionEnrichmentPacket({generationContext:ctx,visualAuthority:frozen.visual_authority,intelligence});
@@ -82,6 +83,24 @@ try {
   const bindings=Object.fromEntries((ctx.screen_context.screens[0].action_refs||[]).map((x)=>[x,`domain.${x}`]));
   const production=buildProductionBindingContract({generationContext:ctx,experienceAuthority:experience.experience_authority,bindings:{actions:bindings}});
   gate('FGA-G20',experience.ok && production.policy?.redesign_forbidden===true && production.policy?.preserve_visual_parity===true && production.policy?.preserve_interaction_parity===true,'DDE productionization preserves frozen experience authority and parity');
+
+  const groceries=features.find((x)=>x.feature_id==='GROC-F001');
+  const groceryUnit=units.find((x)=>(x.feature_ids||[]).includes('GROC-F001'));
+  const gpx=buildFrontendProductExperienceProjection({repoDir:repo,unit:groceryUnit,featureRecord:groceries,targetScreenId:'SCREEN:GROCERIES:GROCERIES_HOME_ENTRY',instruction:'Design the DIAL Groceries Android consumer home screen',affectedPaths:['apps/android/groceries/HomeScreen.kt']});
+  const gctx=gpx.frontend_generation_context;
+  gate('FGA-G21',gctx.platform_context?.target_application_id==='DIAL_CONSUMER_ANDROID' && gctx.platform_context?.applications?.length===1 && gctx.actor_context?.actor_classes?.length===1 && gctx.actor_context.actor_classes[0]==='CUSTOMERS','provider context resolves one exact customer Android application/actor instead of the raw cross-platform union');
+  const grocScreen=registry.screens.find((x)=>x.screen_id==='SCREEN:GROCERIES:GROCERIES_HOME_ENTRY');
+  gate('FGA-G22',(grocScreen?.feature_edges||[]).length===(grocScreen?.feature_refs||[]).length && !(grocScreen?.feature_edges||[]).some((x)=>x.edge_role==='UNCLASSIFIED_CONTEXT') && grocScreen?.feature_edges?.find((x)=>x.feature_id==='GROC-F019')?.edge_role==='DISCOVERY_ENTRY','canonical Screen Registry × Feature Graph carries explicit Groceries Home feature-edge semantics');
+  const gsem=gctx.feature_context?.semantic_envelope;
+  const round=gsem?.features?.find((x)=>x.feature_id==='GROC-F019');
+  const scheduled=gsem?.features?.find((x)=>x.feature_id==='GROC-F013');
+  gate('FGA-G23',round?.subsystem==='GROCERY_ROUNDS' && scheduled?.subsystem==='SCHEDULED_BASKET' && /prepaid grocery/i.test((round?.semantic_invariants||[]).join(' ')) && /not.*recurring.*delivery/i.test((round?.semantic_guards||[]).join(' ')),'FeatureSemanticEnvelope preserves Grocery Rounds meaning and Scheduled Basket non-equivalence');
+  const brand=gctx.design_authority?.domain_brand_authority;
+  gate('FGA-G24',gctx.business_unit_context?.product_positioning==='GENERAL_GROCERY_AND_HOUSEHOLD_COMMERCE' && brand?.palette?.primary_accent==='#F04E00' && brand?.palette?.ink==='#141311' && gctx.business_unit_context?.shopping_mode?.required_on_home===true,'Groceries general-commerce positioning, orange/black/warm-white identity and Shopping mode survive provider compilation');
+  const missingLint=freezeVisualAuthorityArtifact({generationContext:gctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'d'.repeat(64)},critique:{verdict:'PASS'},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'});
+  const rejectedLint=lintCandidateFacts({generationContext:gctx,candidateFacts:[{path:'store.name',value:'Invented Store'}]});
+  const rejectedFreeze=freezeVisualAuthorityArtifact({generationContext:gctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'d'.repeat(64)},critique:{verdict:'PASS'},truthLiteralLint:rejectedLint,designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'});
+  gate('FGA-G25',missingLint.ok===false && missingLint.failures?.includes('TRUTH_LITERAL_LINT_REQUIRED') && rejectedFreeze.ok===false && rejectedFreeze.failures?.includes('TRUTH_LITERAL_LINT_REJECTED'),'VisualAuthority fails closed when provider truth claims are missing or unverified');
 } catch(error) {
   gate('FGA-UNCAUGHT',false,error.stack||error.message);
 }

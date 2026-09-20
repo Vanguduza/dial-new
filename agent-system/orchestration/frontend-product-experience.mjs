@@ -22,6 +22,7 @@ const REGISTRIES = Object.freeze({
   designAcuity: 'agent-system/registries/DESIGN_ACUITY_POLICY.json',
   interactionMotionPatterns: 'agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json',
   interactionMotionSources: 'agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json',
+  domainSemantics: 'agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json',
 });
 
 export const SURFACE_STATE_IDS = Object.freeze([
@@ -283,7 +284,7 @@ export function compileVisualRenderDeterminismEnvelope({ repoDir, presentationDe
   return artifact;
 }
 
-export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null, targetScreenId = null, requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {} } = {}) {
+export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null, targetScreenId = null, targetApplicationId = null, requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {} } = {}) {
   const applicable = (unit?.knowledge_route_ids || []).includes('PRODUCT_EXPERIENCE') || (unit?.design_authorities || []).length > 0;
   if (!applicable) return { applicable: false, state: 'NOT_APPLICABLE', integration_version: FRONTEND_INTEGRATION_VERSION };
   const product_design_profile = resolveProductDesignProfile({ repoDir, unit, featureRecord });
@@ -307,6 +308,9 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
     requestedTruth,
     hydratedTruth,
     capabilityOverrides,
+    instruction,
+    affectedPaths,
+    targetApplicationId,
     frontendProjection: {
       product_design_profile,
       surface_manifest,

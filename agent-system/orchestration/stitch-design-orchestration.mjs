@@ -30,6 +30,7 @@ import {
   lintCandidateFacts,
 } from './frontend-generation-architecture.mjs';
 import { compileInteractionMotionIntelligence, validateInteractionArtifactAgainstIntelligence } from './interaction-motion-intelligence.mjs';
+import { compileFrontendDesignSynthesis, evaluateDesignSynthesisCandidate } from './frontend-design-synthesis.mjs';
 import { StitchAdapter } from './stitch-adapter.mjs';
 import {
   STITCH_PROOF_RELS,
@@ -55,6 +56,8 @@ function certificationRel(taskId) { return `execution/tasks/${taskId}/stitch-scr
 function workerEvidenceRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence.json`; }
 function workerEvidenceDirRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence`; }
 function visualAuthorityRel(taskId) { return `execution/tasks/${taskId}/visual-authority.json`; }
+function visualTruthLintRel(taskId) { return `execution/tasks/${taskId}/visual-truth-lint.json`; }
+function designSynthesisLintRel(taskId) { return `execution/tasks/${taskId}/design-synthesis-lint.json`; }
 function interactionMotionRel(taskId) { return `execution/tasks/${taskId}/stitch-interaction-motion.json`; }
 function interactionIntelligenceRel(taskId) { return `execution/tasks/${taskId}/interaction-motion-intelligence.json`; }
 function interactionAcceptanceRel(taskId) { return `execution/tasks/${taskId}/interaction-acceptance.json`; }
@@ -839,6 +842,17 @@ export function freezeAcceptedStitchVisualAuthority({
   if (!selectedSurface || !surfaces[selectedSurface]) throw new Error('STITCH_VISUAL_AUTHORITY_SURFACE_SELECTION_REQUIRED');
   const artifact = surfaces[selectedSurface];
   if (!artifact.provider_locator?.project_id || !artifact.provider_locator?.screen_id) throw new Error('STITCH_VISUAL_AUTHORITY_PROVIDER_LOCATOR_REQUIRED');
+  if (!artifact.raw_html?.rel) throw new Error('STITCH_VISUAL_TRUTH_CONTRACT_SOURCE_REQUIRED');
+  const rawHtml = fs.readFileSync(resolveControlPath(artifact.raw_html.rel, root), 'utf8');
+  const truthContract = extractVisualTruthClaimsFromHtml(rawHtml);
+  if (truthContract.status !== 'PARSED') throw new Error(`STITCH_VISUAL_TRUTH_CONTRACT_${truthContract.status}`);
+  const truthLiteralLint = lintCandidateFacts({ generationContext: fdep.frontend_generation_context, candidateFacts: truthContract.claims });
+  writeJsonAtomic(visualTruthLintRel(taskId), { ...truthLiteralLint, provider_contract_hash: truthContract.content_hash, surface_id: selectedSurface }, root);
+  if (truthLiteralLint.status !== 'PASSED') throw new Error(`STITCH_VISUAL_TRUTH_LINT_FAILED:${truthLiteralLint.findings.map((x)=>x.finding_id).join(',')}`);
+  const designSynthesis = compileFrontendDesignSynthesis({ repoDir, generationContext: fdep.frontend_generation_context });
+  const designSynthesisLint = evaluateDesignSynthesisCandidate({ synthesis: designSynthesis, html: rawHtml });
+  writeJsonAtomic(designSynthesisLintRel(taskId), { ...designSynthesisLint, surface_id: selectedSurface }, root);
+  if (designSynthesisLint.status !== 'PASSED') throw new Error(`STITCH_DESIGN_SYNTHESIS_LINT_FAILED:${designSynthesisLint.findings.map((x)=>x.finding_id).join(',')}`);
   const frozen = freezeVisualAuthorityArtifact({
     generationContext: fdep.frontend_generation_context,
     candidate: {
@@ -851,6 +865,8 @@ export function freezeAcceptedStitchVisualAuthority({
       structure_map_ref: null,
     },
     critique,
+    truthLiteralLint,
+    designSynthesisLint,
     promotedBy,
     promotionAuthority,
   });
@@ -861,11 +877,29 @@ export function freezeAcceptedStitchVisualAuthority({
     task_id: taskId,
     surface_id: selectedSurface,
     accepted_candidate_hash: accepted.candidate_hash,
+    truth_literal_lint_hash: truthLiteralLint.content_hash,
+    design_synthesis_lint_hash: designSynthesisLint.content_hash,
+    design_synthesis_hash: designSynthesis.content_hash,
+    provider_truth_contract_hash: truthContract.content_hash,
     frozen_at: now(),
   });
   writeJsonAtomic(visualAuthorityRel(taskId), proof, root);
   appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_VISUAL_AUTHORITY_FROZEN', task_id: taskId, surface_id: selectedSurface, visual_authority_hash: proof.content_hash, at: proof.frozen_at }, root);
   return proof;
+}
+
+export function extractVisualTruthClaimsFromHtml(html='') {
+  const source=String(html||'');
+  const match=source.match(/<script[^>]*id=["']dial-visual-truth-claims["'][^>]*>([\s\S]*?)<\/script>/i)
+    || source.match(/<script[^>]*type=["']application\/json["'][^>]*id=["']dial-visual-truth-claims["'][^>]*>([\s\S]*?)<\/script>/i);
+  if(!match) return {found:false,status:'MISSING',claims:[],content_hash:null,error:null};
+  try {
+    const value=JSON.parse(match[1].trim());
+    const claims=Array.isArray(value?.claims)?value.claims:[];
+    return {found:true,status:'PARSED',claims,value,content_hash:hashObject(value),error:null};
+  } catch(error) {
+    return {found:true,status:'INVALID_JSON',claims:[],value:null,content_hash:null,error:String(error?.message||error)};
+  }
 }
 
 export function extractInteractionContractFromHtml(html='') {

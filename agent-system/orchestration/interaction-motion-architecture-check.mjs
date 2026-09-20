@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildFrontendProductExperienceProjection } from './frontend-product-experience.mjs';
 import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence } from './interaction-motion-intelligence.mjs';
-import { freezeVisualAuthorityArtifact } from './frontend-generation-architecture.mjs';
+import { freezeVisualAuthorityArtifact, lintCandidateFacts } from './frontend-generation-architecture.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const repo=path.resolve(here,'../..');
@@ -43,7 +43,7 @@ try {
  const selected=[...(pf.required_considerations||[]),...(pf.strong_candidates||[]),...(pf.additional_candidates||[])].map((x)=>x.pattern_id);
  gate('IM-G10',selected.includes('PATTERN_PREDICTIVE_BACK')&&selected.includes('PATTERN_HORIZONTAL_CONTENT_RAIL')&&!selected.includes('PATTERN_COMMAND_PALETTE'),'pattern selection is contextual for an Android commerce discovery screen');
  gate('IM-G11',pf.open_world_discovery_brief?.admission_required_before_guidance===true&&pf.open_world_discovery_brief?.raw_external_code_to_provider_forbidden===true,'open-world discovery feeds VEKL only through qualification/admission');
- const va=freezeVisualAuthorityArtifact({generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},critique:{verdict:'PASS'},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'}).visual_authority;
+ const va=freezeVisualAuthorityArtifact({generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},critique:{verdict:'PASS'},truthLiteralLint:lintCandidateFacts({generationContext:ctx,candidateFacts:[]}),designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'}).visual_authority;
  const intel=compileInteractionMotionIntelligence({repoDir:repo,generationContext:ctx,visualAuthority:va,preflight:pf});
  gate('IM-G12',intel.expert_role==='PRINCIPAL_PRODUCT_DESIGN_ENGINEER_AND_INTERACTION_MOTION_SPECIALIST'&&intel.decision_contract?.rationale_required===true,'post-freeze pass has explicit expert role and reasoned decisions');
  gate('IM-G13',intel.structural_delta_policy?.silent_redesign_forbidden===true&&intel.structural_delta_policy?.requires_visual_reconvergence?.includes('MATERIAL_INFORMATION_ARCHITECTURE_CHANGE'),'bounded interaction deltas cannot silently redesign frozen visual authority');

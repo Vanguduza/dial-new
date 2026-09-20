@@ -1779,6 +1779,190 @@
           }
         }
       ]
+    },
+    "FrontendDomainSemanticProfile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "module"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FrontendDomainSemanticProfile"
+            },
+            "module": {
+              "type": "string"
+            },
+            "product_positioning": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "brand_authority": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "subsystems": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "FeatureSemanticEnvelope": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "module",
+            "screen_id",
+            "features",
+            "screen_feature_edges"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FeatureSemanticEnvelope"
+            },
+            "module": {
+              "type": "string"
+            },
+            "screen_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "target_application_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "features": {
+              "type": "array"
+            },
+            "screen_feature_edges": {
+              "type": "array"
+            },
+            "provider_interaction_intents": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "VisualTruthClaimsContract": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "claims"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "VisualTruthClaimsContract"
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "value"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "value": {},
+                  "display_text": {}
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FrontendDesignSynthesisBrief": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "target_screen_id",
+            "screen_purpose",
+            "knowledge_channels",
+            "composition_budget"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FrontendDesignSynthesisBrief"
+            },
+            "generation_context_hash": {
+              "type": "string"
+            },
+            "target_screen_id": {
+              "type": "string"
+            },
+            "screen_purpose": {
+              "type": "string"
+            },
+            "knowledge_channels": {
+              "type": "object"
+            },
+            "composition_budget": {
+              "type": "object"
+            },
+            "visual_storytelling": {
+              "type": "object"
+            },
+            "feature_to_experience": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "DesignSynthesisLint": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "design_synthesis_hash",
+            "findings"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "DesignSynthesisLint"
+            },
+            "design_synthesis_hash": {
+              "type": "string"
+            },
+            "findings": {
+              "type": "array"
+            }
+          }
+        }
+      ]
     }
   },
   "oneOf": [
@@ -1922,6 +2106,21 @@
     },
     {
       "$ref": "#/$defs/TruthLiteralLint"
+    },
+    {
+      "$ref": "#/$defs/FrontendDomainSemanticProfile"
+    },
+    {
+      "$ref": "#/$defs/FeatureSemanticEnvelope"
+    },
+    {
+      "$ref": "#/$defs/VisualTruthClaimsContract"
+    },
+    {
+      "$ref": "#/$defs/FrontendDesignSynthesisBrief"
+    },
+    {
+      "$ref": "#/$defs/DesignSynthesisLint"
     }
   ]
 }

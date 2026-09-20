@@ -1,6 +1,7 @@
 import { hashObject } from './knowledge-graph-core.mjs';
 import { buildStitchVisualProductionPacket, buildInteractionMotionEnrichmentPacket } from './frontend-generation-architecture.mjs';
 import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence } from './interaction-motion-intelligence.mjs';
+import { compileFrontendDesignSynthesis, renderDesignSynthesisPromptBlock } from './frontend-design-synthesis.mjs';
 import { loadRegistry } from './knowledge-graph-core.mjs';
 import { buildDesignCandidateManifest, quarantineDesignArtifact } from './design-candidate-admission.mjs';
 import { normalizeDesignCandidate } from './frontend-design-normalizer.mjs';
@@ -31,7 +32,8 @@ export function buildCanonicalStitchVisualPacket({ repoDir, fdep, brief, quality
   if (!repoDir) throw new Error('STITCH_VISUAL_PACKET_REQUIRES_REPO');
   if (!fdep?.frontend_generation_context) throw new Error('FDEP_FRONTEND_GENERATION_CONTEXT_REQUIRED');
   const interactionPreflight=fdep.interaction_design_preflight||compileInteractionDesignPreflight({repoDir,generationContext:fdep.frontend_generation_context});
-  return buildStitchVisualProductionPacket({ generationContext: fdep.frontend_generation_context, designBrief: brief, qualityPacket, interactionPreflight, blindReferenceMode });
+  const designSynthesis=compileFrontendDesignSynthesis({repoDir,generationContext:fdep.frontend_generation_context});
+  return buildStitchVisualProductionPacket({ generationContext: fdep.frontend_generation_context, designBrief: brief, qualityPacket, interactionPreflight, designSynthesis, blindReferenceMode });
 }
 
 export function renderStitchVisualProductionPrompt({ packet } = {}) {
@@ -41,29 +43,38 @@ export function renderStitchVisualProductionPrompt({ packet } = {}) {
   const preflight=packet.interaction_design_preflight||null;
   const interactionReadiness=(preflight?.visual_preflight_requirements||[]).join('\n- ');
   const priorityPatterns=[...(preflight?.required_considerations||[]),...(preflight?.strong_candidates||[])].slice(0,16).map((x)=>`${x.pattern_id}:${x.problem_solved}`).join('\n');
+  const semantic=packet.feature_context?.semantic_envelope||null;
+  const brand=packet.design_authority?.domain_brand_authority||null;
+  const synthesisBlock=renderDesignSynthesisPromptBlock(packet.design_synthesis||{});
   return [
     'DIAL — STITCH VISUAL GENERATION PASS',
-    `Target screen: ${packet.target_screen?.screen_id}.`,
     `Screen role: ${packet.target_screen?.role_boundary?.role || 'DOMAIN_TASK_SURFACE'}.`,
     `Business unit: ${packet.business_unit_context?.module}.`,
+    `Target application: ${packet.platform_context?.target_application_id || 'UNRESOLVED'}.`,
     `Applications/platforms: ${(packet.platform_context?.applications || []).map((x) => `${x.application_id}[${(x.platform_targets || []).join('/')}]`).join(', ')}.`,
-    `Features: ${(packet.feature_context?.feature_ids || []).join(', ')}.`,
-    `Actions: ${(packet.target_screen?.action_refs || []).join(', ')}.`,
-    `Required states: ${(packet.target_screen?.state_contract?.required || []).join(', ')}.`,
+    `Product positioning: ${packet.business_unit_context?.product_positioning || 'authority-defined'}.`,
+    `Category scope: ${(packet.business_unit_context?.category_scope || []).join(', ')}.`,
+    `Shopping mode: ${packet.business_unit_context?.shopping_mode?.required_on_home ? 'REQUIRED on Home; '+packet.business_unit_context.shopping_mode.purpose : 'authority-defined'}.`,
+    `Supported interaction behavior (internal labels; do not render these labels): ${(packet.feature_context?.actions || []).join(', ')}.`,
     `Applicable design archetypes: ${archetypes || 'none; use governed product profile'}.`,
     `Reference policy: ${packet.reference_policy}.`,
+    synthesisBlock,
+    'DOMAIN BRAND AUTHORITY:',
+    brand ? JSON.stringify(brand) : '(No module-specific brand override; use governed product profile.)',
+    semantic?.product_scope_statement ? `PRODUCT SCOPE: ${semantic.product_scope_statement}` : '',
+    semantic?.freshness_positioning ? `FRESHNESS POSITIONING: ${semantic.freshness_positioning}` : '',
     'VERIFIED FACTS (only these supplied literals may be stated as factual):',
     truth || '(No runtime literals supplied; omit unknown values rather than inventing them.)',
     'SCREEN ROLE BOUNDARIES:',
     `Responsibilities: ${(packet.target_screen?.role_boundary?.responsibilities || []).join(', ')}.`,
     `Prohibited: ${(packet.target_screen?.role_boundary?.prohibited_responsibilities || []).join(', ')}.`,
-    'INTERACTION-READINESS PREFLIGHT (shape the visual composition so these behaviors remain possible; do not mechanically add components):',
+    'INTERACTION-READINESS PREFLIGHT — DESIGN CONSTRAINT ONLY, NEVER RENDER PREFLIGHT/STATE-SIMULATOR UI (shape composition so behavior remains possible):',
     interactionReadiness ? `- ${interactionReadiness}` : '(No special structural readiness requirement beyond the screen/state contract.)',
     'HIGH-PRIORITY INTERACTION KNOWLEDGE FOR VISUAL READINESS:',
     priorityPatterns || '(none)',
     ...packet.instructions,
-    `Packet hash: ${packet.packet_hash}.`,
-  ].join('\n');
+    'TRUTH CLAIM CONTRACT: embed a non-executable <script id="dial-visual-truth-claims" type="application/json"> containing {"claims":[...]} where every displayed runtime/business factual literal is listed as {path,value,display_text}. If there are no displayed factual literals, emit {"claims":[]}. Creative labels/headlines without factual claims are not claims. Never omit a displayed price, stock quantity, merchant/store identity, location, ETA/time slot, order ID, discount/savings percentage, member count, balance, entitlement, maturity date or operational status from this contract.',
+  ].filter(Boolean).join('\n');
 }
 
 export function buildCanonicalInteractionMotionPacket({ repoDir, fdep, visualAuthority } = {}) {
@@ -94,7 +105,6 @@ export function renderInteractionMotionPrompt({ packet } = {}) {
     ...packet.rules,
     `Required outputs: ${(packet.required_outputs || []).join(', ')}.`,
     'Embed the structured outputs in the generated HTML as JSON in a script tag with id="dial-interaction-contract" and type="application/json" so DIAL can validate the design decision record.',
-    `Packet hash: ${packet.packet_hash}.`,
   ].join('\n');
 }
 
