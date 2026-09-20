@@ -1,12 +1,20 @@
 {
-  "authority_classes": [
-    "OWNER_EXPLICIT"
-  ],
-  "authorization_ids": [
-    "auth-20260920-owner-vekl-interaction-motion-design-acuity"
-  ],
-  "branch": "gpt/vekl-interaction-motion-design-acuity-20260920",
-  "changed_files": [
+  "schema_version": 1,
+  "authorization_id": "auth-20260920-owner-vekl-interaction-motion-design-acuity",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "55e5221a5f7f44c82ea4c640fe6cd1ee64d53a95957cdceda3fd2b82b847bf2e",
+  "owner_instruction_excerpt": "Now we need to make interaction and motion pass a big part of the development process. Vekl should have the design acuity of an expert developer to determine how to improve screens to make them modern and professional saas screens.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260920-vekl-interaction-motion-design-acuity",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-20T04:05:00Z",
+  "base_sha": "41a8626fd1efa2b7620123faa284a137ff205fad",
+  "branch_scope": "gpt/vekl-interaction-motion-design-acuity-20260920",
+  "authorized_paths": [
     "agent-system/canon/PROJECT_TRUTH.md",
     "agent-system/orchestration/development-unit-planner.mjs",
     "agent-system/orchestration/frontend-design-execution-packet.mjs",
@@ -33,15 +41,30 @@
     "agent-system/schemas/frontend/FRONTEND_CONTRACTS.schema.json",
     "docs/dial/architecture/CANONICAL_FRONTEND_GENERATION_ARCHITECTURE.md",
     "docs/dial/architecture/VEKL_INTERACTION_MOTION_DESIGN_ACUITY_REV1.md",
-    "docs/project-state/authorizations/auth-20260920-owner-vekl-interaction-motion-design-acuity.json",
     "package.json",
     "tests/frontend-generation-architecture.test.ts",
     "tests/interaction-motion-intelligence.test.ts"
   ],
-  "content_diff_sha256": "a45a6b89e1e4fd10de3633650c0161559087769d78f029d1835be9bd837363b3",
-  "observed_at_utc": "2026-09-20T05:22:05.895667+00:00",
-  "repository": "Vanguduza/dial-new",
-  "schema_version": 2,
-  "source_parent": "41a8626fd1efa2b7620123faa284a137ff205fad",
-  "state": "AUTHORIZED_PENDING_COMMIT"
+  "change_classes": [
+    "interaction_motion_first_class",
+    "vekl_design_acuity",
+    "frontend_generation",
+    "stitch_interaction_pass",
+    "open_world_design_discovery",
+    "design_tokens",
+    "acceptance_gates",
+    "research_context",
+    "documentation",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-contract-schemas-2.1",
+  "registry_version": "frontend-contract-schemas-2.2-design-acuity",
   "required_contracts": [
     "ProductDesignProfile",
     "FrontendDesignExecutionPacket",
@@ -45,7 +45,17 @@
     "InteractionAcceptanceMatrix",
     "ExperienceAuthorityArtifact",
     "ProductionBindingContract",
-    "TruthLiteralLint"
+    "TruthLiteralLint",
+    "InteractionDesignPreflight",
+    "InteractionMotionIntelligence",
+    "DesignAcuityAssessment",
+    "InteractionOpportunityMap",
+    "PatternDecisionSet",
+    "MotionHierarchyPlan",
+    "ResponsiveInteractionPlan",
+    "StateBehaviorMatrix",
+    "StructuralDeltaDecision",
+    "InteractionRiskRegister"
   ],
   "common_required_fields": [
     "schema_version",

@@ -15,7 +15,7 @@ const OUT_REL='agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json';
 
 function uniqueSorted(xs){ return [...new Set((xs||[]).filter(Boolean).map(String))].sort(); }
 function uiBearing(feature,contract){ return (feature.client_exposure && feature.client_exposure!=='INTERNAL') || (feature.app_families||[]).length>0 || (contract?.surfaces||[]).some((x)=>['DIAL_WEB','DIAL_CONSUMER','MANAGER','POS','DELIVERY'].includes(x)); }
-function routeIds(feature,contract){ const out=['AUTHORITY','IMPLEMENTATION','VERIFICATION']; if(uiBearing(feature,contract)) out.push('PRODUCT_EXPERIENCE'); if(contract?.security_profile) out.push('SECURITY'); if((contract?.supporting_capability_refs||[]).length || contract?.api_contract) out.push('DEPENDENCY'); return uniqueSorted(out); }
+function routeIds(feature,contract){ const out=['AUTHORITY','IMPLEMENTATION','VERIFICATION']; if(uiBearing(feature,contract)) out.push('PRODUCT_EXPERIENCE','INTERACTION_MOTION'); if(contract?.security_profile) out.push('SECURITY'); if((contract?.supporting_capability_refs||[]).length || contract?.api_contract) out.push('DEPENDENCY'); return uniqueSorted(out); }
 function decisionsFor(featureId, decisions){ return decisions.filter((d)=>d.status==='LOCKED' && ((d.enforced_by||[]).includes(featureId) || d.decision_id==='DEC-026')); }
 function contractId(featureId){ return `FRC:${featureId}`; }
 function contractFingerprint(row){ return hashObject(row || {feature_id:null}); }
@@ -50,7 +50,7 @@ export function deriveDevelopmentUnits(repoDir=DEFAULT_REPO){
  const byFeature=new Map(units.flatMap((u)=>u.feature_ids.map((id)=>[id,u.unit_lineage_id])));
  for(const u of units){ u.upstream_dependencies=uniqueSorted(u.upstream_dependencies.map((id)=>byFeature.get(id)||id)); }
  for(const u of units){ for(const upstream of u.upstream_dependencies){ const target=units.find((x)=>x.unit_lineage_id===upstream); if(target) target.downstream_consumers=uniqueSorted([...target.downstream_consumers,u.unit_lineage_id]); } }
- return {schema_version:1,policy_version:'vekl-2.2-rev3-reference-only',unit_boundary_policy_id:policy.policy_id,membership_order:policy.membership_order,project_truth_hash:truth,technical_stack_fingerprint:stack,knowledge_route_policy_hash:routePolicyHash,units};
+ return {schema_version:1,policy_version:'vekl-2.2-rev4-design-acuity',unit_boundary_policy_id:policy.policy_id,membership_order:policy.membership_order,project_truth_hash:truth,technical_stack_fingerprint:stack,knowledge_route_policy_hash:routePolicyHash,units};
 }
 
 export function writeDevelopmentUnitRegistry(repoDir=DEFAULT_REPO){ const value=deriveDevelopmentUnits(repoDir); fs.writeFileSync(path.join(repoDir,OUT_REL),JSON.stringify(value,null,2)+'\n'); return value; }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-components-1.1",
+  "registry_version": "frontend-components-1.2-interaction",
   "identity_rule": "STABLE_CROSS_RENDERER_COMPONENT_ID",
   "components": [
     {
@@ -98,6 +98,345 @@
         "react": "DialTopBar",
         "figma": "Dial/Navigation/Top",
         "preview": "components/navigation/top"
+      }
+    },
+    {
+      "component_id": "dial.navigation.adaptive",
+      "status": "CERTIFIABLE",
+      "category": "NAVIGATION",
+      "required_states": [
+        "READY",
+        "COMPACT",
+        "EXPANDED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialAdaptiveNavigation",
+        "react": "DialAdaptiveNavigation",
+        "figma": null,
+        "preview": "components/navigation/adaptive"
+      }
+    },
+    {
+      "component_id": "dial.navigation.command-palette",
+      "status": "CERTIFIABLE",
+      "category": "NAVIGATION",
+      "required_states": [
+        "READY",
+        "OPEN",
+        "EMPTY",
+        "LOADING"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialCommandPalette",
+        "react": "DialCommandPalette",
+        "figma": null,
+        "preview": "components/navigation/command-palette"
+      }
+    },
+    {
+      "component_id": "dial.surface.bottom-sheet",
+      "status": "CERTIFIABLE",
+      "category": "CONTEXTUAL_LAYER",
+      "required_states": [
+        "CLOSED",
+        "PEEK",
+        "EXPANDED",
+        "DISMISSED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialBottomSheet",
+        "react": "DialBottomSheet",
+        "figma": null,
+        "preview": "components/surface/bottom-sheet"
+      }
+    },
+    {
+      "component_id": "dial.surface.drawer",
+      "status": "CERTIFIABLE",
+      "category": "CONTEXTUAL_LAYER",
+      "required_states": [
+        "CLOSED",
+        "OPEN"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialDrawer",
+        "react": "DialDrawer",
+        "figma": null,
+        "preview": "components/surface/drawer"
+      }
+    },
+    {
+      "component_id": "dial.surface.supporting-pane",
+      "status": "CERTIFIABLE",
+      "category": "WORKSPACE",
+      "required_states": [
+        "READY",
+        "COLLAPSED",
+        "EXPANDED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialSupportingPane",
+        "react": "DialSupportingPane",
+        "figma": null,
+        "preview": "components/surface/supporting-pane"
+      }
+    },
+    {
+      "component_id": "dial.workspace.list-detail",
+      "status": "CERTIFIABLE",
+      "category": "WORKSPACE",
+      "required_states": [
+        "READY",
+        "NO_SELECTION",
+        "SELECTED",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialListDetail",
+        "react": "DialListDetail",
+        "figma": null,
+        "preview": "components/workspace/list-detail"
+      }
+    },
+    {
+      "component_id": "dial.content.horizontal-rail",
+      "status": "CERTIFIABLE",
+      "category": "DISCOVERY",
+      "required_states": [
+        "READY",
+        "LOADING",
+        "EMPTY",
+        "ERROR"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialHorizontalRail",
+        "react": "DialHorizontalRail",
+        "figma": null,
+        "preview": "components/content/horizontal-rail"
+      }
+    },
+    {
+      "component_id": "dial.content.gallery",
+      "status": "CERTIFIABLE",
+      "category": "MEDIA",
+      "required_states": [
+        "READY",
+        "LOADING",
+        "ERROR",
+        "FULLSCREEN"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialGallery",
+        "react": "DialGallery",
+        "figma": null,
+        "preview": "components/content/gallery"
+      }
+    },
+    {
+      "component_id": "dial.content.accordion",
+      "status": "CERTIFIABLE",
+      "category": "DISCLOSURE",
+      "required_states": [
+        "COLLAPSED",
+        "EXPANDED",
+        "DISABLED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialAccordion",
+        "react": "DialAccordion",
+        "figma": null,
+        "preview": "components/content/accordion"
+      }
+    },
+    {
+      "component_id": "dial.content.tabs",
+      "status": "CERTIFIABLE",
+      "category": "DISCLOSURE",
+      "required_states": [
+        "READY",
+        "SELECTED",
+        "DISABLED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialTabs",
+        "react": "DialTabs",
+        "figma": null,
+        "preview": "components/content/tabs"
+      }
+    },
+    {
+      "component_id": "dial.action.sticky-region",
+      "status": "CERTIFIABLE",
+      "category": "ACTION",
+      "required_states": [
+        "READY",
+        "DISABLED",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialStickyActionRegion",
+        "react": "DialStickyActionRegion",
+        "figma": null,
+        "preview": "components/action/sticky-region"
+      }
+    },
+    {
+      "component_id": "dial.state.skeleton",
+      "status": "CERTIFIABLE",
+      "category": "STATE",
+      "required_states": [
+        "LOADING",
+        "REDUCED_MOTION"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialSkeleton",
+        "react": "DialSkeleton",
+        "figma": null,
+        "preview": "components/state/skeleton"
+      }
+    },
+    {
+      "component_id": "dial.state.empty-recovery",
+      "status": "CERTIFIABLE",
+      "category": "STATE",
+      "required_states": [
+        "EMPTY",
+        "ERROR",
+        "OFFLINE",
+        "DEGRADED",
+        "PERMISSION_DENIED"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialEmptyRecovery",
+        "react": "DialEmptyRecovery",
+        "figma": null,
+        "preview": "components/state/empty-recovery"
+      }
+    },
+    {
+      "component_id": "dial.feedback.transient",
+      "status": "CERTIFIABLE",
+      "category": "FEEDBACK",
+      "required_states": [
+        "INFO",
+        "SUCCESS",
+        "WARNING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialTransientFeedback",
+        "react": "DialTransientFeedback",
+        "figma": null,
+        "preview": "components/feedback/transient"
+      }
+    },
+    {
+      "component_id": "dial.control.quantity-stepper",
+      "status": "CERTIFIABLE",
+      "category": "COMMERCE",
+      "required_states": [
+        "READY",
+        "DISABLED",
+        "LOADING",
+        "ERROR"
+      ],
+      "token_refs": [
+        "semantic.motion.standard"
+      ],
+      "interaction_contract_required": true,
+      "accessibility_contract_required": true,
+      "responsive_contract_required": true,
+      "bindings": {
+        "compose": "DialQuantityStepper",
+        "react": "DialQuantityStepper",
+        "figma": null,
+        "preview": "components/control/quantity-stepper"
       }
     }
   ]

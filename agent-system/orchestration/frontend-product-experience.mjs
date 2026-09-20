@@ -19,6 +19,9 @@ const REGISTRIES = Object.freeze({
   screenFeatureGraph: SCREEN_FEATURE_GRAPH_REF,
   generationPolicy: FRONTEND_GENERATION_REFS.policy,
   truthSources: FRONTEND_GENERATION_REFS.truthSources,
+  designAcuity: 'agent-system/registries/DESIGN_ACUITY_POLICY.json',
+  interactionMotionPatterns: 'agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json',
+  interactionMotionSources: 'agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json',
 });
 
 export const SURFACE_STATE_IDS = Object.freeze([

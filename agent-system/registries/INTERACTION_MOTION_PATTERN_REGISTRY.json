@@ -1,0 +1,1609 @@
+{
+  "schema_version": 1,
+  "registry_version": "interaction-motion-patterns-1.1-contextual-selection",
+  "authority": "VEKL_ADMITTED_DESIGN_KNOWLEDGE",
+  "selection_model": "CONTEXTUAL_CONSIDERATION_NOT_COMPONENT_CHECKLIST",
+  "patterns": [
+    {
+      "pattern_id": "PATTERN_PROGRESSIVE_DISCLOSURE",
+      "family": "INFORMATION_ARCHITECTURE",
+      "problem_solved": "Reduce cognitive load while preserving access to detail",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "MOBILE",
+        "DESKTOP"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_ADAPTIVE_NAVIGATION",
+      "family": "NAVIGATION",
+      "problem_solved": "Adapt navigation form to available space and input mode",
+      "applicability_tags": [
+        "NAVIGATION",
+        "RESPONSIVE"
+      ],
+      "platforms": [
+        "ANDROID",
+        "WEB",
+        "IOS",
+        "DESKTOP"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1",
+        "official.material3.adaptive",
+        "official.apple.hig"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_RESPONSIVE_RECOMPOSITION",
+      "family": "RESPONSIVE",
+      "problem_solved": "Recompose content and actions instead of shrinking desktop geometry",
+      "applicability_tags": [
+        "RESPONSIVE",
+        "ANY_SCREEN"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1",
+        "official.material3.adaptive"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_HORIZONTAL_CONTENT_RAIL",
+      "family": "DISCOVERY",
+      "problem_solved": "Expose browseable peer content without a card grid",
+      "applicability_tags": [
+        "DISCOVERY",
+        "MERCHANDISING",
+        "MEDIA",
+        "CATEGORY"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "DISCOVERY",
+        "MERCHANDISING",
+        "CATEGORY",
+        "MEDIA"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PERSISTENT_WORKSPACE_PANEL",
+      "family": "SAAS_WORKSPACE",
+      "problem_solved": "Keep high-frequency context visible while adjacent work changes",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "WORKSPACE",
+        "OPERATIONAL"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "WORKSPACE"
+      ],
+      "requires_any_tags": [
+        "WEB",
+        "DESKTOP",
+        "TABLET",
+        "OPERATIONAL"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_MULTI_ZONE_SHELL",
+      "family": "SAAS_WORKSPACE",
+      "problem_solved": "Create stable navigation/workspace/context zones for professional software",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "WORKSPACE",
+        "DATA_DENSE"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "WORKSPACE"
+      ],
+      "requires_any_tags": [
+        "WEB",
+        "DESKTOP",
+        "TABLET",
+        "DATA_DENSE"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_LIST_DETAIL",
+      "family": "SAAS_WORKSPACE",
+      "problem_solved": "Keep selection and detail context visible together",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "QUEUE",
+        "SEARCH",
+        "INSPECTION"
+      ],
+      "platforms": [
+        "WEB",
+        "DESKTOP",
+        "TABLET"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "QUEUE",
+        "INSPECTION",
+        "SEARCH_RESULTS"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SUPPORTING_PANE",
+      "family": "SAAS_WORKSPACE",
+      "problem_solved": "Move secondary detail/actions into an adaptive pane",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "CONTEXTUAL"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "CONTEXTUAL"
+      ],
+      "requires_any_tags": [
+        "DESKTOP",
+        "TABLET"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SPATIAL_SHEET",
+      "family": "CONTEXTUAL_LAYER",
+      "problem_solved": "Expose secondary workflow without losing parent context",
+      "applicability_tags": [
+        "MOBILE",
+        "CONTEXTUAL",
+        "FILTER",
+        "ACTION_SHEET"
+      ],
+      "platforms": [
+        "ANDROID",
+        "IOS",
+        "MOBILE"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "CONTEXTUAL",
+        "FILTER",
+        "ACTION_SHEET"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_CONTEXTUAL_DRAWER",
+      "family": "CONTEXTUAL_LAYER",
+      "problem_solved": "Expose filters, inspector or navigation from a meaningful edge",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "FILTER",
+        "INSPECTOR",
+        "NAVIGATION"
+      ],
+      "platforms": [
+        "WEB",
+        "DESKTOP",
+        "TABLET"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "FILTER",
+        "INSPECTOR",
+        "NAVIGATION"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_COMMAND_PALETTE",
+      "family": "PROFESSIONAL_SAAS",
+      "problem_solved": "Accelerate expert navigation and action discovery",
+      "applicability_tags": [
+        "DESKTOP",
+        "KEYBOARD",
+        "POWER_USER",
+        "AI"
+      ],
+      "platforms": [
+        "WEB",
+        "DESKTOP"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS"
+      ],
+      "requires_any_tags": [
+        "DESKTOP",
+        "WEB",
+        "POWER_USER"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SAVED_VIEWS_FILTERS",
+      "family": "PROFESSIONAL_SAAS",
+      "problem_solved": "Persist frequent query/filter configurations",
+      "applicability_tags": [
+        "SEARCH",
+        "FILTER",
+        "DATA_DENSE",
+        "POWER_USER"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS"
+      ],
+      "requires_any_tags": [
+        "SEARCH",
+        "FILTER",
+        "DATA_DENSE"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_INLINE_EDIT",
+      "family": "PROFESSIONAL_SAAS",
+      "problem_solved": "Reduce modal/context switching for low-risk field edits",
+      "applicability_tags": [
+        "EDIT",
+        "DATA_DENSE",
+        "DESKTOP"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS",
+        "EDIT"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_BATCH_SELECTION_ACTIONS",
+      "family": "PROFESSIONAL_SAAS",
+      "problem_solved": "Support efficient multi-item operations",
+      "applicability_tags": [
+        "QUEUE",
+        "TABLE",
+        "LIST",
+        "POWER_USER"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS"
+      ],
+      "requires_any_tags": [
+        "QUEUE",
+        "LIST",
+        "TABLE"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_DENSITY_MODES",
+      "family": "PROFESSIONAL_SAAS",
+      "problem_solved": "Match control density to task frequency and input mode",
+      "applicability_tags": [
+        "DATA_DENSE",
+        "DESKTOP",
+        "TABLET",
+        "TOUCH"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS"
+      ],
+      "requires_any_tags": [
+        "DATA_DENSE",
+        "DESKTOP",
+        "TABLET"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_CONTEXTUAL_AI_SURFACE",
+      "family": "AI_UX",
+      "problem_solved": "Place AI where it reduces work rather than occupying permanent chat",
+      "applicability_tags": [
+        "AI",
+        "ASSIST",
+        "WORKSPACE"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "AI"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SWIPE_REVERSIBLE_ACTION",
+      "family": "GESTURE",
+      "problem_solved": "Accelerate repeated reversible actions on touch surfaces",
+      "applicability_tags": [
+        "TOUCH",
+        "LIST",
+        "REPEAT_ACTION"
+      ],
+      "platforms": [
+        "ANDROID",
+        "IOS"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "EFFICIENCY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "TOUCH"
+      ],
+      "requires_any_tags": [
+        "LIST",
+        "REPEAT_ACTION"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_DRAG_REORDER",
+      "family": "GESTURE",
+      "problem_solved": "Directly manipulate ordered items",
+      "applicability_tags": [
+        "REORDER",
+        "TOUCH",
+        "POINTER"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CAUSALITY",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "REORDER"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PINCH_ZOOM_MEDIA",
+      "family": "GESTURE",
+      "problem_solved": "Inspect imagery or spatial content at detail",
+      "applicability_tags": [
+        "IMAGE",
+        "MEDIA",
+        "MAP",
+        "PRODUCT_DETAIL"
+      ],
+      "platforms": [
+        "ANDROID",
+        "IOS",
+        "WEB"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "IMAGE",
+        "MEDIA",
+        "MAP"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PRESS_SCALE",
+      "family": "MICROINTERACTION",
+      "problem_solved": "Provide tactile acknowledgement for direct manipulation",
+      "applicability_tags": [
+        "TOUCH",
+        "ACTION"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_HAPTIC_FEEDBACK",
+      "family": "MICROINTERACTION",
+      "problem_solved": "Reinforce important touch state changes without adding visual clutter",
+      "applicability_tags": [
+        "TOUCH",
+        "ANDROID"
+      ],
+      "platforms": [
+        "ANDROID"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1",
+        "official.android.compose"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "ANDROID",
+        "TOUCH"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_IMMEDIATE_ACTION_FEEDBACK",
+      "family": "FEEDBACK",
+      "problem_solved": "Acknowledge every meaningful action immediately",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "ACTION"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CAUSALITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_OPTIMISTIC_LOW_RISK",
+      "family": "FEEDBACK",
+      "problem_solved": "Make reversible low-risk interactions feel instantaneous",
+      "applicability_tags": [
+        "LOW_RISK_MUTATION",
+        "FAVORITE",
+        "PREFERENCE",
+        "CART"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "EFFICIENCY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "LOW_RISK_MUTATION"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_LOCK_AUTHORITY_TRANSITION",
+      "family": "STATE",
+      "problem_solved": "Communicate when content becomes restricted, approved or immutable",
+      "applicability_tags": [
+        "AUTHORITY",
+        "APPROVAL",
+        "LOCKED"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CAUSALITY",
+        "TRUST"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "AUTHORITY"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SKELETON_LOADING",
+      "family": "STATE",
+      "problem_solved": "Preserve final geometry while content loads",
+      "applicability_tags": [
+        "LOADING",
+        "ASYNC",
+        "CONTENT"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ORIENTATION",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "LOADING"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_OFFLINE_DEGRADED_STATE",
+      "family": "STATE",
+      "problem_solved": "Make connectivity and partial capability explicit",
+      "applicability_tags": [
+        "OFFLINE",
+        "DEGRADED",
+        "RESILIENCE"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "TRUST",
+        "FEEDBACK"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "OFFLINE",
+        "DEGRADED",
+        "RESILIENCE"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_CONTEXTUAL_RECOVERY",
+      "family": "STATE",
+      "problem_solved": "Place useful recovery actions at the failure point",
+      "applicability_tags": [
+        "ERROR",
+        "RECOVERY",
+        "DEGRADED"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "TRUST",
+        "CAUSALITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "ERROR",
+        "DEGRADED"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_DETERMINISTIC_TRANSACTION_PROGRESS",
+      "family": "STATE",
+      "problem_solved": "Map visible transaction progression to authoritative backend state",
+      "applicability_tags": [
+        "TRANSACTION",
+        "PAYMENT",
+        "ORDER",
+        "WORKFLOW"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "TRUST",
+        "CAUSALITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "TRANSACTION",
+        "PAYMENT",
+        "ORDER"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_STATEFUL_EMPTY_STATE",
+      "family": "STATE",
+      "problem_solved": "Use empty states to explain context and next useful action",
+      "applicability_tags": [
+        "EMPTY",
+        "DISCOVERY",
+        "LIST"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ORIENTATION"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "EMPTY"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SHARED_OBJECT_CONTINUITY",
+      "family": "MOTION",
+      "problem_solved": "Keep an object perceptually continuous across detail/navigation transitions",
+      "applicability_tags": [
+        "DETAIL",
+        "GALLERY",
+        "PRODUCT",
+        "NAVIGATION"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NAVIGATION_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CONTINUITY",
+        "ORIENTATION"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "DETAIL",
+        "GALLERY",
+        "PRODUCT_DETAIL"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_CONTAINER_TRANSFORM",
+      "family": "MOTION",
+      "problem_solved": "Transform a selected surface into its expanded destination",
+      "applicability_tags": [
+        "CARD_TO_DETAIL",
+        "DETAIL",
+        "SHEET"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CONTINUITY",
+        "ORIENTATION"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "DETAIL",
+        "CARD_TO_DETAIL",
+        "SHEET"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SHARED_AXIS_NAVIGATION",
+      "family": "MOTION",
+      "problem_solved": "Communicate hierarchical or lateral navigation relationship",
+      "applicability_tags": [
+        "NAVIGATION",
+        "STEP",
+        "TAB"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NAVIGATION_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ORIENTATION"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "NAVIGATION",
+        "STEP",
+        "TAB"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_LAYOUT_INSERT_REMOVE",
+      "family": "MOTION",
+      "problem_solved": "Animate layout changes without losing object location",
+      "applicability_tags": [
+        "LIST",
+        "CART",
+        "QUEUE",
+        "REORDER"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CONTINUITY",
+        "CAUSALITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "LIST",
+        "CART",
+        "QUEUE",
+        "REORDER"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_TAB_INDICATOR_CONTINUITY",
+      "family": "MOTION",
+      "problem_solved": "Keep selection movement spatially understandable",
+      "applicability_tags": [
+        "TAB",
+        "SEGMENTED"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "TAB",
+        "SEGMENTED"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SCROLL_LINKED_HERO",
+      "family": "MOTION",
+      "problem_solved": "Connect a hero/editorial region to subsequent content while scrolling",
+      "applicability_tags": [
+        "HERO",
+        "DISCOVERY",
+        "EDITORIAL"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "HERO_BRAND_MOTION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [
+        "DATA_DENSE",
+        "OPERATIONAL"
+      ],
+      "motion_purpose": [
+        "HIERARCHY",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "HERO"
+      ],
+      "requires_any_tags": [
+        "DISCOVERY",
+        "EDITORIAL"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_STICKY_CONTEXT_ACTION",
+      "family": "ACTION",
+      "problem_solved": "Keep a high-value contextual action available through long content",
+      "applicability_tags": [
+        "DETAIL",
+        "LONG_SCROLL",
+        "COMMERCE",
+        "FORM"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "DETAIL",
+        "LONG_SCROLL",
+        "FORM"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_DOCKED_ACTION_BAR",
+      "family": "ACTION",
+      "problem_solved": "Stabilize high-frequency actions in professional workflows",
+      "applicability_tags": [
+        "DESKTOP",
+        "TABLET",
+        "OPERATIONAL",
+        "EDIT"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "PROFESSIONAL_SAAS"
+      ],
+      "requires_any_tags": [
+        "OPERATIONAL",
+        "EDIT"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PRODUCT_GALLERY_ZOOM",
+      "family": "COMMERCE",
+      "problem_solved": "Support product inspection through gallery and zoom",
+      "applicability_tags": [
+        "COMMERCE",
+        "PRODUCT_DETAIL",
+        "IMAGE"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "COMMERCE"
+      ],
+      "requires_any_tags": [
+        "DETAIL",
+        "PRODUCT_DETAIL"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_CART_OBJECT_FEEDBACK",
+      "family": "COMMERCE",
+      "problem_solved": "Explain add-to-cart outcome and destination without modal interruption",
+      "applicability_tags": [
+        "COMMERCE",
+        "CART",
+        "ADD_TO_CART"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CAUSALITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "COMMERCE",
+        "CART"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_QUANTITY_STEPPER_FEEDBACK",
+      "family": "COMMERCE",
+      "problem_solved": "Make quantity changes immediate and reversible",
+      "applicability_tags": [
+        "COMMERCE",
+        "QUANTITY"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "COMMERCE",
+        "QUANTITY"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_SEARCH_EXPANSION",
+      "family": "DISCOVERY",
+      "problem_solved": "Transition between compact discovery and focused search without context loss",
+      "applicability_tags": [
+        "SEARCH",
+        "DISCOVERY"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "SEARCH"
+      ],
+      "requires_any_tags": [
+        "DISCOVERY",
+        "HOME_ENTRY",
+        "SEARCH_RESULTS"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PULL_TO_REFRESH",
+      "family": "GESTURE",
+      "problem_solved": "Refresh time-sensitive feed/list state using platform-native gesture",
+      "applicability_tags": [
+        "MOBILE",
+        "FEED",
+        "LIST",
+        "LIVE_STATE"
+      ],
+      "platforms": [
+        "ANDROID",
+        "IOS"
+      ],
+      "motion_level": "MICRO_FEEDBACK",
+      "default_priority": "CONSIDER",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "MOBILE"
+      ],
+      "requires_any_tags": [
+        "FEED",
+        "LIST",
+        "LIVE_STATE"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_PREDICTIVE_BACK",
+      "family": "PLATFORM",
+      "problem_solved": "Preserve Android navigation predictability and gesture continuity",
+      "applicability_tags": [
+        "ANDROID",
+        "NAVIGATION"
+      ],
+      "platforms": [
+        "ANDROID"
+      ],
+      "motion_level": "NAVIGATION_TRANSITION",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ORIENTATION",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "official.android.compose",
+        "official.material.design"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "ANDROID"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_EDGE_TO_EDGE_SYSTEM_UI",
+      "family": "PLATFORM",
+      "problem_solved": "Integrate content with modern Android system bars safely",
+      "applicability_tags": [
+        "ANDROID",
+        "MOBILE"
+      ],
+      "platforms": [
+        "ANDROID"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "official.android.compose"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "ANDROID"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_IME_KEYBOARD_CONTINUITY",
+      "family": "PLATFORM",
+      "problem_solved": "Avoid jumps and hidden actions when software keyboard appears",
+      "applicability_tags": [
+        "FORM",
+        "SEARCH",
+        "ANDROID",
+        "MOBILE"
+      ],
+      "platforms": [
+        "ANDROID"
+      ],
+      "motion_level": "LAYOUT_TRANSITION",
+      "default_priority": "STRONG",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "official.android.compose"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_any_tags": [
+        "FORM",
+        "SEARCH"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_REDUCED_MOTION_EQUIVALENT",
+      "family": "ACCESSIBILITY",
+      "problem_solved": "Provide equivalent understanding when nonessential motion is reduced",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "ACCESSIBILITY"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ACCESSIBILITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_FOCUS_SEMANTIC_CONTINUITY",
+      "family": "ACCESSIBILITY",
+      "problem_solved": "Keep keyboard/screen-reader focus aligned with visual transitions",
+      "applicability_tags": [
+        "KEYBOARD",
+        "ACCESSIBILITY",
+        "DESKTOP",
+        "WEB"
+      ],
+      "platforms": [
+        "WEB",
+        "DESKTOP"
+      ],
+      "motion_level": "COMPONENT_TRANSITION",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "ACCESSIBILITY",
+        "ORIENTATION"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true,
+      "requires_all_tags": [
+        "ACCESSIBILITY"
+      ]
+    },
+    {
+      "pattern_id": "PATTERN_VISUAL_REGRESSION_STATES",
+      "family": "VERIFICATION",
+      "problem_solved": "Capture interaction states and intentional deltas as testable visual evidence",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "VERIFICATION"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_MOTION_TOKEN_GOVERNANCE",
+      "family": "DESIGN_SYSTEM",
+      "problem_solved": "Use shared duration/easing/spring tokens instead of per-screen arbitrary animation",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "MOTION_SYSTEM"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    },
+    {
+      "pattern_id": "PATTERN_OPTICAL_ALIGNMENT_REVIEW",
+      "family": "POLISH",
+      "problem_solved": "Correct optical weight, baselines and perceived spacing beyond mathematical centering",
+      "applicability_tags": [
+        "ANY_SCREEN",
+        "POLISH"
+      ],
+      "platforms": [
+        "ANY"
+      ],
+      "motion_level": "NONE",
+      "default_priority": "REQUIRED",
+      "requires_capabilities": [],
+      "avoid_when": [],
+      "motion_purpose": [
+        "FEEDBACK",
+        "CONTINUITY"
+      ],
+      "reference_sources": [
+        "owner.modern-ux-ui-library.rev1"
+      ],
+      "implementation_policy": "DIAL_NATIVE_REIMPLEMENTATION",
+      "external_code_import_allowed": false,
+      "no_effect_needed_valid": true
+    }
+  ],
+  "global_rules": {
+    "all_applicable_families_must_be_considered": true,
+    "pattern_adoption_not_mandatory": true,
+    "no_effect_needed_valid": true,
+    "animation_for_animation_sake_forbidden": true,
+    "external_reference_code_reuse_forbidden": true,
+    "platform_native_behavior_required": true
+  }
+}

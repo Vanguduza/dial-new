@@ -1,5 +1,6 @@
 import { hashObject } from './knowledge-graph-core.mjs';
 import { buildStitchVisualProductionPacket, buildInteractionMotionEnrichmentPacket } from './frontend-generation-architecture.mjs';
+import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence } from './interaction-motion-intelligence.mjs';
 import { loadRegistry } from './knowledge-graph-core.mjs';
 import { buildDesignCandidateManifest, quarantineDesignArtifact } from './design-candidate-admission.mjs';
 import { normalizeDesignCandidate } from './frontend-design-normalizer.mjs';
@@ -26,15 +27,20 @@ export function selectCanonicalFrontendDesignProvider({ repoDir, requestedProvid
   return { ...result, selection_hash: hashObject({ requested, explicitProviderRequest, providerHealth, result }) };
 }
 
-export function buildCanonicalStitchVisualPacket({ fdep, brief, qualityPacket = null, blindReferenceMode = false } = {}) {
+export function buildCanonicalStitchVisualPacket({ repoDir, fdep, brief, qualityPacket = null, blindReferenceMode = false } = {}) {
+  if (!repoDir) throw new Error('STITCH_VISUAL_PACKET_REQUIRES_REPO');
   if (!fdep?.frontend_generation_context) throw new Error('FDEP_FRONTEND_GENERATION_CONTEXT_REQUIRED');
-  return buildStitchVisualProductionPacket({ generationContext: fdep.frontend_generation_context, designBrief: brief, qualityPacket, blindReferenceMode });
+  const interactionPreflight=fdep.interaction_design_preflight||compileInteractionDesignPreflight({repoDir,generationContext:fdep.frontend_generation_context});
+  return buildStitchVisualProductionPacket({ generationContext: fdep.frontend_generation_context, designBrief: brief, qualityPacket, interactionPreflight, blindReferenceMode });
 }
 
 export function renderStitchVisualProductionPrompt({ packet } = {}) {
   if (!packet?.packet_hash) throw new Error('STITCH_VISUAL_PACKET_REQUIRED');
   const truth = (packet.verified_truth || []).map((x) => `${x.path || x.fact_id}=${JSON.stringify(x.value)} [${x.source_id}]`).join('\n');
   const archetypes = (packet.design_authority?.applicable_archetypes || []).map((x) => `${x.archetype_id}:${x.reuse_mode || 'GUIDANCE'}`).join(', ');
+  const preflight=packet.interaction_design_preflight||null;
+  const interactionReadiness=(preflight?.visual_preflight_requirements||[]).join('\n- ');
+  const priorityPatterns=[...(preflight?.required_considerations||[]),...(preflight?.strong_candidates||[])].slice(0,16).map((x)=>`${x.pattern_id}:${x.problem_solved}`).join('\n');
   return [
     'DIAL — STITCH VISUAL GENERATION PASS',
     `Target screen: ${packet.target_screen?.screen_id}.`,
@@ -51,37 +57,57 @@ export function renderStitchVisualProductionPrompt({ packet } = {}) {
     'SCREEN ROLE BOUNDARIES:',
     `Responsibilities: ${(packet.target_screen?.role_boundary?.responsibilities || []).join(', ')}.`,
     `Prohibited: ${(packet.target_screen?.role_boundary?.prohibited_responsibilities || []).join(', ')}.`,
+    'INTERACTION-READINESS PREFLIGHT (shape the visual composition so these behaviors remain possible; do not mechanically add components):',
+    interactionReadiness ? `- ${interactionReadiness}` : '(No special structural readiness requirement beyond the screen/state contract.)',
+    'HIGH-PRIORITY INTERACTION KNOWLEDGE FOR VISUAL READINESS:',
+    priorityPatterns || '(none)',
     ...packet.instructions,
     `Packet hash: ${packet.packet_hash}.`,
   ].join('\n');
 }
 
-export function buildCanonicalInteractionMotionPacket({ fdep, visualAuthority } = {}) {
+export function buildCanonicalInteractionMotionPacket({ repoDir, fdep, visualAuthority } = {}) {
+  if (!repoDir) throw new Error('INTERACTION_MOTION_PACKET_REQUIRES_REPO');
   if (!fdep?.frontend_generation_context) throw new Error('FDEP_FRONTEND_GENERATION_CONTEXT_REQUIRED');
-  return buildInteractionMotionEnrichmentPacket({ generationContext: fdep.frontend_generation_context, visualAuthority });
+  const intelligence=compileInteractionMotionIntelligence({repoDir,generationContext:fdep.frontend_generation_context,visualAuthority,preflight:fdep.interaction_design_preflight||null});
+  return buildInteractionMotionEnrichmentPacket({ generationContext: fdep.frontend_generation_context, visualAuthority, intelligence });
 }
 
 export function renderInteractionMotionPrompt({ packet } = {}) {
   if (!packet?.packet_hash) throw new Error('INTERACTION_MOTION_PACKET_REQUIRED');
+  const patterns=(packet.pattern_candidates||[]).map((x)=>`${x.pattern_id} | ${x.family} | ${x.priority} | problem=${x.problem_solved}`).join('\n');
+  const dimensions=(packet.design_acuity_dimensions||[]).map((x)=>`${x.dimension_id}: ${x.question}`).join('\n');
   return [
-    'DIAL — INTERACTION & MOTION ENRICHMENT PASS',
+    'DIAL — EXPERT INTERACTION, MOTION & PRODUCT-POLISH PASS',
     `Target screen: ${packet.target_screen_id}.`,
-    'The approved visual composition is frozen. Preserve it.',
+    `Expert role: ${packet.expert_role}.`,
+    'The approved visual identity is frozen, but bounded interaction-driven structural improvements are allowed by the supplied StructuralDeltaPolicy.',
     `Preserve: ${(packet.preserve || []).join(', ')}.`,
-    `Allowed design decisions: ${(packet.allowed_design_decisions || []).join(', ')}.`,
+    'DESIGN ACUITY REVIEW DIMENSIONS:', dimensions||'(none)',
+    'CONTEXTUALLY SELECTED PATTERNS TO CONSIDER:', patterns||'(none)',
+    `Interaction families to review: ${(packet.interaction_families_to_review||[]).join(', ')}.`,
     `Allowed domain actions: ${(packet.capability_envelope?.allowed_interaction_actions || []).join(', ')}.`,
     `Supported capabilities: ${(packet.capability_envelope?.capabilities || []).filter((x) => x.supported).map((x) => x.capability_id).join(', ')}.`,
+    'Do not mechanically apply the library. For every required/strong pattern decide ADOPT, ADAPT, REJECT or NO_EFFECT_NEEDED and explain why.',
+    'Improve the screen like a principal product design engineer: interaction clarity, responsive recomposition, professional SaaS ergonomics, feedback, spatial continuity, edge states, native behavior, accessibility and performance all matter.',
+    'If a necessary improvement exceeds the bounded structural delta, return RETURN_TO_VISUAL_RECONVERGENCE instead of silently redesigning.',
     ...packet.rules,
     `Required outputs: ${(packet.required_outputs || []).join(', ')}.`,
+    'Embed the structured outputs in the generated HTML as JSON in a script tag with id="dial-interaction-contract" and type="application/json" so DIAL can validate the design decision record.',
     `Packet hash: ${packet.packet_hash}.`,
   ].join('\n');
 }
 
-export function buildInteractionAcceptanceMatrix({ interactionArtifact = {}, checks = {} } = {}) {
-  const required = ['no_dead_controls','capability_backed','touch_targets','accessibility_semantics','reduced_motion','performance','state_restoration','gesture_conflicts_clear'];
+export function buildInteractionAcceptanceMatrix({ interactionArtifact = {}, checks = {}, requiredChecks = null } = {}) {
+  const required = requiredChecks || [
+    'design_acuity_review_complete','pattern_decisions_complete','no_dead_controls','capability_backed','purposeful_motion','motion_hierarchy_coherent',
+    'touch_targets','keyboard_and_focus_where_relevant','accessibility_semantics','reduced_motion','performance_budget','state_restoration',
+    'gesture_conflicts_clear','interruptible_transitions','responsive_recomposition','edge_states_covered','platform_native_behavior',
+    'optical_polish_reviewed','structural_delta_within_budget','external_reference_non_authority'
+  ];
   const rows = required.map((id) => ({ check_id: id, passed: checks[id] === true, evidence_ref: checks[`${id}_evidence_ref`] || null }));
   const failed = rows.filter((x) => !x.passed).map((x) => x.check_id);
-  const artifact = { schema_version: 1, artifact_type: 'InteractionAcceptanceMatrix', status: failed.length ? 'REJECTED' : 'PASSED', passed: failed.length === 0, rows, failures: failed, interaction_artifact_hash: interactionArtifact.content_hash || interactionArtifact.response_hash || null };
+  const artifact = { schema_version: 2, artifact_type: 'InteractionAcceptanceMatrix', status: failed.length ? 'REJECTED' : 'PASSED', passed: failed.length === 0, rows, failures: failed, interaction_artifact_hash: interactionArtifact.content_hash || interactionArtifact.response_hash || null };
   artifact.content_hash = hashObject({ ...artifact, content_hash: null });
   return artifact;
 }

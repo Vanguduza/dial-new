@@ -365,7 +365,7 @@ export function compileFrontendGenerationContext({
   return context;
 }
 
-export function buildStitchVisualProductionPacket({ generationContext, designBrief, qualityPacket = null, blindReferenceMode = false } = {}) {
+export function buildStitchVisualProductionPacket({ generationContext, designBrief, qualityPacket = null, interactionPreflight = null, blindReferenceMode = false } = {}) {
   if (!generationContext?.content_hash) throw new Error('FRONTEND_GENERATION_CONTEXT_REQUIRED');
   const completeness = evaluateFrontendGenerationCompleteness(generationContext);
   if (!completeness.provider_dispatch_ready) throw new Error(`FRONTEND_PACKET_INCOMPLETE:${completeness.failures.join(',')}`);
@@ -381,6 +381,7 @@ export function buildStitchVisualProductionPacket({ generationContext, designBri
     verified_truth: generationContext.truth.screen_truth_envelope.facts.filter((x) => VERIFIED_TRUTH_CLASSES.has(x.truth_class)),
     truth_policy: clone(generationContext.truth.screen_truth_envelope.truth_class_policy),
     capability_envelope: clone(generationContext.capability_envelope), design_authority: clone(generationContext.design_authority),
+    interaction_design_preflight: clone(interactionPreflight),
     acceptance_contract: clone(generationContext.acceptance_contract),
     reference_policy: blindReferenceMode ? 'REFERENCE_IMAGE_ACCESS_FORBIDDEN' : 'ONLY_DECLARED_VISUAL_AUTHORITY',
     instructions: [
@@ -390,6 +391,8 @@ export function buildStitchVisualProductionPacket({ generationContext, designBri
       'Do not invent product, operational, compatibility, pricing, inventory, legal, security or performance facts.',
       'Unknown facts must be omitted, deferred, or represented without fabricated values.',
       'Screen role boundaries are hard constraints.',
+      'Interaction is part of the design, not a later decoration pass: preserve visual room for the preflight interaction structures, edge states and responsive behaviors.',
+      'Do not mechanically apply every interaction pattern; use the preflight to make the visual composition interaction-ready.',
       'Produce coded frontend plus a rendered preview suitable for critique and later interaction enrichment.',
     ],
   };
@@ -417,31 +420,46 @@ export function freezeVisualAuthorityArtifact({ generationContext, candidate, cr
   return { ok: true, failures: [], visual_authority: visual };
 }
 
-export function buildInteractionMotionEnrichmentPacket({ generationContext, visualAuthority } = {}) {
+export function buildInteractionMotionEnrichmentPacket({ generationContext, visualAuthority, intelligence } = {}) {
   if (!generationContext?.content_hash) throw new Error('GENERATION_CONTEXT_REQUIRED');
   if (visualAuthority?.status !== 'FROZEN') throw new Error('FROZEN_VISUAL_AUTHORITY_REQUIRED');
   if (visualAuthority.generation_context_hash !== generationContext.content_hash) throw new Error('VISUAL_AUTHORITY_CONTEXT_HASH_MISMATCH');
+  if (!intelligence?.content_hash || intelligence.generation_context_hash !== generationContext.content_hash || intelligence.visual_authority_hash !== visualAuthority.content_hash) throw new Error('INTERACTION_MOTION_INTELLIGENCE_REQUIRED');
+  const candidatePatterns=[...(intelligence.required_considerations||[]),...(intelligence.strong_candidates||[]),...(intelligence.additional_candidates||[])];
   const packet = {
-    schema_version: 1, artifact_type: 'InteractionMotionEnrichmentPacket', artifact_id: `interaction-motion:${generationContext.screen_context.target_screen_id}`, status: 'READY', provider: 'google-stitch', phase: 'INTERACTION_AND_MOTION_ENRICHMENT', provenance: { visual_authority_hash: visualAuthority.content_hash },
-    generation_context_hash: generationContext.content_hash, visual_authority_hash: visualAuthority.content_hash,
+    schema_version: 2, artifact_type: 'InteractionMotionEnrichmentPacket', artifact_id: `interaction-motion:${generationContext.screen_context.target_screen_id}`, status: 'READY', provider: 'google-stitch', phase: 'INTERACTION_AND_MOTION_ENRICHMENT', provenance: { visual_authority_hash: visualAuthority.content_hash, interaction_intelligence_hash: intelligence.content_hash },
+    generation_context_hash: generationContext.content_hash, visual_authority_hash: visualAuthority.content_hash, interaction_intelligence_hash:intelligence.content_hash,
     target_screen_id: generationContext.screen_context.target_screen_id,
-    preserve: ['approved_composition', 'visual_hierarchy', 'section_order', 'brand_expression', 'imagery_strategy'],
+    preserve: ['approved_composition', 'approved_visual_identity', 'brand_expression', 'imagery_strategy', 'primary_hierarchy_unless_reconvergence_requested'],
     capability_envelope: clone(generationContext.capability_envelope),
     screen_role_boundaries: generationContext.screen_context.screens.map((x) => ({ screen_id: x.screen_id, role_boundary: x.role_boundary })),
-    allowed_design_decisions: [
-      'carousel_when_contextually_justified', 'swipe', 'scroll_snap', 'image_zoom', 'fullscreen_gallery', 'tabs', 'accordion',
-      'bottom_sheet', 'sticky_action', 'press_feedback', 'favorite_state_transition', 'cart_feedback', 'loading_transition',
-      'navigation_transition', 'subtle_scroll_linked_motion',
-    ],
-    required_outputs: ['enriched_code', 'InteractionIntentMap', 'GestureMap', 'MotionSpec', 'AdvancedComponentDecisionSet', 'InteractionAcceptanceMatrix'],
+    expert_role:intelligence.expert_role,
+    design_acuity_dimensions:clone(intelligence.acuity_dimensions),
+    motion_hierarchy:clone(intelligence.motion_hierarchy),
+    structural_delta_policy:clone(intelligence.structural_delta_policy),
+    interaction_families_to_review:clone(intelligence.interaction_families_to_review),
+    pattern_candidates:candidatePatterns.map((x)=>({
+      pattern_id:x.pattern_id,family:x.family,problem_solved:x.problem_solved,priority:x.default_priority,motion_level:x.motion_level,
+      motion_purpose:x.motion_purpose,avoid_when:x.avoid_when,selection:x.selection,implementation_policy:x.implementation_policy
+    })),
+    pattern_decision_contract:clone(intelligence.decision_contract),
+    open_world_discovery_brief:clone(intelligence.open_world_discovery_brief),
+    allowed_design_decisions: candidatePatterns.map((x)=>x.pattern_id),
+    required_outputs: ['enriched_code', ...intelligence.required_outputs.filter((x)=>x!=='InteractionAcceptanceMatrix'), 'InteractionAcceptanceMatrix'],
     rules: [
-      'Preserve the approved visual composition; enrich interaction rather than redesigning the screen.',
+      'Act as a principal product design engineer and interaction/motion specialist, not an animation decorator.',
+      'Review the complete screen, every important control, every applicable state and every target platform before proposing effects.',
+      'For each required/strong candidate pattern, return ADOPT, ADAPT, REJECT or NO_EFFECT_NEEDED with rationale.',
+      'Improve professional product quality through hierarchy, disclosure, feedback, continuity, responsive recomposition, native behavior and state completeness.',
+      'Preserve the approved visual identity. Bounded interaction-driven structural deltas are allowed only inside StructuralDeltaPolicy.',
+      'If interaction quality requires a primary hierarchy, major section order, hero identity or information-architecture change, return RETURN_TO_VISUAL_RECONVERGENCE instead of silently redesigning.',
       'Interaction invention is allowed only for capabilities and actions present in the CapabilityEnvelope or feature contract.',
       'Capability invention is forbidden.',
-      'Motion must communicate continuity, hierarchy, cause/effect or feedback; gratuitous animation is forbidden.',
-      'A valid decision may be NO_EFFECT_NEEDED.',
-      'Reduced-motion behavior is mandatory for nonessential motion.',
-      'Touch, keyboard where relevant, accessibility semantics, performance and state restoration must be specified.',
+      'Motion must communicate feedback, continuity, orientation, causality, hierarchy, accessibility or bounded brand expression; gratuitous animation is forbidden.',
+      'NO_EFFECT_NEEDED is valid for an individual pattern, but the expert review itself is mandatory.',
+      'Reduced-motion equivalents, interruptibility, state restoration, gesture-conflict behavior and platform-native behavior are mandatory.',
+      'Touch, keyboard/focus where relevant, accessibility semantics, responsive recomposition and performance budgets must be specified.',
+      'External references are inspiration/evidence only. Do not copy external code, components, assets or pixel layouts.',
     ],
   };
   packet.packet_hash = hashObject({ ...packet, packet_hash: null });

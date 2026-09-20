@@ -1,30 +1,163 @@
 {
   "schema_version": 1,
-  "registry_version": "dial-design-anti-patterns-1.0.0",
+  "registry_version": "dial-design-anti-patterns-1.1-interaction-motion",
   "authority": "DERIVED_DESIGN_POLICY",
   "note": "One versioned list. The enforced_baseline is the set design-authority-projector.mjs has always emitted; it is never reduced. Guided generation adds the guided_additional set on top. Copying either list into a prompt by hand is how the two drift, so prompts read this registry.",
   "enforced_baseline": [
-    { "pattern_id": "FAKE_DATA", "severity": "BLOCKING", "detects": "invented values presented as real product data" },
-    { "pattern_id": "PLACEHOLDER_HELPER_TEXT", "severity": "BLOCKING", "detects": "lorem ipsum or unresolved copy shipped as content" },
-    { "pattern_id": "DEAD_CONTROLS", "severity": "BLOCKING", "detects": "controls with no action, destination or state behind them" },
-    { "pattern_id": "GENERIC_AI_UI", "severity": "BLOCKING", "detects": "undifferentiated template output with no DIAL design grammar" },
-    { "pattern_id": "DONOR_BRAND_AUTHORITY", "severity": "BLOCKING", "detects": "donor branding presented as DIAL brand authority" },
-    { "pattern_id": "RAW_TECHNICAL_IDS", "severity": "BLOCKING", "detects": "internal identifiers surfaced to the end user" }
+    {
+      "pattern_id": "FAKE_DATA",
+      "severity": "BLOCKING",
+      "detects": "invented values presented as real product data"
+    },
+    {
+      "pattern_id": "PLACEHOLDER_HELPER_TEXT",
+      "severity": "BLOCKING",
+      "detects": "lorem ipsum or unresolved copy shipped as content"
+    },
+    {
+      "pattern_id": "DEAD_CONTROLS",
+      "severity": "BLOCKING",
+      "detects": "controls with no action, destination or state behind them"
+    },
+    {
+      "pattern_id": "GENERIC_AI_UI",
+      "severity": "BLOCKING",
+      "detects": "undifferentiated template output with no DIAL design grammar"
+    },
+    {
+      "pattern_id": "DONOR_BRAND_AUTHORITY",
+      "severity": "BLOCKING",
+      "detects": "donor branding presented as DIAL brand authority"
+    },
+    {
+      "pattern_id": "RAW_TECHNICAL_IDS",
+      "severity": "BLOCKING",
+      "detects": "internal identifiers surfaced to the end user"
+    }
   ],
   "guided_additional": [
-    { "pattern_id": "EXCESSIVE_CARD_NESTING", "severity": "MAJOR", "detects": "cards inside cards inside cards with no hierarchy gained" },
-    { "pattern_id": "ARBITRARY_GRADIENTS", "severity": "MAJOR", "detects": "gradients with no token, role or brand justification" },
-    { "pattern_id": "EXCESSIVE_PILLS", "severity": "MINOR", "detects": "pill chips used as the default container for unrelated content" },
-    { "pattern_id": "VISUAL_CLUTTER", "severity": "MAJOR", "detects": "competing emphasis with no clear primary" },
-    { "pattern_id": "DUPLICATED_NAVIGATION", "severity": "MAJOR", "detects": "the same destination offered twice in one viewport" },
-    { "pattern_id": "INVENTED_METRICS", "severity": "BLOCKING", "detects": "numbers, trends or KPIs with no product data source" },
-    { "pattern_id": "MEANINGLESS_HERO", "severity": "MAJOR", "detects": "a hero region carrying no primary task or product truth" },
-    { "pattern_id": "UNSTRUCTURED_LONG_SCROLL", "severity": "MAJOR", "detects": "an undifferentiated vertical stack standing in for information architecture" },
-    { "pattern_id": "INCONSISTENT_RADII", "severity": "MINOR", "detects": "corner radii outside the declared radius scale" },
-    { "pattern_id": "INCONSISTENT_ICON_WEIGHT", "severity": "MINOR", "detects": "mixed icon stroke weights or families in one surface" },
-    { "pattern_id": "DECORATIVE_ANALYTICS", "severity": "MAJOR", "detects": "charts present for visual weight rather than a user decision" },
-    { "pattern_id": "UNSUPPORTED_PROMOTIONAL_CONTENT", "severity": "BLOCKING", "detects": "promotional claims with no governed promotion or pricing authority behind them" }
+    {
+      "pattern_id": "EXCESSIVE_CARD_NESTING",
+      "severity": "MAJOR",
+      "detects": "cards inside cards inside cards with no hierarchy gained"
+    },
+    {
+      "pattern_id": "ARBITRARY_GRADIENTS",
+      "severity": "MAJOR",
+      "detects": "gradients with no token, role or brand justification"
+    },
+    {
+      "pattern_id": "EXCESSIVE_PILLS",
+      "severity": "MINOR",
+      "detects": "pill chips used as the default container for unrelated content"
+    },
+    {
+      "pattern_id": "VISUAL_CLUTTER",
+      "severity": "MAJOR",
+      "detects": "competing emphasis with no clear primary"
+    },
+    {
+      "pattern_id": "DUPLICATED_NAVIGATION",
+      "severity": "MAJOR",
+      "detects": "the same destination offered twice in one viewport"
+    },
+    {
+      "pattern_id": "INVENTED_METRICS",
+      "severity": "BLOCKING",
+      "detects": "numbers, trends or KPIs with no product data source"
+    },
+    {
+      "pattern_id": "MEANINGLESS_HERO",
+      "severity": "MAJOR",
+      "detects": "a hero region carrying no primary task or product truth"
+    },
+    {
+      "pattern_id": "UNSTRUCTURED_LONG_SCROLL",
+      "severity": "MAJOR",
+      "detects": "an undifferentiated vertical stack standing in for information architecture"
+    },
+    {
+      "pattern_id": "INCONSISTENT_RADII",
+      "severity": "MINOR",
+      "detects": "corner radii outside the declared radius scale"
+    },
+    {
+      "pattern_id": "INCONSISTENT_ICON_WEIGHT",
+      "severity": "MINOR",
+      "detects": "mixed icon stroke weights or families in one surface"
+    },
+    {
+      "pattern_id": "DECORATIVE_ANALYTICS",
+      "severity": "MAJOR",
+      "detects": "charts present for visual weight rather than a user decision"
+    },
+    {
+      "pattern_id": "UNSUPPORTED_PROMOTIONAL_CONTENT",
+      "severity": "BLOCKING",
+      "detects": "promotional claims with no governed promotion or pricing authority behind them"
+    },
+    {
+      "pattern_id": "ANIMATION_FOR_ANIMATION_SAKE",
+      "severity": "MAJOR",
+      "detects": "motion with no feedback, continuity, orientation, causality, hierarchy, accessibility or bounded brand purpose"
+    },
+    {
+      "pattern_id": "HIDDEN_CRITICAL_GESTURE",
+      "severity": "BLOCKING",
+      "detects": "critical or destructive action available only through an undiscoverable gesture"
+    },
+    {
+      "pattern_id": "NON_INTERRUPTIBLE_STATE_MOTION",
+      "severity": "MAJOR",
+      "detects": "animation cannot reconcile when authoritative state changes mid-transition"
+    },
+    {
+      "pattern_id": "RESPONSIVE_SHRINKING",
+      "severity": "MAJOR",
+      "detects": "desktop composition merely shrunk onto mobile/tablet without interaction recomposition"
+    },
+    {
+      "pattern_id": "MOTION_STYLE_DRIFT",
+      "severity": "MAJOR",
+      "detects": "multiple unrelated easing/spring/duration styles create incoherent product behavior"
+    },
+    {
+      "pattern_id": "MISSING_ACTION_FEEDBACK",
+      "severity": "BLOCKING",
+      "detects": "meaningful action produces no immediate visible or semantic acknowledgement"
+    },
+    {
+      "pattern_id": "MISSING_REDUCED_MOTION",
+      "severity": "BLOCKING",
+      "detects": "nonessential motion lacks a reduced-motion equivalent"
+    },
+    {
+      "pattern_id": "GESTURE_CONFLICT",
+      "severity": "BLOCKING",
+      "detects": "nested or competing gestures make intended manipulation ambiguous or unreliable"
+    },
+    {
+      "pattern_id": "PLATFORM_ALIEN_BEHAVIOR",
+      "severity": "MAJOR",
+      "detects": "interaction conflicts with target platform navigation, input or accessibility expectations"
+    },
+    {
+      "pattern_id": "EDGE_STATE_VISUAL_ONLY",
+      "severity": "MAJOR",
+      "detects": "loading, error, offline, degraded or permission states are styled but not behaviorally designed"
+    },
+    {
+      "pattern_id": "OVER_ANIMATED_SAAS",
+      "severity": "MAJOR",
+      "detects": "professional workflow slowed or distracted by excessive decorative motion"
+    }
   ],
-  "severity_order": ["BLOCKING", "MAJOR", "MINOR"],
-  "blocking_severities": ["BLOCKING"]
+  "severity_order": [
+    "BLOCKING",
+    "MAJOR",
+    "MINOR"
+  ],
+  "blocking_severities": [
+    "BLOCKING"
+  ]
 }

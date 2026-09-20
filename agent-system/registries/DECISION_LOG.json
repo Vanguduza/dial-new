@@ -950,5 +950,34 @@
       "tests/orchestration-vekl-reference-only.test.mjs"
     ],
     "reopens_if": "the product owner explicitly authorizes a specific external dependency/code adoption under a separate qualified dependency/adoption contract or supersedes reference-only policy with an equal-or-stronger authority model"
+  },
+  {
+    "decision_id": "DEC-040",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / VEKL / FRONTEND / INTERACTION / MOTION / DESIGN ACUITY",
+    "title": "Interaction and motion are first-class frontend design stages and VEKL must supply expert product-design acuity",
+    "decision": "Every interactive DIAL frontend must receive VEKL interaction-design preflight before visual generation and a dedicated VEKL interaction/motion intelligence compilation after visual authority freezes. VEKL retrieves contextually applicable interaction, motion, responsive, platform-native, accessibility, state, recovery, performance and professional-SaaS patterns from admitted knowledge and qualified open-world discovery. Stitch then performs an expert interaction/motion/product-polish pass against the frozen visual identity. The pass must reason pattern-by-pattern rather than mechanically applying fashionable effects and must emit machine-readable design decisions. NO_EFFECT_NEEDED is valid for a pattern but not as a substitute for expert review. Interaction-driven structural changes are bounded; a material hierarchy or information-architecture change returns to visual reconvergence.",
+    "consequence": "Frontend completion now requires explicit behavior design, motion hierarchy, responsive interaction, edge-state behavior, accessibility/reduced-motion handling, gesture-conflict safety, state restoration, performance and optical-polish evidence in addition to visual and functional parity. VEKL open-world discovery continuously refreshes candidate interaction knowledge but only qualified/admitted evidence becomes routine guidance. External repositories and reference databases remain non-authoritative inspiration under DEC-039. The generated Stitch interaction contract is validated before ExperienceAuthority can freeze, and DDE productionization must preserve the accepted interaction as well as the visual design.",
+    "record": "docs/dial/architecture/VEKL_INTERACTION_MOTION_DESIGN_ACUITY_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/DESIGN_ACUITY_POLICY.json",
+      "agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json",
+      "agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json",
+      "agent-system/orchestration/interaction-motion-intelligence.mjs",
+      "agent-system/orchestration/frontend-design-execution-packet.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "agent-system/orchestration/vekl-research-seed.mjs",
+      "agent-system/orchestration/vekl-research-harvest.mjs",
+      "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+      "tests/interaction-motion-intelligence.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-vekl-interaction-motion-design-acuity.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger system that keeps interaction/motion first-class, preserves Product Truth and Screen Registry × Feature Graph authority, maintains context-sensitive pattern selection, requires accessibility/performance/reduced-motion/state evidence, prevents silent redesign after visual freeze and keeps external references non-authoritative"
   }
 ]

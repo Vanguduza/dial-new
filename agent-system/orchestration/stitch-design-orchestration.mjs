@@ -29,6 +29,7 @@ import {
   buildProductionBindingContract,
   lintCandidateFacts,
 } from './frontend-generation-architecture.mjs';
+import { compileInteractionMotionIntelligence, validateInteractionArtifactAgainstIntelligence } from './interaction-motion-intelligence.mjs';
 import { StitchAdapter } from './stitch-adapter.mjs';
 import {
   STITCH_PROOF_RELS,
@@ -55,6 +56,7 @@ function workerEvidenceRel(taskId) { return `execution/tasks/${taskId}/stitch-wo
 function workerEvidenceDirRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence`; }
 function visualAuthorityRel(taskId) { return `execution/tasks/${taskId}/visual-authority.json`; }
 function interactionMotionRel(taskId) { return `execution/tasks/${taskId}/stitch-interaction-motion.json`; }
+function interactionIntelligenceRel(taskId) { return `execution/tasks/${taskId}/interaction-motion-intelligence.json`; }
 function interactionAcceptanceRel(taskId) { return `execution/tasks/${taskId}/interaction-acceptance.json`; }
 function experienceAuthorityRel(taskId) { return `execution/tasks/${taskId}/experience-authority.json`; }
 function productionBindingRel(taskId) { return `execution/tasks/${taskId}/production-binding-contract.json`; }
@@ -166,7 +168,7 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
   if (!targetSurface) throw new Error(`STITCH_TARGET_SURFACE_NOT_DECLARED:${targetSurfaceId}`);
   const creativeStrategy = fdep.creative_screen_generation?.surfaces?.[targetSurfaceId] || null;
   const canonicalPacket = fdep.frontend_generation_context?.content_hash
-    ? buildCanonicalStitchVisualPacket({ fdep, brief, blindReferenceMode: false })
+    ? buildCanonicalStitchVisualPacket({ repoDir, fdep, brief, blindReferenceMode: false })
     : null;
   const canonicalPrompt = canonicalPacket ? renderStitchVisualProductionPrompt({ packet: canonicalPacket }) : null;
   const providerDataPolicy = {
@@ -866,6 +868,19 @@ export function freezeAcceptedStitchVisualAuthority({
   return proof;
 }
 
+export function extractInteractionContractFromHtml(html='') {
+  const source=String(html||'');
+  const match=source.match(/<script[^>]*id=["']dial-interaction-contract["'][^>]*>([\s\S]*?)<\/script>/i)
+    || source.match(/<script[^>]*type=["']application\/json["'][^>]*id=["']dial-interaction-contract["'][^>]*>([\s\S]*?)<\/script>/i);
+  if(!match) return {found:false,status:'MISSING',value:null,content_hash:null,error:null};
+  try {
+    const value=JSON.parse(match[1].trim());
+    return {found:true,status:'PARSED',value,content_hash:hashObject(value),error:null};
+  } catch(error) {
+    return {found:true,status:'INVALID_JSON',value:null,content_hash:null,error:String(error?.message||error)};
+  }
+}
+
 export async function executeStitchInteractionMotionStage({
   repoDir,
   root = DEFAULT_CONTROL_HOME,
@@ -883,7 +898,10 @@ export async function executeStitchInteractionMotionStage({
   if (!currentSha || visualAuthority.repository_sha !== currentSha || !evidenceHashMatches(visualAuthority)) throw new Error('STITCH_VISUAL_AUTHORITY_STALE_OR_TAMPERED');
   const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
   if (!fdepCheck?.ok) throw new Error(`STITCH_INTERACTION_STALE_FDEP:${(fdepCheck?.reasons || []).join(',')}`);
-  const packet = buildCanonicalInteractionMotionPacket({ fdep, visualAuthority });
+  const intelligence=compileInteractionMotionIntelligence({repoDir,generationContext:fdep.frontend_generation_context,visualAuthority,preflight:fdep.interaction_design_preflight||null});
+  writeJsonAtomic(interactionIntelligenceRel(taskId),intelligence,root);
+  const packet = buildCanonicalInteractionMotionPacket({ repoDir, fdep, visualAuthority });
+  if(packet.interaction_intelligence_hash!==intelligence.content_hash) throw new Error('INTERACTION_INTELLIGENCE_PACKET_HASH_MISMATCH');
   const prompt = renderInteractionMotionPrompt({ packet });
   const stitch = adapter || new StitchAdapter({ enabled: true, env });
   const health = await stitch.health();
@@ -901,6 +919,7 @@ export async function executeStitchInteractionMotionStage({
   const htmlArtifact = await artifactDownloader(refined.html_url, { maxBytes: 2_000_000 });
   const imageArtifact = await artifactDownloader(refined.image_url, { maxBytes: 8_000_000 });
   const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+  const structuredContract=extractInteractionContractFromHtml(rawHtml);
   const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
   const rawStored = persistPrivateArtifact(root, taskId, 'interaction-motion-raw.html', Buffer.from(htmlArtifact.body));
   if (!sanitization.ok) throw new Error(`STITCH_INTERACTION_QUARANTINED:${sanitization.sanitized_quarantine.violations.join(',')}`);
@@ -915,7 +934,9 @@ export async function executeStitchInteractionMotionStage({
     task_id: taskId,
     surface_id: visualAuthority.surface_id,
     visual_authority_hash: visualAuthority.content_hash,
+    interaction_intelligence_hash: intelligence.content_hash,
     interaction_motion_packet_hash: packet.packet_hash,
+    structured_contract: structuredContract,
     provider_locator: { project_id: refined.project_id || visualAuthority.project_id, screen_id: refined.screen_id },
     artifacts: {
       raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
@@ -940,12 +961,18 @@ export function acceptStitchInteractionMotionStage({
   promotedBy = 'SYSTEM_AFTER_ACCEPTANCE',
   promotionAuthority = 'AUTHORIZED_DESIGN_AUTHORITY',
 } = {}) {
-  if (!repoDir || !taskId || !interactionArtifact) throw new Error('STITCH_INTERACTION_ACCEPTANCE_INPUTS_REQUIRED');
+  if (!repoDir || !taskId) throw new Error('STITCH_INTERACTION_ACCEPTANCE_INPUTS_REQUIRED');
   const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
   const visualAuthority = readJson(visualAuthorityRel(taskId), null, root);
   const stage = readJson(interactionMotionRel(taskId), null, root);
-  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN' || !stage || !evidenceHashMatches(stage)) throw new Error('STITCH_INTERACTION_ACCEPTANCE_GOVERNED_INPUTS_MISSING');
-  if (stage.visual_authority_hash !== visualAuthority.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_BINDING_INVALID');
+  const intelligence=readJson(interactionIntelligenceRel(taskId), null, root);
+  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN' || !stage || !evidenceHashMatches(stage) || !intelligence?.content_hash) throw new Error('STITCH_INTERACTION_ACCEPTANCE_GOVERNED_INPUTS_MISSING');
+  if (stage.visual_authority_hash !== visualAuthority.content_hash || stage.interaction_intelligence_hash!==intelligence.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_BINDING_INVALID');
+  interactionArtifact=interactionArtifact||stage.structured_contract?.value||null;
+  if(!interactionArtifact) throw new Error('STITCH_INTERACTION_STRUCTURED_CONTRACT_REQUIRED');
+  interactionArtifact.content_hash=interactionArtifact.content_hash||hashObject({...interactionArtifact,content_hash:null});
+  const acuityValidation=validateInteractionArtifactAgainstIntelligence({intelligence,interactionArtifact});
+  if(!acuityValidation.ok) throw new Error(`STITCH_INTERACTION_DESIGN_ACUITY_FAILED:${acuityValidation.failures.join(',')}`);
   const candidateFacts = interactionArtifact.candidate_facts || [];
   const truthLint = lintCandidateFacts({ generationContext: fdep.frontend_generation_context, candidateFacts });
   if (truthLint.status !== 'PASSED') throw new Error(`STITCH_INTERACTION_TRUTH_LINT_FAILED:${truthLint.findings.map((x) => x.finding_id).join(',')}`);
@@ -964,7 +991,7 @@ export function acceptStitchInteractionMotionStage({
   writeJsonAtomic(interactionAcceptanceRel(taskId), acceptance, root);
   writeJsonAtomic(experienceAuthorityRel(taskId), experience, root);
   appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_EXPERIENCE_AUTHORITY_FROZEN', task_id: taskId, experience_authority_hash: experience.content_hash, at: experience.frozen_at }, root);
-  return { acceptance, truth_lint: truthLint, experience_authority: experience };
+  return { acceptance, truth_lint: truthLint, design_acuity_validation: acuityValidation, experience_authority: experience };
 }
 
 export function compileStitchProductionBindingContract({ repoDir, root = DEFAULT_CONTROL_HOME, taskId, bindings = {} } = {}) {

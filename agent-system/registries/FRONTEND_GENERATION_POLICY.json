@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "policy_version": "canonical-frontend-generation-1.0",
+  "policy_version": "canonical-frontend-generation-1.1-design-acuity",
   "authority": "CANONICAL_FRONTEND_GENERATION_ARCHITECTURE",
   "automatic_design_provider": "google-stitch",
   "figma_policy": "EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY",
@@ -68,6 +68,22 @@
       ]
     },
     {
+      "stage_id": "VEKL_INTERACTION_DESIGN_PREFLIGHT",
+      "input": [
+        "FrontendGenerationContext",
+        "CapabilityEnvelope",
+        "ScreenRegistryFeatureGraph",
+        "DesignAcuityPolicy",
+        "InteractionMotionPatternRegistry"
+      ],
+      "output": [
+        "InteractionDesignPreflight",
+        "InteractionOpportunitySeed",
+        "OpenWorldInteractionDiscoveryBrief"
+      ],
+      "policy": "MANDATORY_BEFORE_VISUAL_GENERATION"
+    },
+    {
       "stage_id": "STITCH_VISUAL_GENERATION",
       "provider": "google-stitch",
       "output": [
@@ -90,20 +106,47 @@
       ]
     },
     {
+      "stage_id": "VEKL_INTERACTION_MOTION_INTELLIGENCE",
+      "input": [
+        "VisualAuthorityArtifact",
+        "InteractionDesignPreflight",
+        "CapabilityEnvelope",
+        "DesignAcuityPolicy",
+        "InteractionMotionPatternRegistry"
+      ],
+      "output": [
+        "InteractionMotionIntelligence",
+        "DesignAcuityAssessmentContract",
+        "PatternDecisionContract",
+        "StructuralDeltaPolicy"
+      ],
+      "policy": "MANDATORY_EXPERT_ANALYSIS"
+    },
+    {
       "stage_id": "STITCH_INTERACTION_MOTION_ENRICHMENT",
       "provider": "google-stitch",
       "input": [
         "VisualAuthorityArtifact",
         "FrontendGenerationContext",
-        "CapabilityEnvelope"
+        "CapabilityEnvelope",
+        "InteractionMotionIntelligence"
       ],
       "output": [
         "enriched_code",
+        "DesignAcuityAssessment",
+        "InteractionOpportunityMap",
+        "PatternDecisionSet",
         "InteractionIntentMap",
         "GestureMap",
+        "MotionHierarchyPlan",
         "MotionSpec",
-        "AdvancedComponentDecisionSet"
-      ]
+        "AdvancedComponentDecisionSet",
+        "ResponsiveInteractionPlan",
+        "StateBehaviorMatrix",
+        "StructuralDeltaDecision",
+        "InteractionRiskRegister"
+      ],
+      "policy": "MANDATORY_FOR_INTERACTIVE_FRONTEND_NO_EFFECT_ALLOWED_PER_PATTERN_ONLY"
     },
     {
       "stage_id": "INTERACTION_ACCEPTANCE",
@@ -147,14 +190,24 @@
     "gratuitous_motion_forbidden": true,
     "reduced_motion_required": true,
     "accessibility_required": true,
-    "performance_budget_required": true
+    "performance_budget_required": true,
+    "interaction_design_preflight_required": true,
+    "expert_design_acuity_review_required": true,
+    "all_applicable_pattern_families_considered": true,
+    "pattern_decision_rationale_required": true,
+    "open_world_discovery_bridge_required": true,
+    "bounded_structural_delta_allowed": true,
+    "major_structural_delta_requires_visual_reconvergence": true,
+    "interaction_acceptance_required_before_experience_freeze": true
   },
   "authority_flow": [
     "PRODUCT_TRUTH",
     "SCREEN_FEATURE_GRAPH",
     "DOMAIN_TRUTH",
     "VEKL_DESIGN_KNOWLEDGE",
+    "VEKL_INTERACTION_DESIGN_PREFLIGHT",
     "STITCH_VISUAL_AUTHORITY",
+    "VEKL_INTERACTION_MOTION_INTELLIGENCE",
     "STITCH_INTERACTION_AUTHORITY",
     "DDE_PRODUCTION_BINDING"
   ],

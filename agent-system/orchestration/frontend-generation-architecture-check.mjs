@@ -12,6 +12,7 @@ import {
   resolveTruthSourceProfile,
 } from './frontend-generation-architecture.mjs';
 import { selectCanonicalFrontendDesignProvider } from './frontend-design-provider-orchestrator.mjs';
+import { compileInteractionDesignPreflight, compileInteractionMotionIntelligence } from './interaction-motion-intelligence.mjs';
 import { loadCanonicalScreenGraph } from './screen-feature-graph.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
@@ -57,18 +58,30 @@ try {
   const figma=selectCanonicalFrontendDesignProvider({repoDir:repo,requestedProvider:'figma',explicitProviderRequest:false});
   gate('FGA-G12',provider.selected==='google-stitch' && outage.ok===false && outage.automatic_fallback===false && figma.reason==='FIGMA_EXPLICIT_INVOCATION_REQUIRED','canonical provider router never silently substitutes Figma/direct design');
 
-  const visualPacket=buildStitchVisualProductionPacket({generationContext:ctx,designBrief:{content_hash:'brief'},blindReferenceMode:true});
-  gate('FGA-G13',visualPacket.provider==='google-stitch' && visualPacket.reference_policy==='REFERENCE_IMAGE_ACCESS_FORBIDDEN' && visualPacket.target_screen?.screen_id==='SCREEN:SPARE:SPARE_HOME_ENTRY','Stitch visual packet is screen/feature/platform aware');
+  const acuityPolicy=read('agent-system/registries/DESIGN_ACUITY_POLICY.json');
+  const patternRegistry=read('agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json');
+  const sourceRegistry=read('agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json');
+  gate('FGA-G13',acuityPolicy.interaction_motion_pass==='MANDATORY_FOR_INTERACTIVE_FRONTEND' && acuityPolicy.visual_preflight_required===true && acuityPolicy.post_visual_enrichment_required===true && patternRegistry.patterns?.length>=50,'interaction/motion is a mandatory first-class design lifecycle with a substantial admitted pattern corpus');
+
+  const preflight=compileInteractionDesignPreflight({repoDir:repo,generationContext:ctx});
+  gate('FGA-G14',preflight.status==='READY' && preflight.visual_preflight_requirements?.length>0 && preflight.open_world_discovery_brief?.admission_required_before_guidance===true,'interaction design preflight runs before visual generation and bridges qualified open-world discovery');
+  gate('FGA-G15',(preflight.required_considerations||[]).some((x)=>x.pattern_id==='PATTERN_PREDICTIVE_BACK') && !(preflight.additional_candidates||[]).some((x)=>x.pattern_id==='PATTERN_COMMAND_PALETTE'),'pattern retrieval is platform/screen contextual rather than a fashionable-pattern checklist');
+
+  const visualPacket=buildStitchVisualProductionPacket({generationContext:ctx,designBrief:{content_hash:'brief'},interactionPreflight:preflight,blindReferenceMode:true});
+  gate('FGA-G16',visualPacket.provider==='google-stitch' && visualPacket.reference_policy==='REFERENCE_IMAGE_ACCESS_FORBIDDEN' && visualPacket.target_screen?.screen_id==='SCREEN:SPARE:SPARE_HOME_ENTRY' && visualPacket.interaction_design_preflight?.content_hash===preflight.content_hash,'Stitch visual generation receives screen/feature/platform truth plus interaction-readiness preflight');
 
   const frozen=freezeVisualAuthorityArtifact({generationContext:ctx,candidate:{provider:'google-stitch',project_id:'p',screen_id:'s',response_hash:'a'.repeat(64)},critique:{verdict:'PASS'},promotedBy:'gate',promotionAuthority:'AUTHORIZED_DESIGN_AUTHORITY'});
-  const interaction=buildInteractionMotionEnrichmentPacket({generationContext:ctx,visualAuthority:frozen.visual_authority});
-  gate('FGA-G14',frozen.ok && interaction.provider==='google-stitch' && interaction.preserve?.includes('approved_composition') && interaction.required_outputs?.includes('MotionSpec'),'visual freeze precedes the dedicated Stitch interaction/motion pass');
+  const intelligence=compileInteractionMotionIntelligence({repoDir:repo,generationContext:ctx,visualAuthority:frozen.visual_authority,preflight});
+  gate('FGA-G17',intelligence.expert_role==='PRINCIPAL_PRODUCT_DESIGN_ENGINEER_AND_INTERACTION_MOTION_SPECIALIST' && intelligence.required_outputs?.includes('DesignAcuityAssessment') && intelligence.required_outputs?.includes('ResponsiveInteractionPlan') && intelligence.decision_contract?.rationale_required===true,'post-freeze interaction intelligence requires expert design-acuity analysis and rationale');
+  const interaction=buildInteractionMotionEnrichmentPacket({generationContext:ctx,visualAuthority:frozen.visual_authority,intelligence});
+  gate('FGA-G18',frozen.ok && interaction.provider==='google-stitch' && interaction.preserve?.includes('approved_composition') && interaction.required_outputs?.includes('MotionSpec') && interaction.structural_delta_policy?.silent_redesign_forbidden===true,'visual freeze precedes expert interaction/motion enrichment with bounded structural delta');
+  gate('FGA-G19',sourceRegistry.sources?.every((x)=>x.production_import_allowed===false && x.design_authority_allowed===false) && interaction.open_world_discovery_brief?.raw_external_code_to_provider_forbidden===true,'interaction knowledge uses external sources only as non-authoritative reference/inspiration');
 
   const interactionArtifact={content_hash:'b'.repeat(64),interaction_intent_map:[],gesture_map:[],motion_spec:[],advanced_component_decisions:[]};
   const experience=freezeExperienceAuthorityArtifact({generationContext:ctx,visualAuthority:frozen.visual_authority,interactionArtifact,acceptance:{passed:true,content_hash:'c'.repeat(64)}});
   const bindings=Object.fromEntries((ctx.screen_context.screens[0].action_refs||[]).map((x)=>[x,`domain.${x}`]));
   const production=buildProductionBindingContract({generationContext:ctx,experienceAuthority:experience.experience_authority,bindings:{actions:bindings}});
-  gate('FGA-G15',experience.ok && production.policy?.redesign_forbidden===true && production.policy?.preserve_visual_parity===true && production.policy?.preserve_interaction_parity===true,'DDE productionization preserves frozen experience authority and parity');
+  gate('FGA-G20',experience.ok && production.policy?.redesign_forbidden===true && production.policy?.preserve_visual_parity===true && production.policy?.preserve_interaction_parity===true,'DDE productionization preserves frozen experience authority and parity');
 } catch(error) {
   gate('FGA-UNCAUGHT',false,error.stack||error.message);
 }

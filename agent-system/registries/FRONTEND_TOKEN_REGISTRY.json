@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-dtcg-1.1",
+  "registry_version": "frontend-dtcg-1.2-motion",
   "format": "DTCG_COMPATIBLE",
   "layers": [
     "PRIMITIVE",
@@ -97,6 +97,83 @@
       "layer": "COMPONENT",
       "type": "dimension",
       "alias": "{primitive.radius.lg}"
+    },
+    {
+      "token_id": "semantic.motion.instant",
+      "layer": "SEMANTIC",
+      "type": "duration",
+      "value": "80ms"
+    },
+    {
+      "token_id": "semantic.motion.slow",
+      "layer": "SEMANTIC",
+      "type": "duration",
+      "value": "360ms"
+    },
+    {
+      "token_id": "semantic.motion.emphasis",
+      "layer": "SEMANTIC",
+      "type": "duration",
+      "value": "480ms"
+    },
+    {
+      "token_id": "semantic.motion.easing.standard",
+      "layer": "SEMANTIC",
+      "type": "cubicBezier",
+      "value": [
+        0.2,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "token_id": "semantic.motion.easing.emphasized",
+      "layer": "SEMANTIC",
+      "type": "cubicBezier",
+      "value": [
+        0.2,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "token_id": "semantic.motion.easing.exit",
+      "layer": "SEMANTIC",
+      "type": "cubicBezier",
+      "value": [
+        0.4,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "token_id": "semantic.motion.spring.soft",
+      "layer": "SEMANTIC",
+      "type": "spring",
+      "value": {
+        "stiffness": 260,
+        "damping": 28,
+        "mass": 1
+      }
+    },
+    {
+      "token_id": "semantic.motion.spring.snappy",
+      "layer": "SEMANTIC",
+      "type": "spring",
+      "value": {
+        "stiffness": 520,
+        "damping": 34,
+        "mass": 0.8
+      }
+    },
+    {
+      "token_id": "semantic.motion.reduced",
+      "layer": "SEMANTIC",
+      "type": "policy",
+      "value": "REMOVE_NONESSENTIAL_PRESERVE_STATE_CHANGE"
     }
   ]
 }
