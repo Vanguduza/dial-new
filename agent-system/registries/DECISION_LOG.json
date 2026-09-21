@@ -916,5 +916,27 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-21",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / PROJECT MODEL / DDE INDEPENDENCE / UNIVERSALITY",
+    "title": "DIAL Development System is a complete universal development system; DDE is an independent project/system",
+    "decision": "The DIAL Development System and DDE are two independent development systems. DIAL is itself a complete end-to-end development system capable of admitting and developing arbitrary products/projects through its own Product Truth, research, UX/UI/frontend, architecture, memory, execution, review, verification, deployment and recovery pipeline. DIAL products are project tenants of that system. DDE is not a DIAL subsystem or productionization dependency; it is an independent development system whose repository is currently developed as one ordinary project through DIAL. Similar components may exist in both, but runtime state, memory, authority, credentials, deployment and lifecycle do not couple automatically.",
+    "consequence": "DIAL must fail certification if any required development capability depends on DDE availability. Active code and installers may not hard-code a dial/dde-only project universe. DIAL's HAIF installer owns only DIAL runtime state. DIAL's frontend architecture uses a DIAL-native production binding rather than DDE. The universal project registry classifies DDE as INDEPENDENT_DEVELOPMENT_SYSTEM_PROJECT with all shared-runtime/authority/truth/mutable-memory/deployment flags false. DIAL may modify DDE only through an explicit project mission against DDE's repository; once released, DDE continues independently.",
+    "supersedes": "Only prior wording or implementation that treated DDE as a DIAL runtime tenant, frontend productionization layer, or otherwise implied cross-system coupling; all unrelated DDE comparisons/donor references remain informational.",
+    "record": "docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md; agent-system/canon/PROJECT_TRUTH.md",
+    "enforced_by": [
+      "agent-system/registries/UNIVERSAL_PROJECT_REGISTRY.json",
+      "agent-system/orchestration/project-registry.mjs",
+      "agent-system/orchestration/project-repository-resolver.mjs",
+      "agent-system/orchestration/auxiliary/authority-gate.mjs",
+      "deploy/oracle/hermes-codex/install-haif.sh",
+      "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+      "tests/universal-development-system-independence.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly authorizes a bounded integration while preserving separate authority, state, memory and lifecycle semantics"
   }
 ]
