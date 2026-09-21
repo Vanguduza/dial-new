@@ -11,6 +11,9 @@ import { expireHermesRuntimeSelection, reconcileHermesRuntime } from './hermes-r
 import { healthFresh, loadRuntimeHealth, recordRuntimeHealth, runtimeEligible } from './runtime-health.mjs';
 import { primaryAttemptDecision } from './runtime-capacity-policy.mjs';
 import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './state-store.mjs';
+import { buildRepositoryUnderstandingDelta, buildRepositoryUnderstandingSnapshot, loadRepositoryUnderstandingSnapshot } from './repository-understanding-snapshot.mjs';
+import { sharedMemoryCursor } from './shared-project-memory.mjs';
+import { reviewCheckpointStatus } from './review-fabric.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -254,9 +257,64 @@ export function selectRuntime({ root } = {}) {
 export function handoff({ repoDir = DEFAULT_REPO, root, input = {} } = {}) {
   const pointer = readJson('state/active-checkpoint.json', null, root);
   const checkpoint = pointer?.path ? readJson(pointer.path, null, root) : capture({ repoDir, root });
-  const capsule = buildHandoffCapsule(checkpoint, input);
+  const project = process.env.DIAL_PROJECT_ID || 'dial';
+  const previousUnderstanding = loadRepositoryUnderstandingSnapshot(project, root);
+  const understanding = buildRepositoryUnderstandingSnapshot({
+    project,
+    repoDir,
+    root,
+    featureId: checkpoint.feature_id,
+  });
+  const delta = previousUnderstanding && previousUnderstanding.understanding_hash !== understanding.understanding_hash
+    ? buildRepositoryUnderstandingDelta({
+        project,
+        repoDir,
+        root,
+        fromSnapshot: previousUnderstanding,
+        toSnapshot: understanding,
+      })
+    : null;
+  const reviewCursor = readJson(`review/cursor-${project}.json`, null, root);
+  const reviewState = reviewCursor?.checkpoint_id ? reviewCheckpointStatus(reviewCursor.checkpoint_id, root) : null;
+  const contextPointer = readJson(`context-cache/harness/${project}/${String(input.source_harness || process.env.DIAL_HARNESS_ID || 'hermes').replace(/[^A-Za-z0-9._:-]+/g, '-')}.json`, null, root);
+  const enriched = {
+    ...input,
+    source_harness: input.source_harness || process.env.DIAL_HARNESS_ID || 'hermes',
+    context_fingerprint: input.context_fingerprint || contextPointer?.context_fingerprint || null,
+    memory_cursor: input.memory_cursor || sharedMemoryCursor(project, root),
+    repository_understanding: {
+      understanding_hash: understanding.understanding_hash,
+      repository_sha: understanding.repository_sha,
+      object_rel: understanding.object_rel,
+      project_truth_hash: understanding.project_truth_hash,
+      graph_revision_hash: understanding.graph_revision_hash,
+    },
+    repository_delta: delta ? {
+      mode: delta.mode,
+      delta_hash: delta.delta_hash,
+      object_rel: delta.object_rel,
+      changed_files: delta.changed_files,
+      changed_symbols: delta.changed_symbols,
+      impacted_paths: delta.impact?.impacted_paths || [],
+      validity: delta.validity,
+    } : null,
+    review_checkpoint_id: reviewCursor?.checkpoint_id || null,
+    open_review_findings: reviewState?.receipts?.flatMap((receipt) =>
+      (receipt.findings || [])
+        .filter((finding) => ['CRITICAL', 'HIGH'].includes(finding.severity))
+        .map((finding) => ({ reviewer_harness: receipt.reviewer_harness, ...finding }))
+    ) || [],
+  };
+  const capsule = buildHandoffCapsule(checkpoint, enriched);
   saveHandoffCapsule(capsule, root);
-  appendJsonl('events/supervisor.jsonl', { event: 'HANDOFF_CAPSULE_WRITTEN', feature_id: capsule.feature_id, at: now() }, root);
+  appendJsonl('events/supervisor.jsonl', {
+    event: 'HANDOFF_CAPSULE_WRITTEN',
+    feature_id: capsule.feature_id,
+    repository_understanding_hash: understanding.understanding_hash,
+    repository_delta_hash: delta?.delta_hash ?? null,
+    resume_mode: capsule.resume_contract?.mode ?? null,
+    at: now(),
+  }, root);
   return capsule;
 }
 
