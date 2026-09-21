@@ -142,6 +142,8 @@ export async function runPrimaryHermes({
         ...process.env,
         DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
         DIAL_REPO_DIR: repoDir,
+        DIAL_HARNESS_ID: process.env.DIAL_HARNESS_ID || 'chatgpt-hermes',
+        DIAL_PROJECT_ID: process.env.DIAL_PROJECT_ID || 'dial',
         ...(packetId ? { DIAL_PACKET_ID: packetId, DIAL_GOVERNED_SESSION: '1' } : {}),
         ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
         ...(skillActivation?.runtime_skill_dir ? { DIAL_SKILL_ACTIVATION_DIR: skillActivation.runtime_skill_dir } : {}),
