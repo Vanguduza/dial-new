@@ -1,7 +1,7 @@
 # DIAL Shared Project Memory & Review Fabric (SPMRF) — Rev 1
 
-**Status:** OWNER-DIRECTED IMPLEMENTATION  
-**Authority:** Hermes owns orchestration and memory admission. Project Truth, repository state, machine registries, tests and evidence remain authoritative.  
+**Status:** OWNER-DIRECTED IMPLEMENTATION
+**Authority:** Hermes owns orchestration and memory admission. Project Truth, repository state, machine registries, tests and evidence remain authoritative.
 **Scope:** DIAL control plane plus registered project repositories and the Trading Core review surface.
 
 ## 1. Objective
