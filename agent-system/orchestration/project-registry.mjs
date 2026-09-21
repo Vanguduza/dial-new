@@ -43,6 +43,40 @@ export function defaultDialProject(repoDir = process.env.DIAL_REPO_DIR || DEFAUL
   };
 }
 
+function localSeedProductProjects(repoDir) {
+  const file = path.join(repoDir, 'agent-system/registries/UNIVERSAL_PROJECT_REGISTRY.json');
+  let registry;
+  try { registry = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return []; }
+  const systemOrigin = String(registry?.development_system?.repository?.origin_url || '');
+  const canonicalRepo = normalizeRepo(repoDir);
+  return Object.values(registry?.seed_projects || {})
+    .filter((entry) => entry?.repository?.mode === 'SHARED_MONOREPO' && entry?.repository?.origin_url === systemOrigin)
+    .map((entry) => ({
+      slug: validateSlug(entry.project_id),
+      project_id: validateSlug(entry.project_id),
+      name: String(entry.display_name || entry.project_id).trim().slice(0, 120),
+      classification: String(entry.classification || 'PRODUCT_PROJECT'),
+      repo_dir: canonicalRepo,
+      repository_mode: 'SHARED_MONOREPO',
+      scope_selector: entry.scope_selector || null,
+      project_kind: 'product',
+      manager_policy: 'PROJECT_SPECIFIC_LOCKED_POLICY',
+      development_authority: 'PROJECT_POLICY_REQUIRED',
+      auxiliary_operations_authority: 'NON_AUTHORITATIVE',
+      services: [],
+      created_at: now(),
+      updated_at: now(),
+    }));
+}
+
+function mergeCanonicalLocalSeeds(projects, repoDir) {
+  const bySlug = new Map(projects.map((item) => [item.slug, item]));
+  for (const seed of localSeedProductProjects(repoDir)) {
+    if (!bySlug.has(seed.slug)) bySlug.set(seed.slug, seed);
+  }
+  return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
 export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO } = {}) {
   ensureControlLayout(root);
   const existing = readJson(PROJECT_REGISTRY_REL, null, root);
@@ -51,14 +85,38 @@ export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REP
     if (!dial) return existing;
     const priorServices = Array.isArray(dial.services) ? dial.services : [];
     const services = [...new Set([...priorServices, ...DIAL_SERVICES])];
-    if (services.length === priorServices.length && services.every((item, index) => item === priorServices[index])) return existing;
-    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, updated_at: now() } : item);
+    const withDial = existing.projects.map((item) => item.slug === 'dial' ? {
+      ...item,
+      project_id: item.project_id || 'dial-development-system',
+      classification: item.classification || 'DEVELOPMENT_SYSTEM',
+      repository_mode: item.repository_mode || 'DEDICATED_REPOSITORY',
+      scope_selector: item.scope_selector ?? null,
+      owns_complete_e2e_pipeline: true,
+      runtime_dependency_on_dde: false,
+      authority_dependency_on_dde: false,
+      services,
+      updated_at: now(),
+    } : item);
+    const projects = mergeCanonicalLocalSeeds(withDial, normalizeRepo(dialRepoDir));
+    const changed = JSON.stringify(projects) !== JSON.stringify(existing.projects);
+    if (!changed) return existing;
     const next = { ...existing, projects, updated_at: now() };
     writeJsonAtomic(PROJECT_REGISTRY_REL, next, root);
-    appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_RECONCILED', project: 'dial', added_services: services.filter((item) => !priorServices.includes(item)), at: now() }, root);
+    appendJsonl('events/project-registry.jsonl', {
+      event: 'PROJECT_REGISTRY_RECONCILED',
+      project: 'dial',
+      project_count: projects.length,
+      added_services: services.filter((item) => !priorServices.includes(item)),
+      at: now(),
+    }, root);
     return next;
   }
-  const registry = { schema_version: 1, isolation: 'STRICT_PER_PROJECT_OPERATIONS_STATE', projects: [defaultDialProject(dialRepoDir)], updated_at: now() };
+  const registry = {
+    schema_version: 1,
+    isolation: 'STRICT_PER_PROJECT_OPERATIONS_STATE',
+    projects: mergeCanonicalLocalSeeds([defaultDialProject(dialRepoDir)], normalizeRepo(dialRepoDir)),
+    updated_at: now(),
+  };
   writeJsonAtomic(PROJECT_REGISTRY_REL, registry, root);
   appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_CREATED', projects: ['dial'], at: now() }, root);
   return registry;
