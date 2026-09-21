@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-hermes-full-commander-chatgpt-control",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "61e13824d6b4504f6bccb63b08eb421e9d36ce49369845f6a49c6c2c5a709892",
+  "owner_instruction_excerpt": "Hermes has full control over both local Commander installations but uses them according to owner instructions or within designed automations. Design and build this setup.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-hermes-full-commander-chatgpt-control",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-21T04:07:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/hermes-full-commander-chatgpt-control-20260921",
+  "authorized_paths": [
+    "docs/orchestration/**",
+    "docs/infrastructure/**",
+    "docs/project-state/authorizations/*.json",
+    "agent-system/orchestration/hermes-commander-authority.mjs",
+    "agent-system/orchestration/chatgpt-session-registry.mjs",
+    "agent-system/registries/HERMES_COMMANDER_AUTOMATION_REGISTRY.json",
+    "deploy/oracle/hermes-codex/**",
+    "deploy/oracle/recovery/**",
+    "deploy/oracle/resource-fabric/hosts.json",
+    ".github/workflows/oracle-recovery.yml",
+    "tests/hermes-full-commander-control.test.mjs"
+  ],
+  "change_classes": [
+    "owner_control_topology",
+    "commander_authority_revision",
+    "chatgpt_session_orchestration",
+    "recovery_plane_hardening",
+    "host_role_preservation"
+  ],
+  "owner_overrides": [
+    {
+      "overridden": "The prior Hermes-local Commander contract exposed a read-only inspection subset.",
+      "ruling": "Hermes owns the subordinate Commander and receives its complete pinned capability surface.",
+      "effect": "Tool filtering is removed from the Hermes subordinate Commander. Authorization is enforced above Commander through owner instruction, designed automation policy and immutable host-role boundaries."
+    },
+    {
+      "overridden": "oracle-admin acted as the normal remote ChatGPT Commander foothold.",
+      "ruling": "Normal ChatGPT control terminates on dial-hermes-control. oracle-admin is recovery-only and must not receive project workload.",
+      "effect": "A dedicated owner remote Commander is installed on dial-hermes-control; GitHub plus OCI Run Command becomes the independent recovery route."
+    }
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": true,
+  "owner_control_boundary_change": true,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
