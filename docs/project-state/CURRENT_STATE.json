@@ -3,42 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260921-owner-shared-project-memory-review-fabric"
+    "auth-20260921-owner-hermes-full-commander-chatgpt-control"
   ],
-  "branch": "gpt/shared-project-memory-review-fabric-20260921-clean",
+  "branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
   "changed_files": [
-    "agent-system/orchestration/checkpoint-store.mjs",
-    "agent-system/orchestration/commander-automation-client.mjs",
-    "agent-system/orchestration/handoff-builder.mjs",
-    "agent-system/orchestration/hermes-runtime-executor.mjs",
-    "agent-system/orchestration/project-context-cache.mjs",
-    "agent-system/orchestration/project-repository-resolver.mjs",
-    "agent-system/orchestration/read-only-review-runner.mjs",
-    "agent-system/orchestration/repository-understanding-snapshot.mjs",
-    "agent-system/orchestration/review-coordinator.mjs",
-    "agent-system/orchestration/review-fabric.mjs",
-    "agent-system/orchestration/shared-context-resolver.mjs",
-    "agent-system/orchestration/shared-memory-mcp.mjs",
-    "agent-system/orchestration/shared-project-memory.mjs",
-    "agent-system/orchestration/state-store.mjs",
-    "agent-system/orchestration/supervisor.mjs",
-    "agent-system/registries/HERMES_COMMANDER_AUTOMATION_REGISTRY.json",
-    "agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json",
-    "deploy/oracle/hermes-codex/hermes-hooks/dial-post-turn-checkpoint.sh",
-    "deploy/oracle/hermes-codex/hermes-hooks/dial-pre-turn-context.sh",
-    "deploy/oracle/hermes-codex/install-control-plane.sh",
-    "deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh",
-    "deploy/oracle/hermes-codex/install-trading-memory-peer.sh",
-    "deploy/oracle/hermes-codex/systemd/dial-review-coordinator.service",
     "docs/orchestration/DIAL_SHARED_PROJECT_MEMORY_REVIEW_FABRIC.md",
-    "docs/project-state/authorizations/auth-20260921-owner-shared-project-memory-review-fabric.json",
-    "tests/orchestration-shared-project-memory.test.mjs",
-    "vitest.config.ts"
+    "docs/project-state/authorizations/auth-20260921-owner-spmrf-pr40-consolidation.json"
   ],
-  "content_diff_sha256": "89cfc006c170fec179f6855f26518b8f27d2929c8318e9482d552608ab5dc0bd",
-  "observed_at_utc": "2026-09-21T05:51:03.391305+00:00",
+  "content_diff_sha256": "5b1fe3109fd9a1cb04e766a886b7f318d4b882c9c8aa8d963d6aec2c035b0499",
+  "observed_at_utc": "2026-09-21T06:04:32.418668+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "04bef8d27b3c57bbd25f3e5098c6c156164eb76b",
+  "source_parent": "a739ed99915424ef7c4467246d6043752ea336a8",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

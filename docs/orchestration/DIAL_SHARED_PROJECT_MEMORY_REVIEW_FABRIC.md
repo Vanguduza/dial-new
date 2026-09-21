@@ -416,3 +416,7 @@ A later Postgres/pgvector projection may accelerate semantic retrieval and Supab
 ---
 
 **Canonical result:** account switching and model switching become handoffs between workers sharing one external project brain. The next worker receives verified current state plus the delta since the last valid understanding snapshot, not a requirement to learn the repository again from zero.
+
+## 18. Repository integration
+
+SPMRF is layered on the owner-authorized Hermes full-Commander control plane. For canonical repository closure the two governed changes are merged as one dependency-ordered PR stack; this does not change their separate runtime authority boundaries.
