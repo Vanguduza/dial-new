@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "schema_id": "dial-universal-development-pack-v1",
+  "authority": "DEVELOPMENT_SYSTEM_CONTRACT",
+  "maturity_states": [
+    "DRAFT",
+    "MAPPED",
+    "RESEARCH_READY",
+    "RESEARCH_COMPLETE",
+    "DESIGN_READY",
+    "ARCHITECTURE_READY",
+    "IMPLEMENTATION_READY",
+    "BUILD_READY",
+    "INVALIDATED"
+  ],
+  "artifacts": {
+    "baseline": {
+      "required": true,
+      "fields": ["repository_sha", "branch", "origin_url", "captured_at"]
+    },
+    "product_truth": {
+      "required": true,
+      "fields": ["revision", "requirements_total", "requirements_mapped", "ambiguities_open", "non_goals_defined"]
+    },
+    "development_units": {
+      "required": true,
+      "fields": ["total", "stable_ids", "dependencies_resolved"]
+    },
+    "feature_graph": {
+      "required": true,
+      "fields": ["features_total", "actions_mapped", "workflows_mapped", "data_mapped", "authority_mapped", "orphan_required_features"]
+    },
+    "screen_registry": {
+      "required_when": "ui_bearing",
+      "fields": ["applicable", "screens_total", "required_states_mapped", "navigation_mapped", "platform_behavior_mapped", "unreachable_required_screens"]
+    },
+    "screen_feature_proof": {
+      "required_when": "ui_bearing",
+      "fields": ["applicable", "orphan_required_features", "orphan_screens", "orphan_actions", "controls_without_action", "actions_without_runtime_consumer"]
+    },
+    "research": {
+      "required": true,
+      "fields": ["denominator", "required_cells", "qualified_cells", "critical_conflicts_open"]
+    },
+    "architecture": {
+      "required": true,
+      "fields": ["components_defined", "runtime_topology_defined", "data_contracts_defined", "api_contracts_defined", "authority_defined"]
+    },
+    "failure_recovery": {
+      "required": true,
+      "fields": ["failure_modes_defined", "degraded_states_defined", "reconciliation_defined", "recovery_paths_defined"]
+    },
+    "implementation": {
+      "required": true,
+      "fields": ["dependency_dag_valid", "atomic_packets_ready", "environment_certified"]
+    },
+    "verification": {
+      "required": true,
+      "fields": ["test_strategy_defined", "evidence_plan_defined", "independent_verification_defined", "mutation_plan_defined"]
+    },
+    "closure": {
+      "required": true,
+      "fields": ["component_ledger_seeded", "producer_consumer_caller_complete", "counterexamples_defined", "falsified_by_defined"]
+    },
+    "operations": {
+      "required": true,
+      "fields": ["deployment_defined", "observability_defined", "rollback_defined", "runbooks_defined"]
+    },
+    "system_independence": {
+      "required_when": "development_system",
+      "fields": ["applicable", "owns_complete_e2e_pipeline", "dde_runtime_dependency", "dde_authority_dependency", "arbitrary_project_conformance"]
+    }
+  },
+  "gates": [
+    {"gate_id":"GATE-00","name":"Baseline known","artifact":"baseline"},
+    {"gate_id":"GATE-01","name":"Product Truth complete","artifact":"product_truth"},
+    {"gate_id":"GATE-02","name":"Development Unit graph complete","artifact":"development_units"},
+    {"gate_id":"GATE-03","name":"Feature graph complete","artifact":"feature_graph"},
+    {"gate_id":"GATE-04","name":"Screen Registry complete","artifact":"screen_registry"},
+    {"gate_id":"GATE-05","name":"Bidirectional Screen x Feature proof","artifact":"screen_feature_proof"},
+    {"gate_id":"GATE-06","name":"Research ready","artifact":"research"},
+    {"gate_id":"GATE-07","name":"Architecture ready","artifact":"architecture"},
+    {"gate_id":"GATE-08","name":"Failure/recovery ready","artifact":"failure_recovery"},
+    {"gate_id":"GATE-09","name":"Implementation ready","artifact":"implementation"},
+    {"gate_id":"GATE-10","name":"Verification ready","artifact":"verification"},
+    {"gate_id":"GATE-11","name":"Closure ready","artifact":"closure"},
+    {"gate_id":"GATE-12","name":"Operations ready","artifact":"operations"},
+    {"gate_id":"GATE-13","name":"Development-system independence ready","artifact":"system_independence","system_only":true}
+  ],
+  "rules": [
+    "BUILD_READY is computed, never authored.",
+    "A failed applicable gate cannot be hidden by an aggregate score.",
+    "Every artifact is project-scoped and revisioned.",
+    "Every completion claim must carry evidence references.",
+    "UI exemptions must be explicit rather than represented as empty success.",
+    "A development-system independence gate fails if DIAL depends on DDE for any required E2E development capability."
+  ]
+}
