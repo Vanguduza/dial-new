@@ -938,5 +938,23 @@
       "tests/universal-development-system-independence.test.mjs"
     ],
     "reopens_if": "the product owner explicitly authorizes a bounded integration while preserving separate authority, state, memory and lifecycle semantics"
+  },
+  {
+    "decision_id": "DEC-040",
+    "decided_on": "2026-09-21",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / UNIVERSAL PROJECT PIPELINE / BUILD-READY",
+    "title": "Every admitted project is governed by one deterministic Development Pack and fail-closed Build-Ready gate contract",
+    "decision": "Adopt the PRD-to-Deterministic-Development-Pack preparation standard as the universal DIAL project pipeline contract. Every admitted project must have an exact repository baseline, Product Truth, Development Unit graph, Feature Graph, explicit UI applicability and Screen Registry x Feature Graph proof where applicable, research coverage, architecture, failure/recovery model, implementation DAG/atomic packets, verification/evidence/mutation plan, anti-gap closure and operations plan. BUILD_READY is computed from explicit gates and cannot be written by an agent. Repository drift invalidates effective readiness until an explicit rebaseline resets downstream evidence.",
+    "consequence": "The Development Pack compiler stores project-scoped revisioned artifacts with evidence references, computes Gates 0-12 for every project and Gate 13 for the DIAL Development System, refuses evidence-free artifact claims, refuses artifact updates against a stale repository baseline, and resets downstream artifacts on rebaseline. UI applicability must be explicitly true or false; an unknown value cannot silently exempt Screen Registry gates. A failing applicable gate cannot be hidden by an aggregate score or worker confidence.",
+    "record": "agent-system/registries/DEVELOPMENT_PACK_SCHEMA.json; agent-system/orchestration/development-pack-compiler.mjs; agent-system/orchestration/development-pack-gates.mjs; docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md",
+    "enforced_by": [
+      "agent-system/registries/DEVELOPMENT_PACK_SCHEMA.json",
+      "agent-system/orchestration/development-pack-compiler.mjs",
+      "agent-system/orchestration/development-pack-gates.mjs",
+      "tests/universal-development-pack.test.mjs"
+    ],
+    "reopens_if": "the product owner replaces the pack/gate contract with an equal-or-stronger mechanism that preserves project isolation, exact baselines, bidirectional experience completeness, causal integration, evidence binding, drift invalidation and fail-closed Build-Ready semantics"
   }
 ]
