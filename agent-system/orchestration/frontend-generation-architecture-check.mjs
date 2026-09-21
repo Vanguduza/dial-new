@@ -68,7 +68,7 @@ try {
   const experience=freezeExperienceAuthorityArtifact({generationContext:ctx,visualAuthority:frozen.visual_authority,interactionArtifact,acceptance:{passed:true,content_hash:'c'.repeat(64)}});
   const bindings=Object.fromEntries((ctx.screen_context.screens[0].action_refs||[]).map((x)=>[x,`domain.${x}`]));
   const production=buildProductionBindingContract({generationContext:ctx,experienceAuthority:experience.experience_authority,bindings:{actions:bindings}});
-  gate('FGA-G15',experience.ok && production.policy?.redesign_forbidden===true && production.policy?.preserve_visual_parity===true && production.policy?.preserve_interaction_parity===true,'DDE productionization preserves frozen experience authority and parity');
+  gate('FGA-G15',experience.ok && production.policy?.redesign_forbidden===true && production.policy?.preserve_visual_parity===true && production.policy?.preserve_interaction_parity===true,'DIAL-native production binding preserves frozen experience authority and parity');
 } catch(error) {
   gate('FGA-UNCAUGHT',false,error.stack||error.message);
 }
