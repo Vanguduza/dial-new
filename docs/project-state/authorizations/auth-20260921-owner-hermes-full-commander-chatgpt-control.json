@@ -27,7 +27,8 @@
     ".github/workflows/oracle-recovery.yml",
     "tests/hermes-full-commander-control.test.mjs",
     "agent-system/orchestration/hermes-commander-gateway.mjs",
-    "agent-system/orchestration/desktop-commander-owner-dispatch.mjs"
+    "agent-system/orchestration/desktop-commander-owner-dispatch.mjs",
+    "agent-system/orchestration/probe-commander-authority-gateway.mjs"
   ],
   "change_classes": [
     "owner_control_topology",
