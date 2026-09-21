@@ -27,7 +27,11 @@
       "host": "dial-hermes-control",
       "commander_id": "dial_hermes_local_commander",
       "account_alias": "chatgpt-primary",
-      "roles": ["AUTHOR", "REVIEWER", "ARCHITECT"],
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "ARCHITECT"
+      ],
       "enabled": true
     },
     {
@@ -37,7 +41,11 @@
       "host": "van-trading-core",
       "commander_id": "van_trading_local_commander",
       "account_alias": "chatgpt-secondary",
-      "roles": ["AUTHOR", "REVIEWER", "TRADING_SPECIALIST"],
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "TRADING_SPECIALIST"
+      ],
       "enabled": true
     },
     {
@@ -47,7 +55,11 @@
       "host": "dial-hermes-control",
       "commander_id": "dial_hermes_local_commander",
       "account_alias": "claude-primary",
-      "roles": ["AUTHOR", "REVIEWER", "ARCHITECT"],
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "ARCHITECT"
+      ],
       "enabled": true
     },
     {
@@ -57,7 +69,10 @@
       "host": "van-trading-core",
       "commander_id": "van_trading_local_commander",
       "account_alias": "claude-secondary",
-      "roles": ["REVIEWER", "TRADING_SPECIALIST"],
+      "roles": [
+        "REVIEWER",
+        "TRADING_SPECIALIST"
+      ],
       "enabled": false,
       "enable_condition": "live Claude Code subscription authentication proven on van-trading-core"
     }
@@ -104,9 +119,20 @@
     "author_self_review_counts": false,
     "routine_min_independent_reviews": 1,
     "material_min_independent_reviews": 2,
-    "critical_domains": ["SECURITY", "MONEY", "TRADING", "AUTHORITY", "RECOVERY", "DATA_MIGRATION"],
+    "critical_domains": [
+      "SECURITY",
+      "MONEY",
+      "TRADING",
+      "AUTHORITY",
+      "RECOVERY",
+      "DATA_MIGRATION"
+    ],
     "critical_requires_provider_diversity": true,
-    "default_reviewers": ["chatgpt-hermes", "chatgpt-trading", "claude-hermes"],
+    "default_reviewers": [
+      "chatgpt-hermes",
+      "chatgpt-trading",
+      "claude-hermes"
+    ],
     "dispatch_mode": "ALL_ELIGIBLE_EXCEPT_AUTHOR",
     "review_receipt_required": true
   },
@@ -124,5 +150,10 @@
       "feature_id",
       "context_profile"
     ]
+  },
+  "canonical_integration": {
+    "repository_target": "master",
+    "integration_branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
+    "authorization_id": "auth-20260921-owner-spmrf-final-integration"
   }
 }

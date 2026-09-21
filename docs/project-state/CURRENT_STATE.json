@@ -3,17 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260921-owner-hermes-full-commander-chatgpt-control"
+    "auth-20260921-owner-spmrf-final-integration"
   ],
   "branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
   "changed_files": [
-    "docs/orchestration/DIAL_SHARED_PROJECT_MEMORY_REVIEW_FABRIC.md",
-    "docs/project-state/authorizations/auth-20260921-owner-spmrf-pr40-consolidation.json"
+    "agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json",
+    "docs/project-state/authorizations/auth-20260921-owner-spmrf-final-integration.json"
   ],
-  "content_diff_sha256": "5b1fe3109fd9a1cb04e766a886b7f318d4b882c9c8aa8d963d6aec2c035b0499",
-  "observed_at_utc": "2026-09-21T06:04:32.418668+00:00",
+  "content_diff_sha256": "0a25e6567d345373a8f594f2345a520186f44baf92fb6df51a5146f1380899c7",
+  "observed_at_utc": "2026-09-21T06:05:37.221250+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "a739ed99915424ef7c4467246d6043752ea336a8",
+  "source_parent": "357c689625b1fc214c9524ce28331b72964da087",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
