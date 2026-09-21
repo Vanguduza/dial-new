@@ -95,7 +95,6 @@ export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REP
       runtime_dependency_on_dde: false,
       authority_dependency_on_dde: false,
       services,
-      updated_at: now(),
     } : item);
     const projects = mergeCanonicalLocalSeeds(withDial, normalizeRepo(dialRepoDir));
     const changed = JSON.stringify(projects) !== JSON.stringify(existing.projects);
