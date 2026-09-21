@@ -28,12 +28,25 @@ const ADMISSION_AUTHORITIES = new Set(['OWNER_EXPLICIT', 'VERIFIED_SYSTEM', 'HER
 const MAX_TEXT = 12000;
 const MAX_REFS = 40;
 const MAX_INDEX = 4000;
+const SPMRF_SECRET_PATTERNS = [
+  /\b(?:api[_-]?key|secret[_-]?key|client[_-]?secret|private[_-]?token)\s*[=:]\s*["']?[^\s"'{}]{8,}/i,
+  /\b(?:token|credential)\s*[=:]\s*["']?[A-Za-z0-9._~+\/-]{16,}/i,
+];
+
+function assertSharedMemorySafe(value, label = 'shared project memory') {
+  assertNoSecretMaterial(value, label);
+  const text = typeof value === 'string' ? value : JSON.stringify(value ?? '');
+  for (const pattern of SPMRF_SECRET_PATTERNS) {
+    if (pattern.test(text)) throw new Error(`${label} rejected: possible secret material`);
+  }
+  return value;
+}
 
 function now() { return new Date().toISOString(); }
 function bounded(value, max = MAX_TEXT) {
   const text = String(value ?? '').replace(/\u0000/g, '').trim();
   if (!text) return '';
-  assertNoSecretMaterial(text, 'shared project memory');
+  assertSharedMemorySafe(text, 'shared project memory');
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 function cleanRefs(refs) {
@@ -147,7 +160,7 @@ export function writeMemoryCandidate({
   if (!TYPES.has(resolvedType)) throw new Error(`unsupported memory type: ${type}`);
   const bodyText = bounded(text);
   if (!bodyText) throw new Error('shared memory text is required');
-  assertNoSecretMaterial(metadata, 'shared project memory metadata');
+  assertSharedMemorySafe(metadata, 'shared project memory metadata');
 
   const record = {
     schema_version: 1,
@@ -194,7 +207,7 @@ export function admitMemoryCandidate({
   if (!candidate || candidate.project !== slug || candidate.admission_state !== 'CANDIDATE') {
     throw new Error('shared memory candidate missing or project mismatch');
   }
-  assertNoSecretMaterial(reconciliation, 'shared memory reconciliation');
+  assertSharedMemorySafe(reconciliation, 'shared memory reconciliation');
   const admitted = {
     ...candidate,
     candidate_rel: candidateRel,
@@ -268,6 +281,6 @@ export function searchSharedMemory({
 export function readSharedMemoryObject(rel, root = DEFAULT_CONTROL_HOME) {
   const value = readJson(rel, null, root);
   if (!value) return null;
-  assertNoSecretMaterial(value, 'shared memory object');
+  assertSharedMemorySafe(value, 'shared memory object');
   return value;
 }
