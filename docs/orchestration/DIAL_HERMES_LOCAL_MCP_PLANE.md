@@ -1,90 +1,125 @@
-# DIAL Hermes Local MCP Development Plane
+# DIAL Hermes Full Commander / ChatGPT Control Plane
 
-Status: owner-directed two-plane architecture.
+Status: OWNER-LOCKED — implementation target.
 
-## Topology
+## Purpose
+
+DIAL uses ChatGPT mobile as the owner's primary working hub. The normal control path is:
 
 ```text
-Claude Code ----+
-                +--> local dial-oracle-control MCP --> DIAL owner/control authority
-Codex ----------+                                  |
-                                                   v
-                                             Hermes runtime
-                                                   |
-                                                   +--> dial_local_commander
-                                                        local stdio MCP
-
-Remote Desktop Commander --> oracle-admin --> OCI/recovery/diagnostics only
+ChatGPT mobile
+  -> owner-facing online Desktop Commander
+  -> dial-hermes-control
+  -> Hermes
+  -> Hermes-owned full local Desktop Commander
+  -> persistent local ChatGPT/Codex work sessions and host tools
 ```
 
-## Authority rules
+Hermes also owns a second full local Commander on `van-trading-core` over the private VCN. GitHub plus OCI Run Command is the independent recovery plane. `oracle-admin` is not a normal project execution venue.
 
-1. `dial-hermes-control` is the development/runtime host.
-2. Claude Code and Codex connect locally to the same `operator-control-stdio.mjs` DIAL MCP and retain independent `claude` / `codex` provenance.
-3. Neither Claude Code nor Codex receives a direct Desktop Commander MCP registration.
-4. Hermes owns the local Desktop Commander child MCP under `mcp_servers.dial_local_commander`.
-5. The local Commander is a subordinate capability, never a second project authority.
-6. The DIAL operator MCP remains typed and exposes no generic shell/filesystem proxy.
-7. `oracle-admin` remains `RECOVERY_CONTROL_ONLY`; its remote Desktop Commander connection is independent of Hermes and is reserved for administration/recovery.
-8. Normal development does not traverse `oracle-admin`.
+## Authority model
 
-## Local Commander boundary
+The capability boundary and the authority boundary are deliberately separate.
 
-Hermes MCP support natively spawns stdio MCP servers from `~/.hermes/config.yaml`. The installer pins Desktop Commander to `@wonderwhy-er/desktop-commander@0.2.50` and exposes only a read/inspection subset to Hermes:
+- `dial_local_commander` exposes the complete pinned Desktop Commander MCP tool surface to Hermes. It is not read-only and it carries no tool allowlist.
+- Hermes is the project authority. Commander is a subordinate actuator and never becomes a peer orchestrator.
+- Owner-explicit instructions may authorize Hermes to use any Commander capability on a designated working host.
+- Unattended use is allowed only through a named automation in `HERMES_COMMANDER_AUTOMATION_REGISTRY.json`.
+- Host-role guards, VATI risk authority, repository governance, provider routing and recovery boundaries remain independently enforced. Full Commander capability does not weaken those controls.
+- Claude Code and Codex continue to receive the typed `dial-oracle-control` MCP. They do not receive a direct Commander registration.
 
-- `read_file`
-- `read_multiple_files`
-- `list_directory`
-- `get_file_info`
-- `start_search`
-- `get_more_search_results`
-- `list_processes`
-- `list_sessions`
-- `get_config`
+## Commander identities
 
-Mutating or generic execution tools such as `start_process`, `interact_with_process`, file writes/edits, process kills, configuration mutation and shutdown are deliberately not exposed through this subordinate MCP. Development mutations continue through the governed DIAL/Hermes execution paths.
+```text
+owner_remote_commander
+  ChatGPT mobile -> dial-hermes-control
+  purpose: owner ingress transport
 
-## Installation
+dial_hermes_local_commander
+  Hermes -> local stdio Desktop Commander
+  purpose: full control of local sessions/processes/files/tools
 
-Run on `dial-hermes-control` only:
+van_trading_local_commander
+  Hermes -> private SSH stdio -> van-trading-core Desktop Commander
+  purpose: full control of Trading Core sessions/processes/files/tools
+
+oracle_admin_commander
+  recovery-only, normally cold
+  purpose: emergency recovery only
+```
+
+The two Hermes subordinate Commanders are full-capability surfaces. Their use is governed by the instruction/automation authority layer above them, not by deleting Commander tools.
+
+## Local ChatGPT work surface
+
+The deterministic automatable ChatGPT-backed work surface is Codex/App Server authenticated through the owner's ChatGPT subscription. Hermes records each long-lived work session in `sessions/chatgpt/index.json` using `chatgpt-session-registry.mjs`. The registry stores project, workspace, host, Commander identity, process/session references, thread identity when available, checkpoint and heartbeat state.
+
+A visual ChatGPT desktop process may coexist on a workstation host, but no completion claim is based on GUI presence alone. Hermes must have an observable Commander/Codex execution path and durable session evidence.
+
+## Session lifecycle
+
+```text
+STARTING -> READY -> BUSY -> WAITING_FOR_OWNER -> READY
+                      |             |
+                      v             v
+                   DEGRADED -> RECOVERING -> READY
+READY/BUSY -> CLOSING -> CLOSED
+```
+
+Hermes reuses an eligible READY or WAITING_FOR_OWNER session when project, host, workspace and context fingerprint still match. A stale heartbeat marks a session DEGRADED. Recovery is then performed through the registered `LOCAL_RUNTIME_RECOVERY` automation or an explicit owner instruction.
+
+Phone or mobile-app disconnection is not a task cancellation. Durable mission, session and checkpoint state lives on the Oracle control plane.
+
+## Designed automations
+
+The canonical registry is `agent-system/registries/HERMES_COMMANDER_AUTOMATION_REGISTRY.json`.
+
+Initial automations:
+
+- `CHATGPT_SESSION_LIFECYCLE` — start, interact with, inspect, stop and recover Hermes-managed ChatGPT/Codex sessions.
+- `WORKSPACE_MAINTENANCE` — deterministic file/workspace operations inside an already-authorized mission.
+- `LOCAL_RUNTIME_RECOVERY` — recover a failed local process/session.
+- `COMMANDER_CONFIGURATION_CHANGE` — configuration mutation; owner approval is required.
+
+Adding a new unattended use of Commander requires a registry change. Ad-hoc model initiative is not an automation authority.
+
+## Installation on dial-hermes-control
 
 ```bash
-bash deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh --dry-run   # inspect first
+bash deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh --dry-run
 bash deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh
+bash deploy/oracle/hermes-codex/install-owner-remote-commander.sh
+sudo -u ubuntu dial-owner-commander-pair
 bash deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh
 ```
 
-The installer runs every prerequisite check before it touches anything, including
-the prerequisites of the operator-gateway installer it invokes last. A late
-failure would otherwise leave the host half-applied -- local Commander registered
-but the typed client MCPs absent -- which the qualifier reports as an opaque RED.
-
-Because the Hermes agent reads a live, hand-maintained `~/.hermes/config.yaml`,
-the installer edits that file by splicing in only the `mcp_servers.dial_local_commander`
-block. Every other byte is preserved, so operator comments, YAML anchors and merge
-keys survive. A full `safe_load`/`safe_dump` round-trip would silently discard all
-three.
-
-Safety properties of the config edit:
-
-- the file is re-parsed and compared against the original before any write; if the
-  splice changed anything other than the intended block, nothing is written;
-- an unparseable config is refused rather than rewritten;
-- a timestamped `config.yaml.dial-bak-<UTC>` backup (mode `0600`) is taken whenever
-  a write occurs, and the rollback command is printed;
-- re-running is idempotent: an already-correct config is left byte-identical and
-  no backup is created;
-- `--dry-run` reports what would change and writes nothing.
-
-Both client CLIs must resolve on `PATH` for the owning user. The gateway installer
-registers `dial-oracle-control` for `codex` and `claude` only when each binary is
-present, and the qualifier fails closed unless both are enrolled, so a missing CLI
-is treated as an installation error. `--allow-missing-clients` downgrades that to a
-warning for a deliberate partial install.
-
-The qualifier fails closed unless the Commander tool filter, Codex enrollment,
-Claude Code enrollment and localhost DIAL MCP health all match this topology.
+The local Commander runtime is installed from the exact repository package-lock at a fixed user-owned prefix. Hermes config points to a fixed wrapper, not a dynamic `npx @latest` path.
 
 ## Recovery independence
 
-The remote Desktop Commander session on `oracle-admin` is intentionally separate. Losing Hermes, its MCP configuration, Codex, Claude Code or the local Commander must not remove the recovery foothold. Conversely, loss of `oracle-admin` must not stop ordinary Hermes-local development.
+Normal:
+```text
+ChatGPT mobile -> online Commander -> Hermes -> full subordinate Commander
+```
+
+Recovery:
+```text
+ChatGPT -> GitHub workflow_dispatch -> GitHub-hosted runner -> OCI API -> OCI Run Command
+```
+
+The recovery workflow accepts enumerated target/action inputs only. It has no free-form shell input. Destructive or disruptive actions use the protected `oracle-recovery` GitHub environment.
+
+`oracle-admin` remains available as a break-glass recovery host but is removed from the normal ChatGPT work path. Loss of `oracle-admin` must not stop ordinary Hermes work; loss of Hermes/Commander must not remove the GitHub/OCI recovery route.
+
+## Qualification
+
+The topology is GREEN only when:
+
+1. Hermes owns the local Commander child process.
+2. `tools/list` proves the required process, file-mutation, configuration, session and inspection tools exist.
+3. No `tools.include` filter reduces Hermes' Commander surface.
+4. Codex and Claude remain on the typed DIAL MCP and have no direct Commander bypass.
+5. The owner-facing online Commander can coexist with the Hermes child Commander.
+6. Session registry tests prove reuse, heartbeat degradation and checkpoint semantics.
+7. `oracle-admin` remains excluded from normal project work.
+8. GitHub recovery contains no arbitrary shell input and targets OCI Run Command.

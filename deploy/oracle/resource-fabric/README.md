@@ -93,28 +93,33 @@ Provisioning a host that runs this fabric is `deploy/oracle/provisioning/`.
 
 ## Desktop Commander
 
-Desktop Commander has two deliberately different roles in the three-node estate.
+Desktop Commander has three deliberately separate identities. Capability is not authority.
 
-- `oracle-admin` owns the **independent remote Commander recovery device**. It is
-  supervised by `dial-commander-remote.service`, guarded as
-  `RECOVERY_CONTROL_ONLY`, and exists for break-glass administration/recovery.
-- `dial-hermes-control` owns a **local read-only Desktop Commander child MCP**
-  under Hermes. Hermes is the authority; Codex, Claude and WhatsApp reach Hermes
-  through the typed DIAL MCP and do not connect directly to Commander.
-- `vekl-worker` has **no Commander authority**. It is a background coordinator
-  and remains a recovery target, never a development or admin shell.
+- `dial-hermes-control` owns the **owner-facing online Commander transport** supervised by
+  `dial-owner-commander-remote.service`. ChatGPT mobile uses this as the normal entry into
+  Hermes. Normal project work is submitted through `dial-owner-hermes`, not executed
+  opportunistically on whichever host Commander reached.
+- Hermes owns `dial_hermes_local_commander`, a **full-capability** pinned local Desktop
+  Commander child. The complete Commander tool surface is visible to Hermes. Every tool
+  call passes through `hermes-commander-gateway.mjs`, which fails closed unless the turn
+  carries authenticated owner authority or a named automation from
+  `HERMES_COMMANDER_AUTOMATION_REGISTRY.json`.
+- `van-trading-core` exposes a second full Commander to Hermes over purpose-specific,
+  forced-command private SSH stdio. The bounded `van_trading_commander` trading-domain
+  API remains separate and VATI remains the trading execution/risk authority.
+- `oracle-admin` retains its remote Commander credential/package only as a **cold
+  break-glass recovery path**. It is no longer the normal ChatGPT foothold and it remains
+  `RECOVERY_CONTROL_ONLY`.
+- `vekl-worker` has no Commander authority.
 
-The recovery bootstrap pins
-`@wonderwhy-er/desktop-commander@0.2.50` and applies an exact-version compatibility
-patch that persists refresh-token rotation until upstream includes the fix. The
-service unit is resource-bounded and protected below SSH and the Oracle Cloud
-Agent, so Commander cannot starve the two stronger recovery paths.
+The recovery bootstrap still pins `@wonderwhy-er/desktop-commander@0.2.50`. The owner-facing
+remote service and Hermes subordinate use exact lockfile installations. The remote service
+applies the exact-version refresh-token persistence compatibility patch and is isolated in
+its own resource slice.
 
-The Hermes-local installer exposes only the approved inspection tools:
-`read_file`, `read_multiple_files`, `list_directory`, `get_file_info`,
-`start_search`, `get_more_search_results`, `list_processes`, `list_sessions`,
-and `get_config`. Generic process execution and filesystem mutation remain
-outside the subordinate Commander surface.
+The independent recovery path is GitHub-hosted Actions -> OCI API -> OCI Run Command. It
+does not depend on either Commander, Hermes, SSH, or `oracle-admin` being healthy. Recovery
+workflow inputs are enumerated and do not accept arbitrary shell text.
 
 ## Placement
 

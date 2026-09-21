@@ -130,6 +130,7 @@ export async function executeProviderFirstHermesInstruction({
   skillActivation = null,
   requestedBy = "hermes.control",
   controlPlaneFacts = null,
+  commanderAuthority = null,
   hermesExecutor = executeHermesInstruction,
 } = {}) {
   const startedAt = new Date().toISOString();
@@ -145,7 +146,7 @@ export async function executeProviderFirstHermesInstruction({
     return rejectedEvent({ ...admission, admission: { ok: false, reason: `LOCAL_VENUE_REQUIRES_EXPLICIT_EXECUTOR:${admission.route?.action || "UNKNOWN"}` } }, startedAt);
   }
 
-  const result = await hermesExecutor({ repoDir, instruction, root, packetId, skillActivation });
+  const result = await hermesExecutor({ repoDir, instruction, root, packetId, skillActivation, commanderAuthority });
   const attempts = providerAttemptsFromHermesResult(result);
   let postRoute = null;
   if (attempts.length) {

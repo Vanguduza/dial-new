@@ -114,6 +114,7 @@ export async function runPrimaryHermes({
   model = PRIMARY_MODEL,
   packetId = null,
   skillActivation = null,
+  commanderAuthority = null,
 } = {}) {
   const requestedModel = String(model || PRIMARY_MODEL);
   if (requestedModel !== PRIMARY_MODEL) {
@@ -144,6 +145,10 @@ export async function runPrimaryHermes({
         ...(packetId ? { DIAL_PACKET_ID: packetId, DIAL_GOVERNED_SESSION: '1' } : {}),
         ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
         ...(skillActivation?.runtime_skill_dir ? { DIAL_SKILL_ACTIVATION_DIR: skillActivation.runtime_skill_dir } : {}),
+        ...(commanderAuthority?.source ? { DIAL_COMMANDER_AUTHORITY_SOURCE: String(commanderAuthority.source) } : {}),
+        ...(commanderAuthority?.automationId ? { DIAL_COMMANDER_AUTOMATION_ID: String(commanderAuthority.automationId) } : {}),
+        ...(commanderAuthority?.ownerAttested ? { DIAL_COMMANDER_OWNER_ATTESTED: '1' } : {}),
+        ...(commanderAuthority?.ownerApproval ? { DIAL_COMMANDER_OWNER_APPROVAL: '1' } : {}),
       },
     });
 
@@ -268,6 +273,7 @@ export async function executeHermesInstruction({
   contextBuilder = buildDialHermesContext,
   packetId = null,
   skillActivation = null,
+  commanderAuthority = null,
 } = {}) {
   if (!String(instruction || '').trim()) throw new Error('instruction is required');
 
@@ -326,7 +332,7 @@ export async function executeHermesInstruction({
       packet_id: packetId, at: now(),
     }, root);
   } else {
-    primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation });
+    primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation, commanderAuthority });
   }
   if (primary?.ok) {
     reconcileHermesRuntime({ root });
