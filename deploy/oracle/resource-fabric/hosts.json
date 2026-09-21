@@ -1,17 +1,17 @@
 {
-  "schema_version": 3,
-  "policy_id": "dial-resource-fabric-v3-three-node-provider-first",
-  "note": "Three-node estate: dial-hermes-control is Hermes/control plus bounded local fallback; oracle-admin is recovery/admin only; vekl-worker is background coordination only. Provider-first admission governs development before any Oracle-local execution.",
+  "schema_version": 4,
+  "policy_id": "dial-resource-fabric-v4-hybrid-cloud-provider-first",
+  "note": "Hybrid-cloud estate: logical host dial-hermes-control is the Netcup RS 1000 G12 CONTROL_AUTHORITY; oracle-admin remains Oracle recovery/admin only; vekl-worker remains Oracle background coordination only. Cross-cloud addresses are owner-approved private-overlay endpoints supplied at runtime. Provider-first admission still governs development execution.",
   "hosts": [
     {
       "host_id": "dial-hermes-control",
       "host_class": "CONTROL_AUTHORITY",
       "immutable_role": true,
-      "oci_shape": "VM.Standard.A1.Flex",
-      "architecture": "arm64",
-      "cpu_total": 2,
-      "memory_total_mb": 12288,
-      "private_ip": "10.0.0.184",
+      "oci_shape": null,
+      "architecture": "x86_64",
+      "cpu_total": 4,
+      "memory_total_mb": 8192,
+      "private_ip": null,
       "roles": [
         "HERMES_CONTROL",
         "BOUNDED_RECOVERY"
@@ -33,22 +33,31 @@
         "dial-recovery-agent.service",
         "dial-host-agent.timer"
       ],
-      "control_reservation_mb": 6144,
-      "development_pool_mb": 4096,
-      "background_pool_mb": 1024,
+      "control_reservation_mb": 4608,
+      "development_pool_mb": 2048,
+      "background_pool_mb": 512,
       "emergency_headroom_mb": 1024,
       "max_concurrent_heavy_jobs": 1,
       "transports": {
         "direct_ssh": true,
         "relay_ssh": true,
-        "oci_recovery": true
+        "oci_recovery": false,
+        "secondary_overlay": true
       },
       "toolchains": [
         "node22",
         "npm10",
         "python3",
         "git"
-      ]
+      ],
+      "provider": "netcup",
+      "provider_shape": "RS 1000 G12",
+      "network_identity": {
+        "mode": "OWNER_APPROVED_PRIVATE_OVERLAY",
+        "ssh_endpoint_env": "DIAL_FABRIC_DIAL_HERMES_CONTROL_SSH_HOST",
+        "mcp_bind_env": "DIAL_PRIVATE_MCP_BIND",
+        "public_ip_is_authority": false
+      }
     },
     {
       "host_id": "vekl-worker",
@@ -94,7 +103,8 @@
         "python3",
         "git"
       ],
-      "ocpu_total": 1
+      "ocpu_total": 1,
+      "provider": "oracle"
     },
     {
       "host_id": "oracle-admin",
@@ -151,7 +161,8 @@
         "python3",
         "git"
       ],
-      "ocpu_total": 1
+      "ocpu_total": 1,
+      "provider": "oracle"
     }
   ]
 }

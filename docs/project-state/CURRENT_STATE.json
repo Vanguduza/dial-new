@@ -1,20 +1,36 @@
 {
+  "schema_version": 2,
+  "state": "AUTHORIZED_PENDING_COMMIT",
+  "repository": "Vanguduza/dial-new",
+  "branch": "gpt/netcup-hermes-control-migration-20260921",
+  "source_parent": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "content_diff_sha256": "64175774a17615e0a4002069fde88862a76445fbfd9e9d9a5b793255abd7e284",
+  "changed_files": [
+    "deploy/netcup/hermes-control/README.md",
+    "deploy/netcup/hermes-control/bootstrap-rs1000.sh",
+    "deploy/netcup/hermes-control/migrate-from-oracle-control.sh",
+    "deploy/oracle/control-plane/CONTROL_PLANE_REGISTRY.json",
+    "deploy/oracle/execution-fabric/dial-private-mcp-bind.mjs",
+    "deploy/oracle/execution-fabric/phase3-bind-private-mcp.sh",
+    "deploy/oracle/execution-fabric/phase3-install-coordinator.sh",
+    "deploy/oracle/execution-fabric/phase3-register-nodes.sh",
+    "deploy/oracle/execution-fabric/phase3-verify.sh",
+    "deploy/oracle/execution-fabric/qualify-execution-fabric.sh",
+    "deploy/oracle/hermes-codex/bootstrap-host.sh",
+    "deploy/oracle/provisioning/50-free-tier-check.sh",
+    "deploy/oracle/resource-fabric/hosts.json",
+    "docs/project-state/authorizations/auth-20260921-owner-netcup-hermes-control-migration.json",
+    "ops/development-bootstrap/README.md",
+    "ops/development-bootstrap/lib/topology.mjs",
+    "ops/development-bootstrap/manifest.json",
+    "ops/development-bootstrap/supply-chain/PINS.json",
+    "tests/development-bootstrap.test.mjs"
+  ],
+  "authorization_ids": [
+    "auth-20260921-owner-netcup-hermes-control-migration"
+  ],
   "authority_classes": [
     "OWNER_EXPLICIT"
   ],
-  "authorization_ids": [
-    "auth-20260919-owner-canonical-frontend-generation-architecture",
-    "auth-20260919-owner-master-merge-full-current-scope"
-  ],
-  "branch": "gpt/canonical-screen-feature-graph-20260919",
-  "changed_files": [
-    "agent-system/orchestration/frontend-generation-architecture.mjs",
-    "tests/orchestration-vekl-research-loop.test.mjs"
-  ],
-  "content_diff_sha256": "59ac22b9beef18e50852e03e7104f841145280f22e931b71b277ebc5db6d1781",
-  "observed_at_utc": "2026-09-19T20:35:02.250576+00:00",
-  "repository": "Vanguduza/dial-new",
-  "schema_version": 2,
-  "source_parent": "cf18fa0d4a0ade33d584aaa74a8c2468fd84a442",
-  "state": "AUTHORIZED_PENDING_COMMIT"
+  "observed_at_utc": "2026-09-21T15:08:34.438608+00:00"
 }

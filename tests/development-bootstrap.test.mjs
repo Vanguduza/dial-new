@@ -44,10 +44,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(fs.statSync(path.join(root, 'bootstrap/auth-evidence', `${token}.resume.json`)).mode & 0o077).toBe(0);
   });
 
-  it('reconciles the control topology and accepts E2 logical CPU reporting', () => {
+  it('reconciles the Netcup control topology and accepts E2 logical CPU reporting', () => {
     const hosts = loadHosts();
     const control = hosts.hosts.find((host) => host.host_id === 'dial-hermes-control');
-    expect(control).toMatchObject({ cpu_total: 2, memory_total_mb: 12288 });
+    expect(control).toMatchObject({ provider: 'netcup', provider_shape: 'RS 1000 G12', architecture: 'x86_64', cpu_total: 4, memory_total_mb: 8192, private_ip: null });
     expect(authorityConsistency({ repoDir, hosts }).ok).toBe(true);
     const e2 = hosts.hosts.find((host) => host.host_id === 'vekl-worker');
     expect(compareHostInventory({ entry: e2, facts: { hostname: e2.host_id, architecture: 'x86_64', cpu_total: 2, memory_total_mb: 980, private_ipv4: [e2.private_ip] } }).ok).toBe(true);
