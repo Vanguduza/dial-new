@@ -287,22 +287,32 @@ export async function resolveSharedProjectContext({
   };
 }
 
+async function readStdinJson() {
+  let input = '';
+  for await (const chunk of process.stdin) input += chunk;
+  if (!input.trim()) return {};
+  try { return JSON.parse(input); } catch { return {}; }
+}
+
 async function main() {
   const args = process.argv.slice(2);
+  const hook = args.includes('--hook');
   const get = (name, fallback = null) => {
     const i = args.indexOf(name);
     return i >= 0 ? args[i + 1] : fallback;
   };
+  const payload = hook ? await readStdinJson() : {};
   const result = await resolveSharedProjectContext({
-    project: get('--project', 'dial'),
+    project: get('--project', process.env.DIAL_PROJECT_ID || 'dial'),
     repoDir: get('--repo', process.env.DIAL_REPO_DIR || DEFAULT_REPO),
     root: process.env.DIAL_CONTROL_HOME,
-    harnessId: get('--harness', process.env.DIAL_HARNESS_ID || 'chatgpt-hermes'),
-    userMessage: get('--message', process.env.DIAL_USER_MESSAGE || ''),
-    featureId: get('--feature'),
-    contextProfile: get('--profile', 'IMPLEMENTATION'),
+    harnessId: get('--harness', process.env.DIAL_HARNESS_ID || payload.harness_id || 'chatgpt-hermes'),
+    userMessage: get('--message', payload.user_message ?? payload.message ?? process.env.DIAL_USER_MESSAGE ?? ''),
+    featureId: get('--feature', payload.feature_id ?? process.env.DIAL_FEATURE_ID ?? null),
+    contextProfile: get('--profile', process.env.DIAL_CONTEXT_PROFILE || 'IMPLEMENTATION'),
   });
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+  if (hook) process.stdout.write(`${JSON.stringify({ context: result.delivery.rendered, context_fingerprint: result.context_fingerprint, delivery_mode: result.delivery.mode })}\n`);
+  else process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 }
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
