@@ -4,7 +4,7 @@
 
 This document defines the canonical generation path for DIAL product-experience screens.
 
-The architecture is screen-first, feature-bound, truth-hydrated, Stitch-authored and DDE-productionized. It incorporates the canonical `SCREEN_REGISTRY.json` and `SCREEN_FEATURE_GRAPH.json` as the execution spine rather than treating screen generation as free-form prompt work.
+The architecture is screen-first, feature-bound, truth-hydrated, Stitch-authored and DIAL-productionized. It incorporates the canonical `SCREEN_REGISTRY.json` and `SCREEN_FEATURE_GRAPH.json` as the execution spine rather than treating screen generation as free-form prompt work.
 
 ## Authority model
 
@@ -27,12 +27,16 @@ STITCH INTERACTION & MOTION AUTHORSHIP
         ↓
 EXPERIENCE AUTHORITY FREEZE
         ↓
-DDE PRODUCTION BINDING
+DIAL-NATIVE PRODUCTION BINDING
         ↓
 VISUAL + INTERACTION + FUNCTIONAL PARITY CERTIFICATION
 ```
 
 Reverse authority flow is forbidden. A design provider cannot redefine product truth, business rules, security behavior, money behavior, catalogue truth, fitment truth or canonical application ownership.
+
+## Independence from DDE
+
+DDE is a separate independent development system and is currently one project that may be developed through the DIAL Development System. This DIAL frontend architecture has no runtime, state, memory, deployment or authority dependency on DDE. Similar frontend concepts in DDE are independent unless the owner later authorizes an explicit bounded integration. DDE outage, redesign or repository evolution must not change DIAL frontend capability.
 
 ## Design-provider policy
 
@@ -331,7 +335,7 @@ The enrichment pass is reviewed against explicit structured artifacts:
 - `AdvancedComponentDecisionSet` — carousel, zoom viewer, sheet, tabs, sticky action, etc.;
 - `InteractionAcceptanceMatrix` — no dead controls, capability backing, touch targets, accessibility, reduced motion, performance, state restoration and gesture-conflict checks.
 
-Provider-enriched HTML is quarantined in the same way as visual output. The structured interaction contract is what DDE uses to implement safe production behavior.
+Provider-enriched HTML is quarantined in the same way as visual output. The structured interaction contract is what DIAL's native frontend production layer uses to implement safe production behavior.
 
 ## ExperienceAuthorityArtifact
 
@@ -348,11 +352,11 @@ It locks:
 
 Its productionization policy is `PRESERVE_EXPERIENCE_AUTHORITY_NO_REDESIGN`.
 
-## DDE productionization
+## DIAL-native productionization
 
-DDE's job is no longer to look at a screenshot and improvise a similar UI.
+DIAL's native frontend production layer does not look at a screenshot and improvise a similar UI.
 
-DDE receives the frozen experience and creates a `ProductionBindingContract` mapping:
+The DIAL-native frontend production layer receives the frozen experience and creates a `ProductionBindingContract` mapping:
 
 - visual components → production components;
 - screen actions → real domain actions;
@@ -441,7 +445,7 @@ The architecture gate checks at minimum:
 - provider routing with no silent substitution;
 - canonical Stitch packet compilation;
 - visual freeze before interaction/motion;
-- DDE no-redesign productionization policy.
+- DIAL-native no-redesign productionization policy.
 
 ## Canonical files
 
@@ -471,4 +475,4 @@ A DIAL screen must never reach automatic design as “a prompt asking an AI to m
 
 It reaches Stitch as a compiled, hash-bound execution context that already knows **which DIAL application it belongs to, which canonical screen it is, which features and states it realizes, which authoritative data exists, which capabilities are real, which design authorities apply, what the screen is responsible for, and what it is forbidden to become**.
 
-Stitch owns visual and interaction authorship inside that envelope. DDE owns faithful productionization. Product/domain authority remains superior to both.
+Stitch owns visual and interaction authorship inside that envelope. DIAL's native frontend production layer owns faithful productionization. Product/domain authority remains superior to both.
