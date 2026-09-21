@@ -129,7 +129,7 @@ export function getProject(slug, root) {
   return project;
 }
 
-export function registerProject({ slug, name, repoDir, projectKind = 'software', classification = 'APPLICATION_PROJECT', managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [], repositoryMode = 'DEDICATED_REPOSITORY', scopeSelector = null, independence = null } = {}, root) {
+export function registerProject({ slug, name, repoDir, projectKind = 'software', classification = 'APPLICATION_PROJECT', uiBearing = null, managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [], repositoryMode = 'DEDICATED_REPOSITORY', scopeSelector = null, independence = null } = {}, root) {
   const key = validateSlug(slug);
   const registry = ensureProjectRegistry(root);
   const repo = normalizeRepo(repoDir);
@@ -146,6 +146,7 @@ export function registerProject({ slug, name, repoDir, projectKind = 'software',
     project_id: key,
     name: String(name || key).trim().slice(0, 120),
     classification: String(classification || 'APPLICATION_PROJECT').trim().slice(0, 100),
+    ui_bearing: typeof uiBearing === 'boolean' ? uiBearing : null,
     repo_dir: repo,
     repository_mode: repositoryMode === 'SHARED_MONOREPO' ? 'SHARED_MONOREPO' : 'DEDICATED_REPOSITORY',
     scope_selector: scopeSelector && typeof scopeSelector === 'object' ? scopeSelector : null,
@@ -182,7 +183,7 @@ function main() {
   if (command === 'init') return console.log(JSON.stringify(ensureProjectRegistry(), null, 2));
   if (command === 'list') return console.log(JSON.stringify(listProjects(), null, 2));
   if (command === 'show') return console.log(JSON.stringify(getProject(args[0] || 'dial'), null, 2));
-  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', classification: argValue(args, '--classification') || 'APPLICATION_PROJECT', repositoryMode: argValue(args, '--repository-mode') || 'DEDICATED_REPOSITORY', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY' }), null, 2));
+  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', classification: argValue(args, '--classification') || 'APPLICATION_PROJECT', uiBearing: argValue(args, '--ui-bearing') === null ? null : argValue(args, '--ui-bearing') === 'true', repositoryMode: argValue(args, '--repository-mode') || 'DEDICATED_REPOSITORY', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY' }), null, 2));
   throw new Error(`unknown project registry command: ${command}`);
 }
 if (import.meta.url === `file://${process.argv[1]}`) { try { main(); } catch (error) { console.error(error.stack || error); process.exitCode = 1; } }
