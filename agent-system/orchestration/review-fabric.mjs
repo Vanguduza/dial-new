@@ -178,9 +178,11 @@ export function listReviewJobs({ state = 'inbox', reviewerHarness = null } = {},
   let files = [];
   try { files = fs.readdirSync(dir).filter((x) => x.endsWith('.json')).sort(); }
   catch (error) { if (error?.code !== 'ENOENT') throw error; }
+  const nowMs = Date.now();
   return files.map((file) => readJson(`review/${state}/${file}`, null, root))
     .filter(Boolean)
-    .filter((job) => !reviewerHarness || job.reviewer_harness === reviewerHarness);
+    .filter((job) => !reviewerHarness || job.reviewer_harness === reviewerHarness)
+    .filter((job) => state !== 'inbox' || !job.not_before || Date.parse(job.not_before) <= nowMs);
 }
 
 export function claimReviewJob({ reviewJobId, reviewerHarness } = {}, root = DEFAULT_CONTROL_HOME) {
@@ -212,6 +214,43 @@ export function loadReviewCheckpoint(job, root = DEFAULT_CONTROL_HOME) {
   const checkpoint = readJson(job?.checkpoint_rel, null, root);
   if (!checkpoint || checkpoint.checkpoint_hash !== job?.checkpoint_hash) throw new Error('review checkpoint missing or hash mismatch');
   return checkpoint;
+}
+
+export function releaseReviewJob({
+  reviewJobId,
+  reviewerHarness,
+  error,
+  retryable = true,
+  retryAfterSeconds = 300,
+  maxAttempts = 5,
+} = {}, root = DEFAULT_CONTROL_HOME) {
+  const jobId = safeReviewId(reviewJobId);
+  const job = readJson(jobRel('processing', jobId), null, root);
+  if (!job) throw new Error(`processing review job not found: ${jobId}`);
+  if (job.reviewer_harness !== reviewerHarness) throw new Error('reviewer harness mismatch');
+  const attempts = Number(job.attempt || 0);
+  const canRetry = retryable && attempts < maxAttempts;
+  const next = {
+    ...job,
+    state: canRetry ? 'QUEUED' : 'FAILED',
+    last_error: clean(error, 3000),
+    failed_at: now(),
+    not_before: canRetry ? new Date(Date.now() + Math.max(30, retryAfterSeconds) * 1000).toISOString() : null,
+  };
+  const targetState = canRetry ? 'inbox' : 'failed';
+  writeJsonAtomic(jobRel(targetState, jobId), next, root);
+  try { fs.unlinkSync(resolveControlPath(jobRel('processing', jobId), root)); } catch {}
+  appendJsonl('events/review-fabric.jsonl', {
+    event: canRetry ? 'REVIEW_JOB_REQUEUED' : 'REVIEW_JOB_FAILED',
+    review_job_id: jobId,
+    checkpoint_id: job.checkpoint_id,
+    reviewer_harness: reviewerHarness,
+    attempt: attempts,
+    error: next.last_error,
+    not_before: next.not_before,
+    at: next.failed_at,
+  }, root);
+  return next;
 }
 
 export function submitReviewReceipt({
