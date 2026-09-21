@@ -90,16 +90,18 @@ echo "Preflight passed; pinned full Commander runtime is installed."
 # re-parsed and compared against the original before anything is written, and a
 # timestamped backup is taken whenever a write actually happens.
 # ---------------------------------------------------------------------------
-DIAL_DRY_RUN="$DRY_RUN" python3 - "$HERMES_CONFIG" "$COMMANDER_WRAPPER" <<'PY'
+COMMANDER_GATEWAY="$REPO_DIR/agent-system/orchestration/hermes-commander-gateway.mjs"
+[[ -f "$COMMANDER_GATEWAY" ]] || fail "Hermes Commander authority gateway is missing"
+DIAL_DRY_RUN="$DRY_RUN" python3 - "$HERMES_CONFIG" "$COMMANDER_GATEWAY" <<'PY'
 import os, re, sys, shutil, tempfile, datetime, yaml
 
-path, wrapper = sys.argv[1], sys.argv[2]
+path, gateway = sys.argv[1], sys.argv[2]
 dry = os.environ.get('DIAL_DRY_RUN') == '1'
 KEY, PARENT = 'dial_local_commander', 'mcp_servers'
 
 spec = {
-    'command': wrapper,
-    'args': [],
+    'command': 'node',
+    'args': [gateway, '--commander-id', 'dial_hermes_local_commander'],
     'enabled': True,
     'connect_timeout': 20,
     'timeout': 600,
@@ -217,6 +219,6 @@ systemctl --user is-active --quiet "$GATEWAY_UNIT" || fail "Hermes gateway did n
 echo 'Hermes local MCP plane installed.'
 echo '- Claude Code -> dial-oracle-control (typed DIAL MCP)'
 echo '- Codex       -> dial-oracle-control (typed DIAL MCP)'
-echo '- Hermes      -> dial_local_commander (local FULL Desktop Commander MCP)'
+echo '- Hermes      -> dial_local_commander (FULL Desktop Commander via authority-enforcing gateway)'
 echo '- Owner       -> dial-owner-commander-remote.service (remote transport into Hermes, when paired)'
 echo '- Recovery    -> GitHub + OCI Run Command; oracle-admin is not a normal project entry point'
