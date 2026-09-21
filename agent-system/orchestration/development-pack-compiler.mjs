@@ -188,6 +188,11 @@ export function recordDevelopmentPackArtifact({
     const current = readJson(packRel(slug), null, root);
     if (!current) throw new Error(`DEVELOPMENT_PACK_NOT_SEEDED:${slug}`);
     if (current.maturity_state === 'INVALIDATED' || current.invalidation) throw new Error(`DEVELOPMENT_PACK_INVALIDATED:${slug}`);
+    if (artifactType === 'baseline') throw new Error('USE_REBASELINE_FOR_BASELINE_CHANGE');
+    const project = getProject(slug, root);
+    const observedSha = git(project.repo_dir, ['rev-parse', 'HEAD']);
+    const expectedSha = current.artifacts?.baseline?.repository_sha;
+    if (!expectedSha || observedSha !== expectedSha) throw new Error(`DEVELOPMENT_PACK_BASELINE_STALE:${slug}`);
     const evidenceRefs = validateEvidenceRefs(artifact.evidence_refs);
     const revision = Number(current.revision || 0) + 1;
     const normalized = {
@@ -226,20 +231,73 @@ export function recordDevelopmentPackArtifact({
   });
 }
 
+export function rebaselineDevelopmentPack({ projectSlug, root = DEFAULT_CONTROL_HOME } = {}) {
+  const slug = validProjectId(projectSlug);
+  return withLock(slug, root, () => {
+    const current = readJson(packRel(slug), null, root);
+    if (!current) throw new Error(`DEVELOPMENT_PACK_NOT_SEEDED:${slug}`);
+    const project = getProject(slug, root);
+    const revision = Number(current.revision || 0) + 1;
+    const next = {
+      ...current,
+      revision,
+      pack_id: `DP-${slug}-${String(revision).padStart(6, '0')}`,
+      project: {
+        ...current.project,
+        project_id: project.project_id || project.slug,
+        display_name: project.name,
+        classification: project.classification || current.project.classification,
+        project_kind: project.project_kind || current.project.project_kind,
+        ui_bearing: typeof project.ui_bearing === 'boolean' ? project.ui_bearing : current.project.ui_bearing,
+        repository_mode: project.repository_mode || current.project.repository_mode,
+        scope_selector: project.scope_selector || current.project.scope_selector,
+      },
+      artifacts: initialArtifacts(project),
+      maturity_state: 'DRAFT',
+      build_ready: false,
+      blockers: [],
+      invalidation: null,
+      updated_at: now(),
+    };
+    const evaluation = evaluateDevelopmentPackGates(next);
+    next.maturity_state = evaluation.maturity_state;
+    next.build_ready = false;
+    next.blockers = evaluation.blockers;
+    next.evaluation = evaluation;
+    writeJsonAtomic(packRel(slug), next, root);
+    writeJsonAtomic(historyRel(slug, revision), next, root);
+    appendJsonl('events/development-pack.jsonl', {
+      event: 'DEVELOPMENT_PACK_REBASELINED',
+      project: slug,
+      pack_id: next.pack_id,
+      repository_sha: next.artifacts.baseline.repository_sha,
+      at: now(),
+    }, root);
+    return { pack: next, evaluation };
+  });
+}
+
 export function developmentPackStatus(projectSlug, root = DEFAULT_CONTROL_HOME) {
   const slug = validProjectId(projectSlug);
   const pack = readJson(packRel(slug), null, root);
   if (!pack) return { project: slug, state: 'NOT_SEEDED', build_ready: false };
   const evaluation = evaluateDevelopmentPackGates(pack);
+  const project = getProject(slug, root);
+  const observedSha = git(project.repo_dir, ['rev-parse', 'HEAD']);
+  const expectedSha = pack.artifacts?.baseline?.repository_sha ?? null;
+  const baselineCurrent = Boolean(expectedSha && observedSha === expectedSha);
+  const driftBlocker = { gate_id: 'GATE-00', reasons: ['REPOSITORY_DRIFT'] };
   return {
     project: slug,
     pack_id: pack.pack_id,
     revision: pack.revision,
-    maturity_state: evaluation.maturity_state,
-    build_ready: evaluation.build_ready,
-    blockers: evaluation.blockers,
+    maturity_state: baselineCurrent ? evaluation.maturity_state : 'INVALIDATED',
+    build_ready: baselineCurrent && evaluation.build_ready,
+    baseline_state: baselineCurrent ? 'CURRENT' : 'STALE',
+    blockers: baselineCurrent ? evaluation.blockers : [driftBlocker, ...evaluation.blockers.filter((x) => x.gate_id !== 'GATE-00')],
     gates: evaluation.gates,
-    repository_sha: pack.artifacts?.baseline?.repository_sha ?? null,
+    repository_sha: expectedSha,
+    observed_repository_sha: observedSha || null,
     updated_at: pack.updated_at,
   };
 }
@@ -310,6 +368,7 @@ async function main() {
   if (command === 'seed') return console.log(JSON.stringify(seedDevelopmentPack({ projectSlug, root }), null, 2));
   if (command === 'status') return console.log(JSON.stringify(developmentPackStatus(projectSlug, root), null, 2));
   if (command === 'baseline') return console.log(JSON.stringify(checkDevelopmentPackBaseline(projectSlug, root), null, 2));
+  if (command === 'rebaseline') return console.log(JSON.stringify(rebaselineDevelopmentPack({ projectSlug, root }), null, 2));
   if (command === 'invalidate') {
     return console.log(JSON.stringify(invalidateDevelopmentPack({
       projectSlug,
