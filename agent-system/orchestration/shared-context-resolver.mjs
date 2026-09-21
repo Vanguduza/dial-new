@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { captureGitState } from './checkpoint-store.mjs';
 import { loadHandoffCapsule } from './handoff-builder.mjs';
 import { resolveFeatureId } from './context-broker.mjs';
-import { projectTruthHash } from './knowledge-graph-core.mjs';
+import { hashObject, projectTruthHash } from './knowledge-graph-core.mjs';
 import {
   buildContextCacheIdentity,
   composeContextDelta,
@@ -19,6 +19,7 @@ import {
 import { searchSharedMemory, sharedMemoryCursor } from './shared-project-memory.mjs';
 import { readJson, writeJsonAtomic } from './state-store.mjs';
 import { reviewCheckpointStatus } from './review-fabric.mjs';
+import { resolveProjectRepository } from './project-repository-resolver.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -113,23 +114,27 @@ export async function resolveSharedProjectContext({
   if (!harnessId) throw new Error('harnessId is required');
   const profile = contextProfile(requestedProfile);
   const projectId = projectSlug(project);
-  const git = captureGitState(repoDir);
-  const resolvedFeature = featureId || resolveFeatureId({ userMessage, repoDir }) || null;
-  const truthHash = projectTruthHash(repoDir);
+  const projectRepo = resolveProjectRepository({ project: projectId, root, defaultRepoDir: repoDir });
+  const effectiveRepoDir = projectRepo.repo_dir;
+  const git = captureGitState(effectiveRepoDir);
+  const resolvedFeature = featureId || resolveFeatureId({ userMessage, repoDir: effectiveRepoDir }) || null;
+  const truthHash = projectId === 'dial'
+    ? projectTruthHash(effectiveRepoDir)
+    : hashObject({ authority_mode: projectRepo.authority_mode, repository_sha: git.commit, origin_url: projectRepo.origin_url });
   const graph = currentGraph(root);
   const memoryCursor = sharedMemoryCursor(projectId, root);
 
   const priorUnderstanding = loadRepositoryUnderstandingSnapshot(projectId, root);
   const understanding = buildRepositoryUnderstandingSnapshot({
     project: projectId,
-    repoDir,
+    repoDir: effectiveRepoDir,
     root,
     featureId: resolvedFeature,
   });
   const repoDelta = priorUnderstanding && priorUnderstanding.understanding_hash !== understanding.understanding_hash
     ? buildRepositoryUnderstandingDelta({
         project: projectId,
-        repoDir,
+        repoDir: effectiveRepoDir,
         root,
         fromSnapshot: priorUnderstanding,
         toSnapshot: understanding,
@@ -146,7 +151,7 @@ export async function resolveSharedProjectContext({
     limit: profile === 'DEEP_AUDIT' ? 40 : profile === 'ARCHITECTURE' ? 28 : 20,
   }, root);
   const reviewState = activeReview(projectId, root);
-  const canonical = canonicalFeatureContext(repoDir, resolvedFeature);
+  const canonical = projectId === 'dial' ? canonicalFeatureContext(effectiveRepoDir, resolvedFeature) : '';
 
   const identity = buildContextCacheIdentity({
     project: projectId,
@@ -169,6 +174,8 @@ export async function resolveSharedProjectContext({
     const sections = {
       authority: {
         project: projectId,
+        repository_origin: projectRepo.origin_url,
+        authority_mode: projectRepo.authority_mode,
         project_truth_hash: truthHash,
         source_of_truth_order: [
           'canonical repository and Project Truth',
