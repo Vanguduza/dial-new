@@ -30,6 +30,10 @@ FULL_PROBE="$(node "$REPO_DIR/deploy/oracle/hermes-codex/probe-full-local-comman
 grep -q '"status": "GREEN"' <<<"$FULL_PROBE" || { echo "$FULL_PROBE" >&2; fail "Commander did not expose the required full tool surface"; }
 pass "Live Commander tools/list proves process, mutation, configuration and inspection capabilities"
 
+AUTHORITY_PROBE="$(node "$REPO_DIR/agent-system/orchestration/probe-commander-authority-gateway.mjs" 2>&1)" || { echo "$AUTHORITY_PROBE" >&2; fail "Commander authority gateway probe failed"; }
+grep -q '"status": "GREEN"' <<<"$AUTHORITY_PROBE" || { echo "$AUTHORITY_PROBE" >&2; fail "Commander authority gateway is not GREEN"; }
+pass "Authority gateway fails closed without a grant and allows owner/registered-automation calls"
+
 GATEWAY_UNIT="$(systemctl --user list-units --type=service --all --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
 [[ -n "$GATEWAY_UNIT" ]] || fail "Hermes gateway unit not found"
 systemctl --user is-active --quiet "$GATEWAY_UNIT" || fail "Hermes gateway inactive"
