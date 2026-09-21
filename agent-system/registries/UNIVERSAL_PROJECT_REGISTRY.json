@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "registry_id": "dial-universal-project-registry-v1",
+  "authority": "PROJECT_ADMISSION_INVENTORY_NOT_PROJECT_TRUTH",
+  "development_system": {
+    "project_id": "dial-development-system",
+    "classification": "DEVELOPMENT_SYSTEM",
+    "repository": {
+      "origin_url": "https://github.com/Vanguduza/dial-new.git",
+      "default_branch": "master"
+    },
+    "owns_complete_e2e_pipeline": true,
+    "normal_authority_plane": "HERMES"
+  },
+  "project_classes": [
+    "PRODUCT_PROJECT",
+    "INDEPENDENT_DEVELOPMENT_SYSTEM_PROJECT",
+    "APPLICATION_PROJECT",
+    "LIBRARY_PROJECT",
+    "INFRASTRUCTURE_PROJECT",
+    "RESEARCH_PROJECT"
+  ],
+  "invariants": [
+    "Every development target has a project_id.",
+    "DIAL products are project tenants, not development-system authority.",
+    "DDE is an independent development system and is only a project target from DIAL's perspective.",
+    "Project state, memory, research, evidence and authority are isolated by project_id.",
+    "No project runtime may mutate DIAL development-system authority merely by being registered.",
+    "Future projects are admitted through the same registry contract rather than code changes to project allowlists."
+  ],
+  "seed_projects": {
+    "dde": {
+      "project_id": "dde",
+      "display_name": "DDE",
+      "classification": "INDEPENDENT_DEVELOPMENT_SYSTEM_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dde.git",
+        "default_branch": "main"
+      },
+      "independence": {
+        "runtime_dependency_of_dial_development_system": false,
+        "authority_dependency_of_dial_development_system": false,
+        "shared_product_truth": false,
+        "shared_mutable_memory": false,
+        "shared_deployment_lifecycle": false
+      }
+    },
+    "van": {
+      "project_id": "van",
+      "display_name": "VAN",
+      "classification": "APPLICATION_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/Van.git",
+        "default_branch": "main"
+      }
+    },
+    "dial-groceries": {
+      "project_id": "dial-groceries",
+      "display_name": "DIAL Groceries",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "GROCERIES"}
+    },
+    "dial-logistics": {
+      "project_id": "dial-logistics",
+      "display_name": "DIAL Logistics",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "LOGISTICS"}
+    },
+    "dial-care": {
+      "project_id": "dial-care",
+      "display_name": "DIAL Care",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "CARE"}
+    },
+    "dial-a-spare": {
+      "project_id": "dial-a-spare",
+      "display_name": "DIAL a Spare",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "SPARE"}
+    },
+    "dial-a-tech": {
+      "project_id": "dial-a-tech",
+      "display_name": "DIAL a Tech",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "TECH"}
+    },
+    "dial-laundry": {
+      "project_id": "dial-laundry",
+      "display_name": "DIAL Laundry",
+      "classification": "PRODUCT_PROJECT",
+      "repository": {
+        "origin_url": "https://github.com/Vanguduza/dial-new.git",
+        "default_branch": "master",
+        "mode": "SHARED_MONOREPO"
+      },
+      "scope_selector": {"module": "LAUNDRY"}
+    }
+  },
+  "admission": {
+    "future_projects_supported": true,
+    "runtime_registry_rel": "projects/registry.json",
+    "required_fields": [
+      "project_id",
+      "display_name",
+      "classification",
+      "repository.origin_url",
+      "repository.default_branch"
+    ],
+    "project_id_pattern": "^[a-z0-9][a-z0-9._:-]{0,220}$",
+    "default_isolation": "STRICT_PROJECT_NAMESPACE"
+  }
+}
