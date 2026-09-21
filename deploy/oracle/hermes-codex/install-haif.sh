@@ -19,7 +19,7 @@ check_secret_mode() {
   mode="$(stat -c '%a' "$file")"
   [[ "$mode" == "600" || "$mode" == "400" ]] || { echo "ERROR: $file must be mode 600 or 400 (found $mode)" >&2; exit 1; }
 }
-for secret_file in /var/lib/dial-control/secrets/xkiro-api.key /var/lib/dial-control/secrets/haif-r2.env /home/ubuntu/.dde-control/secrets/xkiro-api.key /home/ubuntu/.dde-control/secrets/haif-r2.env; do check_secret_mode "$secret_file"; done
+for secret_file in /var/lib/dial-control/secrets/xkiro-api.key /var/lib/dial-control/secrets/haif-r2.env; do check_secret_mode "$secret_file"; done
 
 mkdir -p "$SHARED_HOME/releases" "$SYSTEMD_DIR"
 cleanup_tmp() {
@@ -77,53 +77,16 @@ LockPersonality=true
 [Install]
 WantedBy=default.target
 EOF
-cat >"$SYSTEMD_DIR/dde-hermes-haif.service" <<EOF
-[Unit]
-Description=DDE Hermes xKiro Auxiliary Intelligence Fabric tenant
-After=network-online.target
-Wants=network-online.target
-ConditionPathExists=/home/ubuntu/.dde-control/secrets/xkiro-api.key
-
-[Service]
-Type=simple
-WorkingDirectory=$SHARED_HOME/current
-Environment=HAIF_PROJECT=dde
-Environment=HAIF_CONTROL_ROOT=/home/ubuntu/.dde-control
-Environment=HAIF_PROVIDER_ROOT=/home/ubuntu/.dde-control/operations/auxiliary/provider
-Environment=HAIF_KEY_FILE=/home/ubuntu/.dde-control/secrets/xkiro-api.key
-Environment=HAIF_PORT=9142
-Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
-EnvironmentFile=-/home/ubuntu/.dde-control/secrets/haif-r2.env
-UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=$NODE_BIN $SHARED_HOME/current/agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs daemon
-Restart=on-failure
-RestartSec=5
-NoNewPrivileges=true
-PrivateTmp=true
-PrivateDevices=true
-ProtectSystem=strict
-ProtectHome=read-only
-ReadOnlyPaths=$SHARED_HOME/current
-ReadWritePaths=/home/ubuntu/.dde-control
-InaccessiblePaths=/var/lib/dial-control
-RestrictSUIDSGID=true
-LockPersonality=true
-
-[Install]
-WantedBy=default.target
-EOF
-
 systemctl --user daemon-reload
-systemctl --user enable dial-hermes-haif.service dde-hermes-haif.service
+systemctl --user enable dial-hermes-haif.service
 
-for unit in dial-hermes-haif.service dde-hermes-haif.service; do
-  # Restart active tenants so they execute the newly installed immutable release.
-  if systemctl --user restart "$unit"; then
-    systemctl --user is-active "$unit" >/dev/null 2>&1 || true
-  fi
-done
+# Restart only DIAL's HAIF. DDE is an independent development system and must
+# install, configure and operate its own auxiliary intelligence runtime from its
+# own repository and control plane if it chooses to use one.
+if systemctl --user restart dial-hermes-haif.service; then
+  systemctl --user is-active dial-hermes-haif.service >/dev/null 2>&1 || true
+fi
 
-echo "HAIF shared runtime installed: $RUNTIME_DIR"
+echo "HAIF DIAL runtime installed: $RUNTIME_DIR"
 echo "DIAL tenant: port 9141, /var/lib/dial-control only"
-echo "DDE tenant: port 9142, /home/ubuntu/.dde-control only"
-echo "A tenant remains inactive when its own xKiro key file is absent."
+echo "DDE is not installed, configured or controlled by this script."
