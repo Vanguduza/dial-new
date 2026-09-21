@@ -17,6 +17,7 @@ import {
   loadRepositoryUnderstandingSnapshot,
 } from './repository-understanding-snapshot.mjs';
 import { admitMemoryCandidate, writeMemoryCandidate } from './shared-project-memory.mjs';
+import { fileURLToPath } from 'node:url';
 
 function now() { return new Date().toISOString(); }
 function projectSlug(project) {
@@ -33,8 +34,12 @@ function clean(value, max = 4000) {
 function cleanList(values, max = 40) {
   return Array.isArray(values) ? values.slice(0, max).map((x) => clean(x, 1000)).filter(Boolean) : [];
 }
+const FABRIC_REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 function loadFabricRegistry(repoDir) {
-  const file = path.join(repoDir, 'agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json');
+  const candidate = path.join(repoDir || '', 'agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json');
+  const file = fs.existsSync(candidate)
+    ? candidate
+    : path.join(FABRIC_REPO, 'agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json');
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 function jobRel(state, jobId) { return `review/${state}/${jobId}.json`; }
