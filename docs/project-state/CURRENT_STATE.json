@@ -11,9 +11,10 @@
     "docs/project-state/authorizations/auth-20260921-owner-spmrf-final-integration.json"
   ],
   "content_diff_sha256": "0a25e6567d345373a8f594f2345a520186f44baf92fb6df51a5146f1380899c7",
-  "observed_at_utc": "2026-09-21T06:05:37.221250+00:00",
+  "observed_at_utc": "2026-09-21T06:10:00.000000+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
   "source_parent": "357c689625b1fc214c9524ce28331b72964da087",
-  "state": "AUTHORIZED_PENDING_COMMIT"
+  "state": "AUTHORIZED_PENDING_COMMIT",
+  "verification_note": "Final PR verification retrigger after Project Truth scope reconciliation; generated evidence only."
 }
