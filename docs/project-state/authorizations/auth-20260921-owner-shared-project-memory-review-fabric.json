@@ -21,6 +21,7 @@
     "agent-system/orchestration/handoff-builder.mjs",
     "agent-system/orchestration/hermes-runtime-executor.mjs",
     "agent-system/orchestration/project-context-cache.mjs",
+    "agent-system/orchestration/project-repository-resolver.mjs",
     "agent-system/orchestration/read-only-review-runner.mjs",
     "agent-system/orchestration/repository-understanding-snapshot.mjs",
     "agent-system/orchestration/review-coordinator.mjs",
