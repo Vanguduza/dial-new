@@ -13,6 +13,7 @@ import {
 } from './review-fabric.mjs';
 import { handoff } from './supervisor.mjs';
 import { readJson } from './state-store.mjs';
+import { resolveProjectRepository } from './project-repository-resolver.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -185,11 +186,15 @@ function send(value) { process.stdout.write(`${JSON.stringify(value)}\n`); }
 function result(id, value) { return { jsonrpc: '2.0', id, result: value }; }
 function clean(value, max = 4000) { return String(value ?? '').trim().slice(0, max); }
 
+function repoFor(project) {
+  return resolveProjectRepository({ project: project || defaultProject, root, defaultRepoDir: repoDir }).repo_dir;
+}
+
 async function invoke(name, args = {}) {
   if (name === 'project_memory_resolve') {
     return resolveSharedProjectContext({
       project: args.project || defaultProject,
-      repoDir,
+      repoDir: repoFor(args.project || defaultProject),
       root,
       harnessId: args.harness_id || defaultHarness,
       userMessage: args.message || '',
@@ -222,7 +227,7 @@ async function invoke(name, args = {}) {
       checkpointId: args.checkpoint_id || null,
     }, root);
   }
-  if (name === 'project_handoff') return handoff({ repoDir, root, input: args });
+  if (name === 'project_handoff') return handoff({ repoDir: repoFor(args.project || defaultProject), root, input: { ...args, project: args.project || defaultProject } });
   if (name === 'review_publish_checkpoint') {
     return publishReviewCheckpoint({
       project: args.project || defaultProject,
