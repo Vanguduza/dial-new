@@ -29,6 +29,30 @@ DIAL_REVIEW_CLAUDE_MODEL=claude-sonnet-5
 ENV
 chmod 600 "$CONTROL_HOME/config/spmrf.env"
 
+python3 - "$CONTROL_HOME/config/project-repositories.json" "$REPO_DIR" "$VAN_REPO" <<'PY'
+import json,os,sys
+target,dial,van=sys.argv[1:4]
+projects={
+  'dial':{
+    'path':os.path.realpath(dial),
+    'origin_url':'https://github.com/Vanguduza/dial-new.git',
+    'default_branch':'master',
+    'authority_mode':'DIAL_PROJECT_TRUTH',
+  }
+}
+if os.path.isdir(os.path.join(van,'.git')):
+  projects['van']={
+    'path':os.path.realpath(van),
+    'origin_url':'https://github.com/Vanguduza/Van.git',
+    'default_branch':'main',
+    'authority_mode':'REPOSITORY_CANON',
+  }
+os.makedirs(os.path.dirname(target),exist_ok=True)
+with open(target,'w',encoding='utf-8') as f:
+  json.dump({'schema_version':1,'projects':projects},f,indent=2); f.write('\n')
+os.chmod(target,0o600)
+PY
+
 # Register the common memory MCP with Hermes without reducing or changing the
 # existing full Commander surfaces.
 python3 - "$HERMES_CONFIG" "$REPO_DIR" "$CONTROL_HOME" <<'PY'
