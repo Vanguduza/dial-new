@@ -44,7 +44,11 @@ cat > "$HOME/.local/bin/dial-owner-commander-probe" <<WRAP
 #!/usr/bin/env bash
 exec bash "$REPO_DIR/deploy/oracle/hermes-codex/probe-owner-remote-commander.sh" "\$@"
 WRAP
-chmod 0755 "$HOME/.local/bin/dial-owner-commander-pair" "$HOME/.local/bin/dial-owner-commander-probe"
+cat > "$HOME/.local/bin/dial-owner-hermes" <<WRAP
+#!/usr/bin/env bash
+exec node "$REPO_DIR/agent-system/orchestration/desktop-commander-owner-dispatch.mjs" "\$@"
+WRAP
+chmod 0755 "$HOME/.local/bin/dial-owner-commander-pair" "$HOME/.local/bin/dial-owner-commander-probe" "$HOME/.local/bin/dial-owner-hermes"
 
 systemctl --user daemon-reload
 systemctl --user enable "$UNIT" >/dev/null
