@@ -386,3 +386,29 @@ export function publishCheckpointIfChanged({
   if (cursor?.repository_sha === git.commit) return { published: false, reason: 'NO_NEW_COMMIT', repository_sha: git.commit };
   return publishReviewCheckpoint({ project, repoDir, root, authorHarness, featureId, summary });
 }
+
+async function main() {
+  const command = process.argv[2] || 'status';
+  if (command === 'publish-if-changed') {
+    const result = publishCheckpointIfChanged({
+      project: process.env.DIAL_PROJECT_ID || 'dial',
+      repoDir: process.env.DIAL_REPO_DIR || process.cwd(),
+      root: process.env.DIAL_CONTROL_HOME,
+      authorHarness: process.env.DIAL_HARNESS_ID || 'chatgpt-hermes',
+      featureId: process.env.DIAL_FEATURE_ID || null,
+      summary: process.env.DIAL_CHECKPOINT_SUMMARY || null,
+    });
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    return;
+  }
+  if (command === 'status') {
+    const checkpointId = process.argv[3];
+    if (!checkpointId) throw new Error('checkpoint id is required');
+    process.stdout.write(`${JSON.stringify(reviewCheckpointStatus(checkpointId, process.env.DIAL_CONTROL_HOME), null, 2)}\n`);
+    return;
+  }
+  throw new Error(`unknown review-fabric command: ${command}`);
+}
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
+}
