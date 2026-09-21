@@ -1,0 +1,68 @@
+name: One-time SPMRF Project Truth reconcile
+
+on:
+  push:
+    branches:
+      - 'gpt/shared-project-memory-review-fabric-20260921'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-time-spmrf-project-truth-reconcile
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Build one governed SPMRF commit
+        shell: bash
+        env:
+          BASE_SHA: 04bef8d27b3c57bbd25f3e5098c6c156164eb76b
+          CLEAN_BRANCH: gpt/shared-project-memory-review-fabric-20260921-clean
+          PREFLIGHT_WORKFLOW: .github/workflows/one-time-spmrf-preflight.yml
+          RECONCILE_WORKFLOW: .github/workflows/one-time-spmrf-reconcile.yml
+        run: |
+          set -euo pipefail
+
+          git fetch origin "$CLEAN_BRANCH":"refs/remotes/origin/$CLEAN_BRANCH"
+
+          git diff --binary --no-ext-diff --no-renames "$BASE_SHA"...HEAD -- .             ":(exclude)$PREFLIGHT_WORKFLOW"             ":(exclude)$RECONCILE_WORKFLOW" > /tmp/spmrf.patch
+          test -s /tmp/spmrf.patch
+
+          rm -rf /tmp/dial-spmrf-clean
+          git branch -D "$CLEAN_BRANCH" 2>/dev/null || true
+          git worktree add -b "$CLEAN_BRANCH" /tmp/dial-spmrf-clean "$BASE_SHA"
+
+          git -C /tmp/dial-spmrf-clean apply --binary --index /tmp/spmrf.patch
+
+          (
+            cd /tmp/dial-spmrf-clean
+            python3 scripts/project_truth_local.py record
+            git diff --cached --check
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "feat(memory): shared project memory and cross-harness review fabric"
+            python3 scripts/project_truth_local.py verify
+          )
+
+          git -C /tmp/dial-spmrf-clean push origin "HEAD:refs/heads/$CLEAN_BRANCH"
+          echo "CLEAN_COMMIT=$(git -C /tmp/dial-spmrf-clean rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Receipt
+        shell: bash
+        run: |
+          {
+            echo "### SPMRF Project Truth reconciliation"
+            echo "- source: `${{ github.sha }}`"
+            echo "- base: `04bef8d27b3c57bbd25f3e5098c6c156164eb76b`"
+            echo "- clean branch: `gpt/shared-project-memory-review-fabric-20260921-clean`"
+            echo "- clean commit: `$CLEAN_COMMIT`"
+          } >> "$GITHUB_STEP_SUMMARY"
