@@ -101,11 +101,14 @@ export function publishReviewCheckpoint({
   }
 
   const reviewerPlan = eligibleReviewers({ repoDir, authorHarness: harness, domains });
+  const fabricRegistry = loadFabricRegistry(repoDir);
+  const authorProviderFamily = fabricRegistry.harnesses?.find((row) => row.harness_id === harness)?.provider_family ?? null;
   const immutable = {
     schema_version: 1,
     project: projectSlug(project),
     feature_id: featureId ?? null,
     author_harness: harness,
+    author_provider_family: authorProviderFamily,
     repository_sha: git.commit,
     branch: git.branch,
     base_sha: baseSha ?? previousCursor?.repository_sha ?? null,
@@ -350,9 +353,12 @@ export function reviewCheckpointStatus(checkpointId, root = DEFAULT_CONTROL_HOME
     .filter((job) => job.checkpoint_id === checkpointId);
   const completed = jobs.filter((job) => job.state === 'COMPLETED');
   const receipts = completed.map((job) => readJson(job.receipt_rel, null, root)).filter(Boolean);
-  const providers = new Set(receipts.map((r) => r.model_provenance?.provider_family).filter(Boolean));
   const checkpointRel = jobs[0]?.checkpoint_rel;
   const checkpoint = checkpointRel ? readJson(checkpointRel, null, root) : null;
+  const providers = new Set([
+    checkpoint?.author_provider_family,
+    ...receipts.map((r) => r.model_provenance?.provider_family),
+  ].filter(Boolean));
   const required = Number(checkpoint?.review_policy?.required_independent_reviews || 1);
   const diversityRequired = checkpoint?.review_policy?.provider_diversity_required === true;
   const blockingFindings = receipts.flatMap((r) => r.findings || []).filter((f) => ['CRITICAL', 'HIGH'].includes(f.severity));
