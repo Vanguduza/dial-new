@@ -8,6 +8,8 @@ export const SHARED_ARCHETYPES = Object.freeze([
   'CRITIQUE_PLAN', 'CLUSTER_LOGS', 'ROOT_CAUSE_HYPOTHESIS',
   'CONTEXT_COMPRESSION', 'MEMORY_CONSOLIDATION', 'VISUAL_HEURISTIC_CRITIQUE',
   'RESEARCH_PREPROCESS',
+  'VEKL_EXTRACT', 'VEKL_SYNTHESIS', 'TRUTH_DOC_DRIFT_CANDIDATE',
+  'ARCHITECTURE_COMPARE', 'CI_EVIDENCE_CLUSTER', 'SOURCE_INTELLIGENCE',
 ]);
 
 export const DIAL_ARCHETYPES = Object.freeze([
@@ -17,10 +19,6 @@ export const DIAL_ARCHETYPES = Object.freeze([
   'GROCERY_FEEDBACK_CLUSTER',
 ]);
 
-export const DDE_ARCHETYPES = Object.freeze([
-  'VEKL_EXTRACT', 'VEKL_SYNTHESIS', 'TRUTH_DOC_DRIFT_CANDIDATE',
-  'ARCHITECTURE_COMPARE', 'CI_EVIDENCE_CLUSTER', 'SOURCE_INTELLIGENCE',
-]);
 const DENIED_INTENT = Object.freeze([
   /\b(write|edit|modify|patch|commit|push|merge|rebase)\b.{0,40}\b(repo|repository|source|code|file)/i,
   /\b(manager chair|orchestrate|manager runtime|development fallback)\b/i,
@@ -28,14 +26,19 @@ const DENIED_INTENT = Object.freeze([
   /\b(shell|powershell|bash|terminal command)\b/i,
 ]);
 
+function validProject(project) {
+  return /^[a-z0-9][a-z0-9._:-]{0,220}$/.test(String(project || ''));
+}
+
 export function archetypesFor(project) {
-  const local = project === 'dial' ? DIAL_ARCHETYPES : project === 'dde' ? DDE_ARCHETYPES : [];
+  if (!validProject(project)) throw new Error('HAIF project id is invalid');
+  const local = project === 'dial' || project === 'dial-development-system' ? DIAL_ARCHETYPES : [];
   return new Set([...SHARED_ARCHETYPES, ...local]);
 }
 
 export function assertAuxiliaryAuthority(task, { expectedProject } = {}) {
   if (!task || typeof task !== 'object') throw new Error('HAIF task is required');
-  if (!['dial', 'dde'].includes(task.project)) throw new Error('HAIF task project must be dial or dde');
+  if (!validProject(task.project)) throw new Error('HAIF task project id is invalid');
   if (expectedProject && task.project !== expectedProject) {
     throw new Error(`HAIF tenant mismatch: expected ${expectedProject}, got ${task.project}`);
   }
