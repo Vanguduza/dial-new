@@ -323,7 +323,8 @@ describe('HAIF DIAL-owned deployment isolation', () => {
   it('installs only the DIAL HAIF service and never manages an independent DDE runtime', () => {
     const installer = fs.readFileSync('deploy/oracle/hermes-codex/install-haif.sh', 'utf8');
     expect(installer).toContain('Environment=HAIF_PROJECT=dial');
-    expect(installer).toContain('InaccessiblePaths=/home/ubuntu/.dde-control');
+    expect(installer).toContain('ProtectHome=true');
+    expect(installer).toContain('/var/lib/dial-control/runtime/hermes-haif');
     expect(installer).toContain('UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY');
     expect(installer).toContain('ConditionPathExists=/var/lib/dial-control/secrets/xkiro-api.key');
     expect(installer).toContain('systemctl --user restart dial-hermes-haif.service');
