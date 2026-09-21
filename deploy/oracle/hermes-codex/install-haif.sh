@@ -70,7 +70,6 @@ ProtectSystem=strict
 ProtectHome=true
 ReadOnlyPaths=$SHARED_HOME/current
 ReadWritePaths=/var/lib/dial-control
-InaccessiblePaths=/home/ubuntu/.dde-control
 RestrictSUIDSGID=true
 LockPersonality=true
 
