@@ -107,9 +107,9 @@
       "method": "OCI_IMAGE_DIGEST",
       "image": "ubuntu:24.04",
       "digest": "sha256:224a1869083a311ef3f13648a154ba79832fbef6364d31493642ca03082da254",
-      "observed_platform": "linux/arm64",
+      "observed_platform": "multi-platform index (linux/amd64 and linux/arm64 resolved by Docker)",
       "pin_state": "PINNED",
-      "evidence": "RepoDigest on dial-hermes-control 2026-09-15; local sandbox executes on arm64 control host"
+      "evidence": "Official Docker Hub ubuntu:24.04 index digest; multi-platform index rechecked 2026-09-21 so the same pinned index supports Netcup x86_64 and Oracle arm64."
     },
     "whatsapp_pair_runtime": {
       "method": "LOCKFILE_PLUS_VENDORED_TARBALL",

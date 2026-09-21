@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# DIAL Hermes external runtime host bootstrap.
-# Run as the normal SSH user on Ubuntu 24.04 ARM64 with passwordless sudo.
+# DIAL Hermes control-authority host bootstrap (provider-neutral; Netcup/Oracle compatible).
+# Run as the normal service/SSH user on Ubuntu 24.04 x86_64 or ARM64 with passwordless sudo.
 # This script deliberately does NOT authenticate GitHub, Codex, Hermes or Claude.
 
 if [[ "$(uname -s)" != "Linux" ]]; then echo "ERROR: Linux is required" >&2; exit 1; fi
 ARCH="$(uname -m)"
-if [[ "$ARCH" != "aarch64" && "$ARCH" != "arm64" ]]; then echo "WARNING: expected Oracle Ampere ARM64; detected $ARCH" >&2; fi
+case "$ARCH" in
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "ERROR: unsupported architecture $ARCH (expected x86_64/amd64/aarch64/arm64)" >&2; exit 1 ;;
+esac
+if [[ -r /etc/os-release ]]; then
+  . /etc/os-release
+  [[ "${ID:-}" == "ubuntu" && "${VERSION_ID:-}" == "24.04" ]] || { echo "ERROR: Ubuntu 24.04 is required; detected ${PRETTY_NAME:-unknown}" >&2; exit 1; }
+fi
 command -v sudo >/dev/null 2>&1 || { echo "ERROR: sudo is required" >&2; exit 1; }
 
 SVC_USER="${DIAL_SERVICE_USER:-$USER}"

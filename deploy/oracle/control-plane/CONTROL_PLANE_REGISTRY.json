@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "policy_id": "dial-hybrid-control-plane-v3-three-node-recovery",
+  "schema_version": 3,
+  "policy_id": "dial-hybrid-control-plane-v4-netcup-control-oracle-recovery",
   "hosts": {
     "oracle-admin": {
       "host_class": "RECOVERY_CONTROL_ONLY",
@@ -38,10 +38,14 @@
       "transports": {
         "direct_ssh": true,
         "relay_ssh": true,
-        "oci_recovery": true,
-        "commander": false
+        "oci_recovery": false,
+        "commander": false,
+        "secondary_overlay": true
       },
-      "private_ip": "10.0.0.184"
+      "private_ip": null,
+      "provider": "netcup",
+      "provider_shape": "RS 1000 G12",
+      "network_endpoint_source": "DIAL_FABRIC_DIAL_HERMES_CONTROL_SSH_HOST"
     },
     "vekl-worker": {
       "host_class": "BACKGROUND_COORDINATOR",
@@ -116,7 +120,7 @@
   "transport_availability_never_implies_workload_permission": true,
   "development_plane": "HERMES_TYPED_DIAL_MCP_PROVIDER_FIRST_ONLY",
   "topology": {
-    "mode": "THREE_NODE_ACTIVE",
+    "mode": "HYBRID_CLOUD_THREE_NODE_ACTIVE",
     "active_hosts": [
       "oracle-admin",
       "dial-hermes-control",
