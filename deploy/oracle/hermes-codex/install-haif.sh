@@ -6,7 +6,7 @@ export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}"
 
 DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
-SHARED_HOME="${HAIF_SHARED_HOME:-$HOME/.local/share/hermes-haif}"
+SHARED_HOME="${HAIF_SHARED_HOME:-/var/lib/dial-control/runtime/hermes-haif}"
 SYSTEMD_DIR="$HOME/.config/systemd/user"
 NODE_BIN="$(command -v node)"
 REV="$(git -C "$DIAL_REPO_DIR" rev-parse HEAD)"
@@ -67,7 +67,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 PrivateDevices=true
 ProtectSystem=strict
-ProtectHome=read-only
+ProtectHome=true
 ReadOnlyPaths=$SHARED_HOME/current
 ReadWritePaths=/var/lib/dial-control
 InaccessiblePaths=/home/ubuntu/.dde-control
