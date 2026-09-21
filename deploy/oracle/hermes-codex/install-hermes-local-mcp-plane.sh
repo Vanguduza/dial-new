@@ -7,6 +7,9 @@ HERMES_CONFIG="${HERMES_CONFIG:-${HERMES_HOME}/config.yaml}"
 HERMES_DIR="${HERMES_AGENT_DIR:-${HERMES_HOME}/hermes-agent}"
 EXPECTED_HOST="${DIAL_HERMES_HOST_ID:-dial-hermes-control}"
 COMMANDER_PKG='@wonderwhy-er/desktop-commander@0.2.50'
+COMMANDER_PREFIX="${DIAL_LOCAL_COMMANDER_PREFIX:-$HOME/.local/share/dial/desktop-commander}"
+COMMANDER_WRAPPER="${DIAL_LOCAL_COMMANDER_WRAPPER:-$HOME/.local/bin/dial-local-commander-mcp}"
+COMMANDER_SPEC="$REPO_DIR/deploy/oracle/provisioning/commander-runtime"
 
 DRY_RUN=0
 ALLOW_MISSING_CLIENTS=0
@@ -28,7 +31,7 @@ fail(){ echo "ERROR: $*" >&2; exit 1; }
 # the state the qualifier reports as RED.
 # ---------------------------------------------------------------------------
 [[ "$(hostname)" == "$EXPECTED_HOST" ]] || fail "must run on ${EXPECTED_HOST}; got $(hostname)"
-command -v npx >/dev/null 2>&1 || fail "npx is required for local Desktop Commander MCP"
+command -v npm >/dev/null 2>&1 || fail "npm is required for the pinned local Desktop Commander MCP runtime"
 command -v python3 >/dev/null 2>&1 || fail "python3 is required"
 python3 -c 'import yaml' 2>/dev/null || fail "python3 PyYAML is required (apt-get install -y python3-yaml)"
 [[ -f "$HERMES_CONFIG" ]] || fail "Hermes config missing: $HERMES_CONFIG"
@@ -57,10 +60,29 @@ if (( ${#MISSING_CLIENTS[@]} > 0 )); then
     fail "client CLI not on PATH: ${MISSING_CLIENTS[*]}. Install them (they must resolve for the owning user, not only for root), or re-run with --allow-missing-clients to proceed deliberately."
   fi
 fi
-echo "Preflight passed."
+[[ -f "$COMMANDER_SPEC/package.json" && -f "$COMMANDER_SPEC/package-lock.json" ]] || fail "canonical Commander lock files missing"
+locked_version="$(node -e 'const p=require(process.argv[1]); process.stdout.write(p.packages["node_modules/@wonderwhy-er/desktop-commander"]?.version||"")' "$COMMANDER_SPEC/package-lock.json")"
+[[ "$locked_version" == "0.2.50" ]] || fail "Commander lock version mismatch: $locked_version"
+mkdir -p "$COMMANDER_PREFIX" "$(dirname "$COMMANDER_WRAPPER")"
+cp "$COMMANDER_SPEC/package.json" "$COMMANDER_PREFIX/package.json"
+cp "$COMMANDER_SPEC/package-lock.json" "$COMMANDER_PREFIX/package-lock.json"
+lock_hash="$(sha256sum "$COMMANDER_SPEC/package-lock.json" | awk '{print $1}')"
+marker="$COMMANDER_PREFIX/.package-lock.sha256"
+if [[ ! -x "$COMMANDER_PREFIX/node_modules/.bin/desktop-commander" || ! -f "$marker" || "$(cat "$marker" 2>/dev/null || true)" != "$lock_hash" ]]; then
+  npm --prefix "$COMMANDER_PREFIX" ci --ignore-scripts --no-fund --no-audit
+  printf '%s' "$lock_hash" > "$marker"
+  chmod 0644 "$marker"
+fi
+cat > "$COMMANDER_WRAPPER" <<WRAPPER
+#!/usr/bin/env bash
+set -euo pipefail
+exec "$COMMANDER_PREFIX/node_modules/.bin/desktop-commander" "\$@"
+WRAPPER
+chmod 0755 "$COMMANDER_WRAPPER"
+echo "Preflight passed; pinned full Commander runtime is installed."
 
 # ---------------------------------------------------------------------------
-# Register the subordinate read-only Commander under mcp_servers.
+# Register the subordinate FULL-CAPABILITY Commander under mcp_servers.
 #
 # The live Hermes config is edited in place by splicing only this one block. A
 # full YAML round-trip would silently discard operator comments, anchors and
@@ -68,29 +90,20 @@ echo "Preflight passed."
 # re-parsed and compared against the original before anything is written, and a
 # timestamped backup is taken whenever a write actually happens.
 # ---------------------------------------------------------------------------
-DIAL_DRY_RUN="$DRY_RUN" python3 - "$HERMES_CONFIG" "$COMMANDER_PKG" <<'PY'
+DIAL_DRY_RUN="$DRY_RUN" python3 - "$HERMES_CONFIG" "$COMMANDER_WRAPPER" <<'PY'
 import os, re, sys, shutil, tempfile, datetime, yaml
 
-path, package = sys.argv[1], sys.argv[2]
+path, wrapper = sys.argv[1], sys.argv[2]
 dry = os.environ.get('DIAL_DRY_RUN') == '1'
 KEY, PARENT = 'dial_local_commander', 'mcp_servers'
 
 spec = {
-    'command': 'npx',
-    'args': ['-y', package],
+    'command': wrapper,
+    'args': [],
     'enabled': True,
     'connect_timeout': 20,
-    'timeout': 60,
+    'timeout': 600,
     'supports_parallel_tool_calls': False,
-    'tools': {
-        'include': [
-            'read_file', 'read_multiple_files', 'list_directory', 'get_file_info',
-            'start_search', 'get_more_search_results', 'list_processes',
-            'list_sessions', 'get_config',
-        ],
-        'resources': False,
-        'prompts': False,
-    },
 }
 
 def indent_of(line): return len(line) - len(line.lstrip(' '))
@@ -153,7 +166,7 @@ if {k: v for k, v in (before.get(PARENT) or {}).items() if k != KEY} != \
     sys.exit('ERROR: splice altered sibling MCP servers; config left untouched')
 
 if updated == original:
-    print('Hermes config already matches the pinned read-only Commander surface; no change.')
+    print('Hermes config already matches the pinned full-capability Commander surface; no change.')
     sys.exit(0)
 if dry:
     print('DRY RUN: would add/refresh %s.%s in %s (no write performed).' % (PARENT, KEY, path))
@@ -187,14 +200,13 @@ if (( DRY_RUN )); then
 fi
 
 # Claude Code and Codex receive only the typed DIAL operator MCP. They do not
-# receive a direct Desktop Commander registration. Hermes owns the subordinate
-# local Commander toolset and therefore remains the mediation boundary.
+# receive a direct Desktop Commander registration. Hermes owns the full subordinate
+# local Commander capability surface and remains the sole project authority.
 bash "$REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
 
-# The control host must not expose an independent remote Commander authority.
-# Its Commander is a child MCP owned by Hermes; oracle-admin remains the remote
-# recovery Commander. Retire any legacy user service if present.
-systemctl --user disable --now dial-desktop-commander.service >/dev/null 2>&1 || true
+# Do not disable the owner-facing remote Commander on dial-hermes-control.
+# The outer remote device is transport into Hermes; this local child MCP is Hermes'
+# actuator. They have distinct identities and may coexist.
 
 GATEWAY_UNIT="$(systemctl --user list-unit-files --type=service --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
 [[ -n "$GATEWAY_UNIT" ]] || fail "Hermes gateway systemd unit not found"
@@ -205,5 +217,6 @@ systemctl --user is-active --quiet "$GATEWAY_UNIT" || fail "Hermes gateway did n
 echo 'Hermes local MCP plane installed.'
 echo '- Claude Code -> dial-oracle-control (typed DIAL MCP)'
 echo '- Codex       -> dial-oracle-control (typed DIAL MCP)'
-echo '- Hermes      -> dial_local_commander (local read-only Desktop Commander MCP)'
-echo '- oracle-admin remote Commander remains the independent recovery plane'
+echo '- Hermes      -> dial_local_commander (local FULL Desktop Commander MCP)'
+echo '- Owner       -> dial-owner-commander-remote.service (remote transport into Hermes, when paired)'
+echo '- Recovery    -> GitHub + OCI Run Command; oracle-admin is not a normal project entry point'
