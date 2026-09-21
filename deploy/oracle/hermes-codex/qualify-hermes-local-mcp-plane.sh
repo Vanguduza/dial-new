@@ -13,16 +13,18 @@ python3 - "$HERMES_CONFIG" <<'PY' || exit 1
 import os, sys, yaml
 cfg=yaml.safe_load(open(sys.argv[1],encoding='utf-8')) or {}
 server=(cfg.get('mcp_servers') or {}).get('dial_local_commander') or {}
-expected=os.path.expanduser('~/.local/bin/dial-local-commander-mcp')
-assert server.get('command') == expected, server
-assert server.get('args') == [], server
+assert server.get('command') == 'node', server
+args=server.get('args') or []
+assert len(args) == 3, server
+assert args[0].endswith('/agent-system/orchestration/hermes-commander-gateway.mjs'), server
+assert args[1:] == ['--commander-id','dial_hermes_local_commander'], server
 assert server.get('enabled') is True, server
 assert server.get('supports_parallel_tool_calls') is False, server
 assert server.get('timeout') == 600, server
 tools=server.get('tools')
 assert tools in (None, {}), 'Hermes Commander must not carry a tool allowlist/filter'
 PY
-pass "Hermes owns the pinned FULL local Desktop Commander MCP surface without a capability filter"
+pass "Hermes owns the pinned FULL local Desktop Commander MCP surface through the authority gateway without a capability filter"
 
 FULL_PROBE="$(node "$REPO_DIR/deploy/oracle/hermes-codex/probe-full-local-commander.mjs" 2>&1)" || { echo "$FULL_PROBE" >&2; fail "live full Commander tools/list probe failed"; }
 grep -q '"status": "GREEN"' <<<"$FULL_PROBE" || { echo "$FULL_PROBE" >&2; fail "Commander did not expose the required full tool surface"; }
