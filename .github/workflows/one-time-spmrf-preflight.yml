@@ -1,0 +1,35 @@
+name: One-time SPMRF preflight
+
+on:
+  push:
+    branches:
+      - 'gpt/shared-project-memory-review-fabric-20260921'
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Parse new orchestration modules
+        run: |
+          set -euo pipefail
+          for f in             agent-system/orchestration/shared-project-memory.mjs             agent-system/orchestration/project-context-cache.mjs             agent-system/orchestration/repository-understanding-snapshot.mjs             agent-system/orchestration/shared-context-resolver.mjs             agent-system/orchestration/review-fabric.mjs             agent-system/orchestration/read-only-review-runner.mjs             agent-system/orchestration/review-coordinator.mjs             agent-system/orchestration/commander-automation-client.mjs             agent-system/orchestration/project-repository-resolver.mjs             agent-system/orchestration/shared-memory-mcp.mjs; do
+            node --check "$f"
+          done
+      - name: Parse deployment scripts
+        run: |
+          bash -n deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh
+          bash -n deploy/oracle/hermes-codex/install-trading-memory-peer.sh
+          bash -n deploy/oracle/hermes-codex/hermes-hooks/dial-pre-turn-context.sh
+          bash -n deploy/oracle/hermes-codex/hermes-hooks/dial-post-turn-checkpoint.sh
+      - name: SPMRF unit tests
+        run: npx vitest run tests/orchestration-shared-project-memory.test.mjs
