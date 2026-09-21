@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - id: prepare
         name: Build bounded OCI Run Command
@@ -125,7 +125,7 @@ jobs:
     timeout-minutes: 10
     environment: oracle-recovery
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - id: prepare
         name: Validate action and build bounded OCI Run Command
