@@ -22,6 +22,7 @@ function refs(row) {
 
 export function evaluateDevelopmentPackGates(pack = {}) {
   const uiBearing = pack.project?.ui_bearing === true;
+  const uiApplicabilityKnown = typeof pack.project?.ui_bearing === 'boolean';
   const developmentSystem = pack.project?.classification === 'DEVELOPMENT_SYSTEM';
   const gates = [];
 
@@ -57,29 +58,29 @@ export function evaluateDevelopmentPackGates(pack = {}) {
     featurePass ? [] : ['FEATURE_GRAPH_INCOMPLETE'], refs(features)));
 
   const screens = artifact(pack, 'screen_registry');
-  const screenApplicable = uiBearing;
-  const screenPass = !screenApplicable || (
+  const screenApplicable = uiBearing || !uiApplicabilityKnown;
+  const screenPass = uiApplicabilityKnown && (!uiBearing || (
     screens?.applicable === true
     && positive(screens?.screens_total)
     && bool(screens?.required_states_mapped)
     && bool(screens?.navigation_mapped)
     && bool(screens?.platform_behavior_mapped)
     && zero(screens?.unreachable_required_screens)
-  );
+  ));
   gates.push(result('GATE-04', 'Screen Registry complete', screenApplicable, screenPass,
-    screenPass ? [] : ['SCREEN_REGISTRY_INCOMPLETE'], refs(screens)));
+    screenPass ? [] : [!uiApplicabilityKnown ? 'UI_APPLICABILITY_UNDECLARED' : 'SCREEN_REGISTRY_INCOMPLETE'], refs(screens)));
 
   const realization = artifact(pack, 'screen_feature_proof');
-  const realizationPass = !screenApplicable || (
+  const realizationPass = uiApplicabilityKnown && (!uiBearing || (
     realization?.applicable === true
     && zero(realization?.orphan_required_features)
     && zero(realization?.orphan_screens)
     && zero(realization?.orphan_actions)
     && zero(realization?.controls_without_action)
     && zero(realization?.actions_without_runtime_consumer)
-  );
+  ));
   gates.push(result('GATE-05', 'Bidirectional Screen x Feature proof', screenApplicable, realizationPass,
-    realizationPass ? [] : ['SCREEN_FEATURE_PROOF_INCOMPLETE'], refs(realization)));
+    realizationPass ? [] : [!uiApplicabilityKnown ? 'UI_APPLICABILITY_UNDECLARED' : 'SCREEN_FEATURE_PROOF_INCOMPLETE'], refs(realization)));
 
   const research = artifact(pack, 'research');
   const denominator = Number(research?.denominator || 0);
@@ -154,6 +155,19 @@ export function evaluateDevelopmentPackGates(pack = {}) {
 
   const applicable = gates.filter((gate) => gate.applicable);
   const failures = applicable.filter((gate) => gate.state !== 'PASS');
+  const failed = new Set(failures.map((gate) => gate.gate_id));
+  let maturity = 'BUILD_READY';
+  if (failed.has('GATE-00') || failed.has('GATE-01')) maturity = 'DRAFT';
+  else if (['GATE-02','GATE-03','GATE-04','GATE-05'].some((id) => failed.has(id))) maturity = 'MAPPED';
+  else if (failed.has('GATE-06')) maturity = 'RESEARCH_READY';
+  else if (failed.has('GATE-07')) maturity = 'RESEARCH_COMPLETE';
+  else if (failed.has('GATE-08')) maturity = 'DESIGN_READY';
+  else if (failed.has('GATE-09')) maturity = 'ARCHITECTURE_READY';
+  else if (['GATE-10','GATE-11','GATE-12','GATE-13'].some((id) => failed.has(id))) maturity = 'IMPLEMENTATION_READY';
+  if (pack.maturity_state === 'INVALIDATED' || pack.invalidation) maturity = 'INVALIDATED';
+  const invalidated = maturity === 'INVALIDATED';
+  const blockers = failures.map((gate) => ({ gate_id: gate.gate_id, reasons: gate.reasons }));
+  if (invalidated) blockers.unshift({ gate_id: 'PACK', reasons: ['PACK_INVALIDATED'] });
   return {
     schema_version: 1,
     project_id: pack.project?.project_id ?? null,
@@ -161,10 +175,10 @@ export function evaluateDevelopmentPackGates(pack = {}) {
     gates,
     applicable_gate_count: applicable.length,
     passed_gate_count: applicable.length - failures.length,
-    failed_gate_count: failures.length,
-    build_ready: failures.length === 0,
-    maturity_state: failures.length === 0 ? 'BUILD_READY' : 'IMPLEMENTATION_READY',
-    blockers: failures.map((gate) => ({ gate_id: gate.gate_id, reasons: gate.reasons })),
+    failed_gate_count: failures.length + (invalidated ? 1 : 0),
+    build_ready: failures.length === 0 && !invalidated,
+    maturity_state: maturity,
+    blockers,
   };
 }
 
