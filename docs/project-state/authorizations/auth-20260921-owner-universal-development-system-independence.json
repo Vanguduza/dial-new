@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-universal-development-system-independence",
+  "project": "dial-development-system",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "4c63212deea50e238542e42d652bac947b8666c864d92c87457091d009520a9f",
+  "owner_instruction_excerpt": "DDE and the DIAL Development System are independent development systems. DIAL develops DDE as a project. Changes to either system have no automatic effect on the other. The DIAL Development System and all its modules/components must be complete E2E and capable of developing any product.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-universal-dev-system-independence",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-21T09:36:00+02:00",
+  "base_sha": "f0fc3eb523249e48e495a7b53ac7c9812e639930",
+  "branch_scope": "gpt/universal-development-system-independence-20260921",
+  "authorized_paths": [
+    "agent-system/registries/UNIVERSAL_PROJECT_REGISTRY.json",
+    "agent-system/orchestration/project-registry.mjs",
+    "agent-system/orchestration/project-repository-resolver.mjs",
+    "agent-system/orchestration/auxiliary/authority-gate.mjs",
+    "agent-system/orchestration/auxiliary/r2-evidence-store.mjs",
+    "agent-system/orchestration/auxiliary/quota-allocator.mjs",
+    "agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs",
+    "agent-system/orchestration/providers/xkiro/xkiro-qualification.mjs",
+    "agent-system/orchestration/providers/xkiro/elite-benchmark.mjs",
+    "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+    "docs/dial/architecture/CANONICAL_FRONTEND_GENERATION_ARCHITECTURE.md",
+    "docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md",
+    "tests/universal-development-system-independence.test.mjs",
+    "vitest.config.ts",
+    "docs/project-state/authorizations/auth-20260921-owner-universal-development-system-independence.json"
+  ],
+  "change_classes": [
+    "universal_project_registry",
+    "development_system_independence",
+    "dde_project_separation",
+    "generic_project_scoping",
+    "frontend_independence",
+    "auxiliary_project_genericity"
+  ],
+  "owner_overrides": [
+    {
+      "overridden": "Any architecture or code path that treats DDE as a DIAL development-system subsystem, productionization dependency or authority source.",
+      "ruling": "DDE is an independent development system and ordinary project target of the DIAL Development System."
+    },
+    {
+      "overridden": "Any hard-coded project allowlist limited to dial/dde for reusable development-system infrastructure.",
+      "ruling": "Reusable DIAL development-system infrastructure must resolve admitted projects from the universal project registry or validated project identifiers."
+    }
+  ],
+  "material_scope_expansion": true,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "reusable": false,
+  "revoked": false
+}
