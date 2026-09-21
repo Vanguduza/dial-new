@@ -179,7 +179,7 @@ visual convergence + authority freeze
 Stitch interaction & motion enrichment
         |
         v
-DDE production binding
+DIAL-native production binding
         |
         v
 visual + interaction + functional parity
