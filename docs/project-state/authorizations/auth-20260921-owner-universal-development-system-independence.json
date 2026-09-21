@@ -34,6 +34,7 @@
     "docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md",
     "docs/orchestration/HERMES_XKIRO_HAIF.md",
     "docs/project-state/authorizations/auth-20260921-owner-universal-development-system-independence.json",
+    "tests/orchestration-haif.test.mjs",
     "tests/universal-development-system-independence.test.mjs",
     "vitest.config.ts"
   ],
