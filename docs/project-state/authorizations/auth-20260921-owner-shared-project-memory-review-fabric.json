@@ -13,7 +13,7 @@
   },
   "issued_at_utc": "2026-09-21T05:20:00Z",
   "base_sha": "04bef8d27b3c57bbd25f3e5098c6c156164eb76b",
-  "branch_scope": "gpt/shared-project-memory-review-fabric-20260921",
+  "branch_scope": "gpt/shared-project-memory-review-fabric-20260921-clean",
   "authorized_paths": [
     "agent-system/orchestration/checkpoint-store.mjs",
     "agent-system/orchestration/commander-automation-client.mjs",
