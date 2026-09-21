@@ -1,0 +1,77 @@
+name: One-time Hermes Commander Project Truth reconcile
+
+on:
+  push:
+    branches:
+      - 'gpt/hermes-full-commander-chatgpt-control-20260921'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-time-hermes-commander-reconcile
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Build one Project-Truth-authorized commit
+        shell: bash
+        env:
+          BASE_SHA: 1405daaa4b21b9ae35374282b191475e5bcc3ff6
+          CLEAN_BRANCH: gpt/hermes-full-commander-chatgpt-control-20260921-clean
+          TEMP_WORKFLOW: .github/workflows/one-time-hermes-commander-reconcile.yml
+        run: |
+          set -euo pipefail
+
+          git fetch origin "$CLEAN_BRANCH":"refs/remotes/origin/$CLEAN_BRANCH"
+
+          git diff --binary --no-ext-diff --no-renames "$BASE_SHA"...HEAD -- .             ":(exclude)$TEMP_WORKFLOW" > /tmp/hermes-commander.patch
+
+          test -s /tmp/hermes-commander.patch
+
+          rm -rf /tmp/dial-clean
+          git branch -D "$CLEAN_BRANCH" 2>/dev/null || true
+          git worktree add -b "$CLEAN_BRANCH" /tmp/dial-clean "$BASE_SHA"
+
+          git -C /tmp/dial-clean apply --binary --index /tmp/hermes-commander.patch
+
+          test -f /tmp/dial-clean/docs/project-state/authorizations/auth-20260921-owner-hermes-full-commander-chatgpt-control.json
+
+          (
+            cd /tmp/dial-clean
+            python3 scripts/project_truth_local.py record
+          )
+
+          git -C /tmp/dial-clean diff --cached --check
+
+          git -C /tmp/dial-clean config user.name "github-actions[bot]"
+          git -C /tmp/dial-clean config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C /tmp/dial-clean commit -m "feat(control): full Hermes Commander and resilient recovery"
+
+          (
+            cd /tmp/dial-clean
+            python3 scripts/project_truth_local.py verify
+          )
+
+          git -C /tmp/dial-clean push origin "HEAD:refs/heads/$CLEAN_BRANCH"
+
+          echo "CLEAN_COMMIT=$(git -C /tmp/dial-clean rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Receipt
+        shell: bash
+        run: |
+          {
+            echo "### Project Truth reconciliation"
+            echo "- source: `${{ github.sha }}`"
+            echo "- base: `1405daaa4b21b9ae35374282b191475e5bcc3ff6`"
+            echo "- clean branch: `gpt/hermes-full-commander-chatgpt-control-20260921-clean`"
+            echo "- clean commit: `$CLEAN_COMMIT`"
+          } >> "$GITHUB_STEP_SUMMARY"
