@@ -13,6 +13,7 @@ import {
 import { readJson } from './state-store.mjs';
 import { runReadOnlyCheckpointReview } from './read-only-review-runner.mjs';
 import { commanderProcessPid, withCommanderAutomation } from './commander-automation-client.mjs';
+import { resolveProjectRepository } from './project-repository-resolver.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -137,18 +138,20 @@ async function runTradingChatGptReview({ packet, repoDir }) {
 }
 
 async function processOne(job, { repoDir, root }) {
+  const projectRepo = resolveProjectRepository({ project: job.project, root, defaultRepoDir: repoDir });
+  const reviewRepoDir = projectRepo.repo_dir;
   const claimed = claimReviewJob({
     reviewJobId: job.review_job_id,
     reviewerHarness: job.reviewer_harness,
   }, root);
   const checkpoint = loadReviewCheckpoint(claimed, root);
-  const packet = buildPacket({ checkpoint, root, repoDir });
+  const packet = buildPacket({ checkpoint, root, repoDir: reviewRepoDir });
   try {
     let review;
     if (claimed.reviewer_harness === 'chatgpt-hermes' || claimed.reviewer_harness === 'claude-hermes') {
       review = await runReadOnlyCheckpointReview({
         harnessId: claimed.reviewer_harness,
-        repoDir,
+        repoDir: reviewRepoDir,
         packet,
       });
     } else if (claimed.reviewer_harness === 'chatgpt-trading') {
