@@ -520,7 +520,7 @@
       "installer": "deploy/oracle/execution-fabric/phase5-install-providers.sh",
       "workload": "HERMES_RUNTIME",
       "repo_rw_expected": false,
-      "note": "provider-first fabric \u00a714: the signed venue-decision guard must be active or every local execution fails closed",
+      "note": "provider-first fabric §14: the signed venue-decision guard must be active or every local execution fails closed",
       "check_ids": [
         "systemd.dial-venue-guard.service"
       ]
@@ -710,7 +710,7 @@
       "note": "provider-first local sandbox image; pinned tag, never :latest"
     }
   ],
-  "containers_note": "Provider-first execution uses one pinned local sandbox image on the control host (fabric \u00a78). No other container workloads exist; :latest tags are a finding.",
+  "containers_note": "Provider-first execution uses one pinned local sandbox image on the control host (fabric §8). No other container workloads exist; :latest tags are a finding.",
   "mcp_servers": [
     {
       "id": "mcp.dial-oracle-status",
@@ -1312,7 +1312,7 @@
     {
       "id": "cred.venue-signing-key",
       "tooling_kind": "CREDENTIAL",
-      "purpose": "Signed venue decisions (fabric \u00a714.1)",
+      "purpose": "Signed venue decisions (fabric §14.1)",
       "auth_type": "NON_INTERACTIVE_SECRET",
       "location": "/var/lib/dial-control/secrets/venue-ed25519.pem",
       "required_mode": "600",
@@ -1609,19 +1609,23 @@
     {
       "id": "net.private-mcp",
       "tooling_kind": "NETWORK",
-      "target": "http://10.0.0.184:9133/health",
-      "purpose": "private MCP bind on the control host (VCN only)",
+      "target": null,
+      "purpose": "private MCP reachability from vekl-worker to the logical dial-hermes-control across the owner-approved private cross-cloud fabric",
       "hosts": [
         "vekl-worker"
       ],
       "criticality": "MANDATORY",
-      "readiness_class": "CORE_DEVELOPMENT_REQUIRED"
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "resolve_via": "DIAL_PRIVATE_MCP_HEALTH",
+      "configuration_required": true,
+      "gate": "EXTERNAL-GATE-CROSS-CLOUD-PRIVATE-FABRIC-001",
+      "owner_action": "configure an authenticated private server-to-server path between Netcup dial-hermes-control and Oracle vekl-worker/oracle-admin; set DIAL_PRIVATE_MCP_HEALTH to the control overlay health URL; never expose port 9133 unauthenticated to the public Internet"
     },
     {
       "id": "net.cloudflare-access",
       "tooling_kind": "NETWORK",
       "target": null,
-      "purpose": "authenticated public MCP ingress for remote provider containers (fabric \u00a72.4/\u00a711); private VCN MCP remains separate",
+      "purpose": "authenticated public MCP ingress for remote provider containers (fabric §2.4/§11); private VCN MCP remains separate",
       "hosts": [
         "dial-hermes-control"
       ],

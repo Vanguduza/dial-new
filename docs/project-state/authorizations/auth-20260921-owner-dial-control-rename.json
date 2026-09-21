@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-dial-control-rename",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "47ef4f6e89ce0aed2570a5880867436d25708b199421288862ee30eed995628d",
+  "owner_instruction_excerpt": "Change the name to dial control.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-dial-control-rename",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-21T19:15:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    ".github/workflows/netcup-admin.yml",
+    "deploy/netcup/hermes-control/**",
+    "deploy/hybrid/estate-topology.json",
+    "deploy/oracle/resource-fabric/hosts.json",
+    "deploy/oracle/control-plane/CONTROL_PLANE_REGISTRY.json",
+    "docs/project-state/authorizations/auth-20260921-owner-dial-control-rename.json"
+  ],
+  "change_classes": [
+    "host_display_name",
+    "physical_hostname",
+    "compatibility_alias"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
