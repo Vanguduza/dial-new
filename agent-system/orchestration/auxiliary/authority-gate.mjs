@@ -32,7 +32,7 @@ function validProject(project) {
 
 export function archetypesFor(project) {
   if (!validProject(project)) throw new Error('HAIF project id is invalid');
-  const local = project === 'dial' || project === 'dial-development-system' ? DIAL_ARCHETYPES : [];
+  const local = project === 'dial' || project === 'dial-development-system' || project.startsWith('dial-') ? DIAL_ARCHETYPES : [];
   return new Set([...SHARED_ARCHETYPES, ...local]);
 }
 
