@@ -139,7 +139,7 @@ export function seedDevelopmentPack({ projectSlug, root = DEFAULT_CONTROL_HOME }
         display_name: project.name,
         classification: project.classification || 'APPLICATION_PROJECT',
         project_kind: project.project_kind || 'software',
-        ui_bearing: null,
+        ui_bearing: typeof project.ui_bearing === 'boolean' ? project.ui_bearing : null,
         repository_mode: project.repository_mode || 'DEDICATED_REPOSITORY',
         scope_selector: project.scope_selector || null,
       },
@@ -187,6 +187,7 @@ export function recordDevelopmentPackArtifact({
   return withLock(slug, root, () => {
     const current = readJson(packRel(slug), null, root);
     if (!current) throw new Error(`DEVELOPMENT_PACK_NOT_SEEDED:${slug}`);
+    if (current.maturity_state === 'INVALIDATED' || current.invalidation) throw new Error(`DEVELOPMENT_PACK_INVALIDATED:${slug}`);
     const evidenceRefs = validateEvidenceRefs(artifact.evidence_refs);
     const revision = Number(current.revision || 0) + 1;
     const normalized = {
