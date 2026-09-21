@@ -1,0 +1,58 @@
+name: One-time PR40 final verification
+
+on:
+  push:
+    branches:
+      - 'gpt/shared-project-memory-review-fabric-20260921'
+    paths:
+      - '.github/workflows/one-time-pr40-final-verify.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-final-pr40:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout combined DIAL integration branch
+        uses: actions/checkout@v4
+        with:
+          ref: gpt/hermes-full-commander-chatgpt-control-20260921-clean
+          fetch-depth: 0
+
+      - name: Verify PR-native Project Truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin master
+          python3 scripts/project_truth_local.py verify-pr \
+            --base origin/master \
+            --branch gpt/hermes-full-commander-chatgpt-control-20260921-clean
+
+      - name: Install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Core repository verification
+        run: npm run verify
+
+      - name: Commander and shared-memory regression suites
+        run: |
+          npx vitest run \
+            tests/hermes-full-commander-control.test.mjs \
+            tests/orchestration-shared-project-memory.test.mjs
+
+      - name: Final diff hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check origin/master...HEAD
+          node --check agent-system/orchestration/shared-memory-mcp.mjs
+          node --check agent-system/orchestration/review-coordinator.mjs
+          bash -n deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh
+          bash -n deploy/oracle/hermes-codex/install-trading-memory-peer.sh
