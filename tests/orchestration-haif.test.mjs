@@ -319,16 +319,16 @@ describe('HAIF daemon entrypoint', () => {
   });
 });
 
-describe('HAIF shared-runtime deployment isolation', () => {
-  it('installs project-scoped services with reciprocal inaccessible roots', () => {
+describe('HAIF DIAL-owned deployment isolation', () => {
+  it('installs only the DIAL HAIF service and never manages an independent DDE runtime', () => {
     const installer = fs.readFileSync('deploy/oracle/hermes-codex/install-haif.sh', 'utf8');
     expect(installer).toContain('Environment=HAIF_PROJECT=dial');
-    expect(installer).toContain('Environment=HAIF_PROJECT=dde');
     expect(installer).toContain('InaccessiblePaths=/home/ubuntu/.dde-control');
-    expect(installer).toContain('InaccessiblePaths=/var/lib/dial-control');
     expect(installer).toContain('UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY');
     expect(installer).toContain('ConditionPathExists=/var/lib/dial-control/secrets/xkiro-api.key');
-    expect(installer).toContain('ConditionPathExists=/home/ubuntu/.dde-control/secrets/xkiro-api.key');
-    expect(installer).toContain('systemctl --user restart \"$unit\"');
+    expect(installer).toContain('systemctl --user restart dial-hermes-haif.service');
+    expect(installer).not.toContain('dde-hermes-haif.service');
+    expect(installer).not.toContain('Environment=HAIF_PROJECT=dde');
+    expect(installer).not.toContain('ConditionPathExists=/home/ubuntu/.dde-control/secrets/xkiro-api.key');
   });
 });
