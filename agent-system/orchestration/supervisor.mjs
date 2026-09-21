@@ -257,7 +257,7 @@ export function selectRuntime({ root } = {}) {
 export function handoff({ repoDir = DEFAULT_REPO, root, input = {} } = {}) {
   const pointer = readJson('state/active-checkpoint.json', null, root);
   const checkpoint = pointer?.path ? readJson(pointer.path, null, root) : capture({ repoDir, root });
-  const project = process.env.DIAL_PROJECT_ID || 'dial';
+  const project = String(input.project || process.env.DIAL_PROJECT_ID || 'dial').toLowerCase();
   const previousUnderstanding = loadRepositoryUnderstandingSnapshot(project, root);
   const understanding = buildRepositoryUnderstandingSnapshot({
     project,
