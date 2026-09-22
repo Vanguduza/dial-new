@@ -529,6 +529,10 @@ jobs:
               echo "::error::Normal Ubuntu left RUNNING state while bootstrap was converging: $state_now"
               exit 41
             fi
+            if (( attempt == 30 )) && [[ "$ssh_now" != true ]]; then
+              echo "::error::SSH_RECOVERY_CHANNEL_UNREACHABLE: guest booted but SSH stayed closed for 5 minutes"
+              exit 43
+            fi
             if (( attempt % 6 == 0 )); then
               echo "OIDC_WAIT attempt=$attempt/180 state=$state_now ssh=$ssh_now"
             fi

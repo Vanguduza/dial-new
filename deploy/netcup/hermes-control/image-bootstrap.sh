@@ -25,10 +25,24 @@ stage IMAGE_STARTED
 [[ "$ID" == ubuntu && "$VERSION_ID" == 24.04 ]] || { echo "Ubuntu 24.04 required" >&2; exit 2; }
 case "$(uname -m)" in x86_64|amd64) ;; *) echo "x86_64 required" >&2; exit 2;; esac
 
+image_apt_retry() {
+  local attempt rc=1
+  for attempt in $(seq 1 10); do
+    if apt-get -o DPkg::Lock::Timeout=600 "$@"; then
+      return 0
+    else
+      rc=$?
+    fi
+    echo "image apt attempt $attempt failed rc=$rc; retrying" >&2
+    sleep $((attempt < 6 ? attempt * 10 : 60))
+  done
+  return "$rc"
+}
+
 hostnamectl set-hostname "$HOST"
 timedatectl set-timezone UTC || true
-apt-get update
-apt-get install -y --no-install-recommends \
+image_apt_retry update
+image_apt_retry install -y --no-install-recommends \
   sudo openssh-server ca-certificates curl git jq rsync xz-utils unzip zip \
   python3 python3-venv python3-pip python3-yaml pipx sqlite3 ripgrep openssl \
   build-essential cmake ninja-build pkg-config shellcheck \

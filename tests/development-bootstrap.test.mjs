@@ -337,6 +337,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain('PINNED_NODE_READY');
     expect(image).toContain('"$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs"');
     expect(image).toContain('SSH_RECOVERY_CHANNEL_READY');
+    expect(image).toContain('image_apt_retry()');
+    expect(image).toContain('DPkg::Lock::Timeout=600');
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
     expect(image).not.toContain('dial-control-bootstrap-oracle.key');
@@ -346,6 +348,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(oidcInstaller).not.toContain('ExecStart=/usr/local/bin/node');
     expect(recoveryWorkflow).toContain('NORMAL_BOOT_UNREACHABLE');
     expect(recoveryWorkflow).toContain('OIDC_BOOTSTRAP_TIMEOUT');
+    expect(recoveryWorkflow).toContain('SSH_RECOVERY_CHANNEL_UNREACHABLE');
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
