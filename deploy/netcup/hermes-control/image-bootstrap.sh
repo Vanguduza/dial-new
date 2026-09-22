@@ -42,10 +42,14 @@ if [[ -s /root/.ssh/authorized_keys ]]; then
   install -m 0600 -o "$ADMIN" -g "$ADMIN" /root/.ssh/authorized_keys "$HOME_DIR/.ssh/authorized_keys"
 fi
 
-if [[ -s /root/dial-control-bootstrap-oracle.key && -s /root/dial-control-bootstrap-oracle.pub ]]; then
-  install -m 0600 -o "$ADMIN" -g "$ADMIN" /root/dial-control-bootstrap-oracle.key "$HOME_DIR/.ssh/dial-bootstrap-oracle"
-  install -m 0644 -o "$ADMIN" -g "$ADMIN" /root/dial-control-bootstrap-oracle.pub "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub"
+if [[ ! -s "$HOME_DIR/.ssh/dial-bootstrap-oracle" ]]; then
+  sudo -u "$ADMIN" ssh-keygen -q -t ed25519 -N '' \
+    -C 'dial-control-zero-touch-bootstrap' \
+    -f "$HOME_DIR/.ssh/dial-bootstrap-oracle"
 fi
+chmod 0600 "$HOME_DIR/.ssh/dial-bootstrap-oracle"
+chmod 0644 "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub"
+chown "$ADMIN:$ADMIN" "$HOME_DIR/.ssh/dial-bootstrap-oracle" "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub"
 
 install -d -m 0700 -o "$ADMIN" -g "$ADMIN" /var/lib/dial-control "$STATE"
 install -d -m 0700 /etc/dial /etc/wireguard
@@ -80,9 +84,6 @@ EOF
 chown "$ADMIN:$ADMIN" "$HOME_DIR/.config/environment.d/10-dial-host.conf"
 chmod 0644 "$HOME_DIR/.config/environment.d/10-dial-host.conf"
 
-if [[ -s /root/dial-control-bootstrap-wg.key && ! -s /etc/wireguard/dial-netcup.key ]]; then
-  install -m 0600 /root/dial-control-bootstrap-wg.key /etc/wireguard/dial-netcup.key
-fi
 if [[ ! -s /etc/wireguard/dial-netcup.key ]]; then
   wg genkey >/etc/wireguard/dial-netcup.key
   chmod 0600 /etc/wireguard/dial-netcup.key
@@ -203,6 +204,7 @@ bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
   echo "adb=$(adb version 2>/dev/null | head -1 || true)"
   echo "oci=$(oci --version 2>/dev/null || true)"
   echo "wireguard_public_key=$(cat /etc/wireguard/dial-netcup.pub)"
+  echo "bootstrap_ssh_public_key=$(cat "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub")"
   echo "rev51_pack_id=DIAL-DEV-SYS-REV5.1"
   echo "rev51_build_ready=false"
   echo "rev51_new_external_tools=QUALIFICATION_GATED"
