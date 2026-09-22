@@ -118,9 +118,16 @@ async function dispatch(body, claims) {
   const action=String(body.action||'');
   switch(action){
     case 'status': {
+      const receiptPath=path.join(CONTROL,'bootstrap/image-bootstrap.receipt');
+      const receiptExists=fs.existsSync(receiptPath);
+      const receipt=receiptExists ? fs.readFileSync(receiptPath,'utf8') : '';
+      const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
+      const repoHead=ubuntu("git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null").stdout.trim()||null;
       return {
         host:command('hostname').stdout.trim(),
-        bootstrap_receipt:fs.existsSync(path.join(CONTROL,'bootstrap/image-bootstrap.receipt')),
+        bootstrap_receipt:receiptExists,
+        bootstrap_ref:bootstrapRef,
+        repo_head:repoHead,
         oidc_ready:true,
         recovery_ready:fs.existsSync(path.join(ROOT,'github-oci-ready')),
         overlay_verified:fs.existsSync(path.join(ROOT,'overlay-verified')),

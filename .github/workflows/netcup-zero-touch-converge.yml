@@ -42,6 +42,10 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Assert current convergence authority
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
       - id: status
         name: Detect Dial Control readiness
         shell: bash
@@ -126,6 +130,11 @@ jobs:
           EOF
           chmod 0600 "$HOME/.oci/config"
           oci iam region list --limit 1 >/dev/null
+
+      - name: Reassert authority before estate mutation
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
 
       - name: Deliver encrypted OCI recovery identity to Dial Control
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
@@ -256,6 +265,11 @@ jobs:
           bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY" >/dev/null
           bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}' >/dev/null
 
+      - name: Reassert authority before migration prepare
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
       - name: Prepare migration while old control remains authoritative
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
         run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-prepare"}' >/dev/null
@@ -272,9 +286,19 @@ jobs:
           bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"rotate-identities"}' >/dev/null
           bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}' >/dev/null
 
+      - name: Reassert authority before final cutover
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
       - name: Final migration cutover
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
         run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-cutover"}' >/dev/null
+
+      - name: Reassert authority before activation
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
 
       - name: Activate Dial Control
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
@@ -284,6 +308,11 @@ jobs:
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
         continue-on-error: true
         run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"ensure-github-admin-runner"}' >/dev/null
+
+      - name: Reassert authority before certification
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
 
       - name: Final zero-touch certification
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
