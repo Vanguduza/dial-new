@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "standard_id": "DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD",
+  "standard_version": "1.0.0",
+  "status": "LOCKED",
+  "governing_docs": [
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md"
+  ],
+  "doctrine": {
+    "project_preparation_gate_independent_of_runtime_gate": true,
+    "documentation_is_hypothesis_until_evidenced_for_existing_repositories": true,
+    "models_propose_deterministic_authorities_execute": true,
+    "learning_cannot_mint_authority": true,
+    "repository_and_live_qualification_separate": true,
+    "no_completion_without_observable_effect_or_explicit_external_gate": true
+  },
+  "causal_chain": [
+    "requirement",
+    "implementation",
+    "instantiation",
+    "registration",
+    "production_caller",
+    "authority_boundary",
+    "data_control_flow",
+    "executor",
+    "observable_result",
+    "persistence_audit",
+    "failure_handling",
+    "recovery",
+    "tests_evidence"
+  ],
+  "audit_worker_contract": [
+    "scope",
+    "evidence",
+    "proven",
+    "suspected",
+    "false_positives",
+    "uncertainty",
+    "uninspected"
+  ],
+  "status_vocabulary": [
+    "INTEGRATED_AND_EVIDENCED",
+    "IMPLEMENTED_NOT_REACHABLE",
+    "PARTIAL_IMPLEMENTATION",
+    "STUB_OR_PLACEHOLDER",
+    "TEST_ONLY",
+    "UI_ONLY",
+    "BACKEND_ONLY",
+    "CONTRADICTORY_IMPLEMENTATION",
+    "DEAD_OR_ORPHANED",
+    "EXTERNALLY_BLOCKED_REPOSITORY_COMPLETE",
+    "RUNTIME_CERTIFICATION_REQUIRED",
+    "DEVICE_CERTIFICATION_REQUIRED",
+    "OWNER_ACCEPTANCE_REQUIRED",
+    "DELIBERATE_SCOPE",
+    "SUPERSEDED_BY_BETTER_IMPLEMENTATION",
+    "OPEN_GAP",
+    "NOT_APPLICABLE"
+  ],
+  "required_gates": [
+    {
+      "id": "F0_BASELINE",
+      "conditional": false
+    },
+    {
+      "id": "F1_AUTHORITY",
+      "conditional": false
+    },
+    {
+      "id": "F2_REQUIREMENTS_TRUTH",
+      "conditional": false
+    },
+    {
+      "id": "F3_DU_DEPENDENCY",
+      "conditional": false
+    },
+    {
+      "id": "F4_FEATURE_SURFACE",
+      "conditional": false
+    },
+    {
+      "id": "F5_CAUSAL_PATHS",
+      "conditional": false
+    },
+    {
+      "id": "F6_RESEARCH_TOOLING",
+      "conditional": false
+    },
+    {
+      "id": "F7_ARCHITECTURE_AUTHORITY",
+      "conditional": false
+    },
+    {
+      "id": "F8_FAILURE_RECOVERY",
+      "conditional": false
+    },
+    {
+      "id": "F9_IMPLEMENTATION_DAG",
+      "conditional": false
+    },
+    {
+      "id": "F10_VERIFICATION_EVIDENCE",
+      "conditional": false
+    },
+    {
+      "id": "F11_ADVERSARIAL_FORENSICS",
+      "conditional": false
+    },
+    {
+      "id": "F12_SYMBIOTIC_LOOP",
+      "conditional": true,
+      "applies_when": [
+        "AGENTIC",
+        "ADAPTIVE",
+        "AUTONOMOUS",
+        "ASSISTANT",
+        "TRADING_INTELLIGENCE"
+      ]
+    },
+    {
+      "id": "F13_RUNTIME_EXTERNAL_MATRIX",
+      "conditional": false
+    },
+    {
+      "id": "F14_ANTI_GAP_MUTATION",
+      "conditional": false
+    },
+    {
+      "id": "F15_BUILD_READY_CERTIFICATE",
+      "conditional": false
+    }
+  ],
+  "ready_statuses": [
+    "PASS",
+    "NOT_APPLICABLE"
+  ],
+  "certificate_status": "FORENSIC_BUILD_READY",
+  "stale_if_authority_binding_changes": true,
+  "task_envelope_binding_required": true,
+  "emergency_exception": {
+    "name": "OWNER_AUTHORIZED_RECOVERY_ONLY",
+    "permits_feature_development": false,
+    "permits_product_truth_expansion": false,
+    "requires_post_stabilization_forensic_reconciliation": true
+  }
+}

@@ -116,6 +116,11 @@ const canonReferenced = [
   'agent-system/registries/FEATURE_REGISTRY.json',
   'agent-system/bin/context-get.mjs',
   'agent-system/bin/v2-closure-check.mjs',
+  `${pack}/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md`,
+  `${pack}/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md`,
+  'agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json',
+  'agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json',
+  'agent-system/bin/predevelopment-forensic-gate.mjs',
 ];
 
 for (const target of canonReferenced) {

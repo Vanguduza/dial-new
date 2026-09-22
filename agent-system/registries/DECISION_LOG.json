@@ -916,5 +916,36 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-22",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / PROJECT PREPARATION / FORENSICS / CLOSURE",
+    "title": "Fable forensic predevelopment method and PRD-DDP Rev 2 are mandatory before normal development",
+    "decision": "Adopt DIAL-FFDRM-R1 and PRD-DDP-R2 as the mandatory project-preparation authority for every project managed by the DIAL development system. Every project must own a current FORENSIC_BUILD_READY certificate bound to its Product Truth, Development Units, feature/surface realization, governing contracts and the locked standard before normal feature/product implementation. Existing projects require a forensic rebase before the next material development wave; greenfield projects require prospective causal-path, authority, failure/recovery, verification, counterexample, mutation, anti-gap and runtime-qualification contracts before first code. Agentic/adaptive projects additionally require the complete symbiotic-loop proof.",
+    "consequence": "The execution fabric runtime gate and the new project-preparation gate are independent and both are required. Adaptive planning and task envelopes fail closed when preparation is absent, blocked or stale. Project registration/binding records the standard and certificate reference. Repository closure is separated from runtime/device/live qualification. Models may propose but deterministic authorities execute; learning never widens authority; verified success requires postcondition evidence where observable. Explicit owner-authorized recovery may restore/contain a broken system but cannot bypass the standard for feature development.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json",
+      "agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json",
+      "agent-system/bin/predevelopment-forensic-gate.mjs",
+      "agent-system/orchestration/development-unblock.mjs",
+      "agent-system/orchestration/adaptive-execution-planner.mjs",
+      "agent-system/orchestration/task-execution-envelope.mjs",
+      "agent-system/orchestration/project-registry.mjs",
+      "agent-system/orchestration/execution-fabric/project-binding.mjs",
+      ".agents/plugins/dial-governed/skills/dial-development/SKILL.md",
+      "tests/predevelopment-forensic-gate.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260922-owner-fable-forensic-predevelopment-standard.json",
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md"
+    ],
+    "activation_blocker_refs": [
+      "DIAL itself is FORENSIC_BUILD_BLOCKED until the preparation blockers in PREDEVELOPMENT_FORENSIC_CERTIFICATE.json are closed; this is intentional and is not waived by adopting the standard."
+    ],
+    "reopens_if": "the product owner explicitly supersedes DEC-039 with an equal-or-stronger preparation method that preserves causal reachability, authority proof, independent verification, anti-gap/mutation closure, task-envelope freshness and separation of repository from live qualification"
   }
 ]
