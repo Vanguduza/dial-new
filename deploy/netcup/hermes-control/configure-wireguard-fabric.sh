@@ -12,7 +12,7 @@ CONF=/etc/wireguard/wg-dial.conf
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
 [[ -s "$KEY" ]] || { echo "REFUSE: $KEY missing; image bootstrap should have created it" >&2; exit 2; }
-for v in ADMIN_PUB VEKL_PUB TRADING_PUB; do [[ -n "${!v}" ]] || { echo "REFUSE: $v missing" >&2; exit 2; }; done
+for v in ADMIN_PUB VEKL_PUB TRADING_PUB OLD_PUB; do [[ -n "${!v}" ]] || { echo "REFUSE: $v missing" >&2; exit 2; }; done
 
 priv="$(cat "$KEY")"
 cat >"$CONF" <<EOF
