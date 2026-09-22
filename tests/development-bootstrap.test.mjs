@@ -364,6 +364,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable ssh.service');
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable dial-github-oidc-control.service');
     expect(rescuePrestager).toContain('ExecStartPost=/usr/local/sbin/dial-oidc-ready-check');
+    expect(rescuePrestager).toContain('http://127.0.0.1:9134/healthz');
+    expect(rescuePrestager).toContain('.repo_head == $expected');
+    expect(rescuePrestager).not.toContain('</dev/tcp/127.0.0.1/9134');
     expect(rescuePrestager).toContain('sshd -t');
     expect(rescuePrestager).toContain('netplan generate');
     expect(rescuePrestager).toContain('findmnt --verify');
