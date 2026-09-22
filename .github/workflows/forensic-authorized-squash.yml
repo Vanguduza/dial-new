@@ -14,7 +14,7 @@ jobs:
       - name: rebuild target branch through Project Truth recorder
         env:
           SOURCE_BRANCH: gpt/fable-forensic-predevelopment-standard-20260922
-          SOURCE_SHA: 3ddce18b09b403cd0f64a62c600475a95c9f35f1
+          SOURCE_SHA: c7c78c616e30c284adcb00a1e02b0c668700d372
           BASE_SHA: 1405daaa4b21b9ae35374282b191475e5bcc3ff6
         run: |
           set -euo pipefail
