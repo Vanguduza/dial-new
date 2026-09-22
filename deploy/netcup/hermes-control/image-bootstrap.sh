@@ -151,8 +151,8 @@ sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
 stage CORE_HOST_CONVERGENCE_READY
 
 # Node is now installed at the repository-reviewed pin; run the full policy verifier.
-sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
-  node "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs" image \
+sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" \
+  "$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs" image \
   >"$STATE/rev5.1-bootstrap-policy.json"
 chmod 0600 "$STATE/rev5.1-bootstrap-policy.json"
 stage REV51_FULL_POLICY_GREEN
@@ -240,7 +240,7 @@ stage OCI_CLI_READY
   printf 'canonical_host_id=%s\n' "$CANONICAL_HOST_ID"
   printf 'os=%s\n' "$PRETTY_NAME"
   printf 'kernel='; uname -r
-  printf 'node='; sudo -u "$ADMIN" env HOME="$HOME_DIR" bash -lc 'node --version 2>/dev/null || true'
+  printf 'node='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc '"$HOME/.local/bin/node" --version 2>/dev/null || true'
   printf 'claude='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'claude --version 2>/dev/null | head -1 || true'
   printf 'antigravity='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'agy --version 2>/dev/null | head -1 || true'
   printf 'codex='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'codex --version 2>/dev/null | head -1 || true'

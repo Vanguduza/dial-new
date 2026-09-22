@@ -332,6 +332,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain('ZERO_TOUCH_POSTBOOT=ENABLED');
     expect(image).toContain('OIDC_CONTROL_EARLY_READY');
     expect(image).toContain('PINNED_NODE_READY');
+    expect(image).toContain('"$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs"');
     expect(image).toContain('SSH_RECOVERY_CHANNEL_READY');
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
