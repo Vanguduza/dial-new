@@ -39,7 +39,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST required' });
   try {
     const raw = await body(req);
-    const upstream = await fetch(CONTROL_URL, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token()}` }, body: raw });
+    const upstream = await fetch(CONTROL_URL, { method: 'POST', headers: { 'content-type': 'application/json', 'x-dial-operator-channel': 'claude', 'x-dial-operator-actor': 'owner', authorization: `Bearer ${token()}` }, body: raw });
     const text = await upstream.text();
     res.writeHead(upstream.status, { 'content-type': upstream.headers.get('content-type') || 'application/json', 'cache-control': 'no-store' });
     res.end(text);

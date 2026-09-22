@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260915-owner-claude-max-dial-mcp-execution",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "6974102db42008a86aa5034bf977a7385caa1b586e7f5c4ddcf2e7e087c59c05",
+  "owner_instruction_excerpt": "Connect claude max to the dial mcp with allow all permissions and ability to issue execution commands",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260915-claude-max-dial-mcp-execution",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-15T06:56:11+00:00",
+  "base_sha": "fa7c655f12faf02a2b33cc15799069526bdda3a6",
+  "branch_scope": "gpt/claude-max-mcp-owner-20260915",
+  "authorized_paths": [
+    "deploy/oracle/execution-fabric/remote-mcp-relay.mjs",
+    "docs/project-state/authorizations/*.json"
+  ],
+  "change_classes": [
+    "operator_channel_configuration",
+    "remote_mcp_owner_identity",
+    "claude_max_execution_enablement"
+  ],
+  "owner_overrides": [],
+  "notes": [
+    "Owner explicitly requested Claude Max access to the DIAL MCP with all connector tools permitted and execution-command capability.",
+    "This change does not expose a raw shell. It maps the existing capability-authenticated Claude remote relay to the already-authorized claude/owner operator identity so typed DIAL execution tools can pass the existing owner provenance check.",
+    "Hermes, Project Truth, host-role, mission, idempotency, and audit controls remain authoritative and unchanged.",
+    "The live runtime relay was patched and protocol-certified separately because the primary development checkout is currently dirty/conflicted; this worktree records the persistent source change without disturbing that work."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
