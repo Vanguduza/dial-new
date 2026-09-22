@@ -8,9 +8,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: netcup-one-time-bootstrap-kick
-  cancel-in-progress: true
 
 env:
   NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
