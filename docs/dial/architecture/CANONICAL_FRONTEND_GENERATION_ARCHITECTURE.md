@@ -363,6 +363,12 @@ It locks:
 
 Its productionization policy is `PRESERVE_EXPERIENCE_AUTHORITY_NO_REDESIGN`.
 
+## Independence from DDE
+
+The DIAL frontend pipeline is complete without DDE. DDE is a separate independent development system and is not a DIAL runtime, production-binding layer, provider, memory authority, deployment authority or control-plane dependency. DIAL may develop the DDE repository as an ordinary admitted project, but DDE availability or lifecycle state cannot gate DIAL frontend generation or productionization.
+
+The production-binding stage described below is DIAL-native and remains governed by DIAL Project Truth, domain contracts, Experience Authority and repository verification. No DDE service, repository checkout or runtime process is required for this path.
+
 ## DIAL-native productionization
 
 The DIAL production-binding layer does not look at a screenshot and improvise a similar UI.
