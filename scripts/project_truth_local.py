@@ -349,7 +349,12 @@ def verify_pr(base,branch_override=None):
   branch=branch_override or o('rev-parse','--abbrev-ref','HEAD')
   auths=auths_worktree(); selected,uncovered,invalid=select_auths(changed,auths,'HEAD',branch)
   if uncovered:
-   print('BLOCKED: PR changes exceed owner authorization scope: '+', '.join(uncovered),file=sys.stderr); return 47
+   print('BLOCKED: PR changes exceed owner authorization scope: '+', '.join(uncovered),file=sys.stderr)
+   if invalid: print('authorization validation: '+json.dumps(invalid,sort_keys=True),file=sys.stderr)
+   return 47
+  evidence_errors=validate_pr_native_evidence(base,branch,[a['authorization_id'] for a in selected])
+  if evidence_errors:
+   print('BLOCKED: PR-native Project Truth evidence invalid:\n - '+'\n - '.join(evidence_errors),file=sys.stderr); return 46
   added={p for s,p in auth_changes if s=='A'}
   for a in selected:
    if not a.get('reusable') and auth_id_path(a['authorization_id']) not in added:
