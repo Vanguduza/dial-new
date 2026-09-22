@@ -1,0 +1,56 @@
+name: Create reviewable zero-touch final PR
+
+on:
+  push:
+    branches:
+      - ops/reviewable-bootstrap-pr-builder-20260922
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TARGET_BRANCH: bot/netcup-zero-touch-final-20260922
+      SOURCE_BRANCH: ops/reviewable-bootstrap-pr-builder-20260922
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Build one-commit Project Truth-authorized bot PR
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin master "$SOURCE_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+          git checkout -B "$TARGET_BRANCH"
+          git reset --soft origin/master
+
+          git rm --cached -f .github/workflows/create-reviewable-zero-touch-final.yml
+          rm -f .github/workflows/create-reviewable-zero-touch-final.yml
+
+          git add -A
+          python3 scripts/project_truth_local.py record
+          git diff --cached --check
+          git commit -m "infra: finalize zero-touch Dial Control with state-aware housekeeping"
+
+          python3 scripts/project_truth_local.py verify-pr             --base origin/master             --branch "$TARGET_BRANCH"
+
+          git push --force origin "HEAD:refs/heads/$TARGET_BRANCH"
+
+          EXISTING="$(gh pr list --head "$TARGET_BRANCH" --base master --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$EXISTING" ]]; then
+            gh pr create               --base master               --head "$TARGET_BRANCH"               --title "Zero-touch Dial Control with state-aware housekeeping"               --body "Bot-authored reviewable closure of the owner-authorized PR #45 tree. Project Truth is recorded on this branch; owner review and protected-master verification remain mandatory."
+          else
+            echo "PR already exists: #$EXISTING"
+          fi
