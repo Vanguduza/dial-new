@@ -15,6 +15,10 @@ permissions:
   contents: read
 
 concurrency:
+  group: netcup-dial-control-scp-mutation
+  cancel-in-progress: false
+
+concurrency:
   group: netcup-dial-control-recovery-authority
   cancel-in-progress: true
 
@@ -63,7 +67,7 @@ jobs:
   diagnose-and-recover:
     needs: request-authorization
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - name: Diagnose SCP state and recover bootstrap if required
         shell: bash

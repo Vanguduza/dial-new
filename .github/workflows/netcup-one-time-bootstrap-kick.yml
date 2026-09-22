@@ -1,12 +1,14 @@
 name: Netcup one-time bootstrap kick
 
 on:
-  push:
-    branches:
-      - gpt/netcup-hermes-control-integrated-20260921
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: netcup-dial-control-scp-mutation
+  cancel-in-progress: false
 
 
 env:

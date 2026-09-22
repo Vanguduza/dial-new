@@ -273,6 +273,7 @@ describe('DIAL development bootstrap closure', () => {
   it('keeps Dial Control zero-touch bootstrap complete, bounded and resumable', () => {
     const workflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-zero-touch-converge.yml'), 'utf8');
     const recoveryWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-diagnose-recover-bootstrap.yml'), 'utf8');
+    const bootstrapKickWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-one-time-bootstrap-kick.yml'), 'utf8');
     const controller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/github-oidc-control.mjs'), 'utf8');
     const customScript = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh'), 'utf8');
     const image = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh'), 'utf8');
@@ -346,6 +347,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
+    expect(recoveryWorkflow).toContain('timeout-minutes: 90');
+    expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');
+    expect(bootstrapKickWorkflow).toContain('workflow_dispatch:');
+    expect(bootstrapKickWorkflow).not.toContain('push:');
+    expect(bootstrapKickWorkflow).toContain('group: netcup-dial-control-scp-mutation');
     expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/netcup-custom-script.sh');
     expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/install-github-oidc-control.sh');
 
