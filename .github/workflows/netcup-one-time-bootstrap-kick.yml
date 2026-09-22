@@ -39,6 +39,8 @@ jobs:
           INTERVAL="$(jq -r '.interval // 5' <<<"$RESPONSE")"
           [[ -n "$DEVICE_CODE" && "$DEVICE_CODE" != null ]]
           [[ -n "$VERIFY_URL" && "$VERIFY_URL" != null ]]
+          printf 'NETCUP_APPROVAL_URL=%s\n' "$VERIFY_URL"
+          printf 'NETCUP_USER_CODE=%s\n' "$USER_CODE"
           {
             echo "device_code=$DEVICE_CODE"
             echo "interval=$INTERVAL"
