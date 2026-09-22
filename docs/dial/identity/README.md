@@ -11,6 +11,8 @@ This directory contains the DIAL Brand Pack authority package.
 
 - `brand-pack/DIAL_BRAND_PACK_MANIFEST.v1.json` — Brand Pack release manifest, product-expression profiles and identity intelligence.
 - `brand-pack/DIAL_BRAND_STAGE_PROJECTION_POLICY.v1.json` — stage-aware projection contract for feeding the existing development system.
+- `brand-pack/DIAL_BRAND_PRODUCT_APPLICATION_MATRIX.v1.json` — application-context and screen-family projection guidance that defers membership to the canonical screen graph.
+- `brand-pack/schemas/DIAL_BRAND_CONTEXT_PROJECTION.schema.json` — contract for the task-specific Brand Context Projection compiled after canonical screen/application resolution.
 
 ## Authority boundary
 
