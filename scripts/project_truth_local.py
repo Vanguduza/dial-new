@@ -254,6 +254,15 @@ def verify():
    if errs:
     print('BLOCKED: consolidation package verification failed:\n - '+'\n - '.join(errs),file=sys.stderr); return 41
    return 0
+  base_ref=str(os.getenv('GITHUB_BASE_REF') or '')
+  if head_ref and base_ref:
+   candidate=f'origin/{base_ref}'
+   resolved=g('rev-parse','--verify',candidate,check=False)
+   if resolved.returncode!=0: resolved=g('rev-parse','--verify',base_ref,check=False)
+   if resolved.returncode==0:
+    base_sha=resolved.stdout.strip()
+    if isinstance(consolidation_manifest_at(base_sha),dict):
+     return verify_pr(base_sha,head_ref)
  baseline=install_guard()
  if not baseline: print('BLOCKED: Project Truth local guard baseline missing',file=sys.stderr); return 40
  start=verified_history_boundary(baseline)
