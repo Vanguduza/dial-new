@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { parseArgs } from '../ops/development-bootstrap/bootstrap.mjs';
 import { parseSemver, parseToolVersion, requiredServicePath } from '../ops/development-bootstrap/lib/probes.mjs';
 import { authorityConsistency, compareHostInventory, loadHosts } from '../ops/development-bootstrap/lib/topology.mjs';
@@ -283,12 +284,17 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).toContain("oci-cli==3.93.0");
     expect(workflow).toContain('ensure-github-admin-runner');
     expect(workflow).toContain('Final zero-touch certification');
+    const adminWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-admin-oidc.yml'), 'utf8');
+    expect(adminWorkflow).toContain('id-token: write');
+    expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');
+    expect(adminWorkflow).toContain('admin-command');
 
     expect(controller).toContain('/.github/workflows/netcup-zero-touch-converge.yml@');
-    expect(controller).not.toContain("case 'admin-command'");
+    expect(controller).toContain('/.github/workflows/netcup-admin-oidc.yml@');
+    expect(controller).toContain("case 'admin-command'");
     expect(controller).toContain('bootstrap_ssh_public_key');
     expect(controller).toContain('overlay_verified');
-    expect(controller).toContain('GitHub admin runner must be active before sealing certification');
+    expect(controller).toContain('github_oidc_admin:true');
 
     expect(image).toContain("ssh-keygen -q -t ed25519 -N ''");
     expect(image).toContain('install-github-oidc-control.sh');

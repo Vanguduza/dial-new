@@ -1,10 +1,10 @@
-name: Dial Control OIDC admin
+name: Dial Control GitHub OIDC admin
 
 on:
   workflow_dispatch:
     inputs:
-      command_b64:
-        description: Base64-encoded root command; never place secrets in workflow inputs
+      command:
+        description: Root command to execute on Dial Control. Do not place secrets here.
         required: true
         type: string
       acknowledge_root:
@@ -20,34 +20,52 @@ concurrency:
   group: dial-control-oidc-admin
   cancel-in-progress: false
 
+env:
+  DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
+
 jobs:
   admin:
-    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    env:
-      DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          fetch-depth: 1
+
+      - name: Validate explicit root acknowledgement
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${{ inputs.acknowledge_root }}" == "I_UNDERSTAND_ROOT" ]] || {
+            echo "::error::Root acknowledgement is required."
+            exit 2
+          }
 
       - name: Execute audited Dial Control command
         shell: bash
         env:
-          COMMAND_B64: ${{ inputs.command_b64 }}
-          ACK: ${{ inputs.acknowledge_root }}
+          RAW_COMMAND: ${{ inputs.command }}
         run: |
           set -euo pipefail
-          [[ "$ACK" == I_UNDERSTAND_ROOT ]] || { echo "Root acknowledgement missing" >&2; exit 2; }
-          [[ -n "$COMMAND_B64" ]] || { echo "Empty command" >&2; exit 2; }
-          BODY="$(jq -cn --arg cmd "$COMMAND_B64" --arg ack "$ACK" '{action:"admin-command",command_b64:$cmd,ack:$ack}')"
+          [[ -n "$RAW_COMMAND" ]] || { echo "::error::Command is empty"; exit 2; }
+          [[ ${#RAW_COMMAND} -le 32768 ]] || { echo "::error::Command is too long"; exit 2; }
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           {
-            echo "## Dial Control OIDC admin receipt"
+            echo "## Dial Control GitHub OIDC admin receipt"
             echo "- actor: $GITHUB_ACTOR"
-            echo "- source SHA: $GITHUB_SHA"
+            echo "- run: $GITHUB_RUN_ID"
             echo "- command SHA-256: $(jq -r '.result.command_sha256' <<<"$RESPONSE")"
-            echo "- status: PASS"
+            echo "- exit status: $(jq -r '.result.status' <<<"$RESPONSE")"
+            echo ""
+            echo '### stdout'
+            echo '~~~text'
+            jq -r '.result.stdout' <<<"$RESPONSE"
+            echo '~~~'
+            echo ""
+            echo '### stderr'
+            echo '~~~text'
+            jq -r '.result.stderr' <<<"$RESPONSE"
+            echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"

@@ -196,42 +196,29 @@ loginctl enable-linger "$ADMIN" || true
 
 bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
 
-node_v="$(sudo -u "$ADMIN" env HOME="$HOME_DIR" bash -lc 'node --version 2>/dev/null || true')"
-claude_v="$(sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin bash -lc 'claude --version 2>/dev/null | head -1 || true')"
-antigravity_v="$(sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin bash -lc 'agy --version 2>/dev/null | head -1 || true')"
-codex_v="$(sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin bash -lc 'codex --version 2>/dev/null | head -1 || true')"
-hermes_v="$(sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin bash -lc 'hermes --version 2>/dev/null | head -1 || true')"
-java17_v="$(/usr/lib/jvm/java-17-openjdk-amd64/bin/java -version 2>&1 | head -1)"
-java21_v="$(/usr/lib/jvm/java-21-openjdk-amd64/bin/java -version 2>&1 | head -1)"
-adb_v="$(adb version 2>/dev/null | head -1 || true)"
-oci_v="$(oci --version 2>/dev/null || true)"
-wg_pub="$(cat /etc/wireguard/dial-netcup.pub)"
-ssh_pub="$(cat "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub")"
-age_pub="$(cat /etc/dial/github-bootstrap-age.pub)"
-
-cat >"$STATE/image-bootstrap.receipt" <<EOF
-bootstrap_ref=$DIAL_BOOTSTRAP_REF
-display_name=Dial Control
-hostname=$(hostname)
-canonical_host_id=$CANONICAL_HOST_ID
-os=$PRETTY_NAME
-kernel=$(uname -r)
-node=$node_v
-claude=$claude_v
-antigravity=$antigravity_v
-codex=$codex_v
-hermes=$hermes_v
-java17=$java17_v
-java21=$java21_v
-adb=$adb_v
-oci=$oci_v
-wireguard_public_key=$wg_pub
-bootstrap_ssh_public_key=$ssh_pub
-github_bootstrap_age_recipient=$age_pub
-rev51_pack_id=DIAL-DEV-SYS-REV5.1
-rev51_build_ready=false
-rev51_new_external_tools=QUALIFICATION_GATED
-EOF
+{
+  printf 'bootstrap_ref=%s\n' "$DIAL_BOOTSTRAP_REF"
+  printf 'display_name=%s\n' 'Dial Control'
+  printf 'hostname='; hostname
+  printf 'canonical_host_id=%s\n' "$CANONICAL_HOST_ID"
+  printf 'os=%s\n' "$PRETTY_NAME"
+  printf 'kernel='; uname -r
+  printf 'node='; sudo -u "$ADMIN" env HOME="$HOME_DIR" bash -lc 'node --version 2>/dev/null || true'
+  printf 'claude='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'claude --version 2>/dev/null | head -1 || true'
+  printf 'antigravity='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'agy --version 2>/dev/null | head -1 || true'
+  printf 'codex='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'codex --version 2>/dev/null | head -1 || true'
+  printf 'hermes='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'hermes --version 2>/dev/null | head -1 || true'
+  printf 'java17='; /usr/lib/jvm/java-17-openjdk-amd64/bin/java -version 2>&1 | head -1
+  printf 'java21='; /usr/lib/jvm/java-21-openjdk-amd64/bin/java -version 2>&1 | head -1
+  printf 'adb='; adb version 2>/dev/null | head -1 || true
+  printf 'oci='; oci --version 2>/dev/null || true
+  printf 'wireguard_public_key='; cat /etc/wireguard/dial-netcup.pub
+  printf 'bootstrap_ssh_public_key='; cat "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub"
+  printf 'github_bootstrap_age_recipient='; cat /etc/dial/github-bootstrap-age.pub
+  printf 'rev51_pack_id=%s\n' 'DIAL-DEV-SYS-REV5.1'
+  printf 'rev51_build_ready=false\n'
+  printf 'rev51_new_external_tools=QUALIFICATION_GATED\n'
+} >"$STATE/image-bootstrap.receipt"
 chmod 0600 "$STATE/image-bootstrap.receipt"
 
 cat >"$STATE/NEXT" <<'EOF'
