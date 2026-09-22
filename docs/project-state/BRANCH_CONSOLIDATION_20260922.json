@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "generated_for": "branch-housekeeping-safety",
+  "repository": "Vanguduza/dial-new",
+  "canonical_base": {
+    "branch": "master",
+    "sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6"
+  },
+  "consolidation": {
+    "branch": "gpt/dial-all-work-consolidation-20260922",
+    "pre_manifest_head": "cbafc70d0759fa66ef2c4929d343695bedc29792"
+  },
+  "branch_count_observed": 43,
+  "invariants": {
+    "no_branch_deleted_during_consolidation": true,
+    "absorbed_branch_count": 40,
+    "absorbed_branches_ahead_of_consolidation": 0,
+    "source_history_preserved_as_ancestry": true,
+    "stale_project_truth_snapshots_not_promoted": true,
+    "semantic_conflicts_resolved_against_newest_authority": true
+  },
+  "absorbed_branches": [
+    {
+      "branch": "claude/adaptive-harness-model-routing-dec032",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/dial-e2e-audit-green-flag-hqqlyw",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/dial-logo-design-weph4y",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/dial-repo-audit-adoption-k8neax",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/fully-implement-pr2f1h",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/hermes-local-mcp-activation-byqtq3",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/kill-file-usage-1gyb0y",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/oracle-e2-recovery-rebuild-3yotjc",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/oracle-problem-review-rmhdse",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/setup-review-09exdj",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "claude/unattended-dial-v2",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "feat/google-capabilities-consolidated-20260911",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "feat/hermes-local-commander-mcp-plane",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "feat/hybrid-mcp-ssh-control-plane",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "fix/owner-steering-canonical-recovery-20260910",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/canonical-screen-feature-graph-20260919",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/chatgpt-operator-mcp-20260914",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/claude-max-mcp-owner-20260915",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/dial-development-system-green-closure-20260915",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/frontend-product-experience-rev11-20260914-temp",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/frontend-product-experience-rev11-20260914",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/hermes-full-commander-chatgpt-control-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/hermes-spmrf-final-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/hermes-spmrf-final-source-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/netcup-digest-diagnostic-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/netcup-hermes-control-integrated-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/netcup-hermes-control-migration-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/shared-project-memory-review-fabric-20260921-clean",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/shared-project-memory-review-fabric-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/universal-development-system-independence-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/universal-development-system-r3-20260921",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-browser-fabric-certified-20260919",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-browser-fabric-certified-v2-20260919",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-graphify-frontend-reconciliation-20260914",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-interaction-motion-design-acuity-20260920",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-reference-only-reconciliation-20260919",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "gpt/vekl-research-open-world-integration-20260919",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "tmp-do-not-use",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    },
+    {
+      "branch": "work/bootstrap-reconcile-20260914",
+      "ahead_of_consolidation": 0,
+      "disposition": "ABSORBED_HISTORY_PRESERVED"
+    }
+  ],
+  "retained_special_branches": [
+    {
+      "branch": "oracle-runtime-status",
+      "ahead_of_consolidation": 2,
+      "disposition": "RETAIN_OPERATIONAL_STATUS_MIRROR_DO_NOT_MERGE_OR_DELETE"
+    }
+  ],
+  "protected_branches": [
+    {
+      "branch": "master",
+      "disposition": "CANONICAL_DEFAULT"
+    },
+    {
+      "branch": "gpt/dial-all-work-consolidation-20260922",
+      "disposition": "ACTIVE_CONSOLIDATION_UNTIL_MERGED_AND_VERIFIED"
+    }
+  ],
+  "semantic_reconciliations": [
+    {
+      "source": "gpt/vekl-interaction-motion-design-acuity-20260920",
+      "result": "101 substantive changes applied; stale CURRENT_STATE/CHANGE_LEDGER excluded"
+    },
+    {
+      "source": "gpt/universal-development-system-independence-20260921",
+      "result": "universal project/development-pack work integrated; decisions renumbered to DEC-043 and DEC-044 to avoid collision with VEKL DEC-039..042"
+    },
+    {
+      "source": "claude/dial-logo-design-weph4y",
+      "result": "brand/logo assets and authorization applied"
+    },
+    {
+      "source": "claude/hermes-local-mcp-activation-byqtq3",
+      "result": "history/authorizations preserved; newer full-Commander installer retained because it already includes YAML/backup hardening"
+    },
+    {
+      "source": "gpt/netcup-hermes-control-integrated-20260921",
+      "result": "latest zero-touch migration head 442d12291047c5a08241f9baa7fb33ae1896c83d absorbed; universal resolver/test additions retained"
+    },
+    {
+      "source": "claude/oracle-e2-recovery-rebuild-3yotjc",
+      "result": "76-commit recovery lineage preserved; provenance carried; superseded Oracle-only topology not reactivated over Netcup"
+    },
+    {
+      "source": "gpt/vekl-research-open-world-integration-20260919",
+      "result": "history preserved; later lease-scoped evidence validation and final certification retained"
+    },
+    {
+      "source": "gpt/chatgpt-operator-mcp-20260914",
+      "result": "direct authenticated /mcp/chatgpt owner adapter, installer, qualifier, test and authorization restored alongside Commander"
+    },
+    {
+      "source": "gpt/claude-max-mcp-owner-20260915",
+      "result": "Claude owner identity headers restored in remote MCP relay"
+    }
+  ],
+  "deletion_gate": {
+    "condition": "Do not delete any absorbed branch until this consolidation branch is merged to master and the resulting master commit passes repository verification/CI.",
+    "operational_exception": "oracle-runtime-status remains retained even after housekeeping unless its status-mirror role is explicitly retired."
+  }
+}
