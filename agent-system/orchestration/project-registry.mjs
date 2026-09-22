@@ -7,6 +7,8 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 export const PROJECT_REGISTRY_REL = 'operations/project-registry.json';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
+const FORENSIC_STANDARD_ID = 'DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD';
+const FORENSIC_CERTIFICATE_SOURCE = 'PROJECT_SCOPED_DEVELOPMENT_PACK';
 const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service', 'dial-hermes-whatsapp-operator.service'];
 
 function now() { return new Date().toISOString(); }
@@ -32,7 +34,11 @@ export function defaultDialProject(repoDir = process.env.DIAL_REPO_DIR || DEFAUL
     scope_selector: null,
     project_kind: 'development-system',
     manager_policy: 'GPT-5.6_SOL_THEN_CLAUDE_SONNET_5',
-    development_authority: 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY',
+    development_authority: 'FORENSIC_BUILD_READY_AND_SYSTEM_RUNTIME_READY',
+    predevelopment_standard_id: FORENSIC_STANDARD_ID,
+    predevelopment_certificate_source: FORENSIC_CERTIFICATE_SOURCE,
+    predevelopment_readiness: 'PROJECT_PACK_REQUIRED',
+    agentic: true,
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
     owns_complete_e2e_pipeline: true,
     runtime_dependency_on_dde: false,
@@ -61,7 +67,11 @@ function localSeedProductProjects(repoDir) {
       scope_selector: entry.scope_selector || null,
       project_kind: 'product',
       manager_policy: 'PROJECT_SPECIFIC_LOCKED_POLICY',
-      development_authority: 'PROJECT_POLICY_REQUIRED',
+      development_authority: 'FORENSIC_BUILD_READY_AND_PROJECT_POLICY_REQUIRED',
+      predevelopment_standard_id: FORENSIC_STANDARD_ID,
+      predevelopment_certificate_source: FORENSIC_CERTIFICATE_SOURCE,
+      predevelopment_readiness: 'PROJECT_PACK_REQUIRED',
+      agentic: null,
       auxiliary_operations_authority: 'NON_AUTHORITATIVE',
       services: [],
       created_at: now(),
@@ -69,10 +79,22 @@ function localSeedProductProjects(repoDir) {
     }));
 }
 
+function withForensicPolicy(item) {
+  return {
+    ...item,
+    predevelopment_standard_id: FORENSIC_STANDARD_ID,
+    predevelopment_certificate_source: FORENSIC_CERTIFICATE_SOURCE,
+    predevelopment_readiness: item.predevelopment_readiness || 'PROJECT_PACK_REQUIRED',
+    development_authority: item.classification === 'DEVELOPMENT_SYSTEM'
+      ? 'FORENSIC_BUILD_READY_AND_SYSTEM_RUNTIME_READY'
+      : 'FORENSIC_BUILD_READY_AND_PROJECT_POLICY_REQUIRED',
+  };
+}
+
 function mergeCanonicalLocalSeeds(projects, repoDir) {
-  const bySlug = new Map(projects.map((item) => [item.slug, item]));
+  const bySlug = new Map(projects.map((item) => [item.slug, withForensicPolicy(item)]));
   for (const seed of localSeedProductProjects(repoDir)) {
-    if (!bySlug.has(seed.slug)) bySlug.set(seed.slug, seed);
+    if (!bySlug.has(seed.slug)) bySlug.set(seed.slug, withForensicPolicy(seed));
   }
   return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }
@@ -129,7 +151,7 @@ export function getProject(slug, root) {
   return project;
 }
 
-export function registerProject({ slug, name, repoDir, projectKind = 'software', classification = 'APPLICATION_PROJECT', uiBearing = null, managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [], repositoryMode = 'DEDICATED_REPOSITORY', scopeSelector = null, independence = null } = {}, root) {
+export function registerProject({ slug, name, repoDir, projectKind = 'software', classification = 'APPLICATION_PROJECT', uiBearing = null, agentic = null, managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [], repositoryMode = 'DEDICATED_REPOSITORY', scopeSelector = null, independence = null } = {}, root) {
   const key = validateSlug(slug);
   const registry = ensureProjectRegistry(root);
   const repo = normalizeRepo(repoDir);
@@ -152,7 +174,11 @@ export function registerProject({ slug, name, repoDir, projectKind = 'software',
     scope_selector: scopeSelector && typeof scopeSelector === 'object' ? scopeSelector : null,
     project_kind: String(projectKind || 'software').trim().slice(0, 80),
     manager_policy: String(managerPolicy || 'PROJECT_SPECIFIC_LOCKED_POLICY').trim().slice(0, 200),
-    development_authority: key === 'dial' ? 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY' : 'PROJECT_POLICY_REQUIRED',
+    development_authority: key === 'dial' ? 'FORENSIC_BUILD_READY_AND_SYSTEM_RUNTIME_READY' : 'FORENSIC_BUILD_READY_AND_PROJECT_POLICY_REQUIRED',
+    predevelopment_standard_id: FORENSIC_STANDARD_ID,
+    predevelopment_certificate_source: FORENSIC_CERTIFICATE_SOURCE,
+    predevelopment_readiness: 'PROJECT_PACK_REQUIRED',
+    agentic: typeof agentic === 'boolean' ? agentic : (classification === 'DEVELOPMENT_SYSTEM' ? true : null),
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
     independence: independence && typeof independence === 'object' ? {
       runtime_dependency_of_dial_development_system: independence.runtime_dependency_of_dial_development_system === true,
@@ -183,7 +209,7 @@ function main() {
   if (command === 'init') return console.log(JSON.stringify(ensureProjectRegistry(), null, 2));
   if (command === 'list') return console.log(JSON.stringify(listProjects(), null, 2));
   if (command === 'show') return console.log(JSON.stringify(getProject(args[0] || 'dial'), null, 2));
-  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', classification: argValue(args, '--classification') || 'APPLICATION_PROJECT', uiBearing: argValue(args, '--ui-bearing') === null ? null : argValue(args, '--ui-bearing') === 'true', repositoryMode: argValue(args, '--repository-mode') || 'DEDICATED_REPOSITORY', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY' }), null, 2));
+  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', classification: argValue(args, '--classification') || 'APPLICATION_PROJECT', uiBearing: argValue(args, '--ui-bearing') === null ? null : argValue(args, '--ui-bearing') === 'true', agentic: argValue(args, '--agentic') === null ? null : argValue(args, '--agentic') === 'true', repositoryMode: argValue(args, '--repository-mode') || 'DEDICATED_REPOSITORY', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY' }), null, 2));
   throw new Error(`unknown project registry command: ${command}`);
 }
 if (import.meta.url === `file://${process.argv[1]}`) { try { main(); } catch (error) { console.error(error.stack || error); process.exitCode = 1; } }
