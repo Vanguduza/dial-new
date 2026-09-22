@@ -25,7 +25,7 @@ apt-get install -y --no-install-recommends \
   sudo openssh-server ca-certificates curl git jq rsync xz-utils unzip zip \
   python3 python3-venv python3-pip python3-yaml pipx sqlite3 ripgrep openssl \
   build-essential cmake ninja-build pkg-config shellcheck \
-  wireguard wireguard-tools ufw age rclone tmux htop lsof tree \
+  wireguard-tools=1.0.20210914-1ubuntu4 ufw age rclone tmux htop lsof tree \
   openjdk-17-jdk-headless openjdk-21-jdk-headless adb fastboot \
   postgresql-client redis-tools gh
 
