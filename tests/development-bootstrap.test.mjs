@@ -357,6 +357,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('Netcup SCP access token refreshed');
     expect(recoveryWorkflow).toContain('AUTH_STATE="$RUNNER_TEMP/netcup-scp-auth"');
     expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');
+    expect(recoveryWorkflow).toContain('workflow_dispatch:');
+    expect((recoveryWorkflow.match(/^concurrency:/gm) || []).length).toBe(1);
+    expect((bootstrapKickWorkflow.match(/^concurrency:/gm) || []).length).toBe(1);
+    expect(bootstrapKickWorkflow).toContain('workflow_dispatch:');
     expect(bootstrapKickWorkflow).toContain('workflow_dispatch:');
     expect(bootstrapKickWorkflow).not.toContain('push:');
     expect(bootstrapKickWorkflow).toContain('group: netcup-dial-control-scp-mutation');

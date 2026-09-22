@@ -10,6 +10,7 @@ on:
       - deploy/netcup/hermes-control/image-bootstrap.sh
       - deploy/netcup/hermes-control/install-github-oidc-control.sh
       - deploy/netcup/hermes-control/github-oidc-control.mjs
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,10 +18,6 @@ permissions:
 concurrency:
   group: netcup-dial-control-scp-mutation
   cancel-in-progress: false
-
-concurrency:
-  group: netcup-dial-control-recovery-authority
-  cancel-in-progress: true
 
 env:
   NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
