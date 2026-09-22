@@ -91,6 +91,15 @@ if [[ ! -s /etc/wireguard/dial-netcup.key ]]; then
   chmod 0644 /etc/wireguard/dial-netcup.pub
 fi
 
+# One-time encryption identity used by GitHub Actions to deliver the OCI recovery
+# bundle without exposing the private key on the public bootstrap transport.
+if [[ ! -s /etc/dial/github-bootstrap-age.key ]]; then
+  age-keygen -o /etc/dial/github-bootstrap-age.key >/dev/null 2>&1
+  chmod 0600 /etc/dial/github-bootstrap-age.key
+  age-keygen -y /etc/dial/github-bootstrap-age.key >/etc/dial/github-bootstrap-age.pub
+  chmod 0644 /etc/dial/github-bootstrap-age.pub
+fi
+
 rm -rf "$REPO"
 install -d -m 0755 -o "$ADMIN" -g "$ADMIN" "$REPO"
 sudo -u "$ADMIN" git -C "$REPO" init -q
@@ -205,6 +214,7 @@ bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
   echo "oci=$(oci --version 2>/dev/null || true)"
   echo "wireguard_public_key=$(cat /etc/wireguard/dial-netcup.pub)"
   echo "bootstrap_ssh_public_key=$(cat "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub")"
+  echo "github_bootstrap_age_recipient=$(cat /etc/dial/github-bootstrap-age.pub)"
   echo "rev51_pack_id=DIAL-DEV-SYS-REV5.1"
   echo "rev51_build_ready=false"
   echo "rev51_new_external_tools=QUALIFICATION_GATED"
