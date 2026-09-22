@@ -128,6 +128,14 @@ async function dispatch(body, claims) {
         bootstrap_receipt:receiptExists,
         bootstrap_ref:bootstrapRef,
         repo_head:repoHead,
+        bootstrap_stage:fs.existsSync(path.join(CONTROL,'bootstrap/stage'))
+          ? fs.readFileSync(path.join(CONTROL,'bootstrap/stage'),'utf8').trim()
+          : null,
+        bootstrap_failure:fs.existsSync(path.join(CONTROL,'bootstrap/failure-snapshot.txt'))
+          ? fs.readFileSync(path.join(CONTROL,'bootstrap/failure-snapshot.txt'),'utf8').slice(-8000)
+          : null,
+        ssh_active:command('systemctl is-active ssh.service').ok,
+        oidc_unit_active:command('systemctl is-active dial-github-oidc-control.service').ok,
         oidc_ready:true,
         recovery_ready:fs.existsSync(path.join(ROOT,'github-oci-ready')),
         overlay_verified:fs.existsSync(path.join(ROOT,'overlay-verified')),

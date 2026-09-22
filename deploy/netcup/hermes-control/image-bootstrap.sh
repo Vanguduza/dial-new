@@ -14,6 +14,13 @@ HOME_DIR=/home/$ADMIN
 REPO=$HOME_DIR/dial-new
 STATE=/var/lib/dial-control/bootstrap
 
+install -d -m 0700 "$STATE"
+stage() {
+  printf '%s %s\n' "$(date -u +%FT%TZ)" "$1" >"$STATE/stage"
+  echo "IMAGE_BOOTSTRAP_STAGE=$1"
+}
+stage IMAGE_STARTED
+
 . /etc/os-release
 [[ "$ID" == ubuntu && "$VERSION_ID" == 24.04 ]] || { echo "Ubuntu 24.04 required" >&2; exit 2; }
 case "$(uname -m)" in x86_64|amd64) ;; *) echo "x86_64 required" >&2; exit 2;; esac
@@ -28,6 +35,7 @@ apt-get install -y --no-install-recommends \
   wireguard wireguard-tools ufw age rclone tmux htop lsof tree \
   openjdk-17-jdk-headless openjdk-21-jdk-headless adb fastboot \
   postgresql-client redis-tools gh
+stage BASE_PACKAGES_READY
 
 if ! id "$ADMIN" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$ADMIN"
@@ -106,6 +114,7 @@ sudo -u "$ADMIN" git -C "$REPO" init -q
 sudo -u "$ADMIN" git -C "$REPO" remote add origin https://github.com/Vanguduza/dial-new.git
 sudo -u "$ADMIN" git -C "$REPO" fetch --depth 1 origin "$DIAL_BOOTSTRAP_REF"
 sudo -u "$ADMIN" git -C "$REPO" checkout --detach FETCH_HEAD
+stage IMMUTABLE_REPO_CHECKED_OUT
 
 # Rev 5.1 development pack is the bootstrap design authority projection.
 # Minimal preflight uses jq because a truly minimal Ubuntu image may not have Node yet.
@@ -116,15 +125,37 @@ jq -e '
   .current_pack_state.build_ready == false and
   .gap_closure_policy.rule == "IDENTIFIED_GAP_MUST_BE_COVERED"
 ' "$POLICY" >/dev/null || { echo "REFUSE: invalid Rev 5.1 bootstrap policy" >&2; exit 3; }
+stage REV51_POLICY_PREFLIGHT_GREEN
+
+sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" PATH="$HOME_DIR/.local/bin:/usr/local/bin:/usr/bin:/bin" \
+  bash -lc '
+    set -euo pipefail
+    if [[ ! -x "$HOME/.local/bin/node" ]] || [[ "$("$HOME/.local/bin/node" --version 2>/dev/null || true)" != "v22.23.2" ]]; then
+      bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-pinned-node.sh"
+    fi
+    [[ "$("$HOME/.local/bin/node" --version)" == "v22.23.2" ]]
+  '
+stage PINNED_NODE_READY
+
+systemctl enable --now ssh
+ufw allow OpenSSH >/dev/null 2>&1 || true
+ufw --force enable >/dev/null 2>&1 || true
+loginctl enable-linger "$ADMIN" || true
+stage SSH_RECOVERY_CHANNEL_READY
+
+bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
+stage OIDC_CONTROL_EARLY_READY
 
 sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
   bash "$REPO/deploy/oracle/hermes-codex/bootstrap-host.sh"
+stage CORE_HOST_CONVERGENCE_READY
 
 # Node is now installed at the repository-reviewed pin; run the full policy verifier.
 sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
   node "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs" image \
   >"$STATE/rev5.1-bootstrap-policy.json"
 chmod 0600 "$STATE/rev5.1-bootstrap-policy.json"
+stage REV51_FULL_POLICY_GREEN
 
 # Hard runtime postconditions: these are real host installations, not capability
 # declarations. Authentication remains a separate owner gate, but binaries must exist
@@ -142,6 +173,7 @@ sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-
   command -v hermes >/dev/null
   hermes --version >/dev/null
 '
+stage PROVIDER_RUNTIMES_VERIFIED
 
 sudo -u "$ADMIN" env HOME="$HOME_DIR" XDG_RUNTIME_DIR="/run/user/$(id -u "$ADMIN")" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc '
   set -euo pipefail
@@ -165,6 +197,7 @@ sudo -u "$ADMIN" git -C "$VAN_REPO" init -q
 sudo -u "$ADMIN" git -C "$VAN_REPO" remote add origin https://github.com/Vanguduza/Van.git
 sudo -u "$ADMIN" git -C "$VAN_REPO" fetch --depth 1 origin "$VAN_REF"
 sudo -u "$ADMIN" git -C "$VAN_REPO" checkout --detach FETCH_HEAD
+stage VAN_CONTROL_DEFINITIONS_READY
 
 if getent group docker >/dev/null 2>&1; then usermod -aG docker "$ADMIN"; fi
 
@@ -191,19 +224,14 @@ export ANDROID_SDK_ROOT=$ANDROID_HOME
 export PATH=\$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
 EOF
 chmod 0644 /etc/profile.d/dial-android.sh
+stage ANDROID_TOOLCHAIN_READY
 
 # OCI CLI is installed in an isolated venv; authentication material is never embedded here.
 python3 -m venv /opt/oci-cli
 /opt/oci-cli/bin/pip install --disable-pip-version-check --no-cache-dir 'oci-cli==3.93.0'
 ln -sfn /opt/oci-cli/bin/oci /usr/local/bin/oci
 install -d -m 0700 -o "$ADMIN" -g "$ADMIN" "$HOME_DIR/.oci"
-
-systemctl enable --now ssh
-ufw allow OpenSSH >/dev/null 2>&1 || true
-ufw --force enable >/dev/null 2>&1 || true
-loginctl enable-linger "$ADMIN" || true
-
-bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
+stage OCI_CLI_READY
 
 {
   printf 'bootstrap_ref=%s\n' "$DIAL_BOOTSTRAP_REF"
@@ -239,5 +267,6 @@ The old Oracle control VM remains protected until migration, cutover and recover
 EOF
 chmod 0600 "$STATE/NEXT"
 
+stage COMPLETE
 echo "DIAL_NETCUP_IMAGE_BOOTSTRAP=COMPLETE"
 echo "GitHub OIDC zero-touch postbootstrap is enabled; no owner shell steps are required."

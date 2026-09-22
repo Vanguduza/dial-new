@@ -6,6 +6,10 @@ on:
       - gpt/netcup-hermes-control-integrated-20260921
     paths:
       - .github/workflows/netcup-diagnose-recover-bootstrap.yml
+      - deploy/netcup/hermes-control/netcup-custom-script.sh
+      - deploy/netcup/hermes-control/image-bootstrap.sh
+      - deploy/netcup/hermes-control/install-github-oidc-control.sh
+      - deploy/netcup/hermes-control/github-oidc-control.mjs
 
 permissions:
   contents: read

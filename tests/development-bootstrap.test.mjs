@@ -280,6 +280,7 @@ describe('DIAL development bootstrap closure', () => {
     const peer = fs.readFileSync(path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh'), 'utf8');
 
     expect(workflow).toContain("cron: '*/5 * * * *'");
+    expect(workflow).toContain('cancel-in-progress: false');
     expect(workflow).toContain('id-token: write');
     expect(workflow).toContain("body='{\"action\":\"status\"}'");
     expect(workflow).not.toContain("body='{\\\"action");
@@ -302,6 +303,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('bootstrap_ssh_public_key');
     expect(controller).toContain('overlay_verified');
     expect(controller).toContain('github_oidc_admin:true');
+    expect(controller).toContain('bootstrap_stage');
+    expect(controller).toContain('bootstrap_failure');
+    expect(controller).toContain('ssh_active');
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
     expect(customScript).toContain('PROVISIONING_STAGE=NETWORK_FREE');
@@ -326,6 +330,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain("ssh-keygen -q -t ed25519 -N ''");
     expect(image).toContain('install-github-oidc-control.sh');
     expect(image).toContain('ZERO_TOUCH_POSTBOOT=ENABLED');
+    expect(image).toContain('OIDC_CONTROL_EARLY_READY');
+    expect(image).toContain('PINNED_NODE_READY');
+    expect(image).toContain('SSH_RECOVERY_CHANNEL_READY');
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
     expect(image).not.toContain('dial-control-bootstrap-oracle.key');
@@ -338,6 +345,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
+    expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/netcup-custom-script.sh');
+    expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/install-github-oidc-control.sh');
 
     expect(hub).not.toContain('\\\\nOLD_PUB=');
     expect(hub).toContain('AllowedIPs = 10.77.0.5/32');

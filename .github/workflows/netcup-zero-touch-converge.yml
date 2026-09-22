@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: dial-control-zero-touch-converge
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   DIAL_EXPECTED_BOOTSTRAP_REF: 361afee30d641d5b7128a019538aa38f8397d56e
@@ -67,7 +67,8 @@ jobs:
               ready=true
               break
             fi
-            echo "Waiting for Dial Control image bootstrap (attempt $attempt/120)..."
+            stage="$(jq -r '.result.bootstrap_stage // "listener-unreachable"' <<<"${RESPONSE:-{}}" 2>/dev/null || echo listener-unreachable)"
+            echo "Waiting for hardened Dial Control image bootstrap (attempt $attempt/120, stage=$stage)..."
             sleep 30
           done
           if [[ "$ready" != true ]]; then
