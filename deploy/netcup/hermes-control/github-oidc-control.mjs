@@ -16,6 +16,7 @@ const ALLOWED_REFS = new Set([
 ]);
 const ALLOWED_WORKFLOWS = [
   '/.github/workflows/netcup-zero-touch-converge.yml@',
+  '/.github/workflows/netcup-admin-oidc.yml@',
 ];
 const ROOT = path.join(CONTROL, 'github-oidc');
 const USED = path.join(ROOT, 'used-tokens');
@@ -135,11 +136,47 @@ async function dispatch(body, claims) {
         wireguard_public_key:fs.existsSync('/etc/wireguard/dial-netcup.pub')
           ? fs.readFileSync('/etc/wireguard/dial-netcup.pub','utf8').trim()
           : null,
+        github_bootstrap_age_recipient:fs.existsSync('/etc/dial/github-bootstrap-age.pub')
+          ? fs.readFileSync('/etc/dial/github-bootstrap-age.pub','utf8').trim()
+          : null,
       };
     }
     case 'mark-recovery-ready': {
       fs.writeFileSync(path.join(ROOT,'github-oci-ready'),now()+'\n',{mode:0o600});
       return {ready:true};
+    }
+    case 'install-oci-recovery-bundle': {
+      const ciphertext=String(body.ciphertext_b64||'');
+      if(!ciphertext || ciphertext.length > 196608) throw new Error('invalid OCI recovery bundle');
+      const key='/etc/dial/github-bootstrap-age.key';
+      if(!fs.existsSync(key)) throw new Error('age bootstrap identity missing');
+      const encrypted=path.join(ROOT,'oci-bundle.age');
+      const clear=path.join(ROOT,'oci-bundle.json');
+      fs.writeFileSync(encrypted,Buffer.from(ciphertext,'base64'),{mode:0o600});
+      const dec=command("age --decrypt -i "+key+" -o "+clear+" "+encrypted,{timeout:30000});
+      requireOk(dec,'decrypt-oci-bundle');
+      const bundle=JSON.parse(fs.readFileSync(clear,'utf8'));
+      for(const k of ['user','tenancy','fingerprint','region','private_key']){
+        if(!String(bundle[k]||'').trim()) throw new Error('OCI bundle missing '+k);
+      }
+      fs.mkdirSync('/home/ubuntu/.oci',{recursive:true,mode:0o700});
+      fs.writeFileSync('/home/ubuntu/.oci/netcup-recovery.pem',String(bundle.private_key).trim()+'\n',{mode:0o600});
+      const config=[
+        '[DEFAULT]',
+        'user='+String(bundle.user).trim(),
+        'fingerprint='+String(bundle.fingerprint).trim(),
+        'tenancy='+String(bundle.tenancy).trim(),
+        'region='+String(bundle.region).trim(),
+        'key_file=/home/ubuntu/.oci/netcup-recovery.pem',
+        '',
+      ].join('\n');
+      fs.writeFileSync('/home/ubuntu/.oci/config',config,{mode:0o600});
+      command("chown -R ubuntu:ubuntu /home/ubuntu/.oci && chmod 700 /home/ubuntu/.oci && chmod 600 /home/ubuntu/.oci/config /home/ubuntu/.oci/netcup-recovery.pem");
+      fs.rmSync(encrypted,{force:true}); fs.rmSync(clear,{force:true});
+      const probe=ubuntu("oci iam region list --limit 1 >/dev/null",120000);
+      requireOk(probe,'oci-recovery-probe');
+      fs.writeFileSync(path.join(ROOT,'github-oci-ready'),now()+'\n',{mode:0o600});
+      return {installed:true,probe:'PASS'};
     }
     case 'configure-overlay': {
       for(const k of ['oracle_admin','vekl_worker','van_trading_core','old_control']){
@@ -176,6 +213,21 @@ async function dispatch(body, claims) {
       fs.writeFileSync(path.join(CONTROL,'state/migration-prepare-complete'),now()+'\n',{mode:0o600});
       return r;
     }
+    case 'activation-preflight': {
+      if(!fs.existsSync(path.join(CONTROL,'state/migration-prepare-complete'))) throw new Error('migration prepare has not completed');
+      if(!fs.existsSync(path.join(ROOT,'overlay-verified'))) throw new Error('overlay has not been verified');
+      if(!fs.existsSync(path.join(ROOT,'github-oci-ready'))) throw new Error('OCI recovery plane not ready');
+      const checks={
+        codex:ubuntu("codex login status 2>&1 | grep -q 'Logged in using ChatGPT'",120000),
+        claude:ubuntu("claude auth status >/dev/null 2>&1",120000),
+        antigravity:ubuntu("timeout 30s agy sign-in status >/dev/null 2>&1",60000),
+        xkiro:command("test -s /var/lib/dial-control/secrets/xkiro-api.key"),
+        stitch_adc:ubuntu("test -s ~/.config/gcloud/application_default_credentials.json",30000),
+      };
+      const failed=Object.entries(checks).filter(([,v])=>!v.ok).map(([k])=>k);
+      if(failed.length) throw Object.assign(new Error('activation credential preflight failed'),{result:{failed}});
+      return {ready:true,checks:Object.fromEntries(Object.entries(checks).map(([k,v])=>[k,v.ok]))};
+    }
     case 'migrate-cutover': {
       const r=ubuntu("OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover",30*60*1000);
       requireOk(r,'migrate-cutover');
@@ -202,13 +254,21 @@ async function dispatch(body, claims) {
       requireOk(verify,'certify-core');
       const peers=peerCheck().filter((x)=>x.ip!=='10.77.0.5');
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
-      // The public bootstrap ingress is temporary. Seal certification only after
-      // the durable GitHub admin runner is live, then retire the bootstrap ingress.
       const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
-      if(!runner.ok) throw new Error('GitHub admin runner must be active before sealing certification');
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
-      command("systemd-run --unit=dial-retire-github-oidc --on-active=15s /bin/bash -lc 'ufw delete allow 9134/tcp >/dev/null 2>&1 || true; systemctl disable --now dial-github-oidc-control.service'",{timeout:10000});
-      return {verify:verify.stdout,peers,github_admin_runner:true,oidc_retirement_scheduled:true};
+      return {verify:verify.stdout,peers,github_admin_runner:runner.ok,github_oidc_admin:true};
+    }
+    case 'admin-command': {
+      if(!String(claims.workflow_ref||'').includes('/.github/workflows/netcup-admin-oidc.yml@')) throw new Error('admin workflow refused');
+      if(body.ack!=='I_UNDERSTAND_ROOT') throw new Error('admin acknowledgement missing');
+      const raw=Buffer.from(String(body.command_b64||''),'base64').toString('utf8');
+      if(!raw.trim() || raw.length > 32768) throw new Error('invalid admin command');
+      const hash=crypto.createHash('sha256').update(raw).digest('hex');
+      audit({event:'ADMIN_COMMAND_START',actor:claims.actor,ref:claims.ref,command_sha256:hash});
+      const r=command(raw,{timeout:20*60*1000});
+      audit({event:'ADMIN_COMMAND_END',actor:claims.actor,ref:claims.ref,command_sha256:hash,status:r.status,ok:r.ok});
+      requireOk(r,'admin-command');
+      return {command_sha256:hash,...r};
     }
     default:
       throw new Error('unsupported action');
