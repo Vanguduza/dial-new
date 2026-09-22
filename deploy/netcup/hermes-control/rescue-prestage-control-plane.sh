@@ -64,9 +64,37 @@ else
   mount "$ROOTDEV" "$ROOT"
 fi
 grep -q '^ID=ubuntu' "$ROOT/etc/os-release" || { echo "not Ubuntu root" >&2; exit 3; }
-grep -Eq '^VERSION_ID="?24\.04"?for src in /dev /dev/pts /proc /sys; do
-  dst="$ROOT$src"; mkdir -p "$dst"
-  if ! mountpoint -q "$dst"; then mount --rbind "$src" "$dst"; mount --make-rslave "$dst"; BINDS+=("$dst"); fi
+grep -Eq '^VERSION_ID="?24\.04"?$' "$ROOT/etc/os-release" || { echo "Ubuntu 24.04 required" >&2; exit 3; }
+
+mount_fstab_target() {
+  local target="$1" source fstype options
+  mkdir -p "$ROOT$target"
+  mountpoint -q "$ROOT$target" && return 0
+  source="$(findmnt --fstab --evaluate --tab-file "$ROOT/etc/fstab" --target "$target" --output SOURCE -n 2>/dev/null | head -1 || true)"
+  fstype="$(findmnt --fstab --tab-file "$ROOT/etc/fstab" --target "$target" --output FSTYPE -n 2>/dev/null | head -1 || true)"
+  options="$(findmnt --fstab --tab-file "$ROOT/etc/fstab" --target "$target" --output OPTIONS -n 2>/dev/null | head -1 || true)"
+  [[ -n "$source" ]] || { echo "fstab source missing for $target" >&2; return 1; }
+  if [[ -n "$fstype" && -n "$options" ]]; then
+    mount -t "$fstype" -o "$options" "$source" "$ROOT$target"
+  elif [[ -n "$fstype" ]]; then
+    mount -t "$fstype" "$source" "$ROOT$target"
+  else
+    mount "$source" "$ROOT$target"
+  fi
+  MOUNTS+=("$ROOT$target")
+}
+
+mount_fstab_target /boot
+mount_fstab_target /boot/efi
+
+for src in /dev /dev/pts /proc /sys; do
+  dst="$ROOT$src"
+  mkdir -p "$dst"
+  if ! mountpoint -q "$dst"; then
+    mount --rbind "$src" "$dst"
+    mount --make-rslave "$dst"
+    BINDS+=("$dst")
+  fi
 done
 
 if [[ -L "$ROOT/etc/resolv.conf" ]]; then
