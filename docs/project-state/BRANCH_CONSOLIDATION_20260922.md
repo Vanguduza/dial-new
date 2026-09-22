@@ -19,3 +19,5 @@ Universal-development decisions that collided with later frontend decisions were
 Branch ref deletion is forbidden until this consolidation is merged to `master` and the resulting canonical master passes repository verification. Even after that point, `oracle-runtime-status` remains retained unless its operational mirror role is separately retired.
 
 Machine-readable inventory: `docs/project-state/BRANCH_CONSOLIDATION_20260922.json`.
+
+- Latest Netcup/Dial Control head `23998f2be0d5489629d1cf7c7827e320c6bc1a9c` is absorbed, including the state-aware housekeeping fabric.
