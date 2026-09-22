@@ -366,6 +366,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('findmnt -rn -S "$dev" -o TARGET');
     expect(recoveryWorkflow).toContain('dial-root-verify.sh');
     expect(recoveryWorkflow).toContain("<<'VERIFY_EOF'");
+    expect(recoveryWorkflow).toContain('\n          VERIFY_EOF\n'); // VERIFY_EOF heredoc terminator
+    expect(recoveryWorkflow).not.toContain('\n                    VERIFY_EOF\n');
     expect(recoveryWorkflow).toContain('\n          #!/usr/bin/env bash\n');
     expect(recoveryWorkflow).not.toContain('\n#!/usr/bin/env bash\n'); // unindented rescue heredoc
     expect(recoveryWorkflow).toContain('timeout-minutes: 90');

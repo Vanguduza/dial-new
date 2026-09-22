@@ -439,7 +439,7 @@ jobs:
           }
           sync
           umount /mnt/dial-root
-                    VERIFY_EOF
+          VERIFY_EOF
           chmod 0700 "$RUNNER_TEMP/dial-root-verify.sh"
           "${SCP[@]}" "$RUNNER_TEMP/dial-root-verify.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/dial-root-verify.sh >/dev/null
           "${SSH[@]}" "bash /tmp/dial-root-verify.sh '$ROOTDEV'"
