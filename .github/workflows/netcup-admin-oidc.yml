@@ -1,0 +1,53 @@
+name: Dial Control OIDC admin
+
+on:
+  workflow_dispatch:
+    inputs:
+      command_b64:
+        description: Base64-encoded root command; never place secrets in workflow inputs
+        required: true
+        type: string
+      acknowledge_root:
+        description: Type I_UNDERSTAND_ROOT
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dial-control-oidc-admin
+  cancel-in-progress: false
+
+jobs:
+  admin:
+    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+
+      - name: Execute audited Dial Control command
+        shell: bash
+        env:
+          COMMAND_B64: ${{ inputs.command_b64 }}
+          ACK: ${{ inputs.acknowledge_root }}
+        run: |
+          set -euo pipefail
+          [[ "$ACK" == I_UNDERSTAND_ROOT ]] || { echo "Root acknowledgement missing" >&2; exit 2; }
+          [[ -n "$COMMAND_B64" ]] || { echo "Empty command" >&2; exit 2; }
+          BODY="$(jq -cn --arg cmd "$COMMAND_B64" --arg ack "$ACK" '{action:"admin-command",command_b64:$cmd,ack:$ack}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          {
+            echo "## Dial Control OIDC admin receipt"
+            echo "- actor: $GITHUB_ACTOR"
+            echo "- source SHA: $GITHUB_SHA"
+            echo "- command SHA-256: $(jq -r '.result.command_sha256' <<<"$RESPONSE")"
+            echo "- status: PASS"
+          } >>"$GITHUB_STEP_SUMMARY"
