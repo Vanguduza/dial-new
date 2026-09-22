@@ -91,7 +91,7 @@
       "status": "OWNER_ACTION_REQUIRED",
       "gate": "EXTERNAL-GATE-CLOUDFLARE-ACCESS-001",
       "owner_decision_required": false,
-      "evidence": "fabric \u00a711 and bootstrap manifest classify authenticated Cloudflare Access provider ingress as mandatory CORE_DEVELOPMENT_REQUIRED; real DIAL_MCP_INGRESS_URL and live authenticated ingress proof remain absent"
+      "evidence": "fabric §11 and bootstrap manifest classify authenticated Cloudflare Access provider ingress as mandatory CORE_DEVELOPMENT_REQUIRED; real DIAL_MCP_INGRESS_URL and live authenticated ingress proof remain absent"
     },
     {
       "id": "GAP-011",
@@ -203,12 +203,12 @@
     },
     {
       "id": "GAP-024",
-      "title": "Mandatory independent secondary recovery overlay is not authenticated",
+      "title": "Canonical WireGuard secondary recovery overlay requires final live reciprocal qualification",
       "severity": "P1",
-      "status": "OWNER_ACTION_REQUIRED",
+      "status": "RUNTIME_QUALIFICATION_REQUIRED",
       "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
       "owner_decision_required": false,
-      "evidence": "fabric \u00a712 path G requires Tailscale or equivalent independent of Cloudflare; live control, vekl-worker and oracle-admin all report Tailscale BackendState=NeedsLogin and Online=false"
+      "evidence": "Canonical topology now uses WireGuard wg-dial across Netcup/Oracle recovery peers. Repository bootstrap and certification probe are reconciled to WireGuard; final merged-SHA reciprocal recovery proof remains required."
     },
     {
       "id": "GAP-025",
