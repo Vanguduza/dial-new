@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: netcup-dial-control-scp-mutation
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
