@@ -16,7 +16,6 @@ const ALLOWED_REFS = new Set([
 ]);
 const ALLOWED_WORKFLOWS = [
   '/.github/workflows/netcup-zero-touch-converge.yml@',
-  '/.github/workflows/netcup-admin-oidc.yml@',
 ];
 const ROOT = path.join(CONTROL, 'github-oidc');
 const USED = path.join(ROOT, 'used-tokens');
@@ -128,6 +127,12 @@ async function dispatch(body, claims) {
         migration_cutover:fs.existsSync(path.join(CONTROL,'state/migration-cutover-complete')),
         control_active:fs.existsSync(path.join(CONTROL,'state/netcup-control-active')),
         certified:fs.existsSync(path.join(CONTROL,'state/zero-touch-certified')),
+        bootstrap_ssh_public_key:fs.existsSync('/home/ubuntu/.ssh/dial-bootstrap-oracle.pub')
+          ? fs.readFileSync('/home/ubuntu/.ssh/dial-bootstrap-oracle.pub','utf8').trim()
+          : null,
+        wireguard_public_key:fs.existsSync('/etc/wireguard/dial-netcup.pub')
+          ? fs.readFileSync('/etc/wireguard/dial-netcup.pub','utf8').trim()
+          : null,
       };
     }
     case 'mark-recovery-ready': {
@@ -188,19 +193,10 @@ async function dispatch(body, claims) {
       const peers=peerCheck().filter((x)=>x.ip!=='10.77.0.5');
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
-      return {verify:verify.stdout,peers};
-    }
-    case 'admin-command': {
-      if(!String(claims.workflow_ref||'').includes('/.github/workflows/netcup-admin-oidc.yml@')) throw new Error('admin command workflow refused');
-      if(body.ack!=='I_UNDERSTAND_ROOT') throw new Error('admin acknowledgement missing');
-      const raw=Buffer.from(String(body.command_b64||''),'base64').toString('utf8');
-      if(!raw.trim()) throw new Error('empty admin command');
-      const hash=crypto.createHash('sha256').update(raw).digest('hex');
-      audit({event:'ADMIN_COMMAND_START',actor:claims.actor,ref:claims.ref,command_sha256:hash});
-      const r=command(raw,{timeout:20*60*1000});
-      audit({event:'ADMIN_COMMAND_END',actor:claims.actor,ref:claims.ref,command_sha256:hash,status:r.status,ok:r.ok});
-      requireOk(r,'admin-command');
-      return {command_sha256:hash,...r};
+      // The public bootstrap ingress is temporary. Once certification is sealed,
+      // retire it asynchronously after this response has been returned.
+      command("systemd-run --unit=dial-retire-github-oidc --on-active=15s /bin/bash -lc 'ufw delete allow 9134/tcp >/dev/null 2>&1 || true; systemctl disable --now dial-github-oidc-control.service'",{timeout:10000});
+      return {verify:verify.stdout,peers,oidc_retirement_scheduled:true};
     }
     default:
       throw new Error('unsupported action');
