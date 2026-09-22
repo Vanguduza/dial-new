@@ -182,30 +182,67 @@ jobs:
           # the installed filesystem deterministically.
           echo "DIAL_CONTROL_RECOVERY=RESCUE_REQUIRED"
 
-          rescue_active="$(jq -r '.active // false' <<<"$RESCUE")"
-          if [[ "$rescue_active" != true ]]; then
-            echo "Activating Netcup rescue system..."
-            api_post "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-task.json
+          api_patch() {
+            local url="$1" body="$2"
+            curl -sS --fail-with-body -X PATCH \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/merge-patch+json" \
+              -H "accept: application/json" \
+              --data "$body" "$url"
+          }
+
+          wait_state() {
+            local wanted="$1"
+            for attempt in $(seq 1 90); do
+              SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
+              state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
+              echo "server_state=$state_now wanted=$wanted"
+              [[ "$state_now" == "$wanted" ]] && return 0
+              sleep 5
+            done
+            return 1
+          }
+
+          if [[ "$state" == "RUNNING" ]]; then
+            echo "Stopping Dial Control before rescue activation..."
+            api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/stop-task.json || \
+              api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWEROFF" '{"state":"OFF"}' >/tmp/stop-task.json
+            wait_state SHUTOFF || { echo "::error::Server did not reach SHUTOFF"; exit 29; }
           fi
+
+          echo "Activating Netcup rescue system on stopped VM..."
+          set +e
+          RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "accept: application/json" \
+            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
+          rc=$?
+          set -e
+          echo "rescue_activate_http=$RESCUE_HTTP curl_rc=$rc"
+          cat /tmp/rescue-activate.json 2>/dev/null || true
+          [[ "$rc" -eq 0 && "$RESCUE_HTTP" =~ ^20[0-9]$ ]] || {
+            echo "::error::Rescue activation failed"
+            exit 30
+          }
 
           RESCUE_PASSWORD=""
           for attempt in $(seq 1 60); do
             RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
             active="$(jq -r '.active // false' <<<"$RESCUE")"
             RESCUE_PASSWORD="$(jq -r '.password // empty' <<<"$RESCUE")"
-            if [[ "$active" == true && -n "$RESCUE_PASSWORD" ]]; then break; fi
+            [[ "$active" == true && -n "$RESCUE_PASSWORD" ]] && break
             sleep 5
           done
-          [[ -n "$RESCUE_PASSWORD" ]] || { echo "::error::Rescue password was not issued"; exit 30; }
+          [[ -n "$RESCUE_PASSWORD" ]] || { echo "::error::Rescue password was not issued"; exit 31; }
 
-          echo "Power-cycling into rescue..."
-          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWERCYCLE" '{"state":"ON"}' >/tmp/rescue-powercycle.json
+          echo "Starting server into rescue..."
+          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/rescue-start.json
 
           for attempt in $(seq 1 90); do
             if tcp_open 22; then break; fi
             sleep 5
           done
-          tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 31; }
+          tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 32; }
 
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass
@@ -218,28 +255,24 @@ jobs:
           "${SSH[@]}" 'lsblk -o NAME,PATH,SIZE,FSTYPE,TYPE,MOUNTPOINTS'
 
           ROOTDEV="$("${SSH[@]}" 'set -e
-            vgchange -ay >/dev/null 2>&1 || true
             mkdir -p /mnt/dial-probe
-            found=""
-            while read -r dev fs; do
-              case "$fs" in ext4|xfs|btrfs) ;; *) continue;; esac
+            for dev in $(lsblk -rpno NAME,FSTYPE | awk '"'"'$2 ~ /^(ext4|xfs|btrfs)$/ {print $1}'"'"'); do
               umount /mnt/dial-probe >/dev/null 2>&1 || true
               if mount -o ro "$dev" /mnt/dial-probe >/dev/null 2>&1; then
                 if grep -q "^ID=ubuntu" /mnt/dial-probe/etc/os-release 2>/dev/null; then
-                  found="$dev"
+                  printf "%s" "$dev"
                   umount /mnt/dial-probe
-                  printf "%s" "$found"
                   exit 0
                 fi
                 umount /mnt/dial-probe
               fi
-            done < <(lsblk -rpno NAME,FSTYPE)
+            done
             exit 1
           ')"
-          [[ -n "$ROOTDEV" ]] || { echo "::error::Could not identify Ubuntu root filesystem"; exit 32; }
+          [[ -n "$ROOTDEV" ]] || { echo "::error::Could not identify Ubuntu root filesystem"; exit 33; }
           echo "UBUNTU_ROOT_DEVICE=$ROOTDEV"
 
-          "${SSH[@]}" "set -e
+          "${SSH[@]}" "set -Eeuo pipefail
             mkdir -p /mnt/dial-root
             umount /mnt/dial-root >/dev/null 2>&1 || true
             mount '$ROOTDEV' /mnt/dial-root
@@ -248,7 +281,7 @@ jobs:
             ls -l /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service 2>/dev/null || true
             ls -l /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner 2>/dev/null || true
             cat /mnt/dial-root/root/dial-control-bootstrap-scheduled 2>/dev/null || true
-            tail -n 200 /mnt/dial-root/var/log/dial-control-bootstrap.log 2>/dev/null || true
+            tail -n 250 /mnt/dial-root/var/log/dial-control-bootstrap.log 2>/dev/null || true
             cat /mnt/dial-root/var/lib/dial-control/bootstrap/image-bootstrap.receipt 2>/dev/null || true
           "
 
@@ -271,31 +304,40 @@ jobs:
           "
           echo "INSTALLED_FILESYSTEM_BOOTSTRAP_REPAIR=GREEN"
 
+          echo "Stopping rescue boot..."
+          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/rescue-stop.json || \
+            api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWEROFF" '{"state":"OFF"}' >/tmp/rescue-stop.json
+          wait_state SHUTOFF || { echo "::error::Rescue VM did not stop"; exit 34; }
+
           echo "Deactivating rescue system..."
           curl -sS --fail-with-body -X DELETE \
             -H "Authorization: Bearer $TOKEN" \
             -H "accept: application/json" \
-            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-off.json || true
+            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-off.json
 
-          for attempt in $(seq 1 30); do
+          for attempt in $(seq 1 60); do
             RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
             [[ "$(jq -r '.active // false' <<<"$RESCUE")" == false ]] && break
-            sleep 5
+            sleep 3
           done
+          [[ "$(jq -r '.active // false' <<<"$RESCUE")" == false ]] || {
+            echo "::error::Rescue system did not deactivate"
+            exit 35
+          }
 
-          echo "Power-cycling back to repaired Ubuntu..."
-          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWERCYCLE" '{"state":"ON"}' >/tmp/normal-powercycle.json
+          echo "Starting repaired Ubuntu..."
+          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/normal-start.json
 
-          for attempt in $(seq 1 180); do
+          for attempt in $(seq 1 240); do
             if tcp_open 9134; then
               echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
               exit 0
             fi
             if (( attempt % 12 == 0 )); then
-              echo "Waiting for repaired bootstrap listener ($attempt/180)..."
+              echo "Waiting for repaired bootstrap listener ($attempt/240)..."
             fi
             sleep 5
           done
 
-          echo "::error::Repaired Ubuntu booted but OIDC listener did not appear within 15 minutes"
+          echo "::error::Repaired Ubuntu booted but OIDC listener did not appear within 20 minutes"
           exit 40
