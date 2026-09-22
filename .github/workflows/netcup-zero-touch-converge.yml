@@ -45,7 +45,7 @@ jobs:
           body='{"action":"status"}'
           out=''
           for attempt in $(seq 1 24); do
-            if out="$(DIAL_CONTROL_OIDC_URL="$DIAL_CONTROL_OIDC_URL"               bash deploy/netcup/hermes-control/github-oidc-call.sh "$body" 2>/dev/null)"; then
+            if out="$(DIAL_CONTROL_OIDC_URL="$DIAL_CONTROL_OIDC_URL" bash deploy/netcup/hermes-control/github-oidc-call.sh "$body" 2>/dev/null)"; then
               break
             fi
             echo "Dial Control not ready yet (attempt $attempt/24)"
@@ -61,17 +61,12 @@ jobs:
 
           ssh_pub="$(jq -r '.result.bootstrap_ssh_public_key // empty' "$RUNNER_TEMP/dial-control-status.json")"
           wg_pub="$(jq -r '.result.wireguard_public_key // empty' "$RUNNER_TEMP/dial-control-status.json")"
-          {
-            echo "bootstrap_ssh_public_key=$ssh_pub"
-            echo "wireguard_public_key=$wg_pub"
-          } >>"$GITHUB_OUTPUT"
-
-          echo "certified=$(jq -r '.result.certified' "$RUNNER_TEMP/dial-control-status.json")"
+          echo "bootstrap_ssh_public_key=$ssh_pub" >>"$GITHUB_OUTPUT"
+          echo "wireguard_public_key=$wg_pub" >>"$GITHUB_OUTPUT"
 
       - name: Already certified
         if: steps.control.outputs.certified == 'true'
-        run: |
-          echo "DIAL_CONTROL_ZERO_TOUCH=ALREADY_CERTIFIED" >>"$GITHUB_STEP_SUMMARY"
+        run: echo "DIAL_CONTROL_ZERO_TOUCH=ALREADY_CERTIFIED" >>"$GITHUB_STEP_SUMMARY"
 
       - id: enroll
         name: Enroll Oracle peers through OCI Run Command
@@ -84,11 +79,13 @@ jobs:
           set -euo pipefail
 
           for name in OCI_USER OCI_TENANCY OCI_FINGERPRINT OCI_PRIVATE_KEY OCI_REGION OCI_COMPARTMENT OCI_OLD_CONTROL OCI_VEKL OCI_ADMIN OCI_TRADING; do
-            [[ -n "${!name:-}" ]] || {
+            value="$(printenv "$name" 2>/dev/null || true)"
+            [[ -n "$value" ]] || {
               echo "::error::ZERO_TOUCH_BLOCKED: required GitHub OCI credential/variable $name is not configured"
               exit 21
             }
           done
+
           [[ -n "$NETCUP_SSH_PUB" && -n "$NETCUP_WG_PUB" ]] || {
             echo "::error::Dial Control bootstrap public identities are missing"
             exit 22
@@ -99,8 +96,10 @@ jobs:
           OCI="$RUNNER_TEMP/oci/bin/oci"
           KEY="$RUNNER_TEMP/oci-recovery.pem"
           CONFIG="$RUNNER_TEMP/oci-config"
+
           printf '%s\n' "$OCI_PRIVATE_KEY" >"$KEY"
           chmod 600 "$KEY"
+
           cat >"$CONFIG" <<EOF
           [DEFAULT]
           user=$OCI_USER
@@ -116,8 +115,11 @@ jobs:
           wg_b64="$(printf '%s' "$NETCUP_WG_PUB" | base64 -w0)"
 
           run_peer() {
-            local host="$1" instance="$2" outvar="$3"
-            local content target cmd_id state text key
+            local host="$1"
+            local instance="$2"
+            local outvar="$3"
+            local content target cmd_id state text key remote
+
             content="$RUNNER_TEMP/content-$host.json"
             target="$RUNNER_TEMP/target-$host.json"
 
@@ -137,29 +139,40 @@ jobs:
 
             state=ACCEPTED
             for _ in $(seq 1 60); do
-              state="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get                 --command-id "$cmd_id" --instance-id "$instance"                 --query 'data."lifecycle-state"' --raw-output 2>/dev/null || true)"
+              state="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get                 --command-id "$cmd_id"                 --instance-id "$instance"                 --query 'data."lifecycle-state"'                 --raw-output 2>/dev/null || true)"
+
               case "$state" in
-                SUCCEEDED) break ;;
+                SUCCEEDED)
+                  break
+                  ;;
                 FAILED|TIMED_OUT|CANCELED)
                   "$OCI" --config-file "$CONFIG" instance-agent command-execution get                     --command-id "$cmd_id" --instance-id "$instance" || true
                   echo "::error::OCI Run Command failed for $host: $state"
-                  exit 23 ;;
+                  exit 23
+                  ;;
               esac
               sleep 5
             done
-            [[ "$state" == SUCCEEDED ]] || { echo "::error::OCI Run Command did not finish for $host: $state"; exit 24; }
 
-            text="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get               --command-id "$cmd_id" --instance-id "$instance"               --query 'data.content.text' --raw-output)"
+            [[ "$state" == SUCCEEDED ]] || {
+              echo "::error::OCI Run Command did not finish for $host: $state"
+              exit 24
+            }
+
+            text="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get               --command-id "$cmd_id"               --instance-id "$instance"               --query 'data.content.text'               --raw-output)"
+
             printf '%s\n' "$text"
             grep -q 'ZERO_TOUCH_ORACLE_PEER=GREEN' <<<"$text" || {
               echo "::error::peer enrollment receipt missing for $host"
               exit 25
             }
+
             key="$(sed -n 's/^DIAL_WG_PUBLIC_KEY=//p' <<<"$text" | tail -1)"
             [[ "$key" =~ ^[A-Za-z0-9+/]{43}=$ ]] || {
               echo "::error::invalid WireGuard key returned by $host"
               exit 26
             }
+
             printf -v "$outvar" '%s' "$key"
           }
 
@@ -168,12 +181,10 @@ jobs:
           run_peer van-trading-core "$OCI_TRADING" TRADING_KEY
           run_peer old-dial-hermes-control "$OCI_OLD_CONTROL" OLD_KEY
 
-          {
-            echo "oracle_admin_wg=$ADMIN_KEY"
-            echo "vekl_worker_wg=$VEKL_KEY"
-            echo "van_trading_core_wg=$TRADING_KEY"
-            echo "old_control_wg=$OLD_KEY"
-          } >>"$GITHUB_OUTPUT"
+          echo "oracle_admin_wg=$ADMIN_KEY" >>"$GITHUB_OUTPUT"
+          echo "vekl_worker_wg=$VEKL_KEY" >>"$GITHUB_OUTPUT"
+          echo "van_trading_core_wg=$TRADING_KEY" >>"$GITHUB_OUTPUT"
+          echo "old_control_wg=$OLD_KEY" >>"$GITHUB_OUTPUT"
 
           rm -f "$KEY" "$CONFIG"
 
@@ -187,51 +198,44 @@ jobs:
           OLD_KEY: ${{ steps.enroll.outputs.old_control_wg }}
         run: |
           set -euo pipefail
-          body="$(jq -cn             --arg a "$ADMIN_KEY" --arg v "$VEKL_KEY" --arg t "$TRADING_KEY" --arg o "$OLD_KEY"             '{action:"configure-overlay",peers:{oracle_admin:$a,vekl_worker:$v,van_trading_core:$t,old_control:$o}}')"
+          body="$(jq -cn             --arg a "$ADMIN_KEY"             --arg v "$VEKL_KEY"             --arg t "$TRADING_KEY"             --arg o "$OLD_KEY"             '{action:"configure-overlay",peers:{oracle_admin:$a,vekl_worker:$v,van_trading_core:$t,old_control:$o}}')"
           bash deploy/netcup/hermes-control/github-oidc-call.sh "$body"
 
       - name: Verify private overlay and SSH
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.overlay_verified != 'true' && steps.control.outputs.rotated != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}'
 
       - name: Mark GitHub OCI recovery plane ready
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.recovery_ready != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"mark-recovery-ready"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"mark-recovery-ready"}'
 
       - name: Rotate one-time bootstrap identities
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.rotated != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"rotate-identities"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"rotate-identities"}'
 
       - name: Prepare old Hermes state migration
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.migration_prepare != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-prepare"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-prepare"}'
 
       - name: Cut over authoritative Hermes state
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.migration_cutover != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-cutover"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-cutover"}'
 
       - name: Activate Dial Control
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.control_active != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activate"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activate"}'
 
       - name: Register permanent GitHub admin runner
         if: steps.control.outputs.certified != 'true' && steps.control.outputs.github_admin_runner != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"ensure-github-admin-runner"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"ensure-github-admin-runner"}'
 
       - name: Final zero-touch certification
         if: steps.control.outputs.certified != 'true'
-        run: |
-          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"certify"}'
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"certify"}'
 
       - name: Convergence summary
         if: always()
+        shell: bash
         run: |
           {
             echo "## Dial Control zero-touch convergence"
