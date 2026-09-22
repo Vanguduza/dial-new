@@ -69,7 +69,7 @@ cat >>/tmp/dial-environment <<EOF
 DIAL_HERMES_HOST_ID=$HOST
 DIAL_FABRIC_HOST_ID=$CANONICAL_HOST_ID
 DIAL_HOST_ROLE=$CANONICAL_HOST_ID
-DIAL_CONTROL_DISPLAY_NAME=Dial Control
+DIAL_CONTROL_DISPLAY_NAME='Dial Control'
 EOF
 install -m 0644 /tmp/dial-environment /etc/environment
 rm -f /tmp/dial-environment
@@ -79,7 +79,7 @@ cat >"$HOME_DIR/.config/environment.d/10-dial-host.conf" <<EOF
 DIAL_HERMES_HOST_ID=$HOST
 DIAL_FABRIC_HOST_ID=$CANONICAL_HOST_ID
 DIAL_HOST_ROLE=$CANONICAL_HOST_ID
-DIAL_CONTROL_DISPLAY_NAME=Dial Control
+DIAL_CONTROL_DISPLAY_NAME='Dial Control'
 EOF
 chown "$ADMIN:$ADMIN" "$HOME_DIR/.config/environment.d/10-dial-host.conf"
 chmod 0644 "$HOME_DIR/.config/environment.d/10-dial-host.conf"
