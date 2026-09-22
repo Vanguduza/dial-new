@@ -36,12 +36,18 @@ copy_state(){
   sudo chmod 0700 "$CONTROL_HOME"
 }
 copy_identity(){
-  for rel in .hermes .codex .claude .oci; do
+  for rel in .hermes .codex .claude; do
     if "${SSH[@]}" "test -d \"\$HOME/$rel\"" >/dev/null 2>&1; then
       mkdir -p "$HOME/$rel"
       rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
     fi
   done
+  # Keep the dedicated Netcup recovery identity if GitHub already installed it.
+  # Only fall back to the old host's OCI identity when the new host has none.
+  if [[ ! -s "$HOME/.oci/config" ]] && "${SSH[@]}" 'test -d "$HOME/.oci"' >/dev/null 2>&1; then
+    mkdir -p "$HOME/.oci"
+    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.oci/" "$HOME/.oci/"
+  fi
   # Reuse the already-authorized owner Commander device session when present so the
   # new host does not require a second manual device-code pairing.
   if "${SSH[@]}" 'test -d "$HOME/.desktop-commander-device"' >/dev/null 2>&1; then
@@ -54,12 +60,18 @@ copy_identity(){
     mkdir -p "$HOME/.config/gh"
     rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gh/" "$HOME/.config/gh/"
   fi
+  # Stitch uses Google ADC on the existing control host. Carry the already
+  # authorized ADC/config rather than requiring a new browser login.
+  if "${SSH[@]}" 'test -d "$HOME/.config/gcloud"' >/dev/null 2>&1; then
+    mkdir -p "$HOME/.config/gcloud"
+    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gcloud/" "$HOME/.config/gcloud/"
+  fi
   # Claude may store subscription state beneath XDG config as well as ~/.claude.
   if "${SSH[@]}" 'test -d "$HOME/.config/claude"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/claude"
     rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/claude/" "$HOME/.config/claude/"
   fi
-  chmod 0700 "$HOME/.hermes" "$HOME/.codex" "$HOME/.claude" "$HOME/.oci" "$HOME/.desktop-commander-device" "$HOME/.config/gh" 2>/dev/null || true
+  chmod 0700 "$HOME/.hermes" "$HOME/.codex" "$HOME/.claude" "$HOME/.oci" "$HOME/.desktop-commander-device" "$HOME/.config/gh" "$HOME/.config/gcloud" 2>/dev/null || true
 }
 snapshot_repo(){
   mkdir -p "$CONTROL_HOME/migration/oracle-repo-snapshot"
