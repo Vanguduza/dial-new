@@ -23,7 +23,7 @@ import {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const DEFAULT_POLL_MS = 2000;
-const ORIGIN = 'EXTERNAL_ORACLE_ORCHESTRATOR';
+const ORIGIN = 'EXTERNAL_DIAL_ORCHESTRATOR';
 export const QUALIFICATION_CANARY_INSTRUCTION = 'Reply with exactly DIAL_EXTERNAL_ORCHESTRATOR_OK. Do not modify files and do not use tools.';
 
 function now() { return new Date().toISOString(); }
