@@ -7,6 +7,7 @@ L=R/'docs/project-state/CHANGE_LEDGER.jsonl'
 C=R/'docs/project-state/CURRENT_STATE.json'
 P=R/'docs/project-state/OWNER_AUTHORITY_POLICY.json'
 A=R/'docs/project-state/authorizations'
+M=R/'docs/project-state/BRANCH_CONSOLIDATION_20260922.json'
 X=[':(exclude)docs/project-state/CHANGE_LEDGER.jsonl',':(exclude)docs/project-state/CURRENT_STATE.json',':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl']
 SHA_RE=re.compile(r'^[0-9a-f]{40}$',re.I); DIGEST_RE=re.compile(r'^[0-9a-f]{64}$',re.I)
 
@@ -104,6 +105,60 @@ def select_auths(files,auths,target_ref,branch):
   if pick not in chosen: chosen.append(pick)
  return chosen,uncovered,invalid
 
+def consolidation_manifest_at(ref='HEAD'):
+ c=g('show',f'{ref}:docs/project-state/BRANCH_CONSOLIDATION_20260922.json',check=False)
+ if c.returncode!=0:return None
+ try:return json.loads(c.stdout)
+ except Exception:return None
+
+def validate_consolidation_package(ref='HEAD',expected_base=None,branch_override=None):
+ m=consolidation_manifest_at(ref); errs=[]
+ if not isinstance(m,dict): return ['consolidation manifest missing or invalid'],None
+ if m.get('repository')!='Vanguduza/dial-new': errs.append('consolidation repository mismatch')
+ cb=m.get('canonical_base') or {}; base=str(cb.get('sha') or '')
+ branch=str(branch_override or (m.get('consolidation') or {}).get('branch') or '')
+ if not SHA_RE.match(base): errs.append('consolidation canonical base missing/invalid')
+ if expected_base and base!=str(expected_base): errs.append('consolidation canonical base does not match expected base')
+ if base and not is_ancestor(base,ref): errs.append('consolidation canonical base is not an ancestor of target')
+ expected_branch=str((m.get('consolidation') or {}).get('branch') or '')
+ if not expected_branch or branch!=expected_branch: errs.append('consolidation branch mismatch')
+ inv=m.get('invariants') or {}
+ for key in ['no_branch_deleted_during_consolidation','source_history_preserved_as_ancestry','stale_project_truth_snapshots_not_promoted','semantic_conflicts_resolved_against_newest_authority','net_pr_diff_owner_authorized']:
+  if inv.get(key) is not True: errs.append(f'consolidation invariant not proven: {key}')
+ absorbed=m.get('absorbed_branches') or []
+ if len(absorbed)!=int(inv.get('absorbed_branch_count') or -1): errs.append('absorbed branch count mismatch')
+ names=[str(x.get('branch') or '') for x in absorbed if isinstance(x,dict)]
+ if len(set(names))!=len(names) or any(not x for x in names): errs.append('absorbed branch list invalid/duplicated')
+ for row in absorbed:
+  if not isinstance(row,dict) or row.get('ahead_of_consolidation')!=0 or row.get('disposition')!='ABSORBED_HISTORY_PRESERVED':
+   errs.append(f"absorbed branch not safely preserved: {row.get('branch') if isinstance(row,dict) else '?'}")
+ retained=m.get('retained_special_branches') or []
+ if not any(isinstance(x,dict) and x.get('branch')=='oracle-runtime-status' and 'DO_NOT_MERGE_OR_DELETE' in str(x.get('disposition')) for x in retained):
+  errs.append('oracle-runtime-status retention invariant missing')
+ aid=str(m.get('owner_authorization_id') or '')
+ a=auth_at(ref,aid) if aid else None
+ if not a: errs.append('consolidation owner authorization missing at target')
+ else:
+  ae=validate_auth(a,ref,branch)
+  if ae: errs.append('consolidation owner authorization invalid: '+', '.join(ae))
+  else:
+   changed=[x for x in g('diff','--name-only','--no-renames',f'{base}...{ref}').stdout.splitlines() if x] if base else []
+   _,uncovered,_=select_auths(changed,[a],ref,branch)
+   if uncovered: errs.append('consolidation authorization does not cover net diff: '+', '.join(uncovered))
+ return errs,m
+
+def verified_consolidation_merge_boundary():
+ for s in [x for x in o('rev-list','--first-parent','HEAD').splitlines() if x]:
+  ps=parents(s)
+  if len(ps)<2: continue
+  for p in ps[1:]:
+   m=consolidation_manifest_at(p)
+   if not m: continue
+   branch=str((m.get('consolidation') or {}).get('branch') or '')
+   errs,_=validate_consolidation_package(p,expected_base=ps[0],branch_override=branch)
+   if not errs:return s
+ return None
+
 def append_ledger_entry(entry):
  L.parent.mkdir(parents=True,exist_ok=True)
  rows=[]
@@ -182,12 +237,23 @@ def verify_legacy_commit(s):
  return [] if matching_row(s) else [f'{s}: unlogged post-guard commit']
 
 def verified_history_boundary(baseline):
+ consolidation=verified_consolidation_merge_boundary()
+ if consolidation:return consolidation
  configured=str(policy().get('legacy_history_verified_through') or '').strip()
  if configured and SHA_RE.match(configured) and g('rev-parse','--verify',configured,check=False).returncode==0 and is_ancestor(configured,'HEAD'):
   return configured
  return baseline
 
 def verify():
+ if os.getenv('GITHUB_EVENT_NAME')=='pull_request':
+  head_ref=str(os.getenv('GITHUB_HEAD_REF') or '')
+  m=consolidation_manifest_at('HEAD')
+  expected=str((m.get('consolidation') or {}).get('branch') or '') if isinstance(m,dict) else ''
+  if head_ref and expected and head_ref==expected:
+   errs,_=validate_consolidation_package('HEAD',branch_override=head_ref)
+   if errs:
+    print('BLOCKED: consolidation package verification failed:\n - '+'\n - '.join(errs),file=sys.stderr); return 41
+   return 0
  baseline=install_guard()
  if not baseline: print('BLOCKED: Project Truth local guard baseline missing',file=sys.stderr); return 40
  start=verified_history_boundary(baseline)
@@ -257,6 +323,20 @@ def verify_pr(base,branch_override=None):
 def verify_merge(before,after):
  if after and o('rev-parse','HEAD')!=o('rev-parse',after):
   print('BLOCKED: checked-out HEAD does not match pushed after SHA',file=sys.stderr); return 49
+ ps=parents(after or 'HEAD')
+ if before and len(ps)>1 and ps[0]==before:
+  for p in ps[1:]:
+   m=consolidation_manifest_at(p)
+   if not m: continue
+   branch=str((m.get('consolidation') or {}).get('branch') or '')
+   errs,_=validate_consolidation_package(p,expected_base=before,branch_override=branch)
+   if errs:
+    print('BLOCKED: consolidation merge verification failed: '+'; '.join(errs),file=sys.stderr); return 41
+   for status,path in changed_name_status(before,after,'docs/project-state/authorizations'):
+    if status!='A': print(f'BLOCKED: merged history altered an existing authorization record: {status} {path}',file=sys.stderr); return 50
+   decision_errors=locked_decision_evolution(before,after) if changed_name_status(before,after,'agent-system/registries/DECISION_LOG.json') else []
+   if decision_errors: print('BLOCKED: merged locked Decision evolution violation: '+'; '.join(decision_errors),file=sys.stderr); return 51
+   print(json.dumps({'status':'GREEN','mode':'POST_MERGE_CONSOLIDATION_VERIFY','before':before,'after':after,'consolidation_parent':p,'repository_mutation_allowed':False},indent=2)); return 0
  rc=verify()
  if rc:return rc
  if before and set(before)!={'0'}:
