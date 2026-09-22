@@ -1,0 +1,34 @@
+name: forensic-authorized-squash-repair
+on:
+  pull_request:
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.event.pull_request.head.ref == 'tmp/forensic-digest-calculator-20260922'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: rebuild target branch through Project Truth recorder
+        env:
+          SOURCE_BRANCH: gpt/fable-forensic-predevelopment-standard-20260922
+          SOURCE_SHA: 3c89099f449f752d1f6adefb7e093a16610f9070
+          BASE_SHA: 1405daaa4b21b9ae35374282b191475e5bcc3ff6
+        run: |
+          set -euo pipefail
+          git config user.name "Vanguduza"
+          git config user.email "tapiwaguduza@gmail.com"
+          git fetch origin master "$SOURCE_BRANCH"
+          test "$(git rev-parse "origin/$SOURCE_BRANCH")" = "$SOURCE_SHA"
+          test "$(git rev-parse origin/master)" = "$BASE_SHA"
+          git diff --binary --no-ext-diff --no-renames origin/master "origin/$SOURCE_BRANCH" -- . > /tmp/ffdrm.patch
+          git checkout -B "$SOURCE_BRANCH" origin/master
+          git apply --index /tmp/ffdrm.patch
+          python scripts/project_truth_local.py record
+          git diff --cached --check
+          git commit -m "Governance: pin Fable forensic predevelopment standard"
+          python scripts/project_truth_local.py verify
+          git push --force-with-lease="refs/heads/$SOURCE_BRANCH:$SOURCE_SHA" origin HEAD:"refs/heads/$SOURCE_BRANCH"
+          echo "AUTHORIZED_SQUASH_SHA=$(git rev-parse HEAD)"
