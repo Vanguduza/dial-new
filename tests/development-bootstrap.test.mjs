@@ -353,6 +353,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
     expect(recoveryWorkflow).toContain('timeout-minutes: 90');
+    expect(recoveryWorkflow.match(/^concurrency:/gm)).toHaveLength(1);
+    expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');
+    expect(recoveryWorkflow).toContain('workflow_dispatch:'); // workflow_dispatch recovery
     expect(recoveryWorkflow).toContain('grant_type=refresh_token');
     expect(recoveryWorkflow).toContain('Netcup SCP access token refreshed');
     expect(recoveryWorkflow).toContain('AUTH_STATE="$RUNNER_TEMP/netcup-scp-auth"');
