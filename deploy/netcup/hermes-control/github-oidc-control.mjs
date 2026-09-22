@@ -122,11 +122,13 @@ async function dispatch(body, claims) {
       const receiptExists=fs.existsSync(receiptPath);
       const receipt=receiptExists ? fs.readFileSync(receiptPath,'utf8') : '';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
+      const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
       const repoHead=ubuntu("git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null").stdout.trim()||null;
       return {
         host:command('hostname').stdout.trim(),
         bootstrap_receipt:receiptExists,
         bootstrap_ref:bootstrapRef,
+        bootstrap_phase:bootstrapPhase,
         repo_head:repoHead,
         bootstrap_stage:fs.existsSync(path.join(CONTROL,'bootstrap/stage'))
           ? fs.readFileSync(path.join(CONTROL,'bootstrap/stage'),'utf8').trim()

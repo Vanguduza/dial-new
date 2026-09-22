@@ -293,6 +293,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).not.toContain('seq 1 660');
     expect(workflow).toContain('.result.bootstrap_ref == $expected');
     expect(workflow).toContain('.result.repo_head == $expected');
+    expect(workflow).toContain('.result.bootstrap_phase == "CONTROL_PLANE_READY"');
     expect(workflow).toContain('BOOTSTRAP_TERMINAL_FAILURE');
     expect(workflow).toContain('.result.bootstrap_failure // empty');
     const adminWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-admin-oidc.yml'), 'utf8');
@@ -307,6 +308,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('overlay_verified');
     expect(controller).toContain('github_oidc_admin:true');
     expect(controller).toContain('bootstrap_stage');
+    expect(controller).toContain('bootstrap_phase');
     expect(controller).toContain('bootstrap_failure');
     expect(controller).toContain('ssh_active');
 
@@ -337,6 +339,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain('PINNED_NODE_READY');
     expect(image).toContain('"$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs"');
     expect(image).toContain('SSH_RECOVERY_CHANNEL_READY');
+    expect(image).toContain('CONTROL_PLANE_READY');
+    expect(image).toContain('postbootstrap_convergence=%s\\n');
+    expect(image).not.toContain('bootstrap-host.sh');
+    expect(image).not.toContain('sdkmanager');
+    expect(image).not.toContain('install-owner-remote-commander.sh');
     expect(image).toContain('image_apt_retry()');
     expect(image).toContain('DPkg::Lock::Timeout=600');
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
@@ -352,6 +359,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
+    expect(recoveryWorkflow).toContain('dial-root-verify.sh');
+    expect(recoveryWorkflow).toContain("<<'VERIFY_EOF'");
     expect(recoveryWorkflow).toContain('timeout-minutes: 90');
     expect(recoveryWorkflow.match(/^concurrency:/gm)).toHaveLength(1);
     expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');

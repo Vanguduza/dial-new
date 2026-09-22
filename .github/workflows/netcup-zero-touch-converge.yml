@@ -61,6 +61,7 @@ jobs:
                  .ok == true and
                  .result.host == "dial-control" and
                  .result.bootstrap_receipt == true and
+                 .result.bootstrap_phase == "CONTROL_PLANE_READY" and
                  .result.bootstrap_ref == $expected and
                  .result.repo_head == $expected
                ' <<<"$RESPONSE" >/dev/null 2>&1; then

@@ -160,127 +160,49 @@ stage SSH_RECOVERY_CHANNEL_READY
 bash "$REPO/deploy/netcup/hermes-control/install-github-oidc-control.sh"
 stage OIDC_CONTROL_EARLY_READY
 
-sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
-  bash "$REPO/deploy/oracle/hermes-codex/bootstrap-host.sh"
-stage CORE_HOST_CONVERGENCE_READY
-
-# Node is now installed at the repository-reviewed pin; run the full policy verifier.
-sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" \
-  "$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs" image \
-  >"$STATE/rev5.1-bootstrap-policy.json"
-chmod 0600 "$STATE/rev5.1-bootstrap-policy.json"
-stage REV51_FULL_POLICY_GREEN
-
-# Hard runtime postconditions: these are real host installations, not capability
-# declarations. Authentication remains a separate owner gate, but binaries must exist
-# at the reviewed pins before the image bootstrap may succeed.
-sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc '
-  set -euo pipefail
-  command -v claude >/dev/null
-  claude --version | grep -Eq "2\\.1\\.270"
-  command -v agy >/dev/null
-  agy --version | grep -Eq "1\\.2\\.0"
-  command -v antigravity >/dev/null
-  antigravity --version | grep -Eq "1\\.2\\.0"
-  command -v codex >/dev/null
-  codex --version >/dev/null
-  command -v hermes >/dev/null
-  hermes --version >/dev/null
-'
-stage PROVIDER_RUNTIMES_VERIFIED
-
-sudo -u "$ADMIN" env HOME="$HOME_DIR" XDG_RUNTIME_DIR="/run/user/$(id -u "$ADMIN")" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc '
-  set -euo pipefail
-  command -v dial-housekeeping >/dev/null
-  command -v dial-resource >/dev/null
-  systemctl --user is-enabled --quiet dial-housekeeping.path
-  systemctl --user is-enabled --quiet dial-housekeeping.timer
-  dial-housekeeping status | grep -q "DIAL_STATE_AWARE_HOUSEKEEPING_V1"
-'
-
-# Full owner-facing Commander package is installed now; pairing is deliberately interactive later.
-sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" \
-  bash "$REPO/deploy/oracle/hermes-codex/install-owner-remote-commander.sh"
-
-# Pin the VAN/Trading Core subordinate control definitions used by Hermes.
-VAN_REPO="$HOME_DIR/Van"
-VAN_REF="0067d55071342b963293d0724f5a1604d233d105"
-rm -rf "$VAN_REPO"
-install -d -m 0755 -o "$ADMIN" -g "$ADMIN" "$VAN_REPO"
-sudo -u "$ADMIN" git -C "$VAN_REPO" init -q
-sudo -u "$ADMIN" git -C "$VAN_REPO" remote add origin https://github.com/Vanguduza/Van.git
-sudo -u "$ADMIN" git -C "$VAN_REPO" fetch --depth 1 origin "$VAN_REF"
-sudo -u "$ADMIN" git -C "$VAN_REPO" checkout --detach FETCH_HEAD
-stage VAN_CONTROL_DEFINITIONS_READY
-
-if getent group docker >/dev/null 2>&1; then usermod -aG docker "$ADMIN"; fi
-
-# Occasional Android/Java developer toolchain. Gradle remains project-wrapper owned.
-ANDROID_HOME=$HOME_DIR/Android/Sdk
-install -d -m 0755 -o "$ADMIN" -g "$ADMIN" "$ANDROID_HOME"
-ANDROID_BUILD=15859902
-ANDROID_ZIP=/tmp/android-cmdline-tools.zip
-curl --proto '=https' --tlsv1.2 -fL --retry 5 --retry-delay 3 \
-  -o "$ANDROID_ZIP" "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_BUILD}_latest.zip"
-rm -rf /tmp/android-cli "$ANDROID_HOME/cmdline-tools/latest"
-mkdir -p /tmp/android-cli "$ANDROID_HOME/cmdline-tools/latest"
-unzip -q "$ANDROID_ZIP" -d /tmp/android-cli
-cp -a /tmp/android-cli/cmdline-tools/. "$ANDROID_HOME/cmdline-tools/latest/"
-chown -R "$ADMIN:$ADMIN" "$ANDROID_HOME"
-sudo -u "$ADMIN" env JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME="$ANDROID_HOME" \
-  bash -lc 'yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null; "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "build-tools;36.0.0"'
-[[ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]] || { echo "Android sdkmanager missing" >&2; exit 4; }
-[[ -d "$ANDROID_HOME/platforms/android-35" ]] || { echo "Android API 35 missing" >&2; exit 4; }
-[[ -d "$ANDROID_HOME/platforms/android-36" ]] || { echo "Android API 36 missing" >&2; exit 4; }
-cat >/etc/profile.d/dial-android.sh <<EOF
-export ANDROID_HOME=$ANDROID_HOME
-export ANDROID_SDK_ROOT=$ANDROID_HOME
-export PATH=\$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
-EOF
-chmod 0644 /etc/profile.d/dial-android.sh
-stage ANDROID_TOOLCHAIN_READY
-
-# OCI CLI is installed in an isolated venv; authentication material is never embedded here.
+# Critical image bootstrap ends when the host is remotely controllable.
+# Full DIAL development convergence is deliberately deferred until zero-touch
+# has delivered recovery identity, overlay, migrated owner sessions and state.
 python3 -m venv /opt/oci-cli
 /opt/oci-cli/bin/pip install --disable-pip-version-check --no-cache-dir 'oci-cli==3.93.0'
 ln -sfn /opt/oci-cli/bin/oci /usr/local/bin/oci
 install -d -m 0700 -o "$ADMIN" -g "$ADMIN" "$HOME_DIR/.oci"
+oci --version >/dev/null
 stage OCI_CLI_READY
+
+# A successful critical phase supersedes forensic snapshots from older failed boots.
+rm -f "$STATE/failure-snapshot.txt" "$STATE/runner-diagnostics.txt"
+stage CONTROL_PLANE_READY
 
 {
   printf 'bootstrap_ref=%s\n' "$DIAL_BOOTSTRAP_REF"
+  printf 'bootstrap_phase=%s\n' 'CONTROL_PLANE_READY'
   printf 'display_name=%s\n' 'Dial Control'
   printf 'hostname='; hostname
   printf 'canonical_host_id=%s\n' "$CANONICAL_HOST_ID"
   printf 'os=%s\n' "$PRETTY_NAME"
   printf 'kernel='; uname -r
   printf 'node='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc '"$HOME/.local/bin/node" --version 2>/dev/null || true'
-  printf 'claude='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'claude --version 2>/dev/null | head -1 || true'
-  printf 'antigravity='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'agy --version 2>/dev/null | head -1 || true'
-  printf 'codex='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'codex --version 2>/dev/null | head -1 || true'
-  printf 'hermes='; sudo -u "$ADMIN" env HOME="$HOME_DIR" PATH="$HOME_DIR/.local/bin:$HOME_DIR/.npm-global/bin:/usr/local/bin:/usr/bin:/bin" bash -lc 'hermes --version 2>/dev/null | head -1 || true'
-  printf 'java17='; /usr/lib/jvm/java-17-openjdk-amd64/bin/java -version 2>&1 | head -1
-  printf 'java21='; /usr/lib/jvm/java-21-openjdk-amd64/bin/java -version 2>&1 | head -1
-  printf 'adb='; adb version 2>/dev/null | head -1 || true
   printf 'oci='; oci --version 2>/dev/null || true
   printf 'wireguard_public_key='; cat /etc/wireguard/dial-netcup.pub
   printf 'bootstrap_ssh_public_key='; cat "$HOME_DIR/.ssh/dial-bootstrap-oracle.pub"
   printf 'github_bootstrap_age_recipient='; cat /etc/dial/github-bootstrap-age.pub
   printf 'rev51_pack_id=%s\n' 'DIAL-DEV-SYS-REV5.1'
   printf 'rev51_build_ready=false\n'
-  printf 'rev51_new_external_tools=QUALIFICATION_GATED\n'
-  printf 'housekeeping=%s\n' 'DIAL_STATE_AWARE_HOUSEKEEPING_V1'
+  printf 'postbootstrap_convergence=%s\n' 'DEFERRED_TO_ZERO_TOUCH_ACTIVATION'
 } >"$STATE/image-bootstrap.receipt"
 chmod 0600 "$STATE/image-bootstrap.receipt"
 
 cat >"$STATE/NEXT" <<'EOF'
 ZERO_TOUCH_POSTBOOT=ENABLED
-GitHub OIDC convergence takes over automatically after image bootstrap.
+BOOTSTRAP_PHASE=CONTROL_PLANE_READY
+GitHub OIDC convergence now owns recovery identity, overlay, migration and activation.
+Full DIAL development convergence is enforced during activation after owner sessions/state are migrated.
 No shell command is required from the owner.
 The old Oracle control VM remains protected until migration, cutover and recovery certification pass.
 EOF
 chmod 0600 "$STATE/NEXT"
 
-stage COMPLETE
-echo "DIAL_NETCUP_IMAGE_BOOTSTRAP=COMPLETE"
+stage CONTROL_PLANE_READY
+echo "DIAL_NETCUP_IMAGE_BOOTSTRAP=CONTROL_PLANE_READY"
 echo "GitHub OIDC zero-touch postbootstrap is enabled; no owner shell steps are required."
