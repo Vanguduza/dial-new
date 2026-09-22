@@ -17,6 +17,10 @@ command -v gh >/dev/null || fail "gh CLI required"
 gh auth status >/dev/null 2>&1 || fail "authenticate GitHub first with: gh auth login --web"
 gh api "repos/$REPO_SLUG" -q '.permissions.admin' | grep -qx true || fail "GitHub login must have repo admin permission"
 
+# Create the environment used by the bounded admin workflow. The wrapper itself
+# still enforces owner actor, master ref, workflow_dispatch and action allowlists.
+gh api -X PUT "repos/$REPO_SLUG/environments/netcup-admin" >/dev/null
+
 sudo id "$RUNNER_USER" >/dev/null 2>&1 || sudo useradd --system --create-home --home-dir /home/$RUNNER_USER --shell /bin/bash "$RUNNER_USER"
 sudo install -d -m 0755 -o "$RUNNER_USER" -g "$RUNNER_USER" "$RUNNER_HOME"
 tmp="$(mktemp /tmp/actions-runner.XXXXXX.tar.gz)"
@@ -53,4 +57,5 @@ sudo bash -lc "cd '$RUNNER_HOME' && ./svc.sh status"
 
 echo "GITHUB_ADMIN_RUNNER=GREEN"
 echo "runner=dial-control-admin"
-echo "IMPORTANT: in GitHub Settings -> Environments create/protect 'netcup-admin' and require owner approval."
+echo "environment=netcup-admin"
+echo "manual_github_setup=NONE"
