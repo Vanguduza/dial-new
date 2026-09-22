@@ -164,7 +164,7 @@ dial-hermes-submit "<development instruction>"
 
 Do not deliberately exhaust subscription quota to manufacture provider failure evidence.
 
-Generalized development model registries, Manager Chair controls, worker pools, DeepSeek Harness settings and DDE model-management UI are outside this DIAL Hermes implementation.
+DDE-specific Manager Chair, model-management UI and DDE runtime policy are outside this DIAL implementation. DIAL owns its own complete harness/model registries, worker routing, project memory, research, frontend/design, execution, review and verification capabilities; similar DDE capabilities are independent and do not fill gaps in DIAL.
 
 ## Versioned Engineering Knowledge Layer (VEKL Rev 2 + 2.1 deterministic resolver)
 

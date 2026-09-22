@@ -1,0 +1,38 @@
+name: One-time universal development system preflight
+
+on:
+  push:
+    branches:
+      - 'gpt/universal-development-system-independence-20260921'
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Parse universal development-system modules
+        run: |
+          set -euo pipefail
+          node --check agent-system/orchestration/project-registry.mjs
+          node --check agent-system/orchestration/project-repository-resolver.mjs
+          node --check agent-system/orchestration/development-pack-gates.mjs
+          node --check agent-system/orchestration/development-pack-compiler.mjs
+          node --check agent-system/orchestration/auxiliary/authority-gate.mjs
+          node --check agent-system/orchestration/auxiliary/haif-tenant-daemon.mjs
+          bash -n deploy/oracle/hermes-codex/install-haif.sh
+      - name: Universal system tests
+        run: |
+          npx vitest run             tests/universal-development-system-independence.test.mjs             tests/universal-development-pack.test.mjs             tests/orchestration-operations-plane.test.mjs             tests/orchestration-haif.test.mjs             tests/frontend-generation-architecture.test.ts
+      - name: Architecture checks
+        run: |
+          node agent-system/orchestration/frontend-generation-architecture-check.mjs
+          git diff --check

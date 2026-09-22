@@ -9,10 +9,13 @@ import { qualifyXKiroTenant } from '../providers/xkiro/xkiro-qualification.mjs';
 import { benchmarkEliteModels } from '../providers/xkiro/elite-benchmark.mjs';
 
 const PROJECT = process.env.HAIF_PROJECT || 'dial';
-const ROOT = process.env.HAIF_CONTROL_ROOT || (PROJECT === 'dial' ? '/var/lib/dial-control' : '/home/ubuntu/.dde-control');
+if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(PROJECT)) throw new Error('HAIF_PROJECT is invalid');
+const ROOT = process.env.HAIF_CONTROL_ROOT || (PROJECT === 'dial' || PROJECT === 'dial-development-system' ? '/var/lib/dial-control' : null);
+if (!ROOT) throw new Error('HAIF_CONTROL_ROOT is required for non-DIAL projects');
 const PROVIDER_ROOT = process.env.HAIF_PROVIDER_ROOT || path.join(ROOT, 'operations', 'auxiliary', 'provider');
 const KEY_FILE = process.env.HAIF_KEY_FILE || path.join(ROOT, 'secrets', 'xkiro-api.key');
-const PORT = Number(process.env.HAIF_PORT || (PROJECT === 'dial' ? 9141 : 9142));
+const PORT = Number(process.env.HAIF_PORT || (PROJECT === 'dial' || PROJECT === 'dial-development-system' ? 9141 : 0));
+if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) throw new Error('HAIF_PORT is required for non-DIAL projects');
 const TOKEN_FILE = path.join(ROOT, 'secrets', 'haif-control.token');
 
 function ensureToken() {

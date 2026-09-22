@@ -75,7 +75,7 @@ function withLedgerLock(accountRoot, fn) {
 }
 
 export function admissionDecision({ project, usagePayload, estimatedTokens, accountRoot, priority = 'NORMAL' }) {
-  if (!['dial', 'dde'].includes(project)) throw new Error('HAIF project must be dial or dde');
+  if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(String(project || ''))) throw new Error('HAIF project id is invalid');
   if (!accountRoot) throw new Error('HAIF accountRoot is required');
   const usage = normalizeUsage(usagePayload);
   const state = quotaOperatingState({ limit_per_day: usage.limit_per_day, used_today: usage.used_today, remaining: usage.remaining });

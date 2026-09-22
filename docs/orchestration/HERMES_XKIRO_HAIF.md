@@ -1,6 +1,6 @@
 # DIAL Hermes xKiro Auxiliary Intelligence Fabric (HAIF)
 
-**Decision:** `DEC-023`
+**Decision:** `DEC-027`, amended by `DEC-039`
 **Authority:** DIAL development-control architecture
 **Provider role:** non-authoritative auxiliary intelligence only
 
@@ -18,26 +18,26 @@ reject, re-check or escalate.
 
 ## Project/account isolation
 
-DIAL and DDE use separate xKiro accounts and credentials. Separate accounts are
-required so usage, provider wallet/spend policy, revocation and incident scope do
-not collapse across projects. DIAL never reads DDE credentials, queues, evidence,
-model ledger, provider-usage state or control tokens.
+DIAL HAIF is owned and operated only by the DIAL Development System.
 
-DIAL runtime state is rooted under `/var/lib/dial-control`. DDE remains a separate
-project and control plane. A shared public provider catalogue may be reproduced,
-but account usage/quota ledgers are project-account-local.
+DDE is an independent development system. This repository does not install, start,
+configure, qualify, budget, store evidence for, or control a DDE HAIF tenant. If DDE
+uses xKiro or a similar auxiliary intelligence layer, that is owned by DDE's own
+repository, credentials, runtime, state, policy and deployment lifecycle.
 
-Completed auxiliary evidence can be mirrored to Cloudflare R2 through independently
-scoped tenant credentials. Object keys are content-addressed under `haif/<project>/`
-and never contain secret material. DIAL and DDE use separate buckets/credentials; a
-missing or unavailable R2 mirror degrades archival only and never causes evidence to
-be silently discarded from the local durable control root.
+Within DIAL, every admitted project uses an explicit project identifier and isolated
+state/account scope. Reusable HAIF code is project-generic, but project registration
+never grants Project Truth, manager, repository-write or deployment authority.
+
+DIAL runtime state remains rooted under `/var/lib/dial-control`. Completed auxiliary
+evidence may be mirrored to Cloudflare R2 using DIAL-controlled credentials and
+content-addressed object keys under `haif/<project>/`. An unavailable R2 mirror
+degrades archival only and never discards local durable evidence.
 
 ## Free-only / spend control
 
 HAIF v1 is `FREE_ONLY` by code. Paid routes, wallet-backed fallback and silent
-provider substitution are forbidden. Provider-side spend limits remain a separate
-account-console control and must be set independently for each project account.
+provider substitution are forbidden. Provider-side spend limits remain a separate account-console control and must be set independently for each DIAL project/provider account.
 The client does not infer that a catalogue-labelled `free` route is usable: every
 account must prove the route with a real canary.
 
@@ -95,9 +95,9 @@ listed, free-labelled or transport-canary-green is not production-HAIF approved.
 ## Runtime surface
 
 The tenant daemon is localhost-only and token-authenticated. It exposes status,
-task submission and run-once operations; no generic shell exists. Credentials are
-mode `0600` files outside Git. DIAL and DDE use separate control roots, provider
-usage roots, control tokens and ports.
+task submission and run-once operations; no generic shell exists. Credentials are mode `0600` files outside Git. The DIAL installer owns only the
+DIAL control root and DIAL localhost service. Independent development systems such
+as DDE are outside this runtime surface.
 
 ## Verification obligations
 
