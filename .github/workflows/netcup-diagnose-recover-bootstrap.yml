@@ -365,6 +365,7 @@ jobs:
             install -d -m 2755 /mnt/dial-root/var/log/journal 2>/dev/null || true
             systemctl --root=/mnt/dial-root enable ssh.service >/dev/null
             chroot /mnt/dial-root ssh-keygen -A
+            install -d -m 0755 /mnt/dial-root/run/sshd
             chroot /mnt/dial-root /usr/sbin/sshd -t
             chroot /mnt/dial-root netplan generate
             findmnt --verify --verbose --tab-file /mnt/dial-root/etc/fstab
