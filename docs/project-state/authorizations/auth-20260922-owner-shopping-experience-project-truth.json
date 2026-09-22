@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-shopping-experience-project-truth",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "137f109f2051bc2dce95174be131291aa82d85cd3138f4d31b809793326c4f6e",
+  "owner_instruction_excerpt": "Make sure this blueprint it coherently integrated into dial project truth for the shopping experience",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260922-shopping-project-truth-integration",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-22T07:22:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/dial-shopping-project-truth-20260922",
+  "authorized_paths": [
+    "agent-system/canon/PROJECT_TRUTH.md",
+    "agent-system/registries/DECISION_LOG.json",
+    "docs/dial/final-audit/28_SHOPPING/",
+    "docs/dial/final-audit/12_CLIENT_EXPERIENCE/DIAL_CLIENT_APP_ARCHITECTURE.md",
+    "docs/dial/final-audit/00_MASTER/DIAL_CONSOLIDATED_DEVELOPMENT_PLAN_v2_2.md",
+    "agent-system/bin/build-screen-feature-graph.mjs",
+    "agent-system/registries/SCREEN_REGISTRY.json",
+    "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
+    "tests/screen-feature-graph.test.ts"
+  ],
+  "change_classes": [
+    "shopping_product_truth",
+    "client_experience_architecture",
+    "screen_feature_graph",
+    "multimodal_search",
+    "catalogue_offer_authority_reconciliation",
+    "seller_media_experience",
+    "fulfilment_boundary",
+    "donor_tool_boundary",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
