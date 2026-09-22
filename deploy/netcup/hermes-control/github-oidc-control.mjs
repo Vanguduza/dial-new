@@ -202,11 +202,11 @@ async function dispatch(body, claims) {
       requireOk(verify,'certify-core');
       const peers=peerCheck().filter((x)=>x.ip!=='10.77.0.5');
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
-      fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
-      // The public bootstrap ingress is temporary. Once certification is sealed,
-      // retire it asynchronously after this response has been returned.
+      // The public bootstrap ingress is temporary. Seal certification only after
+      // the durable GitHub admin runner is live, then retire the bootstrap ingress.
       const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
-      if(!runner.ok) throw new Error('GitHub admin runner must be active before retiring bootstrap OIDC ingress');
+      if(!runner.ok) throw new Error('GitHub admin runner must be active before sealing certification');
+      fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
       command("systemd-run --unit=dial-retire-github-oidc --on-active=15s /bin/bash -lc 'ufw delete allow 9134/tcp >/dev/null 2>&1 || true; systemctl disable --now dial-github-oidc-control.service'",{timeout:10000});
       return {verify:verify.stdout,peers,github_admin_runner:true,oidc_retirement_scheduled:true};
     }
