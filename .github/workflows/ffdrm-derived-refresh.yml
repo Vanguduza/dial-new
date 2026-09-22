@@ -1,0 +1,32 @@
+name: FFDRM derived-state refresh
+on:
+  push:
+    branches: [gpt/ffdrm-development-system-rebase-20260922]
+permissions:
+  contents: read
+concurrency:
+  group: ffdrm-derived-refresh
+  cancel-in-progress: true
+jobs:
+  derive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Regenerate deterministic Development Unit registry
+        run: node agent-system/orchestration/development-unit-planner.mjs write
+      - name: Prove regenerated registry is current
+        run: node agent-system/orchestration/development-unit-planner.mjs
+      - name: Upload derived registry
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffdrm-derived-registry
+          path: agent-system/registries/DEVELOPMENT_UNIT_REGISTRY.json
+          if-no-files-found: error
+          retention-days: 1
