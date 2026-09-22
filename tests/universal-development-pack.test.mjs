@@ -14,6 +14,7 @@ import {
   rebaselineDevelopmentPack,
 } from '../agent-system/orchestration/development-pack-compiler.mjs';
 import { evaluateDevelopmentPackGates } from '../agent-system/orchestration/development-pack-gates.mjs';
+import { evaluatePredevelopmentForensicReadiness } from '../agent-system/bin/predevelopment-forensic-gate.mjs';
 
 function temp(name) { return fs.mkdtempSync(path.join(os.tmpdir(), `${name}-`)); }
 function makeRepo(name) {
@@ -262,6 +263,30 @@ describe('universal deterministic Development Pack compiler', () => {
     expect(status.maturity_state).toBe('BUILD_READY');
     expect(status.blockers).toEqual([]);
     expect(status.gates.find((g) => g.gate_id === 'GATE-13').state).toBe('NOT_APPLICABLE');
+    const forensic = evaluatePredevelopmentForensicReadiness({ projectSlug: 'customer-app', root, systemRepoDir: process.cwd() });
+    expect(forensic.ok).toBe(true);
+    expect(forensic.certificate).toMatchObject({ project_id: 'customer-app', project_slug: 'customer-app', status: 'FORENSIC_BUILD_READY' });
+    expect(forensic.certificate_hash).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('refuses to reuse one project forensic certificate for another project', () => {
+    const root = temp('pack-isolation-root');
+    const dialRepo = makeRepo('pack-dial');
+    const appA = makeRepo('pack-a');
+    const appB = makeRepo('pack-b');
+    ensureProjectRegistry(root, { dialRepoDir: dialRepo });
+    registerProject({ slug: 'project-a', repoDir: appA, uiBearing: false }, root);
+    registerProject({ slug: 'project-b', repoDir: appB, uiBearing: false }, root);
+    seedDevelopmentPack({ projectSlug: 'project-a', root });
+    for (const [artifactType, artifact] of Object.entries(completeArtifacts())) {
+      recordDevelopmentPackArtifact({ projectSlug: 'project-a', artifactType, artifact, root });
+    }
+    const a = evaluatePredevelopmentForensicReadiness({ projectSlug: 'project-a', root, systemRepoDir: process.cwd() });
+    const b = evaluatePredevelopmentForensicReadiness({ projectSlug: 'project-b', root, systemRepoDir: process.cwd() });
+    expect(a.ok).toBe(true);
+    expect(a.certificate.project_id).toBe('project-a');
+    expect(b.ok).toBe(false);
+    expect(b.reasons).toContain('PROJECT_PACK_MISSING');
   });
 
   it('requires explicit UI applicability instead of silently exempting screen gates', () => {
