@@ -203,28 +203,36 @@ jobs:
             return 1
           }
 
-          if [[ "$state" == "RUNNING" ]]; then
-            echo "Stopping Dial Control before rescue activation..."
-            api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/stop-task.json || \
-              api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWEROFF" '{"state":"OFF"}' >/tmp/stop-task.json
-            wait_state SHUTOFF || { echo "::error::Server did not reach SHUTOFF"; exit 29; }
-          fi
+          RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+          rescue_active="$(jq -r '.active // false' <<<"$RESCUE")"
+          echo "initial_rescue_active=$rescue_active initial_state=$state"
 
-          echo "Activating Netcup rescue system on stopped VM..."
-          set +e
-          RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            -H "accept: application/json" \
-            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
-          rc=$?
-          set -e
-          echo "rescue_activate_http=$RESCUE_HTTP curl_rc=$rc"
-          cat /tmp/rescue-activate.json 2>/dev/null || true
-          [[ "$rc" -eq 0 && "$RESCUE_HTTP" =~ ^20[0-9]$ ]] || {
-            echo "::error::Rescue activation failed"
-            exit 30
-          }
+          if [[ "$rescue_active" != true ]]; then
+            if [[ "$state" == "RUNNING" ]]; then
+              echo "Stopping normal Ubuntu before rescue activation..."
+              api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/stop-task.json || \
+                api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWEROFF" '{"state":"OFF"}' >/tmp/stop-task.json
+              wait_state SHUTOFF || { echo "::error::Server did not reach SHUTOFF"; exit 29; }
+            fi
+
+            echo "Activating Netcup rescue system on stopped VM..."
+            set +e
+            RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "accept: application/json" \
+              "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
+            rc=$?
+            set -e
+            echo "rescue_activate_http=$RESCUE_HTTP curl_rc=$rc"
+            cat /tmp/rescue-activate.json 2>/dev/null || true
+            [[ "$rc" -eq 0 && "$RESCUE_HTTP" =~ ^20[0-9]$ ]] || {
+              echo "::error::Rescue activation failed"
+              exit 30
+            }
+          else
+            echo "Netcup rescue is already active; preserving existing rescue state."
+          fi
 
           RESCUE_PASSWORD=""
           for attempt in $(seq 1 60); do
@@ -236,21 +244,28 @@ jobs:
           done
           [[ -n "$RESCUE_PASSWORD" ]] || { echo "::error::Rescue password was not issued"; exit 31; }
 
-          echo "Waiting for Netcup rescue activation task to complete and SSH to open..."
+          SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
+          state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
+          if [[ "$state_now" == "SHUTOFF" ]]; then
+            echo "Starting already-active rescue system..."
+            api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/rescue-start.json
+          fi
+
+          echo "Waiting for rescue SSH..."
           for attempt in $(seq 1 120); do
             RESCUE_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
             SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
             rescue_now="$(jq -r '.active // false' <<<"$RESCUE_NOW")"
             state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
             echo "rescue_active=$rescue_now server_state=$state_now"
-            if [[ "$rescue_now" == true ]] && tcp_open 22; then
+            if [[ "$rescue_now" == true ]] && [[ "$state_now" == "RUNNING" ]] && tcp_open 22; then
               break
             fi
             sleep 5
           done
           RESCUE_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
           [[ "$(jq -r '.active // false' <<<"$RESCUE_NOW")" == true ]] || {
-            echo "::error::Rescue system did not become active"
+            echo "::error::Rescue system is not active"
             exit 32
           }
           tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 33; }
