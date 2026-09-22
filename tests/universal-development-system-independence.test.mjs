@@ -203,7 +203,7 @@ describe('universal DIAL development-system independence', () => {
       path.join(repoRoot, 'agent-system/registries/DECISION_LOG.json'),
       'utf8',
     ));
-    const decision = decisions.find((row) => row.decision_id === 'DEC-039');
+    const decision = decisions.find((row) => row.decision_id === 'DEC-043');
     expect(decision?.status).toBe('LOCKED');
     expect(decision?.decision).toContain('two independent development systems');
   });

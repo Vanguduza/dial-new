@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-all-work-consolidation",
+  "authority_class": "OWNER_EXPLICIT",
+  "observed_at_utc": "2026-09-22T00:00:00Z",
+  "repository": "Vanguduza/dial-new",
+  "branch": "gpt/dial-all-work-consolidation-20260922",
+  "owner_direction": "Consolidate all repository work before housekeeping so no required branch or work is wrongfully deleted.",
+  "decisions": [
+    {
+      "source_branch": "gpt/universal-development-system-independence-20260921",
+      "source_decision": "DEC-039",
+      "consolidated_decision": "DEC-043"
+    },
+    {
+      "source_branch": "gpt/universal-development-system-independence-20260921",
+      "source_decision": "DEC-040",
+      "consolidated_decision": "DEC-044"
+    }
+  ],
+  "policy": "Preserve source branch history as merge parents; apply non-conflicting content; resolve semantic conflicts against the newest authoritative lineage; do not delete branches until verification is green."
+}

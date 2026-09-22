@@ -1,6 +1,6 @@
 # DIAL Universal Development System Independence
 
-**Decision:** `DEC-039`  
+**Decision:** `DEC-043`  
 **Status:** LOCKED architecture; repository foundation implemented; live universal E2E certification pending.  
 **Authority:** Product owner → Project Truth → Hermes normal authority plane.
 

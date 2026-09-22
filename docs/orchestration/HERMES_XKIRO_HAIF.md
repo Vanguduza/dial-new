@@ -1,6 +1,6 @@
 # DIAL Hermes xKiro Auxiliary Intelligence Fabric (HAIF)
 
-**Decision:** `DEC-027`, amended by `DEC-039`
+**Decision:** `DEC-027`, amended by `DEC-043`
 **Authority:** DIAL development-control architecture
 **Provider role:** non-authoritative auxiliary intelligence only
 
