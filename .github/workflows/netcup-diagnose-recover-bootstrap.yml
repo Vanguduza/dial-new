@@ -308,10 +308,10 @@ jobs:
             umount /mnt/dial-root >/dev/null 2>&1 || true
             mount '$ROOTDEV' /mnt/dial-root
             if [[ -f /mnt/dial-root/etc/environment ]]; then
-              sed -i "s|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME='Dial Control'|" /mnt/dial-root/etc/environment
+              sed -i 's|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME=\"Dial Control\"|' /mnt/dial-root/etc/environment
             fi
             if [[ -f /mnt/dial-root/home/ubuntu/.config/environment.d/10-dial-host.conf ]]; then
-              sed -i "s|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME='Dial Control'|" /mnt/dial-root/home/ubuntu/.config/environment.d/10-dial-host.conf
+              sed -i 's|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME=\"Dial Control\"|' /mnt/dial-root/home/ubuntu/.config/environment.d/10-dial-host.conf
             fi
             echo '=== INSTALLED BOOTSTRAP ARTIFACTS BEFORE REPAIR ==='
             ls -l /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service 2>/dev/null || true
