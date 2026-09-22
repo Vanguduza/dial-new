@@ -26,7 +26,7 @@ env:
   NETCUP_SCP_OIDC_BASE_URL: https://www.servercontrolpanel.de/realms/scp/protocol/openid-connect
   NETCUP_DIAL_CONTROL_IP: 62.83.35.103
   DIAL_BOOTSTRAP_REPAIR_REF: ${{ github.sha }}
-  DIAL_CONTROL_PAYLOAD_REF: 6548a86584ba976b5562376db8cb2ec341b55282
+  DIAL_CONTROL_PAYLOAD_REF: 17dce8e76bb80093bc14ceab9db1f97d80acfcf3
   DIAL_CONTROL_IMAGE_BLOB: 249e86695d841cae4eeebdced0427e1ce149d978
 
 jobs:
