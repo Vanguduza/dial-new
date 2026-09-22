@@ -1,0 +1,35 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260913-owner-hermes-local-mcp-plane",
+  "authorized_paths": [
+    "deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh",
+    "deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh",
+    "docs/orchestration/DIAL_HERMES_LOCAL_MCP_PLANE.md",
+    "docs/project-state/authorizations/auth-20260913-owner-hermes-local-mcp-plane.json"
+  ],
+  "base_sha": "433a4baa085ca98143e715de26628fb002e9b8bb",
+  "branch_scope": "feat/hermes-local-commander-mcp-plane",
+  "business_model_change": false,
+  "change_classes": ["development_infrastructure", "owner_control_plane", "recovery_plane", "documentation", "technical_implementation", "evidence_integrity"],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-13T12:32:00Z",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner explicitly directed implementation of the two-plane topology: Codex and Claude Code connect directly to the same Hermes-local typed DIAL MCP; Hermes owns a pinned local Desktop Commander MCP as a subordinate capability without direct client bypass; oracle-admin remains the independent remote recovery Commander foothold. This authorization covers only the bounded installer, qualifier, architecture documentation and its own evidence record.",
+  "owner_control_boundary_change": true,
+  "owner_instruction_excerpt": "Implement this setup",
+  "owner_instruction_sha256": "d36e106c828d5c3ac9a8092cf38dd040674170d73e7820e7d0e0b73221e9e1d3",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "chatgpt-20260913-hermes-local-mcp-plane"
+  }
+}
