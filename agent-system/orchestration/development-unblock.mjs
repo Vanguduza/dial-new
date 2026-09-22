@@ -100,7 +100,9 @@ export function evaluateDevelopmentUnblock({
   const failed = requiredCheckNames.filter((name) => checks[name] !== true);
 
   return {
-    schema_version: 2,
+    schema_version: 3,
+    project_slug: projectSlug,
+    project_id: forensic?.project_id || null,
     unblocked,
     development_state: unblocked ? (fallbackReady ? 'DEVELOPMENT_RESUMABLE_THROUGH_EXACT_SONNET_FALLBACK' : 'DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES') : 'DEVELOPMENT_BLOCKED',
     reason: unblocked ? null : `external Hermes development-readiness gate not satisfied: ${failed.join(', ')}`,
