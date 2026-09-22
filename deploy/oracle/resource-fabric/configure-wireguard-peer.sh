@@ -13,7 +13,7 @@ PUB="/etc/wireguard/${HOST_ID}.pub"
 case "$HOST_ID" in
   oracle-admin) ADDR=10.77.0.2/32 ;;
   vekl-worker) ADDR=10.77.0.3/32 ;;
-  van-trading-core) ADDR=10.77.0.4/32 ;;
+  van-trading-core) ADDR=10.77.0.4/32 ;;\n  old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.5/32 ;;
   *) echo "REFUSE: unsupported peer $HOST_ID" >&2; exit 2 ;;
 esac
 [[ -n "$NETCUP_PUB" ]] || { echo "REFUSE: NETCUP_WG_PUBLIC_KEY required" >&2; exit 2; }
@@ -47,7 +47,7 @@ systemctl enable --now wg-quick@wg-dial
 sleep 2
 
 grep -vE '(^|[[:space:]])dial-hermes-control([[:space:]]|$)' /etc/hosts >/tmp/dial-hosts.$$
-echo '10.77.0.1 dial-hermes-control' >>/tmp/dial-hosts.$$
+echo '10.77.0.1 dial-control dial-hermes-control' >>/tmp/dial-hosts.$
 install -m 0644 /tmp/dial-hosts.$$ /etc/hosts
 rm -f /tmp/dial-hosts.$$
 
