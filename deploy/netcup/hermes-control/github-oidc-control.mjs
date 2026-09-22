@@ -221,8 +221,8 @@ async function dispatch(body, claims) {
         codex:ubuntu("codex login status 2>&1 | grep -q 'Logged in using ChatGPT'",120000),
         claude:ubuntu("claude auth status >/dev/null 2>&1",120000),
         antigravity:ubuntu("timeout 30s agy sign-in status >/dev/null 2>&1",60000),
-        xkiro:command("test -s /var/lib/dial-control/secrets/xkiro-api.key"),
-        stitch_adc:ubuntu("test -s ~/.config/gcloud/application_default_credentials.json",30000),
+        xkiro:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/install-haif.sh >/dev/null && curl -fsS --max-time 10 http://127.0.0.1:9141/health >/dev/null",120000),
+        stitch:ubuntu("timeout 90s DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/run-stitch-provider.sh auth-check >/dev/null 2>&1",120000),
       };
       const failed=Object.entries(checks).filter(([,v])=>!v.ok).map(([k])=>k);
       if(failed.length) throw Object.assign(new Error('activation credential preflight failed'),{result:{failed}});
