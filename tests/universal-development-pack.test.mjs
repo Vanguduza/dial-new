@@ -376,6 +376,19 @@ describe('universal deterministic Development Pack compiler', () => {
     expect(gate.state).toBe('PASS');
   });
 
+  it('keeps the locked FFDRM standard synchronized with executable gate IDs', () => {
+    const standard = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json'), 'utf8'));
+    const pack = {
+      project: { project_id: 'standard-check', classification: 'APPLICATION_PROJECT', ui_bearing: true },
+      artifacts: {
+        ...completeArtifacts(),
+        baseline: { repository_sha: 'c'.repeat(40), branch: 'main', origin_url: 'https://example.invalid/repo.git', captured_at: new Date().toISOString(), ...evidence('baseline') },
+      },
+    };
+    const executable = evaluateDevelopmentPackGates(pack).forensic_gates.map((g) => g.gate_id);
+    expect(executable).toEqual(standard.required_gates.map((g) => g.id));
+  });
+
   it('fails forensic readiness when causal reachability evidence is removed', () => {
     const pack = {
       project: { project_id: 'causal-project', classification: 'APPLICATION_PROJECT', ui_bearing: true },
