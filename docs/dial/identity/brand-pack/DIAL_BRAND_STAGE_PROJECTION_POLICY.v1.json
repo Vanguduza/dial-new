@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "artifact_type": "DialBrandStageProjectionPolicy",
+  "policy_id": "dial-brand-stage-projection-v1",
+  "status": "DRAFT",
+  "brand_pack_release_ref": "dial-brand-pack@1.0.0-draft",
+  "global_rules": {
+    "brand_never_satisfies_missing_product_truth": true,
+    "brand_never_authors_screen_ownership": true,
+    "brand_never_bypasses_vekl_admission": true,
+    "brand_never_overrides_frozen_visual_authority": true,
+    "brand_never_overrides_frozen_experience_authority": true,
+    "brand_never_authorizes_forbidden_frontend_pattern": true,
+    "brand_never_creates_parallel_token_authority": true,
+    "interaction_motion_guidance_mode": "ENRICHMENT_INTELLIGENCE_NOT_FIXED_SCRIPT",
+    "unknown_or_stale_brand_release": "FAIL_PROJECTION_FRESHNESS"
+  },
+  "stages": [
+    {
+      "stage_id": "PROJECT_TRUTH_PRODUCT_AUTHORING",
+      "brand_input": [
+        "identity_naming_reference",
+        "brand_feasibility",
+        "channel_expression_considerations"
+      ],
+      "may_influence": [
+        "presentation_feasibility",
+        "brand_family_naming"
+      ],
+      "may_not_influence": [
+        "feature_scope",
+        "business_logic",
+        "money_rules",
+        "security_policy",
+        "screen_ownership"
+      ],
+      "output": [
+        "BrandContextReference?"
+      ]
+    },
+    {
+      "stage_id": "DEVELOPMENT_UNIT_RESEARCH_SEED",
+      "activation": "UI_BEARING_UNIT_ONLY",
+      "brand_input": [
+        "brand_release_ref",
+        "product_profile_ref",
+        "application_context_ref",
+        "brand_intelligence_domains"
+      ],
+      "output": [
+        "BrandContextReference"
+      ],
+      "composition_with": [
+        "VEKL_PRODUCT_EXPERIENCE_ROUTE"
+      ],
+      "forbidden": [
+        "DUPLICATE_BRAND_CONTENT_IN_EVERY_UNIT",
+        "CREATE_NEW_VEKL_CAPSULE_AUTHORITY"
+      ]
+    },
+    {
+      "stage_id": "TARGET_RESOLUTION",
+      "brand_input": [],
+      "selection_order": "CANONICAL_SCREEN_APPLICATION_MODULE_RESOLUTION_FIRST",
+      "output": [
+        "resolved_screen_application_module"
+      ],
+      "forbidden": [
+        "BRAND_DRIVEN_SCREEN_CREATION",
+        "BRAND_DRIVEN_APPLICATION_RECLASSIFICATION"
+      ]
+    },
+    {
+      "stage_id": "SCREEN_FEATURE_GRAPH_INJECTION",
+      "brand_input": [],
+      "output": [
+        "ScreenFeatureProjection"
+      ],
+      "authority": "SCREEN_REGISTRY_X_FEATURE_GRAPH",
+      "brand_effect": "NONE"
+    },
+    {
+      "stage_id": "TRUTH_HYDRATION",
+      "brand_input": [
+        "presentation_preferences_for_truth_classes"
+      ],
+      "output": [
+        "ScreenTruthEnvelope",
+        "CapabilityEnvelope"
+      ],
+      "brand_effect": "PRESENTATION_HINTS_ONLY",
+      "forbidden": [
+        "SUPPLY_DOMAIN_FACTS",
+        "FABRICATE_VALUES",
+        "SATISFY_MISSING_REQUIRED_TRUTH"
+      ]
+    },
+    {
+      "stage_id": "SCREEN_PACKET_COMPLETENESS",
+      "brand_input": [],
+      "brand_effect": "NONE",
+      "forbidden": [
+        "TURN_INCOMPLETE_PACKET_COMPLETE"
+      ]
+    },
+    {
+      "stage_id": "VEKL_DESIGN_AUTHORITY_PRODUCT_EXPERIENCE",
+      "brand_input": [
+        "global_identity",
+        "product_expression_profile",
+        "application_context",
+        "screen_role_context",
+        "colour_intelligence",
+        "typography_intelligence",
+        "geometry_intelligence",
+        "imagery_intelligence",
+        "interaction_motion_intelligence",
+        "brand_anti_patterns",
+        "brand_critic_contract"
+      ],
+      "output": [
+        "BrandContextProjection"
+      ],
+      "compose_with": [
+        "VEKL_ADMITTED_DESIGN_KNOWLEDGE",
+        "DONOR_APPLICABILITY",
+        "FREEDOM_BUDGET",
+        "ANTI_PATTERNS"
+      ],
+      "forbidden": [
+        "REPLACE_VEKL",
+        "REPLACE_PRODUCT_EXPERIENCE",
+        "CREATE_SECOND_DESIGN_AUTHORITY"
+      ]
+    },
+    {
+      "stage_id": "EXPLORE_VISUAL_GENERATION",
+      "brand_effect": "HIGH_INTELLIGENCE_LOW_PRESCRIPTION",
+      "inject": [
+        "identity_anchors",
+        "composition_principles",
+        "colour_behaviour",
+        "art_direction",
+        "typography_character",
+        "product_expression",
+        "screen_role_tone",
+        "anti_patterns"
+      ],
+      "preserve_creative_freedom": true,
+      "forbidden": [
+        "TEMPLATE_FILLING_AS_DEFAULT",
+        "SEMANTIC_FREEDOM",
+        "BRAND_AS_FREE_FLOATING_STYLE_PROMPT"
+      ]
+    },
+    {
+      "stage_id": "VISUAL_CRITIQUE_CONVERGENCE",
+      "brand_effect": "STRUCTURED_EVIDENCE",
+      "critic_dimensions": [
+        "identity_recognition",
+        "colour_discipline",
+        "orange_selectivity",
+        "dark_structure_quality",
+        "typographic_character",
+        "product_expression_fit",
+        "application_context_fit",
+        "imagery_art_direction_fit",
+        "cross_product_coherence",
+        "subbrand_drift"
+      ],
+      "forbidden": [
+        "SELF_PROMOTE_CANDIDATE",
+        "BEAUTY_SCORE_AS_SOLE_AUTHORITY"
+      ]
+    },
+    {
+      "stage_id": "VISUAL_AUTHORITY_FREEZE",
+      "brand_effect": "FREEZE_COMPATIBILITY_RECORD",
+      "output": [
+        "brand_release_ref",
+        "brand_projection_hash"
+      ],
+      "after_stage_rule": "BRAND_PACK_CANNOT_REOPEN_FROZEN_VISUAL_DIMENSIONS"
+    },
+    {
+      "stage_id": "STITCH_INTERACTION_MOTION_ENRICHMENT",
+      "brand_input": [
+        "motion_character",
+        "product_specific_motion_opportunities",
+        "motion_anti_character",
+        "application_context",
+        "screen_role_context"
+      ],
+      "must_also_receive": [
+        "VisualAuthorityArtifact",
+        "FrontendGenerationContext",
+        "CapabilityEnvelope"
+      ],
+      "brand_effect": "ENRICHMENT_INTELLIGENCE",
+      "actual_design_authority": "STITCH_WITHIN_EXISTING_INTERACTION_MOTION_CONTRACT",
+      "allowed_outcome": [
+        "InteractionIntentMap",
+        "GestureMap",
+        "MotionSpec",
+        "AdvancedComponentDecisionSet",
+        "NO_EFFECT_NEEDED"
+      ],
+      "forbidden": [
+        "CAPABILITY_INVENTION",
+        "FIXED_MOTION_SCRIPT_FROM_BRAND",
+        "REDESIGN_VISUAL_AUTHORITY"
+      ]
+    },
+    {
+      "stage_id": "INTERACTION_ACCEPTANCE",
+      "brand_effect": "ADDITIVE_CRITIC_EVIDENCE",
+      "checks": [
+        "dial_motion_character_fit",
+        "no_decorative_motion_noise",
+        "product_metaphor_coherence",
+        "urgency_semantics_preserved",
+        "reduced_motion_equivalence"
+      ],
+      "superior_checks": [
+        "capability_backing",
+        "accessibility",
+        "performance",
+        "gesture_conflict",
+        "state_restoration"
+      ]
+    },
+    {
+      "stage_id": "EXPERIENCE_AUTHORITY_FREEZE",
+      "brand_effect": "FREEZE_COMPATIBILITY_RECORD",
+      "after_stage_rule": "BRAND_PACK_CANNOT_REOPEN_FROZEN_EXPERIENCE"
+    },
+    {
+      "stage_id": "DDE_PRODUCTIONIZATION",
+      "brand_input": [
+        "approved_token_projection",
+        "approved_asset_refs",
+        "brand_release_ref"
+      ],
+      "brand_effect": "IMPLEMENTATION_SUPPORT_ONLY",
+      "policy": "PRESERVE_EXPERIENCE_AUTHORITY_NO_REDESIGN",
+      "forbidden": [
+        "BRAND_CLEANUP_REDESIGN",
+        "HARDCODE_UNPROJECTED_BRAND_VALUES"
+      ]
+    },
+    {
+      "stage_id": "PARITY_CERTIFICATION",
+      "brand_effect": "VERIFY_LINEAGE_AND_DRIFT",
+      "checks": [
+        "brand_release_hash_match",
+        "product_profile_hash_match",
+        "brand_anchor_presence",
+        "token_source_lineage",
+        "asset_lineage",
+        "no_forbidden_colour_drift",
+        "responsive_brand_identity"
+      ]
+    },
+    {
+      "stage_id": "LEARNING",
+      "brand_effect": "EVIDENCED_EVOLUTION_CANDIDATE_ONLY",
+      "may_emit": [
+        "BrandEvolutionCandidate"
+      ],
+      "may_not": [
+        "AUTO_MUTATE_BRAND_PACK",
+        "AUTO_PROMOTE_NEW_BRAND_RULE"
+      ],
+      "promotion_authority": [
+        "OWNER",
+        "AUTHORIZED_BRAND_AUTHORITY"
+      ]
+    }
+  ]
+}
