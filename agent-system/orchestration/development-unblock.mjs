@@ -67,7 +67,7 @@ export function evaluateDevelopmentUnblock({
     && gate?.fallback?.identity_proven === true
     && gate?.fallback?.state === 'HEALTHY'
     && gate?.external_fallback_canary?.completed === true
-    && gate?.external_fallback_canary?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR'
+    && gate?.external_fallback_canary?.execution_origin === 'EXTERNAL_DIAL_ORCHESTRATOR'
     && gate?.external_fallback_canary?.resolved_model === 'claude-sonnet-5'
     && gate?.vekl?.live_fallback_canary === true
     && gate?.vekl?.ahead_of_work_forecast_ready === true
@@ -80,7 +80,7 @@ export function evaluateDevelopmentUnblock({
     production_green: productionGreen,
     fallback_ready: fallbackReady,
     fallback_readiness_valid: fallbackReadinessValid,
-    external_origin: gate?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR',
+    external_origin: gate?.execution_origin === 'EXTERNAL_DIAL_ORCHESTRATOR',
     locked_policy: gate?.runtime_policy === 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
     control_plane_fingerprint_known: Boolean(currentFingerprint?.value),
     qualified_control_plane_unchanged: Boolean(
@@ -89,7 +89,7 @@ export function evaluateDevelopmentUnblock({
       && gate?.control_plane_fingerprint?.value === currentFingerprint.value
     ),
     external_orchestrator_heartbeat_fresh: heartbeatFresh,
-    heartbeat_origin_valid: heartbeat?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR',
+    heartbeat_origin_valid: heartbeat?.execution_origin === 'EXTERNAL_DIAL_ORCHESTRATOR',
   };
   const requiredCheckNames = [
     'gate_present', 'accepted_runtime_gate', 'fallback_readiness_valid', 'external_origin', 'locked_policy',
