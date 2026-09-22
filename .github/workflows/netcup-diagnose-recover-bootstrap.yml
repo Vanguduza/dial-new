@@ -205,6 +205,8 @@ jobs:
 
           RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
           rescue_active="$(jq -r '.active // false' <<<"$RESCUE")"
+          rescue_was_active="$rescue_active"
+          activated_rescue_now=false
           echo "initial_rescue_active=$rescue_active initial_state=$state"
 
           if [[ "$rescue_active" != true ]]; then
@@ -230,6 +232,7 @@ jobs:
               echo "::error::Rescue activation failed"
               exit 30
             }
+            activated_rescue_now=true
           else
             echo "Netcup rescue is already active; preserving existing rescue state."
           fi
@@ -246,9 +249,11 @@ jobs:
 
           SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
           state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
-          if [[ "$state_now" == "SHUTOFF" ]]; then
-            echo "Starting already-active rescue system..."
+          if [[ "$rescue_was_active" == true && "$activated_rescue_now" == false && "$state_now" == "SHUTOFF" ]]; then
+            echo "Starting pre-existing stopped rescue system..."
             api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/rescue-start.json
+          elif [[ "$activated_rescue_now" == true ]]; then
+            echo "New rescue activation owns its own start transition; waiting without issuing a second start."
           fi
 
           echo "Waiting for rescue SSH..."
