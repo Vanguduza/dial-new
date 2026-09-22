@@ -122,10 +122,12 @@ async function dispatch(body, claims) {
         bootstrap_receipt:fs.existsSync(path.join(CONTROL,'bootstrap/image-bootstrap.receipt')),
         oidc_ready:true,
         recovery_ready:fs.existsSync(path.join(ROOT,'github-oci-ready')),
+        overlay_verified:fs.existsSync(path.join(ROOT,'overlay-verified')),
         rotated:fs.existsSync(path.join(ROOT,'identities-rotated')),
         migration_prepare:fs.existsSync(path.join(CONTROL,'state/migration-prepare-complete')),
         migration_cutover:fs.existsSync(path.join(CONTROL,'state/migration-cutover-complete')),
         control_active:fs.existsSync(path.join(CONTROL,'state/netcup-control-active')),
+        github_admin_runner:command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'").ok,
         certified:fs.existsSync(path.join(CONTROL,'state/zero-touch-certified')),
         bootstrap_ssh_public_key:fs.existsSync('/home/ubuntu/.ssh/dial-bootstrap-oracle.pub')
           ? fs.readFileSync('/home/ubuntu/.ssh/dial-bootstrap-oracle.pub','utf8').trim()
@@ -158,6 +160,7 @@ async function dispatch(body, claims) {
     case 'verify-overlay': {
       const peers=peerCheck();
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('overlay verification failed'),{result:{peers}});
+      fs.writeFileSync(path.join(ROOT,'overlay-verified'),now()+'\n',{mode:0o600});
       return {peers};
     }
     case 'rotate-identities': {
