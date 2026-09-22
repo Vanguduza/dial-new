@@ -156,8 +156,15 @@ uid="$(chroot "$ROOT" id -u "$ADMIN")"; gid="$(chroot "$ROOT" id -g "$ADMIN")"
 chown -R "$uid:$gid" "$ROOT/home/$ADMIN/dial-new" "$ROOT/home/$ADMIN/.local" "$ROOT/home/$ADMIN/.config"
 
 install -d -m 0700 "$ROOT/home/$ADMIN/.ssh"
-if [[ ! -s "$ROOT/home/$ADMIN/.ssh/authorized_keys" && -s "$ROOT/root/.ssh/authorized_keys" ]]; then install -m 0600 "$ROOT/root/.ssh/authorized_keys" "$ROOT/home/$ADMIN/.ssh/authorized_keys"; fi
-[[ -s "$ROOT/home/$ADMIN/.ssh/authorized_keys" ]] || { echo "ubuntu authorized_keys missing" >&2; exit 5; }
+if [[ ! -s "$ROOT/home/$ADMIN/.ssh/authorized_keys" && -s "$ROOT/root/.ssh/authorized_keys" ]]; then
+  install -m 0600 "$ROOT/root/.ssh/authorized_keys" "$ROOT/home/$ADMIN/.ssh/authorized_keys"
+fi
+if [[ ! -e "$ROOT/home/$ADMIN/.ssh/authorized_keys" ]]; then
+  install -m 0600 /dev/null "$ROOT/home/$ADMIN/.ssh/authorized_keys"
+fi
+if [[ ! -s "$ROOT/home/$ADMIN/.ssh/authorized_keys" ]]; then
+  echo "SSH_AUTHORIZED_KEYS=DEFERRED_TO_AUTHENTICATED_CONTROL_PLANE"
+fi
 if [[ ! -s "$ROOT/home/$ADMIN/.ssh/dial-bootstrap-oracle" ]]; then
   chroot "$ROOT" runuser -u "$ADMIN" -- ssh-keygen -q -t ed25519 -N '' -C dial-control-zero-touch-bootstrap -f /home/$ADMIN/.ssh/dial-bootstrap-oracle
 fi

@@ -360,6 +360,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).not.toContain('\\${'); // escaped runtime expansion
     expect(rescuePrestager).toContain('dpkg_retry()');
     expect(rescuePrestager).toContain('RESCUE_CONTROL_PLANE_PRESTAGE=GREEN');
+    expect(rescuePrestager).toContain('SSH_AUTHORIZED_KEYS=DEFERRED_TO_AUTHENTICATED_CONTROL_PLANE');
+    expect(rescuePrestager).not.toContain('ubuntu authorized_keys missing');
     expect(rescuePrestager).toContain('bootstrap_phase=CONTROL_PLANE_READY');
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable ssh.service');
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable dial-github-oidc-control.service');
