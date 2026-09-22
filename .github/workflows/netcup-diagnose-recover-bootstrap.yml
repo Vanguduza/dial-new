@@ -336,9 +336,19 @@ jobs:
           echo "=== RESCUE BLOCK DEVICES ==="
           "${SSH[@]}" 'lsblk -o NAME,PATH,SIZE,FSTYPE,TYPE,MOUNTPOINTS'
 
-          ROOTDEV="$("${SSH[@]}" 'set -e
+          ROOTDEV="$("${SSH[@]}" 'set -Eeuo pipefail
+            if mountpoint -q /mnt/dial-root && grep -q "^ID=ubuntu" /mnt/dial-root/etc/os-release 2>/dev/null; then
+              findmnt -n -o SOURCE --target /mnt/dial-root
+              exit 0
+            fi
+
             mkdir -p /mnt/dial-probe
             for dev in $(lsblk -rpno NAME,FSTYPE | awk '"'"'$2 ~ /^(ext4|xfs|btrfs)$/ {print $1}'"'"'); do
+              existing="$(findmnt -rn -S "$dev" -o TARGET 2>/dev/null | head -1 || true)"
+              if [[ -n "$existing" ]] && grep -q "^ID=ubuntu" "$existing/etc/os-release" 2>/dev/null; then
+                printf "%s" "$dev"
+                exit 0
+              fi
               umount /mnt/dial-probe >/dev/null 2>&1 || true
               if mount -o ro "$dev" /mnt/dial-probe >/dev/null 2>&1; then
                 if grep -q "^ID=ubuntu" /mnt/dial-probe/etc/os-release 2>/dev/null; then

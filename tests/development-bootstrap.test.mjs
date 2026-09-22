@@ -361,6 +361,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
+    expect(recoveryWorkflow).toContain('mountpoint -q /mnt/dial-root');
+    expect(recoveryWorkflow).toContain('findmnt -n -o SOURCE --target /mnt/dial-root');
+    expect(recoveryWorkflow).toContain('findmnt -rn -S "$dev" -o TARGET');
     expect(recoveryWorkflow).toContain('dial-root-verify.sh');
     expect(recoveryWorkflow).toContain("<<'VERIFY_EOF'");
     expect(recoveryWorkflow).toContain('\n          #!/usr/bin/env bash\n');
