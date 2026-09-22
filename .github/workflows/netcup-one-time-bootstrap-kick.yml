@@ -1,0 +1,135 @@
+name: Netcup one-time bootstrap kick
+
+on:
+  push:
+    branches:
+      - gpt/netcup-hermes-control-integrated-20260921
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netcup-one-time-bootstrap-kick
+  cancel-in-progress: true
+
+env:
+  NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
+  NETCUP_SCP_OIDC_BASE_URL: https://www.servercontrolpanel.de/realms/scp/protocol/openid-connect
+  NETCUP_DIAL_CONTROL_IP: 62.83.35.103
+
+jobs:
+  request-authorization:
+    runs-on: ubuntu-latest
+    outputs:
+      device_code: ${{ steps.device.outputs.device_code }}
+      interval: ${{ steps.device.outputs.interval }}
+    steps:
+      - id: device
+        name: Request Netcup SCP device authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -sS --fail-with-body -X POST \
+            "$NETCUP_SCP_OIDC_BASE_URL/auth/device" \
+            -d "client_id=scp" \
+            -d "scope=openid")"
+          DEVICE_CODE="$(jq -r '.device_code' <<<"$RESPONSE")"
+          USER_CODE="$(jq -r '.user_code' <<<"$RESPONSE")"
+          VERIFY_URL="$(jq -r '.verification_uri_complete' <<<"$RESPONSE")"
+          INTERVAL="$(jq -r '.interval // 5' <<<"$RESPONSE")"
+          [[ -n "$DEVICE_CODE" && "$DEVICE_CODE" != null ]]
+          [[ -n "$VERIFY_URL" && "$VERIFY_URL" != null ]]
+          {
+            echo "device_code=$DEVICE_CODE"
+            echo "interval=$INTERVAL"
+          } >>"$GITHUB_OUTPUT"
+          {
+            echo "## Netcup authorization required"
+            echo ""
+            echo "Approve this short-lived request to allow a one-time power-cycle of Dial Control:"
+            echo ""
+            echo "$VERIFY_URL"
+            echo ""
+            echo "User code: `$USER_CODE`"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+  power-cycle:
+    needs: request-authorization
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for owner approval and power-cycle Dial Control
+        shell: bash
+        env:
+          DEVICE_CODE: ${{ needs.request-authorization.outputs.device_code }}
+          DEVICE_INTERVAL: ${{ needs.request-authorization.outputs.interval }}
+        run: |
+          set -euo pipefail
+          interval="${DEVICE_INTERVAL:-5}"
+          TOKEN=""
+          for attempt in $(seq 1 110); do
+            set +e
+            RESPONSE="$(curl -sS -X POST \
+              "$NETCUP_SCP_OIDC_BASE_URL/token" \
+              -d "grant_type=urn:ietf:params:oauth:grant-type:device_code" \
+              -d "device_code=$DEVICE_CODE" \
+              -d "client_id=scp")"
+            rc=$?
+            set -e
+            TOKEN="$(jq -r '.access_token // empty' <<<"$RESPONSE" 2>/dev/null || true)"
+            if [[ -n "$TOKEN" ]]; then
+              break
+            fi
+            ERROR="$(jq -r '.error // empty' <<<"$RESPONSE" 2>/dev/null || true)"
+            case "$ERROR" in
+              authorization_pending|"") ;;
+              slow_down) interval=$((interval + 5)) ;;
+              access_denied|expired_token)
+                echo "::error::Netcup device authorization failed: $ERROR"
+                exit 20
+                ;;
+            esac
+            sleep "$interval"
+          done
+          [[ -n "$TOKEN" ]] || { echo "::error::Netcup authorization timed out"; exit 20; }
+
+          SERVERS="$(curl -sS --fail-with-body -G \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "accept: application/json" \
+            --data-urlencode "ip=$NETCUP_DIAL_CONTROL_IP" \
+            "$NETCUP_SCP_API_BASE_URL/v1/servers")"
+
+          SERVER_ID="$(jq -r 'if length == 1 then .[0].id else empty end' <<<"$SERVERS")"
+          [[ "$SERVER_ID" =~ ^[0-9]+$ ]] || {
+            echo "::error::Expected exactly one Netcup server for $NETCUP_DIAL_CONTROL_IP"
+            jq '[.[] | {id,name,hostname}]' <<<"$SERVERS"
+            exit 21
+          }
+
+          echo "Dial Control resolved to Netcup server id $SERVER_ID"
+
+          RESPONSE="$(curl -sS --fail-with-body -X PATCH \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/merge-patch+json" \
+            -H "accept: application/json" \
+            --data '{"state":"ON"}' \
+            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWERCYCLE")"
+
+          echo "NETCUP_POWER_CYCLE=REQUESTED"
+          jq '{uuid,name,state,message}' <<<"$RESPONSE" 2>/dev/null || true
+
+      - name: Observe bootstrap listener transition
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            code="$(curl -sS --connect-timeout 3 --max-time 5 -o /dev/null -w '%{http_code}' \
+              "http://$NETCUP_DIAL_CONTROL_IP:9134/" 2>/dev/null || true)"
+            if [[ "$code" == 404 ]]; then
+              echo "DIAL_CONTROL_OIDC_LISTENER=UP"
+              exit 0
+            fi
+            echo "Waiting for Dial Control bootstrap listener ($attempt/60)..."
+            sleep 10
+          done
+          echo "::warning::Power-cycle completed but OIDC listener is not up yet; zero-touch convergence will continue polling."
