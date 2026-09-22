@@ -6,7 +6,7 @@ umask 077
 # environment. This stage must remain network-free and package-manager-free.
 # The immutable payload revision is pinned here unless explicitly overridden
 # by an equally exact 40-hex revision.
-DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-00cffa57f85bc3641df1a2f71f7be1648f5ed805}"
+DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-5bd1eb26a2553af820b8d98a6f380c42269ada5c}"
 [[ "$DIAL_BOOTSTRAP_REF" =~ ^[0-9a-f]{40}$ ]] || {
   echo "REFUSE: invalid DIAL_BOOTSTRAP_REF" >&2
   exit 2
@@ -16,7 +16,7 @@ IMAGE_BOOTSTRAP=/usr/local/sbin/dial-control-image-bootstrap.sh
 RUNNER=/usr/local/sbin/dial-control-bootstrap-runner
 SERVICE=/etc/systemd/system/dial-control-bootstrap.service
 LOG=/var/log/dial-control-bootstrap.log
-EXPECTED_IMAGE_BLOB=1b8750ad8002819a40576909f2dade18f2ded25d
+EXPECTED_IMAGE_BLOB=249e86695d841cae4eeebdced0427e1ce149d978
 
 install -d -m 0755 /usr/local/sbin /etc/systemd/system /etc/systemd/resolved.conf.d
 install -d -m 0700 /var/lib/dial-control/bootstrap
@@ -259,8 +259,8 @@ for attempt in 1 2 3; do
       exit 5
     }
     grep -qx "bootstrap_ref=$REF" "$RECEIPT"
-    mark_stage COMPLETE
-    echo "DIAL_CONTROL_BOOTSTRAP=GREEN"
+    mark_stage CONTROL_PLANE_READY
+    echo "DIAL_CONTROL_BOOTSTRAP=CONTROL_PLANE_READY"
     echo "completed=$(date -u +%FT%TZ)"
     exit 0
   else
