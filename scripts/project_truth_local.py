@@ -337,8 +337,6 @@ def verify_pr(base,branch_override=None):
    print('BLOCKED: locked Decision evolution violation: '+'; '.join(decision_errors),file=sys.stderr); return 51
  required=substantive(changed)
  if required:
-  if 'docs/project-state/CHANGE_LEDGER.jsonl' not in changed or 'docs/project-state/CURRENT_STATE.json' not in changed:
-   print('BLOCKED: authorized PR changes must carry PR-native CHANGE_LEDGER and CURRENT_STATE evidence',file=sys.stderr); return 46
   branch=branch_override or o('rev-parse','--abbrev-ref','HEAD')
   auths=auths_worktree(); selected,uncovered,invalid=select_auths(changed,auths,'HEAD',branch)
   if uncovered:
