@@ -359,15 +359,15 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable ssh.service');
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable dial-github-oidc-control.service');
     expect(rescuePrestager).toContain('ExecStartPost=/usr/local/sbin/dial-oidc-ready-check');
+    expect(rescuePrestager).toContain('sshd -t');
+    expect(rescuePrestager).toContain('netplan generate');
+    expect(rescuePrestager).toContain('findmnt --verify');
     expect(rescuePrestager).toContain("oci-cli==3.93.0");
     expect(rescuePrestager).toContain('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
     const oidcInstaller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/install-github-oidc-control.sh'), 'utf8');
     expect(oidcInstaller).toContain('/home/ubuntu/.local/bin/node');
     expect(oidcInstaller).toContain('EXPECTED_NODE_VERSION="v22.23.2"');
     expect(oidcInstaller).not.toContain('ExecStart=/usr/local/bin/node');
-    expect(recoveryWorkflow).toContain('sshd -t');
-    expect(recoveryWorkflow).toContain('netplan generate');
-    expect(recoveryWorkflow).toContain('findmnt --verify');
     expect(recoveryWorkflow).toContain('mountpoint -q /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -n -o SOURCE --target /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -rn -S "$dev" -o TARGET');
