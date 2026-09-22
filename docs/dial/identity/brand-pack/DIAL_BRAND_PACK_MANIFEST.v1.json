@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "artifact_type": "DialBrandPackManifest",
+  "brand_pack_id": "dial-brand-pack",
+  "release_id": "dial-brand-pack@1.0.0-draft",
+  "status": "DRAFT",
+  "authority_domain": "DIAL_IDENTITY_PRODUCT_EXPRESSION",
+  "repository_baseline_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "authorization_ref": "auth-20260922-owner-dial-brand-pack-rev1",
+  "governing_principles": [
+    "WHITE_CREATES_SPACE",
+    "BLACK_CREATES_STRUCTURE",
+    "ORANGE_CREATES_ATTENTION",
+    "DIAL_IS_PREMIUM_NEUTRAL_WITH_PRECISE_ORANGE_INTERVENTIONS",
+    "HIERARCHY_BEFORE_COLOUR",
+    "WHEN_UNCERTAIN_REMOVE_ORANGE",
+    "IDENTITY_ENRICHES_BUT_DOES_NOT_REDEFINE_PRODUCT_TRUTH"
+  ],
+  "authority": {
+    "may_define": [
+      "brand_identity",
+      "brand_colour_family",
+      "brand_colour_application_intelligence",
+      "brand_typography_character",
+      "brand_geometry_character",
+      "brand_imagery_art_direction",
+      "brand_interaction_motion_intelligence",
+      "brand_sound_haptic_character",
+      "product_expression_profiles",
+      "brand_assets",
+      "brand_critics",
+      "brand_anti_patterns",
+      "brand_release_metadata"
+    ],
+    "may_not_define": [
+      "features",
+      "screens",
+      "business_rules",
+      "money_state",
+      "pricing_truth",
+      "inventory_truth",
+      "fitment_truth",
+      "clinical_truth",
+      "permissions",
+      "security_policy",
+      "commands_queries_events",
+      "application_topology",
+      "provider_selection",
+      "vekl_admission",
+      "visual_authority_promotion",
+      "experience_authority_promotion"
+    ],
+    "superior_authorities": [
+      "PROJECT_TRUTH",
+      "FEATURE_FRC_DOMAIN_AUTHORITY",
+      "SCREEN_REGISTRY_X_FEATURE_GRAPH",
+      "DOMAIN_SECURITY_MONEY_TRUTH"
+    ],
+    "peer_or_downstream_composition": [
+      "VEKL_PRODUCT_EXPERIENCE",
+      "FDEP",
+      "SCREEN_QUALITY_PACKET",
+      "STITCH_VISUAL_GENERATION",
+      "STITCH_INTERACTION_MOTION_ENRICHMENT",
+      "VISUAL_AUTHORITY",
+      "EXPERIENCE_AUTHORITY",
+      "DDE_PRODUCTIONIZATION",
+      "PARITY_CERTIFICATION"
+    ]
+  },
+  "source_authorities": [
+    "agent-system/canon/PROJECT_TRUTH.md",
+    "docs/dial/architecture/CANONICAL_SCREEN_FEATURE_GRAPH.md",
+    "docs/dial/architecture/CANONICAL_FRONTEND_GENERATION_ARCHITECTURE.md",
+    "agent-system/registries/FRONTEND_GENERATION_POLICY.json",
+    "agent-system/registries/FRONTEND_PRODUCT_PROFILE_REGISTRY.json",
+    "agent-system/registries/FRONTEND_TOKEN_REGISTRY.json",
+    "agent-system/registries/FRONTEND_COMPONENT_REGISTRY.json",
+    "agent-system/registries/FRONTEND_PATTERN_POLICY.json",
+    "agent-system/registries/FRONTEND_VISUAL_DETERMINISM_POLICY.json",
+    "agent-system/registries/FRONTEND_TRUTH_SOURCE_REGISTRY.json",
+    "agent-system/registries/FRONTEND_ARCHETYPE_REGISTRY.json",
+    "docs/dial/final-audit/12_CLIENT_EXPERIENCE/DIAL_CLIENT_APP_ARCHITECTURE.md",
+    "docs/dial/final-audit/12_CLIENT_EXPERIENCE/OPERATIONAL_AND_PROVIDER_APP_SURFACE_PLAN.md",
+    "docs/dial/final-audit/16_HOME_IDENTITY_WHATSAPP/DIAL_HOME_PREMIUM_SOLUTIONS_ENVIRONMENT_LOCK.md",
+    "PREMIUM_CINEMATIC_WEB_STANDARD.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_GUIDED_CREATIVE_FRONTEND_EVOLUTION_REV1.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_2_2_REV2_CANONICAL_IMPLEMENTATION_ADDENDUM.md"
+  ],
+  "screen_graph_context": {
+    "canonical_modules": [
+      "HOME",
+      "SPARE",
+      "TECH",
+      "GROCERIES",
+      "LAUNDRY",
+      "VHUB",
+      "CARE",
+      "ASSIST",
+      "PROJECTS",
+      "FLEET",
+      "HEALTH",
+      "CORPORATE",
+      "PLATFORM",
+      "GMPC",
+      "DKRF"
+    ],
+    "graph_counts_at_baseline": {
+      "features": 309,
+      "subfeatures": 2781,
+      "supporting_capabilities": 128,
+      "eventualities": 254,
+      "customer_endpoint_contracts": 180,
+      "shared_platform_functions_in_provenance": 239,
+      "feature_screen_realizations": 1579,
+      "canonical_screens": 428,
+      "module_app_family_projections": 40,
+      "explicit_applications": 20,
+      "declared_channel_scope_families": 22
+    },
+    "duplication_policy": "CONSUME_CANONICAL_GRAPH_NEVER_DUPLICATE_OR_AUTHOR_SCREEN_RELATIONS"
+  },
+  "applications": [
+    "DIAL_CONSUMER_ANDROID",
+    "DIAL_CONSUMER_IOS",
+    "DIAL_CONSUMER_WEB",
+    "DIAL_CONSUMER_WHATSAPP",
+    "DIAL_PUBLIC_WEB",
+    "DIAL_HEALTH_ANDROID",
+    "DIAL_HEALTH_IOS",
+    "DIAL_HEALTH_WEB",
+    "DIAL_HEALTH_WHATSAPP",
+    "DIAL_BUSINESS_WEB",
+    "DIAL_BUSINESS_MOBILE_COMPANION",
+    "TECHNICIAN_ANDROID",
+    "COURIER_ANDROID",
+    "SUPPLIER_MERCHANT_WEB",
+    "GROCERY_SHOPPER",
+    "LAUNDRY_FACILITY",
+    "WAREHOUSE_ANDROID",
+    "STAFF_WEB",
+    "COMMAND_CENTRE",
+    "DIAL_HEALTH_PROVIDER_SURFACES"
+  ],
+  "identity": {
+    "composition_signature": "LIGHT_FIELD_DARK_ANCHOR_ORANGE_SPARK",
+    "colour_budget_guidance": {
+      "ordinary_ui": {
+        "neutral_percent_target": "70-80",
+        "dark_percent_target": "15-25",
+        "orange_percent_target": "3-7"
+      },
+      "enforcement": "CRITIC_HEURISTIC_NOT_HARD_PIXEL_QUOTA"
+    },
+    "orange_jobs": [
+      "PRIMARY_INTENT",
+      "ACTIVE_SELECTION",
+      "PROGRESS_DIRECTIONAL_EMPHASIS",
+      "DELIBERATE_BRAND_ANCHOR",
+      "CONTROLLED_PROMOTIONAL_FOCUS"
+    ],
+    "seed_palette_status": "PROPOSED_SEED_REQUIRES_OWNER_VISUAL_APPROVAL",
+    "seed_palette": {
+      "brand.dial.orange.core": "#F36A36",
+      "brand.dial.orange.action": "#C84E1A",
+      "brand.dial.orange.soft": "#FFF0E8",
+      "brand.dial.black": "#0D0D0D",
+      "brand.dial.charcoal": "#171717",
+      "brand.dial.graphite": "#2A2928",
+      "brand.dial.canvas": "#FAF9F7",
+      "brand.dial.surface.soft": "#F4F2EF",
+      "brand.dial.white": "#FFFFFF",
+      "brand.dial.border": "#E5E2DE",
+      "brand.dial.text.muted": "#77736F"
+    }
+  },
+  "product_profiles": [
+    {
+      "profile_id": "dial.global",
+      "kind": "BASE",
+      "canonical_modules": [
+        "HOME"
+      ],
+      "role": "GLOBAL_IDENTITY"
+    },
+    {
+      "profile_id": "dial.spare",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "SPARE"
+      ],
+      "role": "PREMIUM_AUTOMOTIVE_TECHNICAL_COMMERCE"
+    },
+    {
+      "profile_id": "dial.tech",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "TECH"
+      ],
+      "role": "PROFESSIONAL_TECHNICAL_SERVICE"
+    },
+    {
+      "profile_id": "dial.groceries",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "GROCERIES"
+      ],
+      "role": "WARM_FRESH_COMFORTABLE_COMMERCE"
+    },
+    {
+      "profile_id": "dial.laundry",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "LAUNDRY"
+      ],
+      "role": "CLEAN_CUSTODY_SERVICE"
+    },
+    {
+      "profile_id": "dial.vhub",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "VHUB"
+      ],
+      "role": "PREMIUM_AUTOMOTIVE_OWNERSHIP"
+    },
+    {
+      "profile_id": "dial.care",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "CARE"
+      ],
+      "role": "PREMIUM_RESTRAINED_ENTITLEMENT_ASSET_CARE"
+    },
+    {
+      "profile_id": "dial.assist",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "ASSIST"
+      ],
+      "role": "RAPID_SAFETY_LOCATION_INCIDENT"
+    },
+    {
+      "profile_id": "dial.projects",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "PROJECTS"
+      ],
+      "role": "MANAGED_WORK_MILESTONE_EVIDENCE"
+    },
+    {
+      "profile_id": "dial.fleet",
+      "kind": "PRODUCT",
+      "canonical_modules": [
+        "FLEET"
+      ],
+      "role": "DENSE_OPERATIONAL_ASSET_MAINTENANCE"
+    },
+    {
+      "profile_id": "dial.health",
+      "kind": "SPECIALIST_PRODUCT",
+      "canonical_modules": [
+        "HEALTH"
+      ],
+      "role": "CALM_PRIVATE_SAFETY_LED_SPECIALIST"
+    },
+    {
+      "profile_id": "dial.corporate",
+      "kind": "INTERNAL_PRODUCT",
+      "canonical_modules": [
+        "CORPORATE"
+      ],
+      "role": "COMPACT_ROLE_AWARE_OPERATIONAL"
+    },
+    {
+      "profile_id": "dial.platform",
+      "kind": "CONTROL_PRODUCT",
+      "canonical_modules": [
+        "PLATFORM"
+      ],
+      "role": "OPERATIONAL_CONTROL_AND_STATE"
+    },
+    {
+      "profile_id": "dial.gmpc",
+      "kind": "CONTROL_PRODUCT",
+      "canonical_modules": [
+        "GMPC"
+      ],
+      "role": "COMMERCIAL_CREATIVE_AND_MEASUREMENT_CONTROL"
+    },
+    {
+      "profile_id": "dial.dkrf",
+      "kind": "CONTROL_PRODUCT",
+      "canonical_modules": [
+        "DKRF"
+      ],
+      "role": "KNOWLEDGE_EVIDENCE_RETRIEVAL"
+    },
+    {
+      "profile_id": "dial.logistics",
+      "kind": "CROSS_MODULE_OVERLAY",
+      "canonical_modules": [],
+      "role": "SHARED_DELIVERY_ROUTE_CUSTODY_EXPRESSION",
+      "applies_across": [
+        "SPARE",
+        "GROCERIES",
+        "LAUNDRY",
+        "HEALTH",
+        "PLATFORM"
+      ]
+    },
+    {
+      "profile_id": "dial.control",
+      "kind": "ADJACENT_PROFILE",
+      "canonical_modules": [],
+      "role": "OWNER_CONTROL_EXPRESSION"
+    },
+    {
+      "profile_id": "dial.van",
+      "kind": "ADJACENT_PROFILE",
+      "canonical_modules": [],
+      "role": "ASSISTANT_CHARACTER_EXPRESSION"
+    }
+  ],
+  "motion_intelligence": {
+    "authority_effect": "ENRICH_NOT_RESTRICT",
+    "character": [
+      "CONFIDENT",
+      "IMMEDIATE",
+      "PHYSICALLY_COHERENT",
+      "PURPOSEFUL",
+      "PREMIUM_NOT_SHOWY",
+      "CAUSALLY_UNDERSTANDABLE",
+      "CONTINUITY_PRESERVING",
+      "QUIET_WHEN_SAFETY_OR_TRANSACTION_REQUIRES"
+    ],
+    "anti_character": [
+      "DECORATIVE_BOUNCE",
+      "ENDLESS_FLOAT",
+      "CAUSELESS_MOTION",
+      "ATTENTION_COMPETITION",
+      "FORCED_SCROLL_THEATRE",
+      "STATE_OBSCURING_TRANSITION",
+      "MOTION_AS_INFORMATION_ARCHITECTURE_SUBSTITUTE"
+    ],
+    "actual_motion_authority": "STITCH_INTERACTION_MOTION_ENRICHMENT_WITH_CAPABILITY_ENVELOPE",
+    "no_effect_is_valid": true
+  },
+  "stage_projection_policy_ref": "docs/dial/identity/brand-pack/DIAL_BRAND_STAGE_PROJECTION_POLICY.v1.json",
+  "human_spec_ref": "docs/dial/identity/DIAL_BRAND_PACK_REV1.md",
+  "portal_spec_ref": "docs/dial/identity/DIAL_BRAND_PORTAL_REV1.md",
+  "evolution": {
+    "automatic_canon_learning_forbidden": true,
+    "accepted_design_may_emit": "BrandEvolutionCandidate",
+    "promotion_authority": [
+      "OWNER",
+      "AUTHORIZED_BRAND_AUTHORITY"
+    ]
+  }
+}

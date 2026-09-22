@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dial.local/schemas/identity/DIAL_BRAND_CONTEXT_PROJECTION.schema.json",
+  "title": "DIAL Brand Context Projection",
+  "description": "Task-specific, content-addressed projection of DIAL Brand Pack intelligence after canonical product/application/screen resolution. It enriches Product Experience and design execution without becoming product, screen, domain, VEKL, Visual Authority or Experience Authority.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "status",
+    "brand_release_id",
+    "brand_release_hash",
+    "source_profile_id",
+    "product_profile_id",
+    "application_id",
+    "screen_id",
+    "screen_role",
+    "identity",
+    "visual_intelligence",
+    "interaction_intelligence",
+    "critic_contract",
+    "authority",
+    "provenance",
+    "content_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "BrandContextProjection"
+    },
+    "artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "RESOLVED",
+        "BLOCKED_STALE_BRAND_RELEASE",
+        "BLOCKED_UNKNOWN_PROFILE",
+        "BLOCKED_SCREEN_CONTEXT_MISSING"
+      ]
+    },
+    "brand_release_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "brand_release_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_profile_id": {
+      "const": "dial.global"
+    },
+    "product_profile_id": {
+      "type": "string",
+      "pattern": "^dial\\.[a-z0-9._-]+$"
+    },
+    "application_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "screen_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "screen_role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "principles",
+        "composition_signature",
+        "brand_character"
+      ],
+      "properties": {
+        "principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "composition_signature": {
+          "type": "string"
+        },
+        "brand_character": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "visual_intelligence": {
+      "type": "object",
+      "required": [
+        "colour",
+        "typography",
+        "geometry",
+        "imagery"
+      ],
+      "properties": {
+        "colour": {
+          "type": "object"
+        },
+        "typography": {
+          "type": "object"
+        },
+        "geometry": {
+          "type": "object"
+        },
+        "imagery": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "interaction_intelligence": {
+      "type": "object",
+      "required": [
+        "motion_character",
+        "opportunity_hints",
+        "anti_character",
+        "mode"
+      ],
+      "properties": {
+        "motion_character": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "opportunity_hints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "anti_character": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mode": {
+          "const": "ENRICHMENT_INTELLIGENCE_NOT_FIXED_SCRIPT"
+        }
+      },
+      "additionalProperties": true
+    },
+    "critic_contract": {
+      "type": "object",
+      "required": [
+        "required_dimensions",
+        "anti_patterns"
+      ],
+      "properties": {
+        "required_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "anti_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "project_truth_superior",
+        "screen_feature_graph_superior",
+        "domain_truth_superior",
+        "vekl_admission_superior",
+        "visual_authority_superior_after_freeze",
+        "experience_authority_superior_after_freeze"
+      ],
+      "properties": {
+        "project_truth_superior": {
+          "const": true
+        },
+        "screen_feature_graph_superior": {
+          "const": true
+        },
+        "domain_truth_superior": {
+          "const": true
+        },
+        "vekl_admission_superior": {
+          "const": true
+        },
+        "visual_authority_superior_after_freeze": {
+          "const": true
+        },
+        "experience_authority_superior_after_freeze": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "brand_pack_manifest_ref",
+        "stage_policy_ref",
+        "screen_registry_ref",
+        "screen_feature_graph_ref",
+        "product_profile_registry_ref",
+        "brand_release_hash",
+        "screen_graph_hash",
+        "product_profile_hash"
+      ],
+      "properties": {
+        "brand_pack_manifest_ref": {
+          "type": "string"
+        },
+        "stage_policy_ref": {
+          "type": "string"
+        },
+        "screen_registry_ref": {
+          "type": "string"
+        },
+        "screen_feature_graph_ref": {
+          "type": "string"
+        },
+        "product_profile_registry_ref": {
+          "type": "string"
+        },
+        "brand_release_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "screen_graph_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "product_profile_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

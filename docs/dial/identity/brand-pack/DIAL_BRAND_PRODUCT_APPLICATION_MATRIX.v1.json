@@ -1,0 +1,356 @@
+{
+  "schema_version": 1,
+  "artifact_type": "DialBrandProductApplicationMatrix",
+  "matrix_id": "dial-brand-product-application-matrix-v1",
+  "status": "DRAFT",
+  "source_rule": "APPLICATION_AND_SCREEN_MEMBERSHIP_MUST_BE_RESOLVED_FROM_CANONICAL_SCREEN_FEATURE_GRAPH_AT_COMPILE_TIME",
+  "applications": [
+    {
+      "application_id": "DIAL_PUBLIC_WEB",
+      "class": "PUBLIC_WEB",
+      "default_brand_intensity": "HIGH",
+      "motion_ceiling_source": "ZONE_A_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + resolved product/service portal context",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "HOME"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_CONSUMER_ANDROID",
+      "class": "CUSTOMER_APP",
+      "default_brand_intensity": "MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + module profile",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "SPARE",
+          "TECH",
+          "GROCERIES",
+          "LAUNDRY",
+          "VHUB",
+          "CARE",
+          "ASSIST",
+          "PROJECTS"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_CONSUMER_IOS",
+      "class": "CUSTOMER_APP",
+      "default_brand_intensity": "MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + module profile",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "SPARE",
+          "TECH",
+          "GROCERIES",
+          "LAUNDRY",
+          "VHUB",
+          "CARE",
+          "ASSIST",
+          "PROJECTS"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_CONSUMER_WEB",
+      "class": "CUSTOMER_APP",
+      "default_brand_intensity": "MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + module profile",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "SPARE",
+          "TECH",
+          "GROCERIES",
+          "LAUNDRY",
+          "VHUB",
+          "CARE",
+          "ASSIST",
+          "PROJECTS"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_CONSUMER_WHATSAPP",
+      "class": "CONVERSATIONAL_COMPANION",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "CHANNEL_NATIVE",
+      "profile_resolution": "dial.global + module profile + conversational projection",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "SPARE",
+          "TECH",
+          "GROCERIES",
+          "LAUNDRY",
+          "VHUB",
+          "CARE",
+          "ASSIST",
+          "PROJECTS"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_HEALTH_ANDROID",
+      "class": "SPECIALIST_CUSTOMER_APP",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SAFETY_CONSERVATIVE",
+      "profile_resolution": "dial.global + dial.health",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "HEALTH"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_HEALTH_IOS",
+      "class": "SPECIALIST_CUSTOMER_APP",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SAFETY_CONSERVATIVE",
+      "profile_resolution": "dial.global + dial.health",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "HEALTH"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_HEALTH_WEB",
+      "class": "SPECIALIST_CUSTOMER_APP",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SAFETY_CONSERVATIVE",
+      "profile_resolution": "dial.global + dial.health",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "HEALTH"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_HEALTH_WHATSAPP",
+      "class": "SPECIALIST_CONVERSATIONAL",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "CHANNEL_NATIVE_SAFETY_CONSERVATIVE",
+      "profile_resolution": "dial.global + dial.health + conversational projection",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "HEALTH"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_BUSINESS_WEB",
+      "class": "BUSINESS_CLIENT",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + resolved module profile + business context",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "FLEET",
+          "PROJECTS",
+          "VHUB"
+        ]
+      }
+    },
+    {
+      "application_id": "DIAL_BUSINESS_MOBILE_COMPANION",
+      "class": "BUSINESS_CLIENT_COMPANION",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + resolved module profile + business context",
+      "module_binding": {
+        "mode": "EXPLICIT",
+        "modules": [
+          "FLEET",
+          "PROJECTS",
+          "VHUB"
+        ]
+      }
+    },
+    {
+      "application_id": "TECHNICIAN_ANDROID",
+      "class": "OPERATIONAL_PROVIDER_APP",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + dial.tech + operational context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "COURIER_ANDROID",
+      "class": "OPERATIONAL_PROVIDER_APP",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + dial.logistics overlay + resolved owning-module profile",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "SUPPLIER_MERCHANT_WEB",
+      "class": "OPERATIONAL_PROVIDER_APP",
+      "default_brand_intensity": "LOW_MEDIUM",
+      "motion_ceiling_source": "SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + resolved owning-module profile + provider context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "GROCERY_SHOPPER",
+      "class": "FIELD_OPERATIONS_APP",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + dial.groceries + field context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "LAUNDRY_FACILITY",
+      "class": "FACILITY_OPERATIONS_APP",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + dial.laundry + facility context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "WAREHOUSE_ANDROID",
+      "class": "INTERNAL_OPERATIONS_APP",
+      "default_brand_intensity": "MINIMAL",
+      "motion_ceiling_source": "ZONE_D",
+      "profile_resolution": "dial.global + dial.corporate + operational context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "STAFF_WEB",
+      "class": "INTERNAL_STAFF_APP",
+      "default_brand_intensity": "LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + dial.corporate + staff context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "COMMAND_CENTRE",
+      "class": "OPERATOR_CONTROL_PLANE",
+      "default_brand_intensity": "MINIMAL_LOW",
+      "motion_ceiling_source": "ZONE_D_OR_SCREEN_CONTEXT",
+      "profile_resolution": "dial.global + resolved module/control profile + operator context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    },
+    {
+      "application_id": "DIAL_HEALTH_PROVIDER_SURFACES",
+      "class": "SPECIALIST_PROVIDER_APP",
+      "default_brand_intensity": "MINIMAL_LOW",
+      "motion_ceiling_source": "SAFETY_CONSERVATIVE",
+      "profile_resolution": "dial.global + dial.health + specialist provider context",
+      "module_binding": {
+        "mode": "RESOLVE_FROM_CANONICAL_GRAPH"
+      }
+    }
+  ],
+  "screen_family_overlays": {
+    "HOME_ENTRY_DISCOVERY": {
+      "brand_expression": "HIGHER",
+      "guidance": [
+        "editorial hierarchy",
+        "contextual hero",
+        "elevated search",
+        "one dominant merchandising moment"
+      ]
+    },
+    "SEARCH_BROWSE_CATALOG": {
+      "brand_expression": "MEDIUM",
+      "guidance": [
+        "discovery clarity",
+        "image-led results",
+        "restrained selected states"
+      ]
+    },
+    "PRODUCT_DETAIL": {
+      "brand_expression": "MEDIUM",
+      "guidance": [
+        "inspection",
+        "authoritative facts",
+        "clear CTA hierarchy",
+        "media quality"
+      ]
+    },
+    "TRACKING_MAP": {
+      "brand_expression": "LOW_MEDIUM",
+      "guidance": [
+        "state clarity",
+        "route continuity",
+        "map-card relationship",
+        "sparse accent"
+      ]
+    },
+    "CHECKOUT_PAYMENT_APPROVAL": {
+      "brand_expression": "LOW",
+      "guidance": [
+        "trust",
+        "error prevention",
+        "semantic status",
+        "minimal motion"
+      ]
+    },
+    "OPERATIONAL_QUEUE_EXECUTION": {
+      "brand_expression": "MINIMAL_LOW",
+      "guidance": [
+        "density",
+        "state",
+        "next action",
+        "offline/sync",
+        "safety"
+      ]
+    },
+    "SUPPORT_ISSUE_CLAIM": {
+      "brand_expression": "LOW",
+      "guidance": [
+        "context preservation",
+        "evidence",
+        "escalation",
+        "transparent state"
+      ]
+    },
+    "CONTROL_DASHBOARD": {
+      "brand_expression": "MINIMAL_LOW",
+      "guidance": [
+        "operational hierarchy",
+        "high information confidence",
+        "quiet brand presence"
+      ]
+    },
+    "CONVERSATIONAL": {
+      "brand_expression": "CHANNEL_NATIVE",
+      "guidance": [
+        "wording",
+        "media choice",
+        "message hierarchy",
+        "deep-link continuity"
+      ]
+    }
+  }
+}

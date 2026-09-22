@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-dial-brand-pack-rev1",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_excerpt": "Next phase",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260922-dial-brand-pack-rev1",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-22T05:19:00+00:00",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/dial-brand-pack-rev1-20260922",
+  "authorized_paths": [
+    "docs/dial/identity/**",
+    "docs/project-state/authorizations/auth-20260922-owner-dial-brand-pack-rev1.json"
+  ],
+  "change_classes": [
+    "dial_identity_brand_pack",
+    "brand_portal_specification",
+    "frontend_brand_projection_contract",
+    "product_expression_profiles",
+    "interaction_motion_intelligence",
+    "brand_governance_and_versioning"
+  ],
+  "notes": [
+    "Owner instructed the next phase after the repository-grounded brand-pack audit.",
+    "The Brand Pack is a DIAL Identity/Product authority artifact, not a replacement for Project Truth, VEKL, Screen Registry x Feature Graph, FRC, Product Experience, FDEP, design-provider routing, Visual Authority, Experience Authority or DDE.",
+    "This phase establishes the canonical human and machine-readable brand source plus stage-aware projection contracts; it does not alter business truth, money/security authority, screen ownership, VEKL admission rules, or provider selection."
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
