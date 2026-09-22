@@ -304,8 +304,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(customScript).toContain('Restart=on-failure');
     expect(customScript).not.toContain('ConditionPathExists=!/var/lib/dial-control/bootstrap/image-bootstrap.receipt');
     expect(provisioningStage).not.toMatch(/\b(?:apt-get|curl|git)\b/);
-    expect(provisioningStage).toContain('systemctl start --no-block dial-control-bootstrap.service');
-    expect(provisioningStage).toContain('systemctl daemon-reload');
+    expect(customScript).toContain('systemctl start --no-block dial-control-bootstrap.service');
+    expect(customScript).toContain('systemctl daemon-reload');
     expect(provisioningStage).not.toContain('apt-get');
     expect(provisioningStage).not.toContain('curl --proto');
 
