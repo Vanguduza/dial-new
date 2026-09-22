@@ -118,7 +118,7 @@ describe('DIAL unified operator gateway', () => {
 
   it('does not grant owner-write authority to untrusted local_cli steering calls', async () => {
     const { root } = rootWithRepo();
-    await expect(callChatControlTool('dial_owner_steer', { instruction: 'Make the checkout blue.', request_id: 'local-steer-denied-0001' }, root, { channel: 'local_cli', actor: 'owner', transport: 'cli' })).rejects.toThrow(/authenticated Claude, Codex or WhatsApp owner channel/);
+    await expect(callChatControlTool('dial_owner_steer', { instruction: 'Make the checkout blue.', request_id: 'local-steer-denied-0001' }, root, { channel: 'local_cli', actor: 'owner', transport: 'cli' })).rejects.toThrow(/authenticated Claude, Codex, ChatGPT or WhatsApp owner channel/);
   });
 
   it('lets an active writer reach a safe boundary, then executes the owner steer before autonomous work', async () => {
