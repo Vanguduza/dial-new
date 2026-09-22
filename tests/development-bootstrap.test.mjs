@@ -338,9 +338,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain('ZERO_TOUCH_POSTBOOT=ENABLED');
     expect(image).toContain('OIDC_CONTROL_EARLY_READY');
     expect(image).toContain('PINNED_NODE_READY');
-    expect(image).toContain('"$HOME_DIR/.local/bin/node" "$REPO/ops/development-bootstrap/rev5.1/verify-bootstrap-policy.mjs"');
     expect(image).toContain('SSH_RECOVERY_CHANNEL_READY');
     expect(image).toContain('CONTROL_PLANE_READY');
+    expect(image).toContain('DEFERRED_TO_ZERO_TOUCH_ACTIVATION');
+    expect(image).not.toContain('verify-bootstrap-policy.mjs" image');
     expect(image).toContain('postbootstrap_convergence=%s\\n');
     expect(image).not.toContain('bootstrap-host.sh');
     expect(image).not.toContain('sdkmanager');
