@@ -277,6 +277,7 @@ describe('DIAL development bootstrap closure', () => {
     const controller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/github-oidc-control.mjs'), 'utf8');
     const customScript = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh'), 'utf8');
     const image = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh'), 'utf8');
+    const rescuePrestager = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/rescue-prestage-control-plane.sh'), 'utf8');
     const hub = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh'), 'utf8');
     const peer = fs.readFileSync(path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh'), 'utf8');
 
@@ -311,6 +312,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('bootstrap_phase');
     expect(controller).toContain('bootstrap_failure');
     expect(controller).toContain('ssh_active');
+    expect(controller).toContain("req.method==='GET' && req.url==='/healthz'");
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
     expect(customScript).toContain('PROVISIONING_STAGE=NETWORK_FREE');
@@ -351,25 +353,32 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
     expect(image).not.toContain('dial-control-bootstrap-oracle.key');
+    expect(rescuePrestager).toContain('RESCUE_OFFLINE_CONTROL_PLANE_V1');
+    expect(rescuePrestager).toContain('RESCUE_CONTROL_PLANE_PRESTAGE=GREEN');
+    expect(rescuePrestager).toContain('bootstrap_phase=CONTROL_PLANE_READY');
+    expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable ssh.service');
+    expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable dial-github-oidc-control.service');
+    expect(rescuePrestager).toContain('ExecStartPost=/usr/local/sbin/dial-oidc-ready-check');
+    expect(rescuePrestager).toContain("oci-cli==3.93.0");
+    expect(rescuePrestager).toContain('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
     const oidcInstaller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/install-github-oidc-control.sh'), 'utf8');
     expect(oidcInstaller).toContain('/home/ubuntu/.local/bin/node');
     expect(oidcInstaller).toContain('EXPECTED_NODE_VERSION="v22.23.2"');
     expect(oidcInstaller).not.toContain('ExecStart=/usr/local/bin/node');
-    expect(recoveryWorkflow).toContain('NORMAL_BOOT_UNREACHABLE');
-    expect(recoveryWorkflow).toContain('OIDC_BOOTSTRAP_TIMEOUT');
-    expect(recoveryWorkflow).toContain('SSH_RECOVERY_CHANNEL_UNREACHABLE');
     expect(recoveryWorkflow).toContain('sshd -t');
     expect(recoveryWorkflow).toContain('netplan generate');
     expect(recoveryWorkflow).toContain('findmnt --verify');
     expect(recoveryWorkflow).toContain('mountpoint -q /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -n -o SOURCE --target /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -rn -S "$dev" -o TARGET');
-    expect(recoveryWorkflow).toContain('dial-root-verify.sh');
-    expect(recoveryWorkflow).toContain("<<'VERIFY_EOF'");
-    expect(recoveryWorkflow).toContain('\n          VERIFY_EOF\n'); // VERIFY_EOF heredoc terminator
-    expect(recoveryWorkflow).not.toContain('\n                    VERIFY_EOF\n');
-    expect(recoveryWorkflow).toContain('\n          #!/usr/bin/env bash\n');
-    expect(recoveryWorkflow).not.toContain('\n#!/usr/bin/env bash\n'); // unindented rescue heredoc
+    expect(recoveryWorkflow).toContain('rescue-prestage-control-plane.sh');
+    expect(recoveryWorkflow).toContain('INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN');
+    expect(recoveryWorkflow).toContain('DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN');
+    expect(recoveryWorkflow).toContain('POST_RESCUE_ACCEPTANCE_FAILED');
+    expect(recoveryWorkflow).toContain('/healthz');
+    expect(recoveryWorkflow).not.toContain('DIAL_CONTROL_RECOVERY=NOT_REQUIRED_OIDC_ALREADY_UP');
+    expect(recoveryWorkflow).not.toContain('dial-root-verify.sh');
+    expect(recoveryWorkflow).not.toContain("<<'VERIFY_EOF'");
     expect(recoveryWorkflow).toContain('timeout-minutes: 90');
     expect(recoveryWorkflow.match(/^concurrency:/gm)).toHaveLength(1);
     expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');
@@ -396,6 +405,7 @@ describe('DIAL development bootstrap closure', () => {
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')]);
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/rescue-prestage-control-plane.sh')]);
   });
 
 });
