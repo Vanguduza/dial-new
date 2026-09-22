@@ -24,6 +24,7 @@ function annotateReplacement({ root, taskId, previousTaskId, attempt }) {
 export async function executeAdaptiveSoloWithReroute({
   repoDir,
   root = DEFAULT_CONTROL_HOME,
+  projectSlug = process.env.DIAL_PROJECT_SLUG || 'dial',
   packetId,
   instruction,
   budgetClass = 'S',
@@ -47,7 +48,7 @@ export async function executeAdaptiveSoloWithReroute({
   let previousTaskId = null;
 
   for (let attempt = 1; attempt <= limit; attempt += 1) {
-    const plan = planner({ repoDir, root, packetId, instruction, budgetClass, allowedPaths, deniedPaths, toolGrants, networkAllowlist, dataClass, ownerAuthorityRef });
+    const plan = planner({ repoDir, root, projectSlug, packetId, instruction, budgetClass, allowedPaths, deniedPaths, toolGrants, networkAllowlist, dataClass, ownerAuthorityRef });
     const worker = selectedWorker(plan);
     annotateReplacement({ root, taskId: plan.task_id, previousTaskId, attempt });
     const envelope = readJson(`execution/tasks/${plan.task_id}/envelope.json`, null, root);
@@ -71,7 +72,7 @@ export async function executeAdaptiveSoloWithReroute({
     }
     const lease = leaseResult.lease;
     appendJsonl('events/adaptive-execution.jsonl', {
-      event: 'ADAPTIVE_EXECUTION_ATTEMPT_STARTED', task_id: plan.task_id, packet_id: packetId,
+      event: 'ADAPTIVE_EXECUTION_ATTEMPT_STARTED', task_id: plan.task_id, packet_id: packetId, project_slug: projectSlug,
       attempt, worker_id: workerId, harness_id: worker.harness_id, model_id: worker.model?.model_id || null,
       replacement_for_task_id: previousTaskId, at: now(),
     }, root);
@@ -84,6 +85,7 @@ export async function executeAdaptiveSoloWithReroute({
       const completed = {
         ok: true,
         packet_id: packetId,
+        project_slug: projectSlug,
         final_task_id: plan.task_id,
         fallback_used: attempt > 1,
         attempts: [...attempts, { attempt, task_id: plan.task_id, worker_id: workerId, harness_id: worker.harness_id, model_id: worker.model?.model_id || null, outcome: 'SUCCESS' }],
@@ -92,7 +94,7 @@ export async function executeAdaptiveSoloWithReroute({
       };
       appendJsonl('events/adaptive-execution.jsonl', {
         event: attempt > 1 ? 'ADAPTIVE_EXECUTION_REROUTE_COMPLETED' : 'ADAPTIVE_EXECUTION_COMPLETED',
-        task_id: plan.task_id, packet_id: packetId, attempt, fallback_used: attempt > 1, at: now(),
+        task_id: plan.task_id, packet_id: packetId, project_slug: projectSlug, attempt, fallback_used: attempt > 1, at: now(),
       }, root);
       return completed;
     } catch (error) {
@@ -105,7 +107,7 @@ export async function executeAdaptiveSoloWithReroute({
       const retryable = RETRYABLE_FAILURES.has(failureClass);
       appendJsonl('events/adaptive-execution.jsonl', {
         event: retryable && attempt < limit ? 'ADAPTIVE_EXECUTION_REROUTE_SCHEDULED' : 'ADAPTIVE_EXECUTION_REROUTE_STOPPED',
-        task_id: plan.task_id, packet_id: packetId, attempt, failure_class: failureClass,
+        task_id: plan.task_id, packet_id: packetId, project_slug: projectSlug, attempt, failure_class: failureClass,
         retryable, attempts_remaining: Math.max(0, limit - attempt), at: now(),
       }, root);
       if (!retryable || attempt >= limit) {
