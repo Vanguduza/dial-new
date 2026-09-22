@@ -175,7 +175,7 @@ describe('deterministic auxiliary operations', () => {
     const repo = makeRepo('ops-queue');
     ensureProjectRegistry(root, { dialRepoDir: repo });
     writeJsonAtomic('state/external-orchestrator-heartbeat.json', {
-      execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', observed_at: new Date().toISOString(),
+      execution_origin: 'EXTERNAL_DIAL_ORCHESTRATOR', observed_at: new Date().toISOString(),
     }, root);
     writeJsonAtomic('work-queue/inbox/job-visible-only-by-id.json', { instruction: 'SECRET JOB CONTENT MUST NOT LEAK' }, root);
     const result = queueHealth(root);
