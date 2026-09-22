@@ -9,7 +9,8 @@
   "consolidation": {
     "branch": "gpt/dial-all-work-consolidation-20260922",
     "pre_manifest_head": "cbafc70d0759fa66ef2c4929d343695bedc29792",
-    "authorization_base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6"
+    "authorization_base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+    "latest_absorbed_netup_head": "23998f2be0d5489629d1cf7c7827e320c6bc1a9c"
   },
   "branch_count_observed": 43,
   "invariants": {
@@ -259,7 +260,7 @@
     },
     {
       "source": "gpt/netcup-hermes-control-integrated-20260921",
-      "result": "latest zero-touch migration head 442d12291047c5a08241f9baa7fb33ae1896c83d absorbed; universal resolver/test additions retained"
+      "result": "latest Netcup/Dial Control head 23998f2be0d5489629d1cf7c7827e320c6bc1a9c absorbed, including state-aware housekeeping fabric; universal resolver/test additions retained"
     },
     {
       "source": "claude/oracle-e2-recovery-rebuild-3yotjc",
