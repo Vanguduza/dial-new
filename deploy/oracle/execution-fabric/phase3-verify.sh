@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
-WORKER_IP="${DIAL_WORKER_PRIVATE_IP:-}"
+WORKER_IP="${DIAL_WORKER_OVERLAY_IP:-${DIAL_WORKER_PRIVATE_IP:-}}"
+CONTROL_MCP_HEALTH="${DIAL_PRIVATE_MCP_HEALTH:-}"
+if [[ -z "$CONTROL_MCP_HEALTH" && -n "${DIAL_CONTROL_OVERLAY_IP:-}" ]]; then
+  CONTROL_MCP_HEALTH="http://${DIAL_CONTROL_OVERLAY_IP}:9133/health"
+fi
 OUT="${1:-/var/lib/dial-control/state/fabric-rev2-phase3.json}"
 notes=()
 status=GREEN
 fail(){ status=RED; notes+=("$1"); }
 
-[[ -n "$WORKER_IP" ]] || fail "DIAL_WORKER_PRIVATE_IP unset"
+[[ -n "$WORKER_IP" ]] || fail "worker overlay/private address unset"
+[[ -n "$CONTROL_MCP_HEALTH" ]] || fail "control private MCP health endpoint unset"
 [[ -f /etc/dial/host-role ]] && grep -q 'ROLE=CONTROL_AUTHORITY' /etc/dial/host-role || fail "control host-role missing"
 [[ -f /etc/dial/fabric-nodes.json ]] || fail "fabric-nodes.json missing"
 grep -q 'vekl-worker' /etc/dial/fabric-nodes.json || fail "vekl-worker not in fabric-nodes.json"
 systemctl --user is-active --quiet dial-private-mcp-bind.service || fail "private MCP bind inactive"
-curl -fsS --max-time 5 http://10.0.0.184:9133/health >/tmp/phase3-mcp-health.json || fail "private MCP health failed"
+[[ -n "$CONTROL_MCP_HEALTH" ]] && curl -fsS --max-time 5 "$CONTROL_MCP_HEALTH" >/tmp/phase3-mcp-health.json || fail "private MCP health failed"
 if [[ -n "$WORKER_IP" ]]; then
   ping -c 1 -W 3 "$WORKER_IP" >/tmp/phase3-ping.txt || fail "worker $WORKER_IP ping failed"
   ssh -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new "ubuntu@${WORKER_IP}" 'set -e; hostname | grep -qx vekl-worker; grep -q ROLE=BACKGROUND_COORDINATOR /etc/dial/host-role; systemctl is-active --quiet dial-survival.slice; systemctl is-active --quiet dial-node.slice; systemctl --user is-active --quiet dial-background-coordinator.service; test -f /var/lib/dial-worker/state/background-coordinator.json; python3 -c "import json; p=json.load(open(\"/var/lib/dial-worker/state/background-coordinator.json\")); assert p.get(\"heavy_local_rejected\"); assert p.get(\"local_heavy_compute\") is False"' >/tmp/phase3-worker.txt 2>&1 || fail "worker private SSH/role/coordinator check failed: $(tr '\n' ' ' </tmp/phase3-worker.txt | head -c 300)"
@@ -30,7 +35,7 @@ payload = {
   "status": status,
   "phase": 3,
   "fabric": "PROVIDER_FIRST_EXECUTION_FABRIC",
-  "revision": "2.0",
+  "revision": "4.0",
   "hostname": os.uname().nodename,
   "worker_private_ip": worker_ip or None,
   "role_file": read("/etc/dial/host-role"),

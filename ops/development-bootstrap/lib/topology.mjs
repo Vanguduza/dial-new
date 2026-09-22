@@ -65,20 +65,17 @@ export function authorityConsistency({ repoDir = REPO_DIR, hosts = loadHosts() }
   const control = hostForClass('CONTROL_AUTHORITY', hosts);
   const qualifier = path.join(repoDir, 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh');
   if (fs.existsSync(qualifier) && control) {
-    const m = fs.readFileSync(qualifier, 'utf8').match(/nproc\)"\s+-eq\s+(\d+)/);
-    if (m && Number(m[1]) !== Number(control.cpu_total)) problems.push({ source: 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh', field: 'cpu_total', declared: Number(m[1]), topology: Number(control.cpu_total) });
-  }
-  const doc = path.join(repoDir, 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md');
-  if (fs.existsSync(doc) && control) {
-    const text = fs.readFileSync(doc, 'utf8');
-    const m = text.match(/\*\*(\d+)\s+OCPU\s*\/\s*(\d+)\s*GB RAM\*\*/);
-    if (m) {
-      // Canon and inventory use host-visible logical CPUs, matching nproc/os.cpus on A1 and E2.
-      const docCpu = Number(m[1]);
-      const docMemMb = Number(m[2]) * 1024;
-      if (docCpu !== Number(control.cpu_total)) problems.push({ source: 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md', field: 'cpu_total', declared: docCpu, topology: control.cpu_total });
-      if (docMemMb !== Number(control.memory_total_mb)) problems.push({ source: 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md', field: 'memory_total_mb', declared: docMemMb, topology: Number(control.memory_total_mb) });
+    const text = fs.readFileSync(qualifier, 'utf8');
+    if (!text.includes('deploy/oracle/resource-fabric/hosts.json')) {
+      problems.push({
+        source: 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh',
+        field: 'topology_source',
+        declared: 'embedded/static',
+        topology: HOSTS_REL,
+      });
     }
   }
+  // Physical provider/shape/CPU/RAM truth lives only in hosts.json plus live inventory.
+  // Historical architecture documents are explanatory and cannot pin a retired cloud shape.
   return { ok: problems.length === 0, problems, topology_authority: HOSTS_REL, policy_id: hosts.policy_id || null };
 }

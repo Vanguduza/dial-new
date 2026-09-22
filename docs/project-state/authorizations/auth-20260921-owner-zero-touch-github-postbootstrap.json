@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-zero-touch-github-postbootstrap",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_excerpt": "I dont want to run any manual steps thats why I asked for a script. Automate what comes after boostrap with github.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-zero-touch-github-postbootstrap",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-21T20:05:00Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    ".github/workflows/netcup-admin-oidc.yml",
+    "deploy/netcup/hermes-control/**",
+    "deploy/oracle/resource-fabric/**",
+    "docs/project-state/authorizations/auth-20260921-owner-zero-touch-github-postbootstrap.json",
+    "ops/development-bootstrap/**",
+    "tests/**"
+  ],
+  "change_classes": [
+    "zero_touch_bootstrap",
+    "github_oidc_control",
+    "cross_cloud_enrollment",
+    "credential_state_migration",
+    "automatic_cutover",
+    "automatic_recovery_certification"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": true,
+  "owner_control_boundary_change": true,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

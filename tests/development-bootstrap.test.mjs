@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { parseArgs } from '../ops/development-bootstrap/bootstrap.mjs';
 import { parseSemver, parseToolVersion, requiredServicePath } from '../ops/development-bootstrap/lib/probes.mjs';
 import { authorityConsistency, compareHostInventory, loadHosts } from '../ops/development-bootstrap/lib/topology.mjs';
@@ -44,10 +45,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(fs.statSync(path.join(root, 'bootstrap/auth-evidence', `${token}.resume.json`)).mode & 0o077).toBe(0);
   });
 
-  it('reconciles the control topology and accepts E2 logical CPU reporting', () => {
+  it('reconciles the Netcup control topology and accepts E2 logical CPU reporting', () => {
     const hosts = loadHosts();
     const control = hosts.hosts.find((host) => host.host_id === 'dial-hermes-control');
-    expect(control).toMatchObject({ cpu_total: 2, memory_total_mb: 12288 });
+    expect(control).toMatchObject({ provider: 'netcup', provider_shape: 'RS 1000 G12', architecture: 'x86_64', cpu_total: 4, memory_total_mb: 8192, private_ip: null });
     expect(authorityConsistency({ repoDir, hosts }).ok).toBe(true);
     const e2 = hosts.hosts.find((host) => host.host_id === 'vekl-worker');
     expect(compareHostInventory({ entry: e2, facts: { hostname: e2.host_id, architecture: 'x86_64', cpu_total: 2, memory_total_mb: 980, private_ipv4: [e2.private_ip] } }).ok).toBe(true);
@@ -268,4 +269,45 @@ describe('DIAL development bootstrap closure', () => {
     expect(consumeSenderRateLimit({ root, senderHash: 'b'.repeat(24), nowMs: 1_200, limit: 2, windowMs: 1_000 }).ok).toBe(true);
     expect(compactProcessedIds([{ id_hash: 'old', at_ms: 1 }, { id_hash: 'new', at_ms: 2_000 }], { nowMs: 2_000, maxAgeMs: 100, maxEntries: 10 })).toEqual([{ id_hash: 'new', at_ms: 2_000 }]);
   });
+
+  it('keeps Dial Control zero-touch bootstrap complete, bounded and resumable', () => {
+    const workflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-zero-touch-converge.yml'), 'utf8');
+    const controller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/github-oidc-control.mjs'), 'utf8');
+    const image = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh'), 'utf8');
+    const hub = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh'), 'utf8');
+    const peer = fs.readFileSync(path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh'), 'utf8');
+
+    expect(workflow).toContain("cron: '*/5 * * * *'");
+    expect(workflow).toContain('id-token: write');
+    expect(workflow).toContain("body='{\"action\":\"status\"}'");
+    expect(workflow).not.toContain("body='{\\\"action");
+    expect(workflow).toContain("oci-cli==3.93.0");
+    expect(workflow).toContain('ensure-github-admin-runner');
+    expect(workflow).toContain('Final zero-touch certification');
+    const adminWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-admin-oidc.yml'), 'utf8');
+    expect(adminWorkflow).toContain('id-token: write');
+    expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');
+    expect(adminWorkflow).toContain('admin-command');
+
+    expect(controller).toContain('/.github/workflows/netcup-zero-touch-converge.yml@');
+    expect(controller).toContain('/.github/workflows/netcup-admin-oidc.yml@');
+    expect(controller).toContain("case 'admin-command'");
+    expect(controller).toContain('bootstrap_ssh_public_key');
+    expect(controller).toContain('overlay_verified');
+    expect(controller).toContain('github_oidc_admin:true');
+
+    expect(image).toContain("ssh-keygen -q -t ed25519 -N ''");
+    expect(image).toContain('install-github-oidc-control.sh');
+    expect(image).toContain('ZERO_TOUCH_POSTBOOT=ENABLED');
+    expect(image).not.toContain('dial-control-bootstrap-oracle.key');
+
+    expect(hub).not.toContain('\\\\nOLD_PUB=');
+    expect(hub).toContain('AllowedIPs = 10.77.0.5/32');
+    expect(peer).toContain('old-dial-hermes-control|dial-hermes-control');
+
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh')]);
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')]);
+  });
+
 });
