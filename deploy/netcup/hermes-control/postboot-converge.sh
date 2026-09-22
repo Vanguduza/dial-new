@@ -32,6 +32,9 @@ case "$MODE" in
     ;;
   --activate)
     [[ -s "$CONTROL/github-oidc/READY" ]] || { echo "GitHub OIDC control is not ready" >&2; exit 3; }
+    sudo ufw allow OpenSSH >/dev/null 2>&1 || true
+    sudo ufw allow 9134/tcp >/dev/null 2>&1 || true
+    sudo ufw --force enable >/dev/null 2>&1 || true
     if [[ ! -s "$HOME/.oci/config" && ! -s "$CONTROL/github-oidc/github-oci-ready" ]]; then
       echo "Neither local OCI recovery identity nor GitHub OCI recovery plane is ready." >&2
       exit 3
