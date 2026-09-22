@@ -1,0 +1,53 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260912-owner-oracle-rev3-implementation",
+  "authorized_paths": [
+    "docs/orchestration/DIAL_ORACLE_RESILIENT_3_NODE_CLUSTER_REV3.md",
+    "docs/orchestration/DIAL_ORACLE_RECOVERY_METHODS.md",
+    "deploy/oracle/free-tier-allowance.json",
+    "deploy/oracle/provisioning/50-free-tier-check.sh",
+    "deploy/oracle/provisioning/bootstrap.sh",
+    "deploy/oracle/provisioning/host-certify.sh",
+    "deploy/oracle/provisioning/run.sh",
+    "deploy/oracle/resource-fabric/install-bounded-recovery-peer.sh",
+    "deploy/oracle/resource-fabric/seed-known-hosts.sh",
+    "deploy/oracle/resource-fabric/verify-two-way-recovery.sh",
+    "deploy/oracle/resource-fabric/README.md",
+    "tests/oracle-two-way-verification.test.mjs",
+    "tests/oracle-free-tier.test.mjs",
+    "tests/oracle-admin-provisioning.test.mjs",
+    "vitest.config.ts",
+    "docs/project-state/authorizations/auth-20260912-owner-oracle-rev3-implementation.json"
+  ],
+  "base_sha": "8eeb5dd2264e558e161555f5f2ee9cfccd035649",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "recovery_plane",
+    "resource_governance",
+    "documentation",
+    "technical_implementation"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-12T20:23:18.789893+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner ordered the Rev 3 recommended setup implemented fully. Builds the remaining buildable parts of Rev 3 section 9.2 and closes the allowance item. Adds the outbound half of the bounded recovery identity on the control host, known_hosts seeding, and an end-to-end verifier that is half refusal-testing by design: it also attempts a shell, a reboot, a non-recovery restart, command chaining, an OCI control-plane call and three credential reads, and a refusal probe that succeeds fails the whole run. Credential probes keep only the exit status so a regressed refusal cannot write the credential into the evidence file. Bootstrap now seeds peer host keys and starts dial-recovery-agent.service only when seeding produced entries; that unit had never started on any host because StrictHostKeyChecking=yes fails closed on unseeded peers, so the recovery plane was permanently staged and recovered nothing. Certification gains a two_way_recovery block and GREEN now requires the forced-command identity per Rev 3 section 8; AMBER is unchanged so an honest resting point stays reachable. Free-tier re-confirmation found a material discrepancy: Oracle halved the Always Free Ampere A1 allowance from 4 OCPU 24 GB to 2 OCPU 12 GB effective 2026-06-15 and began terminating over-limit instances on 2026-08-18, with no announcement. dial-hermes-control is declared at double the current allowance and is therefore subject to termination. This is recorded as dated data with provenance and a staleness bound rather than a corrected constant, and 50-free-tier-check.sh measures the estate against it, reporting UNVERIFIED rather than WITHIN when the figures are stale or the canonical page was not read. The canonical docs.oracle.com page is blocked by this environment's egress proxy, so the figures are corroborated across three independent secondary sources rather than canonical, and the check says so. Whether to resize dial-hermes-control or accept the cost is explicitly left to the owner; no capacity change was made. The A1 reduction does NOT explain the 2026-09-12 outage, since the host lost was an E2 and the AMD allowance did not change, and the documents refuse to promote that correlation into a cause. No change to product, money, security authority or owner-control intent. Two-way recovery remains unproven end to end and every document says so.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "Implement your recommended setup fully",
+  "owner_instruction_sha256": "21940a100a86a88112eb30a601ed302b68b3ac190fca8cc1fffbe6204e1b5e12",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260912-oracle-rev3-implementation"
+  }
+}
