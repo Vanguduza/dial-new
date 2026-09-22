@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t d">
+<title id="t">DIAL mark</title>
+<desc id="d">A solid capital D with two rings cut out of it, radiating from the stem, and an amber half-disc at their origin: one call goes out, and the answer comes back to you.</desc>
+<path d="M44 36 H100 A64 64 0 0 1 100 164 H44 Z M66 49 A51 51 0 0 1 66 151 L66 141 A41 41 0 0 0 66 59 Z M66 71 A29 29 0 0 1 66 129 L66 119 A19 19 0 0 0 66 81 Z" fill="#0F2354" fill-rule="evenodd"/>
+<path d="M66 88 A12 12 0 0 1 66 112 Z" fill="#FFB300"/>
+</svg>
