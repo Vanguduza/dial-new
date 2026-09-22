@@ -300,7 +300,7 @@ const server=http.createServer(async (req,res)=>{
       const receipt=fs.existsSync(receiptPath)?fs.readFileSync(receiptPath,'utf8'):'';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
       const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
-      const repoHead=command('git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null').stdout.trim()||null;
+      const repoHead=ubuntu('git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null').stdout.trim()||null;
       res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
       res.end(JSON.stringify({ok:true,host:command('hostname').stdout.trim(),bootstrap_ref:bootstrapRef,bootstrap_phase:bootstrapPhase,repo_head:repoHead}));
       return;

@@ -314,6 +314,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('bootstrap_failure');
     expect(controller).toContain('ssh_active');
     expect(controller).toContain("req.method==='GET' && req.url==='/healthz'");
+    expect(controller).toContain("const repoHead=ubuntu('git -C /home/ubuntu/dial-new rev-parse HEAD");
     expect(controller).toContain('PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin');
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
