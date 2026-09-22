@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-ffdrm-development-system-rebase",
+  "observed_at_utc": "2026-09-22T16:47:00Z",
+  "authority_class": "OWNER_EXPLICIT",
+  "repository": "Vanguduza/dial-new",
+  "target_branch": "gpt/ffdrm-development-system-rebase-20260922",
+  "owner_instruction_excerpt": "Audit and review the DIAL development system using the principles established in the attached Fable Forensic Development & Remediation Method / PRD-DDP Rev 2 and get the system to completeness, determinism, coherence and symbiosis so projects can start development.",
+  "authorized_scope": [
+    "forensic development-system audit",
+    "FFDRM/PRD-DDP integration and enforcement",
+    "project-scoped readiness/certificate remediation",
+    "authority/topology drift remediation",
+    "anti-gap tests and evidence",
+    "repository closure work required to establish truthful development readiness"
+  ],
+  "forbidden_scope": [
+    "silently weakening FFDRM gates",
+    "declaring runtime qualification without live evidence",
+    "using project Product Truth as development-system authority",
+    "deleting unreconciled branch work"
+  ]
+}
