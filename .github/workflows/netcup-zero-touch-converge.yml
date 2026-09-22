@@ -18,6 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  DIAL_EXPECTED_BOOTSTRAP_REF: 361afee30d641d5b7128a019538aa38f8397d56e
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
   OCI_CLI_USER: ${{ secrets.OCI_RECOVERY_USER_OCID }}
   OCI_CLI_TENANCY: ${{ secrets.OCI_RECOVERY_TENANCY_OCID }}
@@ -54,13 +55,19 @@ jobs:
           body='{"action":"status"}'
           RESPONSE=
           ready=false
-          for attempt in $(seq 1 660); do
+          for attempt in $(seq 1 120); do
             if RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$body" 2>"$RUNNER_TEMP/status.err")" &&
-               jq -e '.ok == true and .result.host == "dial-control" and .result.bootstrap_receipt == true' <<<"$RESPONSE" >/dev/null 2>&1; then
+               jq -e --arg expected "$DIAL_EXPECTED_BOOTSTRAP_REF" '
+                 .ok == true and
+                 .result.host == "dial-control" and
+                 .result.bootstrap_receipt == true and
+                 .result.bootstrap_ref == $expected and
+                 .result.repo_head == $expected
+               ' <<<"$RESPONSE" >/dev/null 2>&1; then
               ready=true
               break
             fi
-            echo "Waiting for Dial Control image bootstrap (attempt $attempt/660)..."
+            echo "Waiting for Dial Control image bootstrap (attempt $attempt/120)..."
             sleep 30
           done
           if [[ "$ready" != true ]]; then
