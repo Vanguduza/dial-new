@@ -1,10 +1,21 @@
 {
   "project_id": "dial",
-  "repositories": ["Vanguduza/dial-new"],
-  "workspace_roots": ["/home/ubuntu/dial-new"],
+  "repositories": [
+    "Vanguduza/dial-new"
+  ],
+  "workspace_roots": [
+    "/home/ubuntu/dial-new"
+  ],
   "mcp_endpoint": "http://127.0.0.1:9130",
-  "capability_subset": ["task.execute", "artifact.write"],
-  "credential_references": ["job-scoped-only"],
+  "capability_subset": [
+    "task.execute",
+    "artifact.write"
+  ],
+  "credential_references": [
+    "job-scoped-only"
+  ],
   "attempt_budget_overrides": {},
-  "audit_sink": "/var/lib/dial-control/execution/fabric-audit.jsonl"
+  "audit_sink": "/var/lib/dial-control/execution/fabric-audit.jsonl",
+  "predevelopment_standard_id": "DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD",
+  "predevelopment_certificate_ref": "agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json"
 }

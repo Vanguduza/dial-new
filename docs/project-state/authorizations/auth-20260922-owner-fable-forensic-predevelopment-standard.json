@@ -1,0 +1,47 @@
+{
+  "schema_version": 2,
+  "authorization_id": "auth-20260922-owner-fable-forensic-predevelopment-standard",
+  "authority_class": "OWNER_EXPLICIT",
+  "status": "ACTIVE",
+  "owner_instruction": "Formalize the Fable Forensic Development & Remediation Method and incorporate it into the PRD-to-Deterministic Development Pack pinned in the DIAL development system so each project must meet the standard before development starts.",
+  "authorized_at": "2026-09-22",
+  "scope": {
+    "repository": "Vanguduza/dial-new",
+    "change_classes": [
+      "development_standard",
+      "predevelopment_forensic_gate",
+      "task_envelope_binding",
+      "governed_skill",
+      "ci_verification"
+    ],
+    "allowed_paths": [
+      ".agents/plugins/dial-governed/skills/dial-development/SKILL.md",
+      ".github/workflows/verify.yml",
+      "agent-system/bin/manifest-check.mjs",
+      "agent-system/bin/predevelopment-forensic-gate.mjs",
+      "agent-system/canon/PROJECT_TRUTH.md",
+      "agent-system/orchestration/adaptive-execution-planner.mjs",
+      "agent-system/orchestration/development-unblock.mjs",
+      "agent-system/orchestration/execution-fabric/project-binding.mjs",
+      "agent-system/orchestration/project-registry.mjs",
+      "agent-system/orchestration/task-execution-envelope.mjs",
+      "agent-system/registries/DECISION_LOG.json",
+      "agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json",
+      "agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json",
+      "deploy/oracle/execution-fabric/project-binding.example.json",
+      "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/**",
+      "docs/dial/final-audit/MANIFEST_v2_2.json",
+      "docs/project-state/authorizations/auth-20260922-owner-fable-forensic-predevelopment-standard.json",
+      "package.json",
+      "tests/orchestration-execution-fabric.test.mjs",
+      "tests/orchestration-operations-plane.test.mjs",
+      "tests/predevelopment-forensic-gate.test.mjs"
+    ]
+  },
+  "constraints": [
+    "Do not weaken existing Project Truth, VEKL, authority, security, review or runtime-development gates.",
+    "Predevelopment readiness and runtime development readiness remain independent.",
+    "Emergency bypass is recovery-only and may not authorize feature development."
+  ]
+}

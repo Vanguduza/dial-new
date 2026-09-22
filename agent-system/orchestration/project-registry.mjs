@@ -7,6 +7,8 @@ import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './s
 export const PROJECT_REGISTRY_REL = 'operations/project-registry.json';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
+const FORENSIC_STANDARD_ID = 'DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD';
+const FORENSIC_CERTIFICATE_REF = 'agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json';
 const DIAL_SERVICES = ['dial-hermes-runtime.service', 'hermes-gateway.service', 'hermes-dial-dashboard.service', 'dial-hermes-orchestrator.service', 'dial-hermes-operations.service', 'dial-mission-controller.service', 'dial-chat-control.service', 'dial-hermes-whatsapp-operator.service'];
 
 function now() { return new Date().toISOString(); }
@@ -28,7 +30,10 @@ export function defaultDialProject(repoDir = process.env.DIAL_REPO_DIR || DEFAUL
     repo_dir: normalizeRepo(repoDir),
     project_kind: 'software',
     manager_policy: 'GPT-5.6_SOL_THEN_CLAUDE_SONNET_5',
-    development_authority: 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY',
+    development_authority: 'FORENSIC_BUILD_READY_AND_EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY',
+    predevelopment_standard_id: FORENSIC_STANDARD_ID,
+    predevelopment_certificate_ref: FORENSIC_CERTIFICATE_REF,
+    predevelopment_readiness: 'FORENSIC_BUILD_BLOCKED',
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
     services: DIAL_SERVICES,
     created_at: now(),
@@ -44,11 +49,13 @@ export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REP
     if (!dial) return existing;
     const priorServices = Array.isArray(dial.services) ? dial.services : [];
     const services = [...new Set([...priorServices, ...DIAL_SERVICES])];
-    if (services.length === priorServices.length && services.every((item, index) => item === priorServices[index])) return existing;
-    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, updated_at: now() } : item);
+    const forensicCurrent = dial.predevelopment_standard_id === FORENSIC_STANDARD_ID && dial.predevelopment_certificate_ref === FORENSIC_CERTIFICATE_REF;
+    const authorityCurrent = dial.development_authority === 'FORENSIC_BUILD_READY_AND_EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY';
+    if (services.length === priorServices.length && services.every((item, index) => item === priorServices[index]) && forensicCurrent && authorityCurrent) return existing;
+    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, development_authority: 'FORENSIC_BUILD_READY_AND_EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY', predevelopment_standard_id: FORENSIC_STANDARD_ID, predevelopment_certificate_ref: FORENSIC_CERTIFICATE_REF, predevelopment_readiness: item.predevelopment_readiness || 'FORENSIC_BUILD_BLOCKED', updated_at: now() } : item);
     const next = { ...existing, projects, updated_at: now() };
     writeJsonAtomic(PROJECT_REGISTRY_REL, next, root);
-    appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_RECONCILED', project: 'dial', added_services: services.filter((item) => !priorServices.includes(item)), at: now() }, root);
+    appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_RECONCILED', project: 'dial', added_services: services.filter((item) => !priorServices.includes(item)), forensic_standard: FORENSIC_STANDARD_ID, at: now() }, root);
     return next;
   }
   const registry = { schema_version: 1, isolation: 'STRICT_PER_PROJECT_OPERATIONS_STATE', projects: [defaultDialProject(dialRepoDir)], updated_at: now() };
@@ -77,7 +84,10 @@ export function registerProject({ slug, name, repoDir, projectKind = 'software',
     repo_dir: repo,
     project_kind: String(projectKind || 'software').trim().slice(0, 80),
     manager_policy: String(managerPolicy || 'PROJECT_SPECIFIC_LOCKED_POLICY').trim().slice(0, 200),
-    development_authority: key === 'dial' ? 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY' : 'PROJECT_POLICY_REQUIRED',
+    development_authority: key === 'dial' ? 'FORENSIC_BUILD_READY_AND_EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY' : 'FORENSIC_BUILD_READY_AND_PROJECT_POLICY_REQUIRED',
+    predevelopment_standard_id: FORENSIC_STANDARD_ID,
+    predevelopment_certificate_ref: FORENSIC_CERTIFICATE_REF,
+    predevelopment_readiness: 'CERTIFICATE_REQUIRED',
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
     services: Array.isArray(services) ? services.map(String).filter(Boolean).slice(0, 30) : [],
     created_at: previous?.created_at ?? now(),

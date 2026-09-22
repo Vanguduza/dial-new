@@ -183,3 +183,14 @@ Provider maturity is machine-enforced as `DISCOVERED → IMPLEMENTED → AUTH_RE
 Antigravity is a required worker-only harness. It must be live-qualified and included in harness/model candidate construction with every provider-native pairing that is discovered and proven compatible; unsupported model embedding is never fabricated and must use multi-worker composition instead. Stitch is a required selectable specialist design capability. xKiro, DIAL Truth MCP, Context7, Exa, owner-channel adapters, structural snapshot tooling and declared recovery transports are likewise setup-required according to their development/owner/recovery role. Human-only or deprecated records remain `REFERENCE_ONLY` and are not misrepresented as locally installable software.
 
 Canonical readiness specification: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_CAPABILITY_READINESS_REV1_CANONICAL.md`.
+
+
+### Fable forensic predevelopment lock
+
+`DEC-039` adopts `DIAL-FFDRM-R1` and `PRD-DDP-R2` as the mandatory preparation standard for every project managed through the DIAL development system. Normal feature/product implementation may not begin or continue into a new material wave unless the project owns a current machine-readable predevelopment certificate whose state is exactly `FORENSIC_BUILD_READY`. The certificate is content-bound to Product Truth, Development Units, feature/surface realization, governing contracts and the locked forensic standard; drift makes existing task envelopes stale.
+
+The forensic gate is independent from Hermes/execution-fabric readiness, Unit-scoped VEKL/KRT readiness and task-envelope freshness: all applicable gates must pass. Existing repositories are re-based forensically and previous closure claims are treated as hypotheses until evidence confirms production reachability. Greenfield projects must define falsifiable causal paths, authority, failure/recovery, verification, counterexamples, mutation and runtime-qualification obligations before first code. Agentic/adaptive projects must additionally prove the complete observe → contextualize → reason → decide → approve → act/delegate → observe outcome → reconcile → learn → improve loop.
+
+Models may propose, research and reason; learning may improve competence; neither model confidence nor learning may mint authority. Typed deterministic operations remain with their owning deterministic authority and verified success requires an observable postcondition where one exists. Recovery-only owner authority may restore/contain a broken system before forensic readiness, but it may not be used as a feature-development bypass.
+
+Canonical method: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md`. Canonical preparation standard: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md`.

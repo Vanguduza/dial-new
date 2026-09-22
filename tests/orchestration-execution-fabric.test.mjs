@@ -335,11 +335,16 @@ describe('DIAL Provider-First Execution Fabric Rev2', () => {
       project_id: 'dial',
       repositories: ['Vanguduza/dial-new'],
       mcp_endpoint: 'http://127.0.0.1:9130',
+      predevelopment_standard_id: 'DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD',
+      predevelopment_certificate_ref: 'agent-system/registries/PREDEVELOPMENT_FORENSIC_CERTIFICATE.json',
       truth_model: 'must-not-be-copied-into-fabric-policy',
     });
     expect(binding.project_id).toBe('dial');
+    expect(binding.predevelopment_standard_id).toBe('DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD');
+    expect(binding.predevelopment_certificate_ref).toContain('PREDEVELOPMENT_FORENSIC_CERTIFICATE.json');
     expect(binding.truth_model).toBeUndefined();
     expect(opaqueProjectFields({ project_id: 'dial', truth_model: 'x' })).toContain('truth_model');
+    expect(() => loadProjectBinding({ project_id: 'unprepared' })).toThrow('predevelopment_standard_id');
   });
 
   it('parses the control-host role file', () => {

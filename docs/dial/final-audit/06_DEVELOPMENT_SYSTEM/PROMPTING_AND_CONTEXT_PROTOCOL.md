@@ -30,8 +30,12 @@ Target ordinary context bundle: **≤12k tokens**. Beyond that, return pointers.
 
 ## Development loop
 
+Normal development starts only after `npm run agent:predevelopment:check` returns `FORENSIC_BUILD_READY`. This preparation gate is independent from the external Hermes/runtime development gate and from packet-scoped VEKL readiness.
+
 ```text
-RESOLVE FEATURE ID
+VERIFY FORENSIC_BUILD_READY
+→ VERIFY RUNTIME DEVELOPMENT GATE
+→ RESOLVE FEATURE ID
 → GET JIT CONTEXT
 → INSPECT REPO CURRENT STATE
 → PLAN AGAINST FRC
@@ -42,6 +46,7 @@ RESOLVE FEATURE ID
 → DOMAIN/CROSS-DOMAIN TEST
 → EVIDENCE RECORD
 → PROJECT TRUTH DELTA CHECK
+→ FORENSIC CERTIFICATE FRESHNESS CHECK
 → COMMIT/HANDOFF
 ```
 
