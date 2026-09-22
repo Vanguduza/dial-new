@@ -34,18 +34,41 @@ export function evaluateTailscaleState(doc = {}) {
   };
 }
 
+export function evaluateWireGuardState(output = '', interfaceName = 'wg-dial') {
+  const lines = String(output || '').trim().split(/\r?\n/).filter(Boolean);
+  if (!lines.length) return { ok: false, interface: interfaceName, peer_count: 0, configured: false };
+  const first = lines[0].split('\t');
+  const configured = first.length >= 4;
+  const peerCount = Math.max(0, lines.length - 1);
+  return {
+    ok: configured && peerCount > 0,
+    interface: interfaceName,
+    configured,
+    listen_port: configured ? Number(first[3] || 0) || null : null,
+    peer_count: peerCount,
+  };
+}
+
 export async function certifyNetwork({ role, manifest, controlHome = null }) {
   const domain = 'Network';
   const deps = itemsForRole(manifest.network_dependencies, role);
   const checks = [];
   for (const dep of deps) {
+    if (dep.probe === 'WIREGUARD') {
+      const iface = dep.interface || 'wg-dial';
+      const r = run('wg', ['show', iface, 'dump'], { timeoutMs: 10000 });
+      const ev = evaluateWireGuardState(r.output || '', iface);
+      const status = ev.ok ? STATUS.PASS : dep.configuration_required ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL;
+      checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: ${iface}`, status, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { command: r.command, exit: r.status, ...ev }, gate: ev.ok ? null : (dep.gate || 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001'), remediation: dep.owner_action || 'configure the canonical WireGuard recovery overlay and run reciprocal recovery proof' }));
+      continue;
+    }
     if (dep.probe === 'TAILSCALE') {
       const r = run('tailscale', ['status', '--json'], { timeoutMs: 10000 });
       let parsed = null;
       try { parsed = JSON.parse(r.output || '{}'); } catch {}
       const ev = evaluateTailscaleState(parsed || {});
       const status = ev.ok ? STATUS.PASS : ev.needs_login ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL;
-      checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: ${ev.backend_state || 'UNAVAILABLE'}`, status, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { command: r.command, exit: r.status, ...ev }, gate: ev.ok ? null : (dep.gate || 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001'), remediation: dep.owner_action || 'authenticate Tailscale or configure the owner-approved equivalent secondary recovery overlay' }));
+      checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: legacy Tailscale ${ev.backend_state || 'UNAVAILABLE'}`, status, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { command: r.command, exit: r.status, ...ev }, gate: ev.ok ? null : (dep.gate || 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001'), remediation: dep.owner_action || 'configure the canonical WireGuard recovery overlay' }));
       continue;
     }
     const target = resolveNetworkTarget(dep, { controlHome });
