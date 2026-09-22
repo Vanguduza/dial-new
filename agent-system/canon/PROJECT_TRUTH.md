@@ -54,6 +54,26 @@ DIAL Growth, Marketing & Promotions Control Centre (GMPC) is a first-class horiz
 - Sensitive Dial Health information is excluded from ordinary commercial targeting unless an explicit lawful-purpose contract permits the narrowly scoped use.
 Canonical specification: `docs/dial/final-audit/27_GROWTH_MARKETING_PROMOTIONS/DIAL_GROWTH_MARKETING_PROMOTIONS_CONTROL_CENTRE_REV2.md`.
 
+## Shopping experience lock — Rev 1
+
+`DEC-039` adopts **DIAL Shopping Experience Rev 1** as the canonical horizontal retail-discovery and adaptive-commerce experience inside DIAL Consumer. Shopping is an experience/screen namespace, **not a new DIAL business division and not a second commerce source of truth**.
+
+- Governing rule: **unified engine, differentiated category experiences**.
+- Spare Parts and Groceries are the first transactionally active Shopping category profiles and retain their existing Feature IDs, domain state machines, fulfilment rules and business authorities.
+- Electronics, Fashion & Beauty, Home & Furniture, Toys & Kids, Hardware & DIY, Solar & Power, Agriculture and Industrial/MRO are admitted as design/discovery profiles only; transactional activation requires separate domain/commercial authority.
+- Universal Shopping discovery supports text, voice, barcode/identifier, image, screenshot/share-to-DIAL, image+text and conversational problem statements.
+- Search, embeddings, VEKL/RAG/GraphRAG and ranking are derived decision-support layers; live price, stock, orderability, fulfilment and binding fitment remain with canonical DIAL authorities. Hard eligibility precedes ranking.
+- Canonical product/variant identity is distinct from seller/merchant offer, price, stock and fulfilment.
+- DIAL Lens may surface visual similarity but may never convert appearance/model confidence into a binding compatibility claim; `SPARE-F003` remains fitment authority.
+- DIAL Product Media Studio is a shared catalogue/seller capability. Raw media is immutable; generated derivatives carry provenance and may not alter canonical product identity.
+- The locked client rule against a universal cross-branch cart remains. Shopping may show one Bag/Activity **projection**, while Spare orders, Grocery OrderGroups/Rounds and other branch transactions retain their own authorities and checkout semantics.
+- `DIAL Fulfilled` is a fulfilment route label, not a title-to-goods claim. Spare remains agency-only; DIAL must not recreate owned-stock principal behavior through fulfilment or warehousing language.
+- External commerce/search/logistics/support/media tools are donors/adapters until separately qualified; none becomes Product Truth merely by being selected for a pilot.
+- Research-blueprint `PROP-SHOP-F*` identifiers are non-canonical aliases. They are reconciled to existing Feature IDs/supporting authorities in the Shopping integration map; do not bulk-add a second SHOP feature family merely to represent composition screens.
+
+Canonical specification: `docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md`.  
+Canonical reconciliation map: `docs/dial/final-audit/28_SHOPPING/SHOPPING_BLUEPRINT_INTEGRATION_MAP.json`.
+
 ## Development
 Resolve a Feature ID first. Use JIT context. Completion claims require fresh evidence.
 
