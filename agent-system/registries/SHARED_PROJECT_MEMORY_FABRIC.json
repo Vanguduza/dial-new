@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "fabric_id": "DIAL_SPMRF_V1",
+  "authority": "HERMES",
+  "principles": [
+    "Project Truth and current repository evidence outrank all memory.",
+    "Native ChatGPT or Claude account memory is never project authority.",
+    "All harnesses consume the same external project memory and context-capsule interfaces.",
+    "Handover is snapshot-plus-delta by default; full repository rediscovery is exceptional.",
+    "Reviews target immutable clean checkpoints and cannot be satisfied by the authoring harness.",
+    "Cached context is content-addressed and invalidated by authority/repository/VEKL/memory fingerprints."
+  ],
+  "storage": {
+    "backend": "CONTROL_HOME_CONTENT_ADDRESSED_V1",
+    "root": "/var/lib/dial-control",
+    "postgres_pgvector": {
+      "status": "FUTURE_OPTIONAL_PROJECTION",
+      "authority": "NON_AUTHORITATIVE_PROJECTION",
+      "rule": "A future Postgres/pgvector projection may accelerate semantic retrieval but cannot become a second source of truth."
+    }
+  },
+  "harnesses": [
+    {
+      "harness_id": "chatgpt-hermes",
+      "provider_family": "openai",
+      "surface": "CODEX_CHATGPT_OAUTH",
+      "host": "dial-hermes-control",
+      "commander_id": "dial_hermes_local_commander",
+      "account_alias": "chatgpt-primary",
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "ARCHITECT"
+      ],
+      "enabled": true
+    },
+    {
+      "harness_id": "chatgpt-trading",
+      "provider_family": "openai",
+      "surface": "CODEX_CHATGPT_OAUTH",
+      "host": "van-trading-core",
+      "commander_id": "van_trading_local_commander",
+      "account_alias": "chatgpt-secondary",
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "TRADING_SPECIALIST"
+      ],
+      "enabled": true
+    },
+    {
+      "harness_id": "claude-hermes",
+      "provider_family": "anthropic",
+      "surface": "CLAUDE_CODE",
+      "host": "dial-hermes-control",
+      "commander_id": "dial_hermes_local_commander",
+      "account_alias": "claude-primary",
+      "roles": [
+        "AUTHOR",
+        "REVIEWER",
+        "ARCHITECT"
+      ],
+      "enabled": true
+    },
+    {
+      "harness_id": "claude-trading",
+      "provider_family": "anthropic",
+      "surface": "CLAUDE_CODE",
+      "host": "van-trading-core",
+      "commander_id": "van_trading_local_commander",
+      "account_alias": "claude-secondary",
+      "roles": [
+        "REVIEWER",
+        "TRADING_SPECIALIST"
+      ],
+      "enabled": false,
+      "enable_condition": "live Claude Code subscription authentication proven on van-trading-core"
+    }
+  ],
+  "memory_tiers": {
+    "HOT": {
+      "description": "Current task, active checkpoint, owner instruction, open findings and current branch/SHA.",
+      "default_limit": 24
+    },
+    "WARM": {
+      "description": "Recent feature history, handoffs, reviews and related implementation context.",
+      "default_limit": 80
+    },
+    "COLD": {
+      "description": "Historical/superseded sessions, decisions and evidence retained for targeted retrieval.",
+      "default_limit": 200
+    }
+  },
+  "context_profiles": {
+    "REVIEW": {
+      "max_chars": 32000,
+      "include_raw_files": false,
+      "prefer_delta": true
+    },
+    "IMPLEMENTATION": {
+      "max_chars": 60000,
+      "include_raw_files": false,
+      "prefer_delta": true
+    },
+    "ARCHITECTURE": {
+      "max_chars": 100000,
+      "include_raw_files": false,
+      "prefer_delta": true
+    },
+    "DEEP_AUDIT": {
+      "max_chars": 160000,
+      "include_raw_files": true,
+      "prefer_delta": false
+    }
+  },
+  "review_policy": {
+    "immutable_checkpoint_required": true,
+    "clean_repository_required": true,
+    "author_self_review_counts": false,
+    "routine_min_independent_reviews": 1,
+    "material_min_independent_reviews": 2,
+    "critical_domains": [
+      "SECURITY",
+      "MONEY",
+      "TRADING",
+      "AUTHORITY",
+      "RECOVERY",
+      "DATA_MIGRATION"
+    ],
+    "critical_requires_provider_diversity": true,
+    "default_reviewers": [
+      "chatgpt-hermes",
+      "chatgpt-trading",
+      "claude-hermes"
+    ],
+    "dispatch_mode": "ALL_ELIGIBLE_EXCEPT_AUTHOR",
+    "review_receipt_required": true
+  },
+  "cache_policy": {
+    "content_addressed": true,
+    "delta_delivery": true,
+    "stable_prefix_first": true,
+    "token_estimation_chars_per_token": 4,
+    "max_entries_per_project": 500,
+    "invalidation_dimensions": [
+      "project_truth_hash",
+      "repository_sha",
+      "graph_revision_hash",
+      "memory_cursor",
+      "feature_id",
+      "context_profile"
+    ]
+  },
+  "canonical_integration": {
+    "repository_target": "master",
+    "integration_branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
+    "authorization_id": "auth-20260921-owner-spmrf-final-integration"
+  }
+}
