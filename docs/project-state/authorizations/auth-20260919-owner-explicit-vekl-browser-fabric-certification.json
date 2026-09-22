@@ -13,7 +13,7 @@
   },
   "issued_at_utc": "2026-09-19T12:00:00Z",
   "base_sha": "59a039e8ec6fb4e4ca3470de5644f3660e2eadec",
-  "branch_scope": "gpt/vekl-browser-fabric-certified-20260919",
+  "branch_scope": "gpt/vekl-browser-fabric-certified-v2-20260919",
   "authorized_paths": [
     "agent-system/**",
     "deploy/**",
