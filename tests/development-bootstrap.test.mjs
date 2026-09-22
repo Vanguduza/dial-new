@@ -293,6 +293,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).not.toContain('seq 1 660');
     expect(workflow).toContain('.result.bootstrap_ref == $expected');
     expect(workflow).toContain('.result.repo_head == $expected');
+    expect(workflow).toContain('BOOTSTRAP_TERMINAL_FAILURE');
+    expect(workflow).toContain('.result.bootstrap_failure // empty');
     const adminWorkflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-admin-oidc.yml'), 'utf8');
     expect(adminWorkflow).toContain('id-token: write');
     expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');

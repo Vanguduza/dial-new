@@ -68,6 +68,14 @@ jobs:
               break
             fi
             stage="$(jq -r '.result.bootstrap_stage // "listener-unreachable"' <<<"${RESPONSE:-{}}" 2>/dev/null || echo listener-unreachable)"
+            failure="$(jq -r '.result.bootstrap_failure // empty' <<<"${RESPONSE:-{}}" 2>/dev/null || true)"
+            if [[ "$stage" == FAILED* || -n "$failure" ]]; then
+              echo "::error::BOOTSTRAP_TERMINAL_FAILURE stage=$stage"
+              if [[ -n "$failure" ]]; then
+                printf '%s\n' "$failure" | tail -n 240
+              fi
+              exit 2
+            fi
             echo "Waiting for hardened Dial Control image bootstrap (attempt $attempt/120, stage=$stage)..."
             sleep 30
           done
