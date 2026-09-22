@@ -26,7 +26,7 @@
     "shared_platform_function_count": 239,
     "customer_endpoint_count": 180,
     "source_screen_reference_count": 1579,
-    "canonical_screen_count": 428,
+    "canonical_screen_count": 447,
     "app_surface_count": 40,
     "application_platform_count": 20,
     "declared_channel_family_count": 22,
@@ -69092,6 +69092,1372 @@
       ]
     },
     {
+      "screen_id": "SCREEN:SHOP:ADAPTIVE_PRODUCT_DETAIL",
+      "module": "SHOP",
+      "title": "Adaptive Product Detail",
+      "screen_kind": "DETAIL",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "SPARE-F003",
+        "SPARE-F005",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/product/{productRef}"
+      ],
+      "action_refs": [
+        "compare_offers",
+        "inspect_match_evidence",
+        "inspect_product_truth",
+        "open_domain_cart",
+        "open_linked_service"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:ADAPTIVE_SEARCH_RESULTS",
+      "module": "SHOP",
+      "title": "Adaptive Search Results",
+      "screen_kind": "SEARCH_RESULTS",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "GROC-F007",
+        "SPARE-F002",
+        "SPARE-F003",
+        "SPARE-F005",
+        "SPARE-F007",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/search/results"
+      ],
+      "action_refs": [
+        "compare_offers",
+        "inspect_match_evidence",
+        "open_domain_cart",
+        "open_product",
+        "refine_query"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:ALL_DEPARTMENTS",
+      "module": "SHOP",
+      "title": "All Departments",
+      "screen_kind": "BROWSE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "SPARE-F002"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/categories"
+      ],
+      "action_refs": [
+        "open_department",
+        "search_shop"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:DIAL_LENS_CAPTURE",
+      "module": "SHOP",
+      "title": "DIAL Lens Capture",
+      "screen_kind": "CAPTURE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "SPARE-F002",
+        "SPARE-F003",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/lens"
+      ],
+      "action_refs": [
+        "capture_image",
+        "choose_gallery_image",
+        "crop_object",
+        "scan_barcode",
+        "submit_visual_query"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:DIAL_SHOP_HOME",
+      "module": "SHOP",
+      "title": "DIAL Shop Home",
+      "screen_kind": "HOME_ENTRY",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "GROC-F012",
+        "GROC-F019",
+        "SPARE-F002"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop"
+      ],
+      "action_refs": [
+        "open_department",
+        "open_domain_cart",
+        "open_lens",
+        "resume_shopping",
+        "search_shop"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:FITMENT_COMPATIBILITY_DETAIL",
+      "module": "SHOP",
+      "title": "Fitment & Compatibility Detail",
+      "screen_kind": "DETAIL",
+      "branch_spaces": [
+        "Spare"
+      ],
+      "feature_refs": [
+        "SPARE-F003"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/spares/fitment/{productRef}"
+      ],
+      "action_refs": [
+        "change_vehicle",
+        "report_fitment_issue",
+        "view_fitment_evidence"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:FULFILMENT_CONTROL",
+      "module": "SHOP",
+      "title": "Shopping Fulfilment Control",
+      "screen_kind": "CONTROL",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F005",
+        "GROC-F006",
+        "GROC-F010",
+        "GROC-F011",
+        "GROC-F013",
+        "PLAT-F002",
+        "SPARE-F010",
+        "SPARE-F011"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "COMMAND_CENTRE"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/command/shop/fulfilment"
+      ],
+      "action_refs": [
+        "inspect_adapter_health",
+        "inspect_fulfilment_state",
+        "open_domain_record"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "COMMAND_CENTRE"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:GROCERIES_HOME",
+      "module": "SHOP",
+      "title": "Groceries Home",
+      "screen_kind": "HOME_ENTRY",
+      "branch_spaces": [
+        "Groceries"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "GROC-F002",
+        "GROC-F007",
+        "GROC-F008",
+        "GROC-F012",
+        "GROC-F013",
+        "GROC-F019"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/groceries"
+      ],
+      "action_refs": [
+        "buy_again",
+        "choose_slot",
+        "open_pantry",
+        "open_rounds",
+        "search_groceries"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:PRODUCT_MEDIA_STUDIO",
+      "module": "SHOP",
+      "title": "Product Media Studio",
+      "screen_kind": "WORKSPACE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "GROC-F018",
+        "PLAT-F004",
+        "SPARE-F004",
+        "SPARE-F014"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "SUPPLIER_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/seller/media"
+      ],
+      "action_refs": [
+        "approve_derivative",
+        "capture_product_media",
+        "reprocess_media",
+        "review_derivatives",
+        "upload_raw_media"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "SUPPLIER_MERCHANT_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SEARCH_RELEVANCE_CONSOLE",
+      "module": "SHOP",
+      "title": "Shopping Search Relevance Console",
+      "screen_kind": "CONTROL",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "SPARE-F002",
+        "SPARE-F003",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "COMMAND_CENTRE"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/command/shop/search"
+      ],
+      "action_refs": [
+        "inspect_bad_matches",
+        "inspect_fitment_false_positive",
+        "inspect_zero_results",
+        "review_search_release"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "COMMAND_CENTRE"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SELLER_CENTRE",
+      "module": "SHOP",
+      "title": "Seller Centre",
+      "screen_kind": "WORKSPACE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F018",
+        "PLAT-F004",
+        "SPARE-F014"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "SUPPLIER_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/seller"
+      ],
+      "action_refs": [
+        "open_catalogue",
+        "open_fulfilment",
+        "open_media_studio",
+        "open_offers_inventory",
+        "open_orders"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "SUPPLIER_MERCHANT_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SELLER_FULFILMENT_WORKSPACE",
+      "module": "SHOP",
+      "title": "Seller Fulfilment Workspace",
+      "screen_kind": "WORKSPACE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F005",
+        "GROC-F006",
+        "GROC-F010",
+        "GROC-F011",
+        "GROC-F013",
+        "PLAT-F002",
+        "SPARE-F010",
+        "SPARE-F011"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "SUPPLIER_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/seller/fulfilment"
+      ],
+      "action_refs": [
+        "confirm_pickup",
+        "prepare_handoff",
+        "view_delivery_state",
+        "view_fulfilment_queue"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "SUPPLIER_MERCHANT_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SELLER_OFFER_COMPARISON",
+      "module": "SHOP",
+      "title": "Seller Offer Comparison",
+      "screen_kind": "COMPARE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "GROC-F018",
+        "SPARE-F005",
+        "SPARE-F007"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/product/{productRef}/offers"
+      ],
+      "action_refs": [
+        "compare_price_eta_trust",
+        "open_domain_cart",
+        "select_offer"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SHOPPING_ACTIVITY_ORDER_PROJECTION",
+      "module": "SHOP",
+      "title": "Shopping Activity / Order Projection",
+      "screen_kind": "ACTIVITY",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F004",
+        "GROC-F011",
+        "GROC-F013",
+        "SPARE-F011"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/activity"
+      ],
+      "action_refs": [
+        "get_help",
+        "open_domain_order",
+        "track_fulfilment"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SHOPPING_BAG_DOMAIN_CARTS_OVERVIEW",
+      "module": "SHOP",
+      "title": "Shopping Bag / Domain Carts Overview",
+      "screen_kind": "CART_OVERVIEW",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F004",
+        "GROC-F009",
+        "SPARE-F008",
+        "SPARE-F009"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/bag"
+      ],
+      "action_refs": [
+        "continue_shopping",
+        "open_domain_cart",
+        "remove_saved_intent"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SHOPPING_RESOLUTION",
+      "module": "SHOP",
+      "title": "Shopping Resolution",
+      "screen_kind": "CASE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F017",
+        "PLAT-F005",
+        "SPARE-F012",
+        "SPARE-F013"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/resolve"
+      ],
+      "action_refs": [
+        "get_help",
+        "open_domain_case",
+        "track_case",
+        "upload_evidence"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SPARE_PARTS_HOME",
+      "module": "SHOP",
+      "title": "Spare Parts Home",
+      "screen_kind": "HOME_ENTRY",
+      "branch_spaces": [
+        "Spare"
+      ],
+      "feature_refs": [
+        "SPARE-F001",
+        "SPARE-F002",
+        "SPARE-F003",
+        "SPARE-F006",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/spares"
+      ],
+      "action_refs": [
+        "ask_dial",
+        "browse_epc",
+        "open_lens",
+        "request_non_catalogue_part",
+        "search_part",
+        "select_vehicle"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:SUPPORT_CASE_CENTRE",
+      "module": "SHOP",
+      "title": "Support / Case Centre",
+      "screen_kind": "CASE",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F017",
+        "PLAT-F012",
+        "SPARE-F012",
+        "SPARE-F013",
+        "SPARE-F015"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "COMMAND_CENTRE",
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/support"
+      ],
+      "action_refs": [
+        "add_evidence",
+        "create_case",
+        "escalate",
+        "get_help",
+        "open_case"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "COMMAND_CENTRE",
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
+      "screen_id": "SCREEN:SHOP:UNIVERSAL_SEARCH_ASK_DIAL",
+      "module": "SHOP",
+      "title": "Universal Search / Ask DIAL",
+      "screen_kind": "SEARCH",
+      "branch_spaces": [
+        "Groceries",
+        "Spare"
+      ],
+      "feature_refs": [
+        "GROC-F001",
+        "SPARE-F002",
+        "SPARE-F017"
+      ],
+      "subfeature_refs": [],
+      "supporting_capability_refs": [],
+      "eventuality_refs": [],
+      "app_family_refs": [
+        "DIAL_CONSUMER",
+        "DIAL_WEB"
+      ],
+      "app_surface_refs": [],
+      "route_refs": [
+        "/shop/search"
+      ],
+      "action_refs": [
+        "open_lens",
+        "refine_query",
+        "share_to_dial",
+        "submit_text_query",
+        "submit_voice_query"
+      ],
+      "query_refs": [],
+      "command_refs": [],
+      "event_refs": [],
+      "source_realization_refs": [],
+      "authority_kind": "SHOPPING_COMPOSITION_AUTHORITY",
+      "source_authority_refs": [
+        "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md"
+      ],
+      "state_contract": {
+        "required": [
+          "READY",
+          "LOADING",
+          "EMPTY",
+          "ERROR",
+          "DEGRADED"
+        ],
+        "conditional": [
+          "PARTIAL",
+          "OFFLINE",
+          "STALE",
+          "PERMISSION_DENIED",
+          "SYNCING",
+          "CONFLICT",
+          "SUCCESS"
+        ],
+        "authority_ref": "frontend-product-experience.mjs:SURFACE_STATE_IDS"
+      },
+      "packet_injection_contract": {
+        "inject_before_truth_hydration": true,
+        "inject_feature_graph": true,
+        "inject_capability_graph": true,
+        "inject_eventuality_graph": true,
+        "missing_required_mapping": "FAIL_CLOSED"
+      },
+      "application_refs": [
+        "DIAL_CONSUMER_ANDROID",
+        "DIAL_CONSUMER_IOS",
+        "DIAL_CONSUMER_WEB"
+      ]
+    },
+    {
       "screen_id": "SCREEN:SPARE:CART_PRICING_AND_PROMOTIONS_DETAIL_STATE",
       "module": "SPARE",
       "title": "Cart, pricing & promotions detail/state",
@@ -87957,6 +89323,9 @@
         "SCREEN:PROJECTS:PROJECTS_OS_DETAIL",
         "SCREEN:PROJECTS:PROJECTS_OS_EXCEPTION_QUEUE",
         "SCREEN:PROJECTS:PROJECTS_OS_QUEUE",
+        "SCREEN:SHOP:FULFILMENT_CONTROL",
+        "SCREEN:SHOP:SEARCH_RELEVANCE_CONSOLE",
+        "SCREEN:SHOP:SUPPORT_CASE_CENTRE",
         "SCREEN:TECH:TECHNICIAN_OS_AND_DIAL_ACADEMY_AUDIT_TIMELINE",
         "SCREEN:TECH:TECHNICIAN_OS_AND_DIAL_ACADEMY_DETAIL",
         "SCREEN:TECH:TECHNICIAN_OS_AND_DIAL_ACADEMY_EXCEPTION_QUEUE",
@@ -88677,6 +90046,20 @@
         "SCREEN:PROJECTS:SCOPE_BOQ_QUOTE_DETAIL_STATE",
         "SCREEN:PROJECTS:TEAM_PROJECT_MANAGER_DETAIL_STATE",
         "SCREEN:PROJECTS:VARIATIONS_DETAIL_STATE",
+        "SCREEN:SHOP:ADAPTIVE_PRODUCT_DETAIL",
+        "SCREEN:SHOP:ADAPTIVE_SEARCH_RESULTS",
+        "SCREEN:SHOP:ALL_DEPARTMENTS",
+        "SCREEN:SHOP:DIAL_LENS_CAPTURE",
+        "SCREEN:SHOP:DIAL_SHOP_HOME",
+        "SCREEN:SHOP:FITMENT_COMPATIBILITY_DETAIL",
+        "SCREEN:SHOP:GROCERIES_HOME",
+        "SCREEN:SHOP:SELLER_OFFER_COMPARISON",
+        "SCREEN:SHOP:SHOPPING_ACTIVITY_ORDER_PROJECTION",
+        "SCREEN:SHOP:SHOPPING_BAG_DOMAIN_CARTS_OVERVIEW",
+        "SCREEN:SHOP:SHOPPING_RESOLUTION",
+        "SCREEN:SHOP:SPARE_PARTS_HOME",
+        "SCREEN:SHOP:SUPPORT_CASE_CENTRE",
+        "SCREEN:SHOP:UNIVERSAL_SEARCH_ASK_DIAL",
         "SCREEN:SPARE:CART_PRICING_AND_PROMOTIONS_DETAIL_STATE",
         "SCREEN:SPARE:CASE_TRACKER",
         "SCREEN:SPARE:CATALOGUE_INGEST_AND_NORMALIZATION_DETAIL_STATE",
@@ -89116,6 +90499,20 @@
         "SCREEN:PROJECTS:SCOPE_BOQ_QUOTE_DETAIL_STATE",
         "SCREEN:PROJECTS:TEAM_PROJECT_MANAGER_DETAIL_STATE",
         "SCREEN:PROJECTS:VARIATIONS_DETAIL_STATE",
+        "SCREEN:SHOP:ADAPTIVE_PRODUCT_DETAIL",
+        "SCREEN:SHOP:ADAPTIVE_SEARCH_RESULTS",
+        "SCREEN:SHOP:ALL_DEPARTMENTS",
+        "SCREEN:SHOP:DIAL_LENS_CAPTURE",
+        "SCREEN:SHOP:DIAL_SHOP_HOME",
+        "SCREEN:SHOP:FITMENT_COMPATIBILITY_DETAIL",
+        "SCREEN:SHOP:GROCERIES_HOME",
+        "SCREEN:SHOP:SELLER_OFFER_COMPARISON",
+        "SCREEN:SHOP:SHOPPING_ACTIVITY_ORDER_PROJECTION",
+        "SCREEN:SHOP:SHOPPING_BAG_DOMAIN_CARTS_OVERVIEW",
+        "SCREEN:SHOP:SHOPPING_RESOLUTION",
+        "SCREEN:SHOP:SPARE_PARTS_HOME",
+        "SCREEN:SHOP:SUPPORT_CASE_CENTRE",
+        "SCREEN:SHOP:UNIVERSAL_SEARCH_ASK_DIAL",
         "SCREEN:SPARE:CART_PRICING_AND_PROMOTIONS_DETAIL_STATE",
         "SCREEN:SPARE:CASE_TRACKER",
         "SCREEN:SPARE:CATALOGUE_INGEST_AND_NORMALIZATION_DETAIL_STATE",
@@ -89557,6 +90954,20 @@
         "SCREEN:PROJECTS:SCOPE_BOQ_QUOTE_DETAIL_STATE",
         "SCREEN:PROJECTS:TEAM_PROJECT_MANAGER_DETAIL_STATE",
         "SCREEN:PROJECTS:VARIATIONS_DETAIL_STATE",
+        "SCREEN:SHOP:ADAPTIVE_PRODUCT_DETAIL",
+        "SCREEN:SHOP:ADAPTIVE_SEARCH_RESULTS",
+        "SCREEN:SHOP:ALL_DEPARTMENTS",
+        "SCREEN:SHOP:DIAL_LENS_CAPTURE",
+        "SCREEN:SHOP:DIAL_SHOP_HOME",
+        "SCREEN:SHOP:FITMENT_COMPATIBILITY_DETAIL",
+        "SCREEN:SHOP:GROCERIES_HOME",
+        "SCREEN:SHOP:SELLER_OFFER_COMPARISON",
+        "SCREEN:SHOP:SHOPPING_ACTIVITY_ORDER_PROJECTION",
+        "SCREEN:SHOP:SHOPPING_BAG_DOMAIN_CARTS_OVERVIEW",
+        "SCREEN:SHOP:SHOPPING_RESOLUTION",
+        "SCREEN:SHOP:SPARE_PARTS_HOME",
+        "SCREEN:SHOP:SUPPORT_CASE_CENTRE",
+        "SCREEN:SHOP:UNIVERSAL_SEARCH_ASK_DIAL",
         "SCREEN:SPARE:CART_PRICING_AND_PROMOTIONS_DETAIL_STATE",
         "SCREEN:SPARE:CASE_TRACKER",
         "SCREEN:SPARE:CATALOGUE_INGEST_AND_NORMALIZATION_DETAIL_STATE",
@@ -90599,6 +92010,9 @@
         "SCREEN:GROCERIES:MERCHANT_STORE_CATALOGUE_PROJECTION_DETAIL_STATE",
         "SCREEN:GROCERIES:ORDER_GROUP_MERCHANT_SUBORDERS_DETAIL_STATE",
         "SCREEN:GROCERIES:SEARCH_FILTER_BROWSE_RESULTS",
+        "SCREEN:SHOP:PRODUCT_MEDIA_STUDIO",
+        "SCREEN:SHOP:SELLER_CENTRE",
+        "SCREEN:SHOP:SELLER_FULFILMENT_WORKSPACE",
         "SCREEN:SPARE:CONTEXT_ACTIONS_SHEET",
         "SCREEN:SPARE:HISTORY_TIMELINE",
         "SCREEN:SPARE:ISSUE_SUPPORT_ENTRY",
@@ -90870,5 +92284,5 @@
       "capability_ref_count": 0
     }
   ],
-  "content_hash": "1a5c2cbf9ee7b788853ed621a484857359a5bb3ec85a8d8a67aa1fd5903fcf6f"
+  "content_hash": "1d56a5b6f7431396f8d0db4bd81f2016a01a1672331751c42923f5dd586f6496"
 }
