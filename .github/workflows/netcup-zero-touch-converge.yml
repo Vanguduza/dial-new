@@ -235,9 +235,9 @@ jobs:
         run: |
           {
             echo "## Dial Control zero-touch convergence"
-            echo "- source SHA: `$GITHUB_SHA`"
-            echo "- initial certified state: `${{ steps.control.outputs.certified || 'unknown' }}`"
-            echo "- initial overlay state: `${{ steps.control.outputs.overlay_verified || 'unknown' }}`"
-            echo "- initial migration cutover: `${{ steps.control.outputs.migration_cutover || 'unknown' }}`"
-            echo "- workflow run: `$GITHUB_RUN_ID`"
+            echo "- source SHA: $GITHUB_SHA"
+            echo "- initial certified state: ${{ steps.control.outputs.certified || 'unknown' }}"
+            echo "- initial overlay state: ${{ steps.control.outputs.overlay_verified || 'unknown' }}"
+            echo "- initial migration cutover: ${{ steps.control.outputs.migration_cutover || 'unknown' }}"
+            echo "- workflow run: $GITHUB_RUN_ID"
           } >>"$GITHUB_STEP_SUMMARY"
