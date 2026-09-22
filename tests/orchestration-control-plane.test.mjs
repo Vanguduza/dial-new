@@ -491,7 +491,7 @@ describe('external Oracle orchestration queue', () => {
       developmentGate: () => ({ unblocked: true }),
     });
     expect(processed.state).toBe('COMPLETED');
-    expect(processed.execution_origin).toBe('EXTERNAL_ORACLE_ORCHESTRATOR');
+    expect(processed.execution_origin).toBe('EXTERNAL_DIAL_ORCHESTRATOR');
     expect(processed.runtime_provenance.requested_model).toBe('gpt-5.6-sol');
     expect(externalWorkStatus(queued.job_id, root).state).toBe('COMPLETED');
   });
@@ -646,7 +646,7 @@ describe('checkpoint, memory and DIAL authority boundary', () => {
 
 describe('development readiness gates', () => {
   function heartbeat(root) {
-    writeJsonAtomic('state/external-orchestrator-heartbeat.json', { execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', observed_at: new Date().toISOString() }, root);
+    writeJsonAtomic('state/external-orchestrator-heartbeat.json', { execution_origin: 'EXTERNAL_DIAL_ORCHESTRATOR', observed_at: new Date().toISOString() }, root);
   }
   function fallbackGate(repoDir, overrides = {}) {
     return {
@@ -654,12 +654,12 @@ describe('development readiness gates', () => {
       status: 'DEVELOPMENT_READY_FALLBACK',
       development_only: true,
       production_certified: false,
-      execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR',
+      execution_origin: 'EXTERNAL_DIAL_ORCHESTRATOR',
       runtime_policy: 'gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE',
       control_plane_fingerprint: controlPlaneFingerprint(repoDir),
       primary: { runtime: 'codex_app_server', requested_model: 'gpt-5.6-sol', resolved_model: 'gpt-5.6-sol', identity_proven: true, state: 'ACCOUNT_LIMITED' },
       fallback: { runtime: 'claude_code', requested_model: 'claude-sonnet-5', resolved_model: 'claude-sonnet-5', identity_proven: true, state: 'HEALTHY' },
-      external_fallback_canary: { completed: true, execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR', resolved_model: 'claude-sonnet-5' },
+      external_fallback_canary: { completed: true, execution_origin: 'EXTERNAL_DIAL_ORCHESTRATOR', resolved_model: 'claude-sonnet-5' },
       vekl: { live_fallback_canary: true, ahead_of_work_forecast_ready: true },
       continuity: { green: true },
       ...overrides,

@@ -153,6 +153,159 @@ export function evaluateDevelopmentPackGates(pack = {}) {
   gates.push(result('GATE-13', 'Development-system independence ready', developmentSystem, independencePass,
     independencePass ? [] : ['DEVELOPMENT_SYSTEM_INDEPENDENCE_INCOMPLETE'], refs(independence)));
 
+  // FFDRM/PRD-DDP Rev 2 forensic gates. These deliberately overlap some legacy
+  // Development Pack gates: the legacy gates prove preparation breadth while FFDRM
+  // proves causal/authority/reachability depth. Both must pass.
+  const forensic = artifact(pack, 'forensic_predevelopment') || {};
+  const forensicRefs = refs(forensic);
+  const ff = (id, name, applicable, passed, reasons = [], evidence = forensicRefs) =>
+    result(id, name, applicable, passed, reasons, evidence);
+
+  gates.push(ff('F0_OWNER_INTENT_PRODUCT_TRUTH', 'FFDRM F0 owner intent and Product Truth', true,
+    truthPass && bool(forensic.owner_intent_falsifiable) && bool(forensic.scope_exclusions_explicit),
+    ['OWNER_INTENT_OR_PRODUCT_TRUTH_INCOMPLETE'], [...new Set([...refs(truth), ...forensicRefs])]));
+
+  gates.push(ff('F1_DEVELOPMENT_UNIT_DECOMPOSITION', 'FFDRM F1 Development Unit decomposition', true,
+    unitPass && bool(forensic.shared_authorities_mapped) && bool(forensic.verification_obligations_mapped),
+    ['DEVELOPMENT_UNIT_FORENSIC_DECOMPOSITION_INCOMPLETE'], [...new Set([...refs(units), ...forensicRefs])]));
+
+  const surfaceCoveragePass = featurePass && (!screenApplicable || (screenPass && realizationPass));
+  gates.push(ff('F2_FEATURE_SURFACE_COVERAGE', 'FFDRM F2 feature and surface coverage', true,
+    surfaceCoveragePass && bool(forensic.requirement_to_unit_traceability_complete),
+    ['FEATURE_SURFACE_TRACEABILITY_INCOMPLETE'],
+    [...new Set([...refs(features), ...refs(screens), ...refs(realization), ...forensicRefs])]));
+
+  gates.push(ff('F3_AUTHORITY_MODEL', 'FFDRM F3 deterministic authority model', true,
+    bool(features?.authority_mapped) && bool(architecture?.authority_defined)
+      && bool(forensic.authority?.requester_mapped)
+      && bool(forensic.authority?.policy_owner_mapped)
+      && bool(forensic.authority?.execution_authority_mapped)
+      && bool(forensic.authority?.credential_boundaries_mapped)
+      && bool(forensic.authority?.audit_events_mapped),
+    ['AUTHORITY_MODEL_INCOMPLETE'], [...new Set([...refs(features), ...refs(architecture), ...forensicRefs])]));
+
+  const sp = forensic.state_persistence || {};
+  gates.push(ff('F4_STATE_PERSISTENCE_MODEL', 'FFDRM F4 state and persistence model', true,
+    bool(sp.canonical_state_owners_defined)
+      && bool(sp.persistence_mechanisms_defined)
+      && bool(sp.restart_process_death_defined)
+      && bool(sp.idempotency_defined)
+      && bool(sp.conflict_strategy_defined)
+      && bool(sp.retention_deletion_revocation_defined),
+    ['STATE_PERSISTENCE_MODEL_INCOMPLETE']));
+
+  const cp = forensic.causal_paths || {};
+  gates.push(ff('F5_CAUSAL_PATH_PROOF', 'FFDRM F5 causal path proof', true,
+    positive(cp.material_behaviors_total)
+      && Number(cp.paths_proven || 0) === Number(cp.material_behaviors_total || 0)
+      && zero(cp.unreachable_required_behaviors)
+      && bool(cp.production_callers_proven)
+      && bool(cp.authority_checks_proven)
+      && bool(cp.result_reconciliation_proven)
+      && bool(cp.observable_postconditions_proven),
+    ['CAUSAL_PATH_PROOF_INCOMPLETE']));
+
+  gates.push(ff('F6_RESEARCH_TOOLING_ADEQUACY', 'FFDRM F6 research and tooling adequacy', true,
+    researchPass && bool(forensic.research?.build_vs_adopt_recorded)
+      && bool(forensic.research?.license_security_reviewed)
+      && bool(forensic.research?.unsupported_assumptions_recorded),
+    ['RESEARCH_TOOLING_ADEQUACY_INCOMPLETE'], [...new Set([...refs(research), ...forensicRefs])]));
+
+  gates.push(ff('F7_ARCHITECTURAL_COHERENCE', 'FFDRM F7 architectural coherence', true,
+    architecturePass
+      && bool(forensic.architecture?.no_duplicate_authority)
+      && bool(forensic.architecture?.no_parallel_canonical_state)
+      && bool(forensic.architecture?.identity_error_event_models_coherent)
+      && bool(forensic.architecture?.lifecycle_dataflow_coherent),
+    ['ARCHITECTURAL_COHERENCE_INCOMPLETE'], [...new Set([...refs(architecture), ...forensicRefs])]));
+
+  gates.push(ff('F8_FAILURE_DEGRADATION_RECOVERY', 'FFDRM F8 failure, degradation and recovery', true,
+    failurePass
+      && bool(forensic.failure?.timeouts_defined)
+      && bool(forensic.failure?.retry_limits_defined)
+      && bool(forensic.failure?.idempotency_verified)
+      && bool(forensic.failure?.restart_recovery_defined)
+      && bool(forensic.failure?.stale_state_handling_defined)
+      && bool(forensic.failure?.escalation_defined),
+    ['FAILURE_DEGRADATION_RECOVERY_INCOMPLETE'], [...new Set([...refs(failure), ...forensicRefs])]));
+
+  const sec = forensic.security || {};
+  gates.push(ff('F9_SECURITY_PRIVACY_SECRET_BOUNDARY', 'FFDRM F9 security, privacy and secret boundary', true,
+    bool(sec.credential_ownership_defined)
+      && bool(sec.secret_storage_defined)
+      && bool(sec.trust_boundaries_defined)
+      && bool(sec.input_validation_injection_defense_defined)
+      && bool(sec.least_privilege_defined)
+      && bool(sec.egress_boundaries_defined)
+      && bool(sec.revocation_path_defined)
+      && bool(sec.audit_path_defined)
+      && bool(sec.replay_defense_addressed),
+    ['SECURITY_PRIVACY_SECRET_BOUNDARY_INCOMPLETE']));
+
+  gates.push(ff('F10_VERIFICATION_EVIDENCE_CONTRACT', 'FFDRM F10 verification and evidence contract', true,
+    verificationPass
+      && bool(forensic.verification?.reachability_evidence_defined)
+      && bool(forensic.verification?.failure_injection_defined)
+      && bool(forensic.verification?.runtime_gates_separated)
+      && bool(forensic.verification?.owner_acceptance_separated),
+    ['VERIFICATION_EVIDENCE_CONTRACT_INCOMPLETE'], [...new Set([...refs(verification), ...forensicRefs])]));
+
+  const adv = forensic.adversarial || {};
+  gates.push(ff('F11_ADVERSARIAL_FORENSICS', 'FFDRM F11 adversarial forensics', true,
+    bool(adv.review_complete)
+      && bool(adv.mock_only_checked)
+      && bool(adv.unreachable_checked)
+      && bool(adv.presentational_only_checked)
+      && bool(adv.false_success_checked)
+      && bool(adv.dead_or_orphaned_checked)
+      && bool(adv.restart_stale_state_checked),
+    ['ADVERSARIAL_FORENSICS_INCOMPLETE']));
+
+  const kind = `${pack.project?.classification || ''} ${pack.project?.project_kind || ''}`.toUpperCase();
+  const agentic = forensic.agentic === true || developmentSystem || /(AGENTIC|ADAPTIVE|AUTONOMOUS|ASSISTANT|TRADING)/.test(kind);
+  const sym = forensic.symbiotic_loop || {};
+  const symbioticPass = !agentic || (
+    bool(sym.observe_defined) && bool(sym.contextualize_defined) && bool(sym.reason_defined)
+    && bool(sym.deterministic_authority_boundary_defined) && bool(sym.execute_or_delegate_defined)
+    && bool(sym.outcome_observation_defined) && bool(sym.reconcile_defined)
+    && bool(sym.learn_defined) && bool(sym.improve_defined) && bool(sym.learning_cannot_expand_privilege)
+  );
+  gates.push(ff('F12_SYMBIOTIC_LOOP_PROOF', 'FFDRM F12 symbiotic loop proof', agentic,
+    symbioticPass, symbioticPass ? [] : ['SYMBIOTIC_LOOP_INCOMPLETE']));
+
+  const reach = forensic.reachability || {};
+  gates.push(ff('F13_PRODUCTION_REACHABILITY', 'FFDRM F13 production reachability', true,
+    bool(reach.production_registration_proven)
+      && bool(reach.production_callers_proven)
+      && bool(reach.real_state_binding_proven)
+      && bool(reach.lifecycle_startup_proven_or_na)
+      && bool(reach.observable_postconditions_proven),
+    ['PRODUCTION_REACHABILITY_INCOMPLETE']));
+
+  const anti = forensic.anti_gap || {};
+  gates.push(ff('F14_ANTI_GAP_MUTATION_PROOF', 'FFDRM F14 anti-gap and mutation proof', true,
+    bool(anti.mutation_executed)
+      && bool(anti.critical_breakage_detected)
+      && bool(anti.canonical_tree_guard)
+      && bool(anti.authority_bypass_guard)
+      && bool(anti.caller_disconnect_guard)
+      && bool(anti.live_binding_guard_or_na),
+    ['ANTI_GAP_MUTATION_PROOF_INCOMPLETE']));
+
+  const ffPrereqs = gates.filter((gate) => gate.gate_id.startsWith('F') && gate.gate_id !== 'F15_FORENSIC_BUILD_READY_CERTIFICATION');
+  const ffBlocked = ffPrereqs.some((gate) => gate.applicable && gate.state !== 'PASS');
+  const explicitForensicBlockers = Array.isArray(forensic.preparation_blockers) ? forensic.preparation_blockers.filter(Boolean) : [];
+  const f15Pass = !ffBlocked && explicitForensicBlockers.length === 0
+    && forensic.runtime_qualification_separated === true
+    && forensic.certificate_binding_defined === true;
+  gates.push(ff('F15_FORENSIC_BUILD_READY_CERTIFICATION', 'FFDRM F15 FORENSIC_BUILD_READY certification', true,
+    f15Pass, f15Pass ? [] : [
+      ...(ffBlocked ? ['PRIOR_FFDRM_GATE_BLOCKED'] : []),
+      ...(explicitForensicBlockers.length ? ['PREPARATION_BLOCKERS_OPEN'] : []),
+      ...(forensic.runtime_qualification_separated === true ? [] : ['RUNTIME_QUALIFICATION_NOT_SEPARATE']),
+      ...(forensic.certificate_binding_defined === true ? [] : ['CERTIFICATE_BINDING_UNDEFINED']),
+    ]));
+
   const applicable = gates.filter((gate) => gate.applicable);
   const failures = applicable.filter((gate) => gate.state !== 'PASS');
   const failed = new Set(failures.map((gate) => gate.gate_id));
@@ -164,6 +317,8 @@ export function evaluateDevelopmentPackGates(pack = {}) {
   else if (failed.has('GATE-08')) maturity = 'DESIGN_READY';
   else if (failed.has('GATE-09')) maturity = 'ARCHITECTURE_READY';
   else if (['GATE-10','GATE-11','GATE-12','GATE-13'].some((id) => failed.has(id))) maturity = 'IMPLEMENTATION_READY';
+  const forensicFailures = failures.filter((gate) => gate.gate_id.startsWith('F'));
+  if (forensicFailures.length && maturity === 'BUILD_READY') maturity = 'FORENSIC_BUILD_BLOCKED';
   if (pack.maturity_state === 'INVALIDATED' || pack.invalidation) maturity = 'INVALIDATED';
   const invalidated = maturity === 'INVALIDATED';
   const blockers = failures.map((gate) => ({ gate_id: gate.gate_id, reasons: gate.reasons }));
@@ -173,6 +328,9 @@ export function evaluateDevelopmentPackGates(pack = {}) {
     project_id: pack.project?.project_id ?? null,
     evaluated_at: new Date().toISOString(),
     gates,
+    forensic_gates: gates.filter((gate) => gate.gate_id.startsWith('F')),
+    forensic_ready: gates.find((gate) => gate.gate_id === 'F15_FORENSIC_BUILD_READY_CERTIFICATION')?.state === 'PASS',
+    forensic_state: gates.find((gate) => gate.gate_id === 'F15_FORENSIC_BUILD_READY_CERTIFICATION')?.state === 'PASS' ? 'FORENSIC_BUILD_READY' : 'FORENSIC_BUILD_BLOCKED',
     applicable_gate_count: applicable.length,
     passed_gate_count: applicable.length - failures.length,
     failed_gate_count: failures.length + (invalidated ? 1 : 0),

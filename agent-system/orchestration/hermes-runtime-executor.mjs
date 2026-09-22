@@ -113,6 +113,7 @@ export async function runPrimaryHermes({
   timeoutMs = 30 * 60 * 1000,
   model = PRIMARY_MODEL,
   packetId = null,
+  projectSlug = process.env.DIAL_PROJECT_SLUG || 'dial',
   skillActivation = null,
   commanderAuthority = null,
 } = {}) {
@@ -143,7 +144,8 @@ export async function runPrimaryHermes({
         DIAL_CONTROL_HOME: root || process.env.DIAL_CONTROL_HOME,
         DIAL_REPO_DIR: repoDir,
         DIAL_HARNESS_ID: process.env.DIAL_HARNESS_ID || 'chatgpt-hermes',
-        DIAL_PROJECT_ID: process.env.DIAL_PROJECT_ID || 'dial',
+        DIAL_PROJECT_ID: projectSlug,
+        DIAL_PROJECT_SLUG: projectSlug,
         ...(packetId ? { DIAL_PACKET_ID: packetId, DIAL_GOVERNED_SESSION: '1' } : {}),
         ...(skillActivation?.activation_id ? { DIAL_SKILL_ACTIVATION_ID: skillActivation.activation_id } : {}),
         ...(skillActivation?.runtime_skill_dir ? { DIAL_SKILL_ACTIVATION_DIR: skillActivation.runtime_skill_dir } : {}),
@@ -274,6 +276,7 @@ export async function executeHermesInstruction({
   fallbackRunner = runClaudeHermesFallback,
   contextBuilder = buildDialHermesContext,
   packetId = null,
+  projectSlug = process.env.DIAL_PROJECT_SLUG || 'dial',
   skillActivation = null,
   commanderAuthority = null,
 } = {}) {
@@ -334,7 +337,7 @@ export async function executeHermesInstruction({
       packet_id: packetId, at: now(),
     }, root);
   } else {
-    primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, skillActivation: activation, commanderAuthority });
+    primary = await primaryRunner({ repoDir, instruction: instructionWithKnowledge, root, timeoutMs, model: PRIMARY_MODEL, packetId, projectSlug, skillActivation: activation, commanderAuthority });
   }
   if (primary?.ok) {
     reconcileHermesRuntime({ root });
@@ -460,6 +463,7 @@ export async function executeHermesInstruction({
       root,
       timeoutMs,
       packetId,
+      projectSlug,
       skillActivation: activation,
       skillBundle: fallbackSkillBundle,
     });

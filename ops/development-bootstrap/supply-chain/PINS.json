@@ -98,7 +98,8 @@
         "xz-utils": "5.6.1+really5.4.5-1ubuntu0.3",
         "python3-pip": "24.0+dfsg-1ubuntu1.3",
         "build-essential": "12.10ubuntu1",
-        "tini": "0.19.0-1"
+        "tini": "0.19.0-1",
+        "wireguard-tools": "1.0.20210914-1ubuntu4"
       },
       "pin_state": "PINNED",
       "evidence": "Ubuntu 24.04 apt-cache candidate versions measured on dial-hermes-control 2026-09-15; Ubuntu archive signatures remain apt trust root"

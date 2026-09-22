@@ -79,7 +79,7 @@ while (( SECONDS < deadline )); do
 done
 [[ "$state" == "COMPLETED" ]] || { echo "$result" >&2; fail "external queued turn did not recover and complete after Codex process death"; }
 jq -e '
-  .execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR"
+  .execution_origin == "EXTERNAL_DIAL_ORCHESTRATOR"
   and .result.event == "HERMES_OPERATIONAL_TURN_COMPLETED"
   and .result.policy == "LOCKED_SOL_THEN_SONNET"
   and .result.runtime == "claude_code"
@@ -106,7 +106,7 @@ jq -n \
     status:"GREEN",
     observed_at:$observed_at,
     repo_head:$repo_head,
-    execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",
+    execution_origin:"EXTERNAL_DIAL_ORCHESTRATOR",
     job_id:$job_id,
     project_isolated:true,
     unrelated_project_processes_targeted:false,

@@ -30,7 +30,7 @@ function buildManagerInstruction(mission, root) {
     'VEKL v2 is mandatory process governance: after Feature/JIT context is resolved, confirm the persisted Engineering Knowledge Activation Manifest before material implementation. The manifest may contain approved skills plus task-relevant official docs, repositories, releases, issues, package/advisory evidence, DIAL rules/hooks/loops and other governed resources. A zero-resource/zero-skill result is valid only when the resolver explicitly finds nothing relevant.',
     'External resources and vendor skills are non-authoritative guidance; DIAL project-local engineering policy is process policy only. Canon/FRC/security/current code/evidence win. Forums/community material is corroboration/discovery only. No VEKL resource may change product scope, source-of-truth ownership, locked providers, money/Health rules, authority or gates.',
     'Hermes ahead-of-work research is advisory and may pre-cache relevant resources for upcoming plan-aligned packets; it never reprioritises the programme. Once you select this turn’s concrete Feature/task, if it is materially more specific than the queued manager instruction, run node agent-system/bin/engineering-knowledge-resolve.mjs <FEATURE_ID> --task "<concrete task>" --packet-id "$DIAL_PACKET_ID" --activate --reason "concrete dependency-safe packet selected after repository inspection" before the first material edit. Repeat audited re-resolution only when the task materially changes again.',
-    'If ordinary unblocked work remains after the packet, finish normally; the Oracle mission controller will dispatch the next turn.',
+    'If ordinary unblocked work remains after the packet, finish normally; the DIAL mission controller will dispatch the next turn.',
     'If a genuine owner decision is required, end your final response with exactly: DIAL_MISSION_SIGNAL:BLOCKED_OWNER::<short reason>',
     'If the active canonical programme is genuinely complete, end with exactly: DIAL_MISSION_SIGNAL:COMPLETE::<short reason>',
     '',
@@ -73,7 +73,7 @@ export function missionControllerTick({ root, developmentGate = evaluateDevelopm
     repoDir: mission.repo_dir || process.env.DIAL_REPO_DIR,
     instruction,
     requestedBy: 'mission_controller',
-    metadata: { mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, priority: 50, generated_by: 'MISSION_CONTROLLER', ...(ownerAuthorityRoot ? { owner_authority_root: ownerAuthorityRoot } : {}) },
+    metadata: { project_slug: 'dial', mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, priority: 50, generated_by: 'MISSION_CONTROLLER', ...(ownerAuthorityRoot ? { owner_authority_root: ownerAuthorityRoot } : {}) },
   });
   if (!queued?.engineering_knowledge?.activation_id) {
     throw new Error('MISSION_DISPATCH_REFUSED: submitter returned no programmatically verified VEKL activation');

@@ -117,7 +117,7 @@ section "PROJECT-AWARE RESEARCH + LOCKED RUNTIME IDENTITY"
 # DEC-020 permits the project-aware research manager to fall from exact Sol to
 # exact Sonnet 5. Reuse a current semantic forecast instead of forcing another
 # manager-model turn. Exact live Sol execution is still mandatory below through
-# the VEKL primary canary and external Oracle queue canary.
+# the VEKL primary canary and external DIAL queue canary.
 RESEARCH_FORECAST="$(tmp)"; npm run --silent agent:research:refresh >"$RESEARCH_FORECAST"
 jq -e '.state == "READY" and (.items|length) >= 3 and (.items|length) <= 5 and .resource_cache_count > 0 and .runtime_provenance.identity_proven == true and ((.runtime_provenance.runtime == "codex_app_server" and .runtime_provenance.requested_model == "gpt-5.6-sol" and .runtime_provenance.resolved_model == "gpt-5.6-sol") or (.runtime_provenance.runtime == "claude_code" and .runtime_provenance.requested_model == "claude-sonnet-5" and .runtime_provenance.resolved_model == "claude-sonnet-5"))' "$RESEARCH_FORECAST" >/dev/null || { cat "$RESEARCH_FORECAST" >&2; fail "VEKL project-aware forecast is not live/ready through the locked Sol/Sonnet chain"; }
 RESEARCH_FORECAST_ID="$(jq -r '.forecast_id // empty' "$RESEARCH_FORECAST")"
@@ -158,8 +158,8 @@ while (( SECONDS < deadline )); do
   sleep 2
 done
 [[ "$CANARY_STATE" == "COMPLETED" ]] || { cat "$CANARY_RESULT" >&2; fail "external orchestration canary did not complete"; }
-jq -e '.execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR" and .result.event == "HERMES_OPERATIONAL_TURN_COMPLETED" and .result.runtime == "codex_app_server" and .result.requested_model == "gpt-5.6-sol" and .result.resolved_model == "gpt-5.6-sol" and .result.fallback_used == false' "$CANARY_RESULT" >/dev/null || { cat "$CANARY_RESULT" >&2; fail "external canary did not prove exact Sol execution from the Oracle orchestrator"; }
-pass "work submitted outside the project process is claimed and executed by the Oracle Hermes orchestrator"
+jq -e '.execution_origin == "EXTERNAL_DIAL_ORCHESTRATOR" and .result.event == "HERMES_OPERATIONAL_TURN_COMPLETED" and .result.runtime == "codex_app_server" and .result.requested_model == "gpt-5.6-sol" and .result.resolved_model == "gpt-5.6-sol" and .result.fallback_used == false' "$CANARY_RESULT" >/dev/null || { cat "$CANARY_RESULT" >&2; fail "external canary did not prove exact Sol execution from the DIAL control orchestrator"; }
+pass "work submitted outside the project process is claimed and executed by the DIAL control orchestrator"
 
 section "DETERMINISTIC LOCKED RUNTIME ROUTING"
 # Repository qualification above includes deterministic HEALTHY/limited/total-loss

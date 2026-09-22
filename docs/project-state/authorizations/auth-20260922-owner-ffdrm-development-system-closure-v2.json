@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-ffdrm-development-system-closure-v2",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "9a0321bc42217c2f1e44550199d96024ca7e514bf753dea82940cf2fefd0a770",
+  "base_sha": "c81ed32f8b79cb89ac7e61c4cd1af73aed03616d",
+  "branch_scope": "gpt/ffdrm-development-system-rebase-20260922",
+  "authorized_paths": [
+    ".agents/**",
+    ".github/workflows/**",
+    "PROJECT_CANONICAL_STATE.json",
+    "PROJECT_TRUTH_PROTOCOL.md",
+    "agent-system/**",
+    "deploy/**",
+    "docs/dial/**",
+    "docs/project-state/**",
+    "ops/**",
+    "package.json",
+    "package-lock.json",
+    "scripts/**",
+    "tests/**",
+    "vitest.config.ts"
+  ],
+  "change_classes": [
+    "FORENSIC_STANDARD_ENFORCEMENT",
+    "DERIVED_STATE_REGENERATION",
+    "GOVERNANCE_VERIFIER_REMEDIATION",
+    "RUNTIME_GUARD_HARDENING",
+    "TEST_AND_EVIDENCE_CLOSURE",
+    "REPOSITORY_CLOSURE"
+  ],
+  "reusable": true,
+  "revoked": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "source": {
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "channel": "chatgpt",
+    "observed_date": "2026-09-22"
+  },
+  "scope_note": "Bounded to the owner-authorized FFDRM/PRD-DDP development-system audit, remediation, evidence and repository closure mission. It does not authorize weakening readiness gates or claiming unproven runtime qualification."
+}

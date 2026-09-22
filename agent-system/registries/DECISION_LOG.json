@@ -1070,5 +1070,35 @@
       "tests/universal-development-pack.test.mjs"
     ],
     "reopens_if": "the product owner replaces the pack/gate contract with an equal-or-stronger mechanism that preserves project isolation, exact baselines, bidirectional experience completeness, causal integration, evidence binding, drift invalidation and fail-closed Build-Ready semantics"
+  },
+  {
+    "decision_id": "DEC-045",
+    "decided_on": "2026-09-22",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / FFDRM / PROJECT READINESS / AUTHORITY",
+    "title": "FFDRM and PRD-DDP Rev 2 are mandatory project-scoped predevelopment authority",
+    "decision": "Adopt DIAL-FFDRM-R1 / PRD-DDP-R2 as the mandatory forensic predevelopment standard for the DIAL Development System and every admitted project. The existing universal Development Pack remains the single project-preparation substrate and is strengthened with executable FFDRM F0-F15 gates rather than duplicated by a parallel readiness system. Each project earns its own content-bound FORENSIC_BUILD_READY certificate from its project-scoped Development Pack and current repository baseline. The DIAL Development System itself is a separate DEVELOPMENT_SYSTEM project and must independently prove its own FFDRM readiness, universal project conformance and runtime qualification. Project readiness never implies shared-system runtime qualification, and shared-system readiness never implies a project is prepared.",
+    "consequence": "Normal material development must fail closed unless the selected project has a current project-scoped FORENSIC_BUILD_READY certificate and the shared DIAL system runtime gate is current. Task Execution Envelopes bind project identity, FFDRM standard version, certificate hash/fingerprint and current Unit/knowledge/technical authority; drift invalidates the envelope. Agentic/adaptive projects cannot exempt F12. Repository, runtime/device/live and owner-acceptance states remain distinct. Product-specific blockers such as DIAL feature-contract specificity remain on the affected project pack rather than being misclassified as universal-system readiness blockers.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FFDRM_DEVELOPMENT_SYSTEM_FORENSIC_REBASE_20260922.md",
+    "enforced_by": [
+      "agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json",
+      "agent-system/orchestration/development-pack-gates.mjs",
+      "agent-system/bin/predevelopment-forensic-gate.mjs",
+      "agent-system/orchestration/project-registry.mjs",
+      "agent-system/orchestration/task-execution-envelope.mjs",
+      "agent-system/orchestration/adaptive-execution-planner.mjs",
+      "tests/universal-development-pack.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260922-owner-ffdrm-development-system-rebase.json",
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md",
+      "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md"
+    ],
+    "activation_blocker_refs": [
+      "The development system cannot be certified FORENSIC_BUILD_READY until its own project-scoped Development Pack passes F0-F15.",
+      "Runtime qualification remains separate and requires final merged-SHA live evidence."
+    ],
+    "reopens_if": "the owner explicitly supersedes DIAL-FFDRM-R1 / PRD-DDP-R2 with an equal-or-stronger project-scoped standard preserving causal-path proof, deterministic authority, failure/recovery, adversarial forensics, anti-gap mutation proof, stale-certificate invalidation and runtime/live separation"
   }
 ]

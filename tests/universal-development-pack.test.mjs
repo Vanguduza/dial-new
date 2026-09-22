@@ -14,6 +14,7 @@ import {
   rebaselineDevelopmentPack,
 } from '../agent-system/orchestration/development-pack-compiler.mjs';
 import { evaluateDevelopmentPackGates } from '../agent-system/orchestration/development-pack-gates.mjs';
+import { evaluatePredevelopmentForensicReadiness } from '../agent-system/bin/predevelopment-forensic-gate.mjs';
 
 function temp(name) { return fs.mkdtempSync(path.join(os.tmpdir(), `${name}-`)); }
 function makeRepo(name) {
@@ -121,6 +122,101 @@ function completeArtifacts() {
       runbooks_defined: true,
       ...evidence('operations'),
     },
+    forensic_predevelopment: {
+      owner_intent_falsifiable: true,
+      scope_exclusions_explicit: true,
+      shared_authorities_mapped: true,
+      verification_obligations_mapped: true,
+      requirement_to_unit_traceability_complete: true,
+      authority: {
+        requester_mapped: true,
+        policy_owner_mapped: true,
+        execution_authority_mapped: true,
+        credential_boundaries_mapped: true,
+        audit_events_mapped: true,
+      },
+      state_persistence: {
+        canonical_state_owners_defined: true,
+        persistence_mechanisms_defined: true,
+        restart_process_death_defined: true,
+        idempotency_defined: true,
+        conflict_strategy_defined: true,
+        retention_deletion_revocation_defined: true,
+      },
+      causal_paths: {
+        material_behaviors_total: 5,
+        paths_proven: 5,
+        unreachable_required_behaviors: 0,
+        production_callers_proven: true,
+        authority_checks_proven: true,
+        result_reconciliation_proven: true,
+        observable_postconditions_proven: true,
+      },
+      research: {
+        build_vs_adopt_recorded: true,
+        license_security_reviewed: true,
+        unsupported_assumptions_recorded: true,
+      },
+      architecture: {
+        no_duplicate_authority: true,
+        no_parallel_canonical_state: true,
+        identity_error_event_models_coherent: true,
+        lifecycle_dataflow_coherent: true,
+      },
+      failure: {
+        timeouts_defined: true,
+        retry_limits_defined: true,
+        idempotency_verified: true,
+        restart_recovery_defined: true,
+        stale_state_handling_defined: true,
+        escalation_defined: true,
+      },
+      security: {
+        credential_ownership_defined: true,
+        secret_storage_defined: true,
+        trust_boundaries_defined: true,
+        input_validation_injection_defense_defined: true,
+        least_privilege_defined: true,
+        egress_boundaries_defined: true,
+        revocation_path_defined: true,
+        audit_path_defined: true,
+        replay_defense_addressed: true,
+      },
+      verification: {
+        reachability_evidence_defined: true,
+        failure_injection_defined: true,
+        runtime_gates_separated: true,
+        owner_acceptance_separated: true,
+      },
+      adversarial: {
+        review_complete: true,
+        mock_only_checked: true,
+        unreachable_checked: true,
+        presentational_only_checked: true,
+        false_success_checked: true,
+        dead_or_orphaned_checked: true,
+        restart_stale_state_checked: true,
+      },
+      reachability: {
+        production_registration_proven: true,
+        production_callers_proven: true,
+        real_state_binding_proven: true,
+        lifecycle_startup_proven_or_na: true,
+        observable_postconditions_proven: true,
+      },
+      anti_gap: {
+        mutation_executed: true,
+        critical_breakage_detected: true,
+        canonical_tree_guard: true,
+        authority_bypass_guard: true,
+        caller_disconnect_guard: true,
+        live_binding_guard_or_na: true,
+      },
+      runtime_qualification_separated: true,
+      certificate_binding_defined: true,
+      preparation_blockers: [],
+      ...evidence('ffdrm'),
+    },
   };
 }
 
@@ -167,6 +263,30 @@ describe('universal deterministic Development Pack compiler', () => {
     expect(status.maturity_state).toBe('BUILD_READY');
     expect(status.blockers).toEqual([]);
     expect(status.gates.find((g) => g.gate_id === 'GATE-13').state).toBe('NOT_APPLICABLE');
+    const forensic = evaluatePredevelopmentForensicReadiness({ projectSlug: 'customer-app', root, systemRepoDir: process.cwd() });
+    expect(forensic.ok).toBe(true);
+    expect(forensic.certificate).toMatchObject({ project_id: 'customer-app', project_slug: 'customer-app', status: 'FORENSIC_BUILD_READY' });
+    expect(forensic.certificate_hash).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it('refuses to reuse one project forensic certificate for another project', () => {
+    const root = temp('pack-isolation-root');
+    const dialRepo = makeRepo('pack-dial');
+    const appA = makeRepo('pack-a');
+    const appB = makeRepo('pack-b');
+    ensureProjectRegistry(root, { dialRepoDir: dialRepo });
+    registerProject({ slug: 'project-a', repoDir: appA, uiBearing: false }, root);
+    registerProject({ slug: 'project-b', repoDir: appB, uiBearing: false }, root);
+    seedDevelopmentPack({ projectSlug: 'project-a', root });
+    for (const [artifactType, artifact] of Object.entries(completeArtifacts())) {
+      recordDevelopmentPackArtifact({ projectSlug: 'project-a', artifactType, artifact, root });
+    }
+    const a = evaluatePredevelopmentForensicReadiness({ projectSlug: 'project-a', root, systemRepoDir: process.cwd() });
+    const b = evaluatePredevelopmentForensicReadiness({ projectSlug: 'project-b', root, systemRepoDir: process.cwd() });
+    expect(a.ok).toBe(true);
+    expect(a.certificate.project_id).toBe('project-a');
+    expect(b.ok).toBe(false);
+    expect(b.reasons).toContain('PROJECT_PACK_MISSING');
   });
 
   it('requires explicit UI applicability instead of silently exempting screen gates', () => {
@@ -254,6 +374,70 @@ describe('universal deterministic Development Pack compiler', () => {
     pack.artifacts.system_independence.arbitrary_project_conformance = true;
     const gate = evaluateDevelopmentPackGates(pack).gates.find((g) => g.gate_id === 'GATE-13');
     expect(gate.state).toBe('PASS');
+  });
+
+  it('keeps the locked FFDRM standard synchronized with executable gate IDs', () => {
+    const standard = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'agent-system/registries/FORENSIC_DEVELOPMENT_STANDARD.json'), 'utf8'));
+    const pack = {
+      project: { project_id: 'standard-check', classification: 'APPLICATION_PROJECT', ui_bearing: true },
+      artifacts: {
+        ...completeArtifacts(),
+        baseline: { repository_sha: 'c'.repeat(40), branch: 'main', origin_url: 'https://example.invalid/repo.git', captured_at: new Date().toISOString(), ...evidence('baseline') },
+      },
+    };
+    const executable = evaluateDevelopmentPackGates(pack).forensic_gates.map((g) => g.gate_id);
+    expect(executable).toEqual(standard.required_gates.map((g) => g.id));
+  });
+
+  it('fails forensic readiness when causal reachability evidence is removed', () => {
+    const pack = {
+      project: { project_id: 'causal-project', classification: 'APPLICATION_PROJECT', ui_bearing: true },
+      artifacts: {
+        ...completeArtifacts(),
+        baseline: { repository_sha: 'a'.repeat(40), branch: 'main', origin_url: 'https://example.invalid/repo.git', captured_at: new Date().toISOString(), ...evidence('baseline') },
+      },
+    };
+    expect(evaluateDevelopmentPackGates(pack).forensic_ready).toBe(true);
+    pack.artifacts.forensic_predevelopment.causal_paths.production_callers_proven = false;
+    const mutated = evaluateDevelopmentPackGates(pack);
+    expect(mutated.forensic_ready).toBe(false);
+    expect(mutated.gates.find((g) => g.gate_id === 'F5_CAUSAL_PATH_PROOF').state).toBe('FAIL');
+    expect(mutated.gates.find((g) => g.gate_id === 'F15_FORENSIC_BUILD_READY_CERTIFICATION').state).toBe('FAIL');
+  });
+
+  it('requires the symbiotic loop for the development system itself', () => {
+    const artifacts = completeArtifacts();
+    artifacts.system_independence = {
+      applicable: true,
+      owns_complete_e2e_pipeline: true,
+      dde_runtime_dependency: false,
+      dde_authority_dependency: false,
+      arbitrary_project_conformance: true,
+      ...evidence('independence'),
+    };
+    artifacts.forensic_predevelopment.agentic = true;
+    artifacts.forensic_predevelopment.symbiotic_loop = {
+      observe_defined: true,
+      contextualize_defined: true,
+      reason_defined: true,
+      deterministic_authority_boundary_defined: true,
+      execute_or_delegate_defined: true,
+      outcome_observation_defined: true,
+      reconcile_defined: true,
+      learn_defined: true,
+      improve_defined: true,
+      learning_cannot_expand_privilege: true,
+    };
+    const pack = {
+      project: { project_id: 'dial-development-system', classification: 'DEVELOPMENT_SYSTEM', project_kind: 'development-system', ui_bearing: false },
+      artifacts: {
+        ...artifacts,
+        baseline: { repository_sha: 'b'.repeat(40), branch: 'main', origin_url: 'https://example.invalid/dial.git', captured_at: new Date().toISOString(), ...evidence('baseline') },
+      },
+    };
+    expect(evaluateDevelopmentPackGates(pack).gates.find((g) => g.gate_id === 'F12_SYMBIOTIC_LOOP_PROOF').state).toBe('PASS');
+    pack.artifacts.forensic_predevelopment.symbiotic_loop.outcome_observation_defined = false;
+    expect(evaluateDevelopmentPackGates(pack).gates.find((g) => g.gate_id === 'F12_SYMBIOTIC_LOOP_PROOF').state).toBe('FAIL');
   });
 
   it('does not permit a failing screen-feature mutation to hide behind other green artifacts', () => {

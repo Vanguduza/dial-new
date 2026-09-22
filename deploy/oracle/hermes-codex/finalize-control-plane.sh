@@ -76,7 +76,7 @@ pass "DIAL-owned Codex process death, Sonnet fallback and Sol recovery are prove
 jq -e --arg head "$HEAD_SHA" '
   .status == "GREEN"
   and .repo_head == $head
-  and .execution_origin == "EXTERNAL_ORACLE_ORCHESTRATOR"
+  and .execution_origin == "EXTERNAL_DIAL_ORCHESTRATOR"
   and .project_isolated == true
   and .unrelated_project_processes_targeted == false
   and .actual_codex_app_server_sigkill == true
@@ -134,7 +134,7 @@ const fs = require('fs');
 const p = process.argv[2];
 const h = JSON.parse(fs.readFileSync(p, 'utf8'));
 const age = Date.now() - Date.parse(h.observed_at || '');
-if (h.execution_origin !== 'EXTERNAL_ORACLE_ORCHESTRATOR' || !Number.isFinite(age) || age < 0 || age > 120000) {
+if (h.execution_origin !== 'EXTERNAL_DIAL_ORCHESTRATOR' || !Number.isFinite(age) || age < 0 || age > 120000) {
   console.error('external orchestrator heartbeat is stale or invalid');
   process.exit(1);
 }
@@ -181,7 +181,7 @@ jq -n \
   '{
     schema_version:2,
     status:"PRODUCTION_GREEN",
-    execution_origin:"EXTERNAL_ORACLE_ORCHESTRATOR",
+    execution_origin:"EXTERNAL_DIAL_ORCHESTRATOR",
     runtime_policy:"gpt-5.6-sol -> claude-sonnet-5 -> NO_HERMES_RUNTIME_AVAILABLE",
     development_entrypoint:"dial-hermes-submit",
     direct_project_session_development_allowed:false,

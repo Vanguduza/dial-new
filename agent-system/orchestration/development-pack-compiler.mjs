@@ -31,6 +31,7 @@ const ARTIFACT_TYPES = new Set([
   'closure',
   'operations',
   'system_independence',
+  'forensic_predevelopment',
 ]);
 
 function now() { return new Date().toISOString(); }
@@ -113,6 +114,7 @@ function initialArtifacts(project) {
     verification: null,
     closure: null,
     operations: null,
+    forensic_predevelopment: null,
     system_independence: project.classification === 'DEVELOPMENT_SYSTEM' ? {
       applicable: true,
       owns_complete_e2e_pipeline: project.owns_complete_e2e_pipeline === true,

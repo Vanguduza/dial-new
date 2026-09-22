@@ -173,6 +173,23 @@
       "criticality": "MANDATORY",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "remediation": "bootstrap --apply (Ubuntu docker.io exact package pin from PINS.json; provider-first local sandbox backend)"
+    },
+    {
+      "id": "pkg.wireguard-tools",
+      "tooling_kind": "HOST_SOFTWARE",
+      "binary": "wg",
+      "minimum_version": null,
+      "install_method": "APT_PINNED_OR_IMAGE_PREINSTALLED",
+      "pin_ref": "apt.wireguard-tools",
+      "hosts": [
+        "dial-hermes-control",
+        "vekl-worker",
+        "oracle-admin"
+      ],
+      "criticality": "MANDATORY",
+      "readiness_class": "RECOVERY_REQUIRED",
+      "install_semantics": "wireguard-tools must be present before recovery-overlay qualification; package provenance is pinned in supply-chain/PINS.json when bootstrap installs it",
+      "probe_semantics": "wg show wg-dial dump"
     }
   ],
   "runtimes": [
@@ -1640,7 +1657,7 @@
       "id": "net.secondary-recovery-overlay",
       "tooling_kind": "NETWORK",
       "target": null,
-      "purpose": "independent secondary recovery overlay (Tailscale or owner-approved equivalent), independent of Cloudflare",
+      "purpose": "independent secondary recovery overlay (canonical WireGuard fabric), independent of Cloudflare",
       "hosts": [
         "dial-hermes-control",
         "vekl-worker",
@@ -1648,10 +1665,11 @@
       ],
       "criticality": "MANDATORY",
       "readiness_class": "RECOVERY_REQUIRED",
-      "probe": "TAILSCALE",
+      "probe": "WIREGUARD",
       "configuration_required": true,
       "gate": "EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001",
-      "owner_action": "run `sudo tailscale up` on dial-hermes-control, vekl-worker and oracle-admin; then on each host run `bash deploy/oracle/resource-fabric/verify-secondary-recovery-overlay.sh <the-other-two-hostnames-or-Tailscale-IPs>`"
+      "owner_action": "configure the canonical WireGuard fabric on dial-hermes-control, vekl-worker and oracle-admin; then run reciprocal recovery verification between all required peers",
+      "interface": "wg-dial"
     }
   ],
   "health_checks": [

@@ -333,11 +333,17 @@ describe('DIAL Provider-First Execution Fabric Rev2', () => {
   it('project binding stays fabric-level and leaves project fields opaque', () => {
     const binding = loadProjectBinding({
       project_id: 'dial',
+      project_slug: 'dial',
+      predevelopment_standard_id: 'DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD',
+      predevelopment_certificate_source: 'PROJECT_SCOPED_DEVELOPMENT_PACK',
       repositories: ['Vanguduza/dial-new'],
       mcp_endpoint: 'http://127.0.0.1:9130',
       truth_model: 'must-not-be-copied-into-fabric-policy',
     });
     expect(binding.project_id).toBe('dial');
+    expect(binding.project_slug).toBe('dial');
+    expect(binding.predevelopment_standard_id).toBe('DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD');
+    expect(binding.predevelopment_certificate_source).toBe('PROJECT_SCOPED_DEVELOPMENT_PACK');
     expect(binding.truth_model).toBeUndefined();
     expect(opaqueProjectFields({ project_id: 'dial', truth_model: 'x' })).toContain('truth_model');
   });

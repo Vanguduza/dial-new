@@ -1,0 +1,124 @@
+{
+  "schema_version": 2,
+  "standard_id": "DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD",
+  "method_id": "DIAL-FFDRM-R1",
+  "pack_revision": "PRD-DDP-R2",
+  "standard_version": "1.1.0",
+  "status": "LOCKED",
+  "governing_docs": [
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md"
+  ],
+  "project_certificate_source": "PROJECT_SCOPED_DEVELOPMENT_PACK",
+  "system_certificate_source": "dial-development-system PROJECT_SCOPED_DEVELOPMENT_PACK",
+  "doctrine": {
+    "documentation_is_not_implementation": true,
+    "existence_is_not_reachability": true,
+    "tests_are_evidence_not_authority": true,
+    "deterministic_authority_required": true,
+    "learning_cannot_expand_privilege": true,
+    "observable_postcondition_required": true,
+    "failure_recovery_first_class": true,
+    "repository_runtime_owner_states_separate": true,
+    "stale_certificate_invalidation_required": true
+  },
+  "required_gates": [
+    {
+      "id": "F0_OWNER_INTENT_PRODUCT_TRUTH",
+      "conditional": false
+    },
+    {
+      "id": "F1_DEVELOPMENT_UNIT_DECOMPOSITION",
+      "conditional": false
+    },
+    {
+      "id": "F2_FEATURE_SURFACE_COVERAGE",
+      "conditional": false
+    },
+    {
+      "id": "F3_AUTHORITY_MODEL",
+      "conditional": false
+    },
+    {
+      "id": "F4_STATE_PERSISTENCE_MODEL",
+      "conditional": false
+    },
+    {
+      "id": "F5_CAUSAL_PATH_PROOF",
+      "conditional": false
+    },
+    {
+      "id": "F6_RESEARCH_TOOLING_ADEQUACY",
+      "conditional": false
+    },
+    {
+      "id": "F7_ARCHITECTURAL_COHERENCE",
+      "conditional": false
+    },
+    {
+      "id": "F8_FAILURE_DEGRADATION_RECOVERY",
+      "conditional": false
+    },
+    {
+      "id": "F9_SECURITY_PRIVACY_SECRET_BOUNDARY",
+      "conditional": false
+    },
+    {
+      "id": "F10_VERIFICATION_EVIDENCE_CONTRACT",
+      "conditional": false
+    },
+    {
+      "id": "F11_ADVERSARIAL_FORENSICS",
+      "conditional": false
+    },
+    {
+      "id": "F12_SYMBIOTIC_LOOP_PROOF",
+      "conditional": true,
+      "applies_when": [
+        "DEVELOPMENT_SYSTEM",
+        "AGENTIC",
+        "ADAPTIVE",
+        "AUTONOMOUS",
+        "ASSISTANT",
+        "TRADING_INTELLIGENCE"
+      ]
+    },
+    {
+      "id": "F13_PRODUCTION_REACHABILITY",
+      "conditional": false
+    },
+    {
+      "id": "F14_ANTI_GAP_MUTATION_PROOF",
+      "conditional": false
+    },
+    {
+      "id": "F15_FORENSIC_BUILD_READY_CERTIFICATION",
+      "conditional": false
+    }
+  ],
+  "ready_statuses": [
+    "PASS",
+    "NOT_APPLICABLE"
+  ],
+  "certificate_status": "FORENSIC_BUILD_READY",
+  "runtime_states": [
+    "REPOSITORY_PROVEN",
+    "RUNTIME_QUALIFIED",
+    "DEVICE_QUALIFIED",
+    "LIVE_ELIGIBLE",
+    "OWNER_ACCEPTED"
+  ],
+  "task_envelope_binding_required": true,
+  "project_identity_must_propagate_to_execution": true,
+  "fail_closed_on": [
+    "STANDARD_MISSING",
+    "STANDARD_VERSION_MISMATCH",
+    "PROJECT_PACK_MISSING",
+    "PROJECT_IDENTITY_MISMATCH",
+    "PROJECT_BASELINE_STALE",
+    "REQUIRED_GATE_MISSING",
+    "REQUIRED_GATE_BLOCKED",
+    "PREPARATION_BLOCKER_OPEN",
+    "TASK_ENVELOPE_FORENSIC_FINGERPRINT_STALE"
+  ]
+}

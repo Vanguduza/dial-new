@@ -12,7 +12,7 @@ import { STATUS } from '../ops/development-bootstrap/lib/result.mjs';
 import { pinReady, planConvergence, supplyChainStatus } from '../ops/development-bootstrap/converge/converge.mjs';
 import { loadManifest, loadPins, validateManifest } from '../ops/development-bootstrap/lib/manifest.mjs';
 import { parseEnvironmentFileEntries, parseEnvironmentFiles, environmentFileModes, evaluateUnitHardening } from '../ops/development-bootstrap/systemd/units.mjs';
-import { certifyNetwork, evaluateTailscaleState, resolveNetworkTarget } from '../ops/development-bootstrap/network/reachability.mjs';
+import { certifyNetwork, evaluateTailscaleState, evaluateWireGuardState, resolveNetworkTarget } from '../ops/development-bootstrap/network/reachability.mjs';
 import { issueResumeToken, readResumeToken } from '../ops/development-bootstrap/auth/workflow.mjs';
 import { compactProcessedIds, consumeSenderRateLimit } from '../agent-system/orchestration/whatsapp-delivery-guard.mjs';
 import { composeGreenFlag, verifyWholeSystemEvidence } from '../ops/development-bootstrap/verify/green-flag.mjs';
@@ -179,10 +179,13 @@ describe('DIAL development bootstrap closure', () => {
   });
 
   it('classifies the canonical secondary recovery overlay fail-closed', () => {
-    expect(evaluateTailscaleState({ BackendState: 'NeedsLogin', Self: { Online: false } })).toMatchObject({ ok: false, needs_login: true, backend_state: 'NeedsLogin' });
-    expect(evaluateTailscaleState({ BackendState: 'Running', TailscaleIPs: ['100.64.0.1'], Self: { Online: true, DNSName: 'dial.example.ts.net.' } })).toMatchObject({ ok: true, needs_login: false, backend_state: 'Running', online: true, tailscale_ips: ['100.64.0.1'] });
+    expect(evaluateWireGuardState('', 'wg-dial')).toMatchObject({ ok: false, configured: false, peer_count: 0 });
+    const dump = 'private-key\tpublic-key\t51820\toff\npeer-key\tpsk\t10.77.0.2/32\t198.51.100.2:51820\t1\t0\t0\t25';
+    expect(evaluateWireGuardState(dump, 'wg-dial')).toMatchObject({ ok: true, configured: true, peer_count: 1, interface: 'wg-dial' });
+    // Legacy evaluator remains available for migration diagnostics, but it is no longer canonical authority.
+    expect(evaluateTailscaleState({ BackendState: 'NeedsLogin', Self: { Online: false } }).ok).toBe(false);
     const overlay = loadManifest().network_dependencies.find((x) => x.id === 'net.secondary-recovery-overlay');
-    expect(overlay).toMatchObject({ criticality: 'MANDATORY', readiness_class: 'RECOVERY_REQUIRED', probe: 'TAILSCALE', gate: 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001' });
+    expect(overlay).toMatchObject({ criticality: 'MANDATORY', readiness_class: 'RECOVERY_REQUIRED', probe: 'WIREGUARD', interface: 'wg-dial', gate: 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001' });
   });
 
   it('persists external owner-gate setup as exact, non-secret bootstrap inputs', () => {

@@ -24,7 +24,7 @@ function snapshot(observedAt = new Date().toISOString()) {
     observed_at: observedAt,
     repository: { head: 'abc123', branch: 'master' },
     mission: { mission_id: 'dial-development-root', state: 'RUNNING', turn_number: 12, last_packet_id: 'p-12', last_packet_state: 'PROCESSING', packet_counts: { queued: 0, processing: 1, completed: 11, failed: 0 }, active_packets: [{ packet_id: 'p-12', state: 'PROCESSING' }], owner_blocker: null },
-    orchestration: { queue_state: 'BUSY', active_job_id: 'p-12', queued: 0, heartbeat_observed_at: observedAt, execution_origin: 'EXTERNAL_ORACLE_ORCHESTRATOR' },
+    orchestration: { queue_state: 'BUSY', active_job_id: 'p-12', queued: 0, heartbeat_observed_at: observedAt, execution_origin: 'EXTERNAL_DIAL_ORCHESTRATOR' },
     development: { unblocked: true, state: 'DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES', gate_status: 'PRODUCTION_GREEN', failed_checks: [] },
     runtime: { primary: { state: 'HEALTHY' }, fallback: { state: 'HEALTHY' } },
     research: { state: 'READY', resolved_model: 'gpt-5.6-sol' },

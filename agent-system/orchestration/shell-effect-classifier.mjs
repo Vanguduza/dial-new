@@ -20,14 +20,15 @@ export function classifyShellEffect(command){
  const s=String(command||'').trim();if(!s)return{effect:'READ_ONLY',reason:'EMPTY'};
  if(/[<>]|`|\$\(|\|/.test(s))return{effect:'MATERIAL',reason:'SHELL_COMPOSITION_OR_REDIRECTION'};
  const parts=splitShell(s);if(parts.length!==1)return{effect:'MATERIAL',reason:'MULTI_COMMAND'};
- const seg=parts[0];if(/engineering-knowledge-resolve\.mjs\b.*--packet-id/i.test(seg)&&!/[;&|<>`]|\$\(/.test(seg))return{effect:'EXPLICIT_RERESOLUTION',reason:'VEKL_RERESOLUTION'};
+ const seg=parts[0];
+ if(/^node\s+(?:"[^"]*adaptive-execution-delegate\.mjs"|'[^']*adaptive-execution-delegate\.mjs'|\S*adaptive-execution-delegate\.mjs)(?:\s|$)/i.test(seg))return{effect:'GOVERNED_DELEGATION',reason:'FFDRM_ENVELOPED_WORKER_DELEGATION'};if(/engineering-knowledge-resolve\.mjs\b.*--packet-id/i.test(seg)&&!/[;&|<>`]|\$\(/.test(seg))return{effect:'EXPLICIT_RERESOLUTION',reason:'VEKL_RERESOLUTION'};
  if(/^find\b/i.test(seg)){if(/(?:\s-(?:delete|exec|execdir|ok|okdir)\b)/i.test(seg))return{effect:'MATERIAL',reason:'FIND_MUTATOR'};return{effect:'READ_ONLY',reason:'FIND_INSPECTION'};}
  if(SIMPLE_READ.test(seg)||gitRead(seg))return{effect:'READ_ONLY',reason:'ALLOWLISTED_INSPECTION'};
  return{effect:'MATERIAL',reason:'NOT_PROVEN_READ_ONLY'};
 }
 export function networkAccessIntent(toolName,toolInput={}){const tool=String(toolName||''),source=(tool==='Bash'||tool==='PowerShell')?String(toolInput.command||''):JSON.stringify(toolInput||{});const shellIntent=(tool==='Bash'||tool==='PowerShell')&&(NETWORK_SHELL.test(source)||/\bhttps?:\/\//i.test(source));const toolIntent=tool!=='Bash'&&tool!=='PowerShell'&&NETWORK_TOOL.test(tool);const network=shellIntent||toolIntent;return{network,targets:network?extractNetworkHosts(source):[],reason:shellIntent?'NETWORK_SHELL':toolIntent?'NETWORK_TOOL':'NONE'};}
 export function networkPolicyDecision({toolName,toolInput={},allowlist=[]}={}){const intent=networkAccessIntent(toolName,toolInput);if(!intent.network)return{ok:true,reason:'NO_NETWORK_INTENT',targets:[],denied:[]};const allowed=(allowlist||[]).map(String).filter(Boolean);if(!allowed.length)return{ok:false,reason:'NETWORK_ACCESS_NOT_GRANTED',targets:intent.targets,denied:intent.targets.length?intent.targets:['<unresolved>']};if(!intent.targets.length)return{ok:false,reason:'NETWORK_TARGET_UNRESOLVED',targets:[],denied:['<unresolved>']};const denied=intent.targets.filter((host)=>!hostAllowed(host,allowed));return{ok:denied.length===0,reason:denied.length?'NETWORK_TARGET_NOT_ALLOWED':'NETWORK_TARGET_ALLOWED',targets:intent.targets,denied};}
-export function isConsequentialToolUse(toolName,toolInput={}){if(toolName==='Edit'||toolName==='Write')return true;if(networkAccessIntent(toolName,toolInput).network)return true;if(toolName!=='Bash'&&toolName!=='PowerShell')return false;return classifyShellEffect(toolInput.command).effect==='MATERIAL';}
+export function isConsequentialToolUse(toolName,toolInput={}){if(toolName==='Edit'||toolName==='Write')return true;if(networkAccessIntent(toolName,toolInput).network)return true;if(toolName!=='Bash'&&toolName!=='PowerShell')return false;const effect=classifyShellEffect(toolInput.command).effect;return effect==='MATERIAL'||effect==='GOVERNED_DELEGATION';}
 export function governedPacketDecision({governed=false,consequential=false,packetId=null}={}){
  if(governed&&consequential&&!packetId)return{decision:'deny',reason:'DIAL VEKL 2.2 guard: governed material tool use requires DIAL_PACKET_ID and a persisted activation.'};
  return{decision:null,reason:''};
