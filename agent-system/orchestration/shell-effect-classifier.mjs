@@ -20,7 +20,8 @@ export function classifyShellEffect(command){
  const s=String(command||'').trim();if(!s)return{effect:'READ_ONLY',reason:'EMPTY'};
  if(/[<>]|`|\$\(|\|/.test(s))return{effect:'MATERIAL',reason:'SHELL_COMPOSITION_OR_REDIRECTION'};
  const parts=splitShell(s);if(parts.length!==1)return{effect:'MATERIAL',reason:'MULTI_COMMAND'};
- const seg=parts[0];if(/engineering-knowledge-resolve\.mjs\b.*--packet-id/i.test(seg)&&!/[;&|<>`]|\$\(/.test(seg))return{effect:'EXPLICIT_RERESOLUTION',reason:'VEKL_RERESOLUTION'};
+ const seg=parts[0];
+ if(/^node\s+(?:"[^"]*adaptive-execution-delegate\.mjs"|'[^']*adaptive-execution-delegate\.mjs'|\S*adaptive-execution-delegate\.mjs)(?:\s|$)/i.test(seg))return{effect:'GOVERNED_DELEGATION',reason:'FFDRM_ENVELOPED_WORKER_DELEGATION'};if(/engineering-knowledge-resolve\.mjs\b.*--packet-id/i.test(seg)&&!/[;&|<>`]|\$\(/.test(seg))return{effect:'EXPLICIT_RERESOLUTION',reason:'VEKL_RERESOLUTION'};
  if(/^find\b/i.test(seg)){if(/(?:\s-(?:delete|exec|execdir|ok|okdir)\b)/i.test(seg))return{effect:'MATERIAL',reason:'FIND_MUTATOR'};return{effect:'READ_ONLY',reason:'FIND_INSPECTION'};}
  if(SIMPLE_READ.test(seg)||gitRead(seg))return{effect:'READ_ONLY',reason:'ALLOWLISTED_INSPECTION'};
  return{effect:'MATERIAL',reason:'NOT_PROVEN_READ_ONLY'};
