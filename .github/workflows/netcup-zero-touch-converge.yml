@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DIAL_EXPECTED_BOOTSTRAP_REF: 47749769cc7a1aa6db372257d3a1eafdfdd98e5a
+  DIAL_EXPECTED_BOOTSTRAP_REF: 00cffa57f85bc3641df1a2f71f7be1648f5ed805
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
   OCI_CLI_USER: ${{ secrets.OCI_RECOVERY_USER_OCID }}
   OCI_CLI_TENANCY: ${{ secrets.OCI_RECOVERY_TENANCY_OCID }}
