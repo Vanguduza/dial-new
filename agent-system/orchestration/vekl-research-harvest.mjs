@@ -32,7 +32,7 @@ export const RESEARCH_ROLES = UNION_ALPHA_ROLES; // historical name retained for
 const PLATFORM_GROUPS = Object.freeze([
   {
     id: 'WEB_FRONTEND',
-    topic: 'Current guided multi-candidate frontend, design critics, quality packets, responsive UX, accessibility and browser verification engineering',
+    topic: 'Current guided multi-candidate frontend, interaction/motion design acuity, professional SaaS UX, design critics, responsive recomposition, accessibility, platform-native behavior and browser verification engineering',
     technologies: ['Next.js', 'React', 'TypeScript', 'Playwright', 'Vitest', 'Zod'],
     source_ids: [
       'official.nextjs', 'official.react', 'official.typescript',
@@ -181,29 +181,35 @@ function roleQuestions(moduleClass, tags) {
     ARCHITECTURE_RESEARCHER: `Identify current architecture patterns and authority, consistency and determinism boundaries for ${moduleClass}.`,
     ARCHITECTURE_COMPARATOR: `Compare viable architectures, alternatives, trade-offs and avoidance conditions for ${moduleClass}.`,
     SECURITY_RESEARCHER: `Identify threats, secure defaults, authorization, privacy and supply-chain controls for ${moduleClass}.`,
-    UX_PATTERN_RESEARCHER: `Identify accessible, responsive, degraded-state and professional UX patterns for ${moduleClass}.`,
-    FRONTEND_RESEARCHER: `Identify frontend state, rendering, accessibility, browser and client integration patterns applicable to ${moduleClass}.`,
+    UX_PATTERN_RESEARCHER: `Identify current shipped-product UX, professional SaaS interaction, progressive disclosure, navigation, gesture, feedback, state, recovery and responsive-recomposition patterns for ${moduleClass}; include when not to use each pattern.`,
+    FRONTEND_RESEARCHER: `Identify frontend state, rendering, platform-native interaction, motion hierarchy, microinteraction, reduced-motion, accessibility, performance and client integration patterns applicable to ${moduleClass}.`,
     FAILURE_MODE_RESEARCHER: `Identify failures, partial/offline behavior, retry/idempotency hazards and recovery for ${moduleClass}.`,
     OPERABILITY_RESEARCHER: `Identify observability, alerting, support, capacity, rollback and runbook requirements for ${moduleClass}.`,
     TESTING_RESEARCHER: `Identify deterministic unit, integration, security, failure and end-to-end verification for ${moduleClass}.`,
-    PERFORMANCE_RESEARCHER: `Identify performance budgets, bottlenecks, measurement traps and safe optimization for ${moduleClass}.`,
+    PERFORMANCE_RESEARCHER: `Identify performance budgets, bottlenecks, interaction latency, animation/GPU cost, frame stability, battery impact and safe optimization for ${moduleClass}.`,
     DEPLOYMENT_RESEARCHER: `Identify deployment, configuration, secret, migration, rollback and recovery practices for ${moduleClass}.`,
     INTEGRATION_RESEARCHER: `Identify contract, compatibility, event, API and dependency integration risks for ${moduleClass}.`,
     SOURCE_SYNTHESIZER: `Synthesize the strongest evidence for ${moduleClass}, separating fact from inference and flagging stale evidence.`,
     CONTRADICTION_ANALYST: `Identify conflicting sources or versions for ${moduleClass} and evidence needed to resolve them.`,
-    ANTI_PATTERN_MINER: `Identify current anti-patterns, unsafe shortcuts, symptoms and safer replacements for ${moduleClass}.`,
+    ANTI_PATTERN_MINER: `Identify current anti-patterns, unsafe shortcuts, over-animation, gesture conflicts, accessibility failures, responsive shrinking, generic SaaS/card-soup patterns, symptoms and safer replacements for ${moduleClass}.`,
     OFFICIAL_DOC_SYNTHESIZER: `Extract exact-version implementation and verification guidance from official documentation for ${moduleClass}.`,
-    OPEN_SOURCE_DONOR_RESEARCHER: `Assess public donor implementations, licenses, versions, provenance and assimilation risks for ${moduleClass}.`,
+    OPEN_SOURCE_DONOR_RESEARCHER: `Assess public external repositories only as non-authoritative reference/inspiration for ${moduleClass}: extract abstract patterns, trade-offs, anti-patterns, test ideas, licence/provenance context and implementation lessons; never recommend code/component/asset/schema/business-logic import or donor assimilation.`,
   };
   return UNION_ALPHA_ROLES.map((role) => `${role}: ${questions[role]}`);
 }
 function searchQueriesFor(moduleClass, tags) {
   const primary = tags.slice(0, 3).join(' ');
-  return [
+  const queries=[
     `${primary} ${moduleClass} current architecture security testing best practices`,
     `${primary} production failure modes migration issues maintainers`,
     `${primary} accessibility performance observability 2026`,
   ];
+  if(tags.includes('React')||tags.includes('Android')) queries.push(
+    `${primary} ${moduleClass} modern interaction motion UX patterns 2026 professional SaaS shipped product`,
+    `${primary} ${moduleClass} responsive recomposition gestures reduced motion state feedback accessibility`,
+    `${primary} ${moduleClass} microinteractions motion hierarchy platform native performance`
+  );
+  return queries;
 }
 function unitSubject(unit, feature, resources) {
   const moduleClass = genericModuleClass(unit, feature);

@@ -1,5 +1,5 @@
 ---
 name: dial-donor-assimilate
-description: Use when researching, importing or porting a donor repository/tool into DIAL.
+description: Deprecated compatibility alias. Use only to research an external repository as non-authoritative reference/inspiration under DEC-039; never import or assimilate it.
 ---
-Consult the donor/research registries first. Pin repo/revision/source paths/licence. Apply the locked adoption mode. Replace donor authority boundaries with DIAL, preserve provenance, create parity and integration tests, and never auto-sync upstream.
+This skill name is retained only for compatibility with older task references. Under DEC-039, external repositories are reference and inspiration only. Record source/revision/licence/provenance and extract abstract patterns, trade-offs, UX/interaction ideas, visual inspiration, anti-patterns and tests. Do not copy, port, fork, vendor, preserve or assimilate code, components, assets, schemas, business logic or pixel layouts. Do not create a runtime dependency. Any literal third-party dependency/code adoption requires a separate explicit owner-authorized qualification path.

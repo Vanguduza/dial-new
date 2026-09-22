@@ -94,6 +94,18 @@ Intent recognition distinguishes home/entry, detail/state, search/browse, tracki
 
 The resolver never creates a new screen to satisfy an ambiguous prompt.
 
+## Target application, actor and feature-semantic resolution
+
+A canonical screen may belong to several DIAL applications and may be referenced by many features. That raw union is graph truth, but it is not a valid provider packet. Before provider dispatch DIAL resolves one target application/actor/platform for the requested screen unless the task explicitly asks for a multi-platform exercise. An unresolved application context blocks dispatch.
+
+The Screen Registry × Feature Graph now carries screen-feature edge roles. Governed relations may be `PRIMARY_CAPABILITY`, `DIRECT_INTERACTION`, `STATUS_SUMMARY`, `DISCOVERY_ENTRY`, `CONTEXT_ONLY`, `DEEP_LINK_ONLY` or `NOT_EXPOSED`. `UNCLASSIFIED_CONTEXT` is not permission to expose a feature; when a module has an active semantic policy it blocks provider completeness.
+
+`FeatureSemanticEnvelope` binds those graph edges to Feature Realization outcomes, domain subsystem identity, semantic invariants and non-equivalence guards. This prevents provider context from treating every related feature's queries, commands and lifecycle actions as controls on the target screen. Provider-facing interactions are a screen-safe projection; authoritative domain commands remain domain authority.
+
+Module-specific semantics and product/brand authority are projected from `FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json`. The registry is an enforcement projection of Product Truth and owner-approved design authority, not a competing business source of truth. Canonical detail: `docs/dial/architecture/FRONTEND_APPLICATION_FEATURE_SEMANTIC_COMPILATION_REV1.md`.
+
+For Groceries, this explicitly separates general shopping, Pantry, Scheduled Basket and Grocery Rounds. `GROC-F013` is planned/recurring basket-route delivery. `GROC-F019..F034` are governed Grocery Rounds; the two may not be conflated. Groceries Home is general grocery/household commerce, not a fresh-produce speciality store, and uses the owner-approved orange + black + warm-white identity with Shopping mode retained as a first-class Home concept.
+
 ## FrontendGenerationContext
 
 The central compiled artifact is `FrontendGenerationContext`.
@@ -108,10 +120,11 @@ It contains:
   - aggregate;
   - business/completion rules.
 - `PlatformContext`
-  - canonical DIAL applications;
-  - platform targets;
+  - resolved target application ID;
+  - candidate application refs retained for provenance;
+  - target platform;
   - application class;
-  - primary actors.
+  - primary actor scope.
 - `ActorContext`
   - exposure;
   - actor classes.
@@ -123,18 +136,18 @@ It contains:
   - required/conditional states;
   - application refs.
 - `FeatureContext`
-  - features;
-  - subfeatures;
-  - actions;
-  - queries;
-  - commands;
-  - events;
-  - eventualities;
-  - workflow.
+  - provider-visible features;
+  - complete screen feature refs for provenance;
+  - screen-feature edge roles;
+  - `FeatureSemanticEnvelope`;
+  - design-safe interaction intents;
+  - subfeatures/eventualities/workflow;
+  - domain queries/commands/events only when the target screen policy explicitly requires them.
 - `ScreenTruthEnvelope`.
 - `CapabilityEnvelope`.
 - `DesignAuthority`
   - product design profile;
+  - module product/brand authority;
   - presentation decision;
   - visual reference authority;
   - applicable owner-approved archetypes.
@@ -293,45 +306,47 @@ The frozen artifact binds:
 
 After freeze, ordinary implementation workers may not redesign the screen.
 
-## Interaction & Motion Enrichment Pass
+## Interaction design preflight
 
-The frozen visual artifact is sent back to Stitch in a separate second pass.
+Interaction is a first-class design input rather than a decorative post-processing step. Before Stitch visual generation, VEKL compiles `InteractionDesignPreflight` from the canonical screen, Feature Graph, platform, actor, state contract, capability envelope, product profile and admitted interaction knowledge.
 
-The instruction is to preserve the approved composition and determine whether context-appropriate interaction or motion improves usability, continuity, comprehension or perceived quality.
+The preflight selects contextually applicable patterns and tells the visual pass which interaction structures must remain possible: responsive recomposition, rails, sheets, adaptive panes, sticky/docked actions, state/recovery locations, platform behavior and other screen-specific needs. It does not dictate one layout or mechanically apply the whole library.
 
-Allowed design decisions can include, only where capability-backed:
+The preflight also emits an open-world discovery brief. Discovery candidate material must be qualified/admitted before becoming ordinary VEKL guidance, and external repositories remain reference/inspiration only under `DEC-039`.
 
-- swipe and horizontal rails;
-- scroll snap;
-- product carousel/gallery;
-- tap-to-zoom or fullscreen image inspection;
-- tabs;
-- accordion disclosure;
-- bottom sheets;
-- sticky actions;
-- favourite/save feedback;
-- cart feedback;
-- loading transitions;
-- navigation transitions;
-- restrained scroll-linked motion.
+## Interaction & Motion Design Acuity Pass
 
-`NO_EFFECT_NEEDED` is a valid result.
+After `VisualAuthorityArtifact` freezes, VEKL compiles `InteractionMotionIntelligence` and the frozen visual artifact is sent back to Stitch in a dedicated expert pass.
 
-Capability invention is forbidden. A design model may decide how to present an available image-search capability; it may not invent an AR installation system simply because it would look impressive.
+The expert role is `PRINCIPAL_PRODUCT_DESIGN_ENGINEER_AND_INTERACTION_MOTION_SPECIALIST`. It must review task clarity, hierarchy, discoverability, feedback/causality, spatial continuity, motion purpose, platform fluency, responsive recomposition, state completeness, accessibility, performance, interruptibility, density/ergonomics, optical polish, product specificity and recovery/trust.
 
-Motion must communicate hierarchy, continuity, cause/effect or feedback. Gratuitous animation is rejected.
+VEKL retrieves contextually applicable patterns from the admitted interaction/motion registry. For every required or strongly applicable pattern, Stitch must decide `ADOPT`, `ADAPT`, `REJECT` or `NO_EFFECT_NEEDED` and provide a rationale. `NO_EFFECT_NEEDED` is valid for an individual pattern; skipping expert review is not.
+
+Patterns can include progressive disclosure, professional SaaS workspace/pane behavior, adaptive navigation, touch gestures, sheets/drawers, commerce feedback, loading/offline/recovery behavior, state-driven motion, responsive recomposition, Android-native predictive back/edge-to-edge/IME behavior, reduced-motion equivalents and motion-token governance. The selected set is screen/platform/domain specific; the registry is never a fashionable-component checklist.
+
+Visual freeze protects approved identity, not bad interaction structure. Bounded interaction-driven structural changes may be made when they preserve the primary hierarchy. If interaction quality requires a primary hierarchy change, major section reorder, hero identity change or material information-architecture change, the pass must return `RETURN_TO_VISUAL_RECONVERGENCE` rather than silently redesigning the screen.
+
+Capability invention remains forbidden. Motion must communicate feedback, continuity, orientation, causality, hierarchy, accessibility or bounded brand expression. Gratuitous or non-interruptible animation is rejected.
 
 ## Interaction artifacts
 
-The enrichment pass is reviewed against explicit structured artifacts:
+The expert pass emits a machine-readable `dial-interaction-contract` containing:
 
-- `InteractionIntentMap` — element → trigger → behavior → purpose;
-- `GestureMap` — tap/swipe/drag/pinch/keyboard behavior;
-- `MotionSpec` — transition/motion semantics and reduced-motion behavior;
-- `AdvancedComponentDecisionSet` — carousel, zoom viewer, sheet, tabs, sticky action, etc.;
-- `InteractionAcceptanceMatrix` — no dead controls, capability backing, touch targets, accessibility, reduced motion, performance, state restoration and gesture-conflict checks.
+- `DesignAcuityAssessment`;
+- `InteractionOpportunityMap`;
+- `PatternDecisionSet`;
+- `InteractionIntentMap`;
+- `GestureMap`;
+- `MotionHierarchyPlan`;
+- `MotionSpec`;
+- `AdvancedComponentDecisionSet`;
+- `ResponsiveInteractionPlan`;
+- `StateBehaviorMatrix`;
+- `StructuralDeltaDecision`;
+- `InteractionRiskRegister`;
+- `InteractionAcceptanceMatrix`.
 
-Provider-enriched HTML is quarantined in the same way as visual output. The structured interaction contract is what DDE uses to implement safe production behavior.
+Provider-enriched HTML is quarantined in the same way as visual output. DIAL parses and validates the structured interaction contract before Experience Authority can freeze. Interaction acceptance now covers expert acuity completion, pattern decisions, dead controls, capability backing, purposeful motion, motion hierarchy, touch/keyboard/focus behavior, accessibility, reduced motion, performance, restoration, gesture conflicts, interruptibility, responsive recomposition, edge states, platform-native behavior, optical polish, structural-delta budget and external-reference non-authority.
 
 ## ExperienceAuthorityArtifact
 
@@ -372,17 +387,19 @@ Hard policy:
 
 Static literals may remain only when they are verified immutable content. Runtime values such as vehicle, price, availability, fitment or state must bind to canonical data sources.
 
-## Truth literal lint
+## Provider truth-claim contract and TruthLiteralLint
 
-Before production acceptance, factual-looking candidate content is checked against the `ScreenTruthEnvelope`.
+Truth-literal validation is now a **pre-VisualAuthority hard gate**, not merely a late production check. Stitch visual output must embed a non-executable `dial-visual-truth-claims` JSON contract listing every displayed runtime/business factual literal that needs authority: prices, stock, store/merchant identity, locations, ETAs/slots, order identifiers, discounts/savings, member counts, balances, entitlements, maturity dates, operational status and equivalent claims.
 
-A candidate literal is:
+DIAL extracts the contract from the raw provider artifact before script sanitization and evaluates every claim against `ScreenTruthEnvelope` using `TruthLiteralLint`. A candidate literal is:
 
-- verified and matching;
+- verified and matching → allowed;
 - verified but mismatched → blocking;
-- unverified → blocking until removed or verified.
+- unverified → blocking until removed or authoritatively hydrated.
 
-This allows a richly detailed screen when the packet actually contains rich catalogue/EPC truth while preventing Stitch from manufacturing that detail.
+A missing or invalid truth-claim contract also blocks VisualAuthority promotion. The provider result may remain quarantined design evidence, but `VisualAuthorityArtifact` cannot freeze without a persisted `PASSED` truth lint.
+
+This allows richly detailed designs when packets actually contain authoritative catalogue/domain truth while preventing Stitch from manufacturing realistic-looking facts.
 
 ## FDEP integration
 
@@ -404,7 +421,9 @@ FDEP freshness verifies the Screen Feature Graph hash so graph changes invalidat
 
 ## VEKL integration
 
-VEKL remains responsible for admitted design knowledge, critics, freedom budgets, donor applicability, anti-patterns and learned design authority.
+VEKL remains responsible for admitted design knowledge, critics, freedom budgets, external-reference applicability, anti-patterns, learned design authority and the first-class interaction/motion knowledge plane defined by `DEC-040`.
+
+For every interactive frontend, VEKL now performs two distinct interaction responsibilities: pre-visual interaction-readiness analysis and post-visual expert interaction/motion intelligence. Its open-world discovery system continuously searches for current platform guidance, shipped-product UX evidence, motion patterns, accessibility guidance and professional product behavior; only qualified/admitted findings become routine guidance.
 
 The Screen Registry × Feature Graph tells VEKL what screen is being designed and which features/capabilities/truth domains apply. VEKL does not invent missing domain truth.
 

@@ -1,5 +1,5 @@
 {
-  "registry_version": "vekl-2.2-rev3",
+  "registry_version": "vekl-2.2-rev4-design-acuity",
   "routes": [
     {
       "concerns": [
@@ -64,6 +64,28 @@
       ],
       "max_hops": 3,
       "route_id": "PRODUCT_EXPERIENCE"
+    },
+    {
+      "route_id": "INTERACTION_MOTION",
+      "automatic_for_ui": true,
+      "concerns": [
+        "INTERACTION",
+        "MOTION",
+        "GESTURE",
+        "MICROINTERACTION",
+        "RESPONSIVE",
+        "ACCESSIBILITY",
+        "PROFESSIONAL_SAAS",
+        "PLATFORM_BEHAVIOR"
+      ],
+      "mandatory_node_types": [
+        "DESIGN_AUTHORITY",
+        "SCREEN",
+        "USER_JOURNEY",
+        "ENGINEERING_RESOURCE"
+      ],
+      "max_hops": 3,
+      "why": "Expert interaction/motion and modern product-polish evidence is a first-class frontend concern rather than a late decorative step."
     },
     {
       "concerns": [

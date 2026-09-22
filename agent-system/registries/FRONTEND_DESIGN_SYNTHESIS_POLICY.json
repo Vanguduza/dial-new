@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "policy_version": "frontend-design-synthesis-1.0",
+  "authority": "DEC-042",
+  "principle": "Translate product truth into a coherent customer experience; never render the packet as a requirements inventory.",
+  "knowledge_channels": [
+    "RENDERABLE_CUSTOMER_CONTENT",
+    "BACKGROUND_PRODUCT_SEMANTICS",
+    "DESIGN_CONSTRAINT_ONLY",
+    "VALIDATION_ONLY"
+  ],
+  "global_rules": {
+    "one_requirement_one_section_forbidden": true,
+    "one_feature_one_card_forbidden": true,
+    "feature_ids_customer_visible_forbidden": true,
+    "screen_ids_customer_visible_forbidden": true,
+    "preflight_debug_ui_forbidden": true,
+    "acceptance_matrix_customer_visible_forbidden": true,
+    "state_simulator_customer_visible_forbidden": true,
+    "engineering_provenance_customer_visible_forbidden": true,
+    "background_semantics_may_shape_behavior_not_claim_space": true,
+    "visual_storytelling_required_when_screen_purpose_supports_it": true,
+    "functional_completeness_must_not_reduce_visual_composition_to_feature_inventory": true
+  },
+  "screen_kind_profiles": {
+    "HOME_ENTRY": {
+      "screen_purpose": "DISCOVERY_HOME",
+      "composition_principles": [
+        "lead with orientation, customer value and discovery rather than policies or system mechanics",
+        "compress related capabilities into a small number of customer-facing experience zones",
+        "use imagery, typography and hierarchy as product communication",
+        "keep internal behavior requirements invisible unless they become relevant through interaction"
+      ],
+      "discovery_and_merchandising_min_percent": 55,
+      "system_assurance_max_percent": 10,
+      "required_experience_zones": ["PRIMARY_VALUE_OR_DISCOVERY_MOMENT", "SEARCH_OR_PRIMARY_ENTRY", "DISCOVERY_NAVIGATION", "RELEVANT_CONTENT_OR_PRODUCTS"],
+      "forbidden_dominant_sections": ["STATE_PREFLIGHT_SIMULATOR", "POLICY_EXPLAINER", "GUARANTEES_PANEL", "ENGINEERING_STATUS", "FEATURE_MATRIX"]
+    },
+    "SEARCH_RESULTS": {
+      "screen_purpose": "DISCOVERY_RESULTS",
+      "discovery_and_merchandising_min_percent": 70,
+      "system_assurance_max_percent": 5,
+      "required_experience_zones": ["QUERY_CONTEXT", "FILTER_OR_SORT", "RESULTS", "RECOVERY_OR_EMPTY_STATE"]
+    },
+    "DETAIL_STATE": {
+      "screen_purpose": "DECISION_DETAIL",
+      "discovery_and_merchandising_min_percent": 35,
+      "system_assurance_max_percent": 15,
+      "required_experience_zones": ["PRIMARY_OBJECT", "DECISION_INFORMATION", "PRIMARY_ACTION", "SUPPORTING_CONTEXT"]
+    },
+    "FORM": {
+      "screen_purpose": "TASK_COMPLETION",
+      "discovery_and_merchandising_min_percent": 0,
+      "system_assurance_max_percent": 20,
+      "required_experience_zones": ["TASK_CONTEXT", "INPUT_FLOW", "PRIMARY_ACTION", "RECOVERY"]
+    },
+    "QUEUE": {
+      "screen_purpose": "OPERATIONAL_PRIORITIZATION",
+      "discovery_and_merchandising_min_percent": 0,
+      "system_assurance_max_percent": 15,
+      "required_experience_zones": ["WORK_CONTEXT", "PRIORITIZED_ITEMS", "FILTERS", "ITEM_ACTIONS"]
+    }
+  },
+  "module_screen_overrides": {
+    "GROCERIES:SCREEN:GROCERIES:GROCERIES_HOME_ENTRY": {
+      "screen_purpose": "DISCOVERY_COMMERCE_HOME",
+      "required_experience_zones": [
+        "HERO_DISCOVERY",
+        "SHOPPING_MODE",
+        "SEARCH",
+        "CATEGORY_DISCOVERY",
+        "POPULAR_OR_RELEVANT_PRODUCTS",
+        "CUSTOMER_CONTINUITY",
+        "SUPPORTING_DISCOVERY",
+        "PRIMARY_NAVIGATION"
+      ],
+      "optional_experience_zones": ["PANTRY_ENTRY", "SCHEDULED_BASKET_ENTRY", "GROCERY_ROUNDS_ENTRY", "OFFERS_OR_COLLECTIONS"],
+      "discovery_and_merchandising_min_percent": 65,
+      "system_assurance_max_percent": 5,
+      "forbidden_dominant_sections": [
+        "STATE_PREFLIGHT_SIMULATOR",
+        "POLICY_EXPLAINER",
+        "GUARANTEES_PANEL",
+        "FULFILMENT_POLICY_PANEL",
+        "COLD_CHAIN_STATUS_PANEL",
+        "FEATURE_MATRIX",
+        "ENGINEERING_STATUS"
+      ],
+      "visual_storytelling": {
+        "hero_visual_required": true,
+        "imagery_priority": "HIGH",
+        "hero_must_support": ["GENERAL_GROCERY_AND_HOUSEHOLD_DISCOVERY", "CUSTOMER_VALUE", "SHOPPING_MOMENT"],
+        "hero_must_not_imply": ["FRESH_PRODUCE_ONLY_PRODUCT_IDENTITY", "SPECIALITY_FARM_MARKET_IDENTITY", "OPERATIONAL_DASHBOARD"]
+      },
+      "feature_experience_overrides": {
+        "GROC-F001": {"renderability":"CUSTOMER_EXPERIENCE","experience_expression":"Catalogue and product discovery across general grocery and household shopping","preferred_zones":["SEARCH","CATEGORY_DISCOVERY","POPULAR_OR_RELEVANT_PRODUCTS"]},
+        "GROC-F002": {"renderability":"CUSTOMER_EXPERIENCE","experience_expression":"Shopping mode and fulfilment-context selection without turning Home into a fulfilment dashboard","preferred_zones":["SHOPPING_MODE"]},
+        "GROC-F007": {"renderability":"BACKGROUND_BEHAVIOR","experience_expression":"Substitution rules shape product/cart behavior when relevant","must_not_become_section":true},
+        "GROC-F009": {"renderability":"BACKGROUND_BEHAVIOR","experience_expression":"Approval ceiling constrains variable-total transactions when relevant","must_not_become_section":true},
+        "GROC-F011": {"renderability":"BACKGROUND_BEHAVIOR","experience_expression":"Delivery and cold-chain evidence inform trust/detail/fulfilment behavior when relevant","must_not_become_section":true},
+        "GROC-F012": {"renderability":"CUSTOMER_EXPERIENCE","experience_expression":"Pantry continuity or replenishment entry when authoritative customer context exists","preferred_zones":["CUSTOMER_CONTINUITY","PANTRY_ENTRY"]},
+        "GROC-F013": {"renderability":"CUSTOMER_EXPERIENCE","experience_expression":"Scheduled Basket continuity entry for planned or recurring basket delivery","preferred_zones":["CUSTOMER_CONTINUITY","SCHEDULED_BASKET_ENTRY"]},
+        "GROC-F019": {"renderability":"CUSTOMER_EXPERIENCE","experience_expression":"Grocery Rounds discovery entry explaining the long-horizon collective prepaid grocery programme without exposing Round Room operations","preferred_zones":["GROCERY_ROUNDS_ENTRY"]},
+        "GROC-F020": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round lifecycle constrains the Rounds entry and deeper journey","must_not_become_section":true},
+        "GROC-F021": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round consent rules constrain deeper Rounds flows","must_not_become_section":true},
+        "GROC-F022": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Membership rules constrain deeper Rounds flows","must_not_become_section":true},
+        "GROC-F023": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Prepaid grocery purchase schedule defines Round economics but is not a Home section","must_not_become_section":true},
+        "GROC-F024": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round ledger/accounting is background authority on Home","must_not_become_section":true},
+        "GROC-F025": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Basket planning belongs in the Rounds journey, not Home","must_not_become_section":true},
+        "GROC-F026": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Voting belongs in the Rounds journey, not Home","must_not_become_section":true},
+        "GROC-F027": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Entitlement rules constrain deeper Round state","must_not_become_section":true},
+        "GROC-F028": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Allocation rules constrain deeper Round state","must_not_become_section":true},
+        "GROC-F030": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round Room is a deeper destination and must not be recreated on Home","must_not_become_section":true},
+        "GROC-F031": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Protection/disclosure constrains deeper Round presentation","must_not_become_section":true},
+        "GROC-F032": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round delivery/free-delivery semantics constrain deeper fulfilment","must_not_become_section":true},
+        "GROC-F033": {"renderability":"BACKGROUND_PRODUCT_SEMANTICS","experience_expression":"Round dispute/remedy behavior is not a Home section","must_not_become_section":true}
+      }
+    }
+  }
+}

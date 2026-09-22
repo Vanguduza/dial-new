@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-product-profiles-2.0",
+  "registry_version": "frontend-product-profiles-1.2-domain-semantics",
   "authority_model": "PROJECT_TRUTH_AND_PRODUCT_VISUAL_AUTHORITY_SUPERIOR",
   "inheritance_rules": {
     "base_profile": "dial.global",
@@ -72,7 +72,11 @@
       "extends": "dial.global",
       "status": "ACTIVE",
       "brand_family": "DIAL_GROCERIES",
-      "density_default": "COMFORTABLE"
+      "density_default": "COMFORTABLE",
+      "brand_authority_ref": "agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json#modules.GROCERIES.brand_authority",
+      "product_positioning": "GENERAL_GROCERY_AND_HOUSEHOLD_COMMERCE",
+      "shopping_mode_home": "REQUIRED_WHEN_HOME_ENTRY",
+      "freshness_identity_policy": "FRESH_PRODUCE_IS_CATEGORY_NOT_APP_IDENTITY"
     },
     {
       "profile_id": "dial.logistics",

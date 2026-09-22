@@ -9,7 +9,7 @@ Build DIAL from the v2 Implementation Closure & Build-Ready Canon.
 3. Inspect current code/tests before proposing changes.
 4. Use the concrete FRC states/commands/queries/events.
 5. Apply Security Profile + Material Eventuality contracts.
-6. Trigger Money/Security/Donor/Health/NFR/UI/Migration reviewer when applicable.
+6. Trigger Money/Security/External-Reference/Health/NFR/UI/Migration reviewer when applicable.
 7. Record fresh tests/evidence before advancing a gate.
 8. Preserve DIAL source-of-truth boundaries.
 9. After Feature/JIT context, resolve/confirm the VEKL v2 Engineering Knowledge Activation Manifest before material implementation. Skills are one governed resource class among official docs/repos/releases/issues/advisories/tools/rules/hooks/loops and bounded community corroboration; a valid result may contain no external executable skill.
@@ -37,13 +37,13 @@ re-derive it. Full method and the worked examples that produced this rule:
 
 - invent a hidden product decision;
 - use old v4/D-number docs as active authority when v2 supersedes them;
-- let AI or donor code create a second money/identity/fulfilment/health authority;
+- let AI or external-reference material create a second money/identity/fulfilment/health/design authority;
 - expose secrets/service-role keys;
 - mark a feature complete from code inspection alone;
 - start broad research when canon/current code already answers the question;
 - load the entire master pack when bounded context is sufficient;
 - treat an external/vendor resource, community/forum result, learned wrapper, session-memory hit or model prior as product/architecture/gate authority;
-- activate a skill/plugin/tool/hook/MCP from a research reference or mutable upstream branch — executable VEKL resources require the applicable exact-version donor/security/eval provenance;
+- activate a skill/plugin/tool/hook/MCP from a research reference or mutable upstream branch — executable VEKL resources require the applicable exact-version dependency/security/eval provenance and separate activation authority;
 - let ahead-of-work research reprioritise the Development Plan or send secrets, payment/customer records or identifiable Health data to public research sources.
 
 
@@ -76,6 +76,10 @@ Project Truth write authority comes only from the owner. Agents, CI, tools, rese
 
 Every substantive commit must carry an append-only authorization record and PR-native ledger evidence. Protected `master` is read-only to Project Truth automation. See `PROJECT_TRUTH_PROTOCOL.md` and `docs/project-state/OWNER_AUTHORITY_POLICY.json`.
 
+## External repository reference lock — DEC-039
+
+External repositories previously called donors are **reference and inspiration only**. Research may extract abstract architecture patterns, UX/interaction ideas, visual inspiration, anti-patterns, trade-offs and tests. Do not copy, port, fork, vendor, preserve or assimilate repository code, components, assets, schemas, business logic or pixel layouts into DIAL production. They cannot become Product Truth, source of truth, DesignAuthority or VisualAuthority. A literal third-party dependency/code adoption requires a separate explicit owner authorization and qualification path.
+
 ## VEKL engineering-knowledge lock
 
 Canonical VEKL v2: `docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VERSIONED_ENGINEERING_KNOWLEDGE_LAYER_FEDERATED_RESOURCES_HERMES_v2.md` (`DEC-020`). Rev 1 remains provenance for the qualified immutable-skill substrate.
@@ -93,8 +97,7 @@ The load-bearing ones:
 - a Feature entering implementation needs its own acceptance contract first
   (`product-management:write-spec`) — the generic one is not a contract;
 - a material eventuality without a runbook gets one (`operations:runbook`);
-- pinning or importing any dependency or donor uses Context7 for exact version
-  facts — recalled versions are not evidence;
+- pinning/importing an explicitly owner-authorized dependency uses Context7 for exact-version facts; external repository references are research/inspiration only and do not create import authority.
 - changes to the transition or EPC surfaces run `npm run test:e2e`.
 
 No tool output is authority, and running a review skill does not satisfy the

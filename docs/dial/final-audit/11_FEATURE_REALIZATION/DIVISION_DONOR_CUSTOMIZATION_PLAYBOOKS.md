@@ -1,3 +1,7 @@
+# DEC-039 active rule — division references are inspiration only
+
+Every external repository/product named below is a non-authoritative reference. “Primary”, “base experience”, “preserve”, “keep”, “port” or similar historical language must be read only as a request to study useful abstract patterns. DIAL implementations are authored natively from Product Truth, Feature/Screen Graphs, domain contracts and DIAL design authority. No repository code, component, asset, schema, business logic or pixel layout is to be imported or preserved by this playbook.
+
 # Division Donor Customization Playbooks
 
 ## Spare

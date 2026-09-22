@@ -1,3 +1,7 @@
+# DEC-039 supersession
+
+External repository/tooling entries below are research provenance only unless a separate explicit owner-authorized dependency/activation decision exists. Historical `PORT_SELECTED_*` language does not authorize production import.
+
 # Donor Dossier — Agent Tooling (DRR-TOOLING-001..005)
 
 Five agent-tooling donors run through the CT-3 Donor Assimilation Gate.

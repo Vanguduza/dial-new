@@ -1,3 +1,7 @@
+# DEC-039 amendment — external references are inspiration only
+
+The guided-generation mechanisms in this document remain active, but `DEC-039` supersedes `DONOR_ADAPT`, `DONOR_PRESERVE`, donor-semantic-preservation and donor-screen authority. Reference-informed design is now `REFERENCE_INSPIRED_DIAL_NATIVE`: Product Truth and the canonical Screen Registry × Feature Graph remain superior, external repositories contribute only synthesized abstract inspiration descriptors, Stitch authors a new DIAL-native candidate, and DDE productionizes accepted DIAL experience authority. Raw donor screens/code/components/assets/schemas/business logic are not implementation or visual authority.
+
 # DIAL Guided Creative Frontend Evolution — Rev 1
 
 **Subordinate to:** `DIAL_DEVELOPMENT_PRODUCT_INTELLIGENCE_AUTOMATION_ARCHITECTURE_REV_3_1.md` (§6, §28)

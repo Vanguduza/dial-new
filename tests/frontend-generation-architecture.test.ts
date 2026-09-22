@@ -82,7 +82,8 @@ test('canonical frontend generation context begins with the Screen Registry × F
   const context = px.frontend_generation_context;
   expect(context.screen_context.target_screen_id).toBe(targetScreenId);
   expect(context.feature_context.feature_ids).toContain('SPARE-F001');
-  expect(context.platform_context.applications.map((x) => x.application_id)).toEqual(expect.arrayContaining(['DIAL_CONSUMER_ANDROID','DIAL_CONSUMER_IOS','DIAL_CONSUMER_WEB','DIAL_CONSUMER_WHATSAPP']));
+  expect(context.platform_context.target_application_id).toBe('DIAL_CONSUMER_WEB');
+  expect(context.platform_context.applications.map((x) => x.application_id)).toEqual(['DIAL_CONSUMER_WEB']);
   expect(context.authority_refs.screen_feature_graph_hash).toMatch(/^[0-9a-f]{64}$/);
   expect(context.design_authority.archetype_refs).toContain('DIAL_COMMERCE_DISCOVERY_EDITORIAL_HERO_V1');
   expect(context.screen_context.screens[0].role_boundary.role).toBe('DISCOVERY_NAVIGATION_CONTEXT_AND_LIGHT_MERCHANDISING');
@@ -124,7 +125,7 @@ test('visual packet is compiled from screen, feature, platform, truth, capabilit
     hydratedTruth:{facts:[{fact_id:'vehicle.engine_code',path:'vehicle.engine_code',value:'1GD-FTV',truth_class:'VERIFIED_FACT',source_id:'EPC_VEHICLE_CATALOG',provenance_ref:'epc:toyota:hilux:GUN126R'}]},
   });
   const brief = buildDesignBriefBundle({ projection:px, unit, taskId:'front-gen', instruction:'premium automotive discovery screen' });
-  const packet = buildCanonicalStitchVisualPacket({ fdep:px, brief, blindReferenceMode:true });
+  const packet = buildCanonicalStitchVisualPacket({ repoDir, fdep:px, brief, blindReferenceMode:true });
   expect(packet.provider).toBe('google-stitch');
   expect(packet.reference_policy).toBe('REFERENCE_IMAGE_ACCESS_FORBIDDEN');
   expect(packet.target_screen.screen_id).toBe(targetScreenId);
@@ -134,6 +135,7 @@ test('visual packet is compiled from screen, feature, platform, truth, capabilit
   expect(prompt).toMatch(/STITCH VISUAL GENERATION PASS/);
   expect(prompt).toMatch(/1GD-FTV/);
   expect(prompt).toMatch(/Screen role:/);
+  expect(prompt).toMatch(/INTERACTION-READINESS PREFLIGHT/);
 });
 
 test('approved visual authority flows into a separate Stitch interaction and motion pass', () => {
@@ -142,14 +144,16 @@ test('approved visual authority flows into a separate Stitch interaction and mot
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'p1',screen_id:'s1',response_hash:'a'.repeat(64),html_url:'stitch://html',image_url:'stitch://image'},
     critique:{verdict:'PASS'},
+    truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}),
+    designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)},
     promotedBy:'owner',
     promotionAuthority:'OWNER',
   });
   expect(frozen.ok).toBe(true);
-  const packet = buildCanonicalInteractionMotionPacket({ fdep:px, visualAuthority:frozen.visual_authority });
+  const packet = buildCanonicalInteractionMotionPacket({ repoDir, fdep:px, visualAuthority:frozen.visual_authority });
   expect(packet.preserve).toContain('approved_composition');
   expect(packet.required_outputs).toContain('MotionSpec');
-  expect(renderInteractionMotionPrompt({packet})).toMatch(/Preserve it/);
+  expect(renderInteractionMotionPrompt({packet})).toMatch(/approved visual identity is frozen/i);
 
   const interactionArtifact = {
     content_hash:'b'.repeat(64),
@@ -158,7 +162,7 @@ test('approved visual authority flows into a separate Stitch interaction and mot
     motion_spec:[{element:'category_rail',motion:'snap',reduced_motion:'static'}],
     advanced_component_decisions:[{component:'category_rail',decision:'KEEP_SCROLLABLE_RAIL'}],
   };
-  const allChecks = Object.fromEntries(['no_dead_controls','capability_backed','touch_targets','accessibility_semantics','reduced_motion','performance','state_restoration','gesture_conflicts_clear'].map((x)=>[x,true]));
+  const allChecks = Object.fromEntries(['design_acuity_review_complete','pattern_decisions_complete','no_dead_controls','capability_backed','purposeful_motion','motion_hierarchy_coherent','touch_targets','keyboard_and_focus_where_relevant','accessibility_semantics','reduced_motion','performance_budget','state_restoration','gesture_conflicts_clear','interruptible_transitions','responsive_recomposition','edge_states_covered','platform_native_behavior','optical_polish_reviewed','structural_delta_within_budget','external_reference_non_authority'].map((x)=>[x,true]));
   const acceptance = buildInteractionAcceptanceMatrix({ interactionArtifact, checks:allChecks });
   expect(acceptance.passed).toBe(true);
   const experience = freezeExperienceAuthorityArtifact({
@@ -188,7 +192,7 @@ test('productionization emits an explicit binding contract and forbids redesign'
   const frozen = freezeVisualAuthorityArtifact({
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'p1',screen_id:'s1',response_hash:'a'.repeat(64)},
-    critique:{verdict:'PASS'}, promotedBy:'owner', promotionAuthority:'OWNER',
+    critique:{verdict:'PASS'}, truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}), designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)}, promotedBy:'owner', promotionAuthority:'OWNER',
   }).visual_authority;
   const acceptance = {passed:true,content_hash:'c'.repeat(64)};
   const exp = freezeExperienceAuthorityArtifact({
@@ -209,7 +213,7 @@ test('interaction/motion orchestration sends the frozen Stitch screen through a 
   const frozen = freezeVisualAuthorityArtifact({
     generationContext:px.frontend_generation_context,
     candidate:{provider:'google-stitch',project_id:'project-1',screen_id:'screen-1',response_hash:'d'.repeat(64)},
-    critique:{verdict:'PASS'}, promotedBy:'owner', promotionAuthority:'OWNER',
+    critique:{verdict:'PASS'}, truthLiteralLint:lintCandidateFacts({generationContext:px.frontend_generation_context,candidateFacts:[]}), designSynthesisLint:{status:'PASSED',content_hash:'e'.repeat(64)}, promotedBy:'owner', promotionAuthority:'OWNER',
   }).visual_authority;
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'dial-interaction-motion-'));
   const taskId='task-interaction-motion';

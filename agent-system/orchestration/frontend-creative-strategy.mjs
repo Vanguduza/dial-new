@@ -36,13 +36,13 @@ function clamp01(value) {
 
 function creativeRangeForMode(mode) {
   if (mode === 'RECONSTRUCT') return 'REFINE';
-  if (mode === 'ASSIMILATE') return 'EXPLORE';
+  if (mode === 'ASSIMILATE') return 'EXPLORE'; // legacy serialized mode; DEC-039 treats it as DIAL-native synthesis with reference-only context
   return 'REIMAGINE';
 }
 
 function freedomLevel(mode) {
   if (mode === 'RECONSTRUCT') return 'LOW';
-  if (mode === 'ASSIMILATE') return 'MEDIUM';
+  if (mode === 'ASSIMILATE') return 'MEDIUM'; // legacy compatibility only
   return 'MEDIUM_HIGH';
 }
 
@@ -105,7 +105,7 @@ export function buildCreativeDirectionProfile({ fdep, brief, surfaceId = null } 
       'displaying governance/debug/provider metadata to customers',
       'claiming verification, certification or runtime state without evidence',
       'bypassing registered tokens/components/patterns without an approved change budget',
-      'copying a donor visual identity verbatim when DIAL adaptation is required',
+      'copying an external reference visual identity, layout or pixel treatment into DIAL',
       'sacrificing accessibility or responsive identity for visual novelty',
     ],
     anti_generic_requirements: [

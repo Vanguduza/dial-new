@@ -128,11 +128,12 @@
       "reverse_traversable": false
     },
     {
-      "relationship": "transformed_for",
-      "source_type": "DONOR",
+      "relationship": "informs_non_authoritatively",
+      "source_type": "EXTERNAL_REFERENCE",
       "target_type": "FEATURE",
-      "route_class": "DEPENDENCY",
-      "reverse_traversable": true
+      "route_class": "RESEARCH_REFERENCE",
+      "reverse_traversable": true,
+      "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY"
     },
     {
       "source_type": "ENGINEERING_RESOURCE",
@@ -283,7 +284,7 @@
       "reverse_traversable": true
     }
   ],
-  "registry_version": "vekl-2.2-rev5",
+  "registry_version": "vekl-2.2-rev4",
   "required_edge_fields": [
     "creation_graph_generation",
     "derivation_class",

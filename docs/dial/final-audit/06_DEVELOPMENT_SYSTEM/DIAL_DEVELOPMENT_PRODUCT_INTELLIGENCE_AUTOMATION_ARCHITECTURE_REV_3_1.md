@@ -1,3 +1,7 @@
+# DEC-039 active amendment — 2026-09-19
+
+All donor reuse semantics in this Rev 3.1 blueprint are superseded by the owner-locked external-reference policy: external repositories are reference/inspiration only and cannot be copied, ported, preserved, assimilated or promoted into DIAL implementation/design authority. The open-world research and guided-frontend architecture remain valid when read through that boundary. The canonical frontend path is Product Truth → Screen Registry × Feature Graph → authoritative truth hydration → VEKL knowledge → Stitch → frozen DIAL experience authority → DDE.
+
 # DIAL DEVELOPMENT & PRODUCT INTELLIGENCE / AUTOMATION ARCHITECTURE
 ## Repository-Grounded Open-World VEKL, Guided Generative Frontend Evolution, and Self-Hosted n8n Automation Fabric
 

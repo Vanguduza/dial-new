@@ -19,7 +19,7 @@ export const FREEDOM_LEVELS = Object.freeze(['none', 'low', 'medium', 'high']);
 
 // Dimensions that carry meaning rather than appearance. No phase, provider or
 // packet may grant freedom over these; the ceiling is `none`, always.
-export const SEMANTIC_DIMENSIONS = Object.freeze(['navigation_semantics', 'business_logic', 'money_behavior', 'security_behavior', 'donor_semantics']);
+export const SEMANTIC_DIMENSIONS = Object.freeze(['navigation_semantics', 'business_logic', 'money_behavior', 'security_behavior', 'external_reference_constraints']);
 
 // Per-phase ceilings. Creativity decreases EXPLORE → CONVERGE → RECONSTRUCT
 // (Principle 7); this table is that principle made enforceable.
@@ -29,7 +29,7 @@ export const PHASE_FREEDOM_CEILINGS = Object.freeze({
   RECONSTRUCT: { composition: 'none', spacing: 'low', typography: 'none', surface_strategy: 'none', illustration: 'none', information_architecture: 'none' },
 });
 
-export const CRITICS = Object.freeze(['product', 'donor', 'ux', 'visual', 'accessibility', 'responsive', 'implementation']);
+export const CRITICS = Object.freeze(['product', 'external_reference', 'ux', 'visual', 'accessibility', 'responsive', 'implementation']);
 
 export const DEFAULT_DIVERSITY_DIMENSIONS = Object.freeze(['section_composition', 'imagery_position', 'surface_strategy', 'primary_action_emphasis']);
 
@@ -65,7 +65,7 @@ export function buildDesignFreedomBudget({ phase, requested = {} } = {}) {
 
 const PRODUCT_TRUTH_FIELDS = Object.freeze([
   'feature_ids', 'unit_lineage_id', 'unit_revision_hash', 'user_goal', 'required_actions', 'required_states',
-  'data_semantics', 'navigation_semantics', 'business_rules', 'security_constraints', 'legal_constraints', 'donor_constraints',
+  'data_semantics', 'navigation_semantics', 'business_rules', 'security_constraints', 'legal_constraints', 'external_reference_constraints',
 ]);
 
 export function buildProductTruthPacket(input = {}) {
@@ -133,8 +133,8 @@ export function buildScreenQualityPacket({
   if (unknownCritics.length) failures.push(`UNKNOWN_CRITICS:${unknownCritics.sort().join(',')}`);
   const missingCritics = ['product', 'visual', 'accessibility', 'implementation'].filter((c) => !critics.includes(c));
   if (missingCritics.length) failures.push(`MANDATORY_CRITIC_MISSING:${missingCritics.join(',')}`);
-  if (['DONOR_ADAPT', 'DONOR_PRESERVE'].includes(designProvenanceMode) && !critics.includes('donor')) {
-    failures.push('DONOR_CRITIC_REQUIRED_FOR_DONOR_MODE');
+  if (designProvenanceMode === 'REFERENCE_INSPIRED_DIAL_NATIVE' && !critics.includes('external_reference')) {
+    failures.push('EXTERNAL_REFERENCE_CRITIC_REQUIRED');
   }
   const badDiversity = diversityDimensions.filter((d) => SEMANTIC_DIMENSIONS.includes(d));
   if (badDiversity.length) failures.push(`DIVERSITY_OVER_SEMANTICS_FORBIDDEN:${badDiversity.sort().join(',')}`);
@@ -190,7 +190,7 @@ export function buildScreenQualityPacket({
     references: {
       golden_screens: [...(references.golden_screens || [])].sort(),
       archetypes: [...(references.archetypes || [])].sort(),
-      donor_visual_authority: [...(references.donor_visual_authority || [])].sort(),
+      external_reference_inspiration: [...(references.external_reference_inspiration || references.donor_visual_authority || [])].sort(),
       inspirational_refs: [...(references.inspirational_refs || [])].sort(),
     },
     prohibited_patterns: [...antiPatterns.enforced_baseline, ...antiPatterns.guided_additional],
@@ -202,7 +202,7 @@ export function buildScreenQualityPacket({
     critics: [...critics].sort(),
     acceptance: {
       product_correctness: 'required',
-      donor_semantics: ['DONOR_ADAPT', 'DONOR_PRESERVE'].includes(designProvenanceMode) ? 'required' : 'required_when_applicable',
+      external_reference_non_authority: 'required',
       visual_quality: 'required',
       accessibility: 'required',
       responsive_realism: 'required',

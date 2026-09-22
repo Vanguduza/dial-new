@@ -1,3 +1,7 @@
+# Supersession notice — DEC-039
+
+This document is historical provenance for earlier donor-transformation thinking. Active policy is **external repository reference and inspiration only**: no code, component, asset, schema, business-logic or pixel-copy assimilation is permitted by this document. DIAL-native design/implementation authority is superior.
+
 # Donor UX/UI Transformation Standard
 
 ## Goal

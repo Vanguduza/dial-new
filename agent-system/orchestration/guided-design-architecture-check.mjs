@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 // Workstream B gate: guided generative frontend evolution.
 //
-// The load-bearing claim of this workstream is that it ADDS capability without
-// changing what already governs design. Several gates below therefore compare
-// the current implementation against the committed baseline in git rather than
-// asserting a property in the abstract: a backward-compatibility claim that is
-// not measured against the old code is a hope.
+// The load-bearing claim is now DEC-039: external repositories are research
+// references/inspiration only. Legacy donor modes may be recognized as inputs,
+// but must canonicalize into DIAL-native design and can never restore port/preserve authority.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -60,29 +58,25 @@ try {
     && DESIGN_ITERATION_PHASES.every((p) => !DESIGN_PROVENANCE_MODES.includes(p)),
     'provenance mode and iteration phase vocabularies do not overlap');
 
-  const donorExplore = projectDesignAuthority({ unitMap, designMode: 'DONOR_ADAPT', designIterationPhase: 'EXPLORE', repoDir: repo });
-  gate('GDES-G02', donorExplore.design_provenance_mode === 'DONOR_ADAPT' && donorExplore.design_iteration_phase === 'EXPLORE' && donorExplore.design_mode === 'DONOR_ADAPT',
-    'DONOR_ADAPT and EXPLORE are simultaneously true, and design_mode keeps its provenance meaning');
+  const referenceExplore = projectDesignAuthority({ unitMap, designMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', designIterationPhase: 'EXPLORE', repoDir: repo });
+  gate('GDES-G02', referenceExplore.design_provenance_mode === 'REFERENCE_INSPIRED_DIAL_NATIVE' && referenceExplore.design_iteration_phase === 'EXPLORE' && referenceExplore.design_mode === 'REFERENCE_INSPIRED_DIAL_NATIVE',
+    'reference-inspired DIAL-native provenance and EXPLORE are separate compatible axes');
 
   let threw = null;
   try { projectDesignAuthority({ unitMap, designMode: 'EXPLORE', repoDir: repo }); } catch (e) { threw = e.message; }
   gate('GDES-G03', /unknown design provenance mode/.test(threw || ''), 'an iteration phase cannot be passed as a provenance mode');
 
-  // ── nothing existing changed ───────────────────────────────────────────────
-  if (baselineOf.projector) {
-    const same = DESIGN_PROVENANCE_MODES.every((mode) =>
-      JSON.stringify(baselineOf.projector.projectDesignAuthority({ unitMap, designMode: mode }))
-      === JSON.stringify(projectDesignAuthority({ unitMap, designMode: mode, repoDir: repo })));
-    gate('GDES-G04', same, 'legacy design projections are byte-identical to the committed baseline');
-  }
-  if (baselineOf.router) {
-    let same = true;
-    for (const mode of DESIGN_PROVENANCE_MODES) for (const a of [true, false]) for (const b of [true, false]) for (const h of ['HEALTHY', 'DEGRADED', 'UNKNOWN']) {
-      const args = { designMode: mode, stitchEnabled: a, stitchEligible: a, directWorkerEligible: b, providerHealth: h };
-      if (JSON.stringify(baselineOf.router.selectDesignStrategy(args)) !== JSON.stringify(selectDesignStrategy(args))) same = false;
-    }
-    gate('GDES-G05', same, 'legacy provider routing is identical across every input combination');
-  }
+  // ── legacy donor vocabulary is safely canonicalized, not preserved as implementation authority ──
+  const legacyAdapt = projectDesignAuthority({ unitMap, designMode: 'DONOR_ADAPT', repoDir: repo });
+  const legacyPreserve = projectDesignAuthority({ unitMap, designMode: 'DONOR_PRESERVE', repoDir: repo });
+  gate('GDES-G04', legacyAdapt.design_mode === 'REFERENCE_INSPIRED_DIAL_NATIVE' && legacyPreserve.design_mode === 'REFERENCE_INSPIRED_DIAL_NATIVE'
+    && legacyAdapt.donor_transformation_hash === null && legacyPreserve.donor_transformation_hash === null,
+    'legacy donor modes canonicalize to reference-inspired DIAL-native provenance with no donor transformation authority');
+
+  const noPortRoute = selectDesignStrategy({ designMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', directWorkerEligible: true });
+  gate('GDES-G05', noPortRoute.ok && !noPortRoute.candidates.includes('DIRECT_DONOR_PORT_AND_TRANSFORM'),
+    'provider routing exposes no direct donor port/transform strategy');
+
   if (baselineOf.admission) {
     const content = '<main><h1>DIAL</h1></main>';
     const q = quarantineDesignArtifact({ content });
@@ -125,22 +119,22 @@ try {
     user_goal: 'find and order the right spare part',
     required_actions: ['SEARCH_PART', 'VIEW_PART', 'START_ORDER'],
     required_states: ['LOADING', 'EMPTY', 'ERROR', 'RESULTS'],
-    donor_constraints: ['DONOR_SEARCH_FLOW'],
+    external_reference_constraints: ['NO_EXTERNAL_IMPLEMENTATION_REUSE'],
   });
   gate('GDES-G14', truth.ok && /^[0-9a-f]{64}$/.test(truth.product_truth.product_truth_hash), 'Product Truth packet hashes deterministically');
 
   const packet = buildScreenQualityPacket({
     repoDir: repo, productTruth: truth.product_truth,
-    authority: { design_authority_projection_hash: donorExplore.projection_hash },
-    designProvenanceMode: 'DONOR_ADAPT', designIterationPhase: 'EXPLORE', candidateCount: 3,
+    authority: { design_authority_projection_hash: referenceExplore.projection_hash },
+    designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', designIterationPhase: 'EXPLORE', candidateCount: 3,
     intent: { screen_type: 'HOME', primary_task: 'SEARCH_PART' },
   });
-  gate('GDES-G15', packet.ok && packet.packet.candidate_policy.count === 3 && packet.packet.critics.includes('donor'),
-    'an EXPLORE packet requires three candidates and a donor critic in donor mode');
+  gate('GDES-G15', packet.ok && packet.packet.candidate_policy.count === 3 && packet.packet.critics.includes('external_reference'),
+    'an EXPLORE packet requires three candidates and an external-reference critic when reference-informed');
 
   const tooMany = buildScreenQualityPacket({
     repoDir: repo, productTruth: truth.product_truth,
-    authority: { design_authority_projection_hash: donorExplore.projection_hash },
+    authority: { design_authority_projection_hash: referenceExplore.projection_hash },
     designProvenanceMode: 'NEW_DIAL_DESIGN', designIterationPhase: 'RECONSTRUCT', candidateCount: 3,
   });
   gate('GDES-G16', tooMany.ok === false && tooMany.failures.includes('RECONSTRUCT_REQUIRES_SINGLE_CANDIDATE'),
@@ -148,7 +142,7 @@ try {
 
   const semanticDiversity = buildScreenQualityPacket({
     repoDir: repo, productTruth: truth.product_truth,
-    authority: { design_authority_projection_hash: donorExplore.projection_hash },
+    authority: { design_authority_projection_hash: referenceExplore.projection_hash },
     designProvenanceMode: 'NEW_DIAL_DESIGN', designIterationPhase: 'EXPLORE', candidateCount: 3,
     diversityDimensions: ['navigation_semantics'],
   });
@@ -161,7 +155,7 @@ try {
     declared: {
       actions: ['SEARCH_PART', 'VIEW_PART', 'START_ORDER', 'APPLY_FOR_FINANCE'],
       states: ['LOADING', 'EMPTY', 'ERROR', 'RESULTS'],
-      donor_semantics_preserved: ['DONOR_SEARCH_FLOW'],
+      external_reference_constraints_satisfied: ['NO_EXTERNAL_IMPLEMENTATION_REUSE'],
       displayed_values: [{ label: 'parts in stock', source: 'INVENTED' }],
     },
   };
@@ -171,16 +165,17 @@ try {
     && inventedEvidence.blocking_findings.some((f) => f.finding_id.startsWith('INVENTED_METRICS')),
     'a candidate inventing a product feature or a metric is rejected');
 
-  const dropsDonor = { ...inventing, candidate_id: 'DESIGN-donor', declared: { ...inventing.declared, actions: ['SEARCH_PART', 'VIEW_PART', 'START_ORDER'], donor_semantics_preserved: [], displayed_values: [] } };
-  const donorEvidence = runCritics({ candidate: dropsDonor, productTruth: truth.product_truth, packet: packet.packet, repoDir: repo });
-  gate('GDES-G19', donorEvidence.blocking_findings.some((f) => f.finding_id === 'DONOR_SEMANTICS_NOT_PRESERVED:DONOR_SEARCH_FLOW'),
-    'removing donor semantics is a blocking finding');
+  const violatesReferenceBoundary = { ...inventing, candidate_id: 'DESIGN-reference', declared: { ...inventing.declared, actions: ['SEARCH_PART', 'VIEW_PART', 'START_ORDER'], external_reference_constraints_satisfied: [], external_reference_code_imported: true, displayed_values: [] } };
+  const referenceEvidence = runCritics({ candidate: violatesReferenceBoundary, productTruth: truth.product_truth, packet: packet.packet, repoDir: repo });
+  gate('GDES-G19', referenceEvidence.blocking_findings.some((f) => f.finding_id === 'EXTERNAL_REFERENCE_CONSTRAINT_UNSATISFIED:NO_EXTERNAL_IMPLEMENTATION_REUSE')
+    && referenceEvidence.blocking_findings.some((f) => f.finding_id === 'EXTERNAL_REFERENCE_CODE_IMPORT'),
+    'external repositories remain non-authoritative inspiration and implementation reuse is blocked');
 
   const clean = {
     candidate_id: 'DESIGN-clean', candidate_hash: 'c'.repeat(64), product_truth_hash: truth.product_truth.product_truth_hash,
     declared: {
       actions: ['SEARCH_PART', 'VIEW_PART', 'START_ORDER'], states: ['LOADING', 'EMPTY', 'ERROR', 'RESULTS'],
-      donor_semantics_preserved: ['DONOR_SEARCH_FLOW'], displayed_values: [{ label: 'price', source: 'PRICING_SERVICE' }],
+      external_reference_constraints_satisfied: ['NO_EXTERNAL_IMPLEMENTATION_REUSE'], displayed_values: [{ label: 'price', source: 'PRICING_SERVICE' }],
       primary_task: 'SEARCH_PART', emphasis: [{ level: 'primary' }], controls: [{ label: 'Search', action: 'SEARCH_PART' }],
       navigation: [{ destination: 'HOME' }], contrast_pairs: [{ role: 'body', ratio: 7.1 }],
       touch_targets: [{ label: 'Search', min_dp: 48 }], focus_order_defined: true,
@@ -254,9 +249,9 @@ try {
   const q = quarantineDesignArtifact({ content: '<main><h1>DIAL</h1></main>' });
   const guidedCandidate = buildDesignCandidateManifest({
     taskId: 'gate', providerId: 'google-stitch', unitLineageId: 'U-GATE', unitRevisionHash: 'r-gate',
-    designAuthorityProjectionHash: donorExplore.projection_hash, rawContent: '<main><h1>DIAL</h1></main>', quarantine: q,
+    designAuthorityProjectionHash: referenceExplore.projection_hash, rawContent: '<main><h1>DIAL</h1></main>', quarantine: q,
     screenQualityPacketHash: packet.packet.packet_hash, designIterationPhase: 'EXPLORE',
-    designProvenanceMode: 'DONOR_ADAPT', productTruthHash: truth.product_truth.product_truth_hash,
+    designProvenanceMode: 'REFERENCE_INSPIRED_DIAL_NATIVE', productTruthHash: truth.product_truth.product_truth_hash,
   });
   const noEvidence = admitDesignCandidate({ candidate: guidedCandidate, authorityConforms: true, requiredStatesPresent: true });
   gate('GDES-G29', noEvidence.ok === false && noEvidence.failures.includes('CRITIC_EVIDENCE_REQUIRED_FOR_GUIDED_CANDIDATE'),
@@ -282,8 +277,8 @@ try {
     providers: [{ provider_id: 'google-stitch', authority: 'NON_AUTHORITATIVE_CANDIDATE', qualification_required: true, qualification_evidence_valid: true, health: 'DOWN', supported_phases: ['EXPLORE'], supported_outputs: ['design_artifact'] }],
     directWorkerEligible: true,
   });
-  gate('GDES-G32', outage.ok === true && outage.routes.length === 0 && outage.fallback_strategy === 'DIRECT_DIAL_IMPLEMENTATION' && outage.acceptance_preserved === true,
-    'a provider outage falls back to a qualified route without relaxing acceptance');
+  gate('GDES-G32', outage.ok === false && outage.routes.length === 0 && outage.fallback_strategy === null && outage.outage_behavior === 'WAIT_RETRY_OR_REPORT_UNAVAILABLE' && outage.acceptance_preserved === true,
+    'a Stitch outage fails closed without silent provider/direct-worker substitution');
 
   gate('GDES-G33', exists('tests/orchestration-guided-design.test.mjs'), 'negative-test suite present');
   gate('GDES-G34', exists('agent-system/registries/DESIGN_ANTI_PATTERN_REGISTRY.json'), 'versioned anti-pattern registry present');

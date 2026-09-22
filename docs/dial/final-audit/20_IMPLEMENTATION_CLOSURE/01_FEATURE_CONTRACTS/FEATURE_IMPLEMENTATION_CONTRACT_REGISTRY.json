@@ -264,7 +264,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -408,7 +408,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -656,7 +656,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -792,7 +792,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -908,7 +908,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1034,7 +1034,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1180,7 +1180,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1305,7 +1305,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1436,7 +1436,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1558,7 +1558,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1698,7 +1698,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1815,7 +1815,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -1932,7 +1932,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2045,7 +2045,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2165,7 +2165,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2280,7 +2280,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2410,7 +2410,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2541,7 +2541,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2660,7 +2660,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2785,7 +2785,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -2915,7 +2915,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3045,7 +3045,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3174,7 +3174,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3304,7 +3304,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3439,7 +3439,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3566,7 +3566,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3699,7 +3699,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3827,7 +3827,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -3952,7 +3952,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4085,7 +4085,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4212,7 +4212,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4367,7 +4367,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4506,7 +4506,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4640,7 +4640,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4759,7 +4759,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4874,7 +4874,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -4993,7 +4993,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5116,7 +5116,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5235,7 +5235,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5362,7 +5362,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5487,7 +5487,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5612,7 +5612,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5731,7 +5731,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5875,7 +5875,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -5994,7 +5994,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6128,7 +6128,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6247,7 +6247,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6381,7 +6381,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6500,7 +6500,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6619,7 +6619,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6753,7 +6753,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -6892,7 +6892,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7011,7 +7011,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7125,7 +7125,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7254,7 +7254,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7387,7 +7387,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7513,7 +7513,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7631,7 +7631,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7749,7 +7749,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -7888,7 +7888,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8006,7 +8006,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8132,7 +8132,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8250,7 +8250,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8368,7 +8368,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8501,7 +8501,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8639,7 +8639,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8763,7 +8763,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -8891,7 +8891,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9009,7 +9009,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9127,7 +9127,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9251,7 +9251,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9359,7 +9359,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9467,7 +9467,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9579,7 +9579,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9691,7 +9691,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9803,7 +9803,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -9910,7 +9910,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10022,7 +10022,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10134,7 +10134,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10252,7 +10252,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10364,7 +10364,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10476,7 +10476,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10583,7 +10583,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10695,7 +10695,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10807,7 +10807,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -10914,7 +10914,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11024,7 +11024,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11134,7 +11134,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11244,7 +11244,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11354,7 +11354,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11459,7 +11459,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11564,7 +11564,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11669,7 +11669,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11774,7 +11774,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11884,7 +11884,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -11994,7 +11994,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12110,7 +12110,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12235,7 +12235,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12345,7 +12345,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12450,7 +12450,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12556,7 +12556,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12672,7 +12672,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12788,7 +12788,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -12928,7 +12928,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13044,7 +13044,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13154,7 +13154,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13270,7 +13270,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13386,7 +13386,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13502,7 +13502,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13623,7 +13623,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13739,7 +13739,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13849,7 +13849,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -13965,7 +13965,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14081,7 +14081,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14208,7 +14208,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14324,7 +14324,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14446,7 +14446,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14568,7 +14568,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14690,7 +14690,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14820,7 +14820,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -14936,7 +14936,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15071,7 +15071,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15195,7 +15195,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15311,7 +15311,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15457,7 +15457,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15573,7 +15573,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15709,7 +15709,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15840,7 +15840,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -15956,7 +15956,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16067,7 +16067,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16199,7 +16199,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16326,7 +16326,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16457,7 +16457,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16578,7 +16578,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16699,7 +16699,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16820,7 +16820,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -16941,7 +16941,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17062,7 +17062,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17193,7 +17193,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17344,7 +17344,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17465,7 +17465,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17601,7 +17601,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17717,7 +17717,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17833,7 +17833,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -17962,7 +17962,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18103,7 +18103,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18252,7 +18252,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18409,7 +18409,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18575,7 +18575,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18727,7 +18727,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -18884,7 +18884,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19030,7 +19030,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19188,7 +19188,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19330,7 +19330,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19501,7 +19501,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19658,7 +19658,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -19848,7 +19848,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20005,7 +20005,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20162,7 +20162,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20319,7 +20319,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20465,7 +20465,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20622,7 +20622,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20769,7 +20769,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -20915,7 +20915,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21062,7 +21062,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21221,7 +21221,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21335,7 +21335,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21449,7 +21449,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21563,7 +21563,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21677,7 +21677,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21791,7 +21791,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -21905,7 +21905,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22027,7 +22027,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22146,7 +22146,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22265,7 +22265,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22379,7 +22379,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22498,7 +22498,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22616,7 +22616,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22726,7 +22726,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -22866,7 +22866,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -23001,7 +23001,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -23129,7 +23129,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -23249,7 +23249,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -23363,7 +23363,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25244,7 +25244,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25355,7 +25355,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25466,7 +25466,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25577,7 +25577,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25688,7 +25688,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25799,7 +25799,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -25910,7 +25910,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26021,7 +26021,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26132,7 +26132,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26243,7 +26243,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26354,7 +26354,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26465,7 +26465,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26576,7 +26576,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26687,7 +26687,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26798,7 +26798,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -26909,7 +26909,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27020,7 +27020,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27131,7 +27131,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27242,7 +27242,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27353,7 +27353,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27464,7 +27464,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -27575,7 +27575,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28203,7 +28203,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28450,7 +28450,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28569,7 +28569,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28688,7 +28688,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28807,7 +28807,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -28926,7 +28926,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -29045,7 +29045,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -29164,7 +29164,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -29283,7 +29283,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -29402,7 +29402,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]
@@ -29521,7 +29521,7 @@
       "named events are persisted/outboxed before projections depend on them",
       "negative authorization and security-profile tests pass",
       "applicable eventualities have recovery tests",
-      "donor provenance/parity is green where code is assimilated",
+      "external repository references remain non-authoritative and no donor code/components/assets/schemas/business logic are assimilated into production",
       "observability, audit, support and Command Centre hooks are registered",
       "implementation paths/tests/evidence are filled before CODE_PRESENT or higher"
     ]

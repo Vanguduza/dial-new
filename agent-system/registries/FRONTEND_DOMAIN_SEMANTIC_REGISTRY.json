@@ -1,0 +1,222 @@
+{
+  "registry_version": "frontend-domain-semantics-1.0",
+  "authority": "PROJECT_TRUTH_DERIVED_PLUS_OWNER_APPROVED_FRONTEND_AUTHORITY",
+  "edge_roles": [
+    "PRIMARY_CAPABILITY",
+    "DIRECT_INTERACTION",
+    "STATUS_SUMMARY",
+    "DISCOVERY_ENTRY",
+    "CONTEXT_ONLY",
+    "DEEP_LINK_ONLY",
+    "NOT_EXPOSED"
+  ],
+  "modules": {
+    "GROCERIES": {
+      "product_positioning": "GENERAL_GROCERY_AND_HOUSEHOLD_COMMERCE",
+      "product_scope_statement": "DIAL Groceries is a general grocery and household-shopping product. Fresh produce is one category and merchandising story, never the identity of the whole application.",
+      "category_scope": [
+        "FRESH_PRODUCE",
+        "PANTRY",
+        "DAIRY_AND_EGGS",
+        "MEAT_FISH_AND_PROTEINS",
+        "BAKERY",
+        "BEVERAGES",
+        "FROZEN",
+        "SNACKS",
+        "HOUSEHOLD_ESSENTIALS",
+        "PERSONAL_AND_HOME_ESSENTIALS"
+      ],
+      "freshness_positioning": "SUPPORTING_CATEGORY_AND_MERCHANDISING_STORY_NOT_PRODUCT_THESIS",
+      "brand_authority": {
+        "identity": "DIAL_GROCERIES_ORANGE_BLACK_WARM_WHITE",
+        "authority_class": "OWNER_APPROVED_PRODUCT_VISUAL_IDENTITY",
+        "palette": {
+          "primary_accent": "#F04E00",
+          "ink": "#141311",
+          "surface": "#FFFFFF",
+          "warm_surface": "#FAF7F2"
+        },
+        "semantic_colour_policy": {
+          "orange": "PRIMARY_DIAL_GROCERIES_BRAND_AND_HIGH_VALUE_ACTION_ACCENT",
+          "black": "PRIMARY_INK_ANCHOR_AND_HIGH_CONTRAST_STRUCTURE",
+          "white": "PRIMARY_SURFACE_AND_BREATHING_SPACE",
+          "green": "SUPPORT_ONLY_FOR_SEMANTIC_FRESHNESS_AVAILABILITY_SUCCESS_OR_SUSTAINABILITY_NOT_DOMINANT_BRAND"
+        },
+        "forbidden_drift": [
+          "GREEN_DOMINANT_FARM_FRESH_IDENTITY",
+          "SPECIALITY_ORGANIC_MARKET_IDENTITY",
+          "FRESH_PRODUCE_AS_WHOLE_APP_THESIS"
+        ],
+        "provenance": [
+          "OWNER_FEEDBACK_2026-09-20",
+          "OWNER_APPROVED_GROCERIES_SCREEN_REFERENCE_2026-09-19"
+        ]
+      },
+      "shopping_mode": {
+        "required_on_home": true,
+        "label": "Shopping mode",
+        "purpose": "Show and switch the current way the customer is shopping without turning Home into a fulfilment dashboard.",
+        "examples_are_non_authoritative": [
+          "DELIVERY",
+          "COLLECT"
+        ],
+        "runtime_literal_policy": "MODE_AND_AVAILABILITY_MUST_BIND_TO_AUTHORITATIVE_RUNTIME_TRUTH"
+      },
+      "subsystems": {
+        "NORMAL_SHOPPING": {
+          "feature_refs": [
+            "GROC-F001",
+            "GROC-F002",
+            "GROC-F003",
+            "GROC-F004",
+            "GROC-F005",
+            "GROC-F006",
+            "GROC-F007",
+            "GROC-F008",
+            "GROC-F009",
+            "GROC-F010",
+            "GROC-F011",
+            "GROC-F014",
+            "GROC-F015",
+            "GROC-F016",
+            "GROC-F017",
+            "GROC-F018"
+          ],
+          "semantic_invariants": [
+            "Ordinary grocery shopping covers broad grocery and household categories, catalogue discovery, basket/order and supported fulfilment choices."
+          ]
+        },
+        "PANTRY": {
+          "feature_refs": [
+            "GROC-F012"
+          ],
+          "semantic_invariants": [
+            "My Pantry models household stock/context and can support replenishment suggestions when authoritative state exists."
+          ]
+        },
+        "SCHEDULED_BASKET": {
+          "feature_refs": [
+            "GROC-F013"
+          ],
+          "semantic_invariants": [
+            "Scheduled Basket is recurring or planned basket/route delivery functionality."
+          ],
+          "semantic_guards": [
+            "Scheduled Basket is not a Grocery Round.",
+            "Do not explain Scheduled Basket using pooled member prepaid grocery purchases, voting, entitlement allocation or maturity/bulk-procurement semantics."
+          ]
+        },
+        "GROCERY_ROUNDS": {
+          "feature_refs": [
+            "GROC-F019",
+            "GROC-F020",
+            "GROC-F021",
+            "GROC-F022",
+            "GROC-F023",
+            "GROC-F024",
+            "GROC-F025",
+            "GROC-F026",
+            "GROC-F027",
+            "GROC-F028",
+            "GROC-F029",
+            "GROC-F030",
+            "GROC-F031",
+            "GROC-F032",
+            "GROC-F033",
+            "GROC-F034"
+          ],
+          "semantic_invariants": [
+            "A Grocery Round is a governed collective prepaid grocery-purchase programme over a defined plan period.",
+            "Supported configured plan durations include 3, 6, 9 and 12 months.",
+            "Members make scheduled prepaid grocery purchases or grocery credits during the plan period; the model is not a savings account or withdrawable cash pool.",
+            "Member-level accounting preserves each member grocery entitlement and group transparency.",
+            "Basket planning and equal member voting apply where the Round lifecycle requires collective decisions.",
+            "After the relevant accumulation and planning stage, purchasing power is aggregated for bulk grocery procurement.",
+            "Procured groceries are allocated against member entitlements and fulfilled as groceries; applicable Round benefits include free delivery."
+          ],
+          "semantic_guards": [
+            "Grocery Rounds are not recurring grocery delivery or a Scheduled Basket.",
+            "Grocery Rounds are not a flash group-buy, same-day neighbourhood wholesale order, savings account, investment pool or rotating cash mukando.",
+            "Do not collapse Scheduled Basket into Grocery Rounds; they are separate customer products with different lifecycle semantics.",
+            "Do not describe a Round as closing in hours merely to trigger an immediate group purchase unless authoritative Round state explicitly says so."
+          ],
+          "source_refs": [
+            "docs/dial/final-audit/25_GROCERY_ROUNDS/GROCERY_ROUNDS_MASTER_PLAN_v1.md",
+            "docs/dial/final-audit/25_GROCERY_ROUNDS/ROUND_CREDIT_MODEL_v1.md",
+            "DEC-001",
+            "DEC-007",
+            "DEC-009"
+          ]
+        }
+      },
+      "screen_policies": {
+        "SCREEN:GROCERIES:GROCERIES_HOME_ENTRY": {
+          "feature_edge_roles": {
+            "GROC-F001": "PRIMARY_CAPABILITY",
+            "GROC-F002": "DIRECT_INTERACTION",
+            "GROC-F003": "CONTEXT_ONLY",
+            "GROC-F004": "CONTEXT_ONLY",
+            "GROC-F005": "CONTEXT_ONLY",
+            "GROC-F006": "CONTEXT_ONLY",
+            "GROC-F007": "CONTEXT_ONLY",
+            "GROC-F008": "CONTEXT_ONLY",
+            "GROC-F009": "CONTEXT_ONLY",
+            "GROC-F010": "DISCOVERY_ENTRY",
+            "GROC-F011": "CONTEXT_ONLY",
+            "GROC-F012": "DISCOVERY_ENTRY",
+            "GROC-F013": "DISCOVERY_ENTRY",
+            "GROC-F014": "DISCOVERY_ENTRY",
+            "GROC-F015": "CONTEXT_ONLY",
+            "GROC-F016": "CONTEXT_ONLY",
+            "GROC-F017": "CONTEXT_ONLY",
+            "GROC-F018": "NOT_EXPOSED",
+            "GROC-F019": "DISCOVERY_ENTRY",
+            "GROC-F020": "CONTEXT_ONLY",
+            "GROC-F021": "CONTEXT_ONLY",
+            "GROC-F022": "CONTEXT_ONLY",
+            "GROC-F023": "CONTEXT_ONLY",
+            "GROC-F024": "CONTEXT_ONLY",
+            "GROC-F025": "CONTEXT_ONLY",
+            "GROC-F026": "CONTEXT_ONLY",
+            "GROC-F027": "CONTEXT_ONLY",
+            "GROC-F028": "CONTEXT_ONLY",
+            "GROC-F029": "NOT_EXPOSED",
+            "GROC-F030": "CONTEXT_ONLY",
+            "GROC-F031": "CONTEXT_ONLY",
+            "GROC-F032": "CONTEXT_ONLY",
+            "GROC-F033": "CONTEXT_ONLY",
+            "GROC-F034": "NOT_EXPOSED"
+          },
+          "provider_interaction_intents": [
+            "SEARCH_OR_BROWSE_GROCERIES",
+            "SELECT_SHOPPING_MODE",
+            "OPEN_CATEGORY",
+            "OPEN_PRODUCT",
+            "OPEN_CART",
+            "OPEN_PANTRY",
+            "OPEN_SCHEDULED_BASKET",
+            "OPEN_GROCERY_ROUNDS"
+          ],
+          "provider_command_policy": "NO_DOMAIN_COMMANDS_ON_HOME_DESIGN_PACKET",
+          "provider_action_policy": "DESIGN_SAFE_INTERACTION_INTENTS_ONLY",
+          "merchandising_balance": [
+            "GENERAL_GROCERY_DISCOVERY",
+            "HOUSEHOLD_SHOPPING",
+            "CATEGORY_BREADTH",
+            "PROMOTIONAL_OR_EDITORIAL_MERCHANDISING_WHEN_TRUTH_BACKED"
+          ],
+          "rounds_home_policy": "DISTINCTIVE_DISCOVERY_ENTRY_OR_AUTHORITATIVE_STATUS_SUMMARY_ONLY",
+          "rounds_home_prohibitions": [
+            "DO_NOT_RENDER_ROUND_ROOM",
+            "DO_NOT_RENDER_COMMAND_CENTRE",
+            "DO_NOT_INVENT_MEMBER_COUNT",
+            "DO_NOT_INVENT_BALANCE",
+            "DO_NOT_INVENT_SAVINGS_PERCENT",
+            "DO_NOT_INVENT_MATURITY_DATE"
+          ],
+          "shopping_mode_required": true
+        }
+      }
+    }
+  }
+}
