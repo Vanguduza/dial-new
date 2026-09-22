@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# recovery-trigger: control-ready-bootstrap-v2
 set -Eeuo pipefail
 umask 077
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
