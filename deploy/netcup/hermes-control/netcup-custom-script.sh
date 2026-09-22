@@ -6,7 +6,7 @@ umask 077
 # environment. This stage must remain network-free and package-manager-free.
 # The immutable payload revision is pinned here unless explicitly overridden
 # by an equally exact 40-hex revision.
-DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-133e9d33b2d61a0c39e833c5c2c468c3eb96c9dc}"
+DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-47749769cc7a1aa6db372257d3a1eafdfdd98e5a}"
 [[ "$DIAL_BOOTSTRAP_REF" =~ ^[0-9a-f]{40}$ ]] || {
   echo "REFUSE: invalid DIAL_BOOTSTRAP_REF" >&2
   exit 2
@@ -16,7 +16,7 @@ IMAGE_BOOTSTRAP=/usr/local/sbin/dial-control-image-bootstrap.sh
 RUNNER=/usr/local/sbin/dial-control-bootstrap-runner
 SERVICE=/etc/systemd/system/dial-control-bootstrap.service
 LOG=/var/log/dial-control-bootstrap.log
-EXPECTED_IMAGE_BLOB=7cc49c9b20f0ec41a9073736235802bed4b6fc58
+EXPECTED_IMAGE_BLOB=c9958168bf89582c1a685331b2d7803ae88c4967
 
 install -d -m 0755 /usr/local/sbin /etc/systemd/system /etc/systemd/resolved.conf.d
 install -d -m 0700 /var/lib/dial-control/bootstrap

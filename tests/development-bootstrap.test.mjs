@@ -287,7 +287,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).toContain("oci-cli==3.93.0");
     expect(workflow).toContain('ensure-github-admin-runner');
     expect(workflow).toContain('Final zero-touch certification');
-    expect(workflow).toContain('DIAL_EXPECTED_BOOTSTRAP_REF: 133e9d33b2d61a0c39e833c5c2c468c3eb96c9dc');
+    expect(workflow).toContain('DIAL_EXPECTED_BOOTSTRAP_REF: 47749769cc7a1aa6db372257d3a1eafdfdd98e5a');
     expect(workflow).toContain('seq 1 120');
     expect(workflow).not.toContain('seq 1 660');
     expect(workflow).toContain('.result.bootstrap_ref == $expected');
@@ -322,8 +322,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(customScript).toContain('1.1.1.1 1.0.0.1');
     expect(customScript).toContain('else\n      rc=$?');
     expect(customScript).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
-    expect(customScript).toContain('133e9d33b2d61a0c39e833c5c2c468c3eb96c9dc');
-    expect(customScript).toContain('7cc49c9b20f0ec41a9073736235802bed4b6fc58');
+    expect(customScript).toContain('47749769cc7a1aa6db372257d3a1eafdfdd98e5a');
+    expect(customScript).toContain('c9958168bf89582c1a685331b2d7803ae88c4967');
     expect(provisioningStage).not.toContain('apt-get');
     expect(provisioningStage).not.toContain('curl --proto');
 
