@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "register_id": "DIAL-DS-FFDRM-REBASE-20260922",
+  "method_id": "DIAL-FFDRM-R1",
+  "standard_id": "DIAL_FABLE_FORENSIC_PREDEVELOPMENT_STANDARD",
+  "audit_baseline": {
+    "canonical_master_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+    "consolidation_branch": "gpt/dial-all-work-consolidation-20260922",
+    "consolidation_sha": "c81ed32f8b79cb89ac7e61c4cd1af73aed03616d",
+    "remediation_branch": "gpt/ffdrm-development-system-rebase-20260922"
+  },
+  "current_state": "FORENSIC_BUILD_BLOCKED",
+  "repository_remediation_state": "ACTIVE",
+  "findings": [
+    {
+      "id": "DS-FF-001",
+      "severity": "P0",
+      "classification": "STALE_TRUTH",
+      "requirement": "One canonical repository lineage must carry both consolidated work and FFDRM authority.",
+      "observed": "PR #50 contains the 291-commit consolidated development-system lineage while PR #52 independently introduced FFDRM from master and was 291 commits behind the consolidation head.",
+      "root_cause": "Forensic-standard adoption was developed on master rather than rebased onto the retained-work consolidation lineage.",
+      "remediation": "Created this forensic rebase from consolidation SHA c81ed32... and integrated FFDRM into that lineage.",
+      "verification": [
+        "compare remediation branch against consolidation base",
+        "CI after integration PR"
+      ],
+      "disposition": "PARTIAL_REMEDIATION_AWAITING_INTEGRATION"
+    },
+    {
+      "id": "DS-FF-002",
+      "severity": "P0",
+      "classification": "AUTHORITY_BROKEN",
+      "requirement": "Every admitted project must have its own content-bound FORENSIC_BUILD_READY certificate.",
+      "observed": "The divergent FFDRM implementation used one repository-global DIAL certificate reference for all registered projects.",
+      "root_cause": "Project admission and forensic readiness were composed as repository-global state rather than project-scoped Development Pack state.",
+      "remediation": "Forensic gate now resolves projectSlug, project registry and projects/<slug>/development-pack/pack.json, synthesizing a certificate bound to project ID, baseline SHA, pack hash and FFDRM standard.",
+      "verification": [
+        "project A ready / project B missing-pack mutation test",
+        "project identity mismatch fails closed"
+      ],
+      "disposition": "FIXED_AND_EVIDENCED_REPOSITORY"
+    },
+    {
+      "id": "DS-FF-003",
+      "severity": "P0",
+      "classification": "UNREACHABLE",
+      "requirement": "Project identity and forensic authority must reach the real task execution path.",
+      "observed": "Adaptive planning and Task Execution Envelopes were DIAL-defaulted and did not bind a project-specific forensic certificate.",
+      "root_cause": "Universal project admission was added after the DIAL-specific execution path and identity was not threaded through the later boundary.",
+      "remediation": "Adaptive planner/runner and Task Execution Envelope now propagate project_slug/project_id and bind standard version plus certificate fingerprint; stale or changed authority refuses execution.",
+      "verification": [
+        "task-envelope stale-certificate checks",
+        "project-scoped plan/envelope fields",
+        "CI regression suite"
+      ],
+      "disposition": "FIXED_REPOSITORY_RUNTIME_REQUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "DS-FF-004",
+      "severity": "P0",
+      "classification": "PARTIAL",
+      "requirement": "The Development Pack must enforce FFDRM F0-F15, not only broad preparation presence.",
+      "observed": "The universal pack had GATE-00..13 but did not explicitly prove state persistence, causal reachability, secret boundaries, adversarial forensics, symbiotic closure, production reachability or executed mutation.",
+      "root_cause": "The universal pack predates the owner-adopted FFDRM forensic standard.",
+      "remediation": "Existing Development Pack remains single substrate and now appends executable F0-F15 gates; overall build_ready cannot pass while forensic gates are blocked.",
+      "verification": [
+        "standard-to-executable-gate drift test",
+        "causal-path mutation test",
+        "mandatory system symbiotic-loop mutation test"
+      ],
+      "disposition": "FIXED_AND_EVIDENCED_REPOSITORY"
+    },
+    {
+      "id": "DS-FF-005",
+      "severity": "P1",
+      "classification": "STALE_TRUTH",
+      "requirement": "Recovery qualification must test the current canonical topology.",
+      "observed": "Netcup/Oracle topology declares WireGuard while the bootstrap manifest and recovery probe still required Tailscale authentication.",
+      "root_cause": "Recovery readiness artifacts were not invalidated/reconciled when the cross-cloud overlay changed.",
+      "remediation": "Manifest, network probe, supply-chain pin, Netcup image bootstrap, recovery verifier, tests, README, green board and gap register now use canonical wg-dial WireGuard.",
+      "verification": [
+        "WireGuard state mutation test",
+        "manifest probe WIREGUARD",
+        "final live reciprocal recovery proof"
+      ],
+      "disposition": "FIXED_REPOSITORY_RUNTIME_QUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "DS-FF-006",
+      "severity": "P1",
+      "classification": "STALE_TRUTH",
+      "requirement": "Logical execution authority must survive infrastructure-provider migration.",
+      "observed": "Orchestrator provenance was hard-coded as EXTERNAL_ORACLE_ORCHESTRATOR after Netcup became canonical CONTROL_AUTHORITY.",
+      "root_cause": "Physical provider identity leaked into the logical authority contract.",
+      "remediation": "Provenance contract is provider-neutral EXTERNAL_DIAL_ORCHESTRATOR across runtime, qualification scripts and tests.",
+      "verification": [
+        "control-plane tests",
+        "readiness/fallback qualification scripts"
+      ],
+      "disposition": "FIXED_REPOSITORY_RUNTIME_REQUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "DS-FF-007",
+      "severity": "P0",
+      "classification": "RUNTIME_UNPROVEN",
+      "requirement": "DIAL Development System universal E2E independence must be proven before system FORENSIC_BUILD_READY.",
+      "observed": "Canonical universal-system specification explicitly states live universal E2E certification pending and requires DIAL product, DDE, existing non-DIAL app and clean-slate unrelated project through the same pipeline.",
+      "root_cause": "Architecture and repository foundation were completed before cross-class live conformance evidence.",
+      "remediation": "Keep DEVELOPMENT_SYSTEM Gate 13/F11/F13/F14 blocked until four-class execution, isolation mutation, release/rollback and recovery drills are evidenced.",
+      "verification": [
+        "four-class Development Pack + task dispatch receipts",
+        "cross-project isolation mutation",
+        "unrelated-project no-code-change admission"
+      ],
+      "disposition": "OPEN_BLOCKER"
+    },
+    {
+      "id": "DS-FF-008",
+      "severity": "P0",
+      "classification": "EXTERNAL_GATE",
+      "requirement": "Provider-first execution must have at least one actually usable governed provider execution path and required ingress.",
+      "observed": "Green execution board records provider-container execution surface and authenticated Cloudflare provider ingress as unresolved runtime/external proof.",
+      "root_cause": "Repository integration exists but external provider workspace/ingress qualification is incomplete.",
+      "remediation": "Qualify eligible provider execution surface, authenticated ingress and signed project-bound execution receipt on final SHA.",
+      "verification": [
+        "provider container git/auth canary",
+        "authenticated MCP ingress canary",
+        "signed venue decision and execution receipt"
+      ],
+      "disposition": "RUNTIME_QUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "DS-FF-009",
+      "severity": "P0",
+      "classification": "RUNTIME_UNPROVEN",
+      "requirement": "The development system's own project-scoped Development Pack must produce a current FORENSIC_BUILD_READY certificate.",
+      "observed": "Repository code can now derive the certificate, but the mutable control-state pack for dial-development-system has not been recompiled/evidenced against this remediation SHA.",
+      "root_cause": "Certificate is correctly runtime/content-bound and therefore cannot be truthfully manufactured from repository prose alone.",
+      "remediation": "After integration/deployment, seed/rebaseline dial project pack, record F0-F15 evidence, run forensic gate and preserve certificate/receipt.",
+      "verification": [
+        "agent:pack:status --project dial",
+        "predevelopment-forensic-gate --project dial",
+        "certificate fingerprint bound to deployed SHA"
+      ],
+      "disposition": "OPEN_BLOCKER"
+    },
+    {
+      "id": "DS-FF-010",
+      "severity": "P1",
+      "classification": "RUNTIME_UNPROVEN",
+      "requirement": "Canonical WireGuard recovery path must be exercised, not only configured.",
+      "observed": "Repository now tests WireGuard structurally; exact final-SHA reciprocal Netcup↔Oracle recovery proof is not available in this audit session.",
+      "root_cause": "Live recovery is environment evidence and cannot be proved by repository tests.",
+      "remediation": "Run overlay peer verification and bounded reciprocal recovery drill after final deployment.",
+      "verification": [
+        "wg-dial peer evidence",
+        "peer reachability",
+        "two-way bounded recovery receipt"
+      ],
+      "disposition": "RUNTIME_QUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "DS-FF-011",
+      "severity": "P1",
+      "classification": "EXTERNAL_GATE",
+      "requirement": "Independent live runtime audit requires an available authorized administration surface.",
+      "observed": "All Remote Desktop Commander device records visible to this audit were offline, so this session could not independently execute host qualification.",
+      "root_cause": "Audit connector availability, not repository implementation.",
+      "remediation": "Re-establish authorized live administration surface or run the same qualification through the canonical control plane and retain immutable evidence.",
+      "verification": [
+        "live device/control-plane connection",
+        "runtime certification receipt"
+      ],
+      "disposition": "AUDIT_ACCESS_LIMITATION"
+    },
+    {
+      "id": "DS-FF-012",
+      "severity": "P1",
+      "classification": "DELIBERATE_SCOPE",
+      "requirement": "Project preparation blockers must remain project-scoped.",
+      "observed": "DIAL product CT-1/CT-2/CT-7 contract-specificity gaps were previously treated as if they blocked universal development-system readiness.",
+      "root_cause": "Product and shared-system readiness were represented by one repository-level certificate.",
+      "remediation": "Project-scoped Development Packs/certificates separate DIAL product preparation from dial-development-system readiness. CT-1/2/7 remain real blockers for affected DIAL product work until their project pack proves the required feature-specific contracts.",
+      "verification": [
+        "independent project certificate test",
+        "system certificate does not imply product readiness"
+      ],
+      "disposition": "FIXED_SCOPE_SEPARATION_PRODUCT_GAPS_REMAIN"
+    }
+  ]
+}
