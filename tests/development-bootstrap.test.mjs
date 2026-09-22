@@ -306,6 +306,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(provisioningStage).not.toMatch(/\b(?:apt-get|curl|git)\b/);
     expect(customScript).toContain('systemctl start --no-block dial-control-bootstrap.service');
     expect(customScript).toContain('systemctl daemon-reload');
+    expect(customScript).toContain('BOOTSTRAP_STAGE=');
+    expect(customScript).toContain('OnFailure=dial-control-bootstrap-failure.service');
+    expect(customScript).toContain('openssh-server');
+    expect(customScript).toContain('1.1.1.1 1.0.0.1');
+    expect(customScript).toContain('else\n      rc=$?');
     expect(customScript).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(customScript).toContain('c22756daf6d40c146176c52d3ee69aa109b07ebf');
     expect(customScript).toContain('a068047ebfb92046935201e372da4d6df490cd1a');
@@ -318,6 +323,15 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
     expect(image).not.toContain('dial-control-bootstrap-oracle.key');
+    const oidcInstaller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/install-github-oidc-control.sh'), 'utf8');
+    expect(oidcInstaller).toContain('/home/ubuntu/.local/bin/node');
+    expect(oidcInstaller).toContain('EXPECTED_NODE_VERSION="v22.23.2"');
+    expect(oidcInstaller).not.toContain('ExecStart=/usr/local/bin/node');
+    expect(workflow).toContain('NORMAL_BOOT_UNREACHABLE');
+    expect(workflow).toContain('OIDC_BOOTSTRAP_TIMEOUT');
+    expect(workflow).toContain('sshd -t');
+    expect(workflow).toContain('netplan generate');
+    expect(workflow).toContain('findmnt --verify');
 
     expect(hub).not.toContain('\\\\nOLD_PUB=');
     expect(hub).toContain('AllowedIPs = 10.77.0.5/32');

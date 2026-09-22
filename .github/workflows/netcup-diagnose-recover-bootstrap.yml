@@ -320,6 +320,15 @@ jobs:
             cat /mnt/dial-root/root/dial-control-bootstrap-scheduled 2>/dev/null || true
             tail -n 250 /mnt/dial-root/var/log/dial-control-bootstrap.log 2>/dev/null || true
             cat /mnt/dial-root/var/lib/dial-control/bootstrap/image-bootstrap.receipt 2>/dev/null || true
+            echo '=== BOOT-CRITICAL CONFIG ==='
+            cat /mnt/dial-root/etc/fstab 2>/dev/null || true
+            cat /mnt/dial-root/etc/netplan/*.yaml 2>/dev/null || true
+            grep '^DIAL_' /mnt/dial-root/etc/environment 2>/dev/null || true
+            ls -l /mnt/dial-root/etc/systemd/system/multi-user.target.wants/ssh.service 2>/dev/null || true
+            cat /mnt/dial-root/var/lib/dial-control/bootstrap/boot-sentinel.txt 2>/dev/null || true
+            cat /mnt/dial-root/var/lib/dial-control/bootstrap/failure-snapshot.txt 2>/dev/null || true
+            cat /mnt/dial-root/var/lib/dial-control/bootstrap/runner-diagnostics.txt 2>/dev/null || true
+            cat /mnt/dial-root/var/lib/dial-control/bootstrap/stage 2>/dev/null || true
           "
 
           curl -sS --fail --location \
@@ -335,7 +344,31 @@ jobs:
             chroot /mnt/dial-root /bin/bash /tmp/netcup-custom-script.sh
             test -s /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service
             test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
+            test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-boot-sentinel.service
             test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner
+            test -x /mnt/dial-root/usr/local/sbin/dial-control-boot-sentinel
+            test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-failure-snapshot
+            SERVICE_REF=$(sed -n 's/^Environment=DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)
+            SCHEDULED_REF=$(sed -n 's/^DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)
+            SERVICE_BLOB=$(sed -n 's/^Environment=EXPECTED_IMAGE_BLOB=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)
+            SCHEDULED_BLOB=$(sed -n 's/^IMAGE_BOOTSTRAP_BLOB=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)
+            [[ "$SERVICE_REF" =~ ^[0-9a-f]{40}$ && "$SERVICE_REF" == "$SCHEDULED_REF" ]]
+            [[ "$SERVICE_BLOB" =~ ^[0-9a-f]{40}$ && "$SERVICE_BLOB" == "$SCHEDULED_BLOB" ]]
+            echo "effective_bootstrap_ref=$SERVICE_REF"
+            echo "effective_image_blob=$SERVICE_BLOB"
+            chroot /mnt/dial-root /bin/bash -n /usr/local/sbin/dial-control-bootstrap-runner
+            chroot /mnt/dial-root /bin/sh -c '. /etc/environment'
+            install -d -m 2755 /mnt/dial-root/var/log/journal 2>/dev/null || true
+            systemctl --root=/mnt/dial-root enable ssh.service >/dev/null
+            chroot /mnt/dial-root ssh-keygen -A
+            chroot /mnt/dial-root /usr/sbin/sshd -t
+            chroot /mnt/dial-root netplan generate
+            findmnt --verify --verbose --tab-file /mnt/dial-root/etc/fstab
+            systemd-analyze verify --root=/mnt/dial-root /etc/systemd/system/dial-control-bootstrap.service >/tmp/systemd-verify.txt 2>&1 || {
+              cat /tmp/systemd-verify.txt
+              echo "::error::Offline systemd bootstrap verification failed"
+              exit 37
+            }
             sync
             umount /mnt/dial-root
           "
@@ -393,16 +426,64 @@ jobs:
             exit 36
           }
 
-          for attempt in $(seq 1 240); do
-            if tcp_open 9134; then
+          boot_reached=false
+          for attempt in $(seq 1 60); do
+            SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
+            GUEST_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" || echo '{}')"
+            state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
+            guest_now="$(jq -r '.available // false' <<<"$GUEST_NOW")"
+            ssh_now=false; oidc_now=false
+            tcp_open 22 && ssh_now=true || true
+            tcp_open 9134 && oidc_now=true || true
+            if [[ "$oidc_now" == true ]]; then
               echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
               exit 0
             fi
-            if (( attempt % 12 == 0 )); then
-              echo "Waiting for repaired bootstrap listener ($attempt/240)..."
+            if [[ "$state_now" == RUNNING && ( "$guest_now" == true || "$ssh_now" == true ) ]]; then
+              boot_reached=true
+              echo "NORMAL_BOOT_REACHED state=$state_now guest_agent=$guest_now ssh=$ssh_now"
+              break
+            fi
+            if [[ "$state_now" == CRASHED || "$state_now" == SHUTOFF ]]; then
+              echo "::error::Normal Ubuntu entered terminal state $state_now"
+              break
+            fi
+            if (( attempt % 6 == 0 )); then
+              echo "NORMAL_BOOT_WAIT attempt=$attempt/60 state=$state_now guest_agent=$guest_now ssh=$ssh_now oidc=$oidc_now"
             fi
             sleep 5
           done
 
-          echo "::error::Repaired Ubuntu booted but OIDC listener did not appear within 20 minutes"
-          exit 40
+          if [[ "$boot_reached" != true ]]; then
+            echo "=== POST-BOOT SCP STATE ==="
+            api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
+            api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
+            api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
+            echo "::error::NORMAL_BOOT_UNREACHABLE: no guest agent or SSH within 5 minutes"
+            exit 40
+          fi
+
+          for attempt in $(seq 1 180); do
+            if tcp_open 9134; then
+              echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
+              exit 0
+            fi
+            SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
+            state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
+            ssh_now=false; tcp_open 22 && ssh_now=true || true
+            if [[ "$state_now" == CRASHED || "$state_now" == SHUTOFF ]]; then
+              echo "::error::Normal Ubuntu left RUNNING state while bootstrap was converging: $state_now"
+              exit 41
+            fi
+            if (( attempt % 6 == 0 )); then
+              echo "OIDC_WAIT attempt=$attempt/180 state=$state_now ssh=$ssh_now"
+            fi
+            sleep 10
+          done
+
+          echo "=== OIDC TIMEOUT SCP STATE ==="
+          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
+          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
+          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
+          echo "::error::OIDC_BOOTSTRAP_TIMEOUT: host booted but listener did not appear within 30 minutes"
+          exit 42
