@@ -14,6 +14,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: netcup-dial-control-recovery-authority
+  cancel-in-progress: true
+
 env:
   NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
   NETCUP_SCP_OIDC_BASE_URL: https://www.servercontrolpanel.de/realms/scp/protocol/openid-connect
