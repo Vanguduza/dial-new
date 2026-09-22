@@ -257,6 +257,31 @@ export function buildCanonicalScreenFeatureGraph() {
     s.feature_refs.forEach((x) => {
       if (!featureById.has(x)) throw new Error(`SUPPLEMENTAL_SCREEN_UNKNOWN_FEATURE:${s.screen_id}:${x}`);
       add(idx.screen_to_features, s.screen_id, x); add(idx.feature_to_screens, x, s.screen_id);
+      realizations.push({
+        realization_edge_id: `SFR:${x}:${hash(s.screen_id).slice(0, 12)}`,
+        screen_id: s.screen_id,
+        feature_id: x,
+        module: s.module,
+        app_families: [...s.app_family_refs].sort(),
+        app_surface_refs: [],
+        route: s.route_refs[0] || null,
+        workflow: [],
+        actions: uniq(s.action_refs || []),
+        queries: uniq(s.query_refs || []),
+        commands: uniq(s.command_refs || []),
+        events: uniq(s.event_refs || []),
+        subfeature_refs: [],
+        supporting_capability_refs: uniq(s.supporting_capability_refs || []),
+        eventuality_refs: uniq(s.eventuality_refs || []),
+        provenance: {
+          feature_realization_id: featureById.get(x)?.realization_ref || null,
+          feature_id: x,
+          screen_source_field: 'build-screen-feature-graph.mjs:supplementalScreens',
+          endpoint_registry_bound: Boolean(endpointByFeature.get(x)),
+          authority_kind: s.authority_kind || 'SUPPLEMENTAL_SCREEN_AUTHORITY',
+          source_authority_refs: uniq(s.source_authority_refs || []),
+        },
+      });
     });
     s.supporting_capability_refs.forEach((x) => { add(idx.screen_to_capabilities, s.screen_id, x); add(idx.capability_to_screens, x, s.screen_id); });
     s.app_family_refs.forEach((x) => { add(idx.screen_to_app_families, s.screen_id, x); add(idx.app_family_to_screens, x, s.screen_id); });
