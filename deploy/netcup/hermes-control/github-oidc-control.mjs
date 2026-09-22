@@ -89,7 +89,8 @@ function ubuntu(cmd, timeout=20*60*1000) {
   const uid=command('id -u ubuntu').stdout.trim();
   return command(
     'runuser -u ubuntu -- env HOME=/home/ubuntu XDG_RUNTIME_DIR=/run/user/'+uid+
-    ' DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'+uid+'/bus '+cmd,
+    ' DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'+uid+'/bus '+
+    ' PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin '+cmd,
     {timeout}
   );
 }

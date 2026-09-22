@@ -2,16 +2,16 @@
 set -Eeuo pipefail
 umask 077
 
-ROOTDEV="\${1:?root device required}"
-PAYLOAD_REF="\${2:?payload ref required}"
-IMAGE_BLOB="\${3:?image blob required}"
+ROOTDEV="${1:?root device required}"
+PAYLOAD_REF="${2:?payload ref required}"
+IMAGE_BLOB="${3:?image blob required}"
 ROOT=/mnt/dial-root
 ADMIN=ubuntu
 REPO="$ROOT/home/$ADMIN/dial-new"
 STATE="$ROOT/var/lib/dial-control/bootstrap"
 NODE_VERSION=22.23.2
 NODE_SHA256=d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307
-NODE_ARCHIVE="/tmp/dial-node-\${NODE_VERSION}.tar.xz"
+NODE_ARCHIVE="/tmp/dial-node-${NODE_VERSION}.tar.xz"
 POLICY_OLD=/tmp/policy-rc.d.old
 RESOLV_OLD=/tmp/resolv.conf.old
 BINDS=()
@@ -30,7 +30,7 @@ cleanup() {
   elif [[ "$RESOLV_HAD" == true ]]; then
     cp -a "$RESOLV_OLD" "$ROOT/etc/resolv.conf"
   fi
-  for ((i=\${#BINDS[@]}-1;i>=0;i--)); do umount -l "\${BINDS[$i]}" >/dev/null 2>&1 || true; done
+  for ((i=${#BINDS[@]}-1;i>=0;i--)); do umount -l "${BINDS[$i]}" >/dev/null 2>&1 || true; done
   sync
 }
 trap cleanup EXIT
@@ -40,6 +40,16 @@ apt_retry() {
   for attempt in $(seq 1 10); do
     if chroot "$ROOT" env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=600 "$@"; then return 0; else rc=$?; fi
     echo "prestage apt attempt=$attempt rc=$rc" >&2
+    sleep $((attempt < 6 ? attempt * 10 : 60))
+  done
+  return "$rc"
+}
+
+dpkg_retry() {
+  local rc=1
+  for attempt in $(seq 1 10); do
+    if chroot "$ROOT" dpkg --configure -a; then return 0; else rc=$?; fi
+    echo "prestage dpkg attempt=$attempt rc=$rc" >&2
     sleep $((attempt < 6 ? attempt * 10 : 60))
   done
   return "$rc"
@@ -74,7 +84,7 @@ if [[ -f "$ROOT/etc/environment" ]]; then
   sed -i 's|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME="Dial Control"|' "$ROOT/etc/environment"
 fi
 chroot "$ROOT" /bin/sh -c '. /etc/environment'
-chroot "$ROOT" dpkg --configure -a
+dpkg_retry
 apt_retry update
 apt_retry install -y --no-install-recommends \
   sudo openssh-server ca-certificates curl git jq rsync xz-utils \
@@ -133,13 +143,13 @@ git -C "$REPO" checkout --detach FETCH_HEAD
 [[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]] || { echo "repo pin mismatch" >&2; exit 4; }
 
 curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 8 --retry-all-errors \
-  -o "$NODE_ARCHIVE" "https://nodejs.org/dist/v\${NODE_VERSION}/node-v\${NODE_VERSION}-linux-x64.tar.xz"
+  -o "$NODE_ARCHIVE" "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
 printf '%s  %s\n' "$NODE_SHA256" "$NODE_ARCHIVE" | sha256sum --check --status || { echo "Node SHA mismatch" >&2; exit 4; }
-NODE_PREFIX="$ROOT/home/$ADMIN/.local/lib/node-v\${NODE_VERSION}"
+NODE_PREFIX="$ROOT/home/$ADMIN/.local/lib/node-v${NODE_VERSION}"
 rm -rf "$NODE_PREFIX"; install -d -m 0755 "$NODE_PREFIX" "$ROOT/home/$ADMIN/.local/bin"
 tar -xJf "$NODE_ARCHIVE" --strip-components=1 -C "$NODE_PREFIX"
-for binary in node npm npx corepack; do ln -sfn "../lib/node-v\${NODE_VERSION}/bin/$binary" "$ROOT/home/$ADMIN/.local/bin/$binary"; done
-[[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v\${NODE_VERSION}" ]] || exit 4
+for binary in node npm npx corepack; do ln -sfn "../lib/node-v${NODE_VERSION}/bin/$binary" "$ROOT/home/$ADMIN/.local/bin/$binary"; done
+[[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v${NODE_VERSION}" ]] || exit 4
 chroot "$ROOT" /home/$ADMIN/.local/bin/node --check /home/$ADMIN/dial-new/deploy/netcup/hermes-control/github-oidc-control.mjs
 
 uid="$(chroot "$ROOT" id -u "$ADMIN")"; gid="$(chroot "$ROOT" id -g "$ADMIN")"
@@ -253,7 +263,7 @@ rm -f "$STATE/failure-snapshot.txt" "$STATE/runner-diagnostics.txt"
 grep -qx "bootstrap_ref=$PAYLOAD_REF" "$STATE/image-bootstrap.receipt"
 grep -qx 'bootstrap_phase=CONTROL_PLANE_READY' "$STATE/image-bootstrap.receipt"
 [[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]]
-[[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v\${NODE_VERSION}" ]]
+[[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v${NODE_VERSION}" ]]
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/ssh.service"
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/dial-github-oidc-control.service"
 

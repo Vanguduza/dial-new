@@ -313,6 +313,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('bootstrap_failure');
     expect(controller).toContain('ssh_active');
     expect(controller).toContain("req.method==='GET' && req.url==='/healthz'");
+    expect(controller).toContain('PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin');
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
     expect(customScript).toContain('PROVISIONING_STAGE=NETWORK_FREE');
@@ -354,6 +355,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(image).not.toContain('DIAL_CONTROL_DISPLAY_NAME=Dial Control\\n');
     expect(image).not.toContain('dial-control-bootstrap-oracle.key');
     expect(rescuePrestager).toContain('RESCUE_OFFLINE_CONTROL_PLANE_V1');
+    expect(rescuePrestager).not.toContain('\\${'); // escaped runtime expansion
+    expect(rescuePrestager).toContain('dpkg_retry()');
     expect(rescuePrestager).toContain('RESCUE_CONTROL_PLANE_PRESTAGE=GREEN');
     expect(rescuePrestager).toContain('bootstrap_phase=CONTROL_PLANE_READY');
     expect(rescuePrestager).toContain('systemctl --root="$ROOT" enable ssh.service');
