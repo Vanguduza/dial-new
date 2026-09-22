@@ -31,7 +31,9 @@ new_head="$(cd "$NEW_REPO" && git rev-parse HEAD)"
 printf '{"mode":"%s","old_host":"%s","old_repo_head":"%s","new_repo_head":"%s","started_at":"%s"}\n'   "$MODE" "$OLD_HOST" "$old_head" "$new_head" "$(date -u +%FT%TZ)" >"$EVIDENCE/session.json"
 
 copy_state(){
-  sudo rsync -aH --numeric-ids -e "$RSYNC_SSH"     "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
+  sudo rsync -aH --numeric-ids -e "$RSYNC_SSH" \
+    --exclude 'github-oidc/' --exclude 'bootstrap/' \
+    "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
   sudo chown -R "$USER:$USER" "$CONTROL_HOME"
   sudo chmod 0700 "$CONTROL_HOME"
 }
