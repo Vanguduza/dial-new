@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readJson } from './state-store.mjs';
+import { evaluatePredevelopmentForensicReadiness } from '../bin/predevelopment-forensic-gate.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -41,11 +42,13 @@ export function evaluateDevelopmentUnblock({
   repoDir = DEFAULT_REPO,
   root,
   nowMs = Date.now(),
+  forensicResult = null,
 } = {}) {
   const gate = readJson('state/external-orchestration-gate.json', null, root);
   const heartbeat = readJson('state/external-orchestrator-heartbeat.json', null, root);
   const currentHead = gitHead(repoDir);
   const currentFingerprint = controlPlaneFingerprint(repoDir);
+  const forensic = forensicResult || evaluatePredevelopmentForensicReadiness({ repoDir });
   const heartbeatMs = Date.parse(heartbeat?.observed_at ?? '');
   const heartbeatFresh = Number.isFinite(heartbeatMs)
     && nowMs >= heartbeatMs
@@ -90,11 +93,12 @@ export function evaluateDevelopmentUnblock({
     ),
     external_orchestrator_heartbeat_fresh: heartbeatFresh,
     heartbeat_origin_valid: heartbeat?.execution_origin === 'EXTERNAL_ORACLE_ORCHESTRATOR',
+    forensic_project_ready: forensic.ok === true,
   };
   const requiredCheckNames = [
     'gate_present', 'accepted_runtime_gate', 'fallback_readiness_valid', 'external_origin', 'locked_policy',
     'control_plane_fingerprint_known', 'qualified_control_plane_unchanged',
-    'external_orchestrator_heartbeat_fresh', 'heartbeat_origin_valid',
+    'external_orchestrator_heartbeat_fresh', 'heartbeat_origin_valid', 'forensic_project_ready',
   ];
   const unblocked = requiredCheckNames.every((name) => checks[name] === true);
   const failed = requiredCheckNames.filter((name) => checks[name] !== true);
@@ -103,11 +107,12 @@ export function evaluateDevelopmentUnblock({
     schema_version: 2,
     unblocked,
     development_state: unblocked ? (fallbackReady ? 'DEVELOPMENT_RESUMABLE_THROUGH_EXACT_SONNET_FALLBACK' : 'DEVELOPMENT_RESUMABLE_THROUGH_EXTERNAL_HERMES') : 'DEVELOPMENT_BLOCKED',
-    reason: unblocked ? null : `external Hermes development-readiness gate not satisfied: ${failed.join(', ')}`,
+    reason: unblocked ? null : `DIAL development-readiness gate not satisfied: ${failed.join(', ')}`,
     repo_head: currentHead,
     control_plane_fingerprint: currentFingerprint,
     gate,
     heartbeat,
+    forensic,
     checks,
     observed_at: new Date(nowMs).toISOString(),
   };

@@ -669,7 +669,7 @@ describe('development readiness gates', () => {
   it('unblocks development through exact Sonnet when Sol identity is proven but temporarily provider-limited', () => {
     const root = temp('dial-fallback-ready'), repoDir = process.cwd(); ensureControlLayout(root); heartbeat(root);
     writeJsonAtomic('state/external-orchestration-gate.json', fallbackGate(repoDir), root);
-    const result = evaluateDevelopmentUnblock({ repoDir, root });
+    const result = evaluateDevelopmentUnblock({ repoDir, root, forensicResult: { ok: true, state: 'FORENSIC_BUILD_READY', reasons: [] } });
     expect(result.unblocked).toBe(true);
     expect(result.development_state).toBe('DEVELOPMENT_RESUMABLE_THROUGH_EXACT_SONNET_FALLBACK');
     expect(result.checks.production_green).toBe(false);

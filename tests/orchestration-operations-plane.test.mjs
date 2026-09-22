@@ -95,7 +95,7 @@ describe('strict project isolation', () => {
     const dial = getProject('dial', root);
     const dde = getProject('dde', root);
     expect(dial.manager_policy).toBe('GPT-5.6_SOL_THEN_CLAUDE_SONNET_5');
-    expect(dial.development_authority).toBe('EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY');
+    expect(dial.development_authority).toBe('FORENSIC_BUILD_READY_AND_EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY');
     expect(dde.manager_policy).toBe('DDE_SEPARATE_POLICY');
     expect(dde.repo_dir).not.toBe(dial.repo_dir);
     expect(dde.auxiliary_operations_authority).toBe('NON_AUTHORITATIVE');

@@ -1,12 +1,20 @@
 {
-  "authority_classes": [
-    "OWNER_EXPLICIT"
-  ],
-  "authorization_ids": [
-    "auth-20260922-owner-fable-forensic-predevelopment-standard"
-  ],
-  "branch": "gpt/fable-forensic-predevelopment-standard-20260922",
-  "changed_files": [
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-fable-forensic-predevelopment-standard",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "38cf4a146335f1229faeb9fd787913ce8136888aabb71d969909046b8e7613ee",
+  "owner_instruction_excerpt": "Formalize the reusable Fable Forensic Development & Remediation Method and pin it into the PRD→Deterministic Development Pack so every project must meet it before development starts.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260922-fable-forensic-predevelopment-standard",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-22T09:30:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/fable-forensic-predevelopment-standard-20260922",
+  "authorized_paths": [
     ".agents/plugins/dial-governed/skills/dial-development/SKILL.md",
     "agent-system/bin/manifest-check.mjs",
     "agent-system/bin/predevelopment-forensic-gate.mjs",
@@ -26,7 +34,6 @@
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/PROMPTING_AND_CONTEXT_PROTOCOL.md",
     "docs/dial/final-audit/MANIFEST_v2_2.json",
-    "docs/project-state/authorizations/auth-20260922-owner-fable-forensic-predevelopment-standard.json",
     "package.json",
     "tests/orchestration-adaptive-execution.test.mjs",
     "tests/orchestration-control-plane.test.mjs",
@@ -34,10 +41,24 @@
     "tests/orchestration-operations-plane.test.mjs",
     "tests/predevelopment-forensic-gate.test.mjs"
   ],
-  "content_diff_sha256": "1ddaaa34e855d050c39be5c3450ffaa2e546e0bc93df74323b34f650b45e6bff",
-  "observed_at_utc": "2026-09-22T10:43:16.791416+00:00",
-  "repository": "Vanguduza/dial-new",
-  "schema_version": 2,
-  "source_parent": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
-  "state": "AUTHORIZED_PENDING_COMMIT"
+  "change_classes": [
+    "development_standard",
+    "project_preparation_governance",
+    "project_truth_reconciliation",
+    "forensic_readiness_gate",
+    "task_envelope_binding",
+    "execution_fabric_project_binding",
+    "verification",
+    "documentation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": true,
+  "owner_control_boundary_change": true,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
 }
