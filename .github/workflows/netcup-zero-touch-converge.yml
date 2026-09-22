@@ -1,0 +1,243 @@
+name: Dial Control zero-touch converge
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dial-control-zero-touch-converge
+  cancel-in-progress: false
+
+env:
+  DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
+  OCI_USER: ${{ secrets.OCI_RECOVERY_USER_OCID }}
+  OCI_TENANCY: ${{ secrets.OCI_RECOVERY_TENANCY_OCID }}
+  OCI_FINGERPRINT: ${{ secrets.OCI_RECOVERY_FINGERPRINT }}
+  OCI_PRIVATE_KEY: ${{ secrets.OCI_RECOVERY_PRIVATE_KEY }}
+  OCI_REGION: ${{ vars.OCI_RECOVERY_REGION }}
+  OCI_COMPARTMENT: ${{ vars.OCI_RECOVERY_COMPARTMENT_OCID }}
+  OCI_OLD_CONTROL: ${{ vars.OCI_INSTANCE_DIAL_HERMES_CONTROL }}
+  OCI_VEKL: ${{ vars.OCI_INSTANCE_VEKL_WORKER }}
+  OCI_ADMIN: ${{ vars.OCI_INSTANCE_ORACLE_ADMIN }}
+  OCI_TRADING: ${{ vars.OCI_INSTANCE_VAN_TRADING_CORE }}
+
+jobs:
+  converge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - id: control
+        name: Wait for Dial Control and read convergence state
+        shell: bash
+        run: |
+          set -euo pipefail
+          body='{"action":"status"}'
+          out=''
+          for attempt in $(seq 1 24); do
+            if out="$(DIAL_CONTROL_OIDC_URL="$DIAL_CONTROL_OIDC_URL"               bash deploy/netcup/hermes-control/github-oidc-call.sh "$body" 2>/dev/null)"; then
+              break
+            fi
+            echo "Dial Control not ready yet (attempt $attempt/24)"
+            sleep 10
+          done
+          [[ -n "$out" ]] || { echo "ZERO_TOUCH_WAITING_FOR_DIAL_CONTROL"; exit 20; }
+          printf '%s\n' "$out" >"$RUNNER_TEMP/dial-control-status.json"
+
+          for key in certified recovery_ready overlay_verified rotated migration_prepare migration_cutover control_active github_admin_runner; do
+            value="$(jq -r --arg key "$key" '.result[$key] // false' "$RUNNER_TEMP/dial-control-status.json")"
+            echo "$key=$value" >>"$GITHUB_OUTPUT"
+          done
+
+          ssh_pub="$(jq -r '.result.bootstrap_ssh_public_key // empty' "$RUNNER_TEMP/dial-control-status.json")"
+          wg_pub="$(jq -r '.result.wireguard_public_key // empty' "$RUNNER_TEMP/dial-control-status.json")"
+          {
+            echo "bootstrap_ssh_public_key=$ssh_pub"
+            echo "wireguard_public_key=$wg_pub"
+          } >>"$GITHUB_OUTPUT"
+
+          echo "certified=$(jq -r '.result.certified' "$RUNNER_TEMP/dial-control-status.json")"
+
+      - name: Already certified
+        if: steps.control.outputs.certified == 'true'
+        run: |
+          echo "DIAL_CONTROL_ZERO_TOUCH=ALREADY_CERTIFIED" >>"$GITHUB_STEP_SUMMARY"
+
+      - id: enroll
+        name: Enroll Oracle peers through OCI Run Command
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.overlay_verified != 'true' && steps.control.outputs.rotated != 'true'
+        shell: bash
+        env:
+          NETCUP_SSH_PUB: ${{ steps.control.outputs.bootstrap_ssh_public_key }}
+          NETCUP_WG_PUB: ${{ steps.control.outputs.wireguard_public_key }}
+        run: |
+          set -euo pipefail
+
+          for name in OCI_USER OCI_TENANCY OCI_FINGERPRINT OCI_PRIVATE_KEY OCI_REGION OCI_COMPARTMENT OCI_OLD_CONTROL OCI_VEKL OCI_ADMIN OCI_TRADING; do
+            [[ -n "${!name:-}" ]] || {
+              echo "::error::ZERO_TOUCH_BLOCKED: required GitHub OCI credential/variable $name is not configured"
+              exit 21
+            }
+          done
+          [[ -n "$NETCUP_SSH_PUB" && -n "$NETCUP_WG_PUB" ]] || {
+            echo "::error::Dial Control bootstrap public identities are missing"
+            exit 22
+          }
+
+          python3 -m venv "$RUNNER_TEMP/oci"
+          "$RUNNER_TEMP/oci/bin/pip" install --disable-pip-version-check --quiet 'oci-cli==3.93.0'
+          OCI="$RUNNER_TEMP/oci/bin/oci"
+          KEY="$RUNNER_TEMP/oci-recovery.pem"
+          CONFIG="$RUNNER_TEMP/oci-config"
+          printf '%s\n' "$OCI_PRIVATE_KEY" >"$KEY"
+          chmod 600 "$KEY"
+          cat >"$CONFIG" <<EOF
+          [DEFAULT]
+          user=$OCI_USER
+          fingerprint=$OCI_FINGERPRINT
+          tenancy=$OCI_TENANCY
+          region=$OCI_REGION
+          key_file=$KEY
+          EOF
+          chmod 600 "$CONFIG"
+
+          script_url="https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$GITHUB_SHA/deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh"
+          ssh_b64="$(printf '%s' "$NETCUP_SSH_PUB" | base64 -w0)"
+          wg_b64="$(printf '%s' "$NETCUP_WG_PUB" | base64 -w0)"
+
+          run_peer() {
+            local host="$1" instance="$2" outvar="$3"
+            local content target cmd_id state text key
+            content="$RUNNER_TEMP/content-$host.json"
+            target="$RUNNER_TEMP/target-$host.json"
+
+            remote="set -Eeuo pipefail
+          tmp=\$(mktemp)
+          curl --proto '=https' --tlsv1.2 -fsSL --retry 5 '$script_url' -o \"\$tmp\"
+          chmod 0700 \"\$tmp\"
+          SSH_PUB=\$(printf '%s' '$ssh_b64' | base64 -d)
+          WG_PUB=\$(printf '%s' '$wg_b64' | base64 -d)
+          sudo env DIAL_HOST_ID='$host' NETCUP_WG_PUBLIC_KEY=\"\$WG_PUB\" NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY=\"\$SSH_PUB\" NETCUP_PUBLIC_IP='62.83.35.103' bash \"\$tmp\"
+          rm -f \"\$tmp\""
+
+            jq -n --arg text "$remote" '{source:{sourceType:"TEXT",text:$text},output:{outputType:"TEXT"}}' >"$content"
+            jq -n --arg instance "$instance" '{instanceId:$instance}' >"$target"
+
+            cmd_id="$("$OCI" --config-file "$CONFIG" instance-agent command create               --compartment-id "$OCI_COMPARTMENT"               --content "file://$content"               --target "file://$target"               --timeout-in-seconds 600               --query data.id --raw-output)"
+
+            state=ACCEPTED
+            for _ in $(seq 1 60); do
+              state="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get                 --command-id "$cmd_id" --instance-id "$instance"                 --query 'data."lifecycle-state"' --raw-output 2>/dev/null || true)"
+              case "$state" in
+                SUCCEEDED) break ;;
+                FAILED|TIMED_OUT|CANCELED)
+                  "$OCI" --config-file "$CONFIG" instance-agent command-execution get                     --command-id "$cmd_id" --instance-id "$instance" || true
+                  echo "::error::OCI Run Command failed for $host: $state"
+                  exit 23 ;;
+              esac
+              sleep 5
+            done
+            [[ "$state" == SUCCEEDED ]] || { echo "::error::OCI Run Command did not finish for $host: $state"; exit 24; }
+
+            text="$("$OCI" --config-file "$CONFIG" instance-agent command-execution get               --command-id "$cmd_id" --instance-id "$instance"               --query 'data.content.text' --raw-output)"
+            printf '%s\n' "$text"
+            grep -q 'ZERO_TOUCH_ORACLE_PEER=GREEN' <<<"$text" || {
+              echo "::error::peer enrollment receipt missing for $host"
+              exit 25
+            }
+            key="$(sed -n 's/^DIAL_WG_PUBLIC_KEY=//p' <<<"$text" | tail -1)"
+            [[ "$key" =~ ^[A-Za-z0-9+/]{43}=$ ]] || {
+              echo "::error::invalid WireGuard key returned by $host"
+              exit 26
+            }
+            printf -v "$outvar" '%s' "$key"
+          }
+
+          run_peer oracle-admin "$OCI_ADMIN" ADMIN_KEY
+          run_peer vekl-worker "$OCI_VEKL" VEKL_KEY
+          run_peer van-trading-core "$OCI_TRADING" TRADING_KEY
+          run_peer old-dial-hermes-control "$OCI_OLD_CONTROL" OLD_KEY
+
+          {
+            echo "oracle_admin_wg=$ADMIN_KEY"
+            echo "vekl_worker_wg=$VEKL_KEY"
+            echo "van_trading_core_wg=$TRADING_KEY"
+            echo "old_control_wg=$OLD_KEY"
+          } >>"$GITHUB_OUTPUT"
+
+          rm -f "$KEY" "$CONFIG"
+
+      - name: Configure Dial Control WireGuard hub
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.overlay_verified != 'true' && steps.control.outputs.rotated != 'true'
+        shell: bash
+        env:
+          ADMIN_KEY: ${{ steps.enroll.outputs.oracle_admin_wg }}
+          VEKL_KEY: ${{ steps.enroll.outputs.vekl_worker_wg }}
+          TRADING_KEY: ${{ steps.enroll.outputs.van_trading_core_wg }}
+          OLD_KEY: ${{ steps.enroll.outputs.old_control_wg }}
+        run: |
+          set -euo pipefail
+          body="$(jq -cn             --arg a "$ADMIN_KEY" --arg v "$VEKL_KEY" --arg t "$TRADING_KEY" --arg o "$OLD_KEY"             '{action:"configure-overlay",peers:{oracle_admin:$a,vekl_worker:$v,van_trading_core:$t,old_control:$o}}')"
+          bash deploy/netcup/hermes-control/github-oidc-call.sh "$body"
+
+      - name: Verify private overlay and SSH
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.overlay_verified != 'true' && steps.control.outputs.rotated != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}'
+
+      - name: Mark GitHub OCI recovery plane ready
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.recovery_ready != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"mark-recovery-ready"}'
+
+      - name: Rotate one-time bootstrap identities
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.rotated != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"rotate-identities"}'
+
+      - name: Prepare old Hermes state migration
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.migration_prepare != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-prepare"}'
+
+      - name: Cut over authoritative Hermes state
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.migration_cutover != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-cutover"}'
+
+      - name: Activate Dial Control
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.control_active != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activate"}'
+
+      - name: Register permanent GitHub admin runner
+        if: steps.control.outputs.certified != 'true' && steps.control.outputs.github_admin_runner != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"ensure-github-admin-runner"}'
+
+      - name: Final zero-touch certification
+        if: steps.control.outputs.certified != 'true'
+        run: |
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"certify"}'
+
+      - name: Convergence summary
+        if: always()
+        run: |
+          {
+            echo "## Dial Control zero-touch convergence"
+            echo "- source SHA: `$GITHUB_SHA`"
+            echo "- initial certified state: `${{ steps.control.outputs.certified || 'unknown' }}`"
+            echo "- initial overlay state: `${{ steps.control.outputs.overlay_verified || 'unknown' }}`"
+            echo "- initial migration cutover: `${{ steps.control.outputs.migration_cutover || 'unknown' }}`"
+            echo "- workflow run: `$GITHUB_RUN_ID`"
+          } >>"$GITHUB_STEP_SUMMARY"
