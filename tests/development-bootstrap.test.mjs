@@ -371,7 +371,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).not.toContain('</dev/tcp/127.0.0.1/9134');
     expect(rescuePrestager).toContain('sshd -t');
     expect(rescuePrestager).toContain('netplan generate');
-    expect(rescuePrestager).toContain('findmnt --verify');
+    expect(rescuePrestager).toContain('chroot "$ROOT" findmnt --verify --verbose --tab-file /etc/fstab');
+    expect(rescuePrestager).not.toContain('findmnt --verify --verbose --tab-file "$ROOT/etc/fstab"');
     expect(rescuePrestager).toContain("oci-cli==3.93.0");
     expect(rescuePrestager).toContain('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
     const oidcInstaller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/install-github-oidc-control.sh'), 'utf8');

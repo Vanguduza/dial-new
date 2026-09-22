@@ -253,7 +253,7 @@ rm -f "$ROOT/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.s
 if [[ -f "$ROOT/etc/ufw/ufw.conf" ]]; then sed -i 's/^ENABLED=.*/ENABLED=no/' "$ROOT/etc/ufw/ufw.conf"; fi
 
 chroot "$ROOT" netplan generate
-findmnt --verify --verbose --tab-file "$ROOT/etc/fstab"
+chroot "$ROOT" findmnt --verify --verbose --tab-file /etc/fstab
 systemd-analyze verify --root="$ROOT" /etc/systemd/system/dial-github-oidc-control.service >/tmp/dial-systemd-verify.txt 2>&1 || { cat /tmp/dial-systemd-verify.txt; exit 6; }
 
 . "$ROOT/etc/os-release"
