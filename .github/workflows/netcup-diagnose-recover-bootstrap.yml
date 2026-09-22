@@ -363,7 +363,35 @@ jobs:
           }
 
           echo "Starting repaired Ubuntu..."
-          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/normal-start.json
+          normal_start_ok=false
+          for attempt in $(seq 1 60); do
+            set +e
+            NORMAL_HTTP="$(curl -sS -o /tmp/normal-start.json -w '%{http_code}' -X PATCH \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/merge-patch+json" \
+              -H "accept: application/json" \
+              --data '{"state":"ON"}' \
+              "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID")"
+            rc=$?
+            set -e
+            echo "normal_start_http=$NORMAL_HTTP curl_rc=$rc attempt=$attempt"
+            if [[ "$rc" -eq 0 && "$NORMAL_HTTP" =~ ^20[0-9]$ ]]; then
+              normal_start_ok=true
+              break
+            fi
+            if [[ "$NORMAL_HTTP" == "409" ]]; then
+              echo "Netcup is still finalizing rescue deactivation; retrying normal boot..."
+              sleep 5
+              continue
+            fi
+            cat /tmp/normal-start.json 2>/dev/null || true
+            break
+          done
+          [[ "$normal_start_ok" == true ]] || {
+            cat /tmp/normal-start.json 2>/dev/null || true
+            echo "::error::Could not start repaired Ubuntu after rescue deactivation"
+            exit 36
+          }
 
           for attempt in $(seq 1 240); do
             if tcp_open 9134; then
