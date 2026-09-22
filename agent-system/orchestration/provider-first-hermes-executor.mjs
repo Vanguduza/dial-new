@@ -127,6 +127,7 @@ export async function executeProviderFirstHermesInstruction({
   instruction = "",
   root,
   packetId = null,
+  projectSlug = process.env.DIAL_PROJECT_SLUG || 'dial',
   skillActivation = null,
   requestedBy = "hermes.control",
   controlPlaneFacts = null,
@@ -146,7 +147,7 @@ export async function executeProviderFirstHermesInstruction({
     return rejectedEvent({ ...admission, admission: { ok: false, reason: `LOCAL_VENUE_REQUIRES_EXPLICIT_EXECUTOR:${admission.route?.action || "UNKNOWN"}` } }, startedAt);
   }
 
-  const result = await hermesExecutor({ repoDir, instruction, root, packetId, skillActivation, commanderAuthority });
+  const result = await hermesExecutor({ repoDir, instruction, root, projectSlug, packetId, skillActivation, commanderAuthority });
   const attempts = providerAttemptsFromHermesResult(result);
   let postRoute = null;
   if (attempts.length) {
