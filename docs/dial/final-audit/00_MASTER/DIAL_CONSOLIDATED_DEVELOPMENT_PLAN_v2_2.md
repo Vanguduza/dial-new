@@ -51,6 +51,7 @@ The same decision adds a cross-tool cohesion gate: every cross-cutting concern h
 ### 2026-09-06 canonical breadth extension — GMPC
 
 The active registry now contains **309** feature anchors: the 244-feature state this plan was adopted against plus **65 `GMPC-F*`** Growth, Marketing & Promotions Control Centre features. The GMPC architecture is adopted at `27_GROWTH_MARKETING_PROMOTIONS/` with 195 atomic feature-to-page controls. All 65 enter at `SPECIFIED`; this breadth addition does not manufacture implementation evidence and does not change the Track A / Grocery Rounds execution priority.
+DEC-039 adds Shopping breadth without adding top-level feature anchors: it composes existing Spare, Groceries and shared platform authorities through canonical Shopping screens and supporting capabilities.
 
 GMPC is horizontal Corporate commercial capability. It depends on the kernel, `PLAT-F014` margin/pricing, Finance/Ledger, consent/privacy, capacity signals, DKRF and governed external adapters. `GMPC-F200..F211` are a commercial DKRF profile over `DKRF-F001..F022`, not a competing knowledge fabric. Campaign/promotion economics therefore consume existing authorities rather than creating another pricing, money, customer or RAG source of truth.
 
@@ -208,6 +209,8 @@ not money, so Rounds does **not** consume the step-3 payment/ledger path for its
 subscriptions, and the v2.1 sequence's dependency on step 3 is weaker here than it
 looks. All sixteen features remain `SPECIFIED` on generic contracts; none is
 implemented. The vertical slice in the master plan §26 is the right first bite.
+
+**Shopping experience — DEC-039.** The canonical Shopping experience is a horizontal DIAL Consumer composition layer, not a new Feature Registry business division. The current 309-feature denominator therefore remains unchanged by DEC-039. Existing `SPARE-F*`, `GROC-F*` and `PLAT-F*` authorities are reused through `SCREEN:SHOP:*` composition surfaces. The research blueprint's `PROP-SHOP-F*` IDs are aliases only and are reconciled in `28_SHOPPING/SHOPPING_BLUEPRINT_INTEGRATION_MAP.json`. This prevents duplicate feature authority and avoids silently resetting the active VEKL research denominator. New retail-category Feature IDs are allocated only when a category's domain/commercial activation is actually admitted. Universal search/Lens and Product Media Studio are supporting cross-cutting capabilities under those existing authorities. The client no-universal-cross-branch-cart rule and the Spare agency-only model remain intact.
 
 **DKRF — `DKRF-F001..F022`.** Sits alongside the kernel as a retrieval fabric, not
 inside the commerce path. It is not on the critical path to the vertical slice and
