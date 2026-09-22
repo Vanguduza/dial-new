@@ -363,6 +363,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('findmnt --verify');
     expect(recoveryWorkflow).toContain('dial-root-verify.sh');
     expect(recoveryWorkflow).toContain("<<'VERIFY_EOF'");
+    expect(recoveryWorkflow).toContain('\n          #!/usr/bin/env bash\n');
+    expect(recoveryWorkflow).not.toContain('\n#!/usr/bin/env bash\n'); // unindented rescue heredoc
     expect(recoveryWorkflow).toContain('timeout-minutes: 90');
     expect(recoveryWorkflow.match(/^concurrency:/gm)).toHaveLength(1);
     expect(recoveryWorkflow).toContain('group: netcup-dial-control-scp-mutation');

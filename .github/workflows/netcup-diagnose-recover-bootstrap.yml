@@ -389,47 +389,47 @@ jobs:
           "${SCP[@]}" /tmp/netcup-custom-script.sh root@"$NETCUP_DIAL_CONTROL_IP":/tmp/netcup-custom-script.sh >/dev/null
 
           cat >"$RUNNER_TEMP/dial-root-verify.sh" <<'VERIFY_EOF'
-#!/usr/bin/env bash
-set -Eeuo pipefail
-ROOTDEV="$1"
-mountpoint -q /mnt/dial-root || mount "$ROOTDEV" /mnt/dial-root
-cp /tmp/netcup-custom-script.sh /mnt/dial-root/tmp/netcup-custom-script.sh
-chmod 0700 /mnt/dial-root/tmp/netcup-custom-script.sh
-chroot /mnt/dial-root /bin/bash /tmp/netcup-custom-script.sh
-
-test -s /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service
-test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
-test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-boot-sentinel.service
-test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner
-test -x /mnt/dial-root/usr/local/sbin/dial-control-boot-sentinel
-test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-failure-snapshot
-
-SERVICE_REF="$(sed -n 's/^Environment=DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
-SCHEDULED_REF="$(sed -n 's/^DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
-SERVICE_BLOB="$(sed -n 's/^Environment=EXPECTED_IMAGE_BLOB=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
-SCHEDULED_BLOB="$(sed -n 's/^IMAGE_BOOTSTRAP_BLOB=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
-[[ "$SERVICE_REF" =~ ^[0-9a-f]{40}$ && "$SERVICE_REF" == "$SCHEDULED_REF" ]]
-[[ "$SERVICE_BLOB" =~ ^[0-9a-f]{40}$ && "$SERVICE_BLOB" == "$SCHEDULED_BLOB" ]]
-echo "effective_bootstrap_ref=$SERVICE_REF"
-echo "effective_image_blob=$SERVICE_BLOB"
-
-chroot /mnt/dial-root /bin/bash -n /usr/local/sbin/dial-control-bootstrap-runner
-chroot /mnt/dial-root /bin/sh -c '. /etc/environment'
-install -d -m 2755 /mnt/dial-root/var/log/journal 2>/dev/null || true
-systemctl --root=/mnt/dial-root enable ssh.service >/dev/null
-chroot /mnt/dial-root ssh-keygen -A
-install -d -m 0755 /mnt/dial-root/run/sshd
-chroot /mnt/dial-root /usr/sbin/sshd -t
-chroot /mnt/dial-root netplan generate
-findmnt --verify --verbose --tab-file /mnt/dial-root/etc/fstab
-systemd-analyze verify --root=/mnt/dial-root /etc/systemd/system/dial-control-bootstrap.service >/tmp/systemd-verify.txt 2>&1 || {
-  cat /tmp/systemd-verify.txt
-  echo "::error::Offline systemd bootstrap verification failed"
-  exit 37
-}
-sync
-umount /mnt/dial-root
-VERIFY_EOF
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          ROOTDEV="$1"
+          mountpoint -q /mnt/dial-root || mount "$ROOTDEV" /mnt/dial-root
+          cp /tmp/netcup-custom-script.sh /mnt/dial-root/tmp/netcup-custom-script.sh
+          chmod 0700 /mnt/dial-root/tmp/netcup-custom-script.sh
+          chroot /mnt/dial-root /bin/bash /tmp/netcup-custom-script.sh
+          
+          test -s /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service
+          test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
+          test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-boot-sentinel.service
+          test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner
+          test -x /mnt/dial-root/usr/local/sbin/dial-control-boot-sentinel
+          test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-failure-snapshot
+          
+          SERVICE_REF="$(sed -n 's/^Environment=DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
+          SCHEDULED_REF="$(sed -n 's/^DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
+          SERVICE_BLOB="$(sed -n 's/^Environment=EXPECTED_IMAGE_BLOB=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
+          SCHEDULED_BLOB="$(sed -n 's/^IMAGE_BOOTSTRAP_BLOB=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
+          [[ "$SERVICE_REF" =~ ^[0-9a-f]{40}$ && "$SERVICE_REF" == "$SCHEDULED_REF" ]]
+          [[ "$SERVICE_BLOB" =~ ^[0-9a-f]{40}$ && "$SERVICE_BLOB" == "$SCHEDULED_BLOB" ]]
+          echo "effective_bootstrap_ref=$SERVICE_REF"
+          echo "effective_image_blob=$SERVICE_BLOB"
+          
+          chroot /mnt/dial-root /bin/bash -n /usr/local/sbin/dial-control-bootstrap-runner
+          chroot /mnt/dial-root /bin/sh -c '. /etc/environment'
+          install -d -m 2755 /mnt/dial-root/var/log/journal 2>/dev/null || true
+          systemctl --root=/mnt/dial-root enable ssh.service >/dev/null
+          chroot /mnt/dial-root ssh-keygen -A
+          install -d -m 0755 /mnt/dial-root/run/sshd
+          chroot /mnt/dial-root /usr/sbin/sshd -t
+          chroot /mnt/dial-root netplan generate
+          findmnt --verify --verbose --tab-file /mnt/dial-root/etc/fstab
+          systemd-analyze verify --root=/mnt/dial-root /etc/systemd/system/dial-control-bootstrap.service >/tmp/systemd-verify.txt 2>&1 || {
+            cat /tmp/systemd-verify.txt
+            echo "::error::Offline systemd bootstrap verification failed"
+            exit 37
+          }
+          sync
+          umount /mnt/dial-root
+                    VERIFY_EOF
           chmod 0700 "$RUNNER_TEMP/dial-root-verify.sh"
           "${SCP[@]}" "$RUNNER_TEMP/dial-root-verify.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/dial-root-verify.sh >/dev/null
           "${SSH[@]}" "bash /tmp/dial-root-verify.sh '$ROOTDEV'"
