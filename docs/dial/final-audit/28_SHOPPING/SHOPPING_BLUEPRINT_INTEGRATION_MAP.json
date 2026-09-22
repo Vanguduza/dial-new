@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "authority": "DEC-039",
+  "canonical_spec": "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md",
+  "shopping_is_business_division": false,
+  "screen_namespace": "SHOP",
+  "feature_registry_expansion_by_this_decision": false,
+  "note": "PROP-SHOP-F* are planning aliases from the research blueprint. They are resolved to existing canonical authorities/supporting capabilities or future activation gates; they are not canonical Feature IDs.",
+  "activated_category_profiles": [
+    "SPARE",
+    "GROCERIES"
+  ],
+  "activation_gated_profiles": [
+    "ELECTRONICS",
+    "FASHION_BEAUTY",
+    "HOME_FURNITURE",
+    "TOYS_KIDS",
+    "HARDWARE_DIY",
+    "SOLAR_POWER",
+    "AGRICULTURE",
+    "INDUSTRIAL_MRO"
+  ],
+  "transaction_invariants": {
+    "universal_cross_branch_cart": false,
+    "shopping_bag_is_projection": true,
+    "domain_transactions_remain_authoritative": true,
+    "grocery_rounds_remain_separate": true,
+    "spare_agency_only": true,
+    "dial_fulfilled_does_not_imply_goods_ownership": true
+  },
+  "aliases": [
+    {
+      "proposal_id": "PROP-SHOP-F001",
+      "resolution": "SCREEN_COMPOSITION",
+      "canonical_refs": [
+        "DIAL_CLIENT_APP_ARCHITECTURE",
+        "SPARE-F002",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F002",
+      "resolution": "COMPOSE_EXISTING_FEATURES",
+      "canonical_refs": [
+        "SPARE-F002",
+        "SPARE-F017",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F003",
+      "resolution": "SUPPORTING_CAPABILITY",
+      "canonical_refs": [
+        "SPARE-F002",
+        "SPARE-F017",
+        "GROC-F001",
+        "SPARE-F003"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F004",
+      "resolution": "FRONTEND_SCREEN_COMPOSITION",
+      "canonical_refs": [
+        "SPARE-F002",
+        "SPARE-F003",
+        "SPARE-F017",
+        "GROC-F001",
+        "GROC-F007"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F005",
+      "resolution": "COMPOSE_EXISTING_CATALOGUE_AUTHORITIES",
+      "canonical_refs": [
+        "PLAT-F001",
+        "SPARE-F004",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F006",
+      "resolution": "COMPOSE_EXISTING_OFFER_MERCHANT_AUTHORITIES",
+      "canonical_refs": [
+        "SPARE-F005",
+        "SPARE-F007",
+        "GROC-F001",
+        "GROC-F018",
+        "PLAT-F004"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F007",
+      "resolution": "RECONCILED_NO_UNIVERSAL_CART",
+      "canonical_refs": [
+        "SPARE-F008",
+        "SPARE-F009",
+        "GROC-F004",
+        "GROC-F009",
+        "PLAT-F002"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F008",
+      "resolution": "FRONTEND_CATEGORY_PROFILE_AUTHORITY",
+      "canonical_refs": [
+        "DIAL_CLIENT_APP_ARCHITECTURE"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F009",
+      "resolution": "SUPPORTING_CAPABILITY_UNDER_CATALOGUE_SELLER",
+      "canonical_refs": [
+        "SPARE-F004",
+        "SPARE-F014",
+        "GROC-F001",
+        "GROC-F018",
+        "PLAT-F004"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F010",
+      "resolution": "COMPOSE_EXISTING_IDENTITY_CATALOGUE",
+      "canonical_refs": [
+        "SPARE-F002",
+        "SPARE-F004",
+        "GROC-F001",
+        "PLAT-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F011",
+      "resolution": "EXISTING_FITMENT_AUTHORITY",
+      "canonical_refs": [
+        "SPARE-F003",
+        "SPARE-F017",
+        "PLAT-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F012",
+      "resolution": "LINKED_DOMAIN_SOLUTION_COMPOSITION",
+      "canonical_refs": [
+        "SPARE-F017"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F013",
+      "resolution": "COMPOSE_EXISTING_FULFILMENT_AUTHORITIES",
+      "canonical_refs": [
+        "SPARE-F010",
+        "SPARE-F011",
+        "GROC-F005",
+        "GROC-F006",
+        "GROC-F010",
+        "GROC-F011",
+        "GROC-F013",
+        "PLAT-F002"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F014",
+      "resolution": "COMPOSE_EXISTING_RESOLUTION_AUTHORITIES",
+      "canonical_refs": [
+        "SPARE-F012",
+        "SPARE-F013",
+        "GROC-F017",
+        "PLAT-F005",
+        "PLAT-F012"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F015",
+      "resolution": "SHARED_SELLER_SURFACE",
+      "canonical_refs": [
+        "SPARE-F014",
+        "GROC-F018",
+        "PLAT-F004"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F016",
+      "resolution": "SUPPORTING_RANKING_CAPABILITY",
+      "canonical_refs": [
+        "DEC-024",
+        "SPARE-F002",
+        "SPARE-F017",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F017",
+      "resolution": "SUPPORTING_AI_COMMERCE_CAPABILITY",
+      "canonical_refs": [
+        "SPARE-F017"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F018",
+      "resolution": "GROCERIES_EXISTING_REPLENISHMENT",
+      "canonical_refs": [
+        "GROC-F012",
+        "GROC-F013"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F019",
+      "resolution": "SHARED_NOTIFICATION_PREFERENCE_CAPABILITY",
+      "canonical_refs": [
+        "PLAT-F011",
+        "GMPC-F200"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F020",
+      "resolution": "COMPOSE_EXISTING_SUPPORT_CHANNELS",
+      "canonical_refs": [
+        "SPARE-F015",
+        "GROC-F017",
+        "PLAT-F012"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F021",
+      "resolution": "COMPOSE_EXISTING_CATALOGUE_INGEST",
+      "canonical_refs": [
+        "SPARE-F004",
+        "GROC-F001",
+        "GROC-F018",
+        "PLAT-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F022",
+      "resolution": "PRODUCT_TELEMETRY_AND_SEARCH_QUALITY",
+      "canonical_refs": [
+        "DEC-024",
+        "SPARE-F002",
+        "SPARE-F017",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F023",
+      "resolution": "SUPPORTING_CLIENT_INTENT_ENTRY",
+      "canonical_refs": [
+        "DIAL_CLIENT_APP_ARCHITECTURE",
+        "SPARE-F002",
+        "GROC-F001"
+      ]
+    },
+    {
+      "proposal_id": "PROP-SHOP-F024",
+      "resolution": "LINKED_DOMAIN_BUNDLE_COMPOSITION",
+      "canonical_refs": [
+        "SPARE-F017",
+        "SPARE-F008",
+        "PLAT-F002"
+      ]
+    }
+  ]
+}
