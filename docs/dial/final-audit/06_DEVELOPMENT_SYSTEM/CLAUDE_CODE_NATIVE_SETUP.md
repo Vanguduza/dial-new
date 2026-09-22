@@ -1,3 +1,7 @@
+# DEC-039 external-reference amendment
+
+Any references below to `dial-donor-assimilate`, donor import, or donor porting are historical/compatibility language. The skill is now a safe alias for **reference/inspiration research only** and cannot authorize code/component/asset/schema/business-logic import. Literal third-party dependency adoption requires separate owner authorization and qualification.
+
 # Claude Code Native Setup for DIAL
 
 ## Current-state finding

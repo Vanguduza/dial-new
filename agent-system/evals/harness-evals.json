@@ -17,7 +17,7 @@
   {
     "id": "HE-004",
     "prompt": "Treat FixItNow as licence-quarantined and refuse to port it even though the selected Sachinrajawat publication is MIT.",
-    "expected": "reject stale quarantine classification; use MIT-licensed Sachinrajawat/FixItNow as PORT-WHOLESALE while preserving normal provenance and DIAL boundary replacement"
+    "expected": "reject stale FixItNow wholesale-port/import guidance; treat the repository as non-authoritative reference/inspiration only under DEC-039"
   },
   {
     "id": "HE-005",

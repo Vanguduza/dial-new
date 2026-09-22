@@ -7,14 +7,12 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
 const ANTI_PATTERN_REL = 'agent-system/registries/DESIGN_ANTI_PATTERN_REGISTRY.json';
 
-// Two orthogonal axes (Rev 3.1 §6.2, Principle 5). `DONOR_ADAPT` and `EXPLORE`
-// are both true at once; one says where the design came from, the other says
-// how far the iteration has narrowed. The repository's serialized field is
-// `design_mode`, which has always carried the provenance meaning, so it stays
-// exactly where it is and `design_provenance_mode` is introduced as its
-// explicit semantic alias rather than a rename that would invalidate every
-// stored projection hash.
-export const DESIGN_PROVENANCE_MODES = Object.freeze(['NEW_DIAL_DESIGN', 'DONOR_ADAPT', 'DONOR_PRESERVE', 'LOCKED_BASELINE_REPAIR']);
+// Provenance describes whether DIAL is designing natively, designing natively with
+// non-authoritative external-reference inspiration, or repairing a locked baseline.
+// External repositories never create a port/preserve mode under DEC-039.
+export const DESIGN_PROVENANCE_MODES = Object.freeze(['NEW_DIAL_DESIGN', 'REFERENCE_INSPIRED_DIAL_NATIVE', 'LOCKED_BASELINE_REPAIR']);
+export const LEGACY_DESIGN_PROVENANCE_ALIASES = Object.freeze({ DONOR_ADAPT: 'REFERENCE_INSPIRED_DIAL_NATIVE', DONOR_PRESERVE: 'REFERENCE_INSPIRED_DIAL_NATIVE' });
+function canonicalDesignMode(mode){ return LEGACY_DESIGN_PROVENANCE_ALIASES[mode] || mode; }
 export const DESIGN_ITERATION_PHASES = Object.freeze(['EXPLORE', 'CONVERGE', 'RECONSTRUCT']);
 
 // The baseline six. Kept as a literal as well as in the registry: the registry
@@ -60,7 +58,8 @@ export function projectDesignAuthority({
   repoDir = DEFAULT_REPO,
 } = {}) {
   if (!unitMap?.product_experience_map?.applicable) throw new Error('Product Experience knowledge required for design projection');
-  if (!DESIGN_PROVENANCE_MODES.includes(designMode)) throw new Error(`unknown design provenance mode: ${designMode}`);
+  const canonicalMode = canonicalDesignMode(designMode);
+  if (!DESIGN_PROVENANCE_MODES.includes(canonicalMode)) throw new Error(`unknown design provenance mode: ${designMode}`);
   if (designIterationPhase !== null && !DESIGN_ITERATION_PHASES.includes(designIterationPhase)) {
     throw new Error(`unknown design iteration phase: ${designIterationPhase}`);
   }
@@ -70,9 +69,11 @@ export function projectDesignAuthority({
     unit_revision_hash: unitMap.unit_revision_hash,
     authority_refs: unitMap.product_experience_map.design_authorities || unitMap.design_authorities || [],
     product_experience_knowledge_hash: unitMap.product_experience_map.knowledge_hash,
-    design_mode: designMode,
+    design_mode: canonicalMode,
+    legacy_design_mode_input: canonicalMode === designMode ? null : designMode,
     locked_baseline: lockedBaseline,
-    donor_transformation_hash: donorTransformationHash,
+    external_reference_context_hash: donorTransformationHash,
+    donor_transformation_hash: null,
     prohibited_patterns: [...ENFORCED_BASELINE_PATTERNS],
     authority: 'DERIVED_DESIGN_PROJECTION',
   };
@@ -81,7 +82,7 @@ export function projectDesignAuthority({
   const antiPatterns = loadDesignAntiPatterns(repoDir);
   const guided = {
     ...base,
-    design_provenance_mode: designMode,
+    design_provenance_mode: canonicalMode,
     design_iteration_phase: designIterationPhase,
     prohibited_patterns: antiPatterns.enforced_baseline,
     guided_prohibited_patterns: antiPatterns.guided_additional,

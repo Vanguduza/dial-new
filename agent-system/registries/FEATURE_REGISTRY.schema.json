@@ -156,6 +156,14 @@
       },
       "support_profile": {
         "type": "string"
+      },
+      "donor_refs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "uniqueItems": true,
+        "description": "Legacy-stable reference/source identifiers. DONOR-* and REF-* values are non-authoritative external references under DEC-039; SERVICE-* and SOURCE-* values retain their separately governed integration/source semantics. This field never grants implementation or design authority."
       }
     }
   }

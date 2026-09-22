@@ -29,6 +29,8 @@ import {
   buildProductionBindingContract,
   lintCandidateFacts,
 } from './frontend-generation-architecture.mjs';
+import { compileInteractionMotionIntelligence, validateInteractionArtifactAgainstIntelligence } from './interaction-motion-intelligence.mjs';
+import { compileFrontendDesignSynthesis, evaluateDesignSynthesisCandidate } from './frontend-design-synthesis.mjs';
 import { StitchAdapter } from './stitch-adapter.mjs';
 import {
   STITCH_PROOF_RELS,
@@ -54,7 +56,10 @@ function certificationRel(taskId) { return `execution/tasks/${taskId}/stitch-scr
 function workerEvidenceRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence.json`; }
 function workerEvidenceDirRel(taskId) { return `execution/tasks/${taskId}/stitch-worker-evidence`; }
 function visualAuthorityRel(taskId) { return `execution/tasks/${taskId}/visual-authority.json`; }
+function visualTruthLintRel(taskId) { return `execution/tasks/${taskId}/visual-truth-lint.json`; }
+function designSynthesisLintRel(taskId) { return `execution/tasks/${taskId}/design-synthesis-lint.json`; }
 function interactionMotionRel(taskId) { return `execution/tasks/${taskId}/stitch-interaction-motion.json`; }
+function interactionIntelligenceRel(taskId) { return `execution/tasks/${taskId}/interaction-motion-intelligence.json`; }
 function interactionAcceptanceRel(taskId) { return `execution/tasks/${taskId}/interaction-acceptance.json`; }
 function experienceAuthorityRel(taskId) { return `execution/tasks/${taskId}/experience-authority.json`; }
 function productionBindingRel(taskId) { return `execution/tasks/${taskId}/production-binding-contract.json`; }
@@ -64,7 +69,7 @@ function rawSha256(body) { return crypto.createHash('sha256').update(Buffer.from
 function repositorySha(repoDir) { try { return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoDir, encoding: 'utf8' }).trim(); } catch { return null; } }
 
 function designModeForFdep(fdep) {
-  if (fdep?.donor_frontend_reuse_projection?.reuse_mode && fdep.donor_frontend_reuse_projection.reuse_mode !== 'REJECT') return 'DONOR_ADAPT';
+  if ((fdep?.external_reference_inspiration_projections || []).length) return 'REFERENCE_INSPIRED_DIAL_NATIVE';
   return fdep?.presentation_decision?.execution_mode === 'SYNTHESIZE' ? 'NEW_DIAL_DESIGN' : 'EXISTING_DIAL_DESIGN';
 }
 
@@ -166,7 +171,7 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
   if (!targetSurface) throw new Error(`STITCH_TARGET_SURFACE_NOT_DECLARED:${targetSurfaceId}`);
   const creativeStrategy = fdep.creative_screen_generation?.surfaces?.[targetSurfaceId] || null;
   const canonicalPacket = fdep.frontend_generation_context?.content_hash
-    ? buildCanonicalStitchVisualPacket({ fdep, brief, blindReferenceMode: false })
+    ? buildCanonicalStitchVisualPacket({ repoDir, fdep, brief, blindReferenceMode: false })
     : null;
   const canonicalPrompt = canonicalPacket ? renderStitchVisualProductionPrompt({ packet: canonicalPacket }) : null;
   const providerDataPolicy = {
@@ -219,7 +224,7 @@ export function buildStitchDesignPrompt({ repoDir, fdep, brief, surfaceId = null
     'Generate the primary normal/READY composition only. Do not render lifecycle controls, state switchers, state matrices, loading/error/permission/degraded variants, or operational status panels. DIAL AEF implements and certifies the complete FDEP state matrix after provider-design admission.',
     'When authoritative literal data is absent, use only non-data-bearing structure and product-facing labels implied directly by the governed outcome; never insert example/demo/placeholder/realistic-looking values.',
     'Preserve responsive/accessibility intent and the Premium Solutions Environment characteristics: clean modern composition, generous breathing room, restrained typography, sophisticated neutral surfaces, subtle depth, high confidence and human premium polish.',
-    'Prefer static self-contained markup: no scripts, inline event handlers, remote assets, remote URLs, iframes, service workers or executable browser behavior. DIAL treats all provider output as non-authoritative evidence and sanitizes it before admission.',
+    'Prefer static markup with no scripts, inline event handlers, iframes, service workers or executable browser behavior. Provider-generated/provider-curated visual image assets are allowed when the Design Synthesis visual-storytelling contract requires imagery; do not use arbitrary third-party remote URLs or let image content imply unverified business facts. DIAL treats provider output as non-authoritative evidence and sanitizes it before admission.',
     JSON.stringify(projection),
   ].join('\n');
 }
@@ -662,7 +667,7 @@ export function admitStitchDesignStage({
     requiredStatesPresent: evidence.required_states_present,
     stateCoverageMode,
     primaryCompositionPresent: evidence.primary_composition_present,
-    donorSemanticsPreserved: evidence.donor_semantics_preserved !== false,
+    externalReferenceNonAuthorityPreserved: evidence.external_reference_non_authority !== false,
     designNormalizationEvidence: normalization,
     changeBudgetSatisfied: evidence.change_budget_satisfied,
   });
@@ -837,6 +842,17 @@ export function freezeAcceptedStitchVisualAuthority({
   if (!selectedSurface || !surfaces[selectedSurface]) throw new Error('STITCH_VISUAL_AUTHORITY_SURFACE_SELECTION_REQUIRED');
   const artifact = surfaces[selectedSurface];
   if (!artifact.provider_locator?.project_id || !artifact.provider_locator?.screen_id) throw new Error('STITCH_VISUAL_AUTHORITY_PROVIDER_LOCATOR_REQUIRED');
+  if (!artifact.raw_html?.rel) throw new Error('STITCH_VISUAL_TRUTH_CONTRACT_SOURCE_REQUIRED');
+  const rawHtml = fs.readFileSync(resolveControlPath(artifact.raw_html.rel, root), 'utf8');
+  const truthContract = extractVisualTruthClaimsFromHtml(rawHtml);
+  if (truthContract.status !== 'PARSED') throw new Error(`STITCH_VISUAL_TRUTH_CONTRACT_${truthContract.status}`);
+  const truthLiteralLint = lintCandidateFacts({ generationContext: fdep.frontend_generation_context, candidateFacts: truthContract.claims });
+  writeJsonAtomic(visualTruthLintRel(taskId), { ...truthLiteralLint, provider_contract_hash: truthContract.content_hash, surface_id: selectedSurface }, root);
+  if (truthLiteralLint.status !== 'PASSED') throw new Error(`STITCH_VISUAL_TRUTH_LINT_FAILED:${truthLiteralLint.findings.map((x)=>x.finding_id).join(',')}`);
+  const designSynthesis = compileFrontendDesignSynthesis({ repoDir, generationContext: fdep.frontend_generation_context });
+  const designSynthesisLint = evaluateDesignSynthesisCandidate({ synthesis: designSynthesis, html: rawHtml });
+  writeJsonAtomic(designSynthesisLintRel(taskId), { ...designSynthesisLint, surface_id: selectedSurface }, root);
+  if (designSynthesisLint.status !== 'PASSED') throw new Error(`STITCH_DESIGN_SYNTHESIS_LINT_FAILED:${designSynthesisLint.findings.map((x)=>x.finding_id).join(',')}`);
   const frozen = freezeVisualAuthorityArtifact({
     generationContext: fdep.frontend_generation_context,
     candidate: {
@@ -849,6 +865,8 @@ export function freezeAcceptedStitchVisualAuthority({
       structure_map_ref: null,
     },
     critique,
+    truthLiteralLint,
+    designSynthesisLint,
     promotedBy,
     promotionAuthority,
   });
@@ -859,11 +877,42 @@ export function freezeAcceptedStitchVisualAuthority({
     task_id: taskId,
     surface_id: selectedSurface,
     accepted_candidate_hash: accepted.candidate_hash,
+    truth_literal_lint_hash: truthLiteralLint.content_hash,
+    design_synthesis_lint_hash: designSynthesisLint.content_hash,
+    design_synthesis_hash: designSynthesis.content_hash,
+    provider_truth_contract_hash: truthContract.content_hash,
     frozen_at: now(),
   });
   writeJsonAtomic(visualAuthorityRel(taskId), proof, root);
   appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_VISUAL_AUTHORITY_FROZEN', task_id: taskId, surface_id: selectedSurface, visual_authority_hash: proof.content_hash, at: proof.frozen_at }, root);
   return proof;
+}
+
+export function extractVisualTruthClaimsFromHtml(html='') {
+  const source=String(html||'');
+  const match=source.match(/<script[^>]*id=["']dial-visual-truth-claims["'][^>]*>([\s\S]*?)<\/script>/i)
+    || source.match(/<script[^>]*type=["']application\/json["'][^>]*id=["']dial-visual-truth-claims["'][^>]*>([\s\S]*?)<\/script>/i);
+  if(!match) return {found:false,status:'MISSING',claims:[],content_hash:null,error:null};
+  try {
+    const value=JSON.parse(match[1].trim());
+    const claims=Array.isArray(value?.claims)?value.claims:[];
+    return {found:true,status:'PARSED',claims,value,content_hash:hashObject(value),error:null};
+  } catch(error) {
+    return {found:true,status:'INVALID_JSON',claims:[],value:null,content_hash:null,error:String(error?.message||error)};
+  }
+}
+
+export function extractInteractionContractFromHtml(html='') {
+  const source=String(html||'');
+  const match=source.match(/<script[^>]*id=["']dial-interaction-contract["'][^>]*>([\s\S]*?)<\/script>/i)
+    || source.match(/<script[^>]*type=["']application\/json["'][^>]*id=["']dial-interaction-contract["'][^>]*>([\s\S]*?)<\/script>/i);
+  if(!match) return {found:false,status:'MISSING',value:null,content_hash:null,error:null};
+  try {
+    const value=JSON.parse(match[1].trim());
+    return {found:true,status:'PARSED',value,content_hash:hashObject(value),error:null};
+  } catch(error) {
+    return {found:true,status:'INVALID_JSON',value:null,content_hash:null,error:String(error?.message||error)};
+  }
 }
 
 export async function executeStitchInteractionMotionStage({
@@ -883,7 +932,10 @@ export async function executeStitchInteractionMotionStage({
   if (!currentSha || visualAuthority.repository_sha !== currentSha || !evidenceHashMatches(visualAuthority)) throw new Error('STITCH_VISUAL_AUTHORITY_STALE_OR_TAMPERED');
   const fdepCheck = fdepGuard({ repoDir, root, packet: fdep });
   if (!fdepCheck?.ok) throw new Error(`STITCH_INTERACTION_STALE_FDEP:${(fdepCheck?.reasons || []).join(',')}`);
-  const packet = buildCanonicalInteractionMotionPacket({ fdep, visualAuthority });
+  const intelligence=compileInteractionMotionIntelligence({repoDir,generationContext:fdep.frontend_generation_context,visualAuthority,preflight:fdep.interaction_design_preflight||null});
+  writeJsonAtomic(interactionIntelligenceRel(taskId),intelligence,root);
+  const packet = buildCanonicalInteractionMotionPacket({ repoDir, fdep, visualAuthority });
+  if(packet.interaction_intelligence_hash!==intelligence.content_hash) throw new Error('INTERACTION_INTELLIGENCE_PACKET_HASH_MISMATCH');
   const prompt = renderInteractionMotionPrompt({ packet });
   const stitch = adapter || new StitchAdapter({ enabled: true, env });
   const health = await stitch.health();
@@ -901,6 +953,7 @@ export async function executeStitchInteractionMotionStage({
   const htmlArtifact = await artifactDownloader(refined.html_url, { maxBytes: 2_000_000 });
   const imageArtifact = await artifactDownloader(refined.image_url, { maxBytes: 8_000_000 });
   const rawHtml = Buffer.from(htmlArtifact.body).toString('utf8');
+  const structuredContract=extractInteractionContractFromHtml(rawHtml);
   const sanitization = sanitizeDesignArtifactForEvidence({ content: rawHtml, mimeType: htmlArtifact.content_type || 'text/html' });
   const rawStored = persistPrivateArtifact(root, taskId, 'interaction-motion-raw.html', Buffer.from(htmlArtifact.body));
   if (!sanitization.ok) throw new Error(`STITCH_INTERACTION_QUARANTINED:${sanitization.sanitized_quarantine.violations.join(',')}`);
@@ -915,7 +968,9 @@ export async function executeStitchInteractionMotionStage({
     task_id: taskId,
     surface_id: visualAuthority.surface_id,
     visual_authority_hash: visualAuthority.content_hash,
+    interaction_intelligence_hash: intelligence.content_hash,
     interaction_motion_packet_hash: packet.packet_hash,
+    structured_contract: structuredContract,
     provider_locator: { project_id: refined.project_id || visualAuthority.project_id, screen_id: refined.screen_id },
     artifacts: {
       raw_html: { ...rawStored, content_type: htmlArtifact.content_type || null, quarantine_violations: sanitization.raw_quarantine.violations },
@@ -940,12 +995,18 @@ export function acceptStitchInteractionMotionStage({
   promotedBy = 'SYSTEM_AFTER_ACCEPTANCE',
   promotionAuthority = 'AUTHORIZED_DESIGN_AUTHORITY',
 } = {}) {
-  if (!repoDir || !taskId || !interactionArtifact) throw new Error('STITCH_INTERACTION_ACCEPTANCE_INPUTS_REQUIRED');
+  if (!repoDir || !taskId) throw new Error('STITCH_INTERACTION_ACCEPTANCE_INPUTS_REQUIRED');
   const fdep = readJson(`execution/tasks/${taskId}/frontend-design-execution-packet.json`, null, root);
   const visualAuthority = readJson(visualAuthorityRel(taskId), null, root);
   const stage = readJson(interactionMotionRel(taskId), null, root);
-  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN' || !stage || !evidenceHashMatches(stage)) throw new Error('STITCH_INTERACTION_ACCEPTANCE_GOVERNED_INPUTS_MISSING');
-  if (stage.visual_authority_hash !== visualAuthority.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_BINDING_INVALID');
+  const intelligence=readJson(interactionIntelligenceRel(taskId), null, root);
+  if (!fdep?.frontend_generation_context || visualAuthority?.status !== 'FROZEN' || !stage || !evidenceHashMatches(stage) || !intelligence?.content_hash) throw new Error('STITCH_INTERACTION_ACCEPTANCE_GOVERNED_INPUTS_MISSING');
+  if (stage.visual_authority_hash !== visualAuthority.content_hash || stage.interaction_intelligence_hash!==intelligence.content_hash) throw new Error('STITCH_INTERACTION_VISUAL_AUTHORITY_BINDING_INVALID');
+  interactionArtifact=interactionArtifact||stage.structured_contract?.value||null;
+  if(!interactionArtifact) throw new Error('STITCH_INTERACTION_STRUCTURED_CONTRACT_REQUIRED');
+  interactionArtifact.content_hash=interactionArtifact.content_hash||hashObject({...interactionArtifact,content_hash:null});
+  const acuityValidation=validateInteractionArtifactAgainstIntelligence({intelligence,interactionArtifact});
+  if(!acuityValidation.ok) throw new Error(`STITCH_INTERACTION_DESIGN_ACUITY_FAILED:${acuityValidation.failures.join(',')}`);
   const candidateFacts = interactionArtifact.candidate_facts || [];
   const truthLint = lintCandidateFacts({ generationContext: fdep.frontend_generation_context, candidateFacts });
   if (truthLint.status !== 'PASSED') throw new Error(`STITCH_INTERACTION_TRUTH_LINT_FAILED:${truthLint.findings.map((x) => x.finding_id).join(',')}`);
@@ -964,7 +1025,7 @@ export function acceptStitchInteractionMotionStage({
   writeJsonAtomic(interactionAcceptanceRel(taskId), acceptance, root);
   writeJsonAtomic(experienceAuthorityRel(taskId), experience, root);
   appendJsonl('events/adaptive-execution.jsonl', { event: 'STITCH_EXPERIENCE_AUTHORITY_FROZEN', task_id: taskId, experience_authority_hash: experience.content_hash, at: experience.frozen_at }, root);
-  return { acceptance, truth_lint: truthLint, experience_authority: experience };
+  return { acceptance, truth_lint: truthLint, design_acuity_validation: acuityValidation, experience_authority: experience };
 }
 
 export function compileStitchProductionBindingContract({ repoDir, root = DEFAULT_CONTROL_HOME, taskId, bindings = {} } = {}) {

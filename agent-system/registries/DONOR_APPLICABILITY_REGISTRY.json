@@ -1,68 +1,37 @@
 {
   "schema_version": 1,
-  "registry_version": "dial-aef-donor-1",
-  "authority": "DERIVED_ENFORCEMENT_PROJECTION",
+  "registry_version": "dial-external-reference-1",
+  "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE_REGISTRY",
+  "decision_ref": "DEC-039",
+  "policy_hash": "225f7889fb525df571e172935635185cdeb7555017b154b32f86da25286a62dc",
   "source_hash": "b85618a3883475d7de2c2a2156af9b7f6fb3b9200c514280e2c428d76fa4c31e",
   "donors": [
     {
       "schema_version": 1,
       "donor_id": "DIAL-EPC-TRANSITION-NATIVE",
-      "authority_refs": [
-        "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
-      ],
+      "classification": "DIAL_NATIVE_CANONICAL_NOT_EXTERNAL_REFERENCE",
       "applicable_divisions": [
         "SPARE"
       ],
-      "upstream": {
-        "repository": "DIAL EPC + hero/CGI/line-art/exploded transition engine",
-        "canonical_url": null,
-        "pinned_revision": null
-      },
-      "license": {
-        "status": "NOT_REQUIRED"
-      },
-      "adoption_mode": "DIAL-NATIVE-FROZEN-SPECIALIST-CONTRACT",
-      "transformation": {
-        "preserve": [
-          "exact vehicle resolution",
-          "hero to CGI to line-art to exploded-system transition",
-          "invisible visual hit map",
-          "vehicle-scoped EPC category/group/diagram/parts navigation",
-          "My Garage visual and direct-EPC entry"
-        ],
-        "adapt": [
-          "The attached catalog-agent prompt and vehicle-to-EPC integration blueprint are frozen integration contracts. Commerce frontend wraps around these APIs/flows without altering them."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "visible hotspot dots",
-          "Technical as customer-visible stage",
-          "Play button",
-          "raw source node URLs"
-        ]
-      },
-      "source_of_truth_exclusions": [
-        "visible hotspot dots",
-        "Technical as customer-visible stage",
-        "Play button",
-        "raw source node URLs"
-      ],
-      "sanitization_policy_id": "dial-donor-egress-1",
-      "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "db775371fadfce29be6891e24c8a5dcceb29394880e494a68c183e4168c058c7"
+      "canonical_authority_refs": [],
+      "reference_policy": "NOT_APPLICABLE_DIAL_NATIVE",
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "note": "This historical matrix row describes DIAL-native frozen contracts; authority comes from DIAL canon, never from donor/reference policy.",
+      "authority": "DERIVED_REFERENCE_CLASSIFICATION",
+      "projection_hash": "a970617cfe3b44d1aaf75bcfbee002090e348f700477037e705e359595ef66e5"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-ACESINSPECTOR",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -73,40 +42,47 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-VALIDATION-CONCEPTS-AND-TESTS",
-      "transformation": {
-        "preserve": [
-          "ACES validation",
-          "catalogue quality checks",
-          "source-feed diagnostics"
-        ],
-        "adapt": [
-          "Port validation concepts/test fixtures into DIAL ingestion workers."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "Windows UI/runtime as production service"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "ACES validation",
+        "catalogue quality checks",
+        "source-feed diagnostics"
+      ],
+      "reference_notes": [
+        "Port validation concepts/test fixtures into DIAL ingestion workers."
+      ],
+      "anti_patterns_and_exclusions": [
         "Windows UI/runtime as production service"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "271c156cf48ba8805dcceaa1a97e43fdb02d85e13895f49eb3fe26870cdddcac"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "6671c0d6f794f43cab8a9ea3a828cd182b49374ee97e3837d5e7d01ff2a2554c"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-ACESLINT",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -117,40 +93,47 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-VALIDATION-ALGORITHMS-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "duplicate/overlap detection",
-          "vehicle/attribute validity",
-          "part-type/position checks"
-        ],
-        "adapt": [
-          "Use in supplier-feed landing/normalize/QA before canonical FitmentClaims are published."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "as canonical database"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "duplicate/overlap detection",
+        "part-type/position checks",
+        "vehicle/attribute validity"
+      ],
+      "reference_notes": [
+        "Use in supplier-feed landing/normalize/QA before canonical FitmentClaims are published."
+      ],
+      "anti_patterns_and_exclusions": [
         "as canonical database"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "3beae8b7dd408616f3fe4b0c81b7701db88b6b0120002cb3337778c1fb7fb93f"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "bf3af77e7d94897e4b1cda97a5299b7e9e9d660c2d2e4d93217056b905eef685"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-CAR-ECOMMERCE",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -161,53 +144,57 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-WORKFLOW-ALGORITHM-MOBILE-PATTERNS",
-      "transformation": {
-        "preserve": [
-          "automotive spare-parts workflow patterns",
-          "visual part recognition workflow",
-          "supplier/inventory operational ideas",
-          "delivery/tracking workflow reference",
-          "AI support/recommendation patterns",
-          "Kotlin Android commerce patterns"
-        ],
-        "adapt": [
-          "Treat as functional automotive donor, not primary frontend visual donor."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "Spring backend authority",
-          "Stripe implementation",
-          "its auth/database as DIAL authority",
-          "its Angular visual design as DIAL target"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "AI support/recommendation patterns",
+        "Kotlin Android commerce patterns",
+        "automotive spare-parts workflow patterns",
+        "delivery/tracking workflow reference",
+        "supplier/inventory operational ideas",
+        "visual part recognition workflow"
+      ],
+      "reference_notes": [
+        "Treat as functional automotive donor, not primary frontend visual donor."
+      ],
+      "anti_patterns_and_exclusions": [
         "Spring backend authority",
         "Stripe implementation",
-        "its auth/database as DIAL authority",
-        "its Angular visual design as DIAL target"
+        "its Angular visual design as DIAL target",
+        "its auth/database as DIAL authority"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "b20cdf672971550e618d351b2f7bf55c362ae44ec7ea0067b77cb3ebcc91ac96"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "34b9c62bba2271426180638fb981bd72dfaf457042b3630fa464397200256d96"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-MERCUR-CURRENT",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
-        "SPARE",
-        "GROCERIES"
+        "GROCERIES",
+        "SPARE"
       ],
       "upstream": {
         "repository": "mercurjs/mercur",
@@ -215,50 +202,55 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-MODULE-WORKFLOW-UX",
-      "transformation": {
-        "preserve": [
-          "multi-vendor marketplace decomposition",
-          "vendor/seller operations",
-          "offer/seller relationships",
-          "supplier marketplace workflow patterns",
-          "marketplace administration patterns"
-        ],
-        "adapt": [
-          "Shop-Ecommerce owns customer-facing visual composition; Mercur contributes marketplace/supplier behavior beneath DIAL contracts."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "as second DIAL commerce source of truth",
-          "as primary consumer visual direction",
-          "identity/payment/ledger/delivery authority"
-        ]
-      },
-      "source_of_truth_exclusions": [
-        "as second DIAL commerce source of truth",
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "marketplace administration patterns",
+        "multi-vendor marketplace decomposition",
+        "offer/seller relationships",
+        "supplier marketplace workflow patterns",
+        "vendor/seller operations"
+      ],
+      "reference_notes": [
+        "Shop-Ecommerce owns customer-facing visual composition; Mercur contributes marketplace/supplier behavior beneath DIAL contracts."
+      ],
+      "anti_patterns_and_exclusions": [
         "as primary consumer visual direction",
+        "as second DIAL commerce source of truth",
         "identity/payment/ledger/delivery authority"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "1b50b7f240efa295efb156bf6c0a0621351d669daaffaa462186bd7f0469a29b"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "7897255a8a67fd1de785f2b7cd98251aa5cb3f05bfc79de1b9dc5267de02f40b"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-NIMARA",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
-        "SPARE",
-        "GROCERIES"
+        "GROCERIES",
+        "SPARE"
       ],
       "upstream": {
         "repository": "mirumee/nimara-ecommerce",
@@ -266,46 +258,53 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-UX-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "premium product detail composition",
-          "catalogue polish",
-          "cart/account microinteractions",
-          "responsive UX quality"
-        ],
-        "adapt": [
-          "Use to improve DIAL visual/interaction quality without replacing the selected Shop-Ecommerce base composition."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "commerce backend authority"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "cart/account microinteractions",
+        "catalogue polish",
+        "premium product detail composition",
+        "responsive UX quality"
+      ],
+      "reference_notes": [
+        "Use to improve DIAL visual/interaction quality without replacing the selected Shop-Ecommerce base composition."
+      ],
+      "anti_patterns_and_exclusions": [
         "commerce backend authority"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "48ae0f52238ef7898712c0383542c49ace5fd219fd1912f3c6e356f28e5c8772"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "d766c2e188fc4d2950ece93dcea24b7f22764298a926d0bb362cdbff0b2c3213"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-QUOMATION-VIN",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
+        "FLEET",
         "SPARE",
-        "VHUB",
-        "FLEET"
+        "VHUB"
       ],
       "upstream": {
         "repository": "Quomation/vin-decoder",
@@ -313,42 +312,49 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-UTILITY",
-      "transformation": {
-        "preserve": [
-          "VIN structural validation",
-          "check digit",
-          "WMI/manufacturer",
-          "region",
-          "model-year candidate"
-        ],
-        "adapt": [
-          "First-pass local validator only; exact fitment remains DIAL catalogue/fitment evidence."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "claim exact trim/equipment/build sheet for arbitrary makes"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "VIN structural validation",
+        "WMI/manufacturer",
+        "check digit",
+        "model-year candidate",
+        "region"
+      ],
+      "reference_notes": [
+        "First-pass local validator only; exact fitment remains DIAL catalogue/fitment evidence."
+      ],
+      "anti_patterns_and_exclusions": [
         "claim exact trim/equipment/build sheet for arbitrary makes"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "837227949ef52c7c46153315435da9de89ba6c5c611c66f1e6ccac3a2c2ec882"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "ab75e5b2347f2ba9f8854f6dda7f33c1138aa25502e64ea5fadf04ecf64978df"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-SANDPIM",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -359,44 +365,51 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "SCHEMA-ALGORITHM-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "ACES/PIES structure",
-          "fitment/product data modeling",
-          "automotive PIM concepts"
-        ],
-        "adapt": [
-          "Feed DIAL canonical Catalogue/Fitment design and ingestion validation."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "as DIAL Catalogue SoR"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "ACES/PIES structure",
+        "automotive PIM concepts",
+        "fitment/product data modeling"
+      ],
+      "reference_notes": [
+        "Feed DIAL canonical Catalogue/Fitment design and ingestion validation."
+      ],
+      "anti_patterns_and_exclusions": [
         "as DIAL Catalogue SoR"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "32da172b84338772fc09fbd1243fc89a629c6f295fcaffd3c0aefc837369b639"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "f2faab838da7ada693dbb5fafa9997a6858c2f5f3f030186551adf305fbd97d4"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-SHOP-ECOMMERCE-FRONTEND",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
-        "SPARE",
-        "GROCERIES"
+        "GROCERIES",
+        "SPARE"
       ],
       "upstream": {
         "repository": "jatolentino/Shop-Ecommerce",
@@ -404,57 +417,59 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "PORT-SELECTED-FRONTEND-UX-UI",
-      "transformation": {
-        "preserve": [
-          "public ecommerce page composition",
-          "catalogue/category browsing presentation",
-          "product card and product detail composition",
-          "search/filter/favourites/cart interaction patterns",
-          "customer account/order tracking presentation",
-          "responsive storefront patterns"
-        ],
-        "adapt": [
-          "Recompose selected frontend patterns into DIAL Next.js/Tailwind/shadcn components and bind only to DIAL APIs/state/action contracts."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "MongoDB as DIAL authority",
-          "Express backend as DIAL authority",
-          "donor authentication",
-          "donor payment implementation",
-          "donor order/inventory authority",
-          "provider secrets/client-side payment secrets"
-        ]
-      },
-      "source_of_truth_exclusions": [
-        "MongoDB as DIAL authority",
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "catalogue/category browsing presentation",
+        "customer account/order tracking presentation",
+        "product card and product detail composition",
+        "public ecommerce page composition",
+        "responsive storefront patterns",
+        "search/filter/favourites/cart interaction patterns"
+      ],
+      "reference_notes": [
+        "Recompose selected frontend patterns into DIAL Next.js/Tailwind/shadcn components and bind only to DIAL APIs/state/action contracts."
+      ],
+      "anti_patterns_and_exclusions": [
         "Express backend as DIAL authority",
+        "MongoDB as DIAL authority",
         "donor authentication",
-        "donor payment implementation",
         "donor order/inventory authority",
+        "donor payment implementation",
         "provider secrets/client-side payment secrets"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "40a23e18e9c9869e1b68613dfa1da4d76a271701a81535b1b7ca10e1a7f75de7"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "61b940a7de1a928ca1b1b7220b10f9dd25d7b8bbbccd168ed6a0fa101e0b5005"
     },
     {
       "schema_version": 1,
       "donor_id": "DONOR-YOURNEXTSTORE",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
-        "SPARE",
-        "GROCERIES"
+        "GROCERIES",
+        "SPARE"
       ],
       "upstream": {
         "repository": "yournextstore/yournextstore",
@@ -462,40 +477,47 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "UX-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "modern storefront composition",
-          "product/category layout",
-          "performance-conscious storefront ideas"
-        ],
-        "adapt": [
-          "Reference only where it materially improves the selected frontend."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "backend authority"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "modern storefront composition",
+        "performance-conscious storefront ideas",
+        "product/category layout"
+      ],
+      "reference_notes": [
+        "Reference only where it materially improves the selected frontend."
+      ],
+      "anti_patterns_and_exclusions": [
         "backend authority"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "6ccd608c6e0a8554d922e0e6db492fba9ad712fb6bbf12f104430ece0fe55966"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "3ef13ffe9fd98a63b86b636854f6a4fe3b1e33c3a9efdfeb6eb008cd4e389314"
     },
     {
       "schema_version": 1,
       "donor_id": "REF-CAR-ZONE",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -506,42 +528,48 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "WORKFLOW-VISUAL-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "automotive category organization",
-          "automotive product merchandising",
-          "customer automotive browsing cues"
-        ],
-        "adapt": [
-          "Reference category/product merchandising only; production implementation stays DIAL-native."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "backend authority",
-          "unqualified code import"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "automotive category organization",
+        "automotive product merchandising",
+        "customer automotive browsing cues"
+      ],
+      "reference_notes": [
+        "Reference category/product merchandising only; production implementation stays DIAL-native."
+      ],
+      "anti_patterns_and_exclusions": [
         "backend authority",
         "unqualified code import"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "07105271ec46d85e0b17d08f900ffccd52e484c30de053e83dfaab2b5d1e24e6"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "23c680aa9cbee21bae63c409f1c9f2779c43ebebf1da005f8c7f39e3aed23aed"
     },
     {
       "schema_version": 1,
       "donor_id": "REF-SPARES-SHOP",
+      "classification": "EXTERNAL_REFERENCE",
       "authority_refs": [
         "docs/dial/final-audit/22_COMMERCE_FRONTEND_AND_TRANSITION/01_DONOR_STRATEGY/DONOR_ASSIMILATION_MATRIX_v2_1.json",
-        "docs/dial/final-audit/20_IMPLEMENTATION_CLOSURE/03_DONOR_CLOSURE/DONOR_IMPORT_AND_ASSIMILATION_GATE.md",
-        "docs/dial/final-audit/11_FEATURE_REALIZATION/DONOR_UX_TRANSFORMATION_STANDARD.md"
+        "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+        "DEC-039"
       ],
       "applicable_divisions": [
         "SPARE"
@@ -552,32 +580,38 @@
         "pinned_revision": null
       },
       "license": {
-        "status": "UNRESOLVED"
+        "status": "RESEARCH_CONTEXT_ONLY_UNRESOLVED_FOR_PRODUCTION"
       },
-      "adoption_mode": "VISUAL-REFERENCE",
-      "transformation": {
-        "preserve": [
-          "automotive parts homepage/category composition",
-          "parts catalogue/product page cues",
-          "automotive merchandising visual language"
-        ],
-        "adapt": [
-          "Extract automotive composition ideas into the DIAL/Shop-Ecommerce-based Spare frontend."
-        ],
-        "replace": [],
-        "enhance": [],
-        "forbid": [
-          "legacy build stack as production architecture"
-        ]
-      },
-      "source_of_truth_exclusions": [
+      "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+      "inspiration_topics": [
+        "automotive merchandising visual language",
+        "automotive parts homepage/category composition",
+        "parts catalogue/product page cues"
+      ],
+      "reference_notes": [
+        "Extract automotive composition ideas into the DIAL/Shop-Ecommerce-based Spare frontend."
+      ],
+      "anti_patterns_and_exclusions": [
         "legacy build stack as production architecture"
       ],
+      "production_import_allowed": false,
+      "runtime_dependency_allowed": false,
+      "source_of_truth_allowed": false,
+      "design_authority_allowed": false,
+      "visual_authority_promotion_allowed": false,
+      "semantic_preservation_required": false,
+      "code_copy_allowed": false,
+      "component_copy_allowed": false,
+      "asset_copy_allowed": false,
+      "schema_copy_allowed": false,
+      "business_logic_copy_allowed": false,
+      "pixel_copy_allowed": false,
+      "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
       "sanitization_policy_id": "dial-donor-egress-1",
       "egress_policy_id": "dial-provider-egress-1",
-      "upgrade_policy": "PIN_AT_FIRST_IMPORT_THEN_EXPLICIT_WATCH",
-      "authority": "DERIVED_ENFORCEMENT_PROJECTION",
-      "projection_hash": "2c4c62e3d673228e15683444e22e9f4e2a07115580cee5d315f7fcae2775d48b"
+      "refresh_policy": "RESEARCH_REFRESH_ONLY_NO_IMPORT",
+      "authority": "NON_AUTHORITATIVE_EXTERNAL_REFERENCE",
+      "projection_hash": "6adef59ff2fe93900c7e438eb70c4a1327e7ceee4e8184f297bd6c448b7153cf"
     }
   ]
 }

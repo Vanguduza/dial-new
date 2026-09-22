@@ -198,6 +198,23 @@ function finalizeJob(job, result, root) {
   return record;
 }
 
+function commanderAuthorityForJob(job) {
+  const provenance = job?.metadata?.owner_instruction_provenance;
+  if (provenance?.authority && provenance.authority !== 'NO_AUTHORITY') {
+    return { source: 'OWNER_EXPLICIT', ownerAttested: true, ownerApproval: true };
+  }
+  const automationId = String(job?.metadata?.commander_automation_id || '').trim();
+  if (automationId) {
+    return {
+      source: 'DESIGNED_AUTOMATION',
+      automationId,
+      ownerApproval: job?.metadata?.commander_owner_approval === true,
+      ownerAttested: false,
+    };
+  }
+  return null;
+}
+
 function isQualificationCanary(job) {
   return Boolean(
     job?.requested_by === 'qualification'
@@ -292,6 +309,7 @@ export async function processNextExternalWork({
         packetId: job.job_id,
         skillActivation,
         requestedBy: job.requested_by,
+        commanderAuthority: commanderAuthorityForJob(job),
       });
     }
   } catch (error) {

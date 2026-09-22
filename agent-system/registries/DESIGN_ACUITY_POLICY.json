@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "policy_version": "dial-design-acuity-1.0",
+  "authority": "VEKL_PRODUCT_EXPERIENCE_DESIGN_ACUITY",
+  "interaction_motion_pass": "MANDATORY_FOR_INTERACTIVE_FRONTEND",
+  "visual_preflight_required": true,
+  "post_visual_enrichment_required": true,
+  "principles": [
+    "STRUCTURE_BEFORE_DECORATION",
+    "ACCESSIBILITY_PRIMITIVES_BEFORE_CUSTOM_INTERACTION_HACKS",
+    "TOKENS_BEFORE_PER_SCREEN_STYLING",
+    "RESPONSIVE_RECOMPOSITION_NOT_SHRINKING",
+    "MOTION_COMMUNICATES_STATE_CAUSALITY_OR_HIERARCHY",
+    "PLATFORM_NATIVE_BEHAVIOR_WITH_DIAL_VISUAL_IDENTITY",
+    "EXTERNAL_REFERENCES_ARE_EVIDENCE_NOT_TEMPLATES",
+    "NO_EFFECT_NEEDED_IS_VALID_FOR_AN_INDIVIDUAL_PATTERN_NOT_FOR_SKIPPING_EXPERT_REVIEW",
+    "CAPABILITY_INVENTION_FORBIDDEN",
+    "INTERACTION_DESIGN_MUST_COVER_EDGE_STATES"
+  ],
+  "acuity_dimensions": [
+    {
+      "dimension_id": "TASK_CLARITY",
+      "question": "Does interaction reduce effort and make the primary task immediately obvious?"
+    },
+    {
+      "dimension_id": "INFORMATION_HIERARCHY",
+      "question": "Do disclosure, emphasis and spatial behavior preserve a clear hierarchy?"
+    },
+    {
+      "dimension_id": "INTERACTION_DISCOVERABILITY",
+      "question": "Are important actions discoverable without relying on hidden gestures?"
+    },
+    {
+      "dimension_id": "FEEDBACK_AND_CAUSALITY",
+      "question": "Does every meaningful action visibly explain that it was received and what changed?"
+    },
+    {
+      "dimension_id": "SPATIAL_CONTINUITY",
+      "question": "Do transitions preserve origin, destination and object continuity where useful?"
+    },
+    {
+      "dimension_id": "MOTION_PURPOSE",
+      "question": "Does every proposed motion serve feedback, continuity, orientation, causality, hierarchy or bounded brand expression?"
+    },
+    {
+      "dimension_id": "PLATFORM_FLUENCY",
+      "question": "Does behavior feel native to the target platform/input mode without surrendering DIAL identity?"
+    },
+    {
+      "dimension_id": "RESPONSIVE_RECOMPOSITION",
+      "question": "Does the interaction model recompose for size/input changes instead of merely shrinking?"
+    },
+    {
+      "dimension_id": "STATE_COMPLETENESS",
+      "question": "Are loading, empty, error, offline/degraded, permission and recovery interactions designed where applicable?"
+    },
+    {
+      "dimension_id": "ACCESSIBILITY",
+      "question": "Are focus, semantics, alternatives, reduced motion, target sizes and announcements explicit?"
+    },
+    {
+      "dimension_id": "PERFORMANCE",
+      "question": "Can the interaction and visual effects meet frame, latency, memory, GPU and battery budgets?"
+    },
+    {
+      "dimension_id": "INTERRUPTIBILITY",
+      "question": "Can state-driven motion be interrupted, reversed or reconciled without visual lies?"
+    },
+    {
+      "dimension_id": "DENSITY_AND_ERGONOMICS",
+      "question": "Is information density appropriate for actor, task frequency and input mode?"
+    },
+    {
+      "dimension_id": "OPTICAL_POLISH",
+      "question": "Are alignment, icon weight, number alignment, spacing and control geometry professionally resolved?"
+    },
+    {
+      "dimension_id": "PRODUCT_SPECIFICITY",
+      "question": "Do interactions express this DIAL domain rather than generic SaaS choreography?"
+    },
+    {
+      "dimension_id": "RECOVERY_AND_TRUST",
+      "question": "Do failures, authority changes and partial/degraded states expose truthful next actions?"
+    }
+  ],
+  "motion_hierarchy": [
+    {
+      "level": "MICRO_FEEDBACK",
+      "examples": [
+        "press",
+        "hover",
+        "focus",
+        "toggle"
+      ],
+      "intensity": "LOW"
+    },
+    {
+      "level": "COMPONENT_TRANSITION",
+      "examples": [
+        "accordion",
+        "menu",
+        "chip",
+        "selection"
+      ],
+      "intensity": "LOW_TO_MEDIUM"
+    },
+    {
+      "level": "LAYOUT_TRANSITION",
+      "examples": [
+        "sheet",
+        "drawer",
+        "expansion",
+        "pane change"
+      ],
+      "intensity": "MEDIUM"
+    },
+    {
+      "level": "NAVIGATION_TRANSITION",
+      "examples": [
+        "route",
+        "screen",
+        "shared object"
+      ],
+      "intensity": "MEDIUM"
+    },
+    {
+      "level": "HERO_BRAND_MOTION",
+      "examples": [
+        "hero transition",
+        "brand reveal"
+      ],
+      "intensity": "HIGH_BUT_INFREQUENT"
+    },
+    {
+      "level": "AMBIENT_MOTION",
+      "examples": [
+        "subtle live status",
+        "background field"
+      ],
+      "intensity": "CONTINUOUS_LOW_PRIORITY_BUDGETED"
+    }
+  ],
+  "structural_delta_policy": {
+    "default": "BOUNDED_INTERACTION_DELTA",
+    "allowed": [
+      "ADD_OR_REFINE_INTERACTION_AFFORDANCE",
+      "STATIC_GROUP_TO_TABS_OR_ACCORDION",
+      "SECONDARY_FLOW_TO_SHEET_OR_DRAWER",
+      "ADD_STICKY_OR_DOCKED_ACTION_REGION",
+      "ADD_STATE_FEEDBACK_REGION",
+      "ADD_HORIZONTAL_RAIL_OR_GALLERY_BEHAVIOR",
+      "ADAPT_NAVIGATION_FOR_PLATFORM_OR_BREAKPOINT",
+      "MINOR_SPACING_OR_GEOMETRY_ADJUSTMENT_REQUIRED_BY_INTERACTION"
+    ],
+    "requires_visual_reconvergence": [
+      "PRIMARY_HIERARCHY_CHANGE",
+      "MAJOR_SECTION_REORDER",
+      "HERO_IDENTITY_CHANGE",
+      "BRAND_LANGUAGE_CHANGE",
+      "NEW_MAJOR_WORKFLOW_SURFACE",
+      "MATERIAL_INFORMATION_ARCHITECTURE_CHANGE"
+    ],
+    "silent_redesign_forbidden": true
+  },
+  "acceptance_checks": [
+    "design_acuity_review_complete",
+    "pattern_decisions_complete",
+    "no_dead_controls",
+    "capability_backed",
+    "purposeful_motion",
+    "motion_hierarchy_coherent",
+    "touch_targets",
+    "keyboard_and_focus_where_relevant",
+    "accessibility_semantics",
+    "reduced_motion",
+    "performance_budget",
+    "state_restoration",
+    "gesture_conflicts_clear",
+    "interruptible_transitions",
+    "responsive_recomposition",
+    "edge_states_covered",
+    "platform_native_behavior",
+    "optical_polish_reviewed",
+    "structural_delta_within_budget",
+    "external_reference_non_authority"
+  ],
+  "open_world_discovery": {
+    "enabled": true,
+    "mode": "VEKL_DISCOVERY_CANDIDATE_PLANE",
+    "trigger_when": [
+      "PATTERN_COVERAGE_GAP",
+      "PLATFORM_GUIDANCE_STALE",
+      "NEW_INTERACTION_CLASS",
+      "LOW_CONFIDENCE_PATTERN_SET",
+      "OWNER_REQUEST"
+    ],
+    "default_freshness_days": 45,
+    "candidate_sources": [
+      "OFFICIAL_PLATFORM_DOCS",
+      "SHIPPED_PRODUCT_UX_DATABASES",
+      "MOTION_REFERENCE_SITES",
+      "COMPONENT_ECOSYSTEMS",
+      "PUBLIC_REPOSITORIES"
+    ],
+    "admission_required_before_guidance": true,
+    "raw_external_code_to_provider_forbidden": true
+  },
+  "source_reference_document": {
+    "name": "MODERN_UX_UI_DESIGN_STYLES_FEATURES_AND_RESOURCE_LIBRARY.md",
+    "revision": "1.0",
+    "sha256": "84f73b9d1973cd693a76c358d7de6ea8a50a7745028b0a8fed28687b0ed312e3",
+    "authority": "OWNER_CURATED_REFERENCE_NOT_PRODUCT_TRUTH"
+  }
+}

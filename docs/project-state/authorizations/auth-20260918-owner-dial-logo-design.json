@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260918-owner-dial-logo-design",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "73cef3c98e47a6a1cc3add241f33e33d5bfb81bb2145279f8fe4bbb29465920b",
+  "owner_instruction_excerpt": "Design a professional logo for dial that exumes its purpose or company personality",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260918-dial-logo-design",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-18T11:38:16+00:00",
+  "base_sha": "fa7c655f12faf02a2b33cc15799069526bdda3a6",
+  "branch_scope": "claude/dial-logo-design-weph4y",
+  "authorized_paths": [
+    "docs/brand/**",
+    "docs/brand/logo/*",
+    "apps/preview-player/public/favicon.svg",
+    "docs/project-state/authorizations/*.json"
+  ],
+  "change_classes": [
+    "brand_identity_asset",
+    "brand_documentation",
+    "app_icon_replacement"
+  ],
+  "material_scope_expansion": false,
+  "notes": "Master-brand logo system (dial-D mark, DIAL wordmark lockups, mono and dark variants, app icon) plus a usage guide. Division-level logo rules under GMPC section 19 remain owner decisions and are not defined here."
+}

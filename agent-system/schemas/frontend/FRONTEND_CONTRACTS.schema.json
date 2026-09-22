@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dial.local/schemas/frontend/FRONTEND_CONTRACTS.schema.json",
   "title": "DIAL Frontend Product Experience Contracts",
-  "description": "Machine-readable contracts for the Rev 1.1 Product Experience integration. These schemas validate specialist frontend artifacts; Project Truth, FRC, domain/security authority, VEKL and the Adaptive Execution Fabric remain superior.",
+  "description": "Machine-readable contracts for canonical DIAL frontend Product Experience, including first-class VEKL interaction/motion design acuity under DEC-040. Project Truth, Screen Registry × Feature Graph and domain/security authority remain superior; external repositories are reference/inspiration only under DEC-039.",
   "type": "object",
   "$defs": {
     "BaseArtifact": {
@@ -501,6 +501,88 @@
             }
           }
         }
+      ],
+      "deprecated": true,
+      "description": "LEGACY/HISTORICAL ONLY. DEC-039 supersedes donor reuse/assimilation semantics; active workflows use ExternalReferenceInspirationProjection."
+    },
+    "ExternalReferenceInspirationProjection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "use_mode",
+            "source_reference_hash",
+            "production_import_allowed",
+            "runtime_dependency_allowed",
+            "source_of_truth_allowed",
+            "design_authority_allowed"
+          ],
+          "properties": {
+            "use_mode": {
+              "const": "REFERENCE_AND_INSPIRATION_ONLY"
+            },
+            "inspiration_topics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "anti_patterns_and_exclusions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "reference_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "production_import_allowed": {
+              "const": false
+            },
+            "runtime_dependency_allowed": {
+              "const": false
+            },
+            "source_of_truth_allowed": {
+              "const": false
+            },
+            "design_authority_allowed": {
+              "const": false
+            },
+            "visual_authority_promotion_allowed": {
+              "const": false
+            },
+            "semantic_preservation_required": {
+              "const": false
+            },
+            "pixel_copy_allowed": {
+              "const": false
+            },
+            "provider_projection": {
+              "enum": [
+                "ABSTRACT_SYNTHESIZED_DESCRIPTORS_ONLY"
+              ]
+            },
+            "artifact_type": {
+              "const": "ExternalReferenceInspirationProjection"
+            },
+            "source_reference_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "provenance": {
+              "type": "object"
+            }
+          }
+        }
       ]
     },
     "ApprovedVisualDelta": {
@@ -932,7 +1014,9 @@
             "registry_hashes",
             "acceptance",
             "authority_constraints",
-            "creative_screen_generation"
+            "creative_screen_generation",
+            "frontend_generation_context",
+            "interaction_design_preflight"
           ],
           "properties": {
             "task_id": {
@@ -1011,6 +1095,12 @@
                   "type": "string"
                 }
               }
+            },
+            "frontend_generation_context": {
+              "type": "object"
+            },
+            "interaction_design_preflight": {
+              "$ref": "#/$defs/InteractionDesignPreflight"
             }
           }
         }
@@ -1227,6 +1317,652 @@
           }
         }
       ]
+    },
+    "InteractionDesignPreflight": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "signals",
+            "required_considerations",
+            "open_world_discovery_brief"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionDesignPreflight"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "signals": {
+              "type": "object"
+            },
+            "required_considerations": {
+              "type": "array"
+            },
+            "strong_candidates": {
+              "type": "array"
+            },
+            "additional_candidates": {
+              "type": "array"
+            },
+            "open_world_discovery_brief": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "InteractionMotionIntelligence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "visual_authority_hash",
+            "expert_role",
+            "acuity_dimensions",
+            "required_outputs"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionMotionIntelligence"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "visual_authority_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "expert_role": {
+              "const": "PRINCIPAL_PRODUCT_DESIGN_ENGINEER_AND_INTERACTION_MOTION_SPECIALIST"
+            },
+            "acuity_dimensions": {
+              "type": "array"
+            },
+            "required_outputs": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "StitchVisualProductionPacket": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "target_screen"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "StitchVisualProductionPacket"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "target_screen": {
+              "type": "object"
+            },
+            "interaction_design_preflight": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "InteractionMotionEnrichmentPacket": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "visual_authority_hash",
+            "interaction_intelligence_hash",
+            "required_outputs"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionMotionEnrichmentPacket"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "visual_authority_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "interaction_intelligence_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "required_outputs": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "VisualAuthorityArtifact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "screen_id",
+            "provider"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "VisualAuthorityArtifact"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "screen_id": {
+              "type": "string"
+            },
+            "provider": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ExperienceAuthorityArtifact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "visual_authority_hash",
+            "interaction_artifact_hash"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "ExperienceAuthorityArtifact"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "visual_authority_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "interaction_artifact_hash": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ProductionBindingContract": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "experience_authority_hash",
+            "screen_id"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "ProductionBindingContract"
+            },
+            "generation_context_hash": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$"
+            },
+            "experience_authority_hash": {
+              "type": "string"
+            },
+            "screen_id": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "DesignAcuityAssessment": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "DesignAcuityAssessment"
+            }
+          }
+        }
+      ]
+    },
+    "InteractionOpportunityMap": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionOpportunityMap"
+            }
+          }
+        }
+      ]
+    },
+    "PatternDecisionSet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "PatternDecisionSet"
+            }
+          }
+        }
+      ]
+    },
+    "InteractionIntentMap": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionIntentMap"
+            }
+          }
+        }
+      ]
+    },
+    "GestureMap": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "GestureMap"
+            }
+          }
+        }
+      ]
+    },
+    "MotionHierarchyPlan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "MotionHierarchyPlan"
+            }
+          }
+        }
+      ]
+    },
+    "MotionSpec": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "MotionSpec"
+            }
+          }
+        }
+      ]
+    },
+    "AdvancedComponentDecisionSet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "AdvancedComponentDecisionSet"
+            }
+          }
+        }
+      ]
+    },
+    "ResponsiveInteractionPlan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "ResponsiveInteractionPlan"
+            }
+          }
+        }
+      ]
+    },
+    "StateBehaviorMatrix": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "StateBehaviorMatrix"
+            }
+          }
+        }
+      ]
+    },
+    "StructuralDeltaDecision": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "StructuralDeltaDecision"
+            }
+          }
+        }
+      ]
+    },
+    "InteractionRiskRegister": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionRiskRegister"
+            }
+          }
+        }
+      ]
+    },
+    "InteractionAcceptanceMatrix": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "InteractionAcceptanceMatrix"
+            }
+          }
+        }
+      ]
+    },
+    "TruthLiteralLint": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "artifact_type": {
+              "const": "TruthLiteralLint"
+            }
+          }
+        }
+      ]
+    },
+    "FrontendDomainSemanticProfile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "module"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FrontendDomainSemanticProfile"
+            },
+            "module": {
+              "type": "string"
+            },
+            "product_positioning": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "brand_authority": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "subsystems": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "FeatureSemanticEnvelope": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "module",
+            "screen_id",
+            "features",
+            "screen_feature_edges"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FeatureSemanticEnvelope"
+            },
+            "module": {
+              "type": "string"
+            },
+            "screen_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "target_application_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "features": {
+              "type": "array"
+            },
+            "screen_feature_edges": {
+              "type": "array"
+            },
+            "provider_interaction_intents": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "VisualTruthClaimsContract": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "claims"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "VisualTruthClaimsContract"
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "value"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "value": {},
+                  "display_text": {}
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FrontendDesignSynthesisBrief": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "generation_context_hash",
+            "target_screen_id",
+            "screen_purpose",
+            "knowledge_channels",
+            "composition_budget"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "FrontendDesignSynthesisBrief"
+            },
+            "generation_context_hash": {
+              "type": "string"
+            },
+            "target_screen_id": {
+              "type": "string"
+            },
+            "screen_purpose": {
+              "type": "string"
+            },
+            "knowledge_channels": {
+              "type": "object"
+            },
+            "composition_budget": {
+              "type": "object"
+            },
+            "visual_storytelling": {
+              "type": "object"
+            },
+            "feature_to_experience": {
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "DesignSynthesisLint": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseArtifact"
+        },
+        {
+          "type": "object",
+          "required": [
+            "design_synthesis_hash",
+            "findings"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "DesignSynthesisLint"
+            },
+            "design_synthesis_hash": {
+              "type": "string"
+            },
+            "findings": {
+              "type": "array"
+            }
+          }
+        }
+      ]
     }
   },
   "oneOf": [
@@ -1250,6 +1986,9 @@
     },
     {
       "$ref": "#/$defs/DonorFrontendReuseProjection"
+    },
+    {
+      "$ref": "#/$defs/ExternalReferenceInspirationProjection"
     },
     {
       "$ref": "#/$defs/ApprovedVisualDelta"
@@ -1304,6 +2043,84 @@
     },
     {
       "$ref": "#/$defs/CreativeScreenGenerationStrategy"
+    },
+    {
+      "$ref": "#/$defs/InteractionDesignPreflight"
+    },
+    {
+      "$ref": "#/$defs/InteractionMotionIntelligence"
+    },
+    {
+      "$ref": "#/$defs/StitchVisualProductionPacket"
+    },
+    {
+      "$ref": "#/$defs/InteractionMotionEnrichmentPacket"
+    },
+    {
+      "$ref": "#/$defs/VisualAuthorityArtifact"
+    },
+    {
+      "$ref": "#/$defs/ExperienceAuthorityArtifact"
+    },
+    {
+      "$ref": "#/$defs/ProductionBindingContract"
+    },
+    {
+      "$ref": "#/$defs/DesignAcuityAssessment"
+    },
+    {
+      "$ref": "#/$defs/InteractionOpportunityMap"
+    },
+    {
+      "$ref": "#/$defs/PatternDecisionSet"
+    },
+    {
+      "$ref": "#/$defs/InteractionIntentMap"
+    },
+    {
+      "$ref": "#/$defs/GestureMap"
+    },
+    {
+      "$ref": "#/$defs/MotionHierarchyPlan"
+    },
+    {
+      "$ref": "#/$defs/MotionSpec"
+    },
+    {
+      "$ref": "#/$defs/AdvancedComponentDecisionSet"
+    },
+    {
+      "$ref": "#/$defs/ResponsiveInteractionPlan"
+    },
+    {
+      "$ref": "#/$defs/StateBehaviorMatrix"
+    },
+    {
+      "$ref": "#/$defs/StructuralDeltaDecision"
+    },
+    {
+      "$ref": "#/$defs/InteractionRiskRegister"
+    },
+    {
+      "$ref": "#/$defs/InteractionAcceptanceMatrix"
+    },
+    {
+      "$ref": "#/$defs/TruthLiteralLint"
+    },
+    {
+      "$ref": "#/$defs/FrontendDomainSemanticProfile"
+    },
+    {
+      "$ref": "#/$defs/FeatureSemanticEnvelope"
+    },
+    {
+      "$ref": "#/$defs/VisualTruthClaimsContract"
+    },
+    {
+      "$ref": "#/$defs/FrontendDesignSynthesisBrief"
+    },
+    {
+      "$ref": "#/$defs/DesignSynthesisLint"
     }
   ]
 }

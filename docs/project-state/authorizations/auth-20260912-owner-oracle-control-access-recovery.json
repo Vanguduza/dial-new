@@ -1,0 +1,38 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260912-owner-oracle-control-access-recovery",
+  "authorized_paths": [
+    "docs/orchestration/DIAL_ORACLE_CONTROL_RECOVERY_RUNBOOK.md",
+    "docs/project-state/authorizations/auth-20260912-owner-oracle-control-access-recovery.json"
+  ],
+  "base_sha": "ba43c1b5d3bbc71404d5dfde9660974982334812",
+  "branch_scope": "claude/oracle-problem-review-rmhdse",
+  "business_model_change": false,
+  "change_classes": [
+    "operations_runbook",
+    "material_eventuality_coverage",
+    "runtime_recovery",
+    "blocker_recovery"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-12T02:51:40.945452+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Documentation-only. Grants no gate, no certification and no Oracle mission mutation. Host-side execution remains an owner action.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "i need you to restore access to dial hermes control without disrupting the data on the vm. if you can reboot oracle admin which has been idle for a long time do it and set it up afresh",
+  "owner_instruction_sha256": "355e1c38187e3a19beb8619e04295a0d4e0023827cc4f3488d09b9903659b80c",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260912-oracle-control-access-recovery"
+  }
+}

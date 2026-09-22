@@ -8,7 +8,7 @@ Use this order:
 2. machine registries under `agent-system/registries/`
 3. locked final canon / module audit / Feature Realization Contract
 4. approved historical evidence
-5. donor research
+5. external-reference research
 6. implementation inference
 
 Do not treat stale historical documents as stronger than Project Truth.
@@ -25,10 +25,10 @@ Do not read the full DIAL corpus when a context bundle is sufficient.
 - simulation never mutates production.
 - Delivery owns delivery jobs; official WhatsApp only.
 - Spare is agency-only; do not reintroduce discarded D-51 owned-stock principal.
-- FixItNow is a **PORT-WHOLESALE** Dial a Tech donor; pin the MIT-licensed `Sachinrajawat/FixItNow` publication and preserve its MIT provenance/notice.
+- FixItNow is a non-authoritative research/reference source under DEC-039; no wholesale port or production import is authorized by its licence.
 - Dial Health/ZHOTN is a required standalone DIAL division with its own specialist authorities and Command Centre room.
 - generic AI-looking UI is rejected; use human-readable refs.
-- donor code requires provenance + DIAL boundary replacement.
+- external repository research requires provenance; repository code/components/assets/schemas/business logic are not imported under DEC-039.
 - changed-tree evidence inheritance requires migration regression revalidation.
 
 ## Work method

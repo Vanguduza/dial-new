@@ -20,14 +20,25 @@
     "donor_id": "DONOR-MERCUR-STOREFRONT",
     "name": "Mercur B2C marketplace storefront",
     "kind": "REPOSITORY",
-    "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
-    "role": "Primary Spare multi-vendor commerce information architecture and storefront interaction donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-MERCUR-STOREFRONT",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "marketplace browse/search/product/offer/checkout interaction patterns",
       "multi-vendor mental model",
       "proven ecommerce navigation where useful"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary Spare multi-vendor commerce information architecture and storefront interaction donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "auth",
       "database authority",
       "payment authority",
@@ -35,176 +46,445 @@
       "catalogue authority",
       "analytics/notifications that duplicate DIAL"
     ],
-    "add": [
-      "vehicle-first context",
-      "fitment confidence",
-      "EPC/visual navigation",
-      "DIAL pricing",
-      "DIAL Delivery",
-      "RCE/support",
-      "human refs",
-      "DIAL design tokens"
-    ],
-    "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
+      "role": "Primary Spare multi-vendor commerce information architecture and storefront interaction donor.",
+      "preserve": [
+        "marketplace browse/search/product/offer/checkout interaction patterns",
+        "multi-vendor mental model",
+        "proven ecommerce navigation where useful"
+      ],
+      "replace": [
+        "auth",
+        "database authority",
+        "payment authority",
+        "order authority",
+        "catalogue authority",
+        "analytics/notifications that duplicate DIAL"
+      ],
+      "add": [
+        "vehicle-first context",
+        "fitment confidence",
+        "EPC/visual navigation",
+        "DIAL pricing",
+        "DIAL Delivery",
+        "RCE/support",
+        "human refs",
+        "DIAL design tokens"
+      ],
+      "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "DONOR-MERCUR-VENDOR",
     "name": "Mercur vendor panel",
     "kind": "REPOSITORY",
-    "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
-    "role": "Supplier catalog/offers/orders/settlement operational UX donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-MERCUR-VENDOR",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "seller queue structure",
       "catalog/order operational patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Supplier catalog/offers/orders/settlement operational UX donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "seller auth",
       "seller DB",
       "payout truth",
       "order/catalogue truth"
     ],
-    "add": [
-      "DIAL supplier compliance",
-      "stock freshness",
-      "fitment evidence",
-      "settlement projection",
-      "support/RCE"
-    ],
-    "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT-WHOLESALE_OR_SELECTED_UI",
+      "role": "Supplier catalog/offers/orders/settlement operational UX donor.",
+      "preserve": [
+        "seller queue structure",
+        "catalog/order operational patterns"
+      ],
+      "replace": [
+        "seller auth",
+        "seller DB",
+        "payout truth",
+        "order/catalogue truth"
+      ],
+      "add": [
+        "DIAL supplier compliance",
+        "stock freshness",
+        "fitment evidence",
+        "settlement projection",
+        "support/RCE"
+      ],
+      "source_path_status": "RESOLVE_AND_PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "DONOR-NIMARA-YNS",
     "name": "Nimara / Your Next Store",
     "kind": "UX_REFERENCE",
-    "adoption_mode": "PORT-UX-UI_REFERENCE",
-    "role": "High-polish commerce visual and interaction benchmark.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-NIMARA-YNS",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "clean retail hierarchy",
       "high-quality product presentation",
       "responsive polish"
     ],
-    "replace": [
+    "reference_notes": [
+      "High-polish commerce visual and interaction benchmark."
+    ],
+    "anti_patterns_and_exclusions": [
       "brand identity",
       "navigation shell",
       "data contracts"
     ],
-    "add": [
-      "DIAL tokens",
-      "vehicle context",
-      "support/action states",
-      "accessibility/degraded states"
-    ],
-    "source_path_status": "REFERENCE_OR_SELECTED_COMPONENT_PROVENANCE"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT-UX-UI_REFERENCE",
+      "role": "High-polish commerce visual and interaction benchmark.",
+      "preserve": [
+        "clean retail hierarchy",
+        "high-quality product presentation",
+        "responsive polish"
+      ],
+      "replace": [
+        "brand identity",
+        "navigation shell",
+        "data contracts"
+      ],
+      "add": [
+        "DIAL tokens",
+        "vehicle context",
+        "support/action states",
+        "accessibility/degraded states"
+      ],
+      "source_path_status": "REFERENCE_OR_SELECTED_COMPONENT_PROVENANCE"
+    }
   },
   {
     "donor_id": "DONOR-SANDPIM",
     "name": "SandPIM / ACES-PIES reference",
     "kind": "SCHEMA_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Fitment/PIM schema and qualifier sanity check.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-SANDPIM",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "fitment relationship concepts",
       "attribute/qualifier patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Fitment/PIM schema and qualifier sanity check."
+    ],
+    "anti_patterns_and_exclusions": [
       "PHP/runtime",
       "source database",
       "catalogue authority"
     ],
-    "add": [
-      "DIAL FitmentClaim evidence/confidence/provenance",
-      "vehicle/chassis mapping"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Fitment/PIM schema and qualifier sanity check.",
+      "preserve": [
+        "fitment relationship concepts",
+        "attribute/qualifier patterns"
+      ],
+      "replace": [
+        "PHP/runtime",
+        "source database",
+        "catalogue authority"
+      ],
+      "add": [
+        "DIAL FitmentClaim evidence/confidence/provenance",
+        "vehicle/chassis mapping"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "DONOR-EPC-SPECIALIST-PENDING",
     "name": "EPC browsing specialist specification (parallel agent)",
     "kind": "SPECIALIST_SPEC",
-    "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
-    "role": "Authoritative detailed EPC browsing/catalog source strategy when parallel specialist document lands.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-EPC-SPECIALIST-PENDING",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "specialist EPC hierarchy/provider decisions that satisfy the frozen integration contract"
     ],
-    "replace": [],
-    "add": [
-      "DIAL catalogue/fitment/offers/support/client-app bindings"
+    "reference_notes": [
+      "Authoritative detailed EPC browsing/catalog source strategy when parallel specialist document lands."
     ],
-    "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+    "anti_patterns_and_exclusions": [],
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
+      "role": "Authoritative detailed EPC browsing/catalog source strategy when parallel specialist document lands.",
+      "preserve": [
+        "specialist EPC hierarchy/provider decisions that satisfy the frozen integration contract"
+      ],
+      "replace": [],
+      "add": [
+        "DIAL catalogue/fitment/offers/support/client-app bindings"
+      ],
+      "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+    }
   },
   {
     "donor_id": "DONOR-VISUAL-TRANSFORM-SPECIALIST",
     "name": "DIAL vehicle hero / CGI / exploded visual transformation generator specification",
     "kind": "SPECIALIST_SPEC",
-    "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
-    "role": "Parallel specialist engine producing hero transitions, CGI transformation and exploded navigation assets.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-VISUAL-TRANSFORM-SPECIALIST",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "approved generation pipeline and cinematic output contract"
     ],
-    "replace": [
+    "reference_notes": [
+      "Parallel specialist engine producing hero transitions, CGI transformation and exploded navigation assets."
+    ],
+    "anti_patterns_and_exclusions": [
       "any independent catalogue authority"
     ],
-    "add": [
-      "VisualAssetRegistry",
-      "vehicle-equivalence bindings",
-      "EPC/category navigation binding",
-      "mobile/web fallbacks",
-      "provenance"
-    ],
-    "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "SPECIALIST_CONTRACT_PENDING",
+      "role": "Parallel specialist engine producing hero transitions, CGI transformation and exploded navigation assets.",
+      "preserve": [
+        "approved generation pipeline and cinematic output contract"
+      ],
+      "replace": [
+        "any independent catalogue authority"
+      ],
+      "add": [
+        "VisualAssetRegistry",
+        "vehicle-equivalence bindings",
+        "EPC/category navigation binding",
+        "mobile/web fallbacks",
+        "provenance"
+      ],
+      "source_path_status": "PENDING_SPECIALIST_DOCUMENT"
+    }
   },
   {
     "donor_id": "DONOR-FIXITNOW",
     "name": "Sachinrajawat/FixItNow",
     "url": "https://github.com/Sachinrajawat/FixItNow",
     "kind": "REPOSITORY",
-    "adoption_mode": "PORT-WHOLESALE",
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
     "license": "MIT",
-    "role": "Primary Dial a Tech customer/service application donor.",
-    "preserve": [
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-FIXITNOW",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "service discovery",
       "booking UX",
       "technician/service presentation",
       "mature page/navigation structure where useful"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary Dial a Tech customer/service application donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "donor auth",
       "donor persistence",
       "donor payment authority",
       "donor job authority",
       "donor notifications/analytics where duplicate"
     ],
-    "add": [
-      "Trade/JobClass",
-      "Opportunity Marketplace",
-      "Job Reserve",
-      "HIRA/PPE/LOTO",
-      "WHT",
-      "evidence",
-      "RCE/claims",
-      "provider quality",
-      "offline technician integration",
-      "DIAL support"
-    ],
-    "source_path_status": "PIN_EXACT_MIT_COMMIT_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT-WHOLESALE",
+      "role": "Primary Dial a Tech customer/service application donor.",
+      "preserve": [
+        "service discovery",
+        "booking UX",
+        "technician/service presentation",
+        "mature page/navigation structure where useful"
+      ],
+      "replace": [
+        "donor auth",
+        "donor persistence",
+        "donor payment authority",
+        "donor job authority",
+        "donor notifications/analytics where duplicate"
+      ],
+      "add": [
+        "Trade/JobClass",
+        "Opportunity Marketplace",
+        "Job Reserve",
+        "HIRA/PPE/LOTO",
+        "WHT",
+        "evidence",
+        "RCE/claims",
+        "provider quality",
+        "offline technician integration",
+        "DIAL support"
+      ],
+      "source_path_status": "PIN_EXACT_MIT_COMMIT_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "DONOR-NEARSERVE-HOMEZY",
     "name": "NearServe / Homezy",
     "kind": "UX_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Secondary home-services discovery/booking comparison donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-NEARSERVE-HOMEZY",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "service-category clarity",
       "local-trades discovery patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Secondary home-services discovery/booking comparison donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime/business authority"
     ],
-    "add": [
-      "DIAL service state/support/safety"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Secondary home-services discovery/booking comparison donor.",
+      "preserve": [
+        "service-category clarity",
+        "local-trades discovery patterns"
+      ],
+      "replace": [
+        "runtime/business authority"
+      ],
+      "add": [
+        "DIAL service state/support/safety"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "SERVICE-CALCOM",
@@ -227,93 +507,255 @@
     "donor_id": "REF-INSTACART",
     "name": "Instacart",
     "kind": "BEHAVIOR_UX_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Primary grocery customer experience benchmark for substitution, picking and delivery transparency.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-INSTACART",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "customer mental models for substitutions/picking/weighted goods"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary grocery customer experience benchmark for substitution, picking and delivery transparency."
+    ],
+    "anti_patterns_and_exclusions": [
       "proprietary runtime"
     ],
-    "add": [
-      "Zimbabwe merchant realities",
-      "DIAL Pantry",
-      "DIAL payments/delivery/support"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Primary grocery customer experience benchmark for substitution, picking and delivery transparency.",
+      "preserve": [
+        "customer mental models for substitutions/picking/weighted goods"
+      ],
+      "replace": [
+        "proprietary runtime"
+      ],
+      "add": [
+        "Zimbabwe merchant realities",
+        "DIAL Pantry",
+        "DIAL payments/delivery/support"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "REF-ZW-GROCERY",
     "name": "SPAR / OK Zimbabwe operating references",
     "kind": "LOCAL_MARKET_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Local grocery catalogue, store and fulfilment reality benchmark.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-ZW-GROCERY",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "local assortment/retail conventions"
     ],
-    "replace": [],
-    "add": [
-      "DIAL digital fulfilment"
+    "reference_notes": [
+      "Local grocery catalogue, store and fulfilment reality benchmark."
     ],
-    "source_path_status": "REFERENCE_ONLY"
+    "anti_patterns_and_exclusions": [],
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Local grocery catalogue, store and fulfilment reality benchmark.",
+      "preserve": [
+        "local assortment/retail conventions"
+      ],
+      "replace": [],
+      "add": [
+        "DIAL digital fulfilment"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "REF-LAUNDRY-CONSUMER",
     "name": "Laundryheap / Rinse",
     "kind": "BEHAVIOR_UX_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Consumer laundry booking/status/collection experience benchmark.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-LAUNDRY-CONSUMER",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "pickup scheduling",
       "service selection",
       "status communication patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Consumer laundry booking/status/collection experience benchmark."
+    ],
+    "anti_patterns_and_exclusions": [
       "proprietary runtime"
     ],
-    "add": [
-      "DIAL custody/evidence/pricing/RCE"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Consumer laundry booking/status/collection experience benchmark.",
+      "preserve": [
+        "pickup scheduling",
+        "service selection",
+        "status communication patterns"
+      ],
+      "replace": [
+        "proprietary runtime"
+      ],
+      "add": [
+        "DIAL custody/evidence/pricing/RCE"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "REF-LAUNDRY-OPS",
     "name": "CleanCloud / Cents",
     "kind": "OPERATOR_UX_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Facility/intake/production/QC/commercial laundry workflow benchmark.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-LAUNDRY-OPS",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "operator workflow concepts"
     ],
-    "replace": [
+    "reference_notes": [
+      "Facility/intake/production/QC/commercial laundry workflow benchmark."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime/SoR"
     ],
-    "add": [
-      "DIAL custody, ledger, compliance, Command Centre"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Facility/intake/production/QC/commercial laundry workflow benchmark.",
+      "preserve": [
+        "operator workflow concepts"
+      ],
+      "replace": [
+        "runtime/SoR"
+      ],
+      "add": [
+        "DIAL custody, ledger, compliance, Command Centre"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "DONOR-LUBELOGGER",
     "name": "LubeLogger",
     "kind": "REPOSITORY",
-    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
-    "role": "Fleet/Vehicle Hub maintenance/history/cost/reminder donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-LUBELOGGER",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "maintenance records",
       "service history",
       "cost/reminder mental model"
     ],
-    "replace": [
+    "reference_notes": [
+      "Fleet/Vehicle Hub maintenance/history/cost/reminder donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime identity/storage authority"
     ],
-    "add": [
-      "DIAL vehicle canonical identity",
-      "Tech/Spare/Assist links",
-      "B2B scopes",
-      "support"
-    ],
-    "source_path_status": "PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+      "role": "Fleet/Vehicle Hub maintenance/history/cost/reminder donor.",
+      "preserve": [
+        "maintenance records",
+        "service history",
+        "cost/reminder mental model"
+      ],
+      "replace": [
+        "runtime identity/storage authority"
+      ],
+      "add": [
+        "DIAL vehicle canonical identity",
+        "Tech/Spare/Assist links",
+        "B2B scopes",
+        "support"
+      ],
+      "source_path_status": "PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "SERVICE-OPENREMOTE-FLEET",
@@ -336,170 +778,445 @@
     "donor_id": "REF-SERVICEMYRIDE",
     "name": "ServiceMyRide-style vehicle service UX reference",
     "kind": "UX_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Vehicle service-history/reminder UX comparison.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-SERVICEMYRIDE",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "history presentation"
     ],
-    "replace": [
+    "reference_notes": [
+      "Vehicle service-history/reminder UX comparison."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime"
     ],
-    "add": [
-      "DIAL trusted provenance"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Vehicle service-history/reminder UX comparison.",
+      "preserve": [
+        "history presentation"
+      ],
+      "replace": [
+        "runtime"
+      ],
+      "add": [
+        "DIAL trusted provenance"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "DONOR-OPENPROJECT",
     "name": "OpenProject",
     "kind": "REPOSITORY_REFERENCE",
-    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
-    "role": "Project/portfolio/work-package/dependency/Gantt/meeting workflow donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-OPENPROJECT",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "work-package hierarchy",
       "dependencies",
       "progress/meeting UX patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Project/portfolio/work-package/dependency/Gantt/meeting workflow donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "project SoR",
       "auth",
       "database"
     ],
-    "add": [
-      "DIAL funding",
-      "Tech/Spare/Delivery links",
-      "evidence/safety",
-      "client support"
-    ],
-    "source_path_status": "PIN_IF_SOURCE_PORTED"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+      "role": "Project/portfolio/work-package/dependency/Gantt/meeting workflow donor.",
+      "preserve": [
+        "work-package hierarchy",
+        "dependencies",
+        "progress/meeting UX patterns"
+      ],
+      "replace": [
+        "project SoR",
+        "auth",
+        "database"
+      ],
+      "add": [
+        "DIAL funding",
+        "Tech/Spare/Delivery links",
+        "evidence/safety",
+        "client support"
+      ],
+      "source_path_status": "PIN_IF_SOURCE_PORTED"
+    }
   },
   {
     "donor_id": "DONOR-FRAPPE-HR",
     "name": "Frappe HR",
     "kind": "REPOSITORY",
-    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SCHEMA_WORKFLOW_ALGORITHM_UX",
-    "role": "Primary HR/workforce/payroll behavior donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-FRAPPE-HR",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "mature HR workflows",
       "selected payroll/leave/attendance behavior",
       "ESS patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary HR/workforce/payroll behavior donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "Frappe runtime",
       "auth",
       "DB",
       "accounting"
     ],
-    "add": [
-      "DIAL Identity/SoD",
-      "Zimbabwe effective-dated statutory rules",
-      "DIAL Ledger",
-      "Command Centre"
-    ],
-    "source_path_status": "PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SCHEMA_WORKFLOW_ALGORITHM_UX",
+      "role": "Primary HR/workforce/payroll behavior donor.",
+      "preserve": [
+        "mature HR workflows",
+        "selected payroll/leave/attendance behavior",
+        "ESS patterns"
+      ],
+      "replace": [
+        "Frappe runtime",
+        "auth",
+        "DB",
+        "accounting"
+      ],
+      "add": [
+        "DIAL Identity/SoD",
+        "Zimbabwe effective-dated statutory rules",
+        "DIAL Ledger",
+        "Command Centre"
+      ],
+      "source_path_status": "PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "DONOR-ERPNEXT",
     "name": "ERPNext",
     "kind": "REPOSITORY",
-    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_PORTS",
-    "role": "Finance/procurement/AP/AR/assets/inventory-accounting behavior donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-ERPNEXT",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "document/accounting semantics",
       "3-way procurement behavior",
       "selected valuation/depreciation algorithms"
     ],
-    "replace": [
+    "reference_notes": [
+      "Finance/procurement/AP/AR/assets/inventory-accounting behavior donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "Frappe runtime",
       "ERPNext GL",
       "DB/auth"
     ],
-    "add": [
-      "DIAL Ledger",
-      "DoA/SoD",
-      "DIAL corporate dimensions",
-      "Command Centre"
-    ],
-    "source_path_status": "PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_PORTS",
+      "role": "Finance/procurement/AP/AR/assets/inventory-accounting behavior donor.",
+      "preserve": [
+        "document/accounting semantics",
+        "3-way procurement behavior",
+        "selected valuation/depreciation algorithms"
+      ],
+      "replace": [
+        "Frappe runtime",
+        "ERPNext GL",
+        "DB/auth"
+      ],
+      "add": [
+        "DIAL Ledger",
+        "DoA/SoD",
+        "DIAL corporate dimensions",
+        "Command Centre"
+      ],
+      "source_path_status": "PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "REF-ODOO",
     "name": "Odoo",
     "kind": "ERP_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Adversarial ERP process/UX comparison for finance, procurement, warehouse and assets.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-ODOO",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "edge-case/process ideas"
     ],
-    "replace": [
+    "reference_notes": [
+      "Adversarial ERP process/UX comparison for finance, procurement, warehouse and assets."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime"
     ],
-    "add": [
-      "DIAL-native implementation"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Adversarial ERP process/UX comparison for finance, procurement, warehouse and assets.",
+      "preserve": [
+        "edge-case/process ideas"
+      ],
+      "replace": [
+        "runtime"
+      ],
+      "add": [
+        "DIAL-native implementation"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "DONOR-INVENTREE",
     "name": "InvenTree",
     "kind": "REPOSITORY",
-    "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_MODULES",
-    "role": "Primary direct engineering donor for internal WMS stock/location/lot/serial/movement behaviors.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-INVENTREE",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "stock location tree",
       "lot/serial concepts",
       "movement history",
       "receiving/transfer/barcode patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary direct engineering donor for internal WMS stock/location/lot/serial/movement behaviors."
+    ],
+    "anti_patterns_and_exclusions": [
       "Django runtime",
       "DB",
       "part authority"
     ],
-    "add": [
-      "ownership vs custody",
-      "DIAL Ledger",
-      "DoA/SoD",
-      "offline warehouse app"
-    ],
-    "source_path_status": "PIN_DURING_IMPORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "WHOLESALE_QUARANTINE_PLUS_SELECTED_MODULES",
+      "role": "Primary direct engineering donor for internal WMS stock/location/lot/serial/movement behaviors.",
+      "preserve": [
+        "stock location tree",
+        "lot/serial concepts",
+        "movement history",
+        "receiving/transfer/barcode patterns"
+      ],
+      "replace": [
+        "Django runtime",
+        "DB",
+        "part authority"
+      ],
+      "add": [
+        "ownership vs custody",
+        "DIAL Ledger",
+        "DoA/SoD",
+        "offline warehouse app"
+      ],
+      "source_path_status": "PIN_DURING_IMPORT"
+    }
   },
   {
     "donor_id": "DONOR-SNIPEIT",
     "name": "Snipe-IT",
     "kind": "REPOSITORY_REFERENCE",
-    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
-    "role": "Corporate asset custody/check-in/check-out donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-SNIPEIT",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "custody and audit UX"
     ],
-    "replace": [
+    "reference_notes": [
+      "Corporate asset custody/check-in/check-out donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime/DB/auth"
     ],
-    "add": [
-      "DIAL asset accounting",
-      "JML integration"
-    ],
-    "source_path_status": "PIN_IF_SOURCE_PORTED"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+      "role": "Corporate asset custody/check-in/check-out donor.",
+      "preserve": [
+        "custody and audit UX"
+      ],
+      "replace": [
+        "runtime/DB/auth"
+      ],
+      "add": [
+        "DIAL asset accounting",
+        "JML integration"
+      ],
+      "source_path_status": "PIN_IF_SOURCE_PORTED"
+    }
   },
   {
     "donor_id": "DONOR-GLPI",
     "name": "GLPI / GLPI Agent",
     "kind": "REPOSITORY_AND_AGENT",
-    "adoption_mode": "SCHEMA_WORKFLOW_UX_PLUS_AGENT_INTEGRATION",
-    "role": "ITSM/CMDB workflow donor and endpoint inventory collector.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-GLPI",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "incident/problem/change/SLA patterns",
       "endpoint observation agent"
     ],
-    "replace": [
+    "reference_notes": [
+      "ITSM/CMDB workflow donor and endpoint inventory collector."
+    ],
+    "anti_patterns_and_exclusions": [
       "GLPI server authority"
     ],
-    "add": [
-      "DIAL IT case/asset authority",
-      "DIAL Identity"
-    ],
-    "source_path_status": "PIN_AGENT_AND_REFERENCE_REVISION"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "SCHEMA_WORKFLOW_UX_PLUS_AGENT_INTEGRATION",
+      "role": "ITSM/CMDB workflow donor and endpoint inventory collector.",
+      "preserve": [
+        "incident/problem/change/SLA patterns",
+        "endpoint observation agent"
+      ],
+      "replace": [
+        "GLPI server authority"
+      ],
+      "add": [
+        "DIAL IT case/asset authority",
+        "DIAL Identity"
+      ],
+      "source_path_status": "PIN_AGENT_AND_REFERENCE_REVISION"
+    }
   },
   {
     "donor_id": "SERVICE-DOCUMENSO",
@@ -539,18 +1256,50 @@
     "donor_id": "DONOR-ERAMBA",
     "name": "Eramba",
     "kind": "GRC_REFERENCE",
-    "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
-    "role": "Risk/control/policy/test/exception/CAPA relationship donor.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-ERAMBA",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "GRC relationship/workflow concepts"
     ],
-    "replace": [
+    "reference_notes": [
+      "Risk/control/policy/test/exception/CAPA relationship donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "runtime/database"
     ],
-    "add": [
-      "DIAL evidence/approval/Command Centre"
-    ],
-    "source_path_status": "PIN_IF_SOURCE_PORTED"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_SCHEMA_WORKFLOW_AND_UX_REFERENCE",
+      "role": "Risk/control/policy/test/exception/CAPA relationship donor.",
+      "preserve": [
+        "GRC relationship/workflow concepts"
+      ],
+      "replace": [
+        "runtime/database"
+      ],
+      "add": [
+        "DIAL evidence/approval/Command Centre"
+      ],
+      "source_path_status": "PIN_IF_SOURCE_PORTED"
+    }
   },
   {
     "donor_id": "SERVICE-OPA",
@@ -594,20 +1343,54 @@
     "name": "Grab superapp modularisation architecture",
     "url": "https://engineering.grab.com/app-modularisation-at-scale",
     "kind": "ARCHITECTURE_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Reference for one consumer super-app with independent feature modules and bridge/kit interfaces.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-GRAB-SUPERAPP",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "core/shared/feature/bridge module separation",
       "feature independence",
       "single unified passenger experience"
     ],
-    "replace": [
+    "reference_notes": [
+      "Reference for one consumer super-app with independent feature modules and bridge/kit interfaces."
+    ],
+    "anti_patterns_and_exclusions": [
       "Grab-specific implementation"
     ],
-    "add": [
-      "DIAL branch modules and DIAL-native Android/iOS architecture"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Reference for one consumer super-app with independent feature modules and bridge/kit interfaces.",
+      "preserve": [
+        "core/shared/feature/bridge module separation",
+        "feature independence",
+        "single unified passenger experience"
+      ],
+      "replace": [
+        "Grab-specific implementation"
+      ],
+      "add": [
+        "DIAL branch modules and DIAL-native Android/iOS architecture"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "SERVICE-CHATWOOT",
@@ -640,20 +1423,54 @@
     "donor_id": "REF-INTERCOM-HANDOFF",
     "name": "Intercom/Fin AI-human handoff patterns",
     "kind": "CUSTOMER_SERVICE_REFERENCE",
-    "adoption_mode": "REFERENCE",
-    "role": "Reference for automated resolution, specialized roles and context-rich human handoff.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-INTERCOM-HANDOFF",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "handoff design principles",
       "role-specific automation",
       "escalation rules"
     ],
-    "replace": [
+    "reference_notes": [
+      "Reference for automated resolution, specialized roles and context-rich human handoff."
+    ],
+    "anti_patterns_and_exclusions": [
       "proprietary support runtime"
     ],
-    "add": [
-      "DIAL-owned Support Agent + Chatwoot + RCE"
-    ],
-    "source_path_status": "REFERENCE_ONLY"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Reference for automated resolution, specialized roles and context-rich human handoff.",
+      "preserve": [
+        "handoff design principles",
+        "role-specific automation",
+        "escalation rules"
+      ],
+      "replace": [
+        "proprietary support runtime"
+      ],
+      "add": [
+        "DIAL-owned Support Agent + Chatwoot + RCE"
+      ],
+      "source_path_status": "REFERENCE_ONLY"
+    }
   },
   {
     "donor_id": "SERVICE-LITELLM-SUPPORT",
@@ -714,91 +1531,229 @@
     "donor_id": "DONOR-COMMAND-DESIGN",
     "name": "Studio Admin + shadcn/ui + Tremor Raw + Refine",
     "kind": "UI_STACK",
-    "adoption_mode": "UX_PORT_COMPONENT_PORT_LIBRARY",
-    "role": "Command Centre/corporate operator visual and interaction substrate.",
-    "preserve": [
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-COMMAND-DESIGN",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "high-quality shell",
       "editable primitives",
       "analytics components",
       "headless resource plumbing"
     ],
-    "replace": [
+    "reference_notes": [
+      "Command Centre/corporate operator visual and interaction substrate."
+    ],
+    "anti_patterns_and_exclusions": [
       "donor branding",
       "generic SaaS composition",
       "direct CRUD authority"
     ],
-    "add": [
-      "DIAL design system",
-      "typed actions",
-      "decision/evidence/alerts"
-    ],
-    "source_path_status": "PIN_COMPONENT_PROVENANCE"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "UX_PORT_COMPONENT_PORT_LIBRARY",
+      "role": "Command Centre/corporate operator visual and interaction substrate.",
+      "preserve": [
+        "high-quality shell",
+        "editable primitives",
+        "analytics components",
+        "headless resource plumbing"
+      ],
+      "replace": [
+        "donor branding",
+        "generic SaaS composition",
+        "direct CRUD authority"
+      ],
+      "add": [
+        "DIAL design system",
+        "typed actions",
+        "decision/evidence/alerts"
+      ],
+      "source_path_status": "PIN_COMPONENT_PROVENANCE"
+    }
   },
   {
     "donor_id": "DONOR-DIAL-HOME-SHADCN",
     "name": "nobruf/shadcn-landing-page",
     "url": "https://github.com/nobruf/shadcn-landing-page",
     "kind": "REPOSITORY",
-    "adoption_mode": "PORT_SELECTED_MODULE_AND_UX",
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
     "license": "MIT",
-    "role": "Primary DIAL public home/landing service-router composition donor.",
-    "preserve": [
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-DIAL-HOME-SHADCN",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "responsive navbar/mobile nav",
       "hero/services/benefits/FAQ/footer composition"
     ],
-    "replace": [
+    "reference_notes": [
+      "Primary DIAL public home/landing service-router composition donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "brand/copy",
       "generic SaaS content",
       "theme/tokens",
       "auth-first hierarchy"
     ],
-    "add": [
-      "DIAL Service Router",
-      "intent search",
-      "Activity strip",
-      "Business/Health/Support/WhatsApp",
-      "DIAL design system"
-    ],
-    "source_path_status": "PIN_EXACT_COMMIT_BEFORE_PORT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_SELECTED_MODULE_AND_UX",
+      "role": "Primary DIAL public home/landing service-router composition donor.",
+      "preserve": [
+        "responsive navbar/mobile nav",
+        "hero/services/benefits/FAQ/footer composition"
+      ],
+      "replace": [
+        "brand/copy",
+        "generic SaaS content",
+        "theme/tokens",
+        "auth-first hierarchy"
+      ],
+      "add": [
+        "DIAL Service Router",
+        "intent search",
+        "Activity strip",
+        "Business/Health/Support/WhatsApp",
+        "DIAL design system"
+      ],
+      "source_path_status": "PIN_EXACT_COMMIT_BEFORE_PORT"
+    }
   },
   {
     "donor_id": "DONOR-WHATSAPP-FLOWS-TOOLS",
     "name": "WhatsApp/WhatsApp-Flows-Tools",
     "url": "https://github.com/WhatsApp/WhatsApp-Flows-Tools",
     "kind": "OFFICIAL_REPOSITORY",
-    "adoption_mode": "PORT_ALGORITHM_ENGINE_AND_CONFORMANCE_REFERENCE",
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
     "license": "MIT",
-    "role": "Official WhatsApp Flows endpoint crypto/tooling/examples donor.",
-    "preserve": [
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "DONOR-WHATSAPP-FLOWS-TOOLS",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "endpoint crypto mechanics",
       "Flow/webhook example concepts"
     ],
-    "replace": [
+    "reference_notes": [
+      "Official WhatsApp Flows endpoint crypto/tooling/examples donor."
+    ],
+    "anti_patterns_and_exclusions": [
       "prototype assumptions"
     ],
-    "add": [
-      "DIAL auth/commands/idempotency/observability/security"
-    ],
-    "source_path_status": "PIN_EXACT_COMMIT"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "PORT_ALGORITHM_ENGINE_AND_CONFORMANCE_REFERENCE",
+      "role": "Official WhatsApp Flows endpoint crypto/tooling/examples donor.",
+      "preserve": [
+        "endpoint crypto mechanics",
+        "Flow/webhook example concepts"
+      ],
+      "replace": [
+        "prototype assumptions"
+      ],
+      "add": [
+        "DIAL auth/commands/idempotency/observability/security"
+      ],
+      "source_path_status": "PIN_EXACT_COMMIT"
+    }
   },
   {
     "donor_id": "REF-META-WHATSAPP-API-SAMPLES",
     "name": "fbsamples/whatsapp-api-examples",
     "url": "https://github.com/fbsamples/whatsapp-api-examples",
     "kind": "OFFICIAL_SAMPLE_REFERENCE",
-    "adoption_mode": "REFERENCE",
+    "adoption_mode": "REFERENCE_AND_INSPIRATION_ONLY",
     "license": "Meta Platform Policy",
-    "role": "Cloud API/webhook/template/media/ecommerce examples.",
-    "preserve": [
+    "role": "Non-authoritative external reference/inspiration only; DIAL-native authority and implementation remain mandatory.",
+    "preserve": [],
+    "replace": [],
+    "add": [],
+    "source_path_status": "RESEARCH_PROVENANCE_ONLY",
+    "legacy_donor_id": "REF-META-WHATSAPP-API-SAMPLES",
+    "classification": "EXTERNAL_REFERENCE",
+    "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+    "reference_policy": "REFERENCE_AND_INSPIRATION_ONLY",
+    "inspiration_topics": [
       "API conformance patterns"
     ],
-    "replace": [
+    "reference_notes": [
+      "Cloud API/webhook/template/media/ecommerce examples."
+    ],
+    "anti_patterns_and_exclusions": [
       "sample application architecture"
     ],
-    "add": [
-      "DIAL Gateway/domain integration"
-    ],
-    "source_path_status": "REFERENCE_AND_POLICY_REVIEW"
+    "production_import_allowed": false,
+    "runtime_dependency_allowed": false,
+    "source_of_truth_allowed": false,
+    "design_authority_allowed": false,
+    "visual_authority_promotion_allowed": false,
+    "code_copy_allowed": false,
+    "component_copy_allowed": false,
+    "asset_copy_allowed": false,
+    "schema_copy_allowed": false,
+    "business_logic_copy_allowed": false,
+    "pixel_copy_allowed": false,
+    "historical_pre_dec039_semantics": {
+      "adoption_mode": "REFERENCE",
+      "role": "Cloud API/webhook/template/media/ecommerce examples.",
+      "preserve": [
+        "API conformance patterns"
+      ],
+      "replace": [
+        "sample application architecture"
+      ],
+      "add": [
+        "DIAL Gateway/domain integration"
+      ],
+      "source_path_status": "REFERENCE_AND_POLICY_REVIEW"
+    }
   },
   {
     "donor_id": "SERVICE-PAYNOW",

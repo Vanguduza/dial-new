@@ -71,7 +71,7 @@ function scorePromotion(evalResult) {
 function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
 export async function benchmarkEliteModels({ project, root, providerRoot, keyFile, archetype, fetchImpl = globalThis.fetch, paceMs = null } = {}) {
-  if (!['dial', 'dde'].includes(project)) throw new Error('HAIF benchmark project must be dial or dde');
+  if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(String(project || ''))) throw new Error('HAIF benchmark project id is invalid');
   if (!archetype) throw new Error('HAIF benchmark archetype is required');
   const apiKey = readSecureXKiroKey(keyFile);
   const catalog = await fetchXKiroCatalog({ fetchImpl });

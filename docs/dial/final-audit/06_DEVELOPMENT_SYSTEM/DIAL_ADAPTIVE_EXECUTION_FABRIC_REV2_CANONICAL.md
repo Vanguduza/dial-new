@@ -1,3 +1,7 @@
+# DEC-039 external-repository amendment — 2026-09-19
+
+`DEC-039` supersedes every donor import, port, preserve, adapt, assimilation, donor-parity and donor-semantic-preservation clause in this document. External repositories are **reference and inspiration only**. They may inform abstract patterns, trade-offs, UX/interaction ideas, architecture lessons, anti-patterns and tests, but they carry no DIAL implementation, Product Truth, source-of-truth, DesignAuthority, VisualAuthority or runtime authority. Any literal third-party dependency/code adoption requires a separate explicit owner-authorized qualification. All remaining donor wording below is historical provenance.
+
 # DIAL Adaptive Multi-Harness Execution Fabric — Reconciled Rev 2
 ## VEKL 2.2 Adaptive Execution Fabric Extension
 ### Deterministic Triage + Worker-Only HCX + Compute Governance + Donor Transformation + Provider-Neutral Design Admission + Immutable Execution Evidence

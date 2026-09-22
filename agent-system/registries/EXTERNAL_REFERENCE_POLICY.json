@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "policy_version": "vekl-external-reference-1.0",
+  "authority": "OWNER_LOCKED_DECISION_DEC_039",
+  "decision_ref": "DEC-039",
+  "mode": "REFERENCE_AND_INSPIRATION_ONLY",
+  "allowed_uses": [
+    "ABSTRACT_PATTERN",
+    "ARCHITECTURE_LESSON",
+    "UX_INTERACTION_IDEA",
+    "VISUAL_INSPIRATION",
+    "ANTI_PATTERN",
+    "TRADEOFF_EVIDENCE",
+    "TEST_IDEA",
+    "PUBLIC_IMPLEMENTATION_LESSON"
+  ],
+  "forbidden_uses": [
+    "PRODUCT_TRUTH",
+    "BUSINESS_LOGIC_AUTHORITY",
+    "STATE_MACHINE_AUTHORITY",
+    "SOURCE_OF_TRUTH",
+    "DESIGN_AUTHORITY",
+    "VISUAL_AUTHORITY",
+    "DIRECT_CODE_IMPORT",
+    "COMPONENT_IMPORT",
+    "ASSET_IMPORT",
+    "SCHEMA_IMPORT",
+    "BUSINESS_LOGIC_IMPORT",
+    "PIXEL_COPY",
+    "RUNTIME_DEPENDENCY",
+    "DEPENDENCY_ADOPTION_BY_REFERENCE"
+  ],
+  "production_import_allowed": false,
+  "runtime_dependency_allowed": false,
+  "source_of_truth_allowed": false,
+  "design_authority_allowed": false,
+  "visual_authority_promotion_allowed": false,
+  "semantic_preservation_required": false,
+  "provider_input_policy": "SYNTHESIZED_ABSTRACT_REFERENCE_DESCRIPTORS_ONLY",
+  "raw_repository_code_to_design_provider": false,
+  "raw_donor_screen_as_visual_authority": false,
+  "literal_dependency_adoption_policy": "SEPARATE_EXPLICIT_OWNER_AUTHORIZATION_AND_QUALIFICATION_REQUIRED",
+  "license_policy": "RECORD_LICENSE_AND_PROVENANCE_FOR_RESEARCH; DO_NOT_INFER_PRODUCTION_LICENSE_CLEARANCE",
+  "legacy_terms": {
+    "DONOR_ADAPT": "REFERENCE_INSPIRED_DIAL_NATIVE",
+    "DONOR_PRESERVE": "REFERENCE_INSPIRED_DIAL_NATIVE",
+    "DONOR_ASSIMILATION": "EXTERNAL_REFERENCE_RESEARCH",
+    "DONOR_ADAPTATION": "EXTERNAL_REFERENCE_RESEARCH"
+  },
+  "historical_docs_policy": "HISTORICAL_PROVENANCE_ONLY_WHERE_THEY_DIRECT_IMPORT_PORT_OR_PRESERVATION"
+}

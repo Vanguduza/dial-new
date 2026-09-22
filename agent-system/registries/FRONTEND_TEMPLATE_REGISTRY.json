@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-templates-1.1",
+  "registry_version": "frontend-templates-1.2",
   "resource_projection": "ENGINEERING_RESOURCE",
   "templates": [
     {
@@ -56,21 +56,21 @@
       ]
     },
     {
-      "template_id": "frontend.donor-assimilate",
-      "mode": "ASSIMILATE",
+      "template_id": "frontend.reference-informed-synthesis-brief",
+      "mode": "REFERENCE_INSPIRATION",
       "task_classes": [
-        "DONOR_ADAPTATION",
-        "DONOR_ASSIMILATION"
+        "EXTERNAL_REFERENCE_RESEARCH"
       ],
       "required_inputs": [
-        "FDEP",
-        "DonorFrontendReuseProjection"
+        "ExternalReferenceInspirationProjection"
       ],
       "outputs": [
-        "implementation",
-        "provenance",
-        "CertificationEvidence"
-      ]
+        "abstract_pattern_notes",
+        "anti_pattern_notes",
+        "tradeoff_notes"
+      ],
+      "production_implementation_output": false,
+      "authority": "NON_AUTHORITATIVE_RESEARCH_ONLY"
     },
     {
       "template_id": "frontend.component-create",

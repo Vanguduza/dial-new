@@ -886,7 +886,9 @@
       "docs/project-state/authorizations/auth-20260918-owner-rev31-open-world-guided-design-n8n.json"
     ],
     "activation_blocker_refs": [],
-    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps provenance mode and iteration phase on separate axes, keeps the existing projection, quarantine, admission, donor and promotion behaviour byte-identical for legacy callers, keeps semantic dimensions outside every freedom budget, keeps critic rejection binding on admission, and keeps visual-authority promotion an owner or authorised design-authority act"
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps provenance mode and iteration phase on separate axes, keeps the existing projection, quarantine, admission, donor and promotion behaviour byte-identical for legacy callers, keeps semantic dimensions outside every freedom budget, keeps critic rejection binding on admission, and keeps visual-authority promotion an owner or authorised design-authority act",
+    "superseded_in_part_by": "DEC-039",
+    "active_interpretation": "Guided generation remains active, but donor adapt/preserve/semantic-preservation clauses are superseded. Reference-informed work is DIAL-native and external repositories carry no implementation/design authority."
   },
   {
     "decision_id": "DEC-038",
@@ -916,5 +918,157 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-19",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / VEKL / EXTERNAL REPOSITORIES / FRONTEND",
+    "title": "External repositories are reference and inspiration only; DIAL-native authority and implementation are mandatory",
+    "decision": "External repositories previously described as donors may be researched only as non-authoritative reference and inspiration. They may contribute abstract patterns, trade-offs, interaction ideas, architecture lessons, anti-patterns, evaluation criteria and public evidence. They may not define Product Truth, screen semantics, business logic, state machines, source-of-truth data, design authority or runtime behavior, and normal VEKL/frontend workflows may not copy, port, fork, vendor, preserve or assimilate their code, components, assets, schemas or business logic into DIAL production. Frontend generation remains DIAL-native: Product Truth and the canonical Screen Registry × Feature Graph define scope, authoritative domain sources hydrate facts, VEKL provides governed design knowledge, Stitch authors DIAL-native candidates, and DDE productionizes accepted experience authority. Any literal third-party code or dependency adoption requires a separate explicit owner-authorized dependency/adoption decision and qualification path; it is never implied by reference research.",
+    "consequence": "Legacy DONOR_ADAPT, DONOR_PRESERVE, donor assimilation, direct donor port and preserve-donor-semantics behavior is superseded wherever it conflicts with this decision. Historical donor documents remain provenance only. Active registries/projectors expose reference-and-inspiration descriptors with no implementation authority, no runtime dependency, no pixel-copy authority and no external VisualAuthority promotion. Figma/Stitch/provider behavior remains governed independently; Stitch remains the sole automatic frontend design provider under the canonical frontend generation architecture.",
+    "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_VEKL_EXTERNAL_REFERENCE_INSPIRATION_POLICY_20260919.md",
+    "supersedes_decision_clauses": [
+      "DEC-037:donor-preserve/adapt semantics",
+      "legacy donor assimilation directives"
+    ],
+    "enforced_by": [
+      "agent-system/registries/EXTERNAL_REFERENCE_POLICY.json",
+      "agent-system/registries/DONOR_APPLICABILITY_REGISTRY.json",
+      "agent-system/orchestration/donor-applicability.mjs",
+      "agent-system/orchestration/frontend-donor-projection.mjs",
+      "agent-system/orchestration/unit-knowledge-map-builder.mjs",
+      "agent-system/orchestration/frontend-product-experience.mjs",
+      "agent-system/orchestration/design-authority-projector.mjs",
+      "agent-system/orchestration/design-provider-router.mjs",
+      "agent-system/orchestration/screen-quality-packet.mjs",
+      "agent-system/orchestration/design-critics.mjs",
+      "agent-system/orchestration/vekl-research-seed.mjs",
+      "agent-system/orchestration/vekl-research-harvest.mjs",
+      "agent-system/orchestration/vekl-reference-only-architecture-check.mjs",
+      "tests/orchestration-vekl-reference-only.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly authorizes a specific external dependency/code adoption under a separate qualified dependency/adoption contract or supersedes reference-only policy with an equal-or-stronger authority model"
+  },
+  {
+    "decision_id": "DEC-040",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / VEKL / FRONTEND / INTERACTION / MOTION / DESIGN ACUITY",
+    "title": "Interaction and motion are first-class frontend design stages and VEKL must supply expert product-design acuity",
+    "decision": "Every interactive DIAL frontend must receive VEKL interaction-design preflight before visual generation and a dedicated VEKL interaction/motion intelligence compilation after visual authority freezes. VEKL retrieves contextually applicable interaction, motion, responsive, platform-native, accessibility, state, recovery, performance and professional-SaaS patterns from admitted knowledge and qualified open-world discovery. Stitch then performs an expert interaction/motion/product-polish pass against the frozen visual identity. The pass must reason pattern-by-pattern rather than mechanically applying fashionable effects and must emit machine-readable design decisions. NO_EFFECT_NEEDED is valid for a pattern but not as a substitute for expert review. Interaction-driven structural changes are bounded; a material hierarchy or information-architecture change returns to visual reconvergence.",
+    "consequence": "Frontend completion now requires explicit behavior design, motion hierarchy, responsive interaction, edge-state behavior, accessibility/reduced-motion handling, gesture-conflict safety, state restoration, performance and optical-polish evidence in addition to visual and functional parity. VEKL open-world discovery continuously refreshes candidate interaction knowledge but only qualified/admitted evidence becomes routine guidance. External repositories and reference databases remain non-authoritative inspiration under DEC-039. The generated Stitch interaction contract is validated before ExperienceAuthority can freeze, and DDE productionization must preserve the accepted interaction as well as the visual design.",
+    "record": "docs/dial/architecture/VEKL_INTERACTION_MOTION_DESIGN_ACUITY_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/DESIGN_ACUITY_POLICY.json",
+      "agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json",
+      "agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json",
+      "agent-system/orchestration/interaction-motion-intelligence.mjs",
+      "agent-system/orchestration/frontend-design-execution-packet.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "agent-system/orchestration/vekl-research-seed.mjs",
+      "agent-system/orchestration/vekl-research-harvest.mjs",
+      "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+      "tests/interaction-motion-intelligence.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-vekl-interaction-motion-design-acuity.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger system that keeps interaction/motion first-class, preserves Product Truth and Screen Registry × Feature Graph authority, maintains context-sensitive pattern selection, requires accessibility/performance/reduced-motion/state evidence, prevents silent redesign after visual freeze and keeps external references non-authoritative"
+  },
+  {
+    "decision_id": "DEC-041",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / FRONTEND / SCREEN FEATURE SEMANTICS / PROVIDER TRUTH",
+    "title": "Frontend generation resolves one application context, semantic screen-feature edges and provider truth claims before VisualAuthority",
+    "decision": "A canonical screen/provider packet must not inherit the raw union of all applications, actors, commands or feature workflows that reference that screen. DIAL resolves one target application/actor/platform unless the owner explicitly requests multi-platform generation, compiles screen-feature edge roles and admitted domain subsystem semantics, applies module product/brand authority, and gives the design provider only screen-safe interaction intent. For Groceries, normal shopping, Pantry, Scheduled Basket and Grocery Rounds are explicitly distinct. GROC-F013 is planned/recurring basket-route delivery; GROC-F019..F034 are the Grocery Rounds domain governed by the existing Grocery Rounds master/credit decisions. DIAL Groceries is broad grocery and household commerce, with orange/black/warm-white owner-approved identity, Shopping mode on Home and green only as a supporting semantic colour. Stitch must serialize displayed runtime/business factual literals in a machine-readable truth-claims contract, and a passed TruthLiteralLint is mandatory before VisualAuthority freeze.",
+    "consequence": "The Screen Registry × Feature Graph carries screen-feature edge-role metadata and the generation compiler consumes it. Customer Android Home no longer receives courier, merchant, shopper, web, iOS or WhatsApp provider context merely because those applications share graph relationships. Deep/internal features can constrain or route the screen without exposing their commands. Feature IDs are accompanied by subsystem meaning/non-equivalence guards. Provider fabrication of prices, stores, locations, ETAs, order IDs, balances, member counts, savings, entitlements, maturity dates or other runtime facts prevents authority promotion when not present in ScreenTruthEnvelope. DEC-039 reference-only and DEC-040 first-class interaction/motion remain in force.",
+    "record": "docs/dial/architecture/FRONTEND_APPLICATION_FEATURE_SEMANTIC_COMPILATION_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json",
+      "agent-system/registries/FRONTEND_GENERATION_POLICY.json",
+      "agent-system/registries/FRONTEND_PRODUCT_PROFILE_REGISTRY.json",
+      "agent-system/bin/build-screen-feature-graph.mjs",
+      "agent-system/orchestration/screen-feature-graph.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/frontend-product-experience.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "tests/groceries-frontend-semantic-compiler.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-frontend-semantic-scope-corrections.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger system that keeps target-application scoping deterministic, keeps screen-feature relation semantics explicit, preserves Grocery Rounds/Scheduled Basket non-equivalence, preserves domain product/brand authority and fails VisualAuthority promotion on unverified provider factual literals"
+  },
+  {
+    "decision_id": "DEC-042",
+    "decided_on": "2026-09-20",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / FRONTEND / VEKL / DESIGN SYNTHESIS / RENDERABILITY",
+    "title": "Frontend providers synthesize product knowledge into composed experiences instead of rendering feature inventories",
+    "decision": "DIAL inserts a mandatory knowledge-to-design synthesis layer before Stitch visual generation. Every provider-relevant item is classified as customer-renderable content, background product semantics, design-constraint-only or validation-only. Feature graph relations are transformed into customer goals/experience opportunities before visible components are chosen. Screen-purpose composition budgets determine what deserves visual prominence. Internal feature/screen IDs, preflight/state simulators, acceptance/debug/provenance material are never customer content. For discovery Home surfaces, customer value, imagery, discovery and relevant content must dominate policy/system exposition. Raw provider output is checked by DesignSynthesisLint before VisualAuthority and must also pass TruthLiteralLint.",
+    "consequence": "Stitch receives a synthesis-first prompt rather than a raw feature dump. Functional completeness is expressed through real interactions and state behavior while visual hierarchy remains customer-centric and professionally authored. Groceries Home reserves primary real estate for hero discovery, Shopping mode, search, categories, popular/relevant products and continuity; approval ceiling, substitutions, cold-chain and deep Grocery Rounds mechanics may constrain behavior without becoming main Home sections. Consumer screens are not forced into enterprise dashboard patterns merely to appear professional.",
+    "record": "docs/dial/architecture/FRONTEND_DESIGN_SYNTHESIS_AND_RENDERABILITY_REV1.md",
+    "enforced_by": [
+      "agent-system/registries/FRONTEND_DESIGN_SYNTHESIS_POLICY.json",
+      "agent-system/orchestration/frontend-design-synthesis.mjs",
+      "agent-system/orchestration/frontend-design-provider-orchestrator.mjs",
+      "agent-system/orchestration/frontend-generation-architecture.mjs",
+      "agent-system/orchestration/stitch-design-orchestration.mjs",
+      "agent-system/orchestration/frontend-design-synthesis-check.mjs",
+      "tests/frontend-design-synthesis.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260920-owner-frontend-design-synthesis.json"
+    ],
+    "reopens_if": "the product owner explicitly replaces this with an equal-or-stronger architecture that preserves renderability separation, feature-to-experience synthesis, screen-purpose composition budgets, validation-only non-rendering and fail-closed visual synthesis validation before VisualAuthority"
+  },
+  {
+    "decision_id": "DEC-043",
+    "decided_on": "2026-09-21",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / PROJECT MODEL / DDE INDEPENDENCE / UNIVERSALITY",
+    "title": "DIAL Development System is a complete universal development system; DDE is an independent project/system",
+    "decision": "The DIAL Development System and DDE are two independent development systems. DIAL is itself a complete end-to-end development system capable of admitting and developing arbitrary products/projects through its own Product Truth, research, UX/UI/frontend, architecture, memory, execution, review, verification, deployment and recovery pipeline. DIAL products are project tenants of that system. DDE is not a DIAL subsystem or productionization dependency; it is an independent development system whose repository is currently developed as one ordinary project through DIAL. Similar components may exist in both, but runtime state, memory, authority, credentials, deployment and lifecycle do not couple automatically.",
+    "consequence": "DIAL must fail certification if any required development capability depends on DDE availability. Active code and installers may not hard-code a dial/dde-only project universe. DIAL's HAIF installer owns only DIAL runtime state. DIAL's frontend architecture uses a DIAL-native production binding rather than DDE. The universal project registry classifies DDE as INDEPENDENT_DEVELOPMENT_SYSTEM_PROJECT with all shared-runtime/authority/truth/mutable-memory/deployment flags false. DIAL may modify DDE only through an explicit project mission against DDE's repository; once released, DDE continues independently.",
+    "supersedes": "Only prior wording or implementation that treated DDE as a DIAL runtime tenant, frontend productionization layer, or otherwise implied cross-system coupling; all unrelated DDE comparisons/donor references remain informational.",
+    "record": "docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md; agent-system/canon/PROJECT_TRUTH.md",
+    "enforced_by": [
+      "agent-system/registries/UNIVERSAL_PROJECT_REGISTRY.json",
+      "agent-system/orchestration/project-registry.mjs",
+      "agent-system/orchestration/project-repository-resolver.mjs",
+      "agent-system/orchestration/auxiliary/authority-gate.mjs",
+      "deploy/oracle/hermes-codex/install-haif.sh",
+      "agent-system/orchestration/frontend-generation-architecture-check.mjs",
+      "tests/universal-development-system-independence.test.mjs"
+    ],
+    "reopens_if": "the product owner explicitly authorizes a bounded integration while preserving separate authority, state, memory and lifecycle semantics"
+  },
+  {
+    "decision_id": "DEC-044",
+    "decided_on": "2026-09-21",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / UNIVERSAL PROJECT PIPELINE / BUILD-READY",
+    "title": "Every admitted project is governed by one deterministic Development Pack and fail-closed Build-Ready gate contract",
+    "decision": "Adopt the PRD-to-Deterministic-Development-Pack preparation standard as the universal DIAL project pipeline contract. Every admitted project must have an exact repository baseline, Product Truth, Development Unit graph, Feature Graph, explicit UI applicability and Screen Registry x Feature Graph proof where applicable, research coverage, architecture, failure/recovery model, implementation DAG/atomic packets, verification/evidence/mutation plan, anti-gap closure and operations plan. BUILD_READY is computed from explicit gates and cannot be written by an agent. Repository drift invalidates effective readiness until an explicit rebaseline resets downstream evidence.",
+    "consequence": "The Development Pack compiler stores project-scoped revisioned artifacts with evidence references, computes Gates 0-12 for every project and Gate 13 for the DIAL Development System, refuses evidence-free artifact claims, refuses artifact updates against a stale repository baseline, and resets downstream artifacts on rebaseline. UI applicability must be explicitly true or false; an unknown value cannot silently exempt Screen Registry gates. A failing applicable gate cannot be hidden by an aggregate score or worker confidence.",
+    "record": "agent-system/registries/DEVELOPMENT_PACK_SCHEMA.json; agent-system/orchestration/development-pack-compiler.mjs; agent-system/orchestration/development-pack-gates.mjs; docs/orchestration/DIAL_UNIVERSAL_DEVELOPMENT_SYSTEM_INDEPENDENCE.md",
+    "enforced_by": [
+      "agent-system/registries/DEVELOPMENT_PACK_SCHEMA.json",
+      "agent-system/orchestration/development-pack-compiler.mjs",
+      "agent-system/orchestration/development-pack-gates.mjs",
+      "tests/universal-development-pack.test.mjs"
+    ],
+    "reopens_if": "the product owner replaces the pack/gate contract with an equal-or-stronger mechanism that preserves project isolation, exact baselines, bidirectional experience completeness, causal integration, evidence binding, drift invalidation and fail-closed Build-Ready semantics"
   }
 ]

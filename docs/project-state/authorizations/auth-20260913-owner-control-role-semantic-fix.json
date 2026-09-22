@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260913-owner-control-role-semantic-fix",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "eece64cb79866bdc5db44a3ad59803d4c346ef735774395410e6597c59860d3e",
+  "owner_instruction_excerpt": "Design this architecture and fully implement it without affecting whats already on dial hermes control",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260913-hybrid-mcp-ssh-control-plane",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-13T06:56:00Z",
+  "base_sha": "c0b20527ff60ac55daef8ce6dbf67f64b7512654",
+  "branch_scope": "feat/hybrid-mcp-ssh-control-plane",
+  "authorized_paths": [
+    "deploy/oracle/resource-fabric/role-guard.mjs",
+    "docs/project-state/OWNER_AUTHORITY_POLICY.json",
+    ".github/workflows/hybrid-control-plane-control-role-fix.yml"
+  ],
+  "change_classes": [
+    "control_role_semantic_fix",
+    "role_guard_backward_compatibility"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

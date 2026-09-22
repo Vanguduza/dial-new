@@ -87,6 +87,14 @@ Codex is enrolled with the same stdio MCP server and `DIAL_OPERATOR_CHANNEL=code
 
 Codex repository guidance is in root `AGENTS.md` so status questions use Oracle evidence instead of local-session inference.
 
+## ChatGPT direct MCP owner adapter
+
+ChatGPT is also an authenticated first-class owner adapter to the same typed DIAL operator authority. The dedicated localhost route is `/mcp/chatgpt`; the server fixes provenance to `channel=chatgpt`, `actor=owner`, and `transport=chatgpt_http_mcp` rather than trusting caller-supplied channel headers. It exposes the same named `dial_*` surface, Project Truth, idempotency, audit and safe-boundary owner-steering rules as Claude, Codex and the owner WhatsApp adapter. It does not create a second orchestrator or generic shell/filesystem proxy.
+
+Repository activation uses `deploy/oracle/hermes-codex/install-chatgpt-mcp-adapter.sh` and `qualify-chatgpt-mcp.sh`. Port 9130 remains loopback-only; remote ChatGPT enrollment requires an authenticated private HTTPS ingress to only the dedicated MCP path. The bearer credential remains outside Git with mode 0600. ChatGPT product enrollment is an external live gate and must not be falsely claimed by repository qualification.
+
+This direct typed adapter and the owner-facing Desktop Commander transport are complementary ingress options into Hermes. Neither bypasses Hermes authority or the governed execution fabric.
+
 ## WhatsApp: Dial Hermes Control dedicated account
 
 `whatsapp-hermes-operator.mjs` is the sole development-owner WhatsApp adapter. It uses the existing Hermes/Baileys bridge with a dedicated WhatsApp account so the owner has a normal one-to-one conversation with **Dial Hermes Control**, rather than messaging themselves. The legacy paired self-chat development-control route is retired. There is no WhatsApp fallback while the dedicated account is awaiting configuration/pairing.

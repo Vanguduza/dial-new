@@ -1,3 +1,7 @@
+# DEC-039 supersession
+
+External repository import/port directives in this historical apply plan are superseded. References may be researched for inspiration only; literal dependency adoption requires a separate owner-authorized qualification.
+
 # Repository Apply Plan
 
 Apply this final pack through a reviewed branch, not by copying random files ad hoc.

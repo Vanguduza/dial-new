@@ -14,7 +14,7 @@ for(const x of f){
  if(rr.length!==1) fail.push(`${x.feature_id}: realization count ${rr.length}`);
  const facets=s.filter(y=>y.parent_feature_id===x.feature_id);
  if(facets.length!==9) fail.push(`${x.feature_id}: expected 9 facets, got ${facets.length}`);
- if(!(x.donor_refs||[]).length) fail.push(`${x.feature_id}: donor/source strategy missing`);
+ if(!(x.donor_refs||[]).length) fail.push(`${x.feature_id}: external-reference/source strategy missing`);
  if(!sp.some(y=>y.feature_id===x.feature_id)) fail.push(`${x.feature_id}: security profile missing`);
  if(["CUSTOMER","B2B_CUSTOMER","MIXED"].includes(x.client_exposure||"")){
    if(!c.some(y=>y.feature_id===x.feature_id)) fail.push(`${x.feature_id}: customer endpoint missing`);

@@ -13,7 +13,7 @@ for(const r of roots) walk(r);
 const forbidden=[
   {re:/DIAL_OWNED/i,msg:"superseded Spare owned-stock term"},
   {re:/E6a[^\n]{0,80}Integration Green/i,msg:"E6a cannot be inherited green without explicit evidence"},
-  {re:/FixItNow[^\n]{0,120}QUARANTINE-PENDING-LICENCE/i,msg:"stale FixItNow licence quarantine; use Sachinrajawat/FixItNow MIT PORT-WHOLESALE"},
+  {re:/FixItNow[^\n]{0,120}PORT-WHOLESALE/i,msg:"stale FixItNow wholesale-port directive; DEC-039 makes external repositories reference/inspiration only"},
   {re:/SPECIALIST_VERTICAL_PENDING_PORTFOLIO_LOCK/i,msg:"stale Dial Health portfolio-candidate status; Health is a required standalone division"}
 ];
 

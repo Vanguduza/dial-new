@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260914-owner-chatgpt-direct-mcp",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "b1ea633f06ec8ec5bf6dbb64b78fe3dc488611e7ac1185cd089d1b1747b0ad94",
+  "owner_instruction_excerpt": "I want chat gpt added",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260914-owner-chatgpt-direct-mcp",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-14T17:49:38Z",
+  "base_sha": "df8772ba8b09fea4d34f34a2f19abb43a817afd0",
+  "branch_scope": "gpt/chatgpt-operator-mcp-20260914",
+  "authorized_paths": [
+    "agent-system/orchestration/chat-control-bridge.mjs",
+    "deploy/oracle/hermes-codex/install-chatgpt-mcp-adapter.sh",
+    "deploy/oracle/hermes-codex/qualify-chatgpt-mcp.sh",
+    "docs/orchestration/DIAL_OPERATOR_GATEWAY.md",
+    "tests/chatgpt-operator-channel.test.mjs"
+  ],
+  "change_classes": [
+    "owner_control_channel_extension",
+    "security_hardening",
+    "technical_implementation",
+    "verification",
+    "documentation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": true,
+  "owner_control_boundary_change": true,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

@@ -6,7 +6,7 @@ import { findUnit, hashObject, loadRegistry, now } from './knowledge-graph-core.
 import { resolveGraphRag } from './graph-retrieval-router.mjs';
 import { productExperienceKnowledge } from './product-experience-knowledge-gate.mjs';
 import { buildFrontendProductExperienceProjection } from './frontend-product-experience.mjs';
-import { projectFrontendDonorDecision } from './frontend-donor-projection.mjs';
+import { projectExternalReferenceInspiration } from './frontend-donor-projection.mjs';
 import { compileFrontendGraphProjection } from './frontend-graph-projection.mjs';
 import { resolveStructuralReality } from './structural-reality.mjs';
 
@@ -22,10 +22,10 @@ export function buildUnitKnowledgeMap({repoDir=DEFAULT_REPO,root=DEFAULT_CONTROL
  const contractRows=contracts.filter((c)=>unit.feature_ids.includes(c.feature_id));
  const decisionRows=decisions.filter((d)=>unit.applicable_decision_ids?.includes(d.decision_id));
  const featureRecord=featureRows[0]||null,contractRecord=contractRows[0]||null;
- const donorIds=uniq([...(featureRecord?.donor_refs||[]),...(contractRecord?.donor_refs||[])]);
- const donorProjections=donorIds.map((donorId)=>projectFrontendDonorDecision({repoDir,donorId,unit})).filter((x)=>x.applicable);
- const frontend=buildFrontendProductExperienceProjection({repoDir,unit,featureRecord,contractRecord,instruction,affectedPaths,donorProjection:donorProjections[0]||null});
- if(frontend.applicable){frontend.donor_frontend_reuse_projections=donorProjections;frontend.product_experience_subgraph=compileFrontendGraphProjection({repoDir,unit,projection:frontend,featureRecord,contractRecord});frontend.projection_hash=hashObject({...frontend,projection_hash:null});}
+ const externalReferenceIds=uniq([...(featureRecord?.donor_refs||[]),...(contractRecord?.donor_refs||[])]);
+ const externalReferenceProjections=externalReferenceIds.map((referenceId)=>projectExternalReferenceInspiration({repoDir,referenceId,unit})).filter((x)=>x.applicable);
+ const frontend=buildFrontendProductExperienceProjection({repoDir,unit,featureRecord,contractRecord,instruction,affectedPaths,donorProjection:externalReferenceProjections[0]||null});
+ if(frontend.applicable){frontend.external_reference_inspiration_projections=externalReferenceProjections;frontend.donor_frontend_reuse_projections=[];frontend.product_experience_subgraph=compileFrontendGraphProjection({repoDir,unit,projection:frontend,featureRecord,contractRecord});frontend.projection_hash=hashObject({...frontend,projection_hash:null});}
  const px=productExperienceKnowledge({unit,featureRecord,contractRecord,frontendProjection:frontend});
  const structural=resolveStructuralReality({repoDir,root,unit,instruction,frontendProjection:frontend});
  const critical=(readJson('knowledge/research/challenges/index.json',{challenges:[]},root).challenges||[]).filter((c)=>['REVIEW_REQUIRED','CANON_DELTA_AUTHORIZED'].includes(c.status)&&c.severity==='CRITICAL'&&(c.affected_unit_lineages||[]).includes(unit.unit_lineage_id));

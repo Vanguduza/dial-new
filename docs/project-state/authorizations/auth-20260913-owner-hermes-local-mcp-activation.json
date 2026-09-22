@@ -1,0 +1,42 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260913-owner-hermes-local-mcp-activation",
+  "authorized_paths": [
+    "deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh",
+    "deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh",
+    "docs/orchestration/DIAL_HERMES_LOCAL_MCP_PLANE.md",
+    "docs/project-state/authorizations/auth-20260913-owner-hermes-local-mcp-activation.json"
+  ],
+  "base_sha": "197533130d88f22cd84af26ac5fa225f3a37126f",
+  "branch_scope": "claude/hermes-local-mcp-activation-byqtq3",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "owner_control_plane",
+    "recovery_plane",
+    "documentation",
+    "technical_implementation",
+    "evidence_integrity"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-13T16:01:04Z",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner directed, in session, that the two-plane Hermes-local MCP work be republished on this master-based activation branch and hardened before live activation. Republication of auth-20260913-owner-hermes-local-mcp-plane, whose branch_scope (feat/hermes-local-commander-mcp-plane) and base_sha (433a4ba) belong to the recovery lineage and are not ancestors of this branch; that record is carried unmodified as provenance and is not the authority for this commit. Hardening scope is bounded to the installer's live-config safety (timestamped backup, comment/anchor-preserving splice, post-splice verification, dry-run), preflight ordering so a late gateway failure cannot half-apply the host, and treating a missing client CLI as an installation error. The topology, the read-only Commander tool filter and the qualifier's pass conditions are unchanged. Live activation on dial-hermes-control is not performed by this commit.",
+  "owner_control_boundary_change": true,
+  "owner_instruction_excerpt": "Harden + owner-run bundle; cherry-pick #27 onto the designated branch",
+  "owner_instruction_sha256": "0ac38d0095e58b5345959c490220e496d84e74715690bd4319a0e04b974d0a01",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260913-hermes-local-mcp-activation"
+  }
+}

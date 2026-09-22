@@ -1,0 +1,41 @@
+{
+  "authority": "OWNER_EXPLICIT",
+  "authorization_id": "auth-20260912-owner-oracle-admin-e2-rebuild",
+  "authorized_paths": [
+    "deploy/oracle/provisioning/",
+    "deploy/oracle/resource-fabric/README.md",
+    "tests/oracle-admin-provisioning.test.mjs",
+    "vitest.config.ts",
+    "docs/project-state/authorizations/auth-20260912-owner-oracle-admin-e2-rebuild.json"
+  ],
+  "base_sha": "8feea6b4b1512e57f8025723f4d90937a3244de2",
+  "branch_scope": "claude/oracle-e2-recovery-rebuild-3yotjc",
+  "business_model_change": false,
+  "change_classes": [
+    "development_infrastructure",
+    "recovery_plane",
+    "host_provisioning",
+    "technical_implementation"
+  ],
+  "feature_removal": false,
+  "issued_at_utc": "2026-09-12T10:28:48.513789+00:00",
+  "legal_position_change": false,
+  "locked_provider_change": false,
+  "material_scope_expansion": false,
+  "money_or_custody_model_change": false,
+  "notes": "Owner ordered a from-scratch rebuild of the secondary E2 recovery node oracle-admin. This increment delivers the provisioning, bootstrap, Commander transport and certification implementation only: the session had no OCI credentials and the environment's egress policy refuses the OCI API, so no instance was created and no live claim is made. Certification for the live host is RED by construction. Two findings are reconciled into canon: (1) the VCN and subnet named in the owner instruction are shared with dial-hermes-control per hosts.json, so ingress is applied through a VNIC-scoped NSG and shared objects are never mutated; (2) the pinned Desktop Commander version ships an outbound remote-device transport, which resolves architecture section 17's open registration question without any inbound port. Desktop Commander remains E2 admin/recovery tooling and is not the DIAL operator gateway. The private IP is pinned to the address hosts.json already records, overriding the instruction's 'automatic', because the recovery agent resolves peers by it.",
+  "owner_control_boundary_change": false,
+  "owner_instruction_excerpt": "create a completely fresh Oracle Cloud Always Free E2 recovery/admin VM named oracle-admin and bring it to a fully usable, remotely recoverable state",
+  "owner_instruction_sha256": "e20f90cd3386395df90227e1fb6c4f8423cbf0a9e848ff7371ca36cc02ad649a",
+  "project": "dial",
+  "reusable": false,
+  "revoked": false,
+  "schema_version": 1,
+  "security_authority_change": false,
+  "source": {
+    "channel": "claude_code",
+    "kind": "owner_session_instruction",
+    "owner_attested": true,
+    "request_id": "claude-20260912-oracle-admin-e2-rebuild"
+  }
+}

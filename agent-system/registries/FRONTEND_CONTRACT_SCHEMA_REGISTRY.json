@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": "frontend-contract-schemas-2.0",
+  "registry_version": "frontend-contract-schemas-2.4-design-synthesis",
   "required_contracts": [
     "ProductDesignProfile",
     "FrontendDesignExecutionPacket",
@@ -15,7 +15,7 @@
     "RendererPolicy",
     "ArchetypeSpec",
     "PresentationDecision",
-    "DonorFrontendReuseProjection",
+    "ExternalReferenceInspirationProjection",
     "DesignCandidate",
     "DesignNormalizationEvidence",
     "ComponentCertification",
@@ -45,7 +45,22 @@
     "InteractionAcceptanceMatrix",
     "ExperienceAuthorityArtifact",
     "ProductionBindingContract",
-    "TruthLiteralLint"
+    "TruthLiteralLint",
+    "InteractionDesignPreflight",
+    "InteractionMotionIntelligence",
+    "DesignAcuityAssessment",
+    "InteractionOpportunityMap",
+    "PatternDecisionSet",
+    "MotionHierarchyPlan",
+    "ResponsiveInteractionPlan",
+    "StateBehaviorMatrix",
+    "StructuralDeltaDecision",
+    "InteractionRiskRegister",
+    "FrontendDomainSemanticProfile",
+    "FeatureSemanticEnvelope",
+    "VisualTruthClaimsContract",
+    "FrontendDesignSynthesisBrief",
+    "DesignSynthesisLint"
   ],
   "common_required_fields": [
     "schema_version",

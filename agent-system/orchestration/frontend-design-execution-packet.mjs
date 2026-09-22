@@ -2,6 +2,7 @@ import { DEFAULT_CONTROL_HOME, readJson, writeJsonAtomic } from './state-store.m
 import { findUnit, hashObject } from './knowledge-graph-core.mjs';
 import { buildDesignBriefBundle, buildFrontendProductExperienceProjection, frontendRegistryHashes } from './frontend-product-experience.mjs';
 import { buildCreativeScreenGenerationStrategy, CREATIVE_STRATEGY_VERSION } from './frontend-creative-strategy.mjs';
+import { compileInteractionDesignPreflight } from './interaction-motion-intelligence.mjs';
 
 function now(){return new Date().toISOString();}
 function uniq(v){return [...new Set((v||[]).filter(Boolean).map(String))].sort();}
@@ -15,6 +16,7 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
   if(px.presentation_decision?.renderer_id==='UNRESOLVED') throw new Error('FRONTEND_RENDERER_UNRESOLVED');
   if(px.visual_render_determinism_envelope?.status!=='RESOLVED') throw new Error('FRONTEND_RENDER_DETERMINISM_UNRESOLVED');
   const registryHashes=frontendRegistryHashes(repoDir);
+  const interactionDesignPreflight=compileInteractionDesignPreflight({repoDir,generationContext:px.frontend_generation_context});
   const budget=changeBudget || {
     schema_version:1,
     artifact_type:'ChangeBudget',
@@ -46,14 +48,18 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
     screen_feature_projection:px.screen_feature_projection,
     target_screen_resolution:px.target_screen_resolution || null,
     frontend_generation_context:px.frontend_generation_context,
+    interaction_design_preflight:interactionDesignPreflight,
     surface_state_matrix:px.surface_state_matrix,
     visual_reference_spec:px.visual_reference_spec,
     presentation_decision:px.presentation_decision,
     visual_render_determinism_envelope:px.visual_render_determinism_envelope,
     registry_hashes:registryHashes,
     template_ids:px.presentation_decision?.template_ids||[],
-    donor_frontend_reuse_projection:donorProjection || px.donor_frontend_reuse_projections?.[0] || null,
-    donor_frontend_reuse_projections:px.donor_frontend_reuse_projections || (donorProjection?[donorProjection]:[]),
+    external_reference_inspiration_projection:donorProjection || px.external_reference_inspiration_projections?.[0] || null,
+    external_reference_inspiration_projections:px.external_reference_inspiration_projections || (donorProjection?[donorProjection]:[]),
+    // Legacy fields are intentionally empty after DEC-039. External repositories never become reuse authority.
+    donor_frontend_reuse_projection:null,
+    donor_frontend_reuse_projections:[],
     change_budget:budget,
     acceptance:{
       existing_product_experience_hard_gate:true,
@@ -67,7 +73,10 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
       frontend_generation_context:true,
       truth_hydration_before_provider_dispatch:true,
       state_matrix_coverage:true,
+      interaction_design_preflight:true,
+      expert_design_acuity_review:true,
       interaction_motion_enrichment:true,
+      open_world_interaction_discovery_bridge:true,
       visual_authority_freeze:true,
       experience_authority_freeze:true,
       design_lint:true,
@@ -85,6 +94,9 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
       figma_invocation:'EXPLICIT_OWNER_OR_AUTHORIZED_TASK_ONLY',
       automatic_provider_fallback_forbidden:true,
       productionization_may_redesign:false,
+      external_repositories_reference_and_inspiration_only:true,
+      external_repository_code_import_forbidden:true,
+      external_repository_design_authority_forbidden:true,
       autonomous_canon_mutation:false,
     },
     status:px.frontend_generation_context?.completeness?.provider_dispatch_ready === true ? 'READY_FOR_STITCH_VISUAL_GENERATION' : 'READY_AWAITING_SCREEN_TRUTH_COMPLETENESS',
@@ -105,6 +117,7 @@ export function compileFrontendDesignExecutionPacket({repoDir,root=DEFAULT_CONTR
   writeJsonAtomic('execution/tasks/'+taskId+'/frontend-design-execution-packet.json',packet,root);
   if(brief) writeJsonAtomic('execution/tasks/'+taskId+'/design-brief-bundle.json',brief,root);
   writeJsonAtomic('execution/tasks/'+taskId+'/creative-screen-generation.json',content.creative_screen_generation,root);
+  writeJsonAtomic('execution/tasks/'+taskId+'/interaction-design-preflight.json',interactionDesignPreflight,root);
   return packet;
 }
 

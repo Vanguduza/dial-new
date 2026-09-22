@@ -11,6 +11,7 @@ const INPUTS = {
   eventualities: `${BASE}/EVENTUALITY_PLAYBOOK_REGISTRY.json`,
   platformFunctions: `${BASE}/SHARED_PLATFORM_FUNCTION_REGISTRY.json`,
   customerEndpoints: 'docs/dial/final-audit/12_CLIENT_EXPERIENCE/CUSTOMER_ENDPOINT_REGISTRY.json',
+  domainSemantics: 'agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json',
 };
 const OUTPUTS = {
   screens: 'agent-system/registries/SCREEN_REGISTRY.json',
@@ -90,6 +91,7 @@ export function buildCanonicalScreenFeatureGraph() {
   const eventualities = readJson(INPUTS.eventualities);
   const platformFunctions = readJson(INPUTS.platformFunctions);
   const customerEndpoints = readJson(INPUTS.customerEndpoints);
+  const domainSemantics = readJson(INPUTS.domainSemantics);
 
   const featureById = new Map(features.map((x) => [x.feature_id, x]));
   const subByParent = new Map();
@@ -163,10 +165,13 @@ export function buildCanonicalScreenFeatureGraph() {
       uniq(f.events || []).forEach((x) => s.event_refs.add(x));
       if (f.realization_id) s.source_realization_refs.add(f.realization_id);
 
+      const semanticScreenPolicy = domainSemantics.modules?.[module]?.screen_policies?.[screenId] || null;
+      const edgeRole = semanticScreenPolicy?.feature_edge_roles?.[featureId] || 'UNCLASSIFIED_CONTEXT';
       const realization = {
         realization_edge_id: `SFR:${featureId}:${hash(screenId).slice(0, 12)}`,
         screen_id: screenId,
         feature_id: featureId,
+        edge_role: edgeRole,
         module,
         app_families: families,
         app_surface_refs: families.map((x) => `APP_SURFACE:${slug(module)}:${slug(x)}`).sort(),
@@ -250,6 +255,7 @@ export function buildCanonicalScreenFeatureGraph() {
     ...s,
     branch_spaces: [...s.branch_spaces].sort(),
     feature_refs: [...s.feature_refs].sort(),
+    feature_edges: realizations.filter((r)=>r.screen_id===s.screen_id).map((r)=>({ feature_id:r.feature_id, edge_role:r.edge_role })).sort((a,b)=>a.feature_id.localeCompare(b.feature_id)),
     subfeature_refs: [...s.subfeature_refs].sort(),
     supporting_capability_refs: [...s.supporting_capability_refs].sort(),
     eventuality_refs: [...s.eventuality_refs].sort(),
@@ -350,7 +356,7 @@ export function buildCanonicalScreenFeatureGraph() {
 
   const registry = {
     schema_version: 1,
-    registry_version: 'dial-canonical-screen-registry-1.0',
+    registry_version: 'dial-canonical-screen-registry-1.1-edge-roles',
     authority: 'PROJECT_TRUTH_DERIVED_CANONICAL_REGISTRY',
     generated_from: INPUTS,
     source_hashes: sourceHashes,
@@ -365,7 +371,7 @@ export function buildCanonicalScreenFeatureGraph() {
 
   const graph = {
     schema_version: 1,
-    graph_version: 'dial-screen-feature-graph-1.0',
+    graph_version: 'dial-screen-feature-graph-1.1-edge-roles',
     authority: 'BIDIRECTIONAL_CANONICAL_SCREEN_FEATURE_GRAPH',
     screen_registry_hash: registry.content_hash,
     source_hashes: sourceHashes,

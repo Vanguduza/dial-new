@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-all-work-consolidation-v2",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "50fc648fb0563dd843549927a83e3964069fc276eb2b649e04d3b5076985ddd5",
+  "owner_instruction_excerpt": "Consolidate all work to make sure notifications required branches or work will be wrongfully deleted",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "actor": "owner",
+    "request_id": "dial-branch-consolidation-20260922",
+    "owner_attested": true,
+    "transport": "direct"
+  },
+  "issued_at_utc": "2026-09-22T00:45:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/dial-all-work-consolidation-20260922",
+  "authorized_paths": [
+    "**"
+  ],
+  "change_classes": [
+    "repository_consolidation",
+    "project_truth_reconciliation",
+    "technical_implementation",
+    "verification_repair"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

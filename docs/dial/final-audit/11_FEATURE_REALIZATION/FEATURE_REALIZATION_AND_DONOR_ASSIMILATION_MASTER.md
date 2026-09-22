@@ -1,3 +1,7 @@
+# DEC-039 supersession — external repository reference only
+
+This document retains historical feature-realization provenance, but all donor assimilation/port/preserve/adapt directives are superseded. External repositories may inform research and inspiration only. The current 309-feature realization registries and `DEC-039` govern active implementation; no external repository creates implementation authority or a parity obligation.
+
 # DIAL Final Feature Realization & Donor Assimilation Layer
 
 ## Purpose

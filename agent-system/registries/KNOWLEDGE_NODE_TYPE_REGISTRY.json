@@ -64,7 +64,9 @@
       "node_type": "SECURITY_CONTROL"
     },
     {
-      "node_type": "DONOR"
+      "node_type": "EXTERNAL_REFERENCE",
+      "authority": "NON_AUTHORITATIVE_REFERENCE_ONLY",
+      "why": "External repositories and public product references may inform research but cannot provide DIAL product, design or implementation authority under DEC-039."
     },
     {
       "node_type": "ENGINEERING_RESOURCE"
@@ -100,7 +102,7 @@
       "authority": "NON_AUTHORITATIVE_INDEX"
     }
   ],
-  "registry_version": "vekl-2.2-rev3",
+  "registry_version": "vekl-2.2-rev4",
   "schema_version": 1,
   "orphan_policy": {
     "max_isolated_fraction": 0.02,

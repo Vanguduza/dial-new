@@ -39,7 +39,7 @@ export function xkiroSecretStatus(keyFile) {
 }
 
 export async function qualifyXKiroTenant({ project, root, providerRoot, keyFile, fetchImpl = globalThis.fetch } = {}) {
-  if (!['dial', 'dde'].includes(project)) throw new Error('xKiro qualification project must be dial or dde');
+  if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(String(project || ''))) throw new Error('xKiro qualification project id is invalid');
   const observedAt = now();
   const secret = xkiroSecretStatus(keyFile);
   const catalog = await fetchXKiroCatalog({ fetchImpl });

@@ -52,7 +52,7 @@ function signingKey(secret, dateStamp) {
 }
 
 export function r2ObjectKey({ project, taskId, contentHash }) {
-  if (!['dial', 'dde'].includes(project)) throw new Error('HAIF R2 project must be dial or dde');
+  if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(String(project || ''))) throw new Error('HAIF R2 project id is invalid');
   if (!taskId || !contentHash) throw new Error('HAIF R2 object identity is incomplete');
   return `haif/${project}/evidence/${String(taskId)}/${String(contentHash)}.json`;
 }

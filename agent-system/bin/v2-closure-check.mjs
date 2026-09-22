@@ -83,9 +83,14 @@ for(const e of ev.filter(x=>x.materiality==="MATERIAL")){
   }
 }
 
-if(donors.length<40) fail.push(`donor qualification unexpectedly thin: ${donors.length}`);
+if(donors.length<40) fail.push(`external-reference/integration qualification unexpectedly thin: ${donors.length}`);
 for(const d of donors){
-  if(!d.locked_adoption_mode||!d.qualification_state||!d.pre_use_gate) fail.push(`${d.donor_id}: donor gate incomplete`);
+  if(!d.locked_adoption_mode||!d.qualification_state||!d.pre_use_gate) fail.push(`${d.donor_id}: reference/integration gate incomplete`);
+  const external=/^(DONOR-|REF-)/.test(String(d.donor_id||'')) && d.kind!=='SPECIALIST_SPEC';
+  if(external){
+    if(d.locked_adoption_mode!=='REFERENCE_AND_INSPIRATION_ONLY') fail.push(`${d.donor_id}: external repository is not reference-only`);
+    if(d.production_import_allowed!==false||d.runtime_dependency_allowed!==false||d.source_of_truth_allowed!==false||d.design_authority_allowed!==false) fail.push(`${d.donor_id}: external reference authority boundary incomplete`);
+  }
 }
 if(nfr.length<15) fail.push(`NFR systems unexpectedly thin: ${nfr.length}`);
 if(envs.length<6) fail.push(`environment model unexpectedly thin: ${envs.length}`);

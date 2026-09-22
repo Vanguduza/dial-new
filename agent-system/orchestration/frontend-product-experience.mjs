@@ -19,6 +19,10 @@ const REGISTRIES = Object.freeze({
   screenFeatureGraph: SCREEN_FEATURE_GRAPH_REF,
   generationPolicy: FRONTEND_GENERATION_REFS.policy,
   truthSources: FRONTEND_GENERATION_REFS.truthSources,
+  designAcuity: 'agent-system/registries/DESIGN_ACUITY_POLICY.json',
+  interactionMotionPatterns: 'agent-system/registries/INTERACTION_MOTION_PATTERN_REGISTRY.json',
+  interactionMotionSources: 'agent-system/registries/INTERACTION_MOTION_SOURCE_REGISTRY.json',
+  domainSemantics: 'agent-system/registries/FRONTEND_DOMAIN_SEMANTIC_REGISTRY.json',
 });
 
 export const SURFACE_STATE_IDS = Object.freeze([
@@ -206,7 +210,8 @@ function inferArchetype(text) {
 
 function inferMode({ instruction, visualReferenceSpec, donorProjection }) {
   const t = upper(instruction);
-  if (donorProjection?.reuse_mode && donorProjection.reuse_mode !== 'REJECT') return 'ASSIMILATE';
+  // External repositories are reference/inspiration only under DEC-039; their presence never changes implementation into assimilation.
+  if (donorProjection?.applicable) return 'SYNTHESIZE';
   if (/ENHANCE|MODERN|POLISH|IMPROVE/.test(t)) return 'ENHANCE';
   if (visualReferenceSpec?.references?.length && /RECONSTRUCT|MATCH|EXACT|BENCHMARK|REFERENCE/.test(t)) return 'RECONSTRUCT';
   return visualReferenceSpec?.references?.length ? 'RECONSTRUCT' : 'SYNTHESIZE';
@@ -248,7 +253,7 @@ export function compilePresentationDecision({ repoDir, unit, featureRecord = nul
     template_ids: templateIds,
     exception_policy: 'AI_MAY_PROPOSE_BUT_APPROVED_VISUAL_DELTA_OR_EXPERIENCE_ENHANCEMENT_REQUIRED',
     explanation: {
-      mode: donorProjection?.reuse_mode && donorProjection.reuse_mode !== 'REJECT' ? 'donor projection selected assimilation' : visualReferenceSpec?.references?.length ? 'visual authority exists' : 'no direct visual benchmark; synthesize from governed profile',
+      mode: donorProjection?.applicable ? 'external reference may inform DIAL-native synthesis but has no design or implementation authority' : visualReferenceSpec?.references?.length ? 'visual authority exists' : 'no direct visual benchmark; synthesize from governed profile',
       renderer: renderer_id === 'UNRESOLVED' ? 'no surface-local renderer authority was found; execution must fail closed until resolved' : 'selected from affected paths, instruction, unit paths, or surface-local authority',
       pattern: 'selected from resolved ProductDesignProfile allowlist',
     },
@@ -279,7 +284,7 @@ export function compileVisualRenderDeterminismEnvelope({ repoDir, presentationDe
   return artifact;
 }
 
-export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null, targetScreenId = null, requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {} } = {}) {
+export function buildFrontendProductExperienceProjection({ repoDir, unit, featureRecord = null, contractRecord = null, instruction = '', affectedPaths = [], donorProjection = null, targetScreenId = null, targetApplicationId = null, requestedTruth = [], hydratedTruth = {}, capabilityOverrides = {} } = {}) {
   const applicable = (unit?.knowledge_route_ids || []).includes('PRODUCT_EXPERIENCE') || (unit?.design_authorities || []).length > 0;
   if (!applicable) return { applicable: false, state: 'NOT_APPLICABLE', integration_version: FRONTEND_INTEGRATION_VERSION };
   const product_design_profile = resolveProductDesignProfile({ repoDir, unit, featureRecord });
@@ -303,6 +308,9 @@ export function buildFrontendProductExperienceProjection({ repoDir, unit, featur
     requestedTruth,
     hydratedTruth,
     capabilityOverrides,
+    instruction,
+    affectedPaths,
+    targetApplicationId,
     frontendProjection: {
       product_design_profile,
       surface_manifest,
