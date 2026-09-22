@@ -372,6 +372,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).toContain('sshd -t');
     expect(rescuePrestager).toContain('netplan generate');
     expect(rescuePrestager).toContain('chroot "$ROOT" findmnt --verify --verbose --tab-file /etc/fstab');
+    expect(rescuePrestager).toContain('mount_fstab_target /boot');
+    expect(rescuePrestager).toContain('mount_fstab_target /boot/efi');
+    expect(rescuePrestager).toContain('findmnt --fstab --evaluate');
+    expect(rescuePrestager).toContain('MOUNTS+=("$ROOT$target")');
     expect(rescuePrestager).not.toContain('findmnt --verify --verbose --tab-file "$ROOT/etc/fstab"');
     expect(rescuePrestager).toContain("oci-cli==3.93.0");
     expect(rescuePrestager).toContain('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
