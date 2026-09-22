@@ -61,12 +61,13 @@ PY
 chmod 600 "$MEMORY"
 
 install -m 0700 "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/hermes-hooks/dial-pre-turn-context.sh" "$HERMES_HOME/agent-hooks/dial-pre-turn-context.sh"
+install -m 0700 "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/hermes-hooks/dial-pre-tool-guard.sh" "$HERMES_HOME/agent-hooks/dial-pre-tool-guard.sh"
 install -m 0700 "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/hermes-hooks/dial-post-turn-checkpoint.sh" "$HERMES_HOME/agent-hooks/dial-post-turn-checkpoint.sh"
-PRE_HOOK="$HERMES_HOME/agent-hooks/dial-pre-turn-context.sh"; POST_HOOK="$HERMES_HOME/agent-hooks/dial-post-turn-checkpoint.sh"
+PRE_HOOK="$HERMES_HOME/agent-hooks/dial-pre-turn-context.sh"; TOOL_HOOK="$HERMES_HOME/agent-hooks/dial-pre-tool-guard.sh"; POST_HOOK="$HERMES_HOME/agent-hooks/dial-post-turn-checkpoint.sh"
 CONFIG="$HERMES_HOME/config.yaml"; [[ -f "$CONFIG" ]] || printf '{}\n' >"$CONFIG"; chmod 600 "$CONFIG"
-python3 - "$CONFIG" "$PRE_HOOK" "$POST_HOOK" <<'PY'
+python3 - "$CONFIG" "$PRE_HOOK" "$TOOL_HOOK" "$POST_HOOK" <<'PY'
 import sys,yaml
-p,pre,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; model=cfg.setdefault('model',{})
+p,pre,tool,post=sys.argv[1:]; cfg=yaml.safe_load(open(p,encoding='utf-8')) or {}; model=cfg.setdefault('model',{})
 model['provider']='openai-codex'; model['default']='gpt-5.6-sol'; model['openai_runtime']='codex_app_server'; cfg['hooks_auto_accept']=False
 model.pop('base_url', None)
 cfg['fallback_providers']=[]; cfg.pop('fallback_model',None)
@@ -77,19 +78,19 @@ raw=[str(x) for x in raw if str(x) != '${DIAL_SKILL_ACTIVATION_DIR}']
 raw.append('${DIAL_SKILL_ACTIVATION_DIR}')
 skills['external_dirs']=raw
 hooks=cfg.setdefault('hooks',{})
-for event,command,timeout in [('pre_llm_call',pre,12),('post_llm_call',post,12)]:
+for event,command,timeout in [('pre_llm_call',pre,12),('pre_tool_call',tool,12),('post_llm_call',post,12)]:
     entries=[e for e in hooks.setdefault(event,[]) if not (isinstance(e,dict) and e.get('command')==command)]; entries.append({'command':command,'timeout':timeout}); hooks[event]=entries
 with open(p,'w',encoding='utf-8') as f: yaml.safe_dump(cfg,f,sort_keys=False,allow_unicode=True)
 PY
 
 ALLOW="$HERMES_HOME/shell-hooks-allowlist.json"
-python3 - "$ALLOW" "$PRE_HOOK" "$POST_HOOK" <<'PY'
+python3 - "$ALLOW" "$PRE_HOOK" "$TOOL_HOOK" "$POST_HOOK" <<'PY'
 import json,os,sys
-p,pre,post=sys.argv[1:]
+p,pre,tool,post=sys.argv[1:]
 try: data=json.load(open(p,encoding='utf-8'))
 except Exception: data={}
 approvals=[x for x in data.get('approvals',[]) if isinstance(x,dict)]
-for event,cmd in [('pre_llm_call',pre),('post_llm_call',post)]:
+for event,cmd in [('pre_llm_call',pre),('pre_tool_call',tool),('post_llm_call',post)]:
     if not any(a.get('event')==event and a.get('command')==cmd for a in approvals): approvals.append({'event':event,'command':cmd})
 data['approvals']=approvals; os.makedirs(os.path.dirname(p),exist_ok=True)
 with open(p,'w',encoding='utf-8') as f: json.dump(data,f,indent=2); f.write('\n')

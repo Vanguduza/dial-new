@@ -287,6 +287,29 @@ def locked_decision_evolution(base, head='HEAD'):
   if sid and sid not in old_by and sid not in new_by: errs.append(f"decision {row.get('decision_id')} supersedes unknown decision {sid}")
  return errs
 
+def pr_diff_files(base,head='HEAD'):
+ return [x for x in g('diff','--name-only','--no-renames',f'{base}...{head}','--','.',*X).stdout.splitlines() if x]
+
+def pr_diff_digest(base,head='HEAD'):
+ return hashlib.sha256(g('diff','--binary','--no-ext-diff','--no-renames',f'{base}...{head}','--','.',*X,b=True).stdout).hexdigest()
+
+def validate_pr_native_evidence(base,branch,authorization_ids):
+ files=pr_diff_files(base); digest=pr_diff_digest(base); rows=rows_at('HEAD')
+ matches=[r for r in rows if r.get('kind')=='pr-native-diff' and r.get('source_parent')==base and r.get('diff_sha256')==digest and sorted(r.get('changed_files',[]))==sorted(files)]
+ expectation={'kind':'pr-native-diff','branch':branch,'source_parent':base,'changed_files':files,'diff_sha256':digest,'authorization_ids':sorted(authorization_ids)}
+ if not matches:return ['PR-native CHANGE_LEDGER evidence missing or stale; expected '+json.dumps(expectation,sort_keys=True)]
+ row=matches[-1]
+ if row.get('owner_authorized') is not True:return ['PR-native CHANGE_LEDGER row is not owner-authorized']
+ if sorted(row.get('authorization_ids') or [])!=sorted(authorization_ids):return ['PR-native CHANGE_LEDGER authorization_ids mismatch']
+ try: current=json.loads(C.read_text())
+ except Exception:return ['CURRENT_STATE missing or invalid']
+ for key,value in [('branch',branch),('source_parent',base),('content_diff_sha256',digest)]:
+  if current.get(key)!=value:return [f'CURRENT_STATE {key} mismatch']
+ if sorted(current.get('changed_files') or [])!=sorted(files):return ['CURRENT_STATE changed_files mismatch']
+ if sorted(current.get('authorization_ids') or [])!=sorted(authorization_ids):return ['CURRENT_STATE authorization_ids mismatch']
+ if current.get('state')!='AUTHORIZED_PR_PENDING_MERGE':return ['CURRENT_STATE must be AUTHORIZED_PR_PENDING_MERGE for PR-native evidence']
+ return []
+
 def changed_name_status(base,head='HEAD',pathspec=None):
  args=['diff','--name-status','--no-renames',f'{base}...{head}']
  if pathspec: args+=['--',pathspec]
@@ -295,8 +318,15 @@ def changed_name_status(base,head='HEAD',pathspec=None):
 def verify_pr(base,branch_override=None):
  if g('rev-parse','--verify',base,check=False).returncode!=0:
   print(f'BLOCKED: PR base ref not found: {base}',file=sys.stderr); return 44
- rc=verify()
- if rc:return rc
+ base_manifest=consolidation_manifest_at(base)
+ if isinstance(base_manifest,dict):
+  base_branch=str((base_manifest.get('consolidation') or {}).get('branch') or '')
+  base_errors,_=validate_consolidation_package(base,branch_override=base_branch)
+  if base_errors:
+   print('BLOCKED: PR base consolidation package is not verified:\n - '+'\n - '.join(base_errors),file=sys.stderr); return 41
+ else:
+  rc=verify()
+  if rc:return rc
  auth_changes=changed_name_status(base,'HEAD','docs/project-state/authorizations')
  for status,path in auth_changes:
   if status!='A': print(f'BLOCKED: authorization records are append-only across PRs: {status} {path}',file=sys.stderr); return 45

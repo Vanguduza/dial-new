@@ -9,7 +9,7 @@ import { classifyShellEffect, governedPacketDecision, isConsequentialToolUse, ne
 
 let input=""; for await (const c of process.stdin) input+=c;
 let j={}; try{j=JSON.parse(input)}catch{}
-const rawTool=j.tool_name||"", rawInput=j.tool_input||{};
+const rawTool=j.tool_name||"", rawInput=j.tool_input||j.args||{};
 function normalizeToolName(name){
  const n=String(name||'').toLowerCase();
  if(['terminal','execute_command','shell','bash','powershell'].includes(n)) return 'Bash';
@@ -30,6 +30,7 @@ const leaseId=process.env.DIAL_WORKTREE_LEASE_ID||null;
 const fencingToken=process.env.DIAL_FENCING_TOKEN||null;
 const shellEffect=(tool==="Bash"||tool==="PowerShell")?classifyShellEffect(String(ti.command||"")):null;
 const consequential=isConsequentialToolUse(tool,ti);
+const governedDelegation=shellEffect?.effect==='GOVERNED_DELEGATION';
 const governed=process.env.DIAL_GOVERNED_SESSION==='1'||Boolean(taskId||workerId||process.env.DIAL_MISSION_ID);
 const packetDecision=governedPacketDecision({governed,consequential,packetId});
 if(packetDecision.decision){d=packetDecision.decision;reason=packetDecision.reason;}
@@ -41,7 +42,7 @@ if(packetId&&consequential&&!d){
  else{d="deny";reason="DIAL VEKL 2.2 guard: unscoped planning may inspect only; resolve a Feature/Unit or explicit allowed exemption before material tool use.";}
 }
 
-if(governed&&packetId&&consequential&&!taskId&&!d){
+if(governed&&packetId&&consequential&&!taskId&&!governedDelegation&&!d){
  d='deny';
  reason='DIAL FFDRM guard: manager/direct project mutation is forbidden without a Task Execution Envelope. Delegate material work through agent-system/bin/adaptive-execution-delegate.mjs.';
 }
@@ -87,7 +88,7 @@ if(tool==="Edit"||tool==="Write"){
 }
 if(consequential){
  const inputHash=createHash('sha256').update(JSON.stringify(ti)).digest('hex');
- try{appendJsonl('events/tool-invocations.jsonl',{event:'TOOL_INVOCATION_BEFORE',tool_name:rawTool,normalized_tool_name:tool,tool_input_sha256:inputHash,packet_id:packetId,task_id:taskId,governed,decision:d||'allow',at:new Date().toISOString()},root);}catch{}
+ try{appendJsonl('events/tool-invocations.jsonl',{event:'TOOL_INVOCATION_BEFORE',tool_name:rawTool,normalized_tool_name:tool,shell_effect:shellEffect?.effect||null,tool_input_sha256:inputHash,packet_id:packetId,task_id:taskId,governed,decision:d||'allow',at:new Date().toISOString()},root);}catch{}
 }
 if(d){
  const hermesBlock={action:'block',message:reason,decision:'block',reason};
