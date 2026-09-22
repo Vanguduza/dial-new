@@ -36,9 +36,11 @@ copy_state(){
   sudo chmod 0700 "$CONTROL_HOME"
 }
 copy_identity(){
-  for rel in .hermes .codex .claude; do
-    mkdir -p "$HOME/$rel"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
+  for rel in .hermes .codex .claude .oci; do
+    if "${SSH[@]}" "test -d \"\$HOME/$rel\"" >/dev/null 2>&1; then
+      mkdir -p "$HOME/$rel"
+      rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
+    fi
   done
   # Reuse the already-authorized owner Commander device session when present so the
   # new host does not require a second manual device-code pairing.
@@ -46,12 +48,18 @@ copy_identity(){
     mkdir -p "$HOME/.desktop-commander-device"
     rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.desktop-commander-device/" "$HOME/.desktop-commander-device/"
   fi
+  # GitHub CLI authentication is migrated so the new host can register its
+  # repository-scoped admin runner without another owner login.
+  if "${SSH[@]}" 'test -d "$HOME/.config/gh"' >/dev/null 2>&1; then
+    mkdir -p "$HOME/.config/gh"
+    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gh/" "$HOME/.config/gh/"
+  fi
   # Claude may store subscription state beneath XDG config as well as ~/.claude.
   if "${SSH[@]}" 'test -d "$HOME/.config/claude"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/claude"
     rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/claude/" "$HOME/.config/claude/"
   fi
-  chmod 0700 "$HOME/.hermes" "$HOME/.codex" "$HOME/.claude" "$HOME/.desktop-commander-device" 2>/dev/null || true
+  chmod 0700 "$HOME/.hermes" "$HOME/.codex" "$HOME/.claude" "$HOME/.oci" "$HOME/.desktop-commander-device" "$HOME/.config/gh" 2>/dev/null || true
 }
 snapshot_repo(){
   mkdir -p "$CONTROL_HOME/migration/oracle-repo-snapshot"
