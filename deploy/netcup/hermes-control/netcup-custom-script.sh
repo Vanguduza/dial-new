@@ -6,7 +6,7 @@ umask 077
 # environment. This stage must remain network-free and package-manager-free.
 # The immutable payload revision is pinned here unless explicitly overridden
 # by an equally exact 40-hex revision.
-DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-9fb9ff03dcb693514513019ca9358c814d417a65}"
+DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-c22756daf6d40c146176c52d3ee69aa109b07ebf}"
 [[ "$DIAL_BOOTSTRAP_REF" =~ ^[0-9a-f]{40}$ ]] || {
   echo "REFUSE: invalid DIAL_BOOTSTRAP_REF" >&2
   exit 2
@@ -16,7 +16,7 @@ IMAGE_BOOTSTRAP=/usr/local/sbin/dial-control-image-bootstrap.sh
 RUNNER=/usr/local/sbin/dial-control-bootstrap-runner
 SERVICE=/etc/systemd/system/dial-control-bootstrap.service
 LOG=/var/log/dial-control-bootstrap.log
-EXPECTED_IMAGE_BLOB=57c9af6576539db1938c3e04c91b9ed992af7296
+EXPECTED_IMAGE_BLOB=a068047ebfb92046935201e372da4d6df490cd1a
 
 install -d -m 0755 /usr/local/sbin /etc/systemd/system /etc/systemd/resolved.conf.d
 install -d -m 0700 /var/lib/dial-control/bootstrap
@@ -104,7 +104,17 @@ fetch_payload() {
   install -m 0700 "$tmp" "$IMAGE_BOOTSTRAP"
 }
 
+sanitize_legacy_environment() {
+  if [[ -f /etc/environment ]]; then
+    sed -i "s|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME='Dial Control'|" /etc/environment
+  fi
+  if [[ -f /home/ubuntu/.config/environment.d/10-dial-host.conf ]]; then
+    sed -i "s|^DIAL_CONTROL_DISPLAY_NAME=.*$|DIAL_CONTROL_DISPLAY_NAME='Dial Control'|" /home/ubuntu/.config/environment.d/10-dial-host.conf
+  fi
+}
+
 configure_dns
+sanitize_legacy_environment
 dpkg_recover || true
 apt_retry update
 apt_retry install -y --no-install-recommends ca-certificates curl git

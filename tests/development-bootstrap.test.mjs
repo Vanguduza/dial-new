@@ -306,6 +306,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(provisioningStage).not.toMatch(/\b(?:apt-get|curl|git)\b/);
     expect(customScript).toContain('systemctl start --no-block dial-control-bootstrap.service');
     expect(customScript).toContain('systemctl daemon-reload');
+    expect(customScript).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
+    expect(customScript).toContain('c22756daf6d40c146176c52d3ee69aa109b07ebf');
+    expect(customScript).toContain('a068047ebfb92046935201e372da4d6df490cd1a');
     expect(provisioningStage).not.toContain('apt-get');
     expect(provisioningStage).not.toContain('curl --proto');
 
