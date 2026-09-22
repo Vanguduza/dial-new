@@ -4,7 +4,7 @@
 
 This document defines the canonical generation path for DIAL product-experience screens.
 
-The architecture is screen-first, feature-bound, truth-hydrated, Stitch-authored and DDE-productionized. It incorporates the canonical `SCREEN_REGISTRY.json` and `SCREEN_FEATURE_GRAPH.json` as the execution spine rather than treating screen generation as free-form prompt work.
+The architecture is screen-first, feature-bound, truth-hydrated, Stitch-authored and DIAL-native production-bound. It incorporates the canonical `SCREEN_REGISTRY.json` and `SCREEN_FEATURE_GRAPH.json` as the execution spine rather than treating screen generation as free-form prompt work.
 
 ## Authority model
 
@@ -27,7 +27,7 @@ STITCH INTERACTION & MOTION AUTHORSHIP
         ↓
 EXPERIENCE AUTHORITY FREEZE
         ↓
-DDE PRODUCTION BINDING
+DIAL-NATIVE PRODUCTION BINDING
         ↓
 VISUAL + INTERACTION + FUNCTIONAL PARITY CERTIFICATION
 ```
@@ -363,11 +363,11 @@ It locks:
 
 Its productionization policy is `PRESERVE_EXPERIENCE_AUTHORITY_NO_REDESIGN`.
 
-## DDE productionization
+## DIAL-native productionization
 
-DDE's job is no longer to look at a screenshot and improvise a similar UI.
+The DIAL production-binding layer does not look at a screenshot and improvise a similar UI.
 
-DDE receives the frozen experience and creates a `ProductionBindingContract` mapping:
+The DIAL production-binding layer receives the frozen experience and creates a `ProductionBindingContract` mapping:
 
 - visual components → production components;
 - screen actions → real domain actions;
@@ -460,7 +460,7 @@ The architecture gate checks at minimum:
 - provider routing with no silent substitution;
 - canonical Stitch packet compilation;
 - visual freeze before interaction/motion;
-- DDE no-redesign productionization policy.
+- DIAL-native no-redesign productionization policy.
 
 ## Canonical files
 
@@ -490,4 +490,4 @@ A DIAL screen must never reach automatic design as “a prompt asking an AI to m
 
 It reaches Stitch as a compiled, hash-bound execution context that already knows **which DIAL application it belongs to, which canonical screen it is, which features and states it realizes, which authoritative data exists, which capabilities are real, which design authorities apply, what the screen is responsible for, and what it is forbidden to become**.
 
-Stitch owns visual and interaction authorship inside that envelope. DDE owns faithful productionization. Product/domain authority remains superior to both.
+Stitch owns visual and interaction authorship inside that envelope. The DIAL production-binding layer owns faithful productionization. Product/domain authority remains superior to both.
