@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/netcup-diagnose-recover-bootstrap.yml
       - deploy/netcup/hermes-control/netcup-custom-script.sh
+      - deploy/netcup/hermes-control/rescue-prestage-control-plane.sh
       - deploy/netcup/hermes-control/image-bootstrap.sh
       - deploy/netcup/hermes-control/install-github-oidc-control.sh
       - deploy/netcup/hermes-control/github-oidc-control.mjs
@@ -25,6 +26,8 @@ env:
   NETCUP_SCP_OIDC_BASE_URL: https://www.servercontrolpanel.de/realms/scp/protocol/openid-connect
   NETCUP_DIAL_CONTROL_IP: 62.83.35.103
   DIAL_BOOTSTRAP_REPAIR_REF: ${{ github.sha }}
+  DIAL_CONTROL_PAYLOAD_REF: 5bd1eb26a2553af820b8d98a6f380c42269ada5c
+  DIAL_CONTROL_IMAGE_BLOB: 249e86695d841cae4eeebdced0427e1ce149d978
 
 jobs:
   request-authorization:
@@ -223,10 +226,21 @@ jobs:
           tcp_open 9134 && oidc=true || true
           echo "DIAG state=$state uptime=$uptime guest_agent=$guest_available ssh=$ssh oidc=$oidc firewall_drop=$FIREWALL_BLOCKING"
 
+          HEALTH_JSON='{}'
           if [[ "$oidc" == true ]]; then
-            echo "DIAL_CONTROL_RECOVERY=NOT_REQUIRED_OIDC_ALREADY_UP"
+            HEALTH_JSON="$(curl -fsS --max-time 5 "http://$NETCUP_DIAL_CONTROL_IP:9134/healthz" || echo '{}')"
+          fi
+          if jq -e --arg expected "$DIAL_CONTROL_PAYLOAD_REF" '
+               .ok == true and
+               .host == "dial-control" and
+               .bootstrap_ref == $expected and
+               .bootstrap_phase == "CONTROL_PLANE_READY" and
+               .repo_head == $expected
+             ' <<<"$HEALTH_JSON" >/dev/null 2>&1; then
+            echo "DIAL_CONTROL_RECOVERY=NOT_REQUIRED_EXACT_CONTROL_PLANE_ALREADY_UP"
             exit 0
           fi
+          [[ "$oidc" != true ]] || echo "::warning::Port 9134 is open but exact control-plane health is stale or incomplete; repairing."
 
           # The VM is a fresh bootstrap target and migration has not begun. If
           # normal boot is alive but inaccessible, use Netcup rescue to repair
@@ -393,57 +407,13 @@ jobs:
           "
 
           curl -sS --fail --location \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$DIAL_BOOTSTRAP_REPAIR_REF/deploy/netcup/hermes-control/netcup-custom-script.sh" \
-            -o /tmp/netcup-custom-script.sh
-          chmod 0700 /tmp/netcup-custom-script.sh
-          "${SCP[@]}" /tmp/netcup-custom-script.sh root@"$NETCUP_DIAL_CONTROL_IP":/tmp/netcup-custom-script.sh >/dev/null
-
-          cat >"$RUNNER_TEMP/dial-root-verify.sh" <<'VERIFY_EOF'
-          #!/usr/bin/env bash
-          set -Eeuo pipefail
-          ROOTDEV="$1"
-          mountpoint -q /mnt/dial-root || mount "$ROOTDEV" /mnt/dial-root
-          cp /tmp/netcup-custom-script.sh /mnt/dial-root/tmp/netcup-custom-script.sh
-          chmod 0700 /mnt/dial-root/tmp/netcup-custom-script.sh
-          chroot /mnt/dial-root /bin/bash /tmp/netcup-custom-script.sh
-          
-          test -s /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service
-          test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
-          test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-boot-sentinel.service
-          test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner
-          test -x /mnt/dial-root/usr/local/sbin/dial-control-boot-sentinel
-          test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-failure-snapshot
-          
-          SERVICE_REF="$(sed -n 's/^Environment=DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
-          SCHEDULED_REF="$(sed -n 's/^DIAL_BOOTSTRAP_REF=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
-          SERVICE_BLOB="$(sed -n 's/^Environment=EXPECTED_IMAGE_BLOB=//p' /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service)"
-          SCHEDULED_BLOB="$(sed -n 's/^IMAGE_BOOTSTRAP_BLOB=//p' /mnt/dial-root/root/dial-control-bootstrap-scheduled)"
-          [[ "$SERVICE_REF" =~ ^[0-9a-f]{40}$ && "$SERVICE_REF" == "$SCHEDULED_REF" ]]
-          [[ "$SERVICE_BLOB" =~ ^[0-9a-f]{40}$ && "$SERVICE_BLOB" == "$SCHEDULED_BLOB" ]]
-          echo "effective_bootstrap_ref=$SERVICE_REF"
-          echo "effective_image_blob=$SERVICE_BLOB"
-          
-          chroot /mnt/dial-root /bin/bash -n /usr/local/sbin/dial-control-bootstrap-runner
-          chroot /mnt/dial-root /bin/sh -c '. /etc/environment'
-          install -d -m 2755 /mnt/dial-root/var/log/journal 2>/dev/null || true
-          systemctl --root=/mnt/dial-root enable ssh.service >/dev/null
-          chroot /mnt/dial-root ssh-keygen -A
-          install -d -m 0755 /mnt/dial-root/run/sshd
-          chroot /mnt/dial-root /usr/sbin/sshd -t
-          chroot /mnt/dial-root netplan generate
-          findmnt --verify --verbose --tab-file /mnt/dial-root/etc/fstab
-          systemd-analyze verify --root=/mnt/dial-root /etc/systemd/system/dial-control-bootstrap.service >/tmp/systemd-verify.txt 2>&1 || {
-            cat /tmp/systemd-verify.txt
-            echo "::error::Offline systemd bootstrap verification failed"
-            exit 37
-          }
-          sync
-          umount /mnt/dial-root
-          VERIFY_EOF
-          chmod 0700 "$RUNNER_TEMP/dial-root-verify.sh"
-          "${SCP[@]}" "$RUNNER_TEMP/dial-root-verify.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/dial-root-verify.sh >/dev/null
-          "${SSH[@]}" "bash /tmp/dial-root-verify.sh '$ROOTDEV'"
-          echo "INSTALLED_FILESYSTEM_BOOTSTRAP_REPAIR=GREEN"
+            "https://raw.githubusercontent.com/Vanguduza/dial-new/$DIAL_BOOTSTRAP_REPAIR_REF/deploy/netcup/hermes-control/rescue-prestage-control-plane.sh" \
+            -o "$RUNNER_TEMP/rescue-prestage-control-plane.sh"
+          chmod 0700 "$RUNNER_TEMP/rescue-prestage-control-plane.sh"
+          bash -n "$RUNNER_TEMP/rescue-prestage-control-plane.sh"
+          "${SCP[@]}" "$RUNNER_TEMP/rescue-prestage-control-plane.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/rescue-prestage-control-plane.sh >/dev/null
+          "${SSH[@]}" "bash /tmp/rescue-prestage-control-plane.sh '$ROOTDEV' '$DIAL_CONTROL_PAYLOAD_REF' '$DIAL_CONTROL_IMAGE_BLOB'"
+          echo "INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN"
 
           echo "Stopping rescue boot..."
           api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/rescue-stop.json || \
@@ -497,22 +467,29 @@ jobs:
             exit 36
           }
 
-          boot_reached=false
-          for attempt in $(seq 1 60); do
+          accepted=false
+          for attempt in $(seq 1 120); do
             SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
             GUEST_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" || echo '{}')"
             state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
             guest_now="$(jq -r '.available // false' <<<"$GUEST_NOW")"
-            ssh_now=false; oidc_now=false
+            ssh_now=false
             tcp_open 22 && ssh_now=true || true
-            tcp_open 9134 && oidc_now=true || true
-            if [[ "$oidc_now" == true ]]; then
-              echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
-              exit 0
+            health_json="$(curl -fsS --max-time 4 "http://$NETCUP_DIAL_CONTROL_IP:9134/healthz" || echo '{}')"
+            health_ok=false
+            if jq -e --arg expected "$DIAL_CONTROL_PAYLOAD_REF" '
+                 .ok == true and
+                 .host == "dial-control" and
+                 .bootstrap_ref == $expected and
+                 .bootstrap_phase == "CONTROL_PLANE_READY" and
+                 .repo_head == $expected
+               ' <<<"$health_json" >/dev/null 2>&1; then
+              health_ok=true
             fi
-            if [[ "$state_now" == RUNNING && ( "$guest_now" == true || "$ssh_now" == true ) ]]; then
-              boot_reached=true
-              echo "NORMAL_BOOT_REACHED state=$state_now guest_agent=$guest_now ssh=$ssh_now"
+
+            if [[ "$state_now" == RUNNING && "$ssh_now" == true && "$health_ok" == true ]]; then
+              accepted=true
+              echo "DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN state=$state_now guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
               break
             fi
             if [[ "$state_now" == CRASHED || "$state_now" == SHUTOFF ]]; then
@@ -520,45 +497,20 @@ jobs:
               break
             fi
             if (( attempt % 6 == 0 )); then
-              echo "NORMAL_BOOT_WAIT attempt=$attempt/60 state=$state_now guest_agent=$guest_now ssh=$ssh_now oidc=$oidc_now"
+              echo "POST_RESCUE_ACCEPTANCE_WAIT attempt=$attempt/120 state=$state_now guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
+              jq '{ok,host,bootstrap_ref,bootstrap_phase,repo_head}' <<<"$health_json" 2>/dev/null || true
             fi
             sleep 5
           done
 
-          if [[ "$boot_reached" != true ]]; then
+          if [[ "$accepted" != true ]]; then
             echo "=== POST-BOOT SCP STATE ==="
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
-            echo "::error::NORMAL_BOOT_UNREACHABLE: no guest agent or SSH within 5 minutes"
+            echo "::error::POST_RESCUE_ACCEPTANCE_FAILED: exact SSH + CONTROL_PLANE_READY health contract not reached within 10 minutes"
             exit 40
           fi
 
-          for attempt in $(seq 1 180); do
-            if tcp_open 9134; then
-              echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
-              exit 0
-            fi
-            SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
-            state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
-            ssh_now=false; tcp_open 22 && ssh_now=true || true
-            if [[ "$state_now" == CRASHED || "$state_now" == SHUTOFF ]]; then
-              echo "::error::Normal Ubuntu left RUNNING state while bootstrap was converging: $state_now"
-              exit 41
-            fi
-            if (( attempt == 30 )) && [[ "$ssh_now" != true ]]; then
-              echo "::error::SSH_RECOVERY_CHANNEL_UNREACHABLE: guest booted but SSH stayed closed for 5 minutes"
-              exit 43
-            fi
-            if (( attempt % 6 == 0 )); then
-              echo "OIDC_WAIT attempt=$attempt/180 state=$state_now ssh=$ssh_now"
-            fi
-            sleep 10
-          done
-
-          echo "=== OIDC TIMEOUT SCP STATE ==="
-          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
-          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
-          api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
-          echo "::error::OIDC_BOOTSTRAP_TIMEOUT: host booted but listener did not appear within 30 minutes"
-          exit 42
+          echo "DIAL_CONTROL_RECOVERY=GREEN"
+          exit 0
