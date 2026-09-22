@@ -185,8 +185,18 @@ install -d -m 0700 "$ROOT/var/lib/dial-control/github-oidc"; rm -f "$ROOT/var/li
 cat >"$ROOT/usr/local/sbin/dial-oidc-ready-check" <<'READY'
 #!/usr/bin/env bash
 set -Eeuo pipefail
+RECEIPT=/var/lib/dial-control/bootstrap/image-bootstrap.receipt
+EXPECTED="$(sed -n 's/^bootstrap_ref=//p' "$RECEIPT" | head -1)"
+[[ "$EXPECTED" =~ ^[0-9a-f]{40}$ ]]
 for attempt in $(seq 1 30); do
-  if timeout 2 bash -c '</dev/tcp/127.0.0.1/9134' >/dev/null 2>&1; then
+  HEALTH="$(curl -fsS --max-time 2 http://127.0.0.1:9134/healthz 2>/dev/null || echo '{}')"
+  if jq -e --arg expected "$EXPECTED" '
+       .ok == true and
+       .host == "dial-control" and
+       .bootstrap_ref == $expected and
+       .bootstrap_phase == "CONTROL_PLANE_READY" and
+       .repo_head == $expected
+     ' <<<"$HEALTH" >/dev/null 2>&1; then
     install -d -m 0700 /var/lib/dial-control/github-oidc
     date -u +%FT%TZ >/var/lib/dial-control/github-oidc/READY
     chmod 0600 /var/lib/dial-control/github-oidc/READY
