@@ -1,0 +1,300 @@
+name: Netcup diagnose and recover Dial Control
+
+on:
+  push:
+    branches:
+      - gpt/netcup-hermes-control-integrated-20260921
+
+permissions:
+  contents: read
+
+env:
+  NETCUP_SCP_API_BASE_URL: https://www.servercontrolpanel.de/scp-core/api
+  NETCUP_SCP_OIDC_BASE_URL: https://www.servercontrolpanel.de/realms/scp/protocol/openid-connect
+  NETCUP_DIAL_CONTROL_IP: 62.83.35.103
+  DIAL_BOOTSTRAP_REPAIR_REF: c226680b4d6b5671d4ac0e77ea32ffedec64f3c4
+
+jobs:
+  request-authorization:
+    if: ${{ github.event.head_commit.message == 'ops: run Netcup bootstrap recovery' }}
+    runs-on: ubuntu-latest
+    outputs:
+      device_code: ${{ steps.device.outputs.device_code }}
+      interval: ${{ steps.device.outputs.interval }}
+    steps:
+      - id: device
+        name: Request Netcup SCP recovery authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -sS --fail-with-body -X POST \
+            "$NETCUP_SCP_OIDC_BASE_URL/auth/device" \
+            -d "client_id=scp" \
+            -d "scope=openid")"
+          DEVICE_CODE="$(jq -r '.device_code' <<<"$RESPONSE")"
+          USER_CODE="$(jq -r '.user_code' <<<"$RESPONSE")"
+          VERIFY_URL="$(jq -r '.verification_uri_complete' <<<"$RESPONSE")"
+          INTERVAL="$(jq -r '.interval // 5' <<<"$RESPONSE")"
+          [[ -n "$DEVICE_CODE" && "$DEVICE_CODE" != null ]]
+          [[ -n "$VERIFY_URL" && "$VERIFY_URL" != null ]]
+          {
+            echo "device_code=$DEVICE_CODE"
+            echo "interval=$INTERVAL"
+          } >>"$GITHUB_OUTPUT"
+          printf 'NETCUP_RECOVERY_APPROVAL_URL=%s\n' "$VERIFY_URL"
+          printf 'NETCUP_RECOVERY_USER_CODE=%s\n' "$USER_CODE"
+          {
+            echo "## Netcup recovery authorization required"
+            echo ""
+            echo "$VERIFY_URL"
+            echo ""
+            printf 'User code: %s\n' "$USER_CODE"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+  diagnose-and-recover:
+    needs: request-authorization
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Diagnose SCP state and recover bootstrap if required
+        shell: bash
+        env:
+          DEVICE_CODE: ${{ needs.request-authorization.outputs.device_code }}
+          DEVICE_INTERVAL: ${{ needs.request-authorization.outputs.interval }}
+        run: |
+          set -Eeuo pipefail
+          shopt -s inherit_errexit
+
+          interval="${DEVICE_INTERVAL:-5}"
+          TOKEN=""
+          for attempt in $(seq 1 120); do
+            RESPONSE="$(curl -sS -X POST \
+              "$NETCUP_SCP_OIDC_BASE_URL/token" \
+              -d "grant_type=urn:ietf:params:oauth:grant-type:device_code" \
+              -d "device_code=$DEVICE_CODE" \
+              -d "client_id=scp" || true)"
+            TOKEN="$(jq -r '.access_token // empty' <<<"$RESPONSE" 2>/dev/null || true)"
+            [[ -n "$TOKEN" ]] && break
+            ERROR="$(jq -r '.error // empty' <<<"$RESPONSE" 2>/dev/null || true)"
+            case "$ERROR" in
+              authorization_pending|"") ;;
+              slow_down) interval=$((interval + 5)) ;;
+              access_denied|expired_token)
+                echo "::error::Netcup authorization failed: $ERROR"
+                exit 20
+                ;;
+            esac
+            sleep "$interval"
+          done
+          [[ -n "$TOKEN" ]] || { echo "::error::Netcup authorization timed out"; exit 20; }
+
+          api_get() {
+            curl -sS --fail-with-body \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "accept: application/json" "$1"
+          }
+          api_post() {
+            curl -sS --fail-with-body -X POST \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "accept: application/json" "$1"
+          }
+          api_patch() {
+            local url="$1" body="$2"
+            curl -sS --fail-with-body -X PATCH \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/merge-patch+json" \
+              -H "accept: application/json" \
+              --data "$body" "$url"
+          }
+          tcp_open() {
+            timeout 3 bash -c "</dev/tcp/$NETCUP_DIAL_CONTROL_IP/$1" >/dev/null 2>&1
+          }
+
+          SERVERS="$(curl -sS --fail-with-body -G \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "accept: application/json" \
+            --data-urlencode "ip=$NETCUP_DIAL_CONTROL_IP" \
+            "$NETCUP_SCP_API_BASE_URL/v1/servers")"
+          SERVER_ID="$(jq -r 'if length == 1 then .[0].id else empty end' <<<"$SERVERS")"
+          [[ "$SERVER_ID" =~ ^[0-9]+$ ]] || {
+            echo "::error::Could not resolve exactly one server for $NETCUP_DIAL_CONTROL_IP"
+            jq '[.[] | {id,name,hostname,serverLiveInfo}]' <<<"$SERVERS"
+            exit 21
+          }
+          echo "NETCUP_SERVER_ID=$SERVER_ID"
+
+          SERVER="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID")"
+          INTERFACES="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/interfaces")"
+          GUEST_STATUS="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" || echo '{}')"
+          GUEST_DATA="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent" || echo '{}')"
+          RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+          LOGS="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" || echo '[]')"
+          CPU="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/metrics/cpu?hours=1" || echo '{}')"
+          NET="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/metrics/network?hours=1" || echo '{}')"
+
+          echo "=== SCP SERVER ==="
+          jq '{id,name,hostname,disabled,rescueSystemActive,serverLiveInfo,ipv4Addresses,ipv6Addresses,architecture}' <<<"$SERVER"
+          echo "=== SCP INTERFACES ==="
+          jq '.' <<<"$INTERFACES"
+          echo "=== GUEST AGENT STATUS ==="
+          jq '.' <<<"$GUEST_STATUS"
+          echo "=== GUEST AGENT DATA (summary) ==="
+          jq '{guestAgentAvailable,keys:(.guestAgentData // {} | keys)}' <<<"$GUEST_DATA" 2>/dev/null || true
+          echo "=== RESCUE STATUS (password redacted) ==="
+          jq 'del(.password)' <<<"$RESCUE"
+          echo "=== RECENT SCP LOGS ==="
+          jq '[.[] | {date,type,logKey,message}]' <<<"$LOGS"
+          echo "=== CPU METRICS ==="
+          jq '.' <<<"$CPU"
+          echo "=== NETWORK METRICS ==="
+          jq '.' <<<"$NET"
+
+          FIREWALL_BLOCKING=false
+          while IFS= read -r mac; do
+            [[ -n "$mac" ]] || continue
+            FW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/interfaces/$mac/firewall?consistencyCheck=true" || echo '{}')"
+            echo "=== FIREWALL $mac ==="
+            jq '.' <<<"$FW"
+            active="$(jq -r '.active // false' <<<"$FW")"
+            ingress="$(jq -r '.ingressImplicitRule // empty' <<<"$FW")"
+            if [[ "$active" == true && "$ingress" == DROP_ALL ]]; then
+              FIREWALL_BLOCKING=true
+              echo "::warning::Active Netcup firewall with DROP_ALL ingress detected on $mac"
+            fi
+          done < <(jq -r '.[].mac // empty' <<<"$INTERFACES")
+
+          state="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER")"
+          uptime="$(jq -r '.serverLiveInfo.uptimeInSeconds // 0' <<<"$SERVER")"
+          guest_available="$(jq -r '.available // false' <<<"$GUEST_STATUS")"
+          ssh=false; oidc=false
+          tcp_open 22 && ssh=true || true
+          tcp_open 9134 && oidc=true || true
+          echo "DIAG state=$state uptime=$uptime guest_agent=$guest_available ssh=$ssh oidc=$oidc firewall_drop=$FIREWALL_BLOCKING"
+
+          if [[ "$oidc" == true ]]; then
+            echo "DIAL_CONTROL_RECOVERY=NOT_REQUIRED_OIDC_ALREADY_UP"
+            exit 0
+          fi
+
+          # The VM is a fresh bootstrap target and migration has not begun. If
+          # normal boot is alive but inaccessible, use Netcup rescue to repair
+          # the installed filesystem deterministically.
+          echo "DIAL_CONTROL_RECOVERY=RESCUE_REQUIRED"
+
+          rescue_active="$(jq -r '.active // false' <<<"$RESCUE")"
+          if [[ "$rescue_active" != true ]]; then
+            echo "Activating Netcup rescue system..."
+            api_post "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-task.json
+          fi
+
+          RESCUE_PASSWORD=""
+          for attempt in $(seq 1 60); do
+            RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+            active="$(jq -r '.active // false' <<<"$RESCUE")"
+            RESCUE_PASSWORD="$(jq -r '.password // empty' <<<"$RESCUE")"
+            if [[ "$active" == true && -n "$RESCUE_PASSWORD" ]]; then break; fi
+            sleep 5
+          done
+          [[ -n "$RESCUE_PASSWORD" ]] || { echo "::error::Rescue password was not issued"; exit 30; }
+
+          echo "Power-cycling into rescue..."
+          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWERCYCLE" '{"state":"ON"}' >/tmp/rescue-powercycle.json
+
+          for attempt in $(seq 1 90); do
+            if tcp_open 22; then break; fi
+            sleep 5
+          done
+          tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 31; }
+
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass
+
+          export SSHPASS="$RESCUE_PASSWORD"
+          SSH=(sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 root@"$NETCUP_DIAL_CONTROL_IP")
+          SCP=(sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10)
+
+          echo "=== RESCUE BLOCK DEVICES ==="
+          "${SSH[@]}" 'lsblk -o NAME,PATH,SIZE,FSTYPE,TYPE,MOUNTPOINTS'
+
+          ROOTDEV="$("${SSH[@]}" 'set -e
+            vgchange -ay >/dev/null 2>&1 || true
+            mkdir -p /mnt/dial-probe
+            found=""
+            while read -r dev fs; do
+              case "$fs" in ext4|xfs|btrfs) ;; *) continue;; esac
+              umount /mnt/dial-probe >/dev/null 2>&1 || true
+              if mount -o ro "$dev" /mnt/dial-probe >/dev/null 2>&1; then
+                if grep -q "^ID=ubuntu" /mnt/dial-probe/etc/os-release 2>/dev/null; then
+                  found="$dev"
+                  umount /mnt/dial-probe
+                  printf "%s" "$found"
+                  exit 0
+                fi
+                umount /mnt/dial-probe
+              fi
+            done < <(lsblk -rpno NAME,FSTYPE)
+            exit 1
+          ')"
+          [[ -n "$ROOTDEV" ]] || { echo "::error::Could not identify Ubuntu root filesystem"; exit 32; }
+          echo "UBUNTU_ROOT_DEVICE=$ROOTDEV"
+
+          "${SSH[@]}" "set -e
+            mkdir -p /mnt/dial-root
+            umount /mnt/dial-root >/dev/null 2>&1 || true
+            mount '$ROOTDEV' /mnt/dial-root
+            echo '=== INSTALLED BOOTSTRAP ARTIFACTS BEFORE REPAIR ==='
+            ls -l /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service 2>/dev/null || true
+            ls -l /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service 2>/dev/null || true
+            ls -l /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner 2>/dev/null || true
+            cat /mnt/dial-root/root/dial-control-bootstrap-scheduled 2>/dev/null || true
+            tail -n 200 /mnt/dial-root/var/log/dial-control-bootstrap.log 2>/dev/null || true
+            cat /mnt/dial-root/var/lib/dial-control/bootstrap/image-bootstrap.receipt 2>/dev/null || true
+          "
+
+          curl -sS --fail --location \
+            "https://raw.githubusercontent.com/Vanguduza/dial-new/$DIAL_BOOTSTRAP_REPAIR_REF/deploy/netcup/hermes-control/netcup-custom-script.sh" \
+            -o /tmp/netcup-custom-script.sh
+          chmod 0700 /tmp/netcup-custom-script.sh
+          "${SCP[@]}" /tmp/netcup-custom-script.sh root@"$NETCUP_DIAL_CONTROL_IP":/tmp/netcup-custom-script.sh >/dev/null
+
+          "${SSH[@]}" "set -Eeuo pipefail
+            mountpoint -q /mnt/dial-root || mount '$ROOTDEV' /mnt/dial-root
+            cp /tmp/netcup-custom-script.sh /mnt/dial-root/tmp/netcup-custom-script.sh
+            chmod 0700 /mnt/dial-root/tmp/netcup-custom-script.sh
+            chroot /mnt/dial-root /bin/bash /tmp/netcup-custom-script.sh
+            test -s /mnt/dial-root/etc/systemd/system/dial-control-bootstrap.service
+            test -L /mnt/dial-root/etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
+            test -x /mnt/dial-root/usr/local/sbin/dial-control-bootstrap-runner
+            sync
+            umount /mnt/dial-root
+          "
+          echo "INSTALLED_FILESYSTEM_BOOTSTRAP_REPAIR=GREEN"
+
+          echo "Deactivating rescue system..."
+          curl -sS --fail-with-body -X DELETE \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "accept: application/json" \
+            "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-off.json || true
+
+          for attempt in $(seq 1 30); do
+            RESCUE="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+            [[ "$(jq -r '.active // false' <<<"$RESCUE")" == false ]] && break
+            sleep 5
+          done
+
+          echo "Power-cycling back to repaired Ubuntu..."
+          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWERCYCLE" '{"state":"ON"}' >/tmp/normal-powercycle.json
+
+          for attempt in $(seq 1 180); do
+            if tcp_open 9134; then
+              echo "DIAL_CONTROL_OIDC_LISTENER=UP_AFTER_REPAIR"
+              exit 0
+            fi
+            if (( attempt % 12 == 0 )); then
+              echo "Waiting for repaired bootstrap listener ($attempt/180)..."
+            fi
+            sleep 5
+          done
+
+          echo "::error::Repaired Ubuntu booted but OIDC listener did not appear within 15 minutes"
+          exit 40
