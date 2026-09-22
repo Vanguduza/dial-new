@@ -116,3 +116,25 @@ test('courier Android resolves shared delivery feature authority instead of crea
   expect(getScreensForApplication({ repoDir, applicationId: 'COURIER_ANDROID' }).length).toBeGreaterThan(0);
   for (const featureId of expected) expect(getApplicationsForFeature({ repoDir, featureId })).toContain('COURIER_ANDROID');
 });
+
+
+test('shopping screens compose existing domain authorities without creating a duplicate SHOP feature family', () => {
+  const featureRegistry = JSON.parse(fs.readFileSync(path.join(repoDir, 'agent-system/registries/FEATURE_REGISTRY.json'), 'utf8'));
+  const { registry } = loadCanonicalScreenGraph(repoDir);
+  expect(featureRegistry.some((x) => String(x.feature_id).startsWith('SHOP-F'))).toBe(false);
+
+  const shopScreens = registry.screens.filter((x) => x.screen_id.startsWith('SCREEN:SHOP:'));
+  expect(shopScreens.length).toBeGreaterThanOrEqual(18);
+
+  expect(getFeaturesForScreen({ repoDir, screenId: 'SCREEN:SHOP:DIAL_SHOP_HOME' })).toEqual(
+    expect.arrayContaining(['SPARE-F002','GROC-F001'])
+  );
+  expect(getFeaturesForScreen({ repoDir, screenId: 'SCREEN:SHOP:FITMENT_COMPATIBILITY_DETAIL' })).toEqual(['SPARE-F003']);
+
+  const bag = shopScreens.find((x) => x.screen_id === 'SCREEN:SHOP:SHOPPING_BAG_DOMAIN_CARTS_OVERVIEW');
+  expect(bag?.action_refs).toContain('open_domain_cart');
+  expect(bag?.action_refs).not.toContain('checkout_all_branches');
+
+  const media = shopScreens.find((x) => x.screen_id === 'SCREEN:SHOP:PRODUCT_MEDIA_STUDIO');
+  expect(media?.feature_refs).toEqual(expect.arrayContaining(['SPARE-F004','SPARE-F014','GROC-F001','GROC-F018','PLAT-F004']));
+});
