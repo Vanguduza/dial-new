@@ -30,8 +30,14 @@ Target ordinary context bundle: **≤12k tokens**. Beyond that, return pointers.
 
 ## Development loop
 
+Before resolving a Feature/Unit, resolve the registered project and prove its project-scoped FFDRM certificate. Repository preparation and live execution are separate gates:
+
 ```text
-RESOLVE FEATURE ID
+RESOLVE PROJECT
+→ VERIFY PROJECT DEVELOPMENT PACK BASELINE
+→ VERIFY FFDRM F0-F15 / FORENSIC_BUILD_READY
+→ VERIFY SHARED DIAL DEVELOPMENT-SYSTEM RUNTIME GATE
+→ RESOLVE FEATURE ID
 → GET JIT CONTEXT
 → INSPECT REPO CURRENT STATE
 → PLAN AGAINST FRC
@@ -42,6 +48,7 @@ RESOLVE FEATURE ID
 → DOMAIN/CROSS-DOMAIN TEST
 → EVIDENCE RECORD
 → PROJECT TRUTH DELTA CHECK
+→ RECHECK FORENSIC CERTIFICATE / TASK-ENVELOPE FRESHNESS
 → COMMIT/HANDOFF
 ```
 
@@ -68,3 +75,8 @@ Local checkpoints are not canonical until reviewed into Project Truth.
 - small MCP/tool set;
 - fresh evaluator receives FRC + diff + runnable evidence, not entire conversation;
 - compact/handoff when stale implementation history dominates context.
+
+
+## FFDRM scope rule
+
+A project certificate is never global. DIAL Development System, DIAL product tenants, VAN, DDE, GTR Auto, AECI Maintenance and future projects have independent preparation state. A project's `FORENSIC_BUILD_READY` certificate does not prove the shared execution fabric is runtime-qualified, and a green shared execution fabric does not authorize a project whose pack is stale or blocked. Agentic/adaptive projects must carry the full F12 observe → contextualize → reason → authorize → act/delegate → observe outcome → reconcile → learn → improve proof.
