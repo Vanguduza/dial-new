@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - gpt/netcup-hermes-control-integrated-20260921
+    paths:
+      - .github/workflows/netcup-diagnose-recover-bootstrap.yml
 
 permissions:
   contents: read
@@ -16,7 +18,6 @@ env:
 
 jobs:
   request-authorization:
-    if: ${{ github.event.head_commit.message == 'ops: run Netcup bootstrap recovery' }}
     runs-on: ubuntu-latest
     outputs:
       device_code: ${{ steps.device.outputs.device_code }}
