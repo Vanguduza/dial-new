@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260922-owner-state-aware-housekeeping-fabric",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_excerpt": "Design and build that setup and include it in the bootstrap",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260922-state-aware-housekeeping",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-22T01:02:00Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    "agent-system/orchestration/resource-lifecycle-registry.mjs",
+    "agent-system/orchestration/housekeeping-gc.mjs",
+    "agent-system/registries/HOUSEKEEPING_POLICY.json",
+    "deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh",
+    "deploy/oracle/hermes-codex/systemd/dial-housekeeping.service",
+    "deploy/oracle/hermes-codex/systemd/dial-housekeeping.timer",
+    "deploy/oracle/hermes-codex/bootstrap-host.sh",
+    "deploy/oracle/hermes-codex/install-control-plane.sh",
+    "agent-system/orchestration/state-store.mjs",
+    "agent-system/orchestration/worker-lease-manager.mjs",
+    "agent-system/orchestration/mission-control.mjs",
+    "agent-system/orchestration/mission-controller.mjs",
+    "docs/orchestration/DIAL_STATE_AWARE_HOUSEKEEPING.md",
+    "tests/orchestration-housekeeping.test.mjs",
+    "vitest.config.ts",
+    "package.json",
+    "docs/project-state/authorizations/auth-20260922-owner-state-aware-housekeeping-fabric.json"
+  ],
+  "change_classes": [
+    "development_system_capability",
+    "bootstrap_extension",
+    "state_aware_gc",
+    "resource_lifecycle"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
