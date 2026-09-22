@@ -1,0 +1,13 @@
+[Unit]
+Description=DIAL owner-facing Desktop Commander slice
+
+[Slice]
+MemoryAccounting=yes
+CPUAccounting=yes
+IOAccounting=yes
+MemoryLow=128M
+MemoryHigh=384M
+MemoryMax=640M
+CPUWeight=300
+IOWeight=300
+TasksMax=384

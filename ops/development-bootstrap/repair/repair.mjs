@@ -44,6 +44,24 @@ export function planActions({ role, manifest, repoDir, controlHome, checks = [],
     if (a.state_hint === CONVERGE_STATES.NOT_APPLICABLE) continue;
     actions.push({ id: a.id, title: `${a.needed ? 'install' : 'verify'} ${a.item} via ${a.method}${a.pinned_version ? ` @${a.pinned_version}` : ''}`, needed: a.needed, pin_ready: a.pin_ready, missing_pin: a.missing_pin, owner_action: a.needed && !a.pin_ready, owner_record: a.owner_record, converge: a, run: () => { const r = executeConvergence({ actions: [a], dryRun: false }); const res = r.results[0]; return { ok: res.state === CONVERGE_STATES.APPLIED, state: res.state, executed: res.executed, owner_action: res.owner_action || null }; } });
   }
+  // State-aware housekeeping is required on all persistent DIAL infrastructure roles.
+  if (['dial-hermes-control', 'vekl-worker', 'oracle-admin'].includes(role)) {
+    const hkHost = role === 'dial-hermes-control' ? 'dial-control' : role;
+    actions.push({
+      id: 'act.install-state-aware-housekeeping',
+      title: 'install Hermes state-aware resource lifecycle housekeeping',
+      needed: failed.has('systemd.dial-housekeeping.timer') || !fs.existsSync(path.join(process.env.HOME || '', '.local/bin/dial-housekeeping')) || !fs.existsSync(path.join(process.env.HOME || '', '.local/bin/dial-resource')),
+      run: () => {
+        const r = run('bash', ['deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh'], {
+          cwd: repoDir,
+          timeoutMs: 10 * 60 * 1000,
+          env: { ...process.env, DIAL_REPO_DIR: repoDir, DIAL_HOUSEKEEPING_HOST_ID: hkHost, DIAL_SERVICE_USER: process.env.USER || 'ubuntu' },
+        });
+        return { command: r.command, ok: r.ok, tail: r.output.split('\n').slice(-6) };
+      },
+    });
+  }
+
   // 6. Canonical installers for the control plane (wrapped, never duplicated). They run only after the
   //    runtimes they need are converged through pinned channels: an installer that would itself pull an
   //    unpinned runtime is refused (closure item 1).

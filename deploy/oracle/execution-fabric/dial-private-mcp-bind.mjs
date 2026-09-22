@@ -2,7 +2,10 @@
 import http from 'node:http';
 import fs from 'node:fs';
 
-const BIND = process.env.DIAL_PRIVATE_MCP_BIND || '10.0.0.184';
+const BIND = process.env.DIAL_PRIVATE_MCP_BIND || process.env.DIAL_CONTROL_OVERLAY_IP || null;
+if (!BIND || BIND === '0.0.0.0' || BIND === '::') {
+  throw new Error('DIAL_PRIVATE_MCP_BIND or DIAL_CONTROL_OVERLAY_IP must name a private interface; wildcard/public default is forbidden');
+}
 const PORT = Number(process.env.DIAL_PRIVATE_MCP_PORT || 9133);
 const UPSTREAM = process.env.DIAL_PRIVATE_MCP_UPSTREAM || 'http://127.0.0.1:9131';
 const CAP_FILE = process.env.DIAL_REMOTE_MCP_CAPABILITY_FILE || '/var/lib/dial-control/secrets/remote-mcp-capability';

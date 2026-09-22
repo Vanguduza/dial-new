@@ -136,7 +136,7 @@ if [[ "$MODE" == live ]]; then
 fi
 
 if [[ "$MODE" == declared ]]; then
-  observed="$(jq -c '[.hosts[] | {host: .host_id, shape: .oci_shape, ocpu: .cpu_total, memory_mb: .memory_total_mb}]' "$HOSTS")"
+  observed="$(jq -c '[.hosts[] | select((.provider // "oracle") == "oracle") | {host: .host_id, shape: .oci_shape, ocpu: .cpu_total, memory_mb: .memory_total_mb}]' "$HOSTS")"
 fi
 
 # ---- compare --------------------------------------------------------------------------

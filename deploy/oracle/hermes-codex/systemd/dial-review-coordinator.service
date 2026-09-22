@@ -1,0 +1,29 @@
+[Unit]
+Description=DIAL shared project memory cross-harness review coordinator
+After=network-online.target dial-hermes-runtime.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/dial-new
+Environment=DIAL_REPO_DIR=/home/ubuntu/dial-new
+Environment=DIAL_CONTROL_HOME=/var/lib/dial-control
+Environment=DIAL_PROJECT_ID=dial
+Environment=DIAL_HARNESS_ID=review-coordinator
+EnvironmentFile=-/var/lib/dial-control/config/spmrf.env
+Environment=PATH=%h/.local/bin:%h/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
+ExecStart=/usr/bin/node /home/ubuntu/dial-new/agent-system/orchestration/review-coordinator.mjs --daemon
+Restart=always
+RestartSec=10s
+TimeoutStartSec=60s
+TimeoutStopSec=30s
+Slice=dial-hermes.slice
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/dial-control /home/ubuntu/dial-new %h/.codex %h/.claude %h/.config/claude %h/.cache
+
+[Install]
+WantedBy=default.target

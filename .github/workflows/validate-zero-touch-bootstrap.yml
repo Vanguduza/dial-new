@@ -1,0 +1,40 @@
+name: Validate zero-touch bootstrap
+
+on:
+  push:
+    branches:
+      - gpt/netcup-hermes-control-integrated-20260921
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Parse workflow YAML
+        run: |
+          ruby -e "require 'yaml'; YAML.load_file('.github/workflows/netcup-zero-touch-converge.yml', aliases: true); puts 'YAML_OK'"
+
+      - name: Validate shell entrypoints
+        run: |
+          bash -n deploy/netcup/hermes-control/image-bootstrap.sh
+          bash -n deploy/netcup/hermes-control/configure-wireguard-fabric.sh
+          bash -n deploy/netcup/hermes-control/migrate-from-oracle-control.sh
+          bash -n deploy/netcup/hermes-control/rotate-bootstrap-identities.sh
+          bash -n deploy/netcup/hermes-control/install-github-admin-runner.sh
+          bash -n deploy/netcup/hermes-control/install-github-oidc-control.sh
+          bash -n deploy/netcup/hermes-control/github-oidc-call.sh
+          bash -n deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh
+
+      - name: Validate OIDC controller syntax
+        run: node --check deploy/netcup/hermes-control/github-oidc-control.mjs
+
+      - name: Install test dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run zero-touch regression suite
+        run: npx vitest run tests/development-bootstrap.test.mjs

@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "estate_id": "DIAL_VAN_HYBRID_ESTATE_V1",
+  "total_vms": 4,
+  "note": "Four-VM owner estate. DIAL resource-fabric hosts.json governs the three DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository. Netcup Hermes may recover the Oracle instances but does not inherit VATI trading authority.",
+  "vms": [
+    {
+      "host_id": "dial-hermes-control",
+      "provider": "netcup",
+      "shape": "RS 1000 G12",
+      "architecture": "x86_64",
+      "roles": [
+        "DIAL_CONTROL_AUTHORITY",
+        "HERMES",
+        "DIAL_DEVELOPMENT_SYSTEM",
+        "PRIMARY_ORACLE_RECOVERER",
+        "GITHUB_ADMIN_RUNNER"
+      ],
+      "lifecycle": "PRIMARY_ACTIVE",
+      "display_name": "Dial Control",
+      "physical_hostname": "dial-control",
+      "compatibility_aliases": [
+        "dial-hermes-control"
+      ]
+    },
+    {
+      "host_id": "van-trading-core",
+      "provider": "oracle",
+      "shape": "VM.Standard.A1.Flex",
+      "architecture": "arm64",
+      "roles": [
+        "VAN_TRADING_CORE",
+        "VATI",
+        "VAN_RUNTIME_DEPENDENCIES",
+        "BURST_COMPUTE_WHEN_SAFE"
+      ],
+      "authority_boundary": "VATI_RETAINS_TRADING_RISK_AND_EXECUTION_AUTHORITY",
+      "lifecycle": "ACTIVE"
+    },
+    {
+      "host_id": "vekl-worker",
+      "provider": "oracle",
+      "shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "roles": [
+        "BACKGROUND_COORDINATOR",
+        "VEKL_LIGHT"
+      ],
+      "lifecycle": "ACTIVE"
+    },
+    {
+      "host_id": "oracle-admin",
+      "provider": "oracle",
+      "shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "roles": [
+        "RECOVERY_CONTROL_ONLY",
+        "OCI_RECOVERY",
+        "BREAK_GLASS"
+      ],
+      "lifecycle": "COLD_RECOVERY_ACTIVE"
+    }
+  ],
+  "retired_after_cutover": [
+    {
+      "host_id": "old-oracle-dial-hermes-control",
+      "condition": "Only after Netcup migration, DIAL MCP, SSH, OCI Run Command, GitHub admin and reciprocal recovery certification are all green."
+    }
+  ],
+  "control_paths": {
+    "netcup_to_oracle": [
+      "DIAL_MCP_OVER_PRIVATE_OVERLAY",
+      "SSH_OVER_PRIVATE_OVERLAY_OR_DIRECT_WHERE_ALLOWED",
+      "OCI_API_AND_RUN_COMMAND_OUT_OF_BAND"
+    ],
+    "owner_to_netcup": [
+      "DESKTOP_COMMANDER",
+      "GITHUB_ACTIONS_NETCUP_ADMIN",
+      "SSH",
+      "NETCUP_CONSOLE"
+    ]
+  },
+  "network": {
+    "private_overlay": {
+      "technology": "WIREGUARD",
+      "hub": "dial-control",
+      "cidr": "10.77.0.0/24",
+      "addresses": {
+        "oracle-admin": "10.77.0.2",
+        "vekl-worker": "10.77.0.3",
+        "van-trading-core": "10.77.0.4",
+        "dial-control": "10.77.0.1"
+      },
+      "rule": "Each Oracle VM is an independent outbound peer to Netcup; oracle-admin is not a transit dependency."
+    },
+    "application_planes": [
+      "DIAL_MCP",
+      "SSH",
+      "VAN_TRADING_COMMANDER_MCP"
+    ],
+    "out_of_band_plane": "OCI_API_AND_RUN_COMMAND",
+    "owner_recovery_plane": "GITHUB_ACTIONS_NETCUP_ADMIN"
+  }
+}
