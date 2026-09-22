@@ -12,6 +12,7 @@ import { ensurePacketEngineeringKnowledge, resolvePacketEngineeringKnowledge } f
 import { activationSummary, loadSkillActivationForPacket } from './skill-activation-store.mjs';
 import { recordSkillOutcome } from './skill-outcome-recorder.mjs';
 import { assertFreshKnowledgeBinding } from './knowledge-admission-guard.mjs';
+import { ensureProjectRegistry, getProject } from './project-registry.mjs';
 import {
   appendJsonl,
   ensureControlLayout,
@@ -51,25 +52,33 @@ function validateQualificationCanary({ instruction, requestedBy, metadata }) {
   return true;
 }
 
-export function submitExternalWork({ instruction, requestedBy = 'operator', metadata = {}, root, repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO, engineeringKnowledgeResolver = resolvePacketEngineeringKnowledge } = {}) {
+export function submitExternalWork({ instruction, requestedBy = 'operator', metadata = {}, projectSlug = null, root, repoDir = process.env.DIAL_REPO_DIR || DEFAULT_REPO, engineeringKnowledgeResolver = resolvePacketEngineeringKnowledge } = {}) {
   const text = String(instruction ?? '').trim();
   if (!text) throw new Error('instruction is required');
   const safeMetadata = metadata && typeof metadata === 'object' ? { ...metadata } : {};
+  const resolvedProjectSlug = String(projectSlug || safeMetadata.project_slug || process.env.DIAL_PROJECT_SLUG || 'dial').trim();
+  if (!/^[a-z0-9][a-z0-9._:-]{0,220}$/.test(resolvedProjectSlug)) throw new Error('INVALID_PROJECT_SLUG');
+  safeMetadata.project_slug = resolvedProjectSlug;
   validateQualificationCanary({ instruction: text, requestedBy, metadata: safeMetadata });
   ensureControlLayout(root);
+  ensureProjectRegistry(root, { dialRepoDir: repoDir });
+  const project = getProject(resolvedProjectSlug, root);
+  const projectRepoDir = project.repo_dir;
   const id = crypto.randomUUID();
   let skillActivation = null;
   let engineeringKnowledge;
   if (safeMetadata?.qualification_canary === true) {
     engineeringKnowledge = { policy_version: 'vekl-1.0', activation_id: null, resolution_state: 'NOT_APPLICABLE_QUALIFICATION_CANARY', selected_skills: [] };
   } else {
-    skillActivation = engineeringKnowledgeResolver({ repoDir, root, packetId: id, instruction: text, metadata: safeMetadata });
+    skillActivation = engineeringKnowledgeResolver({ repoDir: projectRepoDir, root, packetId: id, instruction: text, metadata: safeMetadata });
     if (!skillActivation?.activation_id) throw new Error('VEKL_ACTIVATION_REQUIRED_BEFORE_QUEUE');
     if (skillActivation.execution_allowed === false) throw new Error(`VEKL_ACTIVATION_BLOCKED:${skillActivation.resolution_state || 'UNKNOWN'}`);
     engineeringKnowledge = activationSummary(skillActivation);
   }
   const job = {
-    schema_version: 2,
+    schema_version: 3,
+    project_slug: resolvedProjectSlug,
+    project_id: project.project_id || project.slug,
     job_id: id,
     execution_origin: ORIGIN,
     state: 'QUEUED',
@@ -85,6 +94,8 @@ export function submitExternalWork({ instruction, requestedBy = 'operator', meta
     job_id: id,
     execution_origin: ORIGIN,
     requested_by: requestedBy,
+    project_slug: job.project_slug,
+    project_id: job.project_id,
     qualification_canary: job.metadata?.qualification_canary === true,
     skill_activation_id: job.engineering_knowledge?.activation_id ?? null,
     skill_resolution_state: job.engineering_knowledge?.resolution_state ?? null,
@@ -165,6 +176,8 @@ function finalizeJob(job, result, root) {
   appendJsonl('events/external-orchestrator.jsonl', {
     event: completed ? 'EXTERNAL_WORK_COMPLETED' : 'EXTERNAL_WORK_FAILED',
     job_id: job.job_id,
+    project_slug: job.project_slug || job.metadata?.project_slug || 'dial',
+    project_id: job.project_id || null,
     execution_origin: ORIGIN,
     runtime: record.runtime_provenance.runtime,
     requested_model: record.runtime_provenance.requested_model,
@@ -240,6 +253,8 @@ export async function processNextExternalWork({
   appendJsonl('events/external-orchestrator.jsonl', {
     event: 'EXTERNAL_WORK_STARTED',
     job_id: job.job_id,
+    project_slug: job.project_slug || job.metadata?.project_slug || 'dial',
+    project_id: job.project_id || null,
     execution_origin: ORIGIN,
     worker_pid: process.pid,
     qualification_canary: isQualificationCanary(job),
@@ -249,9 +264,28 @@ export async function processNextExternalWork({
     at: now(),
   }, root);
 
+  const projectSlugForJob = String(job.project_slug || job.metadata?.project_slug || 'dial');
+  ensureProjectRegistry(root, { dialRepoDir: repoDir });
+  let projectForJob;
+  try { projectForJob = getProject(projectSlugForJob, root); }
+  catch (error) {
+    return finalizeJob(job, {
+      event: 'HERMES_OPERATIONAL_TURN_FAILED',
+      authority: 'HERMES_RUNTIME_ONLY',
+      policy: 'LOCKED_SOL_THEN_SONNET',
+      runtime: null,
+      requested_model: null,
+      resolved_model: null,
+      fallback_used: false,
+      failure_state: 'PROJECT_NOT_REGISTERED',
+      reason: String(error?.message || error).slice(0, 4000),
+    }, root);
+  }
+  const jobRepoDir = projectForJob.repo_dir;
+
   if (!isQualificationCanary(job)) {
     try {
-      developmentGate({ repoDir, root });
+      developmentGate({ repoDir: jobRepoDir, root, projectSlug: projectSlugForJob });
     } catch (error) {
       return finalizeJob(job, {
         event: 'HERMES_OPERATIONAL_TURN_FAILED',
@@ -284,7 +318,7 @@ export async function processNextExternalWork({
   try {
     const skillActivation = isQualificationCanary(job)
       ? null
-      : ensurePacketEngineeringKnowledge({ repoDir, root, packetId: job.job_id, instruction: job.instruction, metadata: job.metadata });
+      : ensurePacketEngineeringKnowledge({ repoDir: jobRepoDir, root, packetId: job.job_id, instruction: job.instruction, metadata: job.metadata });
     if (skillActivation?.execution_allowed === false) {
       result = {
         event: 'HERMES_OPERATIONAL_TURN_FAILED',
@@ -300,11 +334,12 @@ export async function processNextExternalWork({
       };
     } else {
       if (skillActivation?.knowledge_context?.unit_lineage_id) {
-        assertFreshKnowledgeBinding({ repoDir, root, packetId: job.job_id, boundary: 'DISPATCH_ADMISSION' });
+        assertFreshKnowledgeBinding({ repoDir: jobRepoDir, root, packetId: job.job_id, boundary: 'DISPATCH_ADMISSION' });
       }
       result = await executor({
-        repoDir,
+        repoDir: jobRepoDir,
         root,
+        projectSlug: projectSlugForJob,
         instruction: job.instruction,
         packetId: job.job_id,
         skillActivation,
