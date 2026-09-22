@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
-[[ $# -ge 1 ]] || { echo "usage: verify-secondary-recovery-overlay.sh <peer-hostname-or-tailscale-ip> [...]" >&2; exit 64; }
-command -v tailscale >/dev/null || { echo "tailscale is not installed" >&2; exit 78; }
-STATE="$(tailscale status --json)"
-node -e 'const s=JSON.parse(process.argv[1]); if(s.BackendState!=="Running"||s.Self?.Online!==true) process.exit(1)' "$STATE" || { echo "local Tailscale node is not Running/Online" >&2; exit 77; }
+
+IFACE="${DIAL_RECOVERY_OVERLAY_INTERFACE:-wg-dial}"
+[[ $# -ge 1 ]] || { echo "usage: verify-secondary-recovery-overlay.sh <peer-hostname-or-wireguard-ip> [...]" >&2; exit 64; }
+command -v wg >/dev/null || { echo "wireguard-tools is not installed" >&2; exit 78; }
+command -v ping >/dev/null || { echo "ping is not installed" >&2; exit 78; }
+
+DUMP="$(wg show "$IFACE" dump 2>/dev/null || true)"
+[[ -n "$DUMP" ]] || { echo "WireGuard interface $IFACE is not configured/running" >&2; exit 77; }
+PEERS="$(printf '%s\n' "$DUMP" | awk 'NR>1{n++} END{print n+0}')"
+[[ "$PEERS" -gt 0 ]] || { echo "WireGuard interface $IFACE has no peers" >&2; exit 77; }
+
 for peer in "$@"; do
-  echo "Tailscale proof -> $peer"
-  tailscale ping --c 2 --timeout 8s "$peer"
+  echo "WireGuard recovery proof -> $peer"
+  ping -c 2 -W 3 "$peer" >/dev/null
+  echo "peer=$peer reachable"
 done
+
+echo "SECONDARY_RECOVERY_OVERLAY=WIREGUARD"
+echo "SECONDARY_RECOVERY_OVERLAY_INTERFACE=$IFACE"
+echo "SECONDARY_RECOVERY_OVERLAY_PEERS=$PEERS"
 echo "SECONDARY_RECOVERY_OVERLAY_PEERS_REACHABLE"
