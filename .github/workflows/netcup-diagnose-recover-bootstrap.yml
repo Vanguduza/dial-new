@@ -11,6 +11,7 @@ on:
       - deploy/netcup/hermes-control/install-github-oidc-control.sh
       - deploy/netcup/hermes-control/github-oidc-control.mjs
   workflow_dispatch:
+  # Validated manual recovery retrigger; push-path changes also invoke the same authority.
 
 permissions:
   contents: read
