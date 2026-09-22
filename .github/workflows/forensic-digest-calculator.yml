@@ -1,0 +1,20 @@
+name: forensic-digest-calculator
+on:
+  pull_request:
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: calculate Project Truth digest
+        run: |
+          BASE=1405daaa4b21b9ae35374282b191475e5bcc3ff6
+          TARGET=05a6d768ec79900f85ca448e7f255e0bac1ce3b1
+          echo "TARGET=$TARGET"
+          echo "CHANGED_FILES_BEGIN"
+          git diff --name-only --no-renames "$BASE" "$TARGET" -- . ':(exclude)docs/project-state/CHANGE_LEDGER.jsonl' ':(exclude)docs/project-state/CURRENT_STATE.json' ':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl'
+          echo "CHANGED_FILES_END"
+          printf "DIFF_SHA256="
+          git diff --binary --no-ext-diff --no-renames "$BASE" "$TARGET" -- . ':(exclude)docs/project-state/CHANGE_LEDGER.jsonl' ':(exclude)docs/project-state/CURRENT_STATE.json' ':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl' | sha256sum | awk '{print $1}'
