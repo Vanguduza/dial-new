@@ -214,6 +214,7 @@ jobs:
           set +e
           RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
             -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
             -H "accept: application/json" \
             "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
           rc=$?
