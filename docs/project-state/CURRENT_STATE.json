@@ -4,7 +4,7 @@
   "repository": "Vanguduza/dial-new",
   "branch": "gpt/ffdrm-development-system-rebase-20260922",
   "source_parent": "c81ed32f8b79cb89ac7e61c4cd1af73aed03616d",
-  "content_diff_sha256": "e0b45b85a91e7efa5d0b0923274961923f56b182fce1c875d88e87da4ffe4f46",
+  "content_diff_sha256": "1ef8f2bb4bf6accaf9f43d86fca7cea73a151eb510152e6068bf67a7c8c10347",
   "changed_files": [
     ".agents/plugins/dial-governed/skills/dial-development/SKILL.md",
     "agent-system/bin/adaptive-execution-delegate.mjs",
@@ -37,6 +37,7 @@
     "deploy/oracle/hermes-codex/qualify-control-plane.sh",
     "deploy/oracle/hermes-codex/soak-external-orchestrator.sh",
     "deploy/oracle/resource-fabric/verify-secondary-recovery-overlay.sh",
+    "docs/dial/final-audit/00_MASTER/BUILD_READINESS_SCORECARD.json",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md",
@@ -67,5 +68,5 @@
   "authority_classes": [
     "OWNER_EXPLICIT"
   ],
-  "observed_at_utc": "2026-09-22T19:21:45.261158+00:00"
+  "observed_at_utc": "2026-09-22T19:28:48.692458+00:00"
 }
