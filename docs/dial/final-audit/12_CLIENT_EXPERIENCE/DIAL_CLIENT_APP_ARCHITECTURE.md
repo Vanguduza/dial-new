@@ -31,6 +31,27 @@ Why this is the correct DIAL path:
 
 The implementation must follow a **modular super-app** architecture: core/shared modules, independent feature modules, and bridge/kit interfaces. Feature modules must not directly import other feature implementations. Grab's published super-app modularisation experience is an architectural reference, not a code donor.
 
+### Shopping experience inside DIAL Consumer — Rev 1
+
+Under `DEC-039`, DIAL Shopping is a **horizontal experience space inside DIAL Consumer**, not another business division or another app family.
+
+Shopping owns shared customer composition for:
+
+- `/shop` DIAL Shop home and department discovery;
+- universal text/voice/search;
+- DIAL Lens (camera/gallery/share/barcode/identifier);
+- adaptive search-result composition;
+- shared product-detail/offer-comparison presentation where the owning domain permits it;
+- a Shopping Bag / Domain Carts **projection**;
+- cross-shopping Activity projection;
+- seller/product-media/support entry surfaces where appropriate.
+
+Spare Parts and Groceries are the first transactionally active Shopping category profiles. They keep their specialist rules and visual hierarchy. Spare remains vehicle/fitment/identifier first; Groceries remains store/slot/pack/substitution/Pantry/Rounds first.
+
+Electronics, Fashion & Beauty, Home & Furniture, Toys & Kids, Hardware & DIY, Solar & Power, Agriculture and Industrial/MRO may have canonical design/discovery profiles, but they may not become transactionally active until their commercial/domain authority is separately admitted.
+
+Shopping search may span participating categories, but transaction execution still routes back to the owning branch/domain state machine.
+
 ### 2. Dial Health / My Health — standalone specialist app
 
 Native Android + native iOS + web + official WhatsApp health flows.
@@ -77,7 +98,7 @@ They are not customer super-app modules:
 Recommended persistent primary navigation:
 
 1. **Home** — current activity, personalized shortcuts, service tiles.
-2. **Explore** — branch/service discovery and cross-branch search.
+2. **Explore** — branch/service discovery, DIAL Shop, universal search/Lens and cross-branch discovery.
 3. **Activity** — all active/completed orders, jobs, deliveries, laundry, Assist, Care and projects.
 4. **Support** — conversations, cases, help center and proactive issue alerts.
 5. **Account** — identity, addresses, payment methods, vehicles, consents/preferences.
@@ -96,6 +117,8 @@ Share checkout primitives and payment methods, but preserve domain transactions:
 - Health transaction
 
 A single "DIAL cart" would create false coupling between incompatible commercial/state models.
+
+Under `DEC-039`, Shopping may display a **Shopping Bag / Domain Carts projection** that groups ready-to-buy intent for convenience. It is presentation only: checkout always resolves into the owning domain transaction(s), and the projection cannot invent a universal order, ledger or settlement model.
 
 ## State-driven action model
 
