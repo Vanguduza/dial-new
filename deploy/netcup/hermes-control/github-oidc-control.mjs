@@ -294,6 +294,16 @@ async function dispatch(body, claims) {
 
 const server=http.createServer(async (req,res)=>{
   try{
+    if(req.method==='GET' && req.url==='/healthz'){
+      const receiptPath=path.join(CONTROL,'bootstrap/image-bootstrap.receipt');
+      const receipt=fs.existsSync(receiptPath)?fs.readFileSync(receiptPath,'utf8'):'';
+      const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
+      const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
+      const repoHead=command('git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null').stdout.trim()||null;
+      res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
+      res.end(JSON.stringify({ok:true,host:command('hostname').stdout.trim(),bootstrap_ref:bootstrapRef,bootstrap_phase:bootstrapPhase,repo_head:repoHead}));
+      return;
+    }
     if(req.method!=='POST'||req.url!=='/v1/action'){res.writeHead(404);res.end('not found');return;}
     const chunks=[]; let size=0;
     for await(const c of req){size+=c.length;if(size>128*1024) throw new Error('request too large');chunks.push(c);}
