@@ -50,7 +50,7 @@ jobs:
             echo ""
             echo "$VERIFY_URL"
             echo ""
-            echo "User code: `$USER_CODE`"
+            printf 'User code: %s\\n' "$USER_CODE"
           } >>"$GITHUB_STEP_SUMMARY"
 
   power-cycle:
