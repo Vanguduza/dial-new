@@ -8,7 +8,8 @@
   },
   "consolidation": {
     "branch": "gpt/dial-all-work-consolidation-20260922",
-    "pre_manifest_head": "cbafc70d0759fa66ef2c4929d343695bedc29792"
+    "pre_manifest_head": "cbafc70d0759fa66ef2c4929d343695bedc29792",
+    "authorization_base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6"
   },
   "branch_count_observed": 43,
   "invariants": {
@@ -17,7 +18,8 @@
     "absorbed_branches_ahead_of_consolidation": 0,
     "source_history_preserved_as_ancestry": true,
     "stale_project_truth_snapshots_not_promoted": true,
-    "semantic_conflicts_resolved_against_newest_authority": true
+    "semantic_conflicts_resolved_against_newest_authority": true,
+    "net_pr_diff_owner_authorized": true
   },
   "absorbed_branches": [
     {
@@ -279,5 +281,6 @@
   "deletion_gate": {
     "condition": "Do not delete any absorbed branch until this consolidation branch is merged to master and the resulting master commit passes repository verification/CI.",
     "operational_exception": "oracle-runtime-status remains retained even after housekeeping unless its status-mirror role is explicitly retired."
-  }
+  },
+  "owner_authorization_id": "auth-20260922-owner-all-work-consolidation-v2"
 }
