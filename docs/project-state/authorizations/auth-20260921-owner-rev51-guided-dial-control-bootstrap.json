@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-rev51-guided-dial-control-bootstrap",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_excerpt": "The bootstrap should be guided by these files.",
+  "source": {
+    "kind": "owner_session_instruction_with_uploaded_development_pack",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-rev51-guided-bootstrap",
+    "owner_attested": true,
+    "pack_id": "DIAL-DEV-SYS-REV5.1",
+    "markdown_sha256": "a0fb44aa5378906220d60b531d25c0fb7db62ba8cc9f01c770ef9fa6eeb2394e",
+    "zip_sha256": "b277df9ef56cef5ce6dabb27c4f3f2c11a0e80e31a35c2a700746d4a5461e883"
+  },
+  "issued_at_utc": "2026-09-21T19:40:00Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    "ops/development-bootstrap/rev5.1/**",
+    "deploy/netcup/hermes-control/**",
+    "docs/project-state/authorizations/auth-20260921-owner-rev51-guided-dial-control-bootstrap.json"
+  ],
+  "change_classes": [
+    "bootstrap_authority",
+    "rev5_1_pack_projection",
+    "capability_maturity_gate"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

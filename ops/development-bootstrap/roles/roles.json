@@ -21,7 +21,7 @@
     "dial-hermes-control": {
       "kind": "HOST",
       "host_class": "CONTROL_AUTHORITY",
-      "description": "Hermes/control plus bounded local fallback: owner intake, Hermes runtime, mission control, VEKL orchestration, external queue, operator gateway, provider-first venue router and the local sandbox admitted only on a signed venue basis.",
+      "description": "Hermes/control authority and primary cross-cloud recoverer: owner intake, Hermes runtime, mission control, VEKL orchestration, provider-first venue routing, OCI recovery and SSH brokering. oracle-admin remains independent cold recovery.",
       "immutable": true,
       "allowed_workloads": [
         "OWNER_CONTROL",
@@ -36,13 +36,12 @@
         "HEAVY_BUILD",
         "WORKER_DISPATCH",
         "RECOVERY_PEER",
-        "DIAGNOSTICS"
-      ],
-      "forbidden_workloads": [
+        "DIAGNOSTICS",
         "OCI_RECOVERY",
         "BREAK_GLASS",
         "SSH_BROKER"
       ],
+      "forbidden_workloads": [],
       "control_home": "/var/lib/dial-control",
       "may_be_control_authority": true
     },
@@ -147,26 +146,135 @@
     }
   },
   "workloads": {
-    "OWNER_CONTROL": { "description": "typed dial_* owner controls, steering broker, WhatsApp adapters", "fabric_classes": ["HERMES_RUNTIME"] },
-    "HERMES_RUNTIME": { "description": "Hermes manager runtime (Codex App Server / Claude Code exact slots)", "fabric_classes": ["HERMES_RUNTIME"] },
-    "MISSION_CONTROL": { "description": "persistent dial-development-root mission controller", "fabric_classes": ["HERMES_RUNTIME"] },
-    "VEKL_RESOLVE": { "description": "engineering-knowledge resolution / activation for a packet", "fabric_classes": ["HERMES_RUNTIME"] },
-    "VEKL_RESEARCH": { "description": "ahead-of-work presearch (model-backed forecast on the control host; allowlisted-source cache refresh on the background coordinator)", "fabric_classes": ["HERMES_RUNTIME", "BACKGROUND_KNOWLEDGE", "VEKL_LIGHT"] },
-    "STRUCTURAL_SNAPSHOT": { "description": "structural code-graph extraction (TypeScript baseline; Graphify only when qualified; always advisory)", "fabric_classes": ["BACKGROUND_KNOWLEDGE", "INDEXING_LIGHT"] },
-    "EXTERNAL_QUEUE": { "description": "dial-hermes-orchestrator queue claim/execute", "fabric_classes": ["HERMES_RUNTIME"] },
-    "OPERATOR_GATEWAY": { "description": "chat-control HTTP MCP, operator stdio MCP", "fabric_classes": ["HERMES_RUNTIME"] },
-    "DETERMINISTIC_VERIFY": { "description": "npm run verify and its sub-gates", "fabric_classes": ["PROVIDER_FIRST_LOCAL_SANDBOX"] },
-    "REPOSITORY_WRITE": { "description": "editing and committing the DIAL repository", "fabric_classes": ["PROVIDER_FIRST_LOCAL_SANDBOX"] },
-    "HEAVY_BUILD": { "description": "production build / pack regeneration", "fabric_classes": ["PROVIDER_FIRST_LOCAL_SANDBOX"] },
-    "WORKER_DISPATCH": { "description": "dispatching a bounded job to the background coordinator over SSH", "fabric_classes": ["HERMES_RUNTIME"] },
-    "WORKER_JOB": { "description": "executing an allowlisted worker job and returning a sealed receipt", "fabric_classes": ["BACKGROUND_KNOWLEDGE", "DIAGNOSTICS"] },
-    "INDEXING": { "description": "retrieval index maintenance", "fabric_classes": ["INDEXING_LIGHT"] },
-    "DOC_PROCESSING": { "description": "document ingestion / conversion", "fabric_classes": ["DOC_PROCESSING"] },
-    "DIAGNOSTICS": { "description": "read-only host, service and repository inspection", "fabric_classes": ["DIAGNOSTICS"] },
-    "OCI_RECOVERY": { "description": "cloud console / OCI CLI recovery actions", "fabric_classes": ["OCI_CONTROL"] },
-    "BREAK_GLASS": { "description": "emergency access and repair of other hosts", "fabric_classes": ["RECOVERY"] },
-    "SSH_BROKER": { "description": "brokering SSH into other estate hosts", "fabric_classes": ["SSH_BROKER"] },
-    "HOST_HEALTH": { "description": "infrastructure health probes", "fabric_classes": ["DIAGNOSTICS"] },
-    "RECOVERY_PEER": { "description": "bounded reciprocal recovery of a peer host (R-class ceiling from hosts.json)", "fabric_classes": ["RECOVERY"] }
+    "OWNER_CONTROL": {
+      "description": "typed dial_* owner controls, steering broker, WhatsApp adapters",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "HERMES_RUNTIME": {
+      "description": "Hermes manager runtime (Codex App Server / Claude Code exact slots)",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "MISSION_CONTROL": {
+      "description": "persistent dial-development-root mission controller",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "VEKL_RESOLVE": {
+      "description": "engineering-knowledge resolution / activation for a packet",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "VEKL_RESEARCH": {
+      "description": "ahead-of-work presearch (model-backed forecast on the control host; allowlisted-source cache refresh on the background coordinator)",
+      "fabric_classes": [
+        "HERMES_RUNTIME",
+        "BACKGROUND_KNOWLEDGE",
+        "VEKL_LIGHT"
+      ]
+    },
+    "STRUCTURAL_SNAPSHOT": {
+      "description": "structural code-graph extraction (TypeScript baseline; Graphify only when qualified; always advisory)",
+      "fabric_classes": [
+        "BACKGROUND_KNOWLEDGE",
+        "INDEXING_LIGHT"
+      ]
+    },
+    "EXTERNAL_QUEUE": {
+      "description": "dial-hermes-orchestrator queue claim/execute",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "OPERATOR_GATEWAY": {
+      "description": "chat-control HTTP MCP, operator stdio MCP",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "DETERMINISTIC_VERIFY": {
+      "description": "npm run verify and its sub-gates",
+      "fabric_classes": [
+        "PROVIDER_FIRST_LOCAL_SANDBOX"
+      ]
+    },
+    "REPOSITORY_WRITE": {
+      "description": "editing and committing the DIAL repository",
+      "fabric_classes": [
+        "PROVIDER_FIRST_LOCAL_SANDBOX"
+      ]
+    },
+    "HEAVY_BUILD": {
+      "description": "production build / pack regeneration",
+      "fabric_classes": [
+        "PROVIDER_FIRST_LOCAL_SANDBOX"
+      ]
+    },
+    "WORKER_DISPATCH": {
+      "description": "dispatching a bounded job to the background coordinator over SSH",
+      "fabric_classes": [
+        "HERMES_RUNTIME"
+      ]
+    },
+    "WORKER_JOB": {
+      "description": "executing an allowlisted worker job and returning a sealed receipt",
+      "fabric_classes": [
+        "BACKGROUND_KNOWLEDGE",
+        "DIAGNOSTICS"
+      ]
+    },
+    "INDEXING": {
+      "description": "retrieval index maintenance",
+      "fabric_classes": [
+        "INDEXING_LIGHT"
+      ]
+    },
+    "DOC_PROCESSING": {
+      "description": "document ingestion / conversion",
+      "fabric_classes": [
+        "DOC_PROCESSING"
+      ]
+    },
+    "DIAGNOSTICS": {
+      "description": "read-only host, service and repository inspection",
+      "fabric_classes": [
+        "DIAGNOSTICS"
+      ]
+    },
+    "OCI_RECOVERY": {
+      "description": "cloud console / OCI CLI recovery actions",
+      "fabric_classes": [
+        "OCI_CONTROL"
+      ]
+    },
+    "BREAK_GLASS": {
+      "description": "emergency access and repair of other hosts",
+      "fabric_classes": [
+        "RECOVERY"
+      ]
+    },
+    "SSH_BROKER": {
+      "description": "brokering SSH into other estate hosts",
+      "fabric_classes": [
+        "SSH_BROKER"
+      ]
+    },
+    "HOST_HEALTH": {
+      "description": "infrastructure health probes",
+      "fabric_classes": [
+        "DIAGNOSTICS"
+      ]
+    },
+    "RECOVERY_PEER": {
+      "description": "bounded reciprocal recovery of a peer host (R-class ceiling from hosts.json)",
+      "fabric_classes": [
+        "RECOVERY"
+      ]
+    }
   }
 }

@@ -20,7 +20,7 @@ export function buildHandoffCapsule(checkpoint, input = {}) {
   if (!checkpoint) throw new Error('checkpoint is required');
   assertNoSecretMaterial(checkpoint.runtime_provenance, 'handoff runtime provenance');
   return {
-    schema_version: 3,
+    schema_version: 4,
     feature_id: checkpoint.feature_id ?? null,
     objective: cleanText(input.objective),
     previous_runtime_provenance: checkpoint.runtime_provenance ?? input.previous_runtime_provenance ?? null,
@@ -41,6 +41,17 @@ export function buildHandoffCapsule(checkpoint, input = {}) {
     evidence_refs: cleanList(input.evidence_refs),
     next_action: cleanText(input.next_action ?? checkpoint.execution?.next_unit, 1200),
     session_refs: cleanList(input.session_refs),
+    source_harness: cleanText(input.source_harness, 180),
+    context_fingerprint: cleanText(input.context_fingerprint, 180),
+    memory_cursor: input.memory_cursor ?? null,
+    repository_understanding: input.repository_understanding ?? null,
+    repository_delta: input.repository_delta ?? null,
+    review_checkpoint_id: cleanText(input.review_checkpoint_id, 180),
+    open_review_findings: Array.isArray(input.open_review_findings) ? input.open_review_findings.slice(0, 40) : [],
+    resume_contract: {
+      mode: input.repository_delta?.mode === 'FULL_REDISCOVERY_REQUIRED' ? 'FULL_REDISCOVERY_REQUIRED' : 'SNAPSHOT_PLUS_DELTA',
+      rule: 'Incoming harness reuses the verified repository-understanding snapshot and reads only dirty/stale/impacted source unless full rediscovery is explicitly required.',
+    },
     authority_warning: 'Continuity context only. Runtime provenance and memory never override DIAL canon, registries, Git state, gates, tests or evidence.',
     created_at: new Date().toISOString(),
   };

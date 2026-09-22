@@ -1,0 +1,218 @@
+name: Oracle bounded recovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Oracle host to recover
+        required: true
+        type: choice
+        options:
+          - dial-hermes-control
+          - vekl-worker
+          - oracle-admin
+          - van-trading-core
+      action:
+        description: Predeclared recovery action
+        required: true
+        type: choice
+        options:
+          - probe
+          - collect_diagnostics
+          - restart_owner_commander
+          - restart_hermes_control
+          - restart_cloudflare_ingress
+          - mark_chatgpt_sessions_stale
+          - restart_vekl_coordinator
+          - enable_oracle_admin_commander
+          - restart_trading_services
+          - recover_trading_chatgpt_sessions
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oracle-recovery-${{ inputs.target }}
+  cancel-in-progress: false
+
+env:
+  OCI_CLI_USER: ${{ secrets.OCI_RECOVERY_USER_OCID }}
+  OCI_CLI_TENANCY: ${{ secrets.OCI_RECOVERY_TENANCY_OCID }}
+  OCI_CLI_FINGERPRINT: ${{ secrets.OCI_RECOVERY_FINGERPRINT }}
+  OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_RECOVERY_PRIVATE_KEY }}
+  OCI_CLI_REGION: ${{ vars.OCI_RECOVERY_REGION }}
+
+jobs:
+  observe:
+    if: ${{ inputs.action == 'probe' || inputs.action == 'collect_diagnostics' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - id: prepare
+        name: Build bounded OCI Run Command
+        shell: bash
+        env:
+          TARGET_HOST: ${{ inputs.target }}
+          RECOVERY_ACTION: ${{ inputs.action }}
+          CONTROL_OCID: ${{ vars.OCI_INSTANCE_DIAL_HERMES_CONTROL }}
+          VEKL_OCID: ${{ vars.OCI_INSTANCE_VEKL_WORKER }}
+          ADMIN_OCID: ${{ vars.OCI_INSTANCE_ORACLE_ADMIN }}
+          TRADING_OCID: ${{ vars.OCI_INSTANCE_VAN_TRADING_CORE }}
+        run: |
+          set -euo pipefail
+          case "$TARGET_HOST" in
+            dial-hermes-control) INSTANCE_ID="$CONTROL_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            vekl-worker) INSTANCE_ID="$VEKL_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            oracle-admin) INSTANCE_ID="$ADMIN_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            van-trading-core) INSTANCE_ID="$TRADING_OCID"; BIN=/usr/local/bin/van-github-recovery ;;
+            *) echo "Unsupported target" >&2; exit 2 ;;
+          esac
+          [[ -n "$INSTANCE_ID" ]] || { echo "Instance OCID variable is empty for $TARGET_HOST" >&2; exit 3; }
+          case "$RECOVERY_ACTION" in probe|collect_diagnostics) ;; *) echo "Observe job received a mutating action" >&2; exit 4 ;; esac
+          CONTENT="$RUNNER_TEMP/recovery-content.json"
+          TARGET="$RUNNER_TEMP/recovery-target.json"
+          jq -n --arg text "$BIN $RECOVERY_ACTION" '{source:{sourceType:"TEXT",text:$text},output:{outputType:"TEXT"}}' > "$CONTENT"
+          jq -n --arg instance "$INSTANCE_ID" '{instanceId:$instance}' > "$TARGET"
+          echo "instance_id=$INSTANCE_ID" >> "$GITHUB_OUTPUT"
+          echo "content=$CONTENT" >> "$GITHUB_OUTPUT"
+          echo "target_file=$TARGET" >> "$GITHUB_OUTPUT"
+
+      - id: dispatch
+        name: Dispatch OCI Run Command
+        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
+        with:
+          command: >-
+            instance-agent command create
+            --compartment-id ${{ vars.OCI_RECOVERY_COMPARTMENT_OCID }}
+            --content file://${{ steps.prepare.outputs.content }}
+            --target file://${{ steps.prepare.outputs.target_file }}
+            --timeout-in-seconds 180
+          query: data.id
+          silent: 'True'
+
+      - name: Allow command to execute
+        run: sleep 30
+
+      - id: status
+        name: Read OCI execution status
+        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
+        with:
+          command: >-
+            instance-agent command-execution get
+            --command-id ${{ steps.dispatch.outputs.raw_output }}
+            --instance-id ${{ steps.prepare.outputs.instance_id }}
+          query: data."lifecycle-state"
+          silent: 'True'
+
+      - name: Record recovery receipt
+        shell: bash
+        run: |
+          {
+            echo "### Oracle recovery receipt"
+            echo "- target: `${{ inputs.target }}`"
+            echo "- action: `${{ inputs.action }}`"
+            echo "- OCI command: `${{ steps.dispatch.outputs.raw_output }}`"
+            echo "- execution state: `${{ steps.status.outputs.raw_output }}`"
+            echo "- initiated by: `${{ github.actor }}`"
+            echo "- workflow run: `${{ github.run_id }}`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  recover:
+    if: ${{ inputs.action != 'probe' && inputs.action != 'collect_diagnostics' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: oracle-recovery
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - id: prepare
+        name: Validate action and build bounded OCI Run Command
+        shell: bash
+        env:
+          TARGET_HOST: ${{ inputs.target }}
+          RECOVERY_ACTION: ${{ inputs.action }}
+          CONTROL_OCID: ${{ vars.OCI_INSTANCE_DIAL_HERMES_CONTROL }}
+          VEKL_OCID: ${{ vars.OCI_INSTANCE_VEKL_WORKER }}
+          ADMIN_OCID: ${{ vars.OCI_INSTANCE_ORACLE_ADMIN }}
+          TRADING_OCID: ${{ vars.OCI_INSTANCE_VAN_TRADING_CORE }}
+        run: |
+          set -euo pipefail
+          case "$TARGET_HOST:$RECOVERY_ACTION" in
+            dial-hermes-control:restart_owner_commander|dial-hermes-control:restart_hermes_control|dial-hermes-control:restart_cloudflare_ingress|dial-hermes-control:mark_chatgpt_sessions_stale)
+              INSTANCE_ID="$CONTROL_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            vekl-worker:restart_vekl_coordinator)
+              INSTANCE_ID="$VEKL_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            oracle-admin:enable_oracle_admin_commander)
+              INSTANCE_ID="$ADMIN_OCID"; BIN=/usr/local/bin/dial-github-recovery ;;
+            van-trading-core:restart_trading_services|van-trading-core:recover_trading_chatgpt_sessions)
+              INSTANCE_ID="$TRADING_OCID"; BIN=/usr/local/bin/van-github-recovery ;;
+            *)
+              echo "REFUSE: action $RECOVERY_ACTION is not valid for target $TARGET_HOST" >&2
+              exit 4 ;;
+          esac
+          [[ -n "$INSTANCE_ID" ]] || { echo "Instance OCID variable is empty for $TARGET_HOST" >&2; exit 3; }
+          CONTENT="$RUNNER_TEMP/recovery-content.json"
+          TARGET="$RUNNER_TEMP/recovery-target.json"
+          jq -n --arg text "$BIN $RECOVERY_ACTION" '{source:{sourceType:"TEXT",text:$text},output:{outputType:"TEXT"}}' > "$CONTENT"
+          jq -n --arg instance "$INSTANCE_ID" '{instanceId:$instance}' > "$TARGET"
+          echo "instance_id=$INSTANCE_ID" >> "$GITHUB_OUTPUT"
+          echo "content=$CONTENT" >> "$GITHUB_OUTPUT"
+          echo "target_file=$TARGET" >> "$GITHUB_OUTPUT"
+
+      - id: dispatch
+        name: Dispatch approved OCI Run Command
+        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
+        with:
+          command: >-
+            instance-agent command create
+            --compartment-id ${{ vars.OCI_RECOVERY_COMPARTMENT_OCID }}
+            --content file://${{ steps.prepare.outputs.content }}
+            --target file://${{ steps.prepare.outputs.target_file }}
+            --timeout-in-seconds 240
+          query: data.id
+          silent: 'True'
+
+      - name: Allow recovery to execute
+        run: sleep 45
+
+      - id: status
+        name: Verify OCI execution state
+        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
+        with:
+          command: >-
+            instance-agent command-execution get
+            --command-id ${{ steps.dispatch.outputs.raw_output }}
+            --instance-id ${{ steps.prepare.outputs.instance_id }}
+          query: data."lifecycle-state"
+          silent: 'True'
+
+      - name: Require a non-failed recovery state
+        shell: bash
+        env:
+          OCI_EXECUTION_STATE: ${{ steps.status.outputs.raw_output }}
+        run: |
+          set -euo pipefail
+          case "$OCI_EXECUTION_STATE" in
+            SUCCEEDED) ;;
+            ACCEPTED|IN_PROGRESS)
+              echo "OCI command is still running; the command id is retained in the workflow receipt." ;;
+            *)
+              echo "Recovery execution failed or returned unexpected state: $OCI_EXECUTION_STATE" >&2
+              exit 1 ;;
+          esac
+
+      - name: Record recovery receipt
+        shell: bash
+        run: |
+          {
+            echo "### Oracle recovery receipt"
+            echo "- target: `${{ inputs.target }}`"
+            echo "- action: `${{ inputs.action }}`"
+            echo "- approval environment: `oracle-recovery`"
+            echo "- OCI command: `${{ steps.dispatch.outputs.raw_output }}`"
+            echo "- execution state: `${{ steps.status.outputs.raw_output }}`"
+            echo "- initiated by: `${{ github.actor }}`"
+            echo "- workflow run: `${{ github.run_id }}`"
+          } >> "$GITHUB_STEP_SUMMARY"

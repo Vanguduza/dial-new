@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "purpose": "ONE_TIME_ZERO_TOUCH_ENROLLMENT_ONLY",
+  "generated_for": "dial-control",
+  "expires_after": "FIRST_SUCCESSFUL_IDENTITY_ROTATION",
+  "ssh_public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHaMkmvhUfJR1ZeVHJEoBWSDOtd9JI5nSObKok8fuUIL dial-control-bootstrap-20260921",
+  "wireguard_public_key": "sibm9x+l1GZBIfVOMP45r/D42NbZHIxzZT8iuL7f9n0=",
+  "security_note": "Private bootstrap material is never committed. It is injected only by the Netcup custom script and rotated automatically after GitHub/OCI enrollment succeeds."
+}

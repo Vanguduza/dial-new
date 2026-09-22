@@ -229,6 +229,7 @@ bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh"
+bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh"
 
 cat <<'EOF'

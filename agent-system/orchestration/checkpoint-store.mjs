@@ -78,6 +78,14 @@ export function buildCheckpoint(repoDir, overrides = {}) {
       next: overrides.target_gate ?? repoActive.target_gate ?? null,
     },
     handoff: overrides.handoff ?? null,
+    shared_context: {
+      harness_id: overrides.harness_id ?? process.env.DIAL_HARNESS_ID ?? null,
+      context_fingerprint: overrides.context_fingerprint ?? null,
+      repository_understanding_hash: overrides.repository_understanding_hash ?? null,
+      repository_delta_hash: overrides.repository_delta_hash ?? null,
+      memory_cursor: overrides.memory_cursor ?? null,
+      review_checkpoint_id: overrides.review_checkpoint_id ?? null,
+    },
     updated_at: new Date().toISOString(),
   };
 }
