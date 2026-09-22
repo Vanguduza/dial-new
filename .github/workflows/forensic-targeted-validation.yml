@@ -1,0 +1,31 @@
+name: forensic-targeted-validation
+on:
+  pull_request:
+jobs:
+  targeted:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gpt/fable-forensic-predevelopment-standard-20260922
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: parse changed orchestration modules
+        run: |
+          node --check agent-system/bin/predevelopment-forensic-gate.mjs
+          node --check agent-system/orchestration/development-unblock.mjs
+          node --check agent-system/orchestration/adaptive-execution-planner.mjs
+          node --check agent-system/orchestration/task-execution-envelope.mjs
+          node --check agent-system/orchestration/project-registry.mjs
+          node --check agent-system/orchestration/execution-fabric/project-binding.mjs
+      - name: targeted tests
+        run: npx vitest run tests/predevelopment-forensic-gate.test.mjs tests/orchestration-control-plane.test.mjs tests/orchestration-adaptive-execution.test.mjs tests/orchestration-execution-fabric.test.mjs
+      - name: manifest and DU checks
+        run: |
+          node agent-system/bin/manifest-check.mjs
+          node agent-system/orchestration/development-unit-planner.mjs
