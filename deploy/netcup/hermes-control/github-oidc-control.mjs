@@ -187,6 +187,13 @@ async function dispatch(body, claims) {
       fs.writeFileSync(path.join(CONTROL,'state/netcup-control-active'),now()+'\n',{mode:0o600});
       return r;
     }
+    case 'ensure-github-admin-runner': {
+      const auth=ubuntu("gh auth status",2*60*1000);
+      requireOk(auth,'github-auth');
+      const r=ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/install-github-admin-runner.sh",20*60*1000);
+      requireOk(r,'ensure-github-admin-runner');
+      return r;
+    }
     case 'certify': {
       const verify=ubuntu("DIAL_CONTROL_OVERLAY_IP=10.77.0.1 DIAL_REPO_DIR=/home/ubuntu/dial-new /home/ubuntu/dial-new/ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json",30*60*1000);
       requireOk(verify,'certify-core');
@@ -195,8 +202,10 @@ async function dispatch(body, claims) {
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
       // The public bootstrap ingress is temporary. Once certification is sealed,
       // retire it asynchronously after this response has been returned.
+      const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
+      if(!runner.ok) throw new Error('GitHub admin runner must be active before retiring bootstrap OIDC ingress');
       command("systemd-run --unit=dial-retire-github-oidc --on-active=15s /bin/bash -lc 'ufw delete allow 9134/tcp >/dev/null 2>&1 || true; systemctl disable --now dial-github-oidc-control.service'",{timeout:10000});
-      return {verify:verify.stdout,peers,oidc_retirement_scheduled:true};
+      return {verify:verify.stdout,peers,github_admin_runner:true,oidc_retirement_scheduled:true};
     }
     default:
       throw new Error('unsupported action');
