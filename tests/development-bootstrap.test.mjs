@@ -273,6 +273,7 @@ describe('DIAL development bootstrap closure', () => {
   it('keeps Dial Control zero-touch bootstrap complete, bounded and resumable', () => {
     const workflow = fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-zero-touch-converge.yml'), 'utf8');
     const controller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/github-oidc-control.mjs'), 'utf8');
+    const customScript = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh'), 'utf8');
     const image = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh'), 'utf8');
     const hub = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh'), 'utf8');
     const peer = fs.readFileSync(path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh'), 'utf8');
@@ -296,6 +297,16 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('overlay_verified');
     expect(controller).toContain('github_oidc_admin:true');
 
+    const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
+    expect(customScript).toContain('PROVISIONING_STAGE=NETWORK_FREE');
+    expect(customScript).toContain('99-dial-netcup-bootstrap-dns.conf');
+    expect(customScript).toContain('DPkg::Lock::Timeout=600');
+    expect(customScript).toContain('Restart=on-failure');
+    expect(customScript).not.toContain('ConditionPathExists=!/var/lib/dial-control/bootstrap/image-bootstrap.receipt');
+    expect(provisioningStage).not.toMatch(/\b(?:apt-get|curl|git)\b/);
+    expect(provisioningStage).not.toContain('systemctl start');
+    expect(provisioningStage).not.toContain('systemctl restart');
+
     expect(image).toContain("ssh-keygen -q -t ed25519 -N ''");
     expect(image).toContain('install-github-oidc-control.sh');
     expect(image).toContain('ZERO_TOUCH_POSTBOOT=ENABLED');
@@ -305,6 +316,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(hub).toContain('AllowedIPs = 10.77.0.5/32');
     expect(peer).toContain('old-dial-hermes-control|dial-hermes-control');
 
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')]);
