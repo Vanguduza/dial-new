@@ -916,5 +916,28 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-22",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "CUSTOMER COMMERCE / SHOPPING EXPERIENCE / MARKETPLACE / SEARCH",
+    "title": "DIAL Shopping is a horizontal adaptive-commerce experience over existing domain authorities, not a second business or universal cross-branch transaction model",
+    "decision": "Adopt DIAL Shopping Experience Rev 1 as the canonical shopping experience inside DIAL Consumer. Shopping unifies discovery, multimodal search/Lens, adaptive result composition, seller/product-media surfaces and category-specific experience profiles while preserving the existing domain authorities. Spare Parts and Groceries are the first transactionally active Shopping profiles. Product identity is separate from seller offer. Hard eligibility and fitment evidence precede ranking. The existing no-universal-cross-branch-cart rule remains: Shopping may present Bag/Activity projections but cannot collapse Spare, Grocery Rounds, Laundry, Tech, Projects or Health transaction state machines into one generic cart/order. DIAL Fulfilled is a fulfilment route, not a change in title to goods; Spare remains agency-only. Research PROP-SHOP-F* identifiers are planning aliases and are reconciled to existing Feature IDs/supporting authorities rather than being bulk-added as a duplicate feature family.",
+    "consequence": "The DIAL Screen Registry gains a SHOP composition namespace whose screens may map bidirectionally to SPARE-F*, GROC-F* and PLAT-F* authorities. Groceries and Spare keep specialist home/search/PDP semantics inside the shared shell. Additional retail departments remain activation-gated until their commercial/domain model exists. Search/RAG/GraphRAG/media-AI and external donors remain subordinate and may not write price, stock, money, fulfilment or binding compatibility truth. Product Media Studio becomes a shared catalogue/seller experience with immutable raw provenance and product-preservation controls.",
+    "record": "docs/dial/final-audit/28_SHOPPING/DIAL_SHOPPING_EXPERIENCE_REV1_CANONICAL.md",
+    "enforced_by": [
+      "docs/dial/final-audit/28_SHOPPING/SHOPPING_BLUEPRINT_INTEGRATION_MAP.json",
+      "docs/dial/final-audit/12_CLIENT_EXPERIENCE/DIAL_CLIENT_APP_ARCHITECTURE.md",
+      "agent-system/bin/build-screen-feature-graph.mjs",
+      "agent-system/registries/SCREEN_REGISTRY.json",
+      "agent-system/registries/SCREEN_FEATURE_GRAPH.json",
+      "tests/screen-feature-graph.test.ts"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260922-owner-shopping-experience-project-truth.json"
+    ],
+    "reopens_if": "the product owner explicitly changes the shopping/division boundary, authorizes a universal cross-branch transaction model, changes the Spare agency-only model, activates new retail departments with new commercial authorities, or replaces the product/offer, fitment-evidence or AI/donor authority boundaries"
   }
 ]
