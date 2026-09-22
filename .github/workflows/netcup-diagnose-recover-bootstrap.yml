@@ -236,14 +236,24 @@ jobs:
           done
           [[ -n "$RESCUE_PASSWORD" ]] || { echo "::error::Rescue password was not issued"; exit 31; }
 
-          echo "Starting server into rescue..."
-          api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"ON"}' >/tmp/rescue-start.json
-
-          for attempt in $(seq 1 90); do
-            if tcp_open 22; then break; fi
+          echo "Waiting for Netcup rescue activation task to complete and SSH to open..."
+          for attempt in $(seq 1 120); do
+            RESCUE_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+            SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
+            rescue_now="$(jq -r '.active // false' <<<"$RESCUE_NOW")"
+            state_now="$(jq -r '.serverLiveInfo.state // empty' <<<"$SERVER_NOW")"
+            echo "rescue_active=$rescue_now server_state=$state_now"
+            if [[ "$rescue_now" == true ]] && tcp_open 22; then
+              break
+            fi
             sleep 5
           done
-          tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 32; }
+          RESCUE_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" || echo '{}')"
+          [[ "$(jq -r '.active // false' <<<"$RESCUE_NOW")" == true ]] || {
+            echo "::error::Rescue system did not become active"
+            exit 32
+          }
+          tcp_open 22 || { echo "::error::SSH did not open in rescue"; exit 33; }
 
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass
