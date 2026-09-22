@@ -6,7 +6,7 @@
     "2.0",
     "1.6"
   ],
-  "generated_at": "2026-09-19T21:55:47.411Z",
+  "generated_at": "2026-09-22T17:40:00.000Z",
   "kind": "COMPLETE_PACK",
   "packaging_rule": "This manifest declares every file in the pack except ARCHIVE/ and the manifests themselves. A release that changes only some files must still regenerate over the whole pack. agent:manifest-check fails on a missing, altered or undeclared file, which is how the v2.1 overlay-as-replacement defect is prevented from recurring.",
   "active_readme": "README.md",
@@ -24,7 +24,7 @@
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/CATALOG_AGENT_BUILD_PROMPT.md",
     "22_COMMERCE_FRONTEND_AND_TRANSITION/03_TRANSITION_EPC_SOURCE/DIAL_FULL_CUSTOMER_EXPERIENCE_INTEGRATION_BLUEPRINT.md"
   ],
-  "file_count": 256,
+  "file_count": 260,
   "files": [
     {
       "path": "00_MASTER/BUILD_READINESS_SCORECARD.json",
@@ -193,8 +193,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_GREEN_EXECUTION_BOARD.md",
-      "bytes": 30086,
-      "sha256": "ab2681c64ac7e2850fbe41f295efdc6770b99dac02aa91a5752e7d20a87684ca"
+      "bytes": 30208,
+      "sha256": "ec8af116f27fed0d4ea86b31df1e6d443b5cc7a736102ab9fa57775ef26d3d00"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_PRODUCT_INTELLIGENCE_AUTOMATION_ARCHITECTURE_REV_3_1.md",
@@ -203,8 +203,8 @@
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_GAP_REGISTER.json",
-      "bytes": 11895,
-      "sha256": "023e94699b9efcd42dd372ddd0a3fbfd4f0380a91eb8d936f83d7a68b7a7082d"
+      "bytes": 11952,
+      "sha256": "295d89b1ba456ec342f6ff871d3a2b2d70830e4ec06ba7760046847d3092f212"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/DIAL_DEVELOPMENT_SYSTEM_TRACEABILITY.json",
@@ -282,6 +282,21 @@
       "sha256": "cf86e8f7760bc84078025ffc85676d4c380fd2c83c0bba5ff35ddca3557ecf4f"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/FABLE_FORENSIC_DEVELOPMENT_AND_REMEDIATION_METHOD_REV1.md",
+      "bytes": 12773,
+      "sha256": "ad38b6739b9bbd2152e5d95fd37644f7b1a89d2a1a084201cc5e4a04dc8f85b3"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/FFDRM_DEVELOPMENT_SYSTEM_FORENSIC_REBASE_20260922.md",
+      "bytes": 15434,
+      "sha256": "28f56c087c6d033e5b4d3c8f60ee517ece0b2f5fd95fc731a89704cdbcf51511"
+    },
+    {
+      "path": "06_DEVELOPMENT_SYSTEM/FFDRM_DEVELOPMENT_SYSTEM_REMEDIATION_REGISTER_20260922.json",
+      "bytes": 11385,
+      "sha256": "d10e2b83a823fc7444891e14f876deca77d1c137ac0d541e64cf51471ecf45bf"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/MCP_ARCHITECTURE.md",
       "bytes": 675,
       "sha256": "2e81dcebb6e41bc08c71b546f53e971cf986e35cd98b72c8229b0374428d9be6"
@@ -292,9 +307,14 @@
       "sha256": "fea70230c16792e98995497bd72cceeb11c35d8620b1768dc65fa0e09b27c6df"
     },
     {
+      "path": "06_DEVELOPMENT_SYSTEM/PRD_TO_DETERMINISTIC_DEVELOPMENT_PACK_PROJECT_PREPARATION_GUIDE_REV_2.md",
+      "bytes": 9854,
+      "sha256": "c584458f1a46b55f139bf1440d063757eb1aa855f33c8b374c97429c4823abae"
+    },
+    {
       "path": "06_DEVELOPMENT_SYSTEM/PROMPTING_AND_CONTEXT_PROTOCOL.md",
-      "bytes": 1933,
-      "sha256": "0c9303827369d4f3f1808de96497ea86fd7c87aca93bc82e30e74521393c5b92"
+      "bytes": 2926,
+      "sha256": "ea758e5b418c7af46ec4763890ca2cad71620264026aa38ff2947190bb9e4c32"
     },
     {
       "path": "06_DEVELOPMENT_SYSTEM/ready_to_copy/.claude/agents/dial-context-librarian.md",
