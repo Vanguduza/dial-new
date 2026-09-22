@@ -101,20 +101,61 @@ jobs:
           done
           [[ -n "$TOKEN" ]] || { echo "::error::Netcup authorization timed out"; exit 20; }
 
+          AUTH_STATE="$RUNNER_TEMP/netcup-scp-auth"
+          install -d -m 0700 "$AUTH_STATE"
+
+          persist_token_response() {
+            local response="$1" access refresh expires
+            access="$(jq -r '.access_token // empty' <<<"$response" 2>/dev/null || true)"
+            refresh="$(jq -r '.refresh_token // empty' <<<"$response" 2>/dev/null || true)"
+            expires="$(jq -r '.expires_in // 300' <<<"$response" 2>/dev/null || echo 300)"
+            [[ -n "$access" ]] || return 1
+            printf '%s' "$access" >"$AUTH_STATE/access_token"
+            printf '%s\n' "$(( $(date +%s) + expires ))" >"$AUTH_STATE/expires_at"
+            if [[ -n "$refresh" ]]; then
+              printf '%s' "$refresh" >"$AUTH_STATE/refresh_token"
+            fi
+            chmod 0600 "$AUTH_STATE/access_token" "$AUTH_STATE/expires_at"
+            [[ ! -e "$AUTH_STATE/refresh_token" ]] || chmod 0600 "$AUTH_STATE/refresh_token"
+          }
+
+          persist_token_response "$RESPONSE"
+
+          access_token() {
+            local now expires refresh response
+            now="$(date +%s)"
+            expires="$(cat "$AUTH_STATE/expires_at" 2>/dev/null || echo 0)"
+            if (( now + 30 >= expires )); then
+              refresh="$(cat "$AUTH_STATE/refresh_token" 2>/dev/null || true)"
+              [[ -n "$refresh" ]] || {
+                echo "::error::Netcup access token is expiring and no refresh token was issued" >&2
+                return 1
+              }
+              response="$(curl -sS --fail-with-body -X POST \
+                "$NETCUP_SCP_OIDC_BASE_URL/token" \
+                -d "grant_type=refresh_token" \
+                -d "refresh_token=$refresh" \
+                -d "client_id=scp")" || return 1
+              persist_token_response "$response" || return 1
+              echo "Netcup SCP access token refreshed" >&2
+            fi
+            cat "$AUTH_STATE/access_token"
+          }
+
           api_get() {
             curl -sS --fail-with-body \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "accept: application/json" "$1"
           }
           api_post() {
             curl -sS --fail-with-body -X POST \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "accept: application/json" "$1"
           }
           api_patch() {
             local url="$1" body="$2"
             curl -sS --fail-with-body -X PATCH \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "Content-Type: application/merge-patch+json" \
               -H "accept: application/json" \
               --data "$body" "$url"
@@ -124,7 +165,7 @@ jobs:
           }
 
           SERVERS="$(curl -sS --fail-with-body -G \
-            -H "Authorization: Bearer $TOKEN" \
+            -H "Authorization: Bearer $(access_token)" \
             -H "accept: application/json" \
             --data-urlencode "ip=$NETCUP_DIAL_CONTROL_IP" \
             "$NETCUP_SCP_API_BASE_URL/v1/servers")"
@@ -197,7 +238,7 @@ jobs:
           api_patch() {
             local url="$1" body="$2"
             curl -sS --fail-with-body -X PATCH \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "Content-Type: application/merge-patch+json" \
               -H "accept: application/json" \
               --data "$body" "$url"
@@ -232,7 +273,7 @@ jobs:
             echo "Activating Netcup rescue system on stopped VM..."
             set +e
             RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "Content-Type: application/json" \
               -H "accept: application/json" \
               "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
@@ -394,7 +435,7 @@ jobs:
 
           echo "Deactivating rescue system..."
           curl -sS --fail-with-body -X DELETE \
-            -H "Authorization: Bearer $TOKEN" \
+            -H "Authorization: Bearer $(access_token)" \
             -H "accept: application/json" \
             "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem" >/tmp/rescue-off.json
 
@@ -413,7 +454,7 @@ jobs:
           for attempt in $(seq 1 60); do
             set +e
             NORMAL_HTTP="$(curl -sS -o /tmp/normal-start.json -w '%{http_code}' -X PATCH \
-              -H "Authorization: Bearer $TOKEN" \
+              -H "Authorization: Bearer $(access_token)" \
               -H "Content-Type: application/merge-patch+json" \
               -H "accept: application/json" \
               --data '{"state":"ON"}' \
