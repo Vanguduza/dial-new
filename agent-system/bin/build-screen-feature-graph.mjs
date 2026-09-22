@@ -294,7 +294,15 @@ export function buildCanonicalScreenFeatureGraph() {
       if (familyMatch && moduleMatch) featureRefs.add(f.feature_id);
     }
     const screenRefs = new Set(profile.native_screen_refs || []);
-    for (const featureId of featureRefs) for (const screenId of featureScreens(featureId)) screenRefs.add(screenId);
+    const applicationFamilies = new Set([...(profile.app_family_refs || []), ...(profile.capability_family_refs || [])]);
+    for (const featureId of featureRefs) {
+      for (const screenId of featureScreens(featureId)) {
+        const screen = screens.get(screenId);
+        const isShoppingComposition = screenId.startsWith('SCREEN:SHOP:');
+        const shoppingFamilyMatch = !isShoppingComposition || [...(screen?.app_family_refs || [])].some((family) => applicationFamilies.has(family));
+        if (shoppingFamilyMatch || screenRefs.has(screenId)) screenRefs.add(screenId);
+      }
+    }
     const capabilityRefs = new Set(profile.explicit_capability_refs || []);
     const capabilityFamilies = uniq([...(profile.capability_family_refs || []), ...(profile.app_family_refs || [])]);
     for (const capability of capabilities) {
