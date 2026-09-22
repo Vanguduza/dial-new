@@ -304,8 +304,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(customScript).toContain('Restart=on-failure');
     expect(customScript).not.toContain('ConditionPathExists=!/var/lib/dial-control/bootstrap/image-bootstrap.receipt');
     expect(provisioningStage).not.toMatch(/\b(?:apt-get|curl|git)\b/);
-    expect(provisioningStage).not.toContain('systemctl start');
-    expect(provisioningStage).not.toContain('systemctl restart');
+    expect(provisioningStage).toContain('systemctl start --no-block dial-control-bootstrap.service');
+    expect(provisioningStage).toContain('systemctl daemon-reload');
+    expect(provisioningStage).not.toContain('apt-get');
+    expect(provisioningStage).not.toContain('curl --proto');
 
     expect(image).toContain("ssh-keygen -q -t ed25519 -N ''");
     expect(image).toContain('install-github-oidc-control.sh');

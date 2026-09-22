@@ -156,6 +156,16 @@ chmod 0644 "$SERVICE"
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sfn "$SERVICE" /etc/systemd/system/multi-user.target.wants/dial-control-bootstrap.service
 
+# Netcup executes Custom Script in a live installed-system boot. Enabling the
+# unit alone is not enough because multi-user.target is already active by this
+# point. Start it asynchronously now; if systemd is unavailable for any future
+# provisioning variant, the enabled unit will still start on the next boot.
+if [[ -d /run/systemd/system ]]; then
+  systemctl daemon-reload
+  systemctl enable dial-control-bootstrap.service >/dev/null 2>&1 || true
+  systemctl start --no-block dial-control-bootstrap.service
+fi
+
 cat >/root/dial-control-bootstrap-scheduled <<EOF
 DIAL_BOOTSTRAP_REF=$DIAL_BOOTSTRAP_REF
 IMAGE_BOOTSTRAP_BLOB=$EXPECTED_IMAGE_BLOB
