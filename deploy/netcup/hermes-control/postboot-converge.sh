@@ -51,6 +51,9 @@ case "$MODE" in
     bash "$REPO/deploy/oracle/hermes-codex/install-control-plane.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-owner-remote-commander.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh"
+    if [[ -s "$CONTROL/secrets/xkiro-api.key" ]]; then
+      DIAL_REPO_DIR="$REPO" bash "$REPO/deploy/oracle/hermes-codex/install-haif.sh"
+    fi
     if [[ -s "$HOME/.desktop-commander-device/device.json" ]]; then
       systemctl --user enable --now dial-owner-commander-remote.service >/dev/null 2>&1 || true
     fi
