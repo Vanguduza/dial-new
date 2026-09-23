@@ -22,6 +22,8 @@ command -v docker >/dev/null || fail "docker is required"
 command -v openssl >/dev/null || fail "openssl is required"
 command -v curl >/dev/null || fail "curl is required"
 python3 -c 'import yaml' >/dev/null 2>&1 || fail "python3 PyYAML is required"
+NODE_BIN="$(command -v node)"
+[[ -n "$NODE_BIN" ]] || fail "node is required"
 
 mkdir -p "$STATE_DIR" "$SECRET_DIR" "$UNIT_DIR" "$HERMES_HOME"
 chmod 700 "$STATE_DIR" "$SECRET_DIR" "$HERMES_HOME" 2>/dev/null || true
@@ -102,7 +104,7 @@ Environment=DIAL_REPO_DIR=$REPO_DIR
 Environment=DIAL_CONTROL_HOME=$CONTROL_HOME
 Environment=DIAL_OPENVIKING_ENDPOINT=http://127.0.0.1:1933
 Environment=DIAL_OPENVIKING_API_KEY_FILE=$SECRET_FILE
-ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/openviking-projector.mjs --limit 200
+ExecStart=$NODE_BIN $REPO_DIR/agent-system/orchestration/openviking-projector.mjs --limit 200
 UNIT
 
 cat > "$UNIT_DIR/dial-openviking-projector.timer" <<'UNIT'
