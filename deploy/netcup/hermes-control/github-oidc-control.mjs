@@ -283,7 +283,14 @@ async function dispatch(body, claims) {
       return r;
     }
     case 'verify-overlay': {
-      const peers=peerCheck();
+      // Peers dial the hub (PersistentKeepalive 25 s); the hub learns a peer's endpoint only from its
+      // first handshake after the hub config lists its key. Checking at once reported a freshly
+      // enrolled peer as "No route to host" (2026-09-23), so allow ~2 minutes for handshakes.
+      let peers=peerCheck();
+      for(let i=0;i<8 && !peers.every((x)=>x.ping&&x.ssh);i++){
+        await new Promise((r)=>setTimeout(r,15000));
+        peers=peerCheck();
+      }
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('overlay verification failed'),{result:{peers}});
       fs.writeFileSync(path.join(ROOT,'overlay-verified'),now()+'\n',{mode:0o600});
       return {peers};
