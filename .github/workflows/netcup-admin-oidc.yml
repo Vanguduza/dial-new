@@ -115,11 +115,22 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          sleep 8
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
-          jq -e '
-            .ok == true and
-            (.result | has("source_retirement_preflight")) and
-            (.result | has("a1_control_retired"))
-          ' <<<"$RESPONSE" >/dev/null
+          ok=false
+          for attempt in $(seq 1 12); do
+            RESPONSE=
+            if RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}' 2>"$RUNNER_TEMP/status.err")" &&
+               jq -e '
+                 .ok == true and
+                 (.result | has("source_retirement_preflight")) and
+                 (.result | has("a1_control_retired"))
+               ' <<<"$RESPONSE" >/dev/null 2>&1; then
+              ok=true
+              printf '%s\n' "$RESPONSE" | jq '{ok,source_retirement_preflight:.result.source_retirement_preflight,a1_control_retired:.result.a1_control_retired}'
+              break
+            fi
+            echo "Waiting for refreshed controller (attempt $attempt/12)..."
+            cat "$RUNNER_TEMP/status.err" 2>/dev/null || true
+            sleep 5
+          done
+          [[ "$ok" == true ]] || { echo "::error::Refreshed controller contract did not become reachable"; exit 3; }
           echo "DIAL_CONTROL_CONTROLLER_REFRESH=GREEN"
