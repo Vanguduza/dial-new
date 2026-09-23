@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { DEFAULT_CONTROL_HOME, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
+import { DEFAULT_CONTROL_HOME, readJson, resolveControlPath } from './state-store.mjs';
 import { captureGitState } from './checkpoint-store.mjs';
 import { writeMemoryCandidate } from './shared-project-memory.mjs';
 
@@ -32,11 +32,9 @@ function cfg(root=DEFAULT_CONTROL_HOME) {
     artemis: process.env.DIAL_ARTEMIS_BIN || '/opt/hermes-mobile-fabric/artemis/current/.venv/bin/artemis',
     adb: process.env.DIAL_ADB_BIN || 'adb',
     evidenceRoot: process.env.DIAL_ANDROID_EVIDENCE_ROOT || resolveControlPath('android-testing/evidence',root),
-    devicesFile: process.env.DIAL_ANDROID_DEVICES_FILE || resolveControlPath('config/android-testing-devices.json',root),
   };
 }
 function allowedSerials(root=DEFAULT_CONTROL_HOME) {
-  const c=cfg(root);
   const fromEnv=String(process.env.DIAL_ANDROID_DEVICE_SERIALS||'').split(',').map(x=>x.trim()).filter(Boolean);
   const doc=readJson('config/android-testing-devices.json',{devices:[]},root);
   const fromFile=(doc.devices||[]).filter(d=>d?.enabled!==false).map(d=>String(d.serial||'').trim()).filter(Boolean);
