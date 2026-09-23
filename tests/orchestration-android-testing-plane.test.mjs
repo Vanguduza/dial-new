@@ -55,6 +55,7 @@ function makeHarness(){
     '#!/usr/bin/env bash',
     'set -e',
     'if [[ "$1" == "status" ]]; then echo "ARTEMIS READY"; exit 0; fi',
+    'if [[ "$1" == "doctor" ]]; then echo "verdict=ready"; exit 0; fi',
     'if [[ "$1" == "run" ]]; then echo "task_status=success"; echo "trace_id=test-trace"; exit 0; fi',
     'exit 2',
     '',
@@ -79,6 +80,8 @@ describe('Hermes Android testing plane',()=>{
     });
     expect(result.success).toBe(true);
     expect(result.authority).toBe('TEST_EVIDENCE_NON_AUTHORITATIVE_UNTIL_RECONCILED');
+    expect(result.preflight.output).toContain('verdict=ready');
+    expect(result.preflight.output_sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(result.artifacts.screenshot.sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(result.artifacts.logcat.sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(result.memory_candidate.memory_id).toMatch(/^mem-/);
