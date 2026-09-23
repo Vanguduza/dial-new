@@ -66,6 +66,8 @@ case "$1 $2 $3" in
     fi ;;
   "compute boot-volume-attachment list") echo "ocid1.bootvolume.oc1..bv-$(opt --instance-id "$@" | sed 's/.*\.\.//')" ;;
   "compute image list") echo ocid1.image.oc1..ubuntu2404 ;;
+  "compute instance action")
+    echo "$*" >"$S/action-$(opt --instance-id "$@" | sed 's/.*\.\.//')" ;;
   "compute instance terminate")
     id="$(opt --instance-id "$@")"; touch "$S/terminated-$id"; echo "$*" >"$S/terminate-args" ;;
   "compute instance launch")

@@ -435,6 +435,10 @@ rebuild_instance() {
   source "$ESTATE"
   reconcile_runcommand_dg "$expected_tenancy"
   say "rebuild_${name//-/_}_runcommand_dg=RECONCILED"
+  # The agent started before the new OCID joined the group; refused at first, it stays stuck in
+  # backoff (observed 2026-09-23: RUNNING plugin, commands ACCEPTED for 45 min) until restarted.
+  oci_session compute instance action --instance-id "$new" --action SOFTRESET >/dev/null
+  say "rebuild_${name//-/_}_agent_restart=SOFTRESET"
   jq --arg n "$new" '. + {new_instance:$n}' "$STATE/rebuild-$name.json" >"$STATE/rebuild-$name.json.next" && mv "$STATE/rebuild-$name.json.next" "$STATE/rebuild-$name.json"
   KEEP_SESSION=1   # the next rebuild can reuse this verified session
   say "rebuild_${name//-/_}_new=$new state=RUNNING"

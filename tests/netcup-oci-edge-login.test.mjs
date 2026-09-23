@@ -357,6 +357,7 @@ describe('oci-edge-login finish', () => {
     expect(estate).not.toContain('ocid1.instance.oc1..vekl\n');
     // The new OCID joins the Run Command dynamic group, or the new host never fetches commands.
     expect(r.out).toContain('rebuild_vekl_worker_runcommand_dg=RECONCILED');
+    expect(fs.readFileSync(path.join(again.state, 'action-new-vekl-worker'), 'utf8')).toContain('--action SOFTRESET');
     expect(fs.readFileSync(path.join(again.state, 'iam/dg-rule'), 'utf8')).toContain("instance.id = 'ocid1.instance.oc1..new-vekl-worker'");
   });
 
