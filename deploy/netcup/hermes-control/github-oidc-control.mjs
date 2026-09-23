@@ -94,6 +94,32 @@ function ubuntu(cmd, timeout=20*60*1000) {
     {timeout}
   );
 }
+function repoHead() {
+  const gitDir='/home/ubuntu/dial-new/.git';
+  try {
+    const head=fs.readFileSync(path.join(gitDir,'HEAD'),'utf8').trim();
+    if(/^[0-9a-f]{40}$/.test(head)) return head;
+    const match=head.match(/^ref:\s+(.+)$/);
+    if(match) {
+      const refName=match[1];
+      const loose=path.join(gitDir,refName);
+      if(fs.existsSync(loose)) {
+        const value=fs.readFileSync(loose,'utf8').trim();
+        if(/^[0-9a-f]{40}$/.test(value)) return value;
+      }
+      const packed=path.join(gitDir,'packed-refs');
+      if(fs.existsSync(packed)) {
+        for(const line of fs.readFileSync(packed,'utf8').split('\n')) {
+          const parts=line.trim().split(/\s+/);
+          if(parts.length===2 && parts[1]===refName && /^[0-9a-f]{40}$/.test(parts[0])) return parts[0];
+        }
+      }
+    }
+  } catch {}
+  const result=ubuntu('git -c safe.directory=/home/ubuntu/dial-new -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null');
+  const value=result.stdout.trim();
+  return result.ok && /^[0-9a-f]{40}$/.test(value) ? value : null;
+}
 function requireOk(result, label) {
   if(!result.ok) {
     const e=new Error(label+' failed');
@@ -124,7 +150,7 @@ async function dispatch(body, claims) {
       const receipt=receiptExists ? fs.readFileSync(receiptPath,'utf8') : '';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
       const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
-      const repoHead=ubuntu("git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null").stdout.trim()||null;
+      const repoHead=repoHead();
       return {
         host:command('hostname').stdout.trim(),
         bootstrap_receipt:receiptExists,
@@ -300,7 +326,7 @@ const server=http.createServer(async (req,res)=>{
       const receipt=fs.existsSync(receiptPath)?fs.readFileSync(receiptPath,'utf8'):'';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
       const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
-      const repoHead=ubuntu('git -C /home/ubuntu/dial-new rev-parse HEAD 2>/dev/null').stdout.trim()||null;
+      const repoHead=repoHead();
       res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
       res.end(JSON.stringify({ok:true,host:command('hostname').stdout.trim(),bootstrap_ref:bootstrapRef,bootstrap_phase:bootstrapPhase,repo_head:repoHead}));
       return;

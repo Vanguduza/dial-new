@@ -5,6 +5,7 @@ umask 077
 ROOTDEV="${1:?root device required}"
 PAYLOAD_REF="${2:?payload ref required}"
 IMAGE_BLOB="${3:?image blob required}"
+REPAIR_REF="${4:?repair ref required}"
 ROOT=/mnt/dial-root
 ADMIN=ubuntu
 REPO="$ROOT/home/$ADMIN/dial-new"
@@ -22,6 +23,7 @@ RESOLV_LINK=
 
 [[ "$PAYLOAD_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid payload ref" >&2; exit 2; }
 [[ "$IMAGE_BLOB" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid image blob" >&2; exit 2; }
+[[ "$REPAIR_REF" =~ ^[0-9a-f]{40}$ ]] || { echo "invalid repair ref" >&2; exit 2; }
 
 cleanup() {
   set +e
@@ -214,7 +216,12 @@ fi
 ln -sfn /opt/oci-cli/bin/oci "$ROOT/usr/local/bin/oci"; chroot "$ROOT" /usr/local/bin/oci --version >/dev/null
 
 install -d -m 0755 "$ROOT/usr/local/lib/dial-control" "$ROOT/usr/local/sbin"
-install -m 0755 "$REPO/deploy/netcup/hermes-control/github-oidc-control.mjs" "$ROOT/usr/local/lib/dial-control/github-oidc-control.mjs"
+CONTROL_SRC=/tmp/dial-github-oidc-control.mjs
+curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 8 --retry-all-errors \
+  "https://raw.githubusercontent.com/Vanguduza/dial-new/$REPAIR_REF/deploy/netcup/hermes-control/github-oidc-control.mjs" \
+  -o "$CONTROL_SRC"
+install -m 0755 "$CONTROL_SRC" "$ROOT/usr/local/lib/dial-control/github-oidc-control.mjs"
+chroot "$ROOT" /home/$ADMIN/.local/bin/node --check /usr/local/lib/dial-control/github-oidc-control.mjs
 install -d -m 0700 "$ROOT/var/lib/dial-control/github-oidc"; rm -f "$ROOT/var/lib/dial-control/github-oidc/READY"
 
 cat >"$ROOT/usr/local/sbin/dial-oidc-ready-check" <<'READY'
@@ -292,6 +299,7 @@ systemd-analyze verify --root="$ROOT" /etc/systemd/system/dial-github-oidc-contr
   printf 'bootstrap_phase=CONTROL_PLANE_READY\n'
   printf 'prestage=RESCUE_OFFLINE_CONTROL_PLANE_V1\n'
   printf 'image_bootstrap_blob=%s\n' "$IMAGE_BLOB"
+  printf 'recovery_controller_ref=%s\n' "$REPAIR_REF"
   printf 'display_name=Dial Control\n'
   printf 'hostname=dial-control\n'
   printf 'canonical_host_id=dial-hermes-control\n'

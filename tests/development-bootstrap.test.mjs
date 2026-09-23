@@ -314,7 +314,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('bootstrap_failure');
     expect(controller).toContain('ssh_active');
     expect(controller).toContain("req.method==='GET' && req.url==='/healthz'");
-    expect(controller).toContain("const repoHead=ubuntu('git -C /home/ubuntu/dial-new rev-parse HEAD");
+    expect(controller).toContain('function repoHead()');
+    expect(controller).toContain("fs.readFileSync(path.join(gitDir,'HEAD'),'utf8')");
+    expect(controller).toContain('git -c safe.directory=/home/ubuntu/dial-new -C /home/ubuntu/dial-new rev-parse HEAD');
+    expect(controller).toContain('const repoHead=repoHead()');
     expect(controller).toContain('PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin');
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];
@@ -360,6 +363,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).not.toContain('\\${'); // escaped runtime expansion
     expect(rescuePrestager).toContain('dpkg_retry()');
     expect(rescuePrestager).toContain('RESCUE_CONTROL_PLANE_PRESTAGE=GREEN');
+    expect(rescuePrestager).toContain('REPAIR_REF="${4:?repair ref required}"');
+    expect(rescuePrestager).toContain('raw.githubusercontent.com/Vanguduza/dial-new/$REPAIR_REF/deploy/netcup/hermes-control/github-oidc-control.mjs');
+    expect(rescuePrestager).toContain('recovery_controller_ref=%s');
+
     expect(rescuePrestager.trimEnd().endsWith('echo "RESCUE_CONTROL_PLANE_PRESTAGE=GREEN"')).toBe(true);
     expect((rescuePrestager.match(/RESCUE_CONTROL_PLANE_PRESTAGE=GREEN/g) || []).length).toBe(1);
     expect(rescuePrestager).toContain('SSH_AUTHORIZED_KEYS=DEFERRED_TO_AUTHENTICATED_CONTROL_PLANE');
@@ -392,6 +399,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('findmnt -n -o SOURCE --target /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -rn -S "$dev" -o TARGET');
     expect(recoveryWorkflow).toContain('rescue-prestage-control-plane.sh');
+    expect(recoveryWorkflow).toContain("'$DIAL_CONTROL_IMAGE_BLOB' '$DIAL_BOOTSTRAP_REPAIR_REF'");
+
     expect(recoveryWorkflow).toContain('INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN');
     expect(recoveryWorkflow).toContain('DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN');
     expect(recoveryWorkflow).toContain('POST_RESCUE_ACCEPTANCE_FAILED');

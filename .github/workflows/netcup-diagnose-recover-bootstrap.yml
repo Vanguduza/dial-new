@@ -412,7 +412,7 @@ jobs:
           chmod 0700 "$RUNNER_TEMP/rescue-prestage-control-plane.sh"
           bash -n "$RUNNER_TEMP/rescue-prestage-control-plane.sh"
           "${SCP[@]}" "$RUNNER_TEMP/rescue-prestage-control-plane.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/rescue-prestage-control-plane.sh >/dev/null
-          "${SSH[@]}" "bash /tmp/rescue-prestage-control-plane.sh '$ROOTDEV' '$DIAL_CONTROL_PAYLOAD_REF' '$DIAL_CONTROL_IMAGE_BLOB'"
+          "${SSH[@]}" "bash /tmp/rescue-prestage-control-plane.sh '$ROOTDEV' '$DIAL_CONTROL_PAYLOAD_REF' '$DIAL_CONTROL_IMAGE_BLOB' '$DIAL_BOOTSTRAP_REPAIR_REF'"
           echo "INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN"
 
           echo "Stopping rescue boot..."
