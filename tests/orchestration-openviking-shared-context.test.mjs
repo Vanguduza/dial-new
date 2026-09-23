@@ -20,6 +20,7 @@ const oldEnv={
   endpoint:process.env.DIAL_OPENVIKING_ENDPOINT,
   user:process.env.DIAL_OPENVIKING_USER,
   key:process.env.DIAL_OPENVIKING_API_KEY,
+  authMode:process.env.DIAL_OPENVIKING_AUTH_MODE,
 };
 
 afterEach(async()=>{
@@ -28,6 +29,7 @@ afterEach(async()=>{
   if(oldEnv.endpoint===undefined) delete process.env.DIAL_OPENVIKING_ENDPOINT; else process.env.DIAL_OPENVIKING_ENDPOINT=oldEnv.endpoint;
   if(oldEnv.user===undefined) delete process.env.DIAL_OPENVIKING_USER; else process.env.DIAL_OPENVIKING_USER=oldEnv.user;
   if(oldEnv.key===undefined) delete process.env.DIAL_OPENVIKING_API_KEY; else process.env.DIAL_OPENVIKING_API_KEY=oldEnv.key;
+  if(oldEnv.authMode===undefined) delete process.env.DIAL_OPENVIKING_AUTH_MODE; else process.env.DIAL_OPENVIKING_AUTH_MODE=oldEnv.authMode;
 });
 
 function tmp(){const root=fs.mkdtempSync(path.join(os.tmpdir(),'ov-spmrf-')); roots.push(root); return root;}
@@ -52,6 +54,7 @@ async function mockServer(){
   process.env.DIAL_OPENVIKING_ENDPOINT=`http://127.0.0.1:${address.port}`;
   process.env.DIAL_OPENVIKING_USER='test-user';
   process.env.DIAL_OPENVIKING_API_KEY='test-key-for-isolated-unit-test-123456';
+  process.env.DIAL_OPENVIKING_AUTH_MODE='api_key';
   return {server,seen};
 }
 
@@ -84,6 +87,9 @@ describe('OpenViking governed SPMRF projection',()=>{
     expect(writes).toHaveLength(1);
     expect(writes[0].body.uri).toContain('viking://user/test-user/memories/dial-projects/van/');
     expect(writes[0].body.content).toContain('project_authority: NON_AUTHORITATIVE_CONTEXT');
+    expect(writes[0].headers['x-api-key']).toBe('test-key-for-isolated-unit-test-123456');
+    expect(writes[0].headers['x-openviking-account']).toBeUndefined();
+    expect(writes[0].headers['x-openviking-user']).toBeUndefined();
 
     const semantic=await searchOpenVikingProjectContext({project:'van',query:'overlay recovery',root});
     expect(semantic.available).toBe(true);
