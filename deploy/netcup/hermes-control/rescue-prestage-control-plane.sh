@@ -168,7 +168,7 @@ git -C "$REPO" init -q
 git -C "$REPO" remote add origin https://github.com/Vanguduza/dial-new.git
 git -C "$REPO" fetch --depth 1 origin "$PAYLOAD_REF"
 git -C "$REPO" checkout --detach FETCH_HEAD
-[[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]] || { echo "repo pin mismatch" >&2; exit 4; }
+[[ "$(git -c safe.directory="$REPO" -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]] || { echo "repo pin mismatch" >&2; exit 4; }
 
 curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 8 --retry-all-errors \
   -o "$NODE_ARCHIVE" "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
