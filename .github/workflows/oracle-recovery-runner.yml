@@ -1,0 +1,85 @@
+name: DIAL Oracle Recovery Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Bounded recovery action
+        required: true
+        type: choice
+        options: [probe, status, restart-recovery-agent, restart-host-agent]
+      target:
+        description: Canonical Oracle recovery target
+        required: true
+        type: choice
+        options: [oracle-admin, vekl-worker, dial-hermes-control]
+      reason:
+        description: Auditable operator reason (never executed)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: dial-oracle-recovery-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      destructive: ${{ steps.classify.outputs.destructive }}
+      runner_label: ${{ steps.classify.outputs.runner_label }}
+    steps:
+      - id: classify
+        env:
+          ACTION: ${{ inputs.action }}
+          TARGET: ${{ inputs.target }}
+        run: |
+          case "$ACTION" in
+            probe|status) echo 'destructive=false' >> "$GITHUB_OUTPUT" ;;
+            restart-recovery-agent|restart-host-agent) echo 'destructive=true' >> "$GITHUB_OUTPUT" ;;
+            *) exit 64 ;;
+          esac
+          case "$TARGET" in
+            oracle-admin) echo 'runner_label=dial-hermes-control-recovery' >> "$GITHUB_OUTPUT" ;;
+            vekl-worker|dial-hermes-control) echo 'runner_label=oracle-admin-recovery' >> "$GITHUB_OUTPUT" ;;
+            *) exit 64 ;;
+          esac
+
+  probe:
+    needs: classify
+    if: needs.classify.outputs.destructive == 'false'
+    runs-on: [self-hosted, linux, dial-recovery, "${{ needs.classify.outputs.runner_label }}"]
+    timeout-minutes: 5
+    steps:
+      - name: Execute bounded read-only recovery action
+        env:
+          DIAL_RECOVERY_ACTION: ${{ inputs.action }}
+          DIAL_RECOVERY_TARGET: ${{ inputs.target }}
+          DIAL_RECOVERY_REASON: ${{ inputs.reason }}
+          DIAL_RECOVERY_RUN_ID: ${{ github.run_id }}
+          DIAL_RECOVERY_ACTOR: ${{ github.actor }}
+        run: /usr/local/bin/dial-github-recovery-dispatch
+
+  recover:
+    needs: classify
+    if: needs.classify.outputs.destructive == 'true'
+    runs-on: [self-hosted, linux, dial-recovery, "${{ needs.classify.outputs.runner_label }}"]
+    environment: dial-recovery-protected
+    timeout-minutes: 5
+    steps:
+      - name: Execute approved bounded recovery action
+        env:
+          DIAL_RECOVERY_ACTION: ${{ inputs.action }}
+          DIAL_RECOVERY_TARGET: ${{ inputs.target }}
+          DIAL_RECOVERY_REASON: ${{ inputs.reason }}
+          DIAL_RECOVERY_RUN_ID: ${{ github.run_id }}
+          DIAL_RECOVERY_ACTOR: ${{ github.actor }}
+        run: /usr/local/bin/dial-github-recovery-dispatch
