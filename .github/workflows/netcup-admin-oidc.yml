@@ -1,11 +1,6 @@
 name: Dial Control GitHub OIDC admin
 
 on:
-  push:
-    branches:
-      - gpt/netcup-hermes-control-integrated-20260921
-    paths:
-      - .github/workflows/netcup-admin-oidc.yml
   workflow_dispatch:
     inputs:
       command:
@@ -37,7 +32,6 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Validate explicit root acknowledgement
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -47,7 +41,6 @@ jobs:
           }
 
       - name: Execute audited Dial Control command
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         env:
           RAW_COMMAND: ${{ inputs.command }}
@@ -76,61 +69,3 @@ jobs:
             jq -r '.result.stderr' <<<"$RESPONSE"
             echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
-
-      - name: Install exact recovery controller refresh
-        if: ${{ github.event_name == 'push' }}
-        shell: bash
-        env:
-          REFRESH_REF: a611a843693936cbe19c0dff8302c2ae58547dcd
-        run: |
-          set -Eeuo pipefail
-          RAW_COMMAND="$(cat <<'CMD'
-          set -Eeuo pipefail
-          REF='a611a843693936cbe19c0dff8302c2ae58547dcd'
-          TMPDIR="$(mktemp -d /tmp/dial-controller-refresh.XXXXXX)"
-          trap 'rm -rf "$TMPDIR"' EXIT
-          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/github-oidc-control.mjs" \
-            -o "$TMPDIR/github-oidc-control.mjs"
-          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh" \
-            -o "$TMPDIR/retire-oracle-a1-control-role.sh"
-          /home/ubuntu/.local/bin/node --check "$TMPDIR/github-oidc-control.mjs"
-          bash -n "$TMPDIR/retire-oracle-a1-control-role.sh"
-          install -d -m 0755 /usr/local/lib/dial-control
-          install -m 0755 "$TMPDIR/github-oidc-control.mjs" /usr/local/lib/dial-control/github-oidc-control.mjs
-          install -m 0755 "$TMPDIR/retire-oracle-a1-control-role.sh" /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh
-          sha256sum /usr/local/lib/dial-control/github-oidc-control.mjs /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh
-          systemd-run --unit=dial-github-oidc-refresh --on-active=2s /bin/systemctl restart dial-github-oidc-control.service >/dev/null
-          echo "CONTROLLER_REFRESH_STAGED=TRUE"
-          CMD
-          )"
-          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
-          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true and (.result.stdout | contains("CONTROLLER_REFRESH_STAGED=TRUE"))' <<<"$RESPONSE" >/dev/null
-
-      - name: Verify refreshed controller contract
-        if: ${{ github.event_name == 'push' }}
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          ok=false
-          for attempt in $(seq 1 12); do
-            RESPONSE=
-            if RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}' 2>"$RUNNER_TEMP/status.err")" &&
-               jq -e '
-                 .ok == true and
-                 (.result | has("source_retirement_preflight")) and
-                 (.result | has("a1_control_retired"))
-               ' <<<"$RESPONSE" >/dev/null 2>&1; then
-              ok=true
-              printf '%s\n' "$RESPONSE" | jq '{ok,source_retirement_preflight:.result.source_retirement_preflight,a1_control_retired:.result.a1_control_retired}'
-              break
-            fi
-            echo "Waiting for refreshed controller (attempt $attempt/12)..."
-            cat "$RUNNER_TEMP/status.err" 2>/dev/null || true
-            sleep 5
-          done
-          [[ "$ok" == true ]] || { echo "::error::Refreshed controller contract did not become reachable"; exit 3; }
-          echo "DIAL_CONTROL_CONTROLLER_REFRESH=GREEN"
