@@ -60,6 +60,12 @@ jobs:
       - name: Oracle orchestration shell parses
         run: bash -n deploy/oracle/hermes-codex/*.sh deploy/oracle/hermes-codex/hermes-hooks/*.sh
 
+      - name: Netcup Hermes control shell parses
+        run: bash -n deploy/netcup/hermes-control/*.sh deploy/netcup/hermes-control/openviking/*.sh
+
+      - name: ARTEMIS hardening Python parses
+        run: python3 -m py_compile deploy/netcup/hermes-control/artemis/harden_artemis.py
+
       - name: corrective diff has no whitespace errors
         if: github.event_name == 'pull_request'
         run: git diff --check "origin/${{ github.base_ref }}...HEAD"
