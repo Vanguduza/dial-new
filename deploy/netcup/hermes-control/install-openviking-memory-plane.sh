@@ -104,6 +104,7 @@ Environment=DIAL_REPO_DIR=$REPO_DIR
 Environment=DIAL_CONTROL_HOME=$CONTROL_HOME
 Environment=DIAL_OPENVIKING_ENDPOINT=http://127.0.0.1:1933
 Environment=DIAL_OPENVIKING_API_KEY_FILE=$SECRET_FILE
+Environment=DIAL_OPENVIKING_AUTH_MODE=api_key
 ExecStart=$NODE_BIN $REPO_DIR/agent-system/orchestration/openviking-projector.mjs --limit 200
 UNIT
 
@@ -183,8 +184,6 @@ lines=[line for line in lines if not line.startswith(blocked)]
 lines += [
     'OPENVIKING_ENDPOINT=http://127.0.0.1:1933',
     f'OPENVIKING_API_KEY={key}',
-    'OPENVIKING_ACCOUNT=default',
-    'OPENVIKING_USER=default',
 ]
 os.makedirs(os.path.dirname(path),exist_ok=True)
 fd,tmp=tempfile.mkstemp(prefix='.openviking-env.',dir=os.path.dirname(path),text=True)
