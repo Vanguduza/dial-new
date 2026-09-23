@@ -90,7 +90,7 @@ case "$MODE" in
   prepare)
     valid_ref "$REF" || die "prepare requires exact Git ref as argument 2"
     install_runtime "$REF"
-    runuser -u ubuntu -- env \
+    /usr/sbin/runuser -u ubuntu -- env \
       HOME=/home/ubuntu \
       PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
       bash "$ROOT/prepare-oci-recovery.sh" prepare
@@ -106,20 +106,20 @@ case "$MODE" in
     [[ "$TENANCY_OCID" == ocid1.tenancy.* ]] || die "valid OCI tenancy OCID required"
     [[ "$REGION" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || die "valid OCI region required"
     [[ -x "$ROOT/prepare-oci-recovery.sh" ]] || die "prepare operation has not installed the runtime"
-    runuser -u ubuntu -- env \
+    /usr/sbin/runuser -u ubuntu -- env \
       HOME=/home/ubuntu \
       PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
       OCI_RECOVERY_USER_OCID="$USER_OCID" \
       OCI_RECOVERY_TENANCY_OCID="$TENANCY_OCID" \
       OCI_RECOVERY_REGION="$REGION" \
       bash "$ROOT/prepare-oci-recovery.sh" configure-and-discover
-    runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
+    /usr/sbin/runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
       bash "$ROOT/prepare-oci-recovery.sh" status
     echo "OWNER_OCI_HANDOFF=GREEN"
     ;;
   status)
     [[ -x "$ROOT/prepare-oci-recovery.sh" ]] || die "runtime not installed"
-    runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
+    /usr/sbin/runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
       bash "$ROOT/prepare-oci-recovery.sh" status
     [[ -f "$ROOT/runtime-ref" ]] && echo "runtime_ref=$(cat "$ROOT/runtime-ref")"
     ;;
