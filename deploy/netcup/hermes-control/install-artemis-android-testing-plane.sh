@@ -27,7 +27,7 @@ chmod 700 "$CONTROL_HOME/android-testing" "$CONTROL_HOME/android-testing/evidenc
 install_uv(){
   if command -v uv >/dev/null 2>&1 && [[ "$(uv --version 2>/dev/null | awk '{print $2}')" == "$UV_VERSION" ]]; then return 0; fi
   local tmp; tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  local cleanup_dir="$tmp"
   gh release download "$UV_VERSION" --repo astral-sh/uv --pattern "$UV_ASSET" --dir "$tmp"
   gh attestation verify "$tmp/$UV_ASSET" --repo astral-sh/uv >/dev/null
   tar -xzf "$tmp/$UV_ASSET" -C "$tmp"
@@ -35,6 +35,7 @@ install_uv(){
   [[ -n "$bin" ]] || fail "uv binary missing from verified release"
   sudo install -m 0755 "$bin" /usr/local/bin/uv
   [[ "$(uv --version | awk '{print $2}')" == "$UV_VERSION" ]] || fail "uv version mismatch after install"
+  rm -rf "$cleanup_dir"
 }
 install_uv
 
@@ -47,7 +48,7 @@ if [[ ! -d "$ARTEMIS_DIR/.git" ]]; then
   [[ "$(git -C "$tmp" rev-parse HEAD)" == "$ARTEMIS_COMMIT" ]] || fail "ARTEMIS commit pin mismatch"
   [[ "$(git -C "$tmp" hash-object uv.lock)" == "$ARTEMIS_LOCK_BLOB" ]] || fail "ARTEMIS uv.lock blob mismatch"
   python3 "$REPO_DIR/deploy/netcup/hermes-control/artemis/harden_artemis.py" "$tmp"
-  uv sync --directory "$tmp" --frozen --no-dev
+  (cd "$tmp" && uv sync --frozen --no-dev)
   sudo rm -rf "$ARTEMIS_DIR"
   sudo mv "$tmp" "$ARTEMIS_DIR"
   sudo chown -R "$USER":"$(id -gn)" "$ARTEMIS_DIR"
@@ -55,7 +56,7 @@ else
   [[ "$(git -C "$ARTEMIS_DIR" rev-parse HEAD)" == "$ARTEMIS_COMMIT" ]] || fail "existing ARTEMIS checkout pin mismatch"
   [[ "$(git -C "$ARTEMIS_DIR" hash-object uv.lock)" == "$ARTEMIS_LOCK_BLOB" ]] || fail "existing ARTEMIS lock mismatch"
   python3 "$REPO_DIR/deploy/netcup/hermes-control/artemis/harden_artemis.py" "$ARTEMIS_DIR"
-  uv sync --directory "$ARTEMIS_DIR" --frozen --no-dev
+  (cd "$ARTEMIS_DIR" && uv sync --frozen --no-dev)
 fi
 sudo ln -sfn "$ARTEMIS_DIR" "$ARTEMIS_ROOT/current"
 
