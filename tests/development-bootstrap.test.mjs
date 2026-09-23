@@ -315,6 +315,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');
     expect(adminWorkflow).toContain('admin-command');
     expect(adminWorkflow).not.toContain('push:');
+    expect(adminWorkflow).toContain('workflow_dispatch:');
+    expect(adminWorkflow).toContain("github.actor == 'Vanguduza'");
+    expect(adminWorkflow).toContain('prepare_oci_recovery');
+    expect(adminWorkflow).toContain('configure_and_discover_oci');
+    expect(adminWorkflow).not.toContain('edge-bootstrap:');
     expect(controller).toContain('/usr/local/lib/dial-control/configure-wireguard-fabric.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/rotate-bootstrap-identities.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/retire-oracle-a1-control-role.sh');
