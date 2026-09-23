@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-install-van-rive-netcup",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "8b4b6748cd51f5d8d5b32c4810111857c9f04331f4098a5ca2865a8bdd5baf6c",
+  "owner_instruction_excerpt": "Install the rive build system on netcup using github",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260923-install-van-rive-netcup",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T05:03:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/install-van-rive-netcup-20260923",
+  "authorized_paths": [
+    ".github/workflows/netcup-admin-oidc.yml"
+  ],
+  "change_classes": [
+    "netcup_rive_install",
+    "github_oidc_deployment",
+    "character_forge_tooling",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
