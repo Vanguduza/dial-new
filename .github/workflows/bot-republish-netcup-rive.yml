@@ -109,39 +109,37 @@ jobs:
               -f ref="refs/heads/$BOT_BRANCH" -f sha="$BASE_SHA" >/dev/null
           fi
 
-          paths=(
-            ".github/workflows/netcup-admin-oidc.yml"
-            "docs/project-state/authorizations/$BOT_AUTH_ID.json"
-            "docs/project-state/CHANGE_LEDGER.jsonl"
-            "docs/project-state/CURRENT_STATE.json"
-          )
+          python3 - "$repo" "$BOT_BRANCH" "$BASE_SHA" "$RUNNER_TEMP/create-commit.json" <<'PY'
+import base64
+import json
+import pathlib
+import sys
 
-          additions='[]'
-          for path in "${paths[@]}"; do
-            contents="$(base64 -w0 "$path")"
-            additions="$(jq -c --arg p "$path" --arg c "$contents" \
-              '. + [{path:$p,contents:$c}]' <<<"$additions")"
-          done
+repo, branch, expected, output = sys.argv[1:]
+paths = [
+    ".github/workflows/netcup-admin-oidc.yml",
+    "docs/project-state/authorizations/auth-20260923-owner-install-van-rive-netcup-bot.json",
+    "docs/project-state/CHANGE_LEDGER.jsonl",
+    "docs/project-state/CURRENT_STATE.json",
+]
+additions = []
+for path in paths:
+    payload = base64.b64encode(pathlib.Path(path).read_bytes()).decode("ascii")
+    additions.append({"path": path, "contents": payload})
 
-          query='mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid url}}}'
-          jq -n \
-            --arg query "$query" \
-            --arg repo "$repo" \
-            --arg branch "$BOT_BRANCH" \
-            --arg expected "$BASE_SHA" \
-            --arg headline "ops: install VAN Rive build system on Dial Control" \
-            --argjson additions "$additions" \
-            '{
-              query:$query,
-              variables:{
-                input:{
-                  branch:{repositoryNameWithOwner:$repo,branchName:$branch},
-                  message:{headline:$headline},
-                  expectedHeadOid:$expected,
-                  fileChanges:{additions:$additions}
-                }
-              }
-            }' >"$RUNNER_TEMP/create-commit.json"
+request = {
+    "query": "mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid url}}}",
+    "variables": {
+        "input": {
+            "branch": {"repositoryNameWithOwner": repo, "branchName": branch},
+            "message": {"headline": "ops: install VAN Rive build system on Dial Control"},
+            "expectedHeadOid": expected,
+            "fileChanges": {"additions": additions},
+        }
+    },
+}
+pathlib.Path(output).write_text(json.dumps(request), encoding="utf-8")
+PY
 
           gh api graphql --input "$RUNNER_TEMP/create-commit.json" \
             >"$RUNNER_TEMP/create-commit-response.json"
