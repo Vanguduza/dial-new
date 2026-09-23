@@ -481,6 +481,10 @@ describe('DIAL development bootstrap closure', () => {
     // The CLI runs as ubuntu; a root-owned 0700 temp dir made every file:// argument 'did not exist' (converge run #178).
     expect(ociEnroll).toContain('chown ubuntu:ubuntu "$TMPDIR"');
     expect(ociEnroll).toContain('chown ubuntu:ubuntu "$CONTENT" "$TARGET"');
+    // Run Command runs as unprivileged ocarun: enrollment must escalate with sudo -n, quote its env values, and say so when sudo is missing.
+    expect(ociEnroll).toContain('DIAL_ENROLL_NEEDS_OCARUN_SUDO');
+    expect(ociEnroll).toContain('sudo -n env DIAL_HOST_ID=');
+    expect(ociEnroll).toContain('NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY=\\"\\$(printf');
     expect(ociEnroll).toContain('oracle-peer-keys.json');
     expect(prepareOci).toContain('github-oci-ready');
     expect(prepareOci).toContain('oracle_targets=3');

@@ -81,7 +81,10 @@ chown ubuntu:ubuntu "$TMPDIR"
 
 for HOST_ID in "${HOSTS[@]}"; do
   INSTANCE_ID="${INSTANCE_IDS[$HOST_ID]}"
-  CMD="set -Eeuo pipefail; printf '%s' '$SCRIPT_B64' | base64 -d >/tmp/dial-zero-touch-enroll.sh; chmod 700 /tmp/dial-zero-touch-enroll.sh; DIAL_HOST_ID='$HOST_ID' NETCUP_PUBLIC_IP='$NETCUP_PUBLIC_IP' NETCUP_WG_PUBLIC_KEY=\$(printf '%s' '$WG_B64' | base64 -d) NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY=\$(printf '%s' '$SSH_B64' | base64 -d) bash /tmp/dial-zero-touch-enroll.sh"
+  # OCI Run Command runs as the unprivileged ocarun user (probed: uid=999(ocarun), no sudo by
+  # default). Enrollment needs root, so each VM must carry the owner-granted sudoers entry
+  # /etc/sudoers.d/90-dial-ocarun; refuse with that instruction when it is missing.
+  CMD="set -Eeuo pipefail; sudo -n true 2>/dev/null || { echo 'DIAL_ENROLL_NEEDS_OCARUN_SUDO: grant /etc/sudoers.d/90-dial-ocarun on this VM'; exit 41; }; printf '%s' '$SCRIPT_B64' | base64 -d >/tmp/dial-zero-touch-enroll.sh; chmod 700 /tmp/dial-zero-touch-enroll.sh; sudo -n env DIAL_HOST_ID='$HOST_ID' NETCUP_PUBLIC_IP='$NETCUP_PUBLIC_IP' NETCUP_WG_PUBLIC_KEY=\"\$(printf '%s' '$WG_B64' | base64 -d)\" NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY=\"\$(printf '%s' '$SSH_B64' | base64 -d)\" bash /tmp/dial-zero-touch-enroll.sh"
   CONTENT="$TMPDIR/content-$HOST_ID.json"
   TARGET="$TMPDIR/target-$HOST_ID.json"
   jq -n --arg text "$CMD" '{source:{sourceType:"TEXT",text:$text},output:{outputType:"TEXT"}}' >"$CONTENT"
