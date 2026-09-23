@@ -404,6 +404,16 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN');
     expect(recoveryWorkflow).toContain('DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN');
     expect(recoveryWorkflow).toContain('POST_RESCUE_ACCEPTANCE_FAILED');
+    expect(recoveryWorkflow).toContain('RECOVERY_GREEN exact control-plane contract satisfied');
+    expect(recoveryWorkflow).toContain('repo_head=$repo_now');
+    expect(recoveryWorkflow).toContain('WAIT $attempt/120 state=$state_now');
+    expect(recoveryWorkflow).toContain('NORMAL_BOOT_REQUESTED');
+    expect(recoveryWorkflow).toContain('PRESTAGE_GREEN filesystem control plane installed');
+    expect(recoveryWorkflow).toContain('SCP_RESOLVED server_id=$SERVER_ID');
+    expect(recoveryWorkflow).toContain('RECOVERY_BROADCAST state=%s description=%s');
+    expect(recoveryWorkflow).toContain('AUTH_REQUIRED code=$USER_CODE');
+    expect(recoveryWorkflow).toContain("netcup-recovery/live");
+    expect(recoveryWorkflow).toContain('statuses: write');
     expect(recoveryWorkflow).not.toContain('Normal Ubuntu entered terminal state $state_now');
     expect(recoveryWorkflow).toContain('SHUTOFF_AFTER_RUNNING');
     expect(recoveryWorkflow).toContain('60-second boot grace period');
