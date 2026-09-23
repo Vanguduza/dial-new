@@ -7,21 +7,14 @@ on:
         description: Bounded recovery action
         required: true
         type: choice
-        options:
-          - probe
-          - status
-          - restart-recovery-agent
-          - restart-commander
+        options: [probe, status, restart-recovery-agent, restart-commander]
       target:
         description: Recovery target
         required: true
         type: choice
-        options:
-          - oracle-admin
-          - vekl-worker
-          - dial-control
+        options: [oracle-admin, vekl-worker, dial-control]
       reason:
-        description: Auditable operator reason (not executed)
+        description: Auditable operator reason (never executed)
         required: true
         type: string
 
@@ -42,21 +35,28 @@ jobs:
     timeout-minutes: 2
     outputs:
       destructive: ${{ steps.classify.outputs.destructive }}
+      runner_label: ${{ steps.classify.outputs.runner_label }}
     steps:
       - id: classify
         env:
           ACTION: ${{ inputs.action }}
+          TARGET: ${{ inputs.target }}
         run: |
           case "$ACTION" in
             probe|status) echo 'destructive=false' >> "$GITHUB_OUTPUT" ;;
             restart-recovery-agent|restart-commander) echo 'destructive=true' >> "$GITHUB_OUTPUT" ;;
             *) exit 64 ;;
           esac
+          case "$TARGET" in
+            oracle-admin) echo 'runner_label=vekl-worker-recovery' >> "$GITHUB_OUTPUT" ;;
+            vekl-worker|dial-control) echo 'runner_label=oracle-admin-recovery' >> "$GITHUB_OUTPUT" ;;
+            *) exit 64 ;;
+          esac
 
   probe:
     needs: classify
     if: needs.classify.outputs.destructive == 'false'
-    runs-on: [self-hosted, linux, dial-recovery, oracle-admin]
+    runs-on: [self-hosted, linux, dial-recovery, "${{ needs.classify.outputs.runner_label }}"]
     timeout-minutes: 5
     steps:
       - name: Execute bounded read-only recovery action
@@ -71,7 +71,7 @@ jobs:
   recover:
     needs: classify
     if: needs.classify.outputs.destructive == 'true'
-    runs-on: [self-hosted, linux, dial-recovery, oracle-admin]
+    runs-on: [self-hosted, linux, dial-recovery, "${{ needs.classify.outputs.runner_label }}"]
     environment: dial-recovery-protected
     timeout-minutes: 5
     steps:
