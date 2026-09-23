@@ -377,6 +377,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).toContain('^VERSION_ID="?24\\.04"?$');
     expect(rescuePrestager).toContain('findmnt --fstab --evaluate');
     expect(rescuePrestager).toContain('git -c safe.directory="$REPO" -C "$REPO" rev-parse HEAD');
+    expect(rescuePrestager).not.toContain('git -C "$REPO" rev-parse HEAD');
     expect(rescuePrestager).toContain('MOUNTS+=("$ROOT$target")');
     expect(rescuePrestager).not.toContain('findmnt --verify --verbose --tab-file "$ROOT/etc/fstab"');
     expect(rescuePrestager).toContain("oci-cli==3.93.0");

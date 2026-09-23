@@ -309,7 +309,7 @@ rm -f "$STATE/failure-snapshot.txt" "$STATE/runner-diagnostics.txt"
 
 grep -qx "bootstrap_ref=$PAYLOAD_REF" "$STATE/image-bootstrap.receipt"
 grep -qx 'bootstrap_phase=CONTROL_PLANE_READY' "$STATE/image-bootstrap.receipt"
-[[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]]
+[[ "$(git -c safe.directory="$REPO" -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]]
 [[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v${NODE_VERSION}" ]]
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/ssh.service"
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/dial-github-oidc-control.service"
@@ -417,7 +417,7 @@ git -C "$REPO" init -q
 git -C "$REPO" remote add origin https://github.com/Vanguduza/dial-new.git
 git -C "$REPO" fetch --depth 1 origin "$PAYLOAD_REF"
 git -C "$REPO" checkout --detach FETCH_HEAD
-[[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]] || { echo "repo pin mismatch" >&2; exit 4; }
+[[ "$(git -c safe.directory="$REPO" -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]] || { echo "repo pin mismatch" >&2; exit 4; }
 
 curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 8 --retry-all-errors \
   -o "$NODE_ARCHIVE" "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
@@ -556,7 +556,7 @@ rm -f "$STATE/failure-snapshot.txt" "$STATE/runner-diagnostics.txt"
 
 grep -qx "bootstrap_ref=$PAYLOAD_REF" "$STATE/image-bootstrap.receipt"
 grep -qx 'bootstrap_phase=CONTROL_PLANE_READY' "$STATE/image-bootstrap.receipt"
-[[ "$(git -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]]
+[[ "$(git -c safe.directory="$REPO" -C "$REPO" rev-parse HEAD)" == "$PAYLOAD_REF" ]]
 [[ "$(chroot "$ROOT" /home/$ADMIN/.local/bin/node --version)" == "v${NODE_VERSION}" ]]
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/ssh.service"
 test -L "$ROOT/etc/systemd/system/multi-user.target.wants/dial-github-oidc-control.service"
