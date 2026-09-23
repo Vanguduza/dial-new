@@ -360,6 +360,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).not.toContain('\\${'); // escaped runtime expansion
     expect(rescuePrestager).toContain('dpkg_retry()');
     expect(rescuePrestager).toContain('RESCUE_CONTROL_PLANE_PRESTAGE=GREEN');
+    expect(rescuePrestager.trimEnd().endsWith('echo "RESCUE_CONTROL_PLANE_PRESTAGE=GREEN"')).toBe(true);
+    expect((rescuePrestager.match(/RESCUE_CONTROL_PLANE_PRESTAGE=GREEN/g) || []).length).toBe(1);
     expect(rescuePrestager).toContain('SSH_AUTHORIZED_KEYS=DEFERRED_TO_AUTHENTICATED_CONTROL_PLANE');
     expect(rescuePrestager).not.toContain('ubuntu authorized_keys missing');
     expect(rescuePrestager).toContain('bootstrap_phase=CONTROL_PLANE_READY');
