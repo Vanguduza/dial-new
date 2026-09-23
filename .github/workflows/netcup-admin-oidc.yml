@@ -263,18 +263,10 @@ jobs:
           set -Eeuo pipefail
           RAW_COMMAND="$(cat <<'CMD'
           set -Eeuo pipefail
-          REF='${{ github.sha }}'
-          TMP="$(mktemp /tmp/prepare-oci-recovery.XXXXXX.sh)"
-          trap 'rm -f "$TMP"' EXIT
-          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
-            --connect-timeout 10 --max-time 45 --retry 3 --retry-delay 2 \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/prepare-oci-recovery.sh" \
-            -o "$TMP"
-          bash -n "$TMP"
-          install -m 0755 "$TMP" /usr/local/lib/dial-control/prepare-oci-recovery.sh
+          test -x /usr/local/lib/dial-control/prepare-oci-recovery.sh
           runuser -u ubuntu -- env \
             HOME=/home/ubuntu \
-            PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
+            PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
             bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
           CMD
           )"
