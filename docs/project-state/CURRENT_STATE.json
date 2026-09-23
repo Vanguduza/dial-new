@@ -3,16 +3,22 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260921-owner-dial-control-rename"
+    "auth-20260921-owner-dial-control-rename",
+    "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/grant-ocarun-sudo.sh"
+    ".github/workflows/netcup-admin-oidc.yml",
+    "deploy/hybrid/estate-topology.json",
+    "deploy/netcup/hermes-control/oci-edge-login.sh",
+    "docs/project-state/authorizations/auth-20260923-owner-estate-rebuild-hermes-becomes-van.json",
+    "tests/fixtures/fake-oci-cli.sh",
+    "tests/netcup-oci-edge-login.test.mjs"
   ],
-  "content_diff_sha256": "37ca8c0b811497000aff7ead7f330b903cde46ec8362afaaf17b7e39aef18cea",
-  "observed_at_utc": "2026-09-23T12:40:36.730355+00:00",
+  "content_diff_sha256": "59d3165606baeb9f8f62ed5c9e87e9dc9886acdca25b2694b0bb33fdda73340a",
+  "observed_at_utc": "2026-09-23T21:50:25.771531+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "d29fbe7c3a97c6f2582ed7e0ff6b4a109a7b4f28",
+  "source_parent": "c517b12707ac4f002c882c5d5e6149b1b5e4032a",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

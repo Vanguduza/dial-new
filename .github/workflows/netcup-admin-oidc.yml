@@ -17,6 +17,7 @@ on:
           - abort_oci_edge_login
           - rediscover_oci_estate
           - enable_oci_run_command
+          - rebuild_oci_instance
           - grant_ocarun_sudo
           - custom
       command:
@@ -39,6 +40,15 @@ on:
         description: Primary email for the dedicated dial-netcup-recovery OCI user (required by identity domains). Used only by finish_oci_edge_login.
         required: false
         type: string
+      oci_rebuild_host:
+        description: Host for rebuild_oci_instance (terminate preserving boot volume, relaunch with ocarun sudo). Owner decision auth-20260923-owner-estate-rebuild-hermes-becomes-van.
+        required: false
+        type: choice
+        default: none
+        options:
+          - none
+          - oracle-admin
+          - vekl-worker
       oci_region:
         description: OCI recovery region
         required: false
@@ -143,6 +153,7 @@ jobs:
           OCI_REGION: ${{ inputs.oci_region }}
           OCI_A1_OCID: ${{ inputs.oci_a1_instance_ocid }}
           OCI_USER_EMAIL: ${{ inputs.oci_recovery_user_email }}
+          OCI_REBUILD_HOST: ${{ inputs.oci_rebuild_host }}
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/admin-command.txt"
@@ -173,7 +184,7 @@ jobs:
           /usr/local/lib/dial-control/owner-oci-handoff.sh configure-and-discover $USER_Q $TENANCY_Q $REGION_Q
           EOF
               ;;
-            start_oci_edge_login|oci_edge_login_status|finish_oci_edge_login|abort_oci_edge_login|rediscover_oci_estate|enable_oci_run_command)
+            start_oci_edge_login|oci_edge_login_status|finish_oci_edge_login|abort_oci_edge_login|rediscover_oci_estate|enable_oci_run_command|rebuild_oci_instance)
               [[ "$OCI_REGION" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || { echo "::error::Valid OCI region required"; exit 3; }
               REGION_Q="$(printf '%q' "$OCI_REGION")"
               case "$OPERATION" in
@@ -183,6 +194,10 @@ jobs:
                 enable_oci_run_command)
                   [[ "$OCI_TENANCY_OCID" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Valid oci_tenancy_ocid required"; exit 3; }
                   ARGS="enable-run-command $(printf '%q' "$OCI_TENANCY_OCID")" ;;
+                rebuild_oci_instance)
+                  [[ "$OCI_TENANCY_OCID" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Valid oci_tenancy_ocid required"; exit 3; }
+                  [[ "$OCI_REBUILD_HOST" == oracle-admin || "$OCI_REBUILD_HOST" == vekl-worker ]] || { echo "::error::oci_rebuild_host must be oracle-admin or vekl-worker"; exit 3; }
+                  ARGS="rebuild-instance $(printf '%q' "$OCI_TENANCY_OCID") $OCI_REBUILD_HOST" ;;
                 rediscover_oci_estate)
                   [[ -z "$OCI_A1_OCID" || "$OCI_A1_OCID" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Invalid oci_a1_instance_ocid"; exit 3; }
                   ARGS="rediscover $(printf '%q' "${OCI_A1_OCID:-}")" ;;
@@ -232,7 +247,7 @@ jobs:
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           # The OCI login operations print only OCIDs, states and login/callback URLs, never tokens or keys.
-          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate || "$OPERATION" == enable_oci_run_command || "$OPERATION" == grant_ocarun_sudo ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
+          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate || "$OPERATION" == enable_oci_run_command || "$OPERATION" == rebuild_oci_instance || "$OPERATION" == grant_ocarun_sudo ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
           {
             echo "## Dial Control GitHub OIDC admin receipt"
             echo "- operation: \`$OPERATION\`"

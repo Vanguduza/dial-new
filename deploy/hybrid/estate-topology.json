@@ -141,5 +141,17 @@
       "store": "OpenViking",
       "source": "ADMITTED_SPMRF_PROJECT_MEMORY"
     }
+  },
+  "owner_rebuild_plan_20260923": {
+    "authorization_id": "auth-20260923-owner-estate-rebuild-hermes-becomes-van",
+    "sequence": [
+      "1 record decision",
+      "2 clone Hermes installation and files from dial-hermes-control to Netcup and verify",
+      "3 rebuild oracle-admin and vekl-worker (terminate preserving boot volume, relaunch same shape, subnet and private IP; cloud-init grants ocarun sudo; Run Command and Bastion plugins enabled)",
+      "4 after step 2 is verified, reinstall dial-hermes-control and bootstrap it as van-trading-core",
+      "5 terminate the previous van-trading-core instance (VATI never ran on it)"
+    ],
+    "supersedes": "retired_after_cutover[old-dial-hermes-control].disposition OWNER_TERMINATES_INSTANCE: the A1 is re-roled to van-trading-core instead of terminated",
+    "state": "IN_PROGRESS"
   }
 }

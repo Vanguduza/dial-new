@@ -327,6 +327,103 @@ enable_run_command() {
   say "NEXT_OWNER_ACTION=grant ocarun passwordless sudo on each VM (/etc/sudoers.d/90-dial-ocarun); OCI cannot do this"
 }
 
+# Owner-session operation (auth-20260923-owner-estate-rebuild-hermes-becomes-van): rebuild an E2
+# estate VM with the settings enrollment needs. The old instance is terminated with its boot volume
+# PRESERVED (the E2 Always Free limit is two instances, so it must go before the new one can start),
+# then relaunched with the same name, shape, subnet, private IP and owner SSH key. First-boot
+# cloud-init installs /etc/sudoers.d/90-dial-ocarun; the Run Command and Bastion plugins are enabled
+# at launch. If the relaunch fails, the old boot volume is relaunched so the host comes back as it was.
+rebuild_instance() {
+  local expected_tenancy="${1:-}" name="${2:-}"
+  [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
+  local key
+  case "$name" in
+    oracle-admin) key=ORACLE_ADMIN_OCID ;;
+    vekl-worker) key=VEKL_WORKER_OCID ;;
+    *) die "rebuild-instance is limited to oracle-admin and vekl-worker" ;;
+  esac
+  verify_session "$expected_tenancy"
+  [[ -s "$ESTATE" ]] || die "estate inventory missing; run finish or rediscover first" 26
+  # shellcheck source=/dev/null
+  source "$ESTATE"
+  local old="${!key:-}"
+  [[ "$old" == ocid1.instance.* ]] || die "$name missing from the estate inventory" 26
+
+  local tmp; tmp="$(mktemp -d)"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp" 2>/dev/null || true
+  local inst; inst="$(oci_session compute instance get --instance-id "$old")"
+  local dname shape ad comp keys
+  dname="$(jq -r '.data."display-name"' <<<"$inst")"; shape="$(jq -r '.data.shape' <<<"$inst")"
+  ad="$(jq -r '.data."availability-domain"' <<<"$inst")"; comp="$(jq -r '.data."compartment-id"' <<<"$inst")"
+  keys="$(jq -r '.data.metadata.ssh_authorized_keys // empty' <<<"$inst")"
+  [[ "$dname" == "$name" ]] || die "estate $key is '$dname', not $name; refusing"
+  [[ "$shape" == VM.Standard.E2.1.Micro ]] || die "$name is $shape, not the E2 micro this rebuild is for"
+  [[ -n "$keys" ]] || die "$name carries no owner SSH key in its metadata; refusing to launch a host without one"
+  local subnet ip bv
+  subnet="$(oci_session compute instance list-vnics --instance-id "$old" --query 'data[0]."subnet-id"' --raw-output)"
+  ip="$(oci_session compute instance list-vnics --instance-id "$old" --query 'data[0]."private-ip"' --raw-output)"
+  bv="$(oci_session compute boot-volume-attachment list --availability-domain "$ad" --compartment-id "$comp" \
+    --instance-id "$old" --query 'data[0]."boot-volume-id"' --raw-output)"
+  [[ "$subnet" == ocid1.subnet.* && "$ip" =~ ^[0-9.]+$ && "$bv" == ocid1.bootvolume.* ]] || die "could not resolve $name's subnet, private IP and boot volume"
+  local image
+  image="$(oci_session compute image list --compartment-id "$comp" --operating-system "Canonical Ubuntu" \
+    --operating-system-version "24.04" --shape "$shape" --sort-by TIMECREATED --sort-order DESC --limit 1 \
+    --query 'data[0].id' --raw-output)"
+  [[ "$image" == ocid1.image.* ]] || die "no Ubuntu 24.04 image for $shape"
+  install -d -m 0700 "$STATE"
+  jq -n --arg n "$name" --arg id "$old" --arg bv "$bv" --arg ip "$ip" --arg s "$subnet" --arg ad "$ad" --arg at "$(date -u +%FT%TZ)" \
+    '{host:$n, old_instance:$id, preserved_boot_volume:$bv, private_ip:$ip, subnet:$s, availability_domain:$ad, recorded_at_utc:$at}' \
+    >"$STATE/rebuild-$name.json"
+  say "rebuild_${name//-/_}_old=$old preserved_boot_volume=$bv private_ip=$ip"
+
+  local ud; ud="$(printf '#cloud-config\npreserve_hostname: false\nhostname: %s\nwrite_files:\n  - path: /etc/sudoers.d/90-dial-ocarun\n    owner: root:root\n    permissions: "0440"\n    content: |\n      ocarun ALL=(ALL) NOPASSWD:ALL\n' "$name" | base64 -w0)"
+  jq -n --arg k "$keys" --arg u "$ud" '{ssh_authorized_keys:$k, user_data:$u}' >"$tmp/metadata.json"
+  jq -n '{isMonitoringDisabled:false, isManagementDisabled:false, areAllPluginsDisabled:false,
+    pluginsConfig:[{name:"Compute Instance Run Command",desiredState:"ENABLED"},{name:"Bastion",desiredState:"ENABLED"},
+                   {name:"Compute Instance Monitoring",desiredState:"ENABLED"}]}' >"$tmp/agent.json"
+  chown "$ADMIN_USER:$ADMIN_USER" "$tmp"/*.json 2>/dev/null || true
+
+  oci_session compute instance terminate --instance-id "$old" --preserve-boot-volume true --force >/dev/null
+  local state i
+  for i in $(seq 1 90); do
+    state="$(oci_session compute instance get --instance-id "$old" --query 'data."lifecycle-state"' --raw-output)"
+    [[ "$state" == TERMINATED ]] && break
+    sleep 10
+  done
+  [[ "$state" == TERMINATED ]] || die "$name did not terminate (state $state); its boot volume $bv is preserved"
+  say "rebuild_${name//-/_}_old_state=TERMINATED"
+
+  local new="" err=""
+  for i in 1 2 3 4 5; do
+    if new="$(oci_session compute instance launch --availability-domain "$ad" --compartment-id "$comp" --shape "$shape" \
+          --subnet-id "$subnet" --private-ip "$ip" --assign-public-ip true --display-name "$name" --image-id "$image" \
+          --metadata "file://$tmp/metadata.json" --agent-config "file://$tmp/agent.json" \
+          --query 'data.id' --raw-output 2>"$tmp/err")" && [[ "$new" == ocid1.instance.* ]]; then break; fi
+    err="$(tail -3 "$tmp/err" 2>/dev/null)"; new=""; sleep 30
+  done
+  if [[ "$new" != ocid1.instance.* ]]; then
+    say "rebuild_${name//-/_}_launch_error=$(tr '\n' ' ' <<<"$err" | cut -c1-300)"
+    local back
+    back="$(oci_session compute instance launch --availability-domain "$ad" --compartment-id "$comp" --shape "$shape" \
+      --subnet-id "$subnet" --private-ip "$ip" --assign-public-ip true --display-name "$name" \
+      --source-boot-volume-id "$bv" --query 'data.id' --raw-output 2>/dev/null || true)"
+    rm -rf "$tmp"
+    [[ "$back" == ocid1.instance.* ]] && { sed -i "s|$old|$back|" "$ESTATE"; die "relaunch failed; $name restored from its preserved boot volume as $back" 46; }
+    die "relaunch failed and restore from boot volume $bv failed; restore it manually" 47
+  fi
+  for i in $(seq 1 60); do
+    state="$(oci_session compute instance get --instance-id "$new" --query 'data."lifecycle-state"' --raw-output)"
+    [[ "$state" == RUNNING ]] && break
+    sleep 10
+  done
+  rm -rf "$tmp"
+  [[ "$state" == RUNNING ]] || die "new $name $new is $state, not RUNNING"
+  sed -i "s|$old|$new|" "$ESTATE"
+  jq --arg n "$new" '. + {new_instance:$n}' "$STATE/rebuild-$name.json" >"$STATE/rebuild-$name.json.next" && mv "$STATE/rebuild-$name.json.next" "$STATE/rebuild-$name.json"
+  KEEP_SESSION=1   # the next rebuild can reuse this verified session
+  say "rebuild_${name//-/_}_new=$new state=RUNNING"
+  say "OCI_REBUILD_${name//-/_}=GREEN"
+}
+
 finish() {
   local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}" user_email="${4:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
@@ -467,6 +564,7 @@ case "$MODE" in
   finish) finish "${2:-}" "${3:-}" "${4:-}" "${5:-}" ;;
   rediscover) rediscover "${2:-}" ;;
   enable-run-command) enable_run_command "${2:-}" ;;
+  rebuild-instance) rebuild_instance "${2:-}" "${3:-}" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
   *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]|abort}" >&2; exit 2 ;;
 esac

@@ -327,6 +327,74 @@ describe('oci-edge-login finish', () => {
     expect(sessionGone(again)).toBe(true);
   });
 
+  it('rebuilds an E2 host: preserves its boot volume, reuses name/subnet/IP/owner key, grants ocarun sudo at first boot', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);           // estate inventory exists
+    const again = setup();
+    const r = run(again, 'rebuild-instance', TENANCY, 'vekl-worker');
+    expect(r.err).not.toMatch(/REFUSED/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('preserved_boot_volume=ocid1.bootvolume.oc1..bv-vekl');
+    expect(r.out).toContain('rebuild_vekl_worker_old_state=TERMINATED');
+    expect(r.out).toContain('rebuild_vekl_worker_new=ocid1.instance.oc1..new-vekl-worker state=RUNNING');
+    expect(fs.readFileSync(path.join(again.state, 'terminate-args'), 'utf8')).toMatch(/--preserve-boot-volume true/);
+    const args = fs.readFileSync(path.join(again.state, 'launch-args-vekl-worker'), 'utf8');
+    for (const a of ['--shape VM.Standard.E2.1.Micro', '--subnet-id ocid1.subnet.oc1..s', '--private-ip 10.0.0.51',
+      '--display-name vekl-worker', '--image-id ocid1.image.oc1..ubuntu2404']) expect(args).toContain(a);
+    const meta = JSON.parse(fs.readFileSync(path.join(again.state, 'launch-meta-vekl-worker.json'), 'utf8'));
+    expect(meta.ssh_authorized_keys).toBe('ssh-rsa AAAAowner owner-key');
+    const ud = Buffer.from(meta.user_data, 'base64').toString('utf8');
+    expect(ud).toMatch(/^#cloud-config\n/);
+    expect(ud).toContain('hostname: vekl-worker');
+    expect(ud).toContain('path: /etc/sudoers.d/90-dial-ocarun');
+    expect(ud).toContain('permissions: "0440"');
+    expect(ud).toContain('      ocarun ALL=(ALL) NOPASSWD:ALL');
+    const agent = JSON.parse(fs.readFileSync(path.join(again.state, 'launch-agent-vekl-worker.json'), 'utf8'));
+    expect(agent.pluginsConfig).toContainEqual({ name: 'Compute Instance Run Command', desiredState: 'ENABLED' });
+    expect(agent.pluginsConfig).toContainEqual({ name: 'Bastion', desiredState: 'ENABLED' });
+    const estate = fs.readFileSync(path.join(again.state, 'oracle-estate.env'), 'utf8');
+    expect(estate).toContain('VEKL_WORKER_OCID=ocid1.instance.oc1..new-vekl-worker');
+    expect(estate).not.toContain('ocid1.instance.oc1..vekl\n');
+  });
+
+  it('refuses to rebuild anything but oracle-admin or vekl-worker, before any OCI call', () => {
+    const ctx = setup();
+    for (const n of ['van-trading-core', 'dial-hermes-control', '', 'oracle-admin; rm -rf /']) {
+      const r = run(ctx, 'rebuild-instance', TENANCY, n);
+      expect(r.code).toBe(2);
+    }
+    expect(calls(ctx)).toBe('');
+  });
+
+  it('refuses a rebuild whose estate OCID does not name the requested host', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const again = setup();
+    again.env.FAKE_NAME_OVERRIDE = 'van-trading-core';
+    const r = run(again, 'rebuild-instance', TENANCY, 'vekl-worker');
+    expect(r.code).toBe(2);
+    expect(calls(again)).not.toContain('compute instance terminate');
+  });
+
+  it('restores the host from its preserved boot volume when the relaunch fails', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const again = setup();
+    again.env.FAKE_LAUNCH_FAIL = '1';
+    const r = run(again, 'rebuild-instance', TENANCY, 'oracle-admin');
+    expect(r.code).toBe(46);
+    expect(r.out).toContain('Out of host capacity');
+    expect(fs.readFileSync(path.join(again.state, 'restore-args'), 'utf8')).toContain('--source-boot-volume-id ocid1.bootvolume.oc1..bv-admin');
+    expect(fs.readFileSync(path.join(again.state, 'oracle-estate.env'), 'utf8')).toContain('ORACLE_ADMIN_OCID=ocid1.instance.oc1..restored-oracle-admin');
+  });
+
+  it('refuses rebuild-instance with a session for another tenancy', () => {
+    const ctx = setup({ tenant: OTHER_TENANCY });
+    const r = run(ctx, 'rebuild-instance', TENANCY, 'vekl-worker');
+    expect(r.code).toBe(22);
+    expect(calls(ctx)).not.toContain('compute instance terminate');
+  });
+
   it('refuses enable-run-command with a session for another tenancy', () => {
     const ctx = setup({ tenant: OTHER_TENANCY });
     const r = run(ctx, 'enable-run-command', TENANCY);

@@ -22,6 +22,10 @@ fi
 case "$1 $2 $3" in
   "iam region list"*|"iam compartment list"*|"instance-agent command list"*) echo '{"data":[]}' ;;
   "session terminate"*) : ;;
+  "compute instance list-vnics")
+    id="$(opt --instance-id "$@")"; q="$(opt --query "$@")"
+    if [[ "$q" == *subnet-id* ]]; then echo ocid1.subnet.oc1..s
+    else case "$id" in *admin*) echo 10.0.0.123 ;; *vekl*) echo 10.0.0.51 ;; *) echo 10.0.1.9 ;; esac; fi ;;
   "compute instance list"*)
     # IAM propagation: the durable key's listing can be refused for a while after the probe passed.
     # Durable = default ~/.oci/config (no --config-file, no OCI_CLI_CONFIG_FILE) or that file named explicitly.
@@ -49,9 +53,28 @@ case "$1 $2 $3" in
       *) echo '{"data":[]}' ;;
     esac ;;
   "compute instance get")
-    id="$(opt --instance-id "$@")"
-    if [[ -f "$S/agent-$id.json" ]]; then cat "$S/agent-$id.json"
-    else echo '{"is-management-disabled": false, "is-monitoring-disabled": false, "are-all-plugins-disabled": false, "plugins-config": null}'; fi ;;
+    id="$(opt --instance-id "$@")"; q="$(opt --query "$@")"
+    case "$id" in *admin*) nm=oracle-admin ;; *vekl*) nm=vekl-worker ;; *a1van*) nm=van-trading-core ;; *a1src*) nm=dial-hermes-control ;; *) nm=unknown ;; esac
+    if [[ "$q" == *lifecycle-state* ]]; then
+      if [[ -f "$S/terminated-$id" ]]; then echo TERMINATED; else echo RUNNING; fi
+    elif [[ "$q" == *agent-config* ]]; then
+      if [[ -f "$S/agent-$id.json" ]]; then cat "$S/agent-$id.json"
+      else echo '{"is-management-disabled": false, "is-monitoring-disabled": false, "are-all-plugins-disabled": false, "plugins-config": null}'; fi
+    else
+      shape=VM.Standard.A1.Flex; [[ "$nm" == oracle-admin || "$nm" == vekl-worker ]] && shape=VM.Standard.E2.1.Micro
+      echo '{"data":{"id":"'"$id"'","display-name":"'"${FAKE_NAME_OVERRIDE:-$nm}"'","shape":"'"$shape"'","availability-domain":"AD-1","compartment-id":"'"$FAKE_COMPARTMENT"'","metadata":{"ssh_authorized_keys":"ssh-rsa AAAAowner owner-key"}}}'
+    fi ;;
+  "compute boot-volume-attachment list") echo "ocid1.bootvolume.oc1..bv-$(opt --instance-id "$@" | sed 's/.*\.\.//')" ;;
+  "compute image list") echo ocid1.image.oc1..ubuntu2404 ;;
+  "compute instance terminate")
+    id="$(opt --instance-id "$@")"; touch "$S/terminated-$id"; echo "$*" >"$S/terminate-args" ;;
+  "compute instance launch")
+    name="$(opt --display-name "$@")"
+    if [[ -n "$(opt --source-boot-volume-id "$@")" ]]; then echo "$*" >"$S/restore-args"; echo "ocid1.instance.oc1..restored-$name"; exit 0; fi
+    if [[ "${FAKE_LAUNCH_FAIL:-0}" == 1 ]]; then echo 'ServiceError: {"code": "InternalError", "message": "Out of host capacity."}' >&2; exit 1; fi
+    m="$(opt --metadata "$@")"; a="$(opt --agent-config "$@")"
+    cat "${m#file://}" >"$S/launch-meta-$name.json"; cat "${a#file://}" >"$S/launch-agent-$name.json"; echo "$*" >"$S/launch-args-$name"
+    echo "ocid1.instance.oc1..new-$name" ;;
   "compute instance update")
     id="$(opt --instance-id "$@")"; ac="$(opt --agent-config "$@")"
     cat "${ac#file://}" >"$S/agent-update-$id.json"; echo '{"data":{}}' ;;
