@@ -159,10 +159,6 @@ if os.path.exists(path):
 memory=cfg.get('memory')
 if not isinstance(memory,dict): memory={}
 memory['provider']='openviking'
-ov=memory.get('openviking')
-if not isinstance(ov,dict): ov={}
-ov.update({'endpoint':'http://127.0.0.1:1933','account':'default','user':'default'})
-memory['openviking']=ov
 cfg['memory']=memory
 os.makedirs(os.path.dirname(path),exist_ok=True)
 fd,tmp=tempfile.mkstemp(prefix='.openviking-memory.',dir=os.path.dirname(path),text=True)
