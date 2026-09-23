@@ -35,7 +35,7 @@ function command(cmd, { env={}, timeout=15*60*1000 }={}) {
   const r=spawnSync('/bin/bash',['-lc',cmd],{
     encoding:'utf8',
     timeout,
-    env:{...process.env,...env},
+    env:{...process.env,PATH:(process.env.PATH||'/usr/local/bin:/usr/bin:/bin')+':/usr/local/sbin:/usr/sbin:/sbin',...env},
     maxBuffer: 4*1024*1024,
   });
   return {
