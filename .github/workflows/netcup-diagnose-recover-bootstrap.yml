@@ -35,6 +35,7 @@ jobs:
     outputs:
       device_code: ${{ steps.device.outputs.device_code }}
       interval: ${{ steps.device.outputs.interval }}
+      user_code: ${{ steps.device.outputs.user_code }}
     steps:
       - id: device
         name: Request Netcup SCP recovery authorization
@@ -54,6 +55,7 @@ jobs:
           {
             echo "device_code=$DEVICE_CODE"
             echo "interval=$INTERVAL"
+            echo "user_code=$USER_CODE"
           } >>"$GITHUB_OUTPUT"
           printf 'NETCUP_RECOVERY_APPROVAL_URL=%s\n' "$VERIFY_URL"
           printf 'NETCUP_RECOVERY_USER_CODE=%s\n' "$USER_CODE"
@@ -66,6 +68,7 @@ jobs:
           } >>"$GITHUB_STEP_SUMMARY"
 
   diagnose-and-recover:
+    name: "diagnose-and-recover [AUTH_CODE=${{ needs.request-authorization.outputs.user_code }}]"
     needs: request-authorization
     runs-on: ubuntu-latest
     timeout-minutes: 90
