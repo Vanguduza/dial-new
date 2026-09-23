@@ -11,6 +11,9 @@ on:
       - "agent-system/registries/ANDROID_TESTING_PLANE.json"
       - "agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json"
       - "deploy/netcup/hermes-control/artemis/**"
+      - "deploy/netcup/hermes-control/image-bootstrap.sh"
+      - "deploy/netcup/hermes-control/netcup-custom-script.sh"
+      - "deploy/netcup/hermes-control/postboot-converge.sh"
       - "deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh"
       - "deploy/netcup/hermes-control/install-openviking-memory-plane.sh"
       - "tests/orchestration-android-testing-plane.test.mjs"
@@ -48,6 +51,17 @@ jobs:
 
       - name: Parse ARTEMIS internal bridge
         run: python3 -m py_compile deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
+
+      - name: Validate Netcup subordinate bootstrap pin
+        run: |
+          set -euo pipefail
+          actual="$(git hash-object deploy/netcup/hermes-control/image-bootstrap.sh)"
+          expected="$(sed -n 's/^EXPECTED_IMAGE_BLOB=//p' deploy/netcup/hermes-control/netcup-custom-script.sh | head -1)"
+          test -n "$expected"
+          test "$actual" = "$expected"
+          grep -Eq 'adb fastboot ffmpeg scrcpy docker\.io' deploy/netcup/hermes-control/image-bootstrap.sh
+          grep -q 'install-openviking-memory-plane.sh' deploy/netcup/hermes-control/postboot-converge.sh
+          grep -q 'install-artemis-android-testing-plane.sh' deploy/netcup/hermes-control/postboot-converge.sh
 
       - name: Verify pinned ARTEMIS upstream contract and DIAL hardening
         run: |
