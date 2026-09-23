@@ -2,6 +2,8 @@
 set -euo pipefail
 S="$FAKE_STATE"
 echo "$*" >>"$S/calls.log"
+CFG=""; prev=""
+for a in "$@"; do [[ "$prev" == --config-file ]] && CFG="$a"; prev="$a"; done
 args=("$@"); rest=()
 i=0
 while [[ $i -lt ${#args[@]} ]]; do
@@ -21,6 +23,16 @@ case "$1 $2 $3" in
   "iam region list"*|"iam compartment list"*|"instance-agent command list"*) echo '{"data":[]}' ;;
   "session terminate"*) : ;;
   "compute instance list"*)
+    # IAM propagation: the durable key's listing can be refused for a while after the probe passed.
+    # Durable = default ~/.oci/config (no --config-file, no OCI_CLI_CONFIG_FILE) or that file named explicitly.
+    if [[ ( "$CFG" == */.oci/config || ( -z "$CFG" && -z "${OCI_CLI_CONFIG_FILE:-}" ) ) && -n "$(opt --display-name "$@")" ]]; then
+      n="$(cat "$S/durable-list-fails" 2>/dev/null || echo 0)"
+      if [[ "$n" -lt "${FAKE_DURABLE_LIST_FAILS:-0}" ]]; then
+        echo $((n + 1)) >"$S/durable-list-fails"
+        echo 'ServiceError: {"code": "NotAuthorizedOrNotFound", "message": "Authorization failed or requested resource not found."}' >&2
+        exit 1
+      fi
+    fi
     name="$(opt --display-name "$@")"
     case "$name" in
       oracle-admin) echo '{"data":[{"id":"ocid1.instance.oc1..admin","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"oracle-admin","shape":"VM.Standard.E2.1.Micro","lifecycle-state":"RUNNING"}]}' ;;

@@ -111,14 +111,23 @@ discover_instance() {
   tmp="$(mktemp)"
   for compartment in "${COMPARTMENTS[@]}"; do
     for display_name in "$@"; do
-      oci compute instance list \
+      # An OCI error (e.g. authorization still propagating) must never read as "0 found".
+      local out rc=0
+      out="$(oci compute instance list \
         --compartment-id "$compartment" \
         --display-name "$display_name" \
         --all \
-        --output json 2>/dev/null |
-        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape, ."lifecycle-state", ."time-created"] | @tsv' >>"$tmp" || true
+        --output json 2>"$tmp.err")" || rc=$?
+      if [[ "$rc" -ne 0 ]]; then
+        echo "REFUSE: OCI instance list failed for $logical ($display_name): $(tr -d '\n' <"$tmp.err" | grep -oE '"(code|message)": "[^"]*"' | tr '\n' ' ')" >&2
+        rm -f "$tmp" "$tmp.err"
+        return 26
+      fi
+      # The CLI prints nothing at all when a list is empty.
+      [[ -z "$out" ]] || jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape, ."lifecycle-state", ."time-created"] | @tsv' <<<"$out" >>"$tmp"
     done
   done
+  rm -f "$tmp.err"
   sort -u "$tmp" -o "$tmp"
   if [[ -n "$pin" ]]; then
     awk -F'\t' -v pin="$pin" '$1 == pin' "$tmp" >"$tmp.pin"

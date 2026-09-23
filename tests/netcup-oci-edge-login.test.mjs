@@ -240,6 +240,48 @@ describe('oci-edge-login finish', () => {
     expect(calls(ctx)).toBe('');
   });
 
+  it('retries the final durable discovery through IAM propagation instead of reporting 0 instances', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DURABLE_LIST_FAILS = '3';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.err).not.toContain('found 0');
+    expect(r.err).toContain('NotAuthorizedOrNotFound');
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(true);
+  });
+
+  it('reports the real OCI error when durable discovery never recovers', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DURABLE_LIST_FAILS = '1000';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.code).toBe(26);
+    expect(r.err).toContain('"code": "NotAuthorizedOrNotFound"');
+    expect(r.err).toContain('run rediscover_oci_estate');
+    expect(r.err).not.toContain('found 0');
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
+  });
+
+  it('rediscover completes the estate with the durable key alone, no session needed', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DURABLE_LIST_FAILS = '1000';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(26);
+    expect(sessionGone(ctx)).toBe(true);
+    ctx.env.FAKE_DURABLE_LIST_FAILS = '0';
+    const r = run(ctx, 'rediscover');
+    expect(r.err).not.toMatch(/REFUSE/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_RECOVERY_REDISCOVERY=GREEN');
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(true);
+    expect(calls(ctx)).not.toMatch(/rediscover.*security_token/);
+  });
+
+  it('refuses rediscover before any durable key exists', () => {
+    const ctx = setup({ session: false });
+    const r = run(ctx, 'rediscover');
+    expect(r.code).toBe(21);
+  });
+
   it('rejects a malformed tenancy argument', () => {
     const ctx = setup();
     expect(run(ctx, 'finish', 'ocid1.tenancy.oc1..x; rm -rf /').code).toBe(2);
