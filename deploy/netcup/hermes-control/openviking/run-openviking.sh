@@ -23,6 +23,7 @@ exec docker run --rm --name dial-openviking \
   --security-opt no-new-privileges:true \
   --cap-drop ALL \
   -e OPENVIKING_WITH_BOT=0 \
+  -e PYTHONDONTWRITEBYTECODE=1 \
   -e OPENVIKING_CONFIG_FILE=/app/.openviking/ov.conf \
   -e OPENVIKING_CLI_CONFIG_FILE=/app/.openviking/ovcli.conf \
   -e OPENVIKING_ROOT_API_KEY="$key" \
