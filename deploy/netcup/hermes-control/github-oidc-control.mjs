@@ -138,6 +138,7 @@ function sourceActive() {
     return validWgKey(receipt?.peers?.hermes_source);
   } catch { return false; }
 }
+function vanPending() { return fs.existsSync(path.join(CONTROL,'state/van-trading-core-pending-rebuild')); }
 function estateValue(name) {
   try {
     const m=fs.readFileSync('/etc/dial/oracle-estate.env','utf8').match(new RegExp('^'+name+'=(.*)$','m'));
@@ -148,7 +149,8 @@ function peerCheck() {
   const key=fs.existsSync('/home/ubuntu/.ssh/dial-oracle-admin')
     ? '/home/ubuntu/.ssh/dial-oracle-admin'
     : '/home/ubuntu/.ssh/dial-bootstrap-oracle';
-  const peers=['10.77.0.2','10.77.0.3','10.77.0.4'];
+  const peers=['10.77.0.2','10.77.0.3'];
+  if(!vanPending()) peers.push('10.77.0.4');
   if(sourceActive()) peers.push(SOURCE_IP);
   const out=[];
   for(const ip of peers){
@@ -253,15 +255,15 @@ async function dispatch(body, claims) {
       const keysPath=path.join(ROOT,'oracle-peer-keys.json');
       if(!fs.existsSync(keysPath)) throw new Error('OCI peer key receipt missing');
       const receipt=JSON.parse(fs.readFileSync(keysPath,'utf8'));
-      for(const k of ['oracle_admin','vekl_worker','van_trading_core']){
+      for(const k of (vanPending() ? ['oracle_admin','vekl_worker'] : ['oracle_admin','vekl_worker','van_trading_core'])){
         if(!validWgKey(receipt?.peers?.[k])) throw new Error('invalid persisted peer key '+k);
       }
       if(receipt.peers.hermes_source!==undefined && !validWgKey(receipt.peers.hermes_source)) throw new Error('invalid persisted peer key hermes_source');
-      if(receipt.schema_version!==2 || receipt.retained_oracle_instances!==3) throw new Error('OCI estate physical identity count invalid');
+      if(receipt.schema_version!==2 || receipt.retained_oracle_instances!==(vanPending()?2:3)) throw new Error('OCI estate physical identity count invalid');
       return {receipt,stdout:r.stdout};
     }
     case 'configure-overlay': {
-      for(const k of ['oracle_admin','vekl_worker','van_trading_core']){
+      for(const k of (vanPending() ? ['oracle_admin','vekl_worker'] : ['oracle_admin','vekl_worker','van_trading_core'])){
         if(!validWgKey(body?.peers?.[k])) throw new Error('invalid WireGuard public key for '+k);
       }
       const src=body?.peers?.hermes_source||'';
@@ -273,7 +275,7 @@ async function dispatch(body, claims) {
         {env:{
           ORACLE_ADMIN_WG_PUBLIC_KEY:body.peers.oracle_admin,
           VEKL_WORKER_WG_PUBLIC_KEY:body.peers.vekl_worker,
-          VAN_TRADING_CORE_WG_PUBLIC_KEY:body.peers.van_trading_core,
+          VAN_TRADING_CORE_WG_PUBLIC_KEY:body.peers.van_trading_core||'',
           HERMES_SOURCE_WG_PUBLIC_KEY:fs.existsSync(path.join(CONTROL,'state/a1-control-retired')) ? '' : src,
         }}
       );
@@ -369,6 +371,7 @@ async function dispatch(body, claims) {
     }
     case 'certify': {
       if(!fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) throw new Error('final certification requires retired A1 control role');
+      if(vanPending()) throw new Error('final certification requires the rebuilt van-trading-core (pending-rebuild marker still present)');
       const verify=ubuntu("DIAL_CONTROL_OVERLAY_IP=10.77.0.1 DIAL_REPO_DIR=/home/ubuntu/dial-new /home/ubuntu/dial-new/ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json",30*60*1000);
       requireOk(verify,'certify-core');
       const peers=peerCheck();
@@ -376,9 +379,10 @@ async function dispatch(body, claims) {
       const a1=peers.find((x)=>x.ip==='10.77.0.4');
       if(!a1 || a1.hostname!=='van-trading-core') throw Object.assign(new Error('A1 final identity is not van-trading-core'),{result:{a1}});
       if(peers.some((x)=>x.ip===SOURCE_IP)) throw new Error('migration source is still an overlay peer');
-      // Owner topology: dial-hermes-control is terminated once cloning is done.
+      // Owner plan 2026-09-23: dial-hermes-control is re-roled into van-trading-core (same instance,
+      // answering as van-trading-core at .4, checked above) or else must be terminated.
       const sourceOcid=estateValue('DIAL_HERMES_CONTROL_SOURCE_OCID');
-      if(sourceOcid){
+      if(sourceOcid && sourceOcid!==estateValue('VAN_TRADING_CORE_OCID')){
         const st=ubuntu("oci compute instance get --instance-id '"+sourceOcid.replace(/[^A-Za-z0-9._-]/g,'')+"' --query 'data.\"lifecycle-state\"' --raw-output",120000);
         requireOk(st,'certify-source-termination-state');
         if(!['TERMINATED','TERMINATING'].includes(st.stdout.trim())) throw Object.assign(new Error('dial-hermes-control must be terminated before certification (owner action)'),{result:{source_ocid:sourceOcid,state:st.stdout.trim()}});

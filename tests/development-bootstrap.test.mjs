@@ -323,6 +323,15 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('/usr/local/lib/dial-control/configure-wireguard-fabric.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/rotate-bootstrap-identities.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/retire-oracle-a1-control-role.sh');
+    // Owner rebuild plan: while van-trading-core is pending rebuild it is skipped up to retirement,
+    // but final certification still refuses until the rebuilt van-trading-core answers at .4.
+    const MARKER = 'van-trading-core-pending-rebuild';
+    const hubScript = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh'), 'utf8');
+    const rotateScript = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/rotate-bootstrap-identities.sh'), 'utf8');
+    for (const src of [ociEnroll, hubScript, rotateScript, retireA1, controller]) expect(src).toContain(MARKER);
+    expect(controller).toContain("if(vanPending()) throw new Error('final certification requires the rebuilt van-trading-core");
+    expect(controller).toContain("if(sourceOcid && sourceOcid!==estateValue('VAN_TRADING_CORE_OCID'))");
+    expect(workflow).toContain('.result.receipt.van_trading_core_pending_rebuild // false');
     // ocarun sudo grant: a bounded, owner-requested estate operation that validates the sudoers
     // drop-in before it can affect the live tree, and never installs a candidate visudo rejects.
     const grantSudo = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/grant-ocarun-sudo.sh'), 'utf8');
@@ -480,13 +489,13 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).not.toContain('OCI_INSTANCE_OLD_CONTROL');
     expect(workflow).not.toContain('OCI_RECOVERY_COMPARTMENT_OCID');
     expect(workflow).not.toContain('instance-agent command create');
-    expect(workflow).toContain('.result.receipt.retained_oracle_instances == 3');
+    expect(workflow).toContain('else .result.receipt.retained_oracle_instances == 3 and');
     expect(workflow).toContain('.result.receipt.peers.van_trading_core');
     expect(workflow).not.toContain('a1_transition');
     expect(ociEnroll).toContain('[van-trading-core]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).not.toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
-    expect(ociEnroll).toContain('retained_oracle_instances:3');
+    expect(ociEnroll).toContain('retained_oracle_instances:(if $pending == 1 then 2 else 3 end)');
     // The CLI runs as ubuntu; a root-owned 0700 temp dir made every file:// argument 'did not exist' (converge run #178).
     expect(ociEnroll).toContain('chown ubuntu:ubuntu "$TMPDIR"');
     expect(ociEnroll).toContain('chown ubuntu:ubuntu "$CONTENT" "$TARGET"');

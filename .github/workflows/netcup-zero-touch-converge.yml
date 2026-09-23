@@ -132,16 +132,17 @@ jobs:
           jq -e '
             .ok == true and
             .result.receipt.schema_version == 2 and
-            .result.receipt.retained_oracle_instances == 3 and
+            (if (.result.receipt.van_trading_core_pending_rebuild // false)
+               then .result.receipt.retained_oracle_instances == 2 and (.result.receipt.peers.van_trading_core // "") == ""
+               else .result.receipt.retained_oracle_instances == 3 and (.result.receipt.peers.van_trading_core | test("^[A-Za-z0-9+/]{43}=$")) end) and
             (.result.receipt.peers.oracle_admin | test("^[A-Za-z0-9+/]{43}=$")) and
             (.result.receipt.peers.vekl_worker | test("^[A-Za-z0-9+/]{43}=$")) and
-            (.result.receipt.peers.van_trading_core | test("^[A-Za-z0-9+/]{43}=$")) and
             ((.result.receipt.peers.hermes_source // "") | test("^([A-Za-z0-9+/]{43}=)?$"))
           ' <<<"$RESPONSE" >/dev/null
           {
             echo "oracle_admin=$(jq -r '.result.receipt.peers.oracle_admin' <<<"$RESPONSE")"
             echo "vekl_worker=$(jq -r '.result.receipt.peers.vekl_worker' <<<"$RESPONSE")"
-            echo "van_trading_core=$(jq -r '.result.receipt.peers.van_trading_core' <<<"$RESPONSE")"
+            echo "van_trading_core=$(jq -r '.result.receipt.peers.van_trading_core // ""' <<<"$RESPONSE")"
             echo "hermes_source=$(jq -r '.result.receipt.peers.hermes_source // ""' <<<"$RESPONSE")"
           } >>"$GITHUB_OUTPUT"
 

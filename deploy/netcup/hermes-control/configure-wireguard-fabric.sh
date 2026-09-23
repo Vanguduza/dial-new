@@ -14,7 +14,9 @@ CONF=/etc/wireguard/wg-dial.conf
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
 [[ -s "$KEY" ]] || { echo "REFUSE: $KEY missing; image bootstrap should have created it" >&2; exit 2; }
-for v in ADMIN_PUB VEKL_PUB VAN_PUB; do
+VAN_PENDING=0; [[ -f "${DIAL_VAN_PENDING_MARKER:-/var/lib/dial-control/state/van-trading-core-pending-rebuild}" ]] && VAN_PENDING=1
+REQ=(ADMIN_PUB VEKL_PUB); [[ "$VAN_PENDING" == 1 ]] || REQ+=(VAN_PUB)
+for v in "${REQ[@]}"; do
   [[ -n "${!v}" ]] || { echo "REFUSE: $v missing" >&2; exit 2; }
 done
 
@@ -34,12 +36,16 @@ AllowedIPs = 10.77.0.2/32
 # vekl-worker
 PublicKey = $VEKL_PUB
 AllowedIPs = 10.77.0.3/32
+EOF
+if [[ -n "$VAN_PUB" ]]; then
+  cat >>"$CONF" <<EOF
 
 [Peer]
 # van-trading-core (retained Oracle A1)
 PublicKey = $VAN_PUB
 AllowedIPs = 10.77.0.4/32
 EOF
+fi
 if [[ -n "$SRC_PUB" ]]; then
   [[ "$SRC_PUB" =~ ^[A-Za-z0-9+/]{43}=$ ]] || { echo "REFUSE: invalid migration source key" >&2; exit 2; }
   cat >>"$CONF" <<EOF
@@ -63,8 +69,8 @@ grep -vE '(^|[[:space:]])(oracle-admin|vekl-worker|van-trading-core|old-dial-her
 cat >>"$tmp" <<'EOF'
 10.77.0.2 oracle-admin
 10.77.0.3 vekl-worker
-10.77.0.4 van-trading-core
 EOF
+[[ -z "$VAN_PUB" ]] || echo '10.77.0.4 van-trading-core' >>"$tmp"
 [[ -z "$SRC_PUB" ]] || echo '10.77.0.5 old-dial-hermes-control' >>"$tmp"
 install -m 0644 "$tmp" /etc/hosts
 rm -f "$tmp"

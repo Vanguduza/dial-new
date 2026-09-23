@@ -136,8 +136,10 @@ if [[ -f "$SSH_CONFIG" ]]; then
 fi
 
 # The retained VAN peer must be untouched and still answer as itself.
-FINAL_CHECK=(runuser -u ubuntu -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new ubuntu@van-trading-core)
-[[ "$("${FINAL_CHECK[@]}" hostname)" == van-trading-core ]] || die "van-trading-core did not answer as itself after source retirement"
+if [[ ! -f "$CONTROL_HOME/state/van-trading-core-pending-rebuild" ]]; then
+  FINAL_CHECK=(runuser -u ubuntu -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new ubuntu@van-trading-core)
+  [[ "$("${FINAL_CHECK[@]}" hostname)" == van-trading-core ]] || die "van-trading-core did not answer as itself after source retirement"
+fi
 
 cat >"$EVIDENCE/post-retirement.json" <<EOF
 {

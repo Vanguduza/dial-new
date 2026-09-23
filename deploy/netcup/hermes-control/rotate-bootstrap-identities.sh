@@ -20,7 +20,8 @@ declare -A PEERS=(
   [vekl-worker]=10.77.0.3
   [van-trading-core]=10.77.0.4
 )
-NAMES=(oracle-admin vekl-worker van-trading-core)
+NAMES=(oracle-admin vekl-worker)
+[[ -f /var/lib/dial-control/state/van-trading-core-pending-rebuild ]] || NAMES+=(van-trading-core)
 # The migration source (a separate A1) is rotated only while it is still an overlay peer.
 if [[ ! -f /var/lib/dial-control/state/a1-control-retired ]] &&
    grep -qE '^10\.77\.0\.5[[:space:]]+old-dial-hermes-control([[:space:]]|$)' /etc/hosts; then

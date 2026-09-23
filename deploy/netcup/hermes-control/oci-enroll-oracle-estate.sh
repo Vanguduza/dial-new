@@ -10,6 +10,11 @@ OUT="$CONTROL_ROOT/oracle-peer-keys.json"
 NETCUP_PUBLIC_IP="${NETCUP_PUBLIC_IP:-62.83.35.103}"
 WG_PUB_FILE="${NETCUP_WG_PUBLIC_KEY_FILE:-/etc/wireguard/dial-netcup.pub}"
 SSH_PUB_FILE="${NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY_FILE:-/home/ubuntu/.ssh/dial-bootstrap-oracle.pub}"
+# Owner plan (auth-20260923-owner-estate-rebuild-hermes-becomes-van): the current van-trading-core is
+# being dropped and dial-hermes-control is re-roled into it after the Hermes clone. While this marker
+# exists van-trading-core is not enrolled; final certification still requires it.
+VAN_PENDING_MARKER="${DIAL_VAN_PENDING_MARKER:-/var/lib/dial-control/state/van-trading-core-pending-rebuild}"
+VAN_PENDING=0; [[ -f "$VAN_PENDING_MARKER" ]] && VAN_PENDING=1
 
 die(){ echo "OCI_ESTATE_ENROLL_REFUSED: $*" >&2; exit 2; }
 [[ "$(hostname)" == dial-control ]] || die "wrong host"
@@ -66,7 +71,8 @@ declare -A INSTANCE_IDS=(
   [vekl-worker]="$VEKL_WORKER_OCID"
   [van-trading-core]="$VAN_TRADING_CORE_OCID"
 )
-HOSTS=(oracle-admin vekl-worker van-trading-core)
+HOSTS=(oracle-admin vekl-worker)
+[[ "$VAN_PENDING" == 1 ]] || HOSTS+=(van-trading-core)
 if [[ -n "$SOURCE_OCID" ]]; then
   INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"
   HOSTS+=(old-dial-hermes-control)
@@ -127,13 +133,15 @@ install -d -m 0700 "$CONTROL_ROOT"
 jq -n \
   --arg admin "${KEYS[oracle-admin]}" \
   --arg vekl "${KEYS[vekl-worker]}" \
-  --arg van "${KEYS[van-trading-core]}" \
+  --arg van "${KEYS[van-trading-core]:-}" \
+  --argjson pending "$VAN_PENDING" \
   --arg src "${KEYS[old-dial-hermes-control]:-}" \
   --arg at "$(date -u +%FT%TZ)" \
   '{
     schema_version:2,
     enrolled_at_utc:$at,
-    retained_oracle_instances:3,
+    retained_oracle_instances:(if $pending == 1 then 2 else 3 end),
+    van_trading_core_pending_rebuild:($pending == 1),
     hermes_source_enrolled:($src != ""),
     peers:({
       oracle_admin:$admin,
@@ -144,6 +152,7 @@ jq -n \
 chmod 0600 "$OUT"
 
 echo "OCI_ORACLE_PEERS_ENROLLED=GREEN"
-echo "retained_oracle_instances=3"
+echo "retained_oracle_instances=$(( VAN_PENDING == 1 ? 2 : 3 ))"
+echo "van_trading_core_pending_rebuild=$([[ "$VAN_PENDING" == 1 ]] && echo true || echo false)"
 echo "hermes_source_enrolled=$([[ -n "${KEYS[old-dial-hermes-control]:-}" ]] && echo true || echo false)"
 echo "peer_keys_file=$OUT"
