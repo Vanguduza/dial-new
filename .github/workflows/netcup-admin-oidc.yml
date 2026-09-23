@@ -47,7 +47,7 @@ permissions:
 
 concurrency:
   group: dial-control-oidc-admin
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
