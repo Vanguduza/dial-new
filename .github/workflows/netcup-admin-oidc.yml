@@ -17,7 +17,7 @@ concurrency:
 
 env:
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
-  VAN_SHA: 1a2ab7c7f6c59e1164a7f4e12a7ea262dbeaa54e
+  VAN_SHA: b88418d10a791ad0ce6a9b196267908e8bff0525
 
 jobs:
   install:
