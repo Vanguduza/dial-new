@@ -1,4 +1,5 @@
 name: Temporary Project Truth Digest
+# rerun: closure-candidate-v2
 on:
   push:
     branches:
