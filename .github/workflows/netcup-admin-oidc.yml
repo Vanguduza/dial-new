@@ -259,7 +259,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          RAW_COMMAND='set +e; echo OCI_BIN_ROOT=$(command -v oci || true); echo OCI_BIN_UBUNTU=$(runuser -u ubuntu -- bash -lc "command -v oci" 2>/dev/null || true); echo ---OUTPUT---; tail -n 120 /var/lib/dial-control/oci-browser-bootstrap/output.log 2>/dev/null || true; echo ---EXIT---; cat /var/lib/dial-control/oci-browser-bootstrap/exit-code 2>/dev/null || true; echo ---UNIT---; systemctl status dial-oci-browser-bootstrap.service --no-pager -l 2>&1 | tail -n 80 || true; echo ---PORT---; ss -ltnp "sport = :8181" || true'
+          RAW_COMMAND='set +e; echo OCI_BIN_ROOT=$(command -v oci || true); echo OCI_BIN_UBUNTU=$(runuser -u ubuntu -- bash -lc "command -v oci" 2>/dev/null || true); echo ---OUTPUT---; tail -n 120 /var/lib/dial-control/oci-browser-bootstrap/output.log 2>/dev/null || true; echo ---EXIT---; cat /var/lib/dial-control/oci-browser-bootstrap/exit-code 2>/dev/null || true; echo ---UNIT---; UNIT=$(cat /var/lib/dial-control/oci-browser-bootstrap/unit-name 2>/dev/null || true); [[ -n "$UNIT" ]] && systemctl status "$UNIT.service" --no-pager -l 2>&1 | tail -n 80 || true; echo ---PORT---; ss -ltnp "sport = :8181" || true'
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
@@ -274,10 +274,12 @@ jobs:
           set -Eeuo pipefail
           LOGDIR=/var/lib/dial-control/oci-browser-bootstrap
           install -d -m 0700 -o ubuntu -g ubuntu "$LOGDIR"
-          systemctl stop dial-oci-browser-bootstrap.service >/dev/null 2>&1 || true
           rm -f "$LOGDIR/output.log" "$LOGDIR/exit-code"
           fuser -k 8181/tcp >/dev/null 2>&1 || true
-          systemd-run             --unit=dial-oci-browser-bootstrap             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=Environment=PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin             --property=WorkingDirectory=/home/ubuntu             /bin/bash -lc 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
+          UNIT="dial-oci-browser-bootstrap-${GITHUB_RUN_ID:-manual}"
+          printf '%s\n' "$UNIT" >"$LOGDIR/unit-name"
+          systemctl reset-failed "$UNIT.service" >/dev/null 2>&1 || true
+          systemd-run             --unit="$UNIT"             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=Environment=PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin             --property=WorkingDirectory=/home/ubuntu             /bin/bash -lc 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
           echo OCI_EDGE_BOOTSTRAP_STARTED=TRUE
           CMD
           )"
