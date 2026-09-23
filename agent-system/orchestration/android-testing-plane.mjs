@@ -151,7 +151,7 @@ export async function runAndroidTest({
   const run=evidenceDir(projectId,root);
   const c=cfg(root);
   const started=new Date().toISOString();
-  let build=null, install=null, artemis=null, success=false, error=null;
+  let build=null, install=null, preflight=null, artemis=null, success=false, error=null;
   try {
     try { runFile(c.adb,['-s',serial,'logcat','-c'],{timeoutMs:15000}); } catch {}
     if(gradleTask) {
@@ -170,9 +170,33 @@ export async function runAndroidTest({
       const output=runFile(c.adb,['-s',serial,'install','-r','-g',absolute],{timeoutMs:180000});
       install={apk:path.relative(repo,absolute),apk_sha256:sha256(fs.readFileSync(absolute)),result:bounded(output,12000)};
     }
-    if(packageName) requirePackage(packageName);
-    const env={ADB_DEVICE_SERIAL:serial,DIAL_ANDROID_TEST_RUN_ID:run.id};
-    const output=runFile(c.artemis,['run',task,'--profile',selectedProfile],{
+    const lockedPackage=packageName ? requirePackage(packageName) : null;
+    const env={
+      ADB_DEVICE_SERIAL:serial,
+      ARTEMIS_DEVICE_ID:serial,
+      ARTEMIS_TASK_INGRESS:'dial-hermes-android-testing',
+      DIAL_ANDROID_TEST_RUN_ID:run.id,
+    };
+    const doctorOutput=runFile(c.artemis,['doctor'],{
+      cwd:path.resolve(path.dirname(c.artemis),'../..'),
+      env,
+      timeoutMs:120000,
+    });
+    saveText(path.join(run.dir,'artemis-doctor.txt'),doctorOutput);
+    preflight={output_sha256:sha256(bounded(doctorOutput)),output:bounded(doctorOutput,40000)};
+    const tracesPath=path.join(run.dir,'artemis-traces');
+    fs.mkdirSync(tracesPath,{recursive:true,mode:0o700});
+    const artemisArgs=[
+      'run',task,
+      '--profile',selectedProfile,
+      '--device-serial',serial,
+      '--standalone',
+      '--test-name',run.id,
+      '--traces-path',tracesPath,
+    ];
+    if(lockedPackage) artemisArgs.push('--locked-app',lockedPackage);
+    if(selectedProfile==='pro') artemisArgs.push('--verification-level','strict');
+    const output=runFile(c.artemis,artemisArgs,{
       cwd:path.resolve(path.dirname(c.artemis),'../..'),
       env,
       timeoutMs:Math.min(Math.max(Number(timeoutMs)||1800000,60000),2700000),
@@ -189,7 +213,7 @@ export async function runAndroidTest({
     const summary={
       schema_version:1,run_id:run.id,project:projectId,device_serial:serial,profile:selectedProfile,
       objective_sha256:sha256(task),repository_sha:git.commit,branch:git.branch,started_at:started,finished_at:new Date().toISOString(),
-      success,build,install,artemis,error,artifacts,
+      success,build,install,preflight,artemis,error,artifacts,
       authority:'TEST_EVIDENCE_NON_AUTHORITATIVE_UNTIL_RECONCILED',
     };
     const summaryPath=path.join(run.dir,'summary.json');
