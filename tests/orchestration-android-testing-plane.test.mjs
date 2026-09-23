@@ -134,6 +134,27 @@ describe('Hermes Android testing plane',()=>{
     expect(()=>manageAndroidTask({traceId:'foreign-trace',action:'status',root})).toThrow(/not owned/);
   });
 
+  it('supervises asynchronous ARTEMIS tasks and seals evidence without an interactive poller',()=>{
+    const root=temp('android-plane-control-');
+    const repo=makeRepo();
+    makeHarness();
+    const started=startAndroidTask({
+      project:'van',repoDir:repo,deviceSerial:'SERIAL-1',objective:'Run a supervised Android workflow.',profile:'flash',root,sourceHarness:'hermes',
+    });
+    const output=execFileSync(process.execPath,[path.resolve('agent-system/orchestration/android-testing-supervisor.mjs')],{
+      cwd:path.resolve('.'),
+      env:{...process.env,DIAL_CONTROL_HOME:root},
+      encoding:'utf8',
+    });
+    const report=JSON.parse(output);
+    expect(report.checked).toBe(1);
+    expect(report.sealed).toBe(1);
+    expect(report.errors).toEqual([]);
+    const task=JSON.parse(fs.readFileSync(path.join(root,'android-testing','tasks',`${started.trace_id}.json`),'utf8'));
+    expect(task.evidence.sealed_at).toBeTruthy();
+    expect(task.evidence.memory_candidate.memory_id).toMatch(/^mem-/);
+  });
+
   it('routes device observation and diagnosis through admitted Hermes policy',()=>{
     const root=temp('android-plane-control-');
     makeRepo();
