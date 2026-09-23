@@ -250,6 +250,95 @@ function sealAsyncEvidence(traceId,status,root=DEFAULT_CONTROL_HOME) {
   return rec.evidence;
 }
 
+
+export function resolveAdmittedAndroidSerial(deviceSerial=null,{root=DEFAULT_CONTROL_HOME}={}) {
+  return resolveAdmittedSerial(deviceSerial,root);
+}
+
+export function requireAdmittedAndroidAvd(avdName,{root=DEFAULT_CONTROL_HOME}={}) {
+  const avd=String(avdName||'').trim();
+  if(!AVD_RE.test(avd) || !allowedAvds(root).has(avd)) {
+    throw new Error(`Android AVD is not admitted to the Hermes test plane: ${avdName}`);
+  }
+  return avd;
+}
+
+export function isHermesOwnedAndroidTrace(traceId,{root=DEFAULT_CONTROL_HOME}={}) {
+  try {
+    loadTaskRecord(requireTrace(traceId),root);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function registerOwnerConsoleTask({
+  traceId,
+  project='dial',
+  repoDir='.',
+  deviceSerial,
+  objective,
+  profile='flash',
+  apkPath=null,
+  packageName=null,
+  expectedOutput=null,
+  verificationLevel='strict',
+  explorerMode='flash',
+  upstreamStatus='running',
+  root=DEFAULT_CONTROL_HOME,
+  sourceHarness='van-owner-web',
+}={}) {
+  const trace=requireTrace(traceId);
+  const existing=taskRecordPath(trace,root);
+  if(fs.existsSync(existing)) return readJsonFile(existing);
+  const projectId=slug(project,'project');
+  const serial=requireSerial(deviceSerial,root);
+  const selectedProfile=requireProfile(profile);
+  const task=String(objective||'').trim();
+  if(!task || task.length>12000) throw new Error('Android task objective is required and must be <= 12000 characters');
+  const repo=path.resolve(repoDir||'.');
+  if(!fs.existsSync(repo)) throw new Error(`repository missing: ${repo}`);
+  const git=captureGitState(repo);
+  const lockedPackage=packageName ? requirePackage(packageName) : null;
+  let absoluteApk=null, apkSha=null;
+  if(apkPath){
+    absoluteApk=path.resolve(repo,apkPath);
+    if(!within(repo,absoluteApk)) throw new Error('APK path escapes repository');
+    if(!fs.existsSync(absoluteApk) || !absoluteApk.endsWith('.apk')) throw new Error(`APK not found: ${absoluteApk}`);
+    apkSha=sha256(fs.readFileSync(absoluteApk));
+  }
+  const verification=requireVerification(verificationLevel,selectedProfile);
+  const explorer=requireExplorer(explorerMode,selectedProfile);
+  const record={
+    schema_version:1,
+    trace_id:trace,
+    authority:'HERMES_OWNED_ARTEMIS_SUBORDINATE_TASK',
+    owner_surface:'VAN_ARTEMIS_WEB_CONSOLE',
+    project:projectId,
+    repository_sha:git.commit,
+    repository_branch:git.branch,
+    device_serial:serial,
+    profile:selectedProfile,
+    verification_level:verification,
+    explorer_mode:explorer,
+    package_name:lockedPackage,
+    apk_sha256:apkSha,
+    expected_output_sha256:expectedOutput ? sha256(String(expectedOutput)) : null,
+    objective_sha256:sha256(task),
+    source_harness:sourceHarness,
+    started_at:new Date().toISOString(),
+    upstream:{
+      status:String(upstreamStatus||'running').slice(0,80),
+      ingress:'dial-hermes-van-owner-ui',
+      stdout_log:null,
+      stderr_log:null,
+      notes_dir:null,
+    },
+  };
+  writeJsonAtomic(existing,record);
+  return record;
+}
+
 export function androidTestingStatus({root=DEFAULT_CONTROL_HOME}={}) {
   const c=cfg(root);
   let adb='';

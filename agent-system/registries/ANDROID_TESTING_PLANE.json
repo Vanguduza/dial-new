@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V2",
   "authority": "HERMES_CONTROL_AUTHORITY",
   "host": "dial-control",
@@ -34,8 +34,9 @@
     "async_supervisor": "/var/lib/dial-control via dial-artemis-supervisor.timer",
     "van_console_proxy": "dial-artemis-console-proxy.service",
     "van_console_proxy_port": 9135,
-    "van_console_proxy_auth": "BEARER_SECRET_OUTSIDE_GIT",
-    "raw_artemis_ui": "LOOPBACK_ONLY_127.0.0.1:9146"
+    "van_console_proxy_auth": "SERVER_SIDE_BEARER_SECRET_OUTSIDE_ANDROID_AND_GIT",
+    "raw_artemis_ui": "LOOPBACK_ONLY_127.0.0.1:9146",
+    "van_console_mode": "HERMES_GOVERNED_OWNER_CONTROL"
   },
   "upstream_native_capabilities_consumed_internally": {
     "mobile_run_task": "android_task_start",
@@ -111,13 +112,29 @@
     "trace_management_requires_hermes_owned_trace": true,
     "secrets_in_evidence": "PROHIBITED",
     "managed_parallel_artemis_web_control_surface": "PROHIBITED",
-    "van_embedded_web_console": "ALLOWED_ONLY_VIA_HERMES_AUTHENTICATED_PROXY",
-    "van_console_mutations": "BLOCKED_AT_PROXY_USE_HERMES_ANDROID_TESTING_BROKER"
+    "van_embedded_web_console": "ALLOWED_ONLY_VIA_HERMES_AUTHENTICATED_PROXY_AND_VAN_OWNER_SESSION",
+    "van_console_mutations": "HERMES_GOVERNED_OWNER_ALLOWLIST",
+    "van_console_allowed_mutations": [
+      "SINGLE_TASK_RUN_ON_ADMITTED_DEVICE",
+      "STOP_HERMES_OWNED_TRACE",
+      "SELECT_ADMITTED_DEVICE",
+      "LAUNCH_ADMITTED_AVD",
+      "ADB_RESTART_OR_KEY_HEAL",
+      "EMULATOR_STOP_OR_DISMISS"
+    ],
+    "van_console_blocked_mutations": [
+      "CREDENTIAL_WRITE_OR_TEST",
+      "ADB_SERVER_REBIND",
+      "HISTORY_CLEANUP_OR_SESSION_DELETE",
+      "STEP_REPLAY",
+      "ARTEMIS_SERVER_RESTART_OR_SHUTDOWN",
+      "GLOBAL_STOP"
+    ]
   },
   "readiness": {
     "engineering": "IMPLEMENTED",
     "live_host_install": "PENDING_LIVE_DIAL_CONTROL",
     "physical_device_certification": "PENDING_ADMITTED_CONNECTED_DEVICE",
-    "van_embedded_console_engineering": "IMPLEMENTED_PENDING_VAN_GATEWAY_WIRING"
+    "van_embedded_console_engineering": "HERMES_GOVERNED_CONTROL_IMPLEMENTED_PENDING_LIVE_VAN_GATEWAY_QUALIFICATION"
   }
 }

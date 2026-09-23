@@ -115,9 +115,9 @@ The upstream ARTEMIS Showcase/Admin web surface is now prepared as a **loopback-
 
 The console proxy binds to the DIAL private overlay on port `9135`, authenticates every browser-proxy request with a secret stored outside Git, strips browser Origin/forwarding headers before reaching ARTEMIS, and keeps the upstream server on `127.0.0.1:9146`.
 
-The first integration mode is deliberately `OBSERVE_ONLY`: GET/HEAD/OPTIONS traffic is proxied so VAN can embed ARTEMIS live device state, task/trace views, replay material and diagnostics, while direct upstream task mutation is rejected with `hermes_governed_control_required`. Task start/stop/instruction injection/diagnosis continue through `dial_android_testing`, preserving ARTEMIS as a Hermes subordinate rather than creating a second control authority.
+The VAN surface is now `HERMES_GOVERNED_CONTROL`, not a raw ARTEMIS admin port. Read traffic is proxied for live device state, task/trace views and diagnostics. A narrow owner mutation allowlist admits one task at a time on an admitted device, stop of a Hermes-owned trace, admitted device selection, admitted AVD launch, ADB restart/key-heal, and emulator stop/dismiss. Task submissions are forced to `dial-hermes-van-owner-ui`, assigned a server-generated trace ID, registered in the Hermes Android task ledger, and remain `TEST_EVIDENCE` candidates until normal reconciliation. Credential writes/tests, ADB-server rebinding, history cleanup/session deletion, step replay, server lifecycle, global stop and unknown mutations are refused at the proxy.
 
-The VAN Android/Gateway side may mint a short-lived owner-device-bound web session and proxy this private service into an in-app WebView. The private Netcup bearer token must remain server-side; it is never sent to Android.
+The VAN Android/Gateway side mints a short-lived hardware-owner-device-bound web session and proxies this private service into an in-app WebView. The private Netcup bearer token remains server-side and is never sent to Android. Browser mutations therefore cross two boundaries: the VAN owner session and the Netcup Hermes allowlist.
 
 ## OpenViking memory plane
 
@@ -214,7 +214,7 @@ OpenViking:
 ARTEMIS:
 - converges when `adb`, `scrcpy`, and `ffmpeg` are already present,
 - installs the Hermes-only ARTEMIS bridge and governed MCP,
-- starts the raw ARTEMIS web server on loopback only and exposes an authenticated private-overlay proxy for VAN in observe-only mode; mutation remains on the Hermes Android broker,
+- starts the raw ARTEMIS web server on loopback only and exposes an authenticated private-overlay proxy for VAN with a narrow Hermes-governed owner mutation allowlist; unsupported/admin mutations remain blocked,
 - otherwise reports the host dependency gap instead of silently auto-installing unpinned packages.
 
 The Netcup image bootstrap now installs the Android host dependencies (`adb`, `scrcpy`, `ffmpeg`) and Docker required by the OpenViking container, and adds the service user to the Docker group before zero-touch postboot activation.
