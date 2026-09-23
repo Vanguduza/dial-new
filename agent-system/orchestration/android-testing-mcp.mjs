@@ -168,10 +168,13 @@ async function handle(message){
     capabilities:{tools:{listChanged:false}},
     serverInfo:{name:'dial-hermes-android-testing',version:'2.0.0'},
     instructions:[
-      'Hermes is the Android control authority and ARTEMIS is its subordinate executor.',
-      'Use ARTEMIS for the Android work it excels at: live device exploration, cross-app UI automation, Flash/Pro execution, strict verification, device observation, trace replay, diagnosis, safe self-heal and multi-device testing.',
-      'Never expose or connect the raw upstream ARTEMIS MCP. All ARTEMIS access passes through this admission, trace-ownership and evidence broker.',
-      'Prefer Flash for routine deterministic UI paths; use Pro for exploration, recovery, ADB/log diagnosis, checkpoint verification, long-horizon work or continuous monitoring.',
+      'Hermes is the Android control authority and ARTEMIS is its subordinate specialist executor.',
+      'Delegate live Android device work to ARTEMIS rather than recreating it in a general coding harness: active UI exploration, bug reproduction, cross-app automation, performance/stability investigation, device observation, trace replay, ADB/log diagnosis, recovery, safe self-heal, emulator work and multi-device tests.',
+      'Before coding around an observed Android problem, inspect the live admitted device and reproduce the state when practical; do not hallucinate UI state from source alone.',
+      'Prefer Flash for routine deterministic UI paths. Use Pro for exploration, recovery, ADB/log diagnosis, performance investigation, checkpoint or strict verification, multi-branch UI state, long-horizon work, continuous monitoring, or a written report.',
+      'For recurring flows, use ARTEMIS to discover and verify the path, then converge stable repetition into deterministic automation instead of repeatedly spending autonomous-agent turns.',
+      'Poll async work through the Hermes supervisor at least every minute, inspect terminal trace/log evidence, and consume Pro notes/reports before claiming success.',
+      'Never expose or connect the raw upstream ARTEMIS MCP or managed web console. All supported ARTEMIS access passes through this admission, trace-ownership and evidence broker.',
       'Results are evidence, not Project Truth. Physical certification requires a real admitted device run.',
     ].join(' '),
   });
