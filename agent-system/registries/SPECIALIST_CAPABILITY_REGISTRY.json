@@ -123,7 +123,9 @@
         "apk_install_and_locked_app_execution": true,
         "video_and_history_analysis": true,
         "repository_write": false,
-        "project_truth_write": false
+        "project_truth_write": false,
+        "bug_reproduction": true,
+        "performance_and_stability_profiling": true
       },
       "output_class": "EVIDENCE",
       "governed_by": [
