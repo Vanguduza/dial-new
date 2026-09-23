@@ -321,6 +321,14 @@ jobs:
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
         run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activate"}' >/dev/null
 
+      - name: Prove Netcup ready before retiring old Oracle control
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"source-retirement-preflight"}' >/dev/null
+
+      - name: Retire old Hermes control role on Oracle A1
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"retire-a1-control-role"}' >/dev/null
+
       - name: Optionally register self-hosted GitHub admin runner
         if: ${{ steps.prerequisites.outputs.ready == 'true' }}
         continue-on-error: true
@@ -344,6 +352,8 @@ jobs:
             echo "- GitHub OIDC admin: GREEN"
             echo "- Oracle WireGuard/SSH: GREEN"
             echo "- Hermes migration/cutover: GREEN"
-            echo "- Oracle A1: preserved as one transition peer; VAN/VATI authority is not mutated by DIAL"
-            echo "- old Oracle control role retirement: separate role-transition gate; instance deletion is not part of DIAL convergence"
+            echo "- Oracle A1: one physical transition peer; old Hermes control installation/state retired after verified clone"
+            echo "- Oracle A1 final identity: van-trading-core"
+            echo "- VAN/VATI authority: preserved; DIAL removes only the former control-plane role/state and keeps SSH/WireGuard/provider user credentials"
+            echo "- final estate: Netcup Dial Control + van-trading-core + vekl-worker + oracle-admin"
           } >>"$GITHUB_STEP_SUMMARY"
