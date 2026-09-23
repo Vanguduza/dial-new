@@ -355,6 +355,7 @@ finish() {
     "Allow group \($g) to read instance-family in \($s)",
     "Allow group \($g) to use instances in \($s) where request.permission = '"'"'INSTANCE_POWER_ACTIONS'"'"'",
     "Allow group \($g) to manage instance-agent-command-family in \($s)",
+    "Allow group \($g) to read instance-agent-command-execution-family in \($s)",
     "Allow dynamic-group \($d) to use instance-agent-command-execution-family in \($s) where request.instance.id = target.instance.id"
   ]')"
   policy="$(ocid_by_name policy "$tenant" "$RECOVERY_NAME")"

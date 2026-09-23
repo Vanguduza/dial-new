@@ -106,7 +106,11 @@ for HOST_ID in "${HOSTS[@]}"; do
     esac
     sleep 5
   done
-  [[ "$STATE" == SUCCEEDED ]] || die "OCI peer enrollment failed for $HOST_ID: $STATE"
+  if [[ "$STATE" != SUCCEEDED ]]; then
+    # The peer's own output is the only evidence of why it failed; show its tail (no secrets are printed by the peer script).
+    jq -r '.data.content.text // "" | split("\n") | .[-25:] | .[]' <<<"$EXEC_JSON" >&2 || true
+    die "OCI peer enrollment failed for $HOST_ID: $STATE (exit $(jq -r '.data.content."exit-code" // "n/a"' <<<"$EXEC_JSON"))"
+  fi
   EXIT_CODE="$(jq -r '.data.content."exit-code" // -1' <<<"$EXEC_JSON")"
   [[ "$EXIT_CODE" == 0 ]] || die "peer enrollment exit code $EXIT_CODE for $HOST_ID"
   OUTPUT="$(jq -r '.data.content.text // ""' <<<"$EXEC_JSON")"

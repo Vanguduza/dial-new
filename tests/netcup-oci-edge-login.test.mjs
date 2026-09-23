@@ -91,7 +91,10 @@ describe('oci-edge-login finish', () => {
 
     // Root compartment: policy grammar is "in tenancy", never "compartment id <tenancy ocid>".
     const statements = JSON.parse(fs.readFileSync(path.join(ctx.state, 'iam/policy-statements'), 'utf8'));
-    expect(statements).toHaveLength(5);
+    expect(statements).toHaveLength(6);
+    // Converge run #181: with only "manage instance-agent-command-family", execution list worked but
+    // execution get (exit code and output) returned 404 for an execution that exists.
+    expect(statements).toContain('Allow group dial-netcup-recovery to read instance-agent-command-execution-family in tenancy');
     expect(statements.join('\n')).not.toContain('compartment id ocid1.tenancy');
     expect(statements).toContain("Allow group dial-netcup-recovery to use instances in tenancy where request.permission = 'INSTANCE_POWER_ACTIONS'");
     expect(statements.some((s) => /manage all-resources|manage instance-family/.test(s))).toBe(false);
