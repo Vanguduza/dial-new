@@ -1,6 +1,11 @@
 name: Dial Control GitHub OIDC admin
 
 on:
+  push:
+    branches:
+      - gpt/netcup-hermes-control-integrated-20260921
+    paths:
+      - .github/workflows/netcup-admin-oidc.yml
   workflow_dispatch:
     inputs:
       operation:
@@ -47,7 +52,7 @@ env:
 
 jobs:
   admin:
-    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -196,3 +201,111 @@ jobs:
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
           jq -e '.ok == true and .result.recovery_ready == true' <<<"$RESPONSE" >/dev/null
           echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
+
+  edge-auth-bootstrap:
+    if: ${{ github.event_name == 'push' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Start supported OCI Edge authentication bridge
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RAW_COMMAND="$(cat <<'CMD'
+          set -Eeuo pipefail
+          LOGDIR=/var/lib/dial-control/oci-edge-auth
+          OCI_BIN="$(command -v oci || true)"
+          CF_BIN="$(command -v cloudflared || true)"
+          [[ -x "$OCI_BIN" ]] || { echo "REFUSE: OCI CLI missing"; exit 31; }
+          [[ -x "$CF_BIN" ]] || { echo "REFUSE: cloudflared missing"; exit 32; }
+
+          install -d -m 0700 -o ubuntu -g ubuntu "$LOGDIR"
+          rm -f "$LOGDIR/oci.log" "$LOGDIR/tunnel.log" "$LOGDIR/session-complete"
+          rm -rf /home/ubuntu/.oci/edge-session
+          rm -f /home/ubuntu/.oci/edge-session-config
+          install -d -m 0700 -o ubuntu -g ubuntu /home/ubuntu/.oci/edge-session
+
+          fuser -k 8181/tcp >/dev/null 2>&1 || true
+          pkill -f 'cloudflared tunnel --url http://127.0.0.1:8181' >/dev/null 2>&1 || true
+
+          SESSION_WRAPPER="$LOGDIR/run-session.sh"
+          cat >"$SESSION_WRAPPER" <<EOF
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          export HOME=/home/ubuntu
+          export BROWSER=/bin/false
+          export PYTHONUNBUFFERED=1
+          export PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin
+          exec "$OCI_BIN" session authenticate \
+            --region af-johannesburg-1 \
+            --profile-name DIAL_EDGE_SESSION \
+            --config-location /home/ubuntu/.oci/edge-session-config \
+            --token-location /home/ubuntu/.oci/edge-session \
+            --session-expiration-in-minutes 30 \
+            >"$LOGDIR/oci.log" 2>&1
+          EOF
+          chown ubuntu:ubuntu "$SESSION_WRAPPER"
+          chmod 0700 "$SESSION_WRAPPER"
+
+          STAMP="$(date +%s%N)"
+          systemd-run             --unit="dial-oci-edge-session-$STAMP"             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=WorkingDirectory=/home/ubuntu             "$SESSION_WRAPPER" >/dev/null
+
+          AUTH_URL=
+          for attempt in $(seq 1 30); do
+            AUTH_URL="$(grep -Eo 'https://login\.[^[:space:]]+' "$LOGDIR/oci.log" 2>/dev/null | head -1 || true)"
+            LISTENERS="$(ss -ltnH 'sport = :8181' 2>/dev/null | wc -l)"
+            if [[ -n "$AUTH_URL" && "$LISTENERS" -ge 1 ]]; then break; fi
+            sleep 2
+          done
+          [[ -n "$AUTH_URL" ]] || { echo "REFUSE: OCI browser authorization URL did not appear"; cat "$LOGDIR/oci.log" 2>/dev/null || true; exit 33; }
+          [[ "$(ss -ltnH 'sport = :8181' 2>/dev/null | wc -l)" -ge 1 ]] || { echo "REFUSE: OCI callback listener is not active"; exit 34; }
+
+          TUNNEL_WRAPPER="$LOGDIR/run-tunnel.sh"
+          cat >"$TUNNEL_WRAPPER" <<EOF
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          exec "$CF_BIN" tunnel --no-autoupdate --url http://127.0.0.1:8181 >"$LOGDIR/tunnel.log" 2>&1
+          EOF
+          chmod 0700 "$TUNNEL_WRAPPER"
+          systemd-run             --unit="dial-oci-edge-tunnel-$STAMP"             "$TUNNEL_WRAPPER" >/dev/null
+
+          CALLBACK_URL=
+          for attempt in $(seq 1 45); do
+            CALLBACK_URL="$(grep -Eo 'https://[a-z0-9-]+\.trycloudflare\.com' "$LOGDIR/tunnel.log" 2>/dev/null | head -1 || true)"
+            [[ -n "$CALLBACK_URL" ]] && break
+            sleep 2
+          done
+          [[ -n "$CALLBACK_URL" ]] || { echo "REFUSE: HTTPS callback bridge did not become ready"; cat "$LOGDIR/tunnel.log" 2>/dev/null || true; exit 35; }
+
+          echo "OCI_EDGE_AUTH_URL=$AUTH_URL"
+          echo "OCI_EDGE_CALLBACK_URL=$CALLBACK_URL"
+          echo "OCI_EDGE_LISTENER=GREEN"
+          echo "OCI_EDGE_BRIDGE=GREEN"
+          CMD
+          )"
+
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          OUT="$(jq -r '.result.stdout' <<<"$RESPONSE")"
+          printf '%s\n' "$OUT"
+
+          AUTH_URL="$(sed -n 's/^OCI_EDGE_AUTH_URL=//p' <<<"$OUT" | head -1)"
+          CALLBACK_URL="$(sed -n 's/^OCI_EDGE_CALLBACK_URL=//p' <<<"$OUT" | head -1)"
+          [[ "$AUTH_URL" == https://login.* ]] || { echo "::error::Missing OCI auth URL"; exit 40; }
+          [[ "$CALLBACK_URL" == https://*.trycloudflare.com ]] || { echo "::error::Missing HTTPS callback URL"; exit 41; }
+
+          {
+            echo "## OCI Edge authentication bridge"
+            echo "- state: GREEN"
+            echo "- OCI authorization URL:"
+            echo "$AUTH_URL"
+            echo "- temporary HTTPS callback base:"
+            echo "$CALLBACK_URL"
+            echo "- The browser OAuth token is never printed by this workflow."
+            echo "- After OCI redirects Edge to http://localhost:8181/#..., replace only the http://localhost:8181 prefix with the HTTPS callback base above, preserving the /#... suffix."
+          } >>"$GITHUB_STEP_SUMMARY"
+
