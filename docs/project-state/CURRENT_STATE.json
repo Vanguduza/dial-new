@@ -9,10 +9,10 @@
   "changed_files": [
     "deploy/netcup/hermes-control/grant-ocarun-sudo.sh"
   ],
-  "content_diff_sha256": "81706c5b783525e94a093f3ceabad2a682b81824e248a37a31963f2f1cdecc6c",
-  "observed_at_utc": "2026-09-23T12:30:34.198864+00:00",
+  "content_diff_sha256": "37ca8c0b811497000aff7ead7f330b903cde46ec8362afaaf17b7e39aef18cea",
+  "observed_at_utc": "2026-09-23T12:40:36.730355+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "16ef409b9a05f475a73c44bc5c82278162355d42",
+  "source_parent": "d29fbe7c3a97c6f2582ed7e0ff6b4a109a7b4f28",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

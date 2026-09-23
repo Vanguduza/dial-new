@@ -3,8 +3,13 @@
 #
 # Owner-requested (2026-09-23): OCI Run Command runs as the unprivileged uid=999(ocarun); the
 # zero-touch enrollment step needs root and stops with DIAL_ENROLL_NEEDS_OCARUN_SUDO until this
-# grant exists. OCI itself cannot create it, so Dial Control does it over the private WireGuard
-# overlay using the ubuntu admin identity, which already holds passwordless sudo on each peer.
+# grant exists. OCI cannot create the grant itself (Run Command has no sudo), so Dial Control
+# does it over SSH using the ubuntu admin identity.
+#
+# Channel: this grant is a PRE-enrollment bootstrap. The private WireGuard overlay (10.77.0.x)
+# does not exist until enrollment runs, so peers are reached at their PUBLIC IPs (resolved via
+# OCI) here, not over the overlay. Once a peer is enrolled its overlay hostname also works, so
+# re-runs from either state are fine.
 #
 # Consequence, accepted by the owner: whoever can create Run Commands (the owner and the
 # dial-netcup-recovery user) then has root on these VMs.
@@ -18,6 +23,9 @@ umask 077
 
 PERM_KEY="${DIAL_ORACLE_ADMIN_KEY:-/home/ubuntu/.ssh/dial-oracle-admin}"
 BOOT_KEY="${DIAL_ORACLE_BOOTSTRAP_KEY:-/home/ubuntu/.ssh/dial-bootstrap-oracle}"
+OCI_CONFIG="${OCI_CONFIG:-/home/ubuntu/.oci/config}"
+ESTATE="${DIAL_ORACLE_ESTATE:-/etc/dial/oracle-estate.env}"
+SSH_USER="${DIAL_ESTATE_SSH_USER:-ubuntu}"
 
 die(){ echo "OCARUN_SUDO_REFUSED: $*" >&2; exit 2; }
 
@@ -25,20 +33,40 @@ die(){ echo "OCARUN_SUDO_REFUSED: $*" >&2; exit 2; }
 KEY="$PERM_KEY"
 [[ -s "$KEY" ]] || KEY="$BOOT_KEY"
 [[ -s "$KEY" ]] || die "no authorized SSH identity for the estate ($PERM_KEY / $BOOT_KEY)"
+[[ -s "$OCI_CONFIG" ]] || die "OCI config missing at $OCI_CONFIG; run finish/prepare first"
+[[ -s "$ESTATE" ]] || die "Oracle estate inventory missing at $ESTATE"
 
-# The retained Oracle peers, on their overlay addresses. The migration source is included only
-# while it is still an overlay peer (before retirement), so its own enrollment can also proceed.
-declare -A PEERS=(
-  [oracle-admin]=10.77.0.2
-  [vekl-worker]=10.77.0.3
-  [van-trading-core]=10.77.0.4
+# shellcheck disable=SC1090
+source "$ESTATE"
+
+OCI=(runuser -u "$SSH_USER" -- env HOME="/home/$SSH_USER" OCI_CLI_CONFIG_FILE="$OCI_CONFIG"
+  PATH=/home/"$SSH_USER"/.local/bin:/usr/local/bin:/usr/bin:/bin oci)
+
+# The retained Oracle peers plus, while it is still present, the migration source. Each is
+# resolved to its live public IP so the grant works before the overlay exists.
+declare -A OCIDS=(
+  [oracle-admin]="${ORACLE_ADMIN_OCID:-}"
+  [vekl-worker]="${VEKL_WORKER_OCID:-}"
+  [van-trading-core]="${VAN_TRADING_CORE_OCID:-}"
 )
 NAMES=(oracle-admin vekl-worker van-trading-core)
-if [[ ! -f /var/lib/dial-control/state/a1-control-retired ]] &&
-   grep -qE '^10\.77\.0\.5[[:space:]]+old-dial-hermes-control([[:space:]]|$)' /etc/hosts; then
-  PEERS[old-dial-hermes-control]=10.77.0.5
+if [[ ! -f /var/lib/dial-control/state/a1-control-retired && -n "${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" ]]; then
+  OCIDS[old-dial-hermes-control]="$DIAL_HERMES_CONTROL_SOURCE_OCID"
   NAMES+=(old-dial-hermes-control)
 fi
+
+declare -A PEERS=()
+for name in "${NAMES[@]}"; do
+  id="${OCIDS[$name]}"
+  [[ "$id" == ocid1.instance.* ]] || { echo "ocarun_sudo_${name//-/_}=SKIPPED_NO_OCID"; continue; }
+  ip="$("${OCI[@]}" compute instance list-vnics --instance-id "$id" \
+         --query 'data[0]."public-ip"' --raw-output 2>/dev/null | tr -d '\r' | tail -1)"
+  if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    PEERS[$name]="$ip"
+  else
+    echo "ocarun_sudo_${name//-/_}=NO_PUBLIC_IP"
+  fi
+done
 
 # Runs on each peer as ubuntu (which has passwordless sudo). Validates before it commits.
 REMOTE_SCRIPT="$(cat <<'REMOTE'
@@ -69,12 +97,14 @@ REMOTE_B64="$(printf '%s' "$REMOTE_SCRIPT" | base64 -w0)"
 
 incomplete=0
 for name in "${NAMES[@]}"; do
-  ip="${PEERS[$name]}"
+  ip="${PEERS[$name]:-}"
+  # Hosts with no OCID or no public IP were already reported above; they are not granted.
+  [[ -n "$ip" ]] || { incomplete=1; continue; }
   out=""
   # ssh may fail (unreachable, auth); capture stdout+stderr without tripping errexit.
   set +e
-  out="$(runuser -u ubuntu -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=8 \
-           -o StrictHostKeyChecking=accept-new "ubuntu@$ip" \
+  out="$(runuser -u "$SSH_USER" -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=8 \
+           -o StrictHostKeyChecking=accept-new "$SSH_USER@$ip" \
            "printf '%s' '$REMOTE_B64' | base64 -d | bash -s" 2>&1)"
   set -e
   # A no-match grep must not abort the run, so guard the extraction explicitly.
