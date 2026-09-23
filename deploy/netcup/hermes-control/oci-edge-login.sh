@@ -5,6 +5,7 @@
 #   oci-edge-login.sh status                          PENDING_OWNER_LOGIN | SESSION_READY | ABSENT
 #   oci-edge-login.sh finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]
 #                                                     session -> dedicated user + API key, then teardown
+#   oci-edge-login.sh rediscover [van-trading-core-ocid]  durable-key discovery only (no login), with retries
 #   oci-edge-login.sh abort                           revoke/remove the session and stop the bridge
 #
 # Facts this relies on, read from the pinned oci-cli 3.93.0 source (oci_cli/cli_setup_bootstrap.py,
@@ -229,6 +230,30 @@ ensure_named() { # ensure_named <kind> <tenancy> <name> <description> [extra cre
   printf '%s\n' "$id"
 }
 
+# Final discovery with the durable key. IAM changes are eventually consistent: a probe can
+# succeed and the next list still be refused, so retry only on OCI errors (26), bounded.
+durable_discover() {
+  local pin="${1:-}" i rc
+  for i in $(seq 1 20); do
+    rc=0
+    as_admin env OCI_A1_TRANSITION_OCID="$pin" bash "$LIB/prepare-oci-recovery.sh" discover || rc=$?
+    [[ "$rc" == 0 ]] && return 0
+    [[ "$rc" == 26 ]] || return "$rc"
+    sleep 15
+  done
+  return 26
+}
+
+rediscover() {
+  local pin="${1:-}"
+  [[ -z "$pin" || "$pin" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "invalid van-trading-core OCID"
+  [[ -s "$ADMIN_HOME/.oci/config" ]] || die "no durable recovery config; run finish first" 21
+  local rc=0
+  durable_discover "$pin" || rc=$?
+  [[ "$rc" == 0 ]] || die "durable discovery failed ($rc)" "$rc"
+  say "OCI_RECOVERY_REDISCOVERY=GREEN"
+}
+
 KEEP_SESSION=0
 # A session is destroyed on every exit except one: discovery found more than one candidate and
 # needs the owner's choice. Nothing has been written to IAM at that point, and the session still
@@ -374,7 +399,9 @@ finish() {
   say "OCI_RECOVERY_DURABLE_PROBE=GREEN"
 
   # Final discovery with the durable key; only this writes the recovery-ready marker.
-  as_admin env OCI_A1_TRANSITION_OCID="$a1_pin" bash "$LIB/prepare-oci-recovery.sh" discover
+  local drc=0
+  durable_discover "$a1_pin" || drc=$?
+  [[ "$drc" == 0 ]] || die "durable discovery failed ($drc); the key is registered, run rediscover_oci_estate" "$drc"
   say "recovery_user=$user"
   say "OCI_EDGE_LOGIN=FINISHED"
 }
@@ -383,6 +410,7 @@ case "$MODE" in
   start)  start "${2:-}" ;;
   status) status ;;
   finish) finish "${2:-}" "${3:-}" "${4:-}" "${5:-}" ;;
+  rediscover) rediscover "${2:-}" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
   *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]|abort}" >&2; exit 2 ;;
 esac
