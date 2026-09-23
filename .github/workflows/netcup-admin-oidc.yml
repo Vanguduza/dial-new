@@ -1,144 +1,198 @@
-# one-shot VAN Rive install trigger: 2026-09-23
-name: Install VAN Rive build system on Dial Control
+name: Dial Control GitHub OIDC admin
 
 on:
-  push:
-    branches: [gpt/netcup-hermes-control-integrated-20260921]
-    paths:
-      - .github/workflows/netcup-admin-oidc.yml
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Bounded Dial Control admin operation
+        required: true
+        default: prepare_oci_recovery
+        type: choice
+        options:
+          - prepare_oci_recovery
+          - configure_and_discover_oci
+          - custom
+      command:
+        description: Custom root command. Used only when operation=custom. Never place secrets here.
+        required: false
+        type: string
+      oci_user_ocid:
+        description: Dedicated OCI recovery user OCID. Used only by configure_and_discover_oci.
+        required: false
+        type: string
+      oci_tenancy_ocid:
+        description: OCI tenancy OCID. Used only by configure_and_discover_oci.
+        required: false
+        type: string
+      oci_region:
+        description: OCI recovery region
+        required: false
+        default: af-johannesburg-1
+        type: string
+      acknowledge_root:
+        description: Type I_UNDERSTAND_ROOT
+        required: true
+        type: string
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: dial-control-rive-install
+  group: dial-control-oidc-admin
   cancel-in-progress: false
 
 env:
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
-  VAN_SHA: 1a2ab7c7f6c59e1164a7f4e12a7ea262dbeaa54e
 
 jobs:
-  install:
+  admin:
     if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 150
-
+    timeout-minutes: 25
     steps:
-      - name: Install and qualify Character Forge Rive workstation
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Refresh bounded Dial Control runtime helpers
+        if: ${{ inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
         run: |
           set -Eeuo pipefail
-
-          oidc_admin() {
-            local raw="$1"
-            local command_b64 body hash audience encoded sep token
-            command_b64="$(printf '%s' "$raw" | base64 -w0)"
-            body="$(jq -cn --arg c "$command_b64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-            hash="$(printf '%s' "$body" | sha256sum | awk '{print $1}')"
-            audience="dial-control:$hash"
-            encoded="$(jq -nr --arg v "$audience" '$v|@uri')"
-            sep='?'
-            [[ "$ACTIONS_ID_TOKEN_REQUEST_URL" == *\?* ]] && sep='&'
-            token="$(
-              curl --proto '=https' --tlsv1.2 -fsS \
-                -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                "${ACTIONS_ID_TOKEN_REQUEST_URL}${sep}audience=${encoded}" |
-                jq -er '.value'
-            )"
-            curl -fsS --retry 3 --retry-delay 2 --connect-timeout 10 --max-time 1190 \
-              -H "Authorization: Bearer $token" \
-              -H 'Content-Type: application/json' \
-              --data-binary "$body" \
-              "$DIAL_CONTROL_OIDC_URL"
+          admin_exec() {
+            local raw="$1" b64 body response
+            [[ ${#raw} -le 32768 ]] || { echo "::error::bounded admin command too large"; exit 5; }
+            b64="$(printf '%s' "$raw" | base64 -w0)"
+            body="$(jq -cn --arg c "$b64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+            response="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$body")"
+            jq -e '.ok == true' <<<"$response" >/dev/null
+          }
+          push_file() {
+            local src="$1" dst="$2" mode="$3" checker="$4"
+            local name tmp data sha chunk
+            name="$(basename "$dst")"
+            tmp="/tmp/dial-runtime-refresh-$name.b64"
+            data="$(base64 -w0 "$src")"
+            sha="$(sha256sum "$src" | awk '{print $1}')"
+            admin_exec "set -Eeuo pipefail; rm -f '$tmp'; : >'$tmp'; chmod 600 '$tmp'"
+            while [[ -n "$data" ]]; do
+              chunk="${data:0:10000}"
+              data="${data:10000}"
+              admin_exec "set -Eeuo pipefail; printf '%s' '$chunk' >>'$tmp'"
+            done
+            admin_exec "set -Eeuo pipefail; install -d -m 0755 /usr/local/lib/dial-control; base64 -d '$tmp' >'$dst.tmp'; echo '$sha  $dst.tmp' | sha256sum -c -; $checker '$dst.tmp'; install -m '$mode' '$dst.tmp' '$dst'; rm -f '$dst.tmp' '$tmp'"
           }
 
-          START_COMMAND="$(cat <<'REMOTE'
-          set -Eeuo pipefail
-          test "$(hostname -s)" = dial-control
-          UNIT=van-character-forge-bootstrap-__RUN_ID__
-          WORK=/var/lib/dial-control/van-character-forge-bootstrap-source
-          rm -rf "$WORK"
-          git clone --filter=blob:none https://github.com/Vanguduza/Van.git "$WORK"
-          git -C "$WORK" fetch --depth=1 origin __VAN_SHA__
-          git -C "$WORK" checkout --detach __VAN_SHA__
-          systemd-run \
-            --unit="$UNIT" \
-            --property=TimeoutStartSec=infinity \
-            --setenv=VAN_COMMIT_SHA=__VAN_SHA__ \
-            --setenv=CHARACTER_FORGE_COMMANDER_USER=ubuntu \
-            /bin/bash "$WORK/deploy/character-forge/bootstrap-netcup-authoring.sh"
-          printf 'UNIT=%s\nWORK=%s\n' "$UNIT" "$WORK"
-          REMOTE
-          )"
-          START_COMMAND="${START_COMMAND//__RUN_ID__/$GITHUB_RUN_ID}"
-          START_COMMAND="${START_COMMAND//__VAN_SHA__/$VAN_SHA}"
-          START_RESPONSE="$(oidc_admin "$START_COMMAND")"
-          jq -e '.ok == true and .result.status == 0' <<<"$START_RESPONSE" >/dev/null
+          push_file deploy/netcup/hermes-control/github-oidc-control.mjs /usr/local/lib/dial-control/github-oidc-control.mjs 0755 "/home/ubuntu/.local/bin/node --check"
+          push_file deploy/netcup/hermes-control/prepare-oci-recovery.sh /usr/local/lib/dial-control/prepare-oci-recovery.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh /usr/local/lib/dial-control/oci-enroll-oracle-estate.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/install-housekeeping-final-estate.sh /usr/local/lib/dial-control/install-housekeeping-final-estate.sh 0755 "bash -n"
+          push_file deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh /usr/local/lib/dial-control/zero-touch-enroll-peer.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/configure-wireguard-fabric.sh /usr/local/lib/dial-control/configure-wireguard-fabric.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/rotate-bootstrap-identities.sh /usr/local/lib/dial-control/rotate-bootstrap-identities.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh 0755 "bash -n"
 
-          UNIT="van-character-forge-bootstrap-$GITHUB_RUN_ID"
-          state=unknown
-          result=unknown
-          exec_status=255
-
-          for attempt in $(seq 1 240); do
-            POLL_COMMAND="set -Eeuo pipefail; unit='$UNIT'; if systemctl show \"\$unit\" >/dev/null 2>&1; then load=\$(systemctl show -p LoadState --value \"\$unit\"); active=\$(systemctl show -p ActiveState --value \"\$unit\"); sub=\$(systemctl show -p SubState --value \"\$unit\"); result=\$(systemctl show -p Result --value \"\$unit\"); status=\$(systemctl show -p ExecMainStatus --value \"\$unit\"); else load=not-found; active=unknown; sub=unknown; result=unknown; status=255; fi; printf 'LOAD_STATE=%s\\nACTIVE_STATE=%s\\nSUB_STATE=%s\\nRESULT=%s\\nEXEC_STATUS=%s\\n' \"\$load\" \"\$active\" \"\$sub\" \"\$result\" \"\$status\""
-            POLL_RESPONSE="$(oidc_admin "$POLL_COMMAND")"
-            jq -e '.ok == true and .result.status == 0' <<<"$POLL_RESPONSE" >/dev/null
-            stdout="$(jq -r '.result.stdout' <<<"$POLL_RESPONSE")"
-            state="$(awk -F= '$1=="ACTIVE_STATE"{print $2}' <<<"$stdout")"
-            result="$(awk -F= '$1=="RESULT"{print $2}' <<<"$stdout")"
-            exec_status="$(awk -F= '$1=="EXEC_STATUS"{print $2}' <<<"$stdout")"
-            echo "bootstrap attempt $attempt: active=$state result=$result exec=$exec_status"
-            if [[ "$state" == inactive && "$result" == success && "$exec_status" == 0 ]]; then
+          admin_exec "set -Eeuo pipefail; systemd-run --unit=dial-github-oidc-refresh --on-active=2s /bin/systemctl restart dial-github-oidc-control.service >/dev/null; echo DIAL_CONTROL_RUNTIME_REFRESH=SCHEDULED"
+          ok=false
+          for attempt in $(seq 1 18); do
+            sleep 5
+            if response="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}' 2>/dev/null)" &&
+               jq -e '.ok == true and (.result | has("oci_estate_inventory")) and (.result | has("oci_peers_enrolled")) and (.result | has("housekeeping_estate"))' <<<"$response" >/dev/null 2>&1; then
+              ok=true
               break
             fi
-            if [[ "$state" == failed || ( "$state" == inactive && "$result" != success ) ]]; then
-              LOG_RESPONSE="$(oidc_admin "journalctl -u '$UNIT' -n 200 --no-pager; exit 0")"
-              jq -r '.result.stdout,.result.stderr' <<<"$LOG_RESPONSE" >&2
-              exit 1
-            fi
-            sleep 30
           done
+          [[ "$ok" == true ]] || { echo "::error::Refreshed controller contract did not come back"; exit 6; }
+          echo DIAL_CONTROL_RUNTIME_REFRESH=GREEN
 
-          [[ "$state" == inactive && "$result" == success && "$exec_status" == 0 ]] || {
-            echo "::error::Character Forge bootstrap did not complete successfully"
-            exit 1
+      - name: Validate explicit root acknowledgement
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${{ inputs.acknowledge_root }}" == "I_UNDERSTAND_ROOT" ]] || {
+            echo "::error::Root acknowledgement is required."
+            exit 2
           }
 
-          FINAL_COMMAND="$(cat <<'REMOTE'
+      - name: Build bounded admin command
+        shell: bash
+        env:
+          OPERATION: ${{ inputs.operation }}
+          CUSTOM_COMMAND: ${{ inputs.command }}
+          OCI_USER_OCID: ${{ inputs.oci_user_ocid }}
+          OCI_TENANCY_OCID: ${{ inputs.oci_tenancy_ocid }}
+          OCI_REGION: ${{ inputs.oci_region }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/admin-command.txt"
+          case "$OPERATION" in
+            prepare_oci_recovery)
+              cat >"$OUT" <<EOF
           set -Eeuo pipefail
-          test "$(hostname -s)" = dial-control
-          test -x /usr/local/bin/rive
-          printf 'HOST=%s\n' "$(hostname -s)"
-          printf 'RIVE_VERSION=%s\n' "$(rive --version 2>&1 | head -n1)"
-          printf '%s\n' '=== QUALIFICATION ==='
-          sudo -n -u vanforge /usr/local/libexec/van-character-forge-worker qualify
-          printf '%s\n' '=== TOOLCHAIN_LOCK ==='
-          cat /var/lib/dial-character-forge/toolchain.lock.json
-          printf '%s\n' '=== CHARACTER_FORGE_STATUS ==='
-          sudo -n -u vanforge /usr/local/libexec/van-character-forge-worker status
-          REMOTE
-          )"
-          FINAL_RESPONSE="$(oidc_admin "$FINAL_COMMAND")"
-          jq -e '.ok == true and .result.status == 0' <<<"$FINAL_RESPONSE" >/dev/null
-          jq -r '.result.stdout' <<<"$FINAL_RESPONSE" | tee "$RUNNER_TEMP/van-rive-install-receipt.txt"
-          jq -r '.result.stderr' <<<"$FINAL_RESPONSE" | tee -a "$RUNNER_TEMP/van-rive-install-receipt.txt" >&2
+          REF='$GITHUB_SHA'
+          TMP="\$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
+          trap 'rm -f "\$TMP"' EXIT
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
+            "https://raw.githubusercontent.com/Vanguduza/dial-new/\$REF/deploy/netcup/hermes-control/owner-oci-handoff.sh" \
+            -o "\$TMP"
+          bash -n "\$TMP"
+          bash "\$TMP" prepare "\$REF"
+          EOF
+              ;;
+            configure_and_discover_oci)
+              [[ "$OCI_USER_OCID" == ocid1.user.* ]] || { echo "::error::Valid oci_user_ocid required"; exit 3; }
+              [[ "$OCI_TENANCY_OCID" == ocid1.tenancy.* ]] || { echo "::error::Valid oci_tenancy_ocid required"; exit 3; }
+              [[ "$OCI_REGION" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || { echo "::error::Valid OCI region required"; exit 3; }
+              USER_Q="$(printf '%q' "$OCI_USER_OCID")"
+              TENANCY_Q="$(printf '%q' "$OCI_TENANCY_OCID")"
+              REGION_Q="$(printf '%q' "$OCI_REGION")"
+              cat >"$OUT" <<EOF
+          set -Eeuo pipefail
+          test -x /usr/local/lib/dial-control/owner-oci-handoff.sh
+          /usr/local/lib/dial-control/owner-oci-handoff.sh configure-and-discover $USER_Q $TENANCY_Q $REGION_Q
+          EOF
+              ;;
+            custom)
+              [[ -n "$CUSTOM_COMMAND" ]] || { echo "::error::Custom command is empty"; exit 3; }
+              printf '%s' "$CUSTOM_COMMAND" >"$OUT"
+              ;;
+            *) echo "::error::Unsupported operation: $OPERATION"; exit 3 ;;
+          esac
+          [[ -s "$OUT" ]] || { echo "::error::Admin command was not built"; exit 3; }
+          [[ "$(wc -c <"$OUT")" -le 32768 ]] || { echo "::error::Admin command exceeds controller limit"; exit 3; }
 
+      - name: Execute audited Dial Control command
+        shell: bash
+        run: |
+          set -euo pipefail
+          RAW_COMMAND="$(cat "$RUNNER_TEMP/admin-command.txt")"
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           {
-            echo "## VAN Character Forge Rive workstation"
-            echo "- target: dial-control"
-            echo "- VAN SHA: $VAN_SHA"
-            echo "- bootstrap: PASS"
-            echo "- qualification: PASS"
-            echo "- root command SHA-256: $(jq -r '.result.command_sha256' <<<"$FINAL_RESPONSE")"
+            echo "## Dial Control GitHub OIDC admin receipt"
+            echo "- operation: `${{ inputs.operation }}`"
+            echo "- actor: $GITHUB_ACTOR"
+            echo "- run: $GITHUB_RUN_ID"
+            echo "- command SHA-256: $(jq -r '.result.command_sha256' <<<"$RESPONSE")"
+            echo "- exit status: $(jq -r '.result.status' <<<"$RESPONSE")"
+            echo ""
+            echo '### stdout'
+            echo '~~~text'
+            jq -r '.result.stdout' <<<"$RESPONSE"
+            echo '~~~'
+            echo ""
+            echo '### stderr'
+            echo '~~~text'
+            jq -r '.result.stderr' <<<"$RESPONSE"
+            echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
 
-      - name: Upload installation receipt
-        uses: actions/upload-artifact@v4
-        with:
-          name: van-rive-netcup-install-receipt
-          path: ${{ runner.temp }}/van-rive-install-receipt.txt
-          if-no-files-found: error
-          retention-days: 90
+      - name: Verify local OCI recovery authority
+        if: ${{ inputs.operation == 'configure_and_discover_oci' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
+          jq -e '.ok == true and .result.recovery_ready == true' <<<"$RESPONSE" >/dev/null
+          echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
