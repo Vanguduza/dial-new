@@ -177,8 +177,13 @@ function captureFinalArtifacts({serial,dir,root}) {
 function safeArtemisFile(file,root) {
   if(!file) return null;
   const c=cfg(root);
-  const resolved=path.resolve(String(file).replace(/^file:\/\//,''));
-  if(!within(c.root,resolved) || !fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) return null;
+  const lexical=path.resolve(String(file).replace(/^file:\/\//,''));
+  if(!fs.existsSync(lexical)) return null;
+  let resolved;
+  try { resolved=fs.realpathSync(lexical); } catch { return null; }
+  let canonicalRoot;
+  try { canonicalRoot=fs.realpathSync(c.root); } catch { canonicalRoot=path.resolve(c.root); }
+  if(!within(canonicalRoot,resolved) || !fs.statSync(resolved).isFile()) return null;
   return resolved;
 }
 function copyTextEvidence(source,dest,root,max=1500000) {
