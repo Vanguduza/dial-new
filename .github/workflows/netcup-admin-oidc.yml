@@ -219,6 +219,15 @@ jobs:
           OCI_BIN="$(command -v oci || true)"
           CF_BIN="$(command -v cloudflared || true)"
           [[ -x "$OCI_BIN" ]] || { echo "REFUSE: OCI CLI missing"; exit 31; }
+          OCI_REAL="$(readlink -f "$OCI_BIN")"
+          if [[ "$OCI_REAL" == /opt/oci-cli/* ]]; then
+            chmod -R a+rX /opt/oci-cli
+          fi
+          /usr/sbin/runuser -u ubuntu -- "$OCI_BIN" --version >/dev/null 2>&1 || {
+            echo "REFUSE: OCI CLI is not executable by ubuntu after permission repair"
+            namei -l "$OCI_REAL" || true
+            exit 36
+          }
           if [[ ! -x "$CF_BIN" ]]; then
             TMP_CF="$(mktemp /tmp/cloudflared.XXXXXX)"
             curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
