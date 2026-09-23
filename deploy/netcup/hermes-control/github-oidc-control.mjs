@@ -228,8 +228,10 @@ async function dispatch(body, claims) {
       for(const k of ['oracle_admin','vekl_worker','a1_transition']){
         if(!validWgKey(body?.peers?.[k])) throw new Error('invalid WireGuard public key for '+k);
       }
+      const hubScript='/usr/local/lib/dial-control/configure-wireguard-fabric.sh';
+      if(!fs.existsSync(hubScript)) throw new Error('installed WireGuard hub helper missing');
       const r=command(
-        "bash '"+REPO+"/deploy/netcup/hermes-control/configure-wireguard-fabric.sh'",
+        "bash '"+hubScript+"'",
         {env:{
           ORACLE_ADMIN_WG_PUBLIC_KEY:body.peers.oracle_admin,
           VEKL_WORKER_WG_PUBLIC_KEY:body.peers.vekl_worker,
@@ -246,7 +248,9 @@ async function dispatch(body, claims) {
       return {peers};
     }
     case 'rotate-identities': {
-      const r=command("bash '"+REPO+"/deploy/netcup/hermes-control/rotate-bootstrap-identities.sh'",{timeout:20*60*1000});
+      const rotateScript='/usr/local/lib/dial-control/rotate-bootstrap-identities.sh';
+      if(!fs.existsSync(rotateScript)) throw new Error('installed identity rotation helper missing');
+      const r=command("bash '"+rotateScript+"'",{timeout:20*60*1000});
       requireOk(r,'rotate-identities');
       fs.writeFileSync(path.join(ROOT,'identities-rotated'),now()+'\n',{mode:0o600});
       return r;
