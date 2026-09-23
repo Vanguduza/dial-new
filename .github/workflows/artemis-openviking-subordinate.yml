@@ -5,6 +5,7 @@ on:
     paths:
       - "agent-system/orchestration/android-testing-*.mjs"
       - "agent-system/orchestration/artemis-subordinate-client.mjs"
+      - "agent-system/orchestration/artemis-console-proxy.mjs"
       - "agent-system/orchestration/openviking-*.mjs"
       - "agent-system/orchestration/shared-*.mjs"
       - "agent-system/registries/ANDROID_TESTING_PLANE.json"
@@ -38,6 +39,7 @@ jobs:
       - name: Parse Hermes subordinate JavaScript
         run: |
           node --check agent-system/orchestration/artemis-subordinate-client.mjs
+          node --check agent-system/orchestration/artemis-console-proxy.mjs
           node --check agent-system/orchestration/android-testing-plane.mjs
           node --check agent-system/orchestration/android-testing-mcp.mjs
           node --check agent-system/orchestration/android-testing-supervisor.mjs
@@ -79,7 +81,7 @@ jobs:
 
       - name: Validate Android plane and specialist authority
         run: |
-          node -e "const r=require('./agent-system/registries/ANDROID_TESTING_PLANE.json'); if(r.authority!=='HERMES_CONTROL_AUTHORITY'||r.authority_invariants?.artemis_is_subordinate!==true||r.authority_invariants?.raw_upstream_mcp_exposed!==false||r.authority_invariants?.managed_direct_artemis_ui_registered!==false) process.exit(1)"
+          node -e "const r=require('./agent-system/registries/ANDROID_TESTING_PLANE.json'); if(r.authority!=='HERMES_CONTROL_AUTHORITY'||r.authority_invariants?.artemis_is_subordinate!==true||r.authority_invariants?.raw_upstream_mcp_exposed!==false||r.authority_invariants?.managed_direct_artemis_ui_registered!==false||r.authority_invariants?.van_embedded_console_preserves_hermes_authority!==true||r.access?.van_console_proxy!=='dial-artemis-console-proxy.service'||r.security?.van_console_mutations!=='BLOCKED_AT_PROXY_USE_HERMES_ANDROID_TESTING_BROKER') process.exit(1)"
           node -e "const r=require('./agent-system/registries/SPECIALIST_CAPABILITY_REGISTRY.json'); const a=r.capabilities.find(x=>x.id==='artemis-android'); if(!a||a.authority_class!=='HERMES_SUBORDINATE_EXECUTOR'||a.access?.raw_upstream_mcp!==false||a.never_a_harness_or_manager!==true) process.exit(1)"
 
       - name: Run subordinate plane tests

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import http from 'node:http';
 
 const bindHost = process.env.DIAL_ARTEMIS_CONSOLE_BIND || '127.0.0.1';
@@ -26,12 +27,7 @@ function expectedToken() {
 }
 function safeEqual(a,b) {
   const aa=Buffer.from(String(a||'')); const bb=Buffer.from(String(b||''));
-  return aa.length===bb.length && aa.length>0 && cryptoSafe(aa,bb);
-}
-function cryptoSafe(a,b) {
-  let out=0;
-  for(let i=0;i<a.length;i++) out |= a[i]^b[i];
-  return out===0;
+  return aa.length===bb.length && aa.length>0 && crypto.timingSafeEqual(aa,bb);
 }
 function upstreamHeaders(req) {
   const headers = { ...req.headers };
