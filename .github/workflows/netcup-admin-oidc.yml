@@ -234,6 +234,17 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
+      - name: Read previous OCI bootstrap diagnostics
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RAW_COMMAND='set +e; echo OCI_BIN_ROOT=$(command -v oci || true); echo OCI_BIN_UBUNTU=$(runuser -u ubuntu -- bash -lc "command -v oci" 2>/dev/null || true); echo ---OUTPUT---; tail -n 120 /var/lib/dial-control/oci-browser-bootstrap/output.log 2>/dev/null || true; echo ---EXIT---; cat /var/lib/dial-control/oci-browser-bootstrap/exit-code 2>/dev/null || true; echo ---UNIT---; systemctl status dial-oci-browser-bootstrap.service --no-pager -l 2>&1 | tail -n 80 || true; echo ---PORT---; ss -ltnp "sport = :8181" || true'
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          jq -r '.result.stdout' <<<"$RESPONSE"
+
       - name: Start OCI browser bootstrap on Dial Control
         shell: bash
         run: |
