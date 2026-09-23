@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-sonnet-final-orca-latest-gpt6-astra-proceed",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "a6748279313e829cd2d93f3b371fe74eeab4dc041e7d76de109d9a8a8a27a437",
+  "owner_instruction_excerpt": "Add Sonnet 5 as the final fallback and proceed, orca latest. It's GPT-6 Astra. Is ARTEMIS not a testing harness for Android apps, not a VAN integration?",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude_code",
+    "request_id": "claude-code-20260923-sonnet-final-orca-latest-proceed",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T16:55:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "claude/plan-audit-review-p8i1uc",
+  "authorized_paths": [
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_3_OWNER_DECIDED.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/VAN_DEVELOPMENT_CONTROL_CENTRE_DESIGN_REV_1.md",
+    "docs/project-state/**"
+  ],
+  "change_classes": [
+    "architecture_owner_decision_record",
+    "manager_runtime_chain_design",
+    "execution_workspace_runtime_design",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": true,
+  "reusable": false,
+  "revoked": false
+}

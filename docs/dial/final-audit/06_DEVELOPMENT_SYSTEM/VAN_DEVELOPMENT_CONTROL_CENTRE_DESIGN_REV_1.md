@@ -20,7 +20,9 @@
 | Mutations need ingress token + device token + hardware device proof | `backend/van_gateway/app.py:1195-1293`; `VanGatewayClient.postProved:1329` | Every dev action goes through `postProved`. |
 | Upstream secrets never reach Android | ARTEMIS console pattern, `artemis/console.py:176-182`; `tests/contracts/test_artemis_console_boundary.py` | The DIAL projection credential lives in a VAN backend token file only; a contract test greps Android for it. |
 
-Not reused: the ARTEMIS console's WebView reverse-proxy model (`command/artemis/ArtemisConsoleRoute.kt`). It suits embedding an existing web console. The Development Control Centre is native: typed reads, typed actions, seven-state screens. The existing `work/artemis` route stays and is linked from task detail when Android verification is involved.
+Not reused: the ARTEMIS console's WebView reverse-proxy model (`command/artemis/ArtemisConsoleRoute.kt`). It suits embedding an existing web console. The Development Control Centre is native: typed reads, typed actions, seven-state screens.
+
+**ARTEMIS is not a VAN component.** It is DIAL's Android app testing harness (`google/artemis` on `dial-control`, under Hermes; Rev 3 §5a). The existing `work/artemis` route is only an owner console window onto it. It stays as is and is linked from task detail when a task has Android verification.
 
 ---
 
@@ -39,7 +41,7 @@ Not reused: the ARTEMIS console's WebView reverse-proxy model (`command/artemis/
 | Orca Workspaces | hub child + detail | `work/dev/workspaces`, `work/dev/workspaces/{workspaceId}` |
 | Research / VEKL | hub child | `work/dev/research` |
 | Frontend / Design | hub child | `work/dev/design` |
-| Android Testing | existing | `work/artemis` (+ ARTEMIS rows inside task detail) |
+| Android Testing | existing owner console onto DIAL's ARTEMIS harness (no new VAN build) | `work/artemis` (+ ARTEMIS verification rows inside task detail, from the projection) |
 | Build / CI | hub child | `work/dev/ci` |
 | Security | hub child | `work/dev/security` |
 | Reviews | hub child | `work/dev/reviews` |

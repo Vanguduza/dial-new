@@ -3,20 +3,18 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260923-owner-hermes-orca-fabric-consolidation-route",
     "auth-20260923-owner-orca-mandatory-van-devcc-astra"
   ],
   "branch": "claude/plan-audit-review-p8i1uc",
   "changed_files": [
-    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_2_CONSOLIDATION.md",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_3_OWNER_DECIDED.md",
     "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/VAN_DEVELOPMENT_CONTROL_CENTRE_DESIGN_REV_1.md",
-    "docs/project-state/authorizations/auth-20260923-owner-orca-mandatory-van-devcc-astra.json"
+    "docs/project-state/authorizations/auth-20260923-owner-sonnet-final-orca-latest-gpt6-astra-proceed.json"
   ],
-  "content_diff_sha256": "d71628f3445aff4d33c39c950dddeddd8655eb170e1a23d4dfd398b9a7ca4f26",
-  "observed_at_utc": "2026-09-23T16:43:30.515665+00:00",
+  "content_diff_sha256": "8205a00b15349e774e42e961edb172529d6fab640266a9230467797004fd9097",
+  "observed_at_utc": "2026-09-23T16:57:17.333873+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "7c4c293882c84b3d9db65f4bcc09d7e142b98d5e",
+  "source_parent": "8b6a15376b709defa06903cf2f6978c46331c33f",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
