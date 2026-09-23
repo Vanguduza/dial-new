@@ -3,7 +3,7 @@
 #
 #   oci-edge-login.sh start  [region]                 open the browser-login bridge
 #   oci-edge-login.sh status                          PENDING_OWNER_LOGIN | SESSION_READY | ABSENT
-#   oci-edge-login.sh finish <tenancy-ocid> [region] [a1-instance-ocid]
+#   oci-edge-login.sh finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]
 #                                                     session -> dedicated user + API key, then teardown
 #   oci-edge-login.sh abort                           revoke/remove the session and stop the bridge
 #
@@ -221,7 +221,8 @@ ensure_named() { # ensure_named <kind> <tenancy> <name> <description> [extra cre
   local id; id="$(ocid_by_name "$kind" "$tenancy" "$name")"
   if [[ -z "$id" ]]; then
     id="$(oci_session iam "$kind" create --compartment-id "$tenancy" --name "$name" \
-          --description "$desc" "$@" --wait-for-state ACTIVE | jq -r '.data.id')"
+          --description "$desc" "$@" --wait-for-state ACTIVE | jq -r '.data.id // ""')" || id=""
+    [[ "$id" == ocid1.* ]] || die "could not create $kind $name" 40
     say "iam_${kind//-/_}=CREATED" >&2
   fi
   [[ "$id" == ocid1.* ]] || die "could not resolve $kind $name" 40
@@ -237,10 +238,12 @@ finish_exit() {
 }
 
 finish() {
-  local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}"
+  local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}" user_email="${4:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
   [[ "$region" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || die "invalid region"
   [[ -z "$a1_pin" || "$a1_pin" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "invalid A1 instance OCID"
+  # Identity-domain tenancies require a primary email on every user (IdcsConversionError otherwise).
+  [[ -z "$user_email" || "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || die "invalid recovery user email"
 
   if ! session_present; then
     if bridge_active; then say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"; exit 20; fi
@@ -285,7 +288,17 @@ finish() {
   # Dedicated identity: API keys only, no console password or other credentials.
   local group user
   group="$(ensure_named group "$tenant" "$RECOVERY_NAME" "DIAL Netcup recovery (least privilege, managed by oci-edge-login.sh)")"
-  user="$(ensure_named user "$tenant" "$RECOVERY_NAME" "DIAL Netcup recovery API principal (managed by oci-edge-login.sh)")"
+  local email_args=()
+  [[ -z "$user_email" ]] || email_args=(--email "$user_email")
+  user="$(ensure_named user "$tenant" "$RECOVERY_NAME" "DIAL Netcup recovery API principal (managed by oci-edge-login.sh)" \
+          ${email_args[@]+"${email_args[@]}"})" || {
+    # An input the owner can supply (e.g. the primary email): keep the session for the retry.
+    KEEP_SESSION=1
+    say "OCI_EDGE_SESSION=KEPT_FOR_RETRY"
+    say "session_seconds_left=$(( exp - $(date +%s) ))"
+    say "OWNER_INPUT_REQUIRED=the dedicated recovery user could not be created; see the OCI error above (identity domains need oci_recovery_user_email)"
+    exit 40
+  }
   oci_session iam user update-user-capabilities --user-id "$user" \
     --can-use-console-password false --can-use-api-keys true --can-use-auth-tokens false \
     --can-use-smtp-credentials false --can-use-customer-secret-keys false \
@@ -369,7 +382,7 @@ finish() {
 case "$MODE" in
   start)  start "${2:-}" ;;
   status) status ;;
-  finish) finish "${2:-}" "${3:-}" "${4:-}" ;;
+  finish) finish "${2:-}" "${3:-}" "${4:-}" "${5:-}" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
-  *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [a1-instance-ocid]|abort}" >&2; exit 2 ;;
+  *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]|abort}" >&2; exit 2 ;;
 esac

@@ -32,6 +32,10 @@ on:
         description: Optional. The authoritative van-trading-core instance when finish_oci_edge_login lists more than one CANDIDATE.
         required: false
         type: string
+      oci_recovery_user_email:
+        description: Primary email for the dedicated dial-netcup-recovery OCI user (required by identity domains). Used only by finish_oci_edge_login.
+        required: false
+        type: string
       oci_region:
         description: OCI recovery region
         required: false
@@ -134,6 +138,7 @@ jobs:
           OCI_TENANCY_OCID: ${{ inputs.oci_tenancy_ocid }}
           OCI_REGION: ${{ inputs.oci_region }}
           OCI_A1_OCID: ${{ inputs.oci_a1_instance_ocid }}
+          OCI_USER_EMAIL: ${{ inputs.oci_recovery_user_email }}
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/admin-command.txt"
@@ -176,8 +181,12 @@ jobs:
                   ARGS="finish $(printf '%q' "$OCI_TENANCY_OCID") $REGION_Q"
                   if [[ -n "$OCI_A1_OCID" ]]; then
                     [[ "$OCI_A1_OCID" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Invalid oci_a1_instance_ocid"; exit 3; }
-                    ARGS="$ARGS $(printf '%q' "$OCI_A1_OCID")"
-                  fi ;;
+                  fi
+                  if [[ -n "$OCI_USER_EMAIL" ]]; then
+                    [[ "$OCI_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || { echo "::error::Invalid oci_recovery_user_email"; exit 3; }
+                  fi
+                  # Positional: [van-trading-core-ocid] [recovery-user-email]; '' keeps the slot.
+                  ARGS="$ARGS $(printf '%q' "${OCI_A1_OCID:-}") $(printf '%q' "${OCI_USER_EMAIL:-}")" ;;
               esac
               cat >"$OUT" <<EOF
           set -Eeuo pipefail

@@ -210,6 +210,36 @@ describe('oci-edge-login finish', () => {
     expect(sessionGone(ctx)).toBe(true);
   });
 
+  it('keeps the session and asks for an email when an identity domain rejects the user, without claiming CREATED', () => {
+    const ctx = setup();
+    ctx.env.FAKE_REQUIRE_EMAIL = '1';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.code).toBe(40);
+    expect(r.out).toContain('OCI_EDGE_SESSION=KEPT_FOR_RETRY');
+    expect(r.out).toContain('OWNER_INPUT_REQUIRED');
+    expect(r.err).not.toContain('iam_user=CREATED');
+    expect(sessionGone(ctx)).toBe(false);
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
+  });
+
+  it('creates the recovery user with the supplied primary email and finishes on the retry', () => {
+    const ctx = setup();
+    ctx.env.FAKE_REQUIRE_EMAIL = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(40);
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', '', 'owner+dial-netcup-recovery@example.com');
+    expect(r.err).not.toMatch(/REFUSE/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
+    expect(fs.readFileSync(path.join(ctx.state, 'iam/user-email'), 'utf8').trim()).toBe('owner+dial-netcup-recovery@example.com');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
+  it('rejects a malformed recovery user email before touching OCI', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY, 'af-johannesburg-1', '', 'x@y.com; rm -rf /').code).toBe(2);
+    expect(calls(ctx)).toBe('');
+  });
+
   it('rejects a malformed tenancy argument', () => {
     const ctx = setup();
     expect(run(ctx, 'finish', 'ocid1.tenancy.oc1..x; rm -rf /').code).toBe(2);

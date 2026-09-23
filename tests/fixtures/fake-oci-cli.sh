@@ -49,6 +49,15 @@ case "$1 $2 $3" in
     fi ;;
   "iam dynamic-group update") opt --matching-rule "$@" >"$S/iam/dg-rule"; echo '{"data":{}}' ;;
   "iam policy update") opt --statements "$@" >"$S/iam/policy-statements"; echo '{"data":{}}' ;;
+  "iam user create")
+    # Identity-domain tenancies reject a user without a primary email (IdcsConversionError).
+    if [[ "${FAKE_REQUIRE_EMAIL:-0}" == 1 && -z "$(opt --email "$@")" ]]; then
+      echo 'ServiceError: {"code": "IdcsConversionError", "message": "The primary email must be specified."}' >&2
+      exit 1
+    fi
+    opt --email "$@" >"$S/iam/user-email"
+    echo "ocid1.user.oc1..created" >"$S/iam/user"
+    echo '{"data":{"id":"ocid1.user.oc1..created"}}' ;;
   "iam "*)
     kind="$2"; verb="$3"
     if [[ "$verb" == list ]]; then
