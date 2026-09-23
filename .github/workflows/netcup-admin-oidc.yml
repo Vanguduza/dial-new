@@ -54,14 +54,14 @@ env:
 
 jobs:
   admin:
-    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Refresh bounded Dial Control runtime helpers
-        if: ${{ github.event_name == 'push' || inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
+        if: ${{ inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -258,7 +258,7 @@ jobs:
           systemctl stop dial-oci-browser-bootstrap.service >/dev/null 2>&1 || true
           rm -f "$LOGDIR/output.log" "$LOGDIR/exit-code"
           fuser -k 8181/tcp >/dev/null 2>&1 || true
-          systemd-run             --unit=dial-oci-browser-bootstrap             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=Environment=PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin             --property=WorkingDirectory=/home/ubuntu             /bin/bash -lc 'set -o pipefail; OCI_BIN="$(command -v oci)"; printf "N/A\nN/A\n" | "$OCI_BIN" setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
+          systemd-run             --unit=dial-oci-browser-bootstrap             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=Environment=PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin             --property=WorkingDirectory=/home/ubuntu             /bin/bash -lc 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
           echo OCI_EDGE_BOOTSTRAP_STARTED=TRUE
           CMD
           )"
