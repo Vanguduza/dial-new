@@ -1,14 +1,6 @@
-# OCI handoff retry 1
-# OIDC diagnostics retry v3
 name: Dial Control GitHub OIDC admin
-# oidc-diagnostic-trigger-3
 
 on:
-  push:
-    branches:
-      - gpt/netcup-hermes-control-integrated-20260921
-    paths:
-      - .github/workflows/netcup-admin-oidc.yml
   workflow_dispatch:
     inputs:
       operation:
@@ -47,38 +39,19 @@ permissions:
   id-token: write
 
 concurrency:
-  group: dial-control-oci-key-handoff-v3
-  cancel-in-progress: true
+  group: dial-control-oidc-admin
+  cancel-in-progress: false
 
 env:
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
 
 jobs:
   admin:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-
-      - name: Diagnose GitHub OIDC claims and controller refusal
-        if: ${{ github.event_name == 'push' }}
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          BODY='{"action":"status"}'
-          HASH="$(printf '%s' "$BODY" | sha256sum | awk '{print $1}')"
-          AUDIENCE="dial-control:$HASH"
-          ENCODED_AUDIENCE="$(jq -nr --arg v "$AUDIENCE" '$v|@uri')"
-          SEP='?'; [[ "$ACTIONS_ID_TOKEN_REQUEST_URL" == *\?* ]] && SEP='&'
-          TOKEN="$(curl --proto '=https' --tlsv1.2 -fsS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}${SEP}audience=${ENCODED_AUDIENCE}" | jq -er '.value')"
-          PAYLOAD="$(cut -d. -f2 <<<"$TOKEN" | tr '_-' '/+' | awk '{l=length($0)%4; if(l==2)$0=$0"=="; else if(l==3)$0=$0"="; print}' | base64 -d 2>/dev/null)"
-          echo "$PAYLOAD" | jq '{actor,repository,ref,workflow_ref,event_name,job_workflow_ref,run_id,run_attempt}'
-          TMP="$RUNNER_TEMP/controller-response.json"
-          CODE="$(curl -sS -o "$TMP" -w '%{http_code}' -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' --data-binary "$BODY" "$DIAL_CONTROL_OIDC_URL")"
-          echo "CONTROLLER_HTTP=$CODE"
-          jq -c '{ok,error,result:(if (.result|type)=="object" then {ok:.result.ok,status:.result.status,signal:.result.signal,error:.result.error} else .result end)}' "$TMP" 2>/dev/null || { echo "CONTROLLER_BODY_NON_JSON"; head -c 800 "$TMP"; echo; }
-          [[ "$CODE" =~ ^2[0-9][0-9]$ ]] || exit 7
 
       - name: Refresh bounded Dial Control runtime helpers
         if: ${{ inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
@@ -132,7 +105,6 @@ jobs:
           echo DIAL_CONTROL_RUNTIME_REFRESH=GREEN
 
       - name: Validate explicit root acknowledgement
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -142,7 +114,6 @@ jobs:
           }
 
       - name: Build bounded admin command
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         env:
           OPERATION: ${{ inputs.operation }}
@@ -157,7 +128,7 @@ jobs:
             prepare_oci_recovery)
               cat >"$OUT" <<EOF
           set -Eeuo pipefail
-          REF='__DIAL_EDGE_BOOTSTRAP_REF__'
+          REF='$GITHUB_SHA'
           TMP="\$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
           trap 'rm -f "\$TMP"' EXIT
           curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
@@ -190,12 +161,10 @@ jobs:
           [[ "$(wc -c <"$OUT")" -le 32768 ]] || { echo "::error::Admin command exceeds controller limit"; exit 3; }
 
       - name: Execute audited Dial Control command
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         run: |
           set -euo pipefail
           RAW_COMMAND="$(cat "$RUNNER_TEMP/admin-command.txt")"
-          RAW_COMMAND="$(printf '%s' "$RAW_COMMAND" | sed "s/__DIAL_EDGE_BOOTSTRAP_REF__/$GITHUB_SHA/g")"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
@@ -219,28 +188,6 @@ jobs:
             echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
 
-      - name: Prepare OCI recovery identity for browser handoff
-        if: ${{ github.event_name == 'push' }}
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          RAW_COMMAND="$(cat <<'CMD'
-          set -Eeuo pipefail
-          test -x /usr/local/lib/dial-control/owner-oci-handoff.sh
-          /usr/local/lib/dial-control/owner-oci-handoff.sh prepare '$GITHUB_SHA'
-          CMD
-          )"
-          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
-          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
-          jq -r '.result.stdout' <<<"$RESPONSE"
-          {
-            echo "## OCI recovery browser handoff"
-            echo '~~~text'
-            jq -r '.result.stdout' <<<"$RESPONSE"
-            echo '~~~'
-          } >>"$GITHUB_STEP_SUMMARY"
       - name: Verify local OCI recovery authority
         if: ${{ inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
@@ -249,77 +196,3 @@ jobs:
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
           jq -e '.ok == true and .result.recovery_ready == true' <<<"$RESPONSE" >/dev/null
           echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
-
-  edge-bootstrap:
-    if: ${{ github.event_name == 'push' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 12
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-
-      - name: Prepare dedicated OCI recovery key on Dial Control
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          RAW_COMMAND="$(cat <<'CMD'
-          set -Eeuo pipefail
-          OCI_DIR=/home/ubuntu/.oci
-          KEY="$OCI_DIR/netcup-hermes-recovery.pem"
-          PUB="$OCI_DIR/netcup-hermes-recovery_public.pem"
-          CONFIG="$OCI_DIR/config"
-          ESTATE=/etc/dial/oracle-estate.env
-          install -d -m 0700 -o ubuntu -g ubuntu "$OCI_DIR"
-          if [[ ! -s "$KEY" ]]; then
-            openssl genrsa -out "$KEY" 2048 >/dev/null 2>&1
-          fi
-          if [[ ! -s "$PUB" ]]; then
-            openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
-          fi
-          FP="$(openssl rsa -pubout -outform DER -in "$KEY" 2>/dev/null | openssl md5 -c | awk '{print $2}')"
-          printf '%s\n' \
-            '[DEFAULT]' \
-            'user=REPLACE_WITH_DEDICATED_OCI_USER_OCID' \
-            "fingerprint=$FP" \
-            'tenancy=REPLACE_WITH_TENANCY_OCID' \
-            'region=af-johannesburg-1' \
-            "key_file=$KEY" >"$CONFIG"
-          chown ubuntu:ubuntu "$KEY" "$PUB" "$CONFIG"
-          chmod 0600 "$KEY" "$CONFIG"
-          chmod 0644 "$PUB"
-          install -d -m 0755 /etc/dial
-          if [[ ! -f "$ESTATE" ]]; then
-            printf '%s\n' \
-              '# Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.' \
-              '# A1 is one physical transition peer; there is intentionally no fourth old-control OCID.' \
-              'DIAL_OCI_COMPARTMENT=' \
-              'VAN_TRADING_CORE_OCID=' \
-              'VEKL_WORKER_OCID=' \
-              'ORACLE_ADMIN_OCID=' >"$ESTATE"
-          fi
-          chmod 0600 "$ESTATE"
-          echo OCI_RECOVERY_IDENTITY=PREPARED
-          echo public_key_begin
-          cat "$PUB"
-          echo public_key_end
-          echo "fingerprint=$FP"
-          echo OCI_RECOVERY_CONFIG=OWNER_ACTION_REQUIRED
-          CMD
-          )"
-          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
-          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
-          OUT="$(jq -r '.result.stdout' <<<"$RESPONSE")"
-          printf '%s\n' "$OUT"
-          grep -q '^OCI_RECOVERY_IDENTITY=PREPARED$' <<<"$OUT"
-          grep -q '^public_key_begin$' <<<"$OUT"
-          grep -q '^public_key_end$' <<<"$OUT"
-          grep -q '^fingerprint=' <<<"$OUT"
-          {
-            echo '## OCI recovery public-key handoff'
-            echo 'Upload only this public key to the dedicated OCI recovery user. The private key remains on Dial Control.'
-            echo '~~~text'
-            awk '/^public_key_begin$/{flag=1;next}/^public_key_end$/{flag=0}flag' <<<"$OUT"
-            grep '^fingerprint=' <<<"$OUT"
-            echo '~~~'
-          } >>"$GITHUB_STEP_SUMMARY"
