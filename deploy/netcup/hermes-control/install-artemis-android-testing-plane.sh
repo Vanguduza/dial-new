@@ -18,7 +18,9 @@ ARTEMIS_CONSOLE_TOKEN_FILE="$CONTROL_HOME/secrets/artemis-console.token"
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "dial-control" ]] || fail "must run on Netcup dial-control"
 [[ "$(uname -m)" == "x86_64" ]] || fail "this qualified installer is x86_64 only"
-for cmd in git gh python3 adb scrcpy ffmpeg node; do command -v "$cmd" >/dev/null 2>&1 || fail "required host dependency missing: $cmd"; done
+for cmd in git gh python3 adb scrcpy ffmpeg node openssl; do command -v "$cmd" >/dev/null 2>&1 || fail "required host dependency missing: $cmd"; done
+NODE_BIN="$(command -v node)"
+[[ -x "$NODE_BIN" ]] || fail "resolved node binary is not executable: $NODE_BIN"
 python3 -c 'import sys; assert sys.version_info >= (3,12)' || fail "Python 3.12+ required"
 
 sudo install -d -m 0755 /opt/hermes-mobile-fabric "$ARTEMIS_ROOT"
@@ -100,7 +102,7 @@ Environment=DIAL_ARTEMIS_BIN=$ARTEMIS_DIR/.venv/bin/artemis
 Environment=DIAL_ARTEMIS_PYTHON=$ARTEMIS_DIR/.venv/bin/python
 Environment=DIAL_ARTEMIS_BRIDGE=$REPO_DIR/deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
 Environment=DIAL_ADB_BIN=adb
-ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/android-testing-supervisor.mjs
+ExecStart=$NODE_BIN $REPO_DIR/agent-system/orchestration/android-testing-supervisor.mjs
 UNIT
 
 cat > "$UNIT_DIR/dial-artemis-supervisor.timer" <<UNIT
@@ -198,7 +200,7 @@ Environment=DIAL_ARTEMIS_CONSOLE_BIND=$CONSOLE_BIND
 Environment=DIAL_ARTEMIS_CONSOLE_PORT=$ARTEMIS_CONSOLE_PORT
 Environment=DIAL_ARTEMIS_UI_UPSTREAM=http://127.0.0.1:$ARTEMIS_UI_PORT
 Environment=DIAL_ARTEMIS_CONSOLE_TOKEN_FILE=$ARTEMIS_CONSOLE_TOKEN_FILE
-ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/artemis-console-proxy.mjs
+ExecStart=$NODE_BIN $REPO_DIR/agent-system/orchestration/artemis-console-proxy.mjs
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
@@ -206,7 +208,6 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
 ReadOnlyPaths=$REPO_DIR $ARTEMIS_DIR $ARTEMIS_CONSOLE_TOKEN_FILE
-ReadWritePaths=$CONTROL_HOME
 
 [Install]
 WantedBy=default.target
