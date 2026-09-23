@@ -11,8 +11,6 @@ ARTEMIS_DIR="$ARTEMIS_ROOT/$ARTEMIS_COMMIT"
 UV_VERSION="0.12.17"
 UV_ASSET="uv-x86_64-unknown-linux-gnu.tar.gz"
 UNIT_DIR="$HOME/.config/systemd/user"
-CONSOLE_ENABLED="${DIAL_ARTEMIS_CONSOLE_ENABLED:-0}"
-[[ "${1:-}" == "--no-start" ]] && CONSOLE_ENABLED=0
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "dial-control" ]] || fail "must run on Netcup dial-control"
@@ -110,25 +108,6 @@ Unit=dial-artemis-supervisor.service
 WantedBy=timers.target
 UNIT
 
-cat > "$UNIT_DIR/dial-artemis-ui.service" <<UNIT
-[Unit]
-Description=DIAL hardened ARTEMIS Android test console
-After=network-online.target
-
-[Service]
-Type=simple
-WorkingDirectory=$ARTEMIS_DIR
-Environment=ADB_SERVER_HOST=127.0.0.1
-Environment=ADB_SERVER_PORT=5037
-Environment=DIAL_ARTEMIS_HARDENED=1
-ExecStart=$ARTEMIS_DIR/.venv/bin/artemis ui
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=default.target
-UNIT
-
 python3 - "$HOME/.hermes/config.yaml" "$REPO_DIR" "$CONTROL_HOME" "$ARTEMIS_DIR" <<'PY'
 import os,sys,tempfile,yaml
 path,repo,control,artemis=sys.argv[1:5]
@@ -166,13 +145,10 @@ finally:
 PY
 
 systemctl --user daemon-reload
+systemctl --user disable --now dial-artemis-ui.service >/dev/null 2>&1 || true
+rm -f "$UNIT_DIR/dial-artemis-ui.service"
+systemctl --user daemon-reload
 systemctl --user enable --now dial-artemis-supervisor.timer >/dev/null
-if [[ "$CONSOLE_ENABLED" == "1" ]]; then
-  systemctl --user enable dial-artemis-ui.service >/dev/null
-  systemctl --user restart dial-artemis-ui.service
-else
-  systemctl --user disable --now dial-artemis-ui.service >/dev/null 2>&1 || true
-fi
 
 node "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs" </dev/null >/dev/null 2>&1 || true
 echo "ARTEMIS_INSTALL=GREEN"
@@ -180,7 +156,7 @@ echo "ARTEMIS_COMMIT=$ARTEMIS_COMMIT"
 echo "ARTEMIS_LOCK_BLOB=$ARTEMIS_LOCK_BLOB"
 echo "ARTEMIS_ROLE=HERMES_SUBORDINATE_ANDROID_EXECUTOR"
 echo "RAW_ARTEMIS_MCP=NOT_EXPOSED"
-echo "ARTEMIS_DIRECT_CONSOLE=$([[ "$CONSOLE_ENABLED" == "1" ]] && echo ENABLED_EXPLICITLY || echo DISABLED_BY_DEFAULT)"
+echo "ARTEMIS_DIRECT_CONSOLE=DISABLED_NOT_REGISTERED"
 echo "HERMES_MCP=dial_android_testing"
 echo "ARTEMIS_SUPERVISOR_TIMER=dial-artemis-supervisor.timer"
 echo "DEVICE_ADMISSION_FILE=$CONTROL_HOME/config/android-testing-devices.json"
