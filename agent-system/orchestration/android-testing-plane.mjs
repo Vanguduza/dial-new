@@ -175,7 +175,7 @@ export async function runAndroidTest({
     if(packageName) requirePackage(packageName);
     const env={ADB_DEVICE_SERIAL:serial,DIAL_ANDROID_TEST_RUN_ID:run.id};
     const output=runFile(c.artemis,['run',task,'--profile',selectedProfile],{
-      cwd:path.dirname(c.artemis),
+      cwd:path.resolve(path.dirname(c.artemis),'../..'),
       env,
       timeoutMs:Math.min(Math.max(Number(timeoutMs)||1800000,60000),2700000),
     });
@@ -194,7 +194,10 @@ export async function runAndroidTest({
       success,build,install,artemis,error,artifacts,
       authority:'TEST_EVIDENCE_NON_AUTHORITATIVE_UNTIL_RECONCILED',
     };
-    writeJsonAtomic(path.relative(root||DEFAULT_CONTROL_HOME,path.join(run.dir,'summary.json')),summary,root);
+    const summaryPath=path.join(run.dir,'summary.json');
+    const tmpSummary=`${summaryPath}.tmp-${process.pid}`;
+    fs.writeFileSync(tmpSummary,`${JSON.stringify(summary,null,2)}\n`,{mode:0o600});
+    fs.renameSync(tmpSummary,summaryPath);
     const candidate=writeMemoryCandidate({
       project:projectId,tier:'HOT',type:'TEST_EVIDENCE',
       text:`Android test ${run.id} ${success?'PASSED':'FAILED'} on ${serial}. Objective hash ${summary.objective_sha256}. Repository ${git.commit}.`,
@@ -202,7 +205,9 @@ export async function runAndroidTest({
       sourceHarness,repositorySha:git.commit,metadata:{run_id:run.id,success,profile:selectedProfile,device_serial:serial},
     },root);
     summary.memory_candidate={memory_id:candidate.memory_id,object_rel:candidate.object_rel};
-    writeJsonAtomic(path.relative(root||DEFAULT_CONTROL_HOME,path.join(run.dir,'summary.json')),summary,root);
+    const tmpFinal=`${summaryPath}.tmp-${process.pid}`;
+    fs.writeFileSync(tmpFinal,`${JSON.stringify(summary,null,2)}\n`,{mode:0o600});
+    fs.renameSync(tmpFinal,summaryPath);
     release();
     return summary;
   }
