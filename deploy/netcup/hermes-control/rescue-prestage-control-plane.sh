@@ -213,7 +213,10 @@ if [[ ! -x "$ROOT/opt/oci-cli/bin/oci" ]] || ! chroot "$ROOT" /opt/oci-cli/bin/o
   rm -rf "$ROOT/opt/oci-cli"; chroot "$ROOT" python3 -m venv /opt/oci-cli
   chroot "$ROOT" /opt/oci-cli/bin/pip install --disable-pip-version-check --no-cache-dir --retries 8 'oci-cli==3.93.0'
 fi
-ln -sfn /opt/oci-cli/bin/oci "$ROOT/usr/local/bin/oci"; chroot "$ROOT" /usr/local/bin/oci --version >/dev/null
+chmod -R a+rX "$ROOT/opt/oci-cli"
+ln -sfn /opt/oci-cli/bin/oci "$ROOT/usr/local/bin/oci"
+chroot "$ROOT" /usr/local/bin/oci --version >/dev/null
+chroot "$ROOT" /usr/sbin/runuser -u ubuntu -- /usr/local/bin/oci --version >/dev/null
 
 install -d -m 0755 "$ROOT/usr/local/lib/dial-control" "$ROOT/usr/local/sbin"
 CONTROL_SRC=/tmp/dial-github-oidc-control.mjs
