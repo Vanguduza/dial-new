@@ -16,13 +16,18 @@ function repoRoot() {
   return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 }
 
+function canonicalPath(value) {
+  const resolved=path.resolve(value);
+  try { return fs.realpathSync(resolved); } catch { return resolved; }
+}
+
 function artemisRootFromBinary(binary) {
-  return path.resolve(path.dirname(binary), '../..');
+  return canonicalPath(path.resolve(path.dirname(binary), '../..'));
 }
 
 export function artemisSubordinateConfig() {
   const binary = process.env.DIAL_ARTEMIS_BIN || '/opt/hermes-mobile-fabric/artemis/current/.venv/bin/artemis';
-  const root = process.env.DIAL_ARTEMIS_ROOT || artemisRootFromBinary(binary);
+  const root = process.env.DIAL_ARTEMIS_ROOT ? canonicalPath(process.env.DIAL_ARTEMIS_ROOT) : artemisRootFromBinary(binary);
   const python = process.env.DIAL_ARTEMIS_PYTHON || path.join(root, '.venv/bin/python');
   const bridge = process.env.DIAL_ARTEMIS_BRIDGE || path.join(repoRoot(), 'deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py');
   const runner = process.env.DIAL_ARTEMIS_BRIDGE_RUNNER || python;
