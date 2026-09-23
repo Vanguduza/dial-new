@@ -134,4 +134,17 @@ echo "ARTEMIS_LOCK_BLOB=$ARTEMIS_LOCK_BLOB"
 echo "RAW_ARTEMIS_MCP=NOT_EXPOSED"
 echo "HERMES_MCP=dial_android_testing"
 echo "DEVICE_ADMISSION_FILE=$CONTROL_HOME/config/android-testing-devices.json"
-echo "ANDROID_TESTING_LIVE=$([[ $(jq -r '.devices|map(select(.enabled!=false))|length' "$CONTROL_HOME/config/android-testing-devices.json" 2>/dev/null || echo 0) -gt 0 ]] && echo READY || echo WAITING_FOR_ADMITTED_DEVICE)"
+admitted_count="$(python3 - "$CONTROL_HOME/config/android-testing-devices.json" <<'PY'
+import json,sys
+try:
+    data=json.load(open(sys.argv[1],encoding='utf-8'))
+    print(sum(1 for d in (data.get('devices') or []) if isinstance(d,dict) and d.get('enabled',True) is not False and d.get('serial')))
+except Exception:
+    print(0)
+PY
+)"
+if [[ "$admitted_count" -gt 0 ]]; then
+  echo "ANDROID_TESTING_LIVE=READY_FOR_CONNECTED_ADMITTED_DEVICE"
+else
+  echo "ANDROID_TESTING_LIVE=WAITING_FOR_ADMITTED_DEVICE"
+fi
