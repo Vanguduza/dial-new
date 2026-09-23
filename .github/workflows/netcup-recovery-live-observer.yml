@@ -26,8 +26,8 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET_RUN_ID: '35810901058'
-          TARGET_SHA: '5f97121976b01cbbd830360559f9bd554cd4a6e5'
+          TARGET_RUN_ID: '35812073401'
+          EXPECTED_PAYLOAD_REF: '17dce8e76bb80093bc14ceab9db1f97d80acfcf3'
           CONTROL_IP: '62.83.35.103'
         run: |
           set -Eeuo pipefail
@@ -68,7 +68,7 @@ jobs:
             phase="$(jq -r '.bootstrap_phase // "null"' <<<"$health_json" 2>/dev/null || echo null)"
             repo_head="$(jq -r '.repo_head // "null"' <<<"$health_json" 2>/dev/null || echo null)"
             health_ok=false
-            if jq -e --arg expected "$TARGET_SHA" '.ok == true and .host == "dial-control" and .bootstrap_phase == "CONTROL_PLANE_READY" and .repo_head == $expected' <<<"$health_json" >/dev/null 2>&1; then
+            if jq -e --arg expected "$EXPECTED_PAYLOAD_REF" '.ok == true and .host == "dial-control" and .bootstrap_phase == "CONTROL_PLANE_READY" and .repo_head == $expected' <<<"$health_json" >/dev/null 2>&1; then
               health_ok=true
             fi
 
