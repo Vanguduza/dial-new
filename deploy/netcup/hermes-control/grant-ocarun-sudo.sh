@@ -71,16 +71,22 @@ incomplete=0
 for name in "${NAMES[@]}"; do
   ip="${PEERS[$name]}"
   out=""
-  if out="$(runuser -u ubuntu -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=8 \
-              -o StrictHostKeyChecking=accept-new "ubuntu@$ip" \
-              "printf '%s' '$REMOTE_B64' | base64 -d | bash -s" 2>&1)"; then :; fi
-  status="$(printf '%s\n' "$out" | grep '^REMOTE=' | tail -1)"
+  # ssh may fail (unreachable, auth); capture stdout+stderr without tripping errexit.
+  set +e
+  out="$(runuser -u ubuntu -- ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=8 \
+           -o StrictHostKeyChecking=accept-new "ubuntu@$ip" \
+           "printf '%s' '$REMOTE_B64' | base64 -d | bash -s" 2>&1)"
+  set -e
+  # A no-match grep must not abort the run, so guard the extraction explicitly.
+  status="$(printf '%s\n' "$out" | grep '^REMOTE=' | tail -1 || true)"
   status="${status#REMOTE=}"
   [[ -n "$status" ]] || status="UNREACHABLE"
   echo "ocarun_sudo_${name//-/_}=$status"
   case "$status" in
     GRANTED*|ALREADY_GRANTED*) ;;
-    *) incomplete=1; printf '%s\n' "$out" | tail -3 | sed "s/^/  ${name}: /" ;;
+    *) incomplete=1
+       # Non-secret diagnostics (hostnames, ssh errors) to explain a non-grant.
+       printf '%s\n' "$out" | tail -3 | sed "s/^/  ${name}: /" ;;
   esac
 done
 

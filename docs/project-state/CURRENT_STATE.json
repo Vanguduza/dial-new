@@ -3,20 +3,16 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260921-owner-dial-control-rename",
-    "auth-20260921-owner-netcup-four-vm-integrated-control"
+    "auth-20260921-owner-dial-control-rename"
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    ".github/workflows/netcup-admin-oidc.yml",
-    "deploy/netcup/hermes-control/grant-ocarun-sudo.sh",
-    "docs/project-state/authorizations/auth-20260923-owner-grant-ocarun-sudo.json",
-    "tests/development-bootstrap.test.mjs"
+    "deploy/netcup/hermes-control/grant-ocarun-sudo.sh"
   ],
-  "content_diff_sha256": "ff12be9c6776be28ca24ddfebc2cd547a32c4d1130c5eb397790e4c110bd0f76",
-  "observed_at_utc": "2026-09-23T12:23:14.094749+00:00",
+  "content_diff_sha256": "81706c5b783525e94a093f3ceabad2a682b81824e248a37a31963f2f1cdecc6c",
+  "observed_at_utc": "2026-09-23T12:30:34.198864+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "154cfd722f60773a0199cf8d570b2874324c2a2d",
+  "source_parent": "16ef409b9a05f475a73c44bc5c82278162355d42",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
