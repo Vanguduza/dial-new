@@ -11,6 +11,8 @@ import {
 } from '../agent-system/orchestration/android-testing-plane.mjs';
 import {
   classifyConsoleMutation,
+  ownerRunWasAccepted,
+  prepareOwnerReplayRequest,
   prepareOwnerRunRequest,
 } from '../agent-system/orchestration/artemis-console-proxy.mjs';
 
@@ -44,7 +46,7 @@ describe('Hermes-governed ARTEMIS owner console',()=>{
     expect(classifyConsoleMutation('/api/cleanup')).toBe('BLOCKED_ADMIN');
     expect(classifyConsoleMutation('/api/system/shutdown')).toBe('BLOCKED_LIFECYCLE');
     expect(classifyConsoleMutation('/api/sessions/abc/delete')).toBe('BLOCKED_DELETE');
-    expect(classifyConsoleMutation('/api/sessions/abc/steps/1/replay')).toBe('BLOCKED_REPLAY');
+    expect(classifyConsoleMutation('/api/sessions/abc/steps/1/replay')).toBe('REPLAY_OWNED_STEP');
   });
   it('forces owner web tasks onto admitted devices, one governed trace at a time',()=>{
     const root=temp('artemis-console-control-');
@@ -60,6 +62,25 @@ describe('Hermes-governed ARTEMIS owner console',()=>{
     expect(()=>prepareOwnerRunRequest({goal:'x',device_serial:'UNADMITTED'},{root,repoDir:projectRepo})).toThrow(/not admitted/);
     expect(resolveAdmittedAndroidSerial('SERIAL-1',{root})).toBe('SERIAL-1');
     expect(requireAdmittedAndroidAvd('Pixel_API_35',{root})).toBe('Pixel_API_35');
+  });
+  it('governs step replay by Hermes trace ownership and Android device admission',()=>{
+    const root=temp('artemis-console-control-');
+    const projectRepo=repo();
+    process.env.DIAL_ANDROID_DEVICE_SERIALS='SERIAL-1';
+    registerOwnerConsoleTask({
+      traceId:'owned-trace',project:'van',repoDir:projectRepo,deviceSerial:'SERIAL-1',
+      objective:'Create an owned trace.',profile:'flash',root,
+    });
+    const replay=prepareOwnerReplayRequest('/api/sessions/owned-trace/steps/2/replay',{device_id:'SERIAL-1',tool_name:'tap'},{root});
+    expect(replay).toMatchObject({traceId:'owned-trace',stepNumber:2,deviceSerial:'SERIAL-1'});
+    expect(replay.body.device_id).toBe('SERIAL-1');
+    expect(()=>prepareOwnerReplayRequest('/api/sessions/foreign/steps/1/replay',{device_id:'SERIAL-1'},{root})).toThrow(/not owned/);
+    expect(()=>prepareOwnerReplayRequest('/api/sessions/owned-trace/steps/1/replay',{device_id:'OTHER'},{root})).toThrow(/not admitted/);
+  });
+  it('does not claim a rejected upstream submission as a Hermes-owned task',()=>{
+    expect(ownerRunWasAccepted({status:'queued',tasks:[{session_id:'trace-1',status:'pending'}]})).toBe(true);
+    expect(ownerRunWasAccepted({status:'rejected',tasks:[]})).toBe(false);
+    expect(ownerRunWasAccepted({status:'failed',tasks:[{session_id:'trace-2',status:'failed'}]})).toBe(false);
   });
   it('registers owner-web traces as Hermes-owned evidence candidates, never Project Truth',()=>{
     const root=temp('artemis-console-control-');

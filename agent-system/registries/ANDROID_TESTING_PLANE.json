@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V2",
   "authority": "HERMES_CONTROL_AUTHORITY",
   "host": "dial-control",
@@ -120,13 +120,13 @@
       "SELECT_ADMITTED_DEVICE",
       "LAUNCH_ADMITTED_AVD",
       "ADB_RESTART_OR_KEY_HEAL",
-      "EMULATOR_STOP_OR_DISMISS"
+      "EMULATOR_STOP_OR_DISMISS",
+      "REPLAY_HERMES_OWNED_STEP_ON_ADMITTED_DEVICE"
     ],
     "van_console_blocked_mutations": [
       "CREDENTIAL_WRITE_OR_TEST",
       "ADB_SERVER_REBIND",
       "HISTORY_CLEANUP_OR_SESSION_DELETE",
-      "STEP_REPLAY",
       "ARTEMIS_SERVER_RESTART_OR_SHUTDOWN",
       "GLOBAL_STOP"
     ]

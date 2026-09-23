@@ -120,9 +120,29 @@ export function classifyConsoleMutation(pathname) {
   if(BLOCKED_ADMIN_PREFIXES.some(prefix=>pathname===prefix || pathname.startsWith(prefix+'/'))) return 'BLOCKED_ADMIN';
   if(pathname==='/api/system/restart' || pathname==='/api/system/shutdown') return 'BLOCKED_LIFECYCLE';
   if(/^\/api\/sessions\/[^/]+\/delete$/.test(pathname)) return 'BLOCKED_DELETE';
-  if(/^\/api\/sessions\/[^/]+\/steps\/\d+\/replay$/.test(pathname)) return 'BLOCKED_REPLAY';
+  if(/^\/api\/sessions\/[^/]+\/steps\/\d+\/replay$/.test(pathname)) return 'REPLAY_OWNED_STEP';
   return 'UNSUPPORTED';
 }
+export function prepareOwnerReplayRequest(pathname,payload,{root=controlHome}={}) {
+  const match=String(pathname||'').match(/^\/api\/sessions\/([^/]+)\/steps\/(\d+)\/replay$/);
+  if(!match) throw new Error('invalid ARTEMIS replay path');
+  const traceId=decodeURIComponent(match[1]);
+  if(!isHermesOwnedAndroidTrace(traceId,{root})) throw new Error('replay trace is not owned by the Hermes Android plane');
+  const body={...(payload||{})};
+  const serial=resolveAdmittedAndroidSerial(body.device_id||body.device_serial||null,{root});
+  delete body.device_serial;
+  body.device_id=serial;
+  return {traceId,stepNumber:Number(match[2]),deviceSerial:serial,body};
+}
+
+export function ownerRunWasAccepted(payload={}) {
+  const overall=String(payload?.status||'').toLowerCase();
+  const task=Array.isArray(payload?.tasks) ? payload.tasks[0] : null;
+  const taskStatus=String(task?.status||'').toLowerCase();
+  const rejected=new Set(['rejected','failed','cancelled','canceled']);
+  return Boolean(task?.session_id) && !rejected.has(overall) && !rejected.has(taskStatus);
+}
+
 export function prepareOwnerRunRequest(payload,{root=controlHome,repoDir=consoleRepo}={}) {
   const body={...(payload||{})};
   const goals=Array.isArray(body.goals) ? body.goals.filter(x=>String(x||'').trim()) : [];
@@ -180,7 +200,7 @@ async function handleMutation(req,res) {
     return sendJson(res,405,{
       error:'hermes_governed_control_required',
       mutation:kind,
-      detail:'This upstream ARTEMIS admin mutation is not admitted to the VAN owner surface. Use Hermes/DIAL operator controls for privileged configuration, destructive history operations, replay, or server lifecycle.',
+      detail:'This upstream ARTEMIS admin mutation is not admitted to the VAN owner surface. Use Hermes/DIAL operator controls for privileged configuration, destructive history operations, or server lifecycle.',
     });
   }
   let raw;
@@ -200,8 +220,9 @@ async function handleMutation(req,res) {
         let upstreamBody={};
         try { upstreamBody=parseJsonBuffer(result.body); } catch {}
         const upstreamTask=Array.isArray(upstreamBody.tasks) ? upstreamBody.tasks[0] : null;
-        const traceId=String(upstreamTask?.session_id || prepared.session_id);
-        registerOwnerConsoleTask({
+        if(ownerRunWasAccepted(upstreamBody)){
+          const traceId=String(upstreamTask.session_id);
+          registerOwnerConsoleTask({
           traceId,
           project:consoleProject,
           repoDir:consoleRepo,
@@ -217,7 +238,10 @@ async function handleMutation(req,res) {
           root:controlHome,
           sourceHarness:'van-owner-web',
         });
-        auditMutation({event:'ARTEMIS_OWNER_WEB_TASK_STARTED',path:pathname,trace_id:traceId,device_serial:prepared.device_serial,project:consoleProject});
+          auditMutation({event:'ARTEMIS_OWNER_WEB_TASK_STARTED',path:pathname,trace_id:traceId,device_serial:prepared.device_serial,project:consoleProject});
+        } else {
+          auditMutation({event:'ARTEMIS_OWNER_WEB_TASK_NOT_ACCEPTED',path:pathname,status:String(upstreamBody.status||'unknown').slice(0,80),device_serial:prepared.device_serial,project:consoleProject});
+        }
       }
       return sendBuffered(res,result);
     }
@@ -228,6 +252,13 @@ async function handleMutation(req,res) {
       if(!isHermesOwnedAndroidTrace(traceId,{root:controlHome})) return sendJson(res,403,{error:'trace is not owned by the Hermes Android plane'});
       const result=await requestUpstreamBuffered(req,raw.length?raw:Buffer.from(JSON.stringify({session_id:traceId})));
       auditMutation({event:'ARTEMIS_OWNER_WEB_TASK_STOP',path:pathname,trace_id:traceId,status_code:result.statusCode});
+      return sendBuffered(res,result);
+    }
+    if(kind==='REPLAY_OWNED_STEP'){
+      const prepared=prepareOwnerReplayRequest(pathname,body,{root:controlHome});
+      raw=Buffer.from(JSON.stringify(prepared.body));
+      const result=await requestUpstreamBuffered(req,raw);
+      auditMutation({event:'ARTEMIS_OWNER_WEB_STEP_REPLAY',path:pathname,trace_id:prepared.traceId,step_number:prepared.stepNumber,device_serial:prepared.deviceSerial,status_code:result.statusCode});
       return sendBuffered(res,result);
     }
     if(kind==='SELECT_DEVICE'){
