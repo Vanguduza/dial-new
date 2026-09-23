@@ -7,7 +7,8 @@ OCI_DIR="$HOME/.oci"
 KEY="$OCI_DIR/netcup-hermes-recovery.pem"
 PUB="$OCI_DIR/netcup-hermes-recovery_public.pem"
 CONFIG="$OCI_DIR/config"
-ESTATE=/etc/dial/oracle-estate.env
+ESTATE="${DIAL_OCI_ESTATE_FILE:-/etc/dial/oracle-estate.env}"
+READY_MARKER="${DIAL_OCI_READY_MARKER:-/var/lib/dial-control/github-oidc/github-oci-ready}"
 REGION="${OCI_RECOVERY_REGION:-af-johannesburg-1}"
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
@@ -65,7 +66,7 @@ config_ready() {
 
 inventory_ready() {
   [[ -s "$ESTATE" ]] || return 1
-  grep -q '^DIAL_OCI_COMPARTMENT=ocid1\.compartment\.' "$ESTATE" &&
+  grep -Eq '^DIAL_OCI_COMPARTMENT=ocid1\.(compartment|tenancy)\.' "$ESTATE" &&
     grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
     grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
     grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
@@ -125,7 +126,8 @@ discover_instance() {
   local id compartment display shape
   IFS=$'\t' read -r id compartment display shape <"$tmp"
   rm -f "$tmp"
-  [[ "$id" == ocid1.instance.* && "$compartment" == ocid1.compartment.* ]] || {
+  # An instance in the root compartment reports the tenancy OCID as its compartment.
+  [[ "$id" == ocid1.instance.* && ( "$compartment" == ocid1.compartment.* || "$compartment" == ocid1.tenancy.* ) ]] || {
     echo "REFUSE: invalid OCI identity returned for $logical" >&2
     return 21
   }
@@ -138,16 +140,30 @@ discover_instance() {
 
 discover() {
   ensure_key
-  config_ready || {
-    echo "REFUSE: OCI recovery config needs dedicated user and tenancy OCIDs before discovery" >&2
-    exit 10
-  }
+  # Session mode: oci-edge-login.sh runs discovery once with the owner's short-lived browser
+  # session (auth selected through OCI_CLI_* in the environment) so the recovery policy can be
+  # scoped to the estate compartment before the durable key exists. It writes the inventory
+  # only; the recovery-ready marker is reserved for the durable dedicated-user key below.
+  local session_mode=false tenancy
+  if [[ "${OCI_RECOVERY_DISCOVERY_AUTH:-}" == session ]]; then
+    session_mode=true
+    [[ "${OCI_CLI_AUTH:-}" == security_token && -n "${OCI_CLI_CONFIG_FILE:-}" ]] || {
+      echo "REFUSE: session discovery requires OCI_CLI_AUTH=security_token and OCI_CLI_CONFIG_FILE" >&2
+      exit 10
+    }
+    tenancy="${OCI_RECOVERY_TENANCY_OCID:-}"
+    [[ "$tenancy" == ocid1.tenancy.* ]] || { echo "REFUSE: OCI_RECOVERY_TENANCY_OCID required" >&2; exit 10; }
+  else
+    config_ready || {
+      echo "REFUSE: OCI recovery config needs dedicated user and tenancy OCIDs before discovery" >&2
+      exit 10
+    }
+    tenancy="$(config_value tenancy)"
+  fi
   command -v oci >/dev/null 2>&1 || { echo "REFUSE: OCI CLI missing" >&2; exit 11; }
   command -v jq >/dev/null 2>&1 || { echo "REFUSE: jq missing" >&2; exit 11; }
 
   oci iam region list --limit 1 >/dev/null
-  local tenancy
-  tenancy="$(config_value tenancy)"
 
   mapfile -t COMPARTMENTS < <(
     {
@@ -197,9 +213,15 @@ EOF
   sudo install -m 0600 "$tmp" "$ESTATE"
   rm -f "$tmp"
 
-  sudo install -d -m 0700 /var/lib/dial-control/github-oidc
-  printf '%s\n' "$(date -u +%FT%TZ)" | sudo tee /var/lib/dial-control/github-oidc/github-oci-ready >/dev/null
-  sudo chmod 0600 /var/lib/dial-control/github-oidc/github-oci-ready
+  if [[ "$session_mode" == true ]]; then
+    echo "OCI_RECOVERY_DISCOVERY=INVENTORY_ONLY"
+    echo "estate_file=$ESTATE"
+    return 0
+  fi
+
+  sudo install -d -m 0700 "$(dirname "$READY_MARKER")"
+  printf '%s\n' "$(date -u +%FT%TZ)" | sudo tee "$READY_MARKER" >/dev/null
+  sudo chmod 0600 "$READY_MARKER"
 
   echo "OCI_RECOVERY_DISCOVERY=GREEN"
   echo "oracle_targets=3"
