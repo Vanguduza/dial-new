@@ -107,7 +107,7 @@ Every asynchronous task is recorded under `/var/lib/dial-control/android-testing
 
 `android_diagnose` can launch only explicitly allowlisted AVDs. Safe ARTEMIS self-heal actions stay behind the Hermes broker. The Android plane does not create an unrestricted internet-facing ADB listener.
 
-The managed ARTEMIS web console is not registered at all. The installer removes/disables any prior `dial-artemis-ui.service`, so the estate has no supported parallel ARTEMIS control surface. Hermes is the supported control boundary.
+The upstream ARTEMIS web process is registered only as a loopback-only internal backend (`dial-artemis-ui.service`) for the governed VAN console. It is not a direct owner or harness control surface, is not bound to the public/private estate interface, and carries no independent authority. Hermes remains the supported control boundary; VAN reaches ARTEMIS only through the authenticated proxy and its admission policy.
 
 ## VAN embedded ARTEMIS console
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V2",
   "authority": "HERMES_CONTROL_AUTHORITY",
   "host": "dial-control",
@@ -15,11 +15,13 @@
     "hermes_is_control_authority": true,
     "artemis_is_subordinate": true,
     "raw_upstream_mcp_exposed": false,
-    "raw_upstream_ui_enabled_by_default": false,
+    "raw_upstream_ui_enabled_by_default": true,
     "project_truth_can_be_advanced_by_artemis": false,
     "test_evidence_is_authoritative_before_reconciliation": false,
     "managed_direct_artemis_ui_registered": false,
-    "van_embedded_console_preserves_hermes_authority": true
+    "van_embedded_console_preserves_hermes_authority": true,
+    "raw_upstream_ui_network_scope": "LOOPBACK_ONLY_INTERNAL_BACKEND",
+    "raw_upstream_ui_direct_owner_access": false
   },
   "access": {
     "hermes_mcp": "dial_android_testing",
@@ -76,7 +78,9 @@
     "BUG_REPRODUCTION",
     "PERFORMANCE_AND_STABILITY_PROFILING",
     "VAN_EMBEDDED_ARTEMIS_WEB_OBSERVATION",
-    "HERMES_AUTHENTICATED_ARTEMIS_CONSOLE_PROXY"
+    "HERMES_AUTHENTICATED_ARTEMIS_CONSOLE_PROXY",
+    "VAN_EMBEDDED_ARTEMIS_WEB_GOVERNED_CONTROL",
+    "HERMES_OWNED_STEP_REPLAY"
   ],
   "routing": {
     "flash": "ROUTINE_DETERMINISTIC_UI_PATHS",
