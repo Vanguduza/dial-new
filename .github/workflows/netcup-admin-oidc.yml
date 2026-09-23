@@ -274,8 +274,6 @@ jobs:
           UNIT="dial-oci-browser-bootstrap-$(date +%s%N)"
           printf '%s\n' "$UNIT" >"$LOGDIR/unit-name"
           systemd-run --collect --unit="$UNIT" \
-            --property=User=ubuntu \
-            --property=Group=ubuntu \
             --property=Environment=HOME=/home/ubuntu \
             --property=WorkingDirectory=/home/ubuntu \
             /bin/bash -c 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"' >/dev/null
