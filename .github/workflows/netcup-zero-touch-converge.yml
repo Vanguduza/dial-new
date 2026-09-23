@@ -1,0 +1,235 @@
+name: Dial Control zero-touch converge
+
+on:
+  push:
+    branches:
+      - master
+      - gpt/netcup-hermes-control-integrated-20260921
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: dial-control-zero-touch-converge
+  cancel-in-progress: false
+
+env:
+  DIAL_EXPECTED_BOOTSTRAP_REF: 17dce8e76bb80093bc14ceab9db1f97d80acfcf3
+  DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
+
+jobs:
+  converge:
+    if: ${{ github.repository == 'Vanguduza/dial-new' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+
+    steps:
+      - name: Checkout authoritative revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+
+      - name: Assert current convergence authority
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - id: status
+        name: Detect Dial Control readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          body='{"action":"status"}'
+          RESPONSE=
+          ready=false
+          for attempt in $(seq 1 120); do
+            if RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$body" 2>"$RUNNER_TEMP/status.err")" &&
+               jq -e --arg expected "$DIAL_EXPECTED_BOOTSTRAP_REF" '
+                 .ok == true and
+                 .result.host == "dial-control" and
+                 .result.bootstrap_receipt == true and
+                 .result.bootstrap_phase == "CONTROL_PLANE_READY" and
+                 .result.bootstrap_ref == $expected and
+                 .result.repo_head == $expected
+               ' <<<"$RESPONSE" >/dev/null 2>&1; then
+              ready=true
+              break
+            fi
+            stage="$(jq -r '.result.bootstrap_stage // "listener-unreachable"' <<<"${RESPONSE:-{}}" 2>/dev/null || echo listener-unreachable)"
+            failure="$(jq -r '.result.bootstrap_failure // empty' <<<"${RESPONSE:-{}}" 2>/dev/null || true)"
+            if [[ "$stage" == FAILED* || -n "$failure" ]]; then
+              echo "::error::BOOTSTRAP_TERMINAL_FAILURE stage=$stage"
+              if [[ -n "$failure" ]]; then
+                printf '%s\n' "$failure" | tail -n 240
+              fi
+              exit 2
+            fi
+            echo "Waiting for hardened Dial Control image bootstrap (attempt $attempt/120, stage=$stage)..."
+            sleep 30
+          done
+          if [[ "$ready" != true ]]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::error::Dial Control did not become ready within the zero-touch convergence window."
+            exit 1
+          fi
+          printf '%s' "$RESPONSE" >"$RUNNER_TEMP/status.json"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "certified=$(jq -r '.result.certified // false' "$RUNNER_TEMP/status.json")" >> "$GITHUB_OUTPUT"
+          echo "recovery_ready=$(jq -r '.result.recovery_ready // false' "$RUNNER_TEMP/status.json")" >> "$GITHUB_OUTPUT"
+          echo "oci_estate_inventory=$(jq -r '.result.oci_estate_inventory // false' "$RUNNER_TEMP/status.json")" >> "$GITHUB_OUTPUT"
+          echo "oci_peers_enrolled=$(jq -r '.result.oci_peers_enrolled // false' "$RUNNER_TEMP/status.json")" >> "$GITHUB_OUTPUT"
+          {
+            echo "bootstrap_ssh_public_key<<EOF"
+            jq -r '.result.bootstrap_ssh_public_key' "$RUNNER_TEMP/status.json"
+            echo "EOF"
+            echo "wireguard_public_key=$(jq -r '.result.wireguard_public_key' "$RUNNER_TEMP/status.json")"
+            echo "age_recipient=$(jq -r '.result.github_bootstrap_age_recipient' "$RUNNER_TEMP/status.json")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Waiting for image bootstrap
+        if: ${{ steps.status.outputs.ready != 'true' }}
+        run: echo "ZERO_TOUCH_STATE=WAITING_FOR_DIAL_CONTROL"
+
+      - name: Already certified
+        if: ${{ steps.status.outputs.ready == 'true' && steps.status.outputs.certified == 'true' }}
+        run: echo "ZERO_TOUCH_STATE=ALREADY_CERTIFIED" >> "$GITHUB_STEP_SUMMARY"
+
+      - id: prerequisites
+        name: Validate local OCI recovery authority
+        if: ${{ steps.status.outputs.ready == 'true' && steps.status.outputs.certified != 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${{ steps.status.outputs.recovery_ready }}" == true ]] || {
+            echo "::error::Dial Control OCI recovery identity/inventory is not ready. Upload the prepared public API key to the dedicated OCI recovery user, then run prepare-oci-recovery.sh configure-and-discover on Dial Control."
+            exit 2
+          }
+          [[ "${{ steps.status.outputs.oci_estate_inventory }}" == true ]] || {
+            echo "::error::Dial Control OCI estate inventory is not ready."
+            exit 2
+          }
+          [[ "${{ steps.status.outputs.wireguard_public_key }}" =~ ^[A-Za-z0-9+/]{43}=$ ]] || {
+            echo "::error::Invalid Dial Control WireGuard public key"
+            exit 2
+          }
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Reassert authority before estate mutation
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - id: peers
+        name: Enroll Oracle estate from Dial Control OCI authority
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"oci-enroll-estate"}')"
+          jq -e '
+            .ok == true and
+            .result.receipt.schema_version == 2 and
+            .result.receipt.retained_oracle_instances == 3 and
+            (.result.receipt.peers.oracle_admin | test("^[A-Za-z0-9+/]{43}=$")) and
+            (.result.receipt.peers.vekl_worker | test("^[A-Za-z0-9+/]{43}=$")) and
+            (.result.receipt.peers.van_trading_core | test("^[A-Za-z0-9+/]{43}=$")) and
+            ((.result.receipt.peers.hermes_source // "") | test("^([A-Za-z0-9+/]{43}=)?$"))
+          ' <<<"$RESPONSE" >/dev/null
+          {
+            echo "oracle_admin=$(jq -r '.result.receipt.peers.oracle_admin' <<<"$RESPONSE")"
+            echo "vekl_worker=$(jq -r '.result.receipt.peers.vekl_worker' <<<"$RESPONSE")"
+            echo "van_trading_core=$(jq -r '.result.receipt.peers.van_trading_core' <<<"$RESPONSE")"
+            echo "hermes_source=$(jq -r '.result.receipt.peers.hermes_source // ""' <<<"$RESPONSE")"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Configure and verify private overlay
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY="$(jq -cn             --arg admin "${{ steps.peers.outputs.oracle_admin }}"             --arg vekl "${{ steps.peers.outputs.vekl_worker }}"             --arg van "${{ steps.peers.outputs.van_trading_core }}"             --arg src "${{ steps.peers.outputs.hermes_source }}"             '{action:"configure-overlay",peers:({oracle_admin:$admin,vekl_worker:$vekl,van_trading_core:$van} + (if $src != "" then {hermes_source:$src} else {} end))}')"
+          bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY" >/dev/null
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}' >/dev/null
+
+      - name: Install state-aware housekeeping over verified overlay
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"install-housekeeping-estate"}' >/dev/null
+
+      - name: Reassert authority before migration prepare
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - name: Prepare migration while old control remains authoritative
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-prepare"}' >/dev/null
+
+      - name: Prove takeover readiness before quiescing old control
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activation-preflight"}' >/dev/null
+
+      - name: Rotate one-time identities and reverify overlay
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"rotate-identities"}' >/dev/null
+          bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"verify-overlay"}' >/dev/null
+
+      - name: Reassert authority before final cutover
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - name: Final migration cutover
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"migrate-cutover"}' >/dev/null
+
+      - name: Reassert authority before activation
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - name: Activate Dial Control
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"activate"}' >/dev/null
+
+      - name: Prove Netcup ready before retiring old Oracle control
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"source-retirement-preflight"}' >/dev/null
+
+      - name: Retire old Hermes control role on Oracle A1
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"retire-a1-control-role"}' >/dev/null
+
+      - name: Optionally register self-hosted GitHub admin runner
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        continue-on-error: true
+        run: bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"ensure-github-admin-runner"}' >/dev/null
+
+      - name: Reassert authority before certification
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: bash deploy/netcup/hermes-control/assert-authoritative-workflow.sh
+
+      - name: Final zero-touch certification
+        if: ${{ steps.prerequisites.outputs.ready == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"certify"}')"
+          jq -e '.ok == true and .result.github_oidc_admin == true' <<<"$RESPONSE" >/dev/null
+          {
+            echo "## Dial Control zero-touch convergence"
+            echo "- state: CERTIFIED"
+            echo "- GitHub OIDC admin: GREEN"
+            echo "- Oracle WireGuard/SSH: GREEN"
+            echo "- Hermes migration/cutover: GREEN"
+            echo "- Oracle A1: one physical transition peer; old Hermes control installation/state retired after verified clone"
+            echo "- Oracle A1 final identity: van-trading-core"
+            echo "- VAN/VATI authority: preserved; DIAL removes only the former control-plane role/state and keeps SSH/WireGuard/provider user credentials"
+            echo "- final estate: Netcup Dial Control + van-trading-core + vekl-worker + oracle-admin"
+          } >>"$GITHUB_STEP_SUMMARY"

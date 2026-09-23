@@ -574,18 +574,29 @@ Default-deny east-west, NSGs per node, no unrestricted `0.0.0.0/0` SSH.
 
 # 12. Recovery
 
-`oracle-admin` retains multiple independent paths, so that no single failure
-removes all of them:
+Normal owner control no longer traverses `oracle-admin`. ChatGPT mobile reaches the
+owner-facing online Commander on `dial-hermes-control`, then Hermes. Recovery is
+deliberately out-of-band:
 
 ```text
-A  private SSH -> control host
-B  private SSH -> vekl-worker
-C  recovery MCP
-D  OCI CLI / API
-E  OCI Run Command          (works when SSH is down, agent alive)
-F  remote Desktop Commander
-G  secondary overlay (Tailscale or equivalent, independent of Cloudflare)
+A  GitHub-hosted Actions -> OCI API -> OCI Run Command
+B  OCI console / Cloud Shell -> OCI Run Command
+C  private SSH from the recovery plane
+D  reciprocal bounded recovery SSH
+E  recovery MCP
+F  oracle-admin remote Desktop Commander (cold / break-glass only)
+G  secondary overlay where configured
 ```
+
+Path A is the normal machine recovery mechanism for Commander/Hermes outages. The
+GitHub workflow has enumerated target/action inputs, no free-form shell input, a
+per-target concurrency lock, and a protected `oracle-recovery` environment for
+mutating actions. It therefore remains usable when Commander, Hermes or
+`oracle-admin` is unavailable.
+
+`oracle-admin` remains a recovery host but does not carry routine ChatGPT,
+development, model or build load. Its Commander may be started temporarily by the
+bounded recovery workflow when a break-glass interactive recovery device is required.
 
 Recovery paths are exercised on a schedule. An untested recovery path is not a
 recovery path.

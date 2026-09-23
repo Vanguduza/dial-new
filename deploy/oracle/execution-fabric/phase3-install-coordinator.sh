@@ -5,6 +5,11 @@ REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 WORKER="${DIAL_WORKER_HOME:-/var/lib/dial-worker}"
 SAFE_PATH="$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
 NODE="$(PATH="$SAFE_PATH" command -v node)"
+PRIVATE_MCP_HEALTH="${DIAL_PRIVATE_MCP_HEALTH:-}"
+if [[ -z "$PRIVATE_MCP_HEALTH" && -n "${DIAL_CONTROL_OVERLAY_IP:-}" ]]; then
+  PRIVATE_MCP_HEALTH="http://${DIAL_CONTROL_OVERLAY_IP}:9133/health"
+fi
+[[ -n "$PRIVATE_MCP_HEALTH" ]] || { echo "DIAL_PRIVATE_MCP_HEALTH or DIAL_CONTROL_OVERLAY_IP is required for cross-cloud coordinator" >&2; exit 2; }
 [[ -x "$NODE" && "$("$NODE" -p 'process.versions.node.split(".")[0]')" -ge 22 ]] || { echo "Node 22+ is required from deterministic service PATH" >&2; exit 3; }
 
 test -f /etc/dial/host-role
@@ -23,7 +28,7 @@ Environment=DIAL_REPO_DIR=$REPO
 Environment=DIAL_WORKER_HOME=$WORKER
 Environment=DIAL_HOST_ROLE_FILE=/etc/dial/host-role
 Environment=DIAL_PRIVATE_MCP_URL_FILE=$WORKER/secrets/private-mcp-url
-Environment=DIAL_PRIVATE_MCP_HEALTH=http://10.0.0.184:9133/health
+Environment=DIAL_PRIVATE_MCP_HEALTH=$PRIVATE_MCP_HEALTH
 Environment=PATH=$SAFE_PATH
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
 ExecStart=$NODE $HERE/dial-background-coordinator.mjs

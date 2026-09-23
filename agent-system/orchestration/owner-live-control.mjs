@@ -164,6 +164,9 @@ export async function executeOwnerLiveTurn({ instruction, mode = null, advisoryC
     writeJsonAtomic(ownerTurnRel(turnId), executing, root);
     appendJsonl('events/owner-live.jsonl', { event: 'OWNER_LIVE_TURN_STARTED', turn_id: turnId, mode: turnMode, safe_boundary_wait_ms: wait.waited_ms, at: executing.executing_at }, root);
 
+    const ownerCommanderAuthority = ownerProvenance?.authority && ownerProvenance.authority !== 'NO_AUTHORITY'
+      ? { source: 'OWNER_EXPLICIT', ownerAttested: true, ownerApproval: true }
+      : null;
     const result = await executor({
       repoDir: repoDir || before.repo_dir,
       root,
@@ -171,6 +174,7 @@ export async function executeOwnerLiveTurn({ instruction, mode = null, advisoryC
       packetId: turnId,
       skillActivation: activation,
       requestedBy: recordBase.requested_by,
+      commanderAuthority: ownerCommanderAuthority,
     });
     const ok = result?.event === 'HERMES_OPERATIONAL_TURN_COMPLETED';
     const completed = {
