@@ -25,7 +25,7 @@ function cleanUser(value) {
 function config(root = DEFAULT_CONTROL_HOME, env = process.env) {
   const endpoint = String(env.DIAL_OPENVIKING_ENDPOINT || DEFAULT_ENDPOINT).replace(/\/+$/, '');
   const user = cleanUser(env.DIAL_OPENVIKING_USER || DEFAULT_USER);
-  const keyFile = env.DIAL_OPENVIKING_API_KEY_FILE || resolveControlPath('secrets/openviking-api.key', root);
+  const keyFile = env.DIAL_OPENVIKING_API_KEY_FILE || resolveControlPath('secrets/openviking-root-api.key', root);
   let apiKey = String(env.DIAL_OPENVIKING_API_KEY || '').trim();
   if (!apiKey && fs.existsSync(keyFile)) apiKey = fs.readFileSync(keyFile, 'utf8').trim();
   return { endpoint, user, apiKey, keyFile };
