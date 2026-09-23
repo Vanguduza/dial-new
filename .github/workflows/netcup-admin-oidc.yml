@@ -267,6 +267,10 @@ jobs:
           rm -f "$LOGDIR/output.log" "$LOGDIR/exit-code"
           fuser -k 8181/tcp >/dev/null 2>&1 || true
           test -x /usr/local/bin/oci
+          echo "OCI_LAUNCHER=$(ls -l /usr/local/bin/oci)"
+          echo "OCI_TARGET=$(readlink -f /usr/local/bin/oci)"
+          namei -l "$(readlink -f /usr/local/bin/oci)" || true
+          runuser -u ubuntu -- test -x /usr/local/bin/oci && echo "OCI_UBUNTU_EXEC=YES" || echo "OCI_UBUNTU_EXEC=NO"
           UNIT="dial-oci-browser-bootstrap-$(date +%s%N)"
           printf '%s\n' "$UNIT" >"$LOGDIR/unit-name"
           systemd-run --collect --unit="$UNIT" \
