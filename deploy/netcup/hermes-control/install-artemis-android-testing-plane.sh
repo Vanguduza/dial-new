@@ -11,8 +11,8 @@ ARTEMIS_DIR="$ARTEMIS_ROOT/$ARTEMIS_COMMIT"
 UV_VERSION="0.12.17"
 UV_ASSET="uv-x86_64-unknown-linux-gnu.tar.gz"
 UNIT_DIR="$HOME/.config/systemd/user"
-START=1
-[[ "${1:-}" == "--no-start" ]] && START=0
+CONSOLE_ENABLED="${DIAL_ARTEMIS_CONSOLE_ENABLED:-0}"
+[[ "${1:-}" == "--no-start" ]] && CONSOLE_ENABLED=0
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "dial-control" ]] || fail "must run on Netcup dial-control"
@@ -21,8 +21,8 @@ for cmd in git gh python3 adb scrcpy ffmpeg node; do command -v "$cmd" >/dev/nul
 python3 -c 'import sys; assert sys.version_info >= (3,12)' || fail "Python 3.12+ required"
 
 sudo install -d -m 0755 /opt/hermes-mobile-fabric "$ARTEMIS_ROOT"
-mkdir -p "$CONTROL_HOME/config" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$UNIT_DIR"
-chmod 700 "$CONTROL_HOME/android-testing" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" 2>/dev/null || true
+mkdir -p "$CONTROL_HOME/config" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" "$UNIT_DIR"
+chmod 700 "$CONTROL_HOME/android-testing" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" 2>/dev/null || true
 
 install_uv(){
   if command -v uv >/dev/null 2>&1 && [[ "$(uv --version 2>/dev/null | awk '{print $2}')" == "$UV_VERSION" ]]; then return 0; fi
@@ -60,12 +60,18 @@ else
 fi
 sudo ln -sfn "$ARTEMIS_DIR" "$ARTEMIS_ROOT/current"
 
+"$ARTEMIS_DIR/.venv/bin/python" -m py_compile "$REPO_DIR/deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py"
+node --check "$REPO_DIR/agent-system/orchestration/artemis-subordinate-client.mjs"
+node --check "$REPO_DIR/agent-system/orchestration/android-testing-plane.mjs"
+node --check "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs"
+
 if [[ ! -s "$CONTROL_HOME/config/android-testing-devices.json" ]]; then
   cat > "$CONTROL_HOME/config/android-testing-devices.json" <<'JSON'
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "authority": "OWNER_ADMISSION_REQUIRED",
-  "devices": []
+  "devices": [],
+  "avds": []
 }
 JSON
   chmod 600 "$CONTROL_HOME/config/android-testing-devices.json"
@@ -106,6 +112,9 @@ servers['dial_android_testing']={
         'DIAL_PROJECT_ID':'dial',
         'DIAL_HARNESS_ID':'hermes',
         'DIAL_ARTEMIS_BIN':os.path.join(artemis,'.venv/bin/artemis'),
+        'DIAL_ARTEMIS_ROOT':artemis,
+        'DIAL_ARTEMIS_PYTHON':os.path.join(artemis,'.venv/bin/python'),
+        'DIAL_ARTEMIS_BRIDGE':os.path.join(repo,'deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py'),
         'DIAL_ADB_BIN':'adb',
     },
     'enabled':True,
@@ -124,14 +133,20 @@ finally:
 PY
 
 systemctl --user daemon-reload
-systemctl --user enable dial-artemis-ui.service >/dev/null
-if [[ "$START" == 1 ]]; then systemctl --user restart dial-artemis-ui.service; fi
+if [[ "$CONSOLE_ENABLED" == "1" ]]; then
+  systemctl --user enable dial-artemis-ui.service >/dev/null
+  systemctl --user restart dial-artemis-ui.service
+else
+  systemctl --user disable --now dial-artemis-ui.service >/dev/null 2>&1 || true
+fi
 
 node "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs" </dev/null >/dev/null 2>&1 || true
 echo "ARTEMIS_INSTALL=GREEN"
 echo "ARTEMIS_COMMIT=$ARTEMIS_COMMIT"
 echo "ARTEMIS_LOCK_BLOB=$ARTEMIS_LOCK_BLOB"
+echo "ARTEMIS_ROLE=HERMES_SUBORDINATE_ANDROID_EXECUTOR"
 echo "RAW_ARTEMIS_MCP=NOT_EXPOSED"
+echo "ARTEMIS_DIRECT_CONSOLE=$([[ "$CONSOLE_ENABLED" == "1" ]] && echo ENABLED_EXPLICITLY || echo DISABLED_BY_DEFAULT)"
 echo "HERMES_MCP=dial_android_testing"
 echo "DEVICE_ADMISSION_FILE=$CONTROL_HOME/config/android-testing-devices.json"
 admitted_count="$(python3 - "$CONTROL_HOME/config/android-testing-devices.json" <<'PY'
