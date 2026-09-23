@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-close-repository-issues",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "0603b4e8d584d3748f0b87ebcbc5355d260318958d6a5187a29a34cc777463d9",
+  "owner_instruction_excerpt": "Close repository issues",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260923-close-repository-issues",
+    "owner_attested": true
+  },
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/netcup-hermes-artemis-openviking-clean-20260923",
+  "authorized_paths": [
+    ".github/*",
+    "agent-system/*",
+    "deploy/*",
+    "docs/*",
+    "ops/*",
+    "package.json",
+    "tests/*",
+    "vitest.config.ts"
+  ],
+  "change_classes": [
+    "repository_issue_closure",
+    "canonical_integration_squash",
+    "ci_regression_fix",
+    "existing_owner_authorized_control_plane_reconciliation"
+  ],
+  "owner_overrides": [],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

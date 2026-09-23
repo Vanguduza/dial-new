@@ -426,6 +426,14 @@ CONF
     fact recovery_agent_activation "staged, not started: seeding tool not present on this ref"
   fi
 
+  sudo -u $ADMIN_USER env \
+    DIAL_REPO_DIR="$REPO_DIR" \
+    DIAL_HOUSEKEEPING_HOST_ID=oracle-admin \
+    DIAL_SERVICE_USER="$ADMIN_USER" \
+    XDG_RUNTIME_DIR="/run/user/$(id -u $ADMIN_USER)" \
+    bash "$REPO_DIR/deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh" || return 1
+  fact state_aware_housekeeping installed
+
   fact fabric_staged true
   return 0
 }

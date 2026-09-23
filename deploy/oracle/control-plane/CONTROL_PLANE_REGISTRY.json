@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "policy_id": "dial-hybrid-control-plane-v3-three-node-recovery",
+  "schema_version": 3,
+  "policy_id": "dial-hybrid-control-plane-v4-netcup-control-oracle-recovery",
   "hosts": {
     "oracle-admin": {
       "host_class": "RECOVERY_CONTROL_ONLY",
@@ -33,15 +33,28 @@
         "RECOVERY",
         "DIAGNOSTICS",
         "HERMES_RUNTIME",
-        "GIT_METADATA_READ"
+        "GIT_METADATA_READ",
+        "OCI_CONTROL",
+        "SSH_BROKER",
+        "CONTROL"
       ],
       "transports": {
         "direct_ssh": true,
         "relay_ssh": true,
         "oci_recovery": true,
-        "commander": false
+        "commander": true,
+        "secondary_overlay": true,
+        "dial_mcp": true
       },
-      "private_ip": "10.0.0.184"
+      "private_ip": null,
+      "provider": "netcup",
+      "provider_shape": "RS 1000 G12",
+      "network_endpoint_source": "DIAL_FABRIC_DIAL_HERMES_CONTROL_SSH_HOST",
+      "display_name": "Dial Control",
+      "physical_hostname": "dial-control",
+      "compatibility_aliases": [
+        "dial-hermes-control"
+      ]
     },
     "vekl-worker": {
       "host_class": "BACKGROUND_COORDINATOR",
@@ -67,6 +80,7 @@
   },
   "routing": {
     "CONTROL": [
+      "dial-hermes-control",
       "oracle-admin"
     ],
     "RECOVERY": [
@@ -80,9 +94,11 @@
       "vekl-worker"
     ],
     "OCI_CONTROL": [
+      "dial-hermes-control",
       "oracle-admin"
     ],
     "SSH_BROKER": [
+      "dial-hermes-control",
       "oracle-admin"
     ],
     "POLICY_LEDGER": [
@@ -116,7 +132,7 @@
   "transport_availability_never_implies_workload_permission": true,
   "development_plane": "HERMES_TYPED_DIAL_MCP_PROVIDER_FIRST_ONLY",
   "topology": {
-    "mode": "THREE_NODE_ACTIVE",
+    "mode": "HYBRID_CLOUD_THREE_NODE_ACTIVE",
     "active_hosts": [
       "oracle-admin",
       "dial-hermes-control",

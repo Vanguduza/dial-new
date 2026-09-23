@@ -107,9 +107,9 @@
       "method": "OCI_IMAGE_DIGEST",
       "image": "ubuntu:24.04",
       "digest": "sha256:224a1869083a311ef3f13648a154ba79832fbef6364d31493642ca03082da254",
-      "observed_platform": "linux/arm64",
+      "observed_platform": "multi-platform index (linux/amd64 and linux/arm64 resolved by Docker)",
       "pin_state": "PINNED",
-      "evidence": "RepoDigest on dial-hermes-control 2026-09-15; local sandbox executes on arm64 control host"
+      "evidence": "Official Docker Hub ubuntu:24.04 index digest; multi-platform index rechecked 2026-09-21 so the same pinned index supports Netcup x86_64 and Oracle arm64."
     },
     "whatsapp_pair_runtime": {
       "method": "LOCKFILE_PLUS_VENDORED_TARBALL",
@@ -176,6 +176,50 @@
       "authentication": "NONE",
       "pin_state": "PINNED",
       "evidence": "Repository-owned bridge v1; fixed official Exa MCP endpoint; live initialize/toolset/search canary observed 2026-09-16. Remote provider version is observed, not locally pinned."
+    },
+    "github_actions_runner": {
+      "method": "OFFICIAL_GITHUB_RELEASE_ASSET_SHA256",
+      "version": "2.337.0",
+      "asset": "actions-runner-linux-x64-2.337.0.tar.gz",
+      "url": "https://github.com/actions/runner/releases/download/v2.337.0/actions-runner-linux-x64-2.337.0.tar.gz",
+      "sha256": "70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613",
+      "pin_state": "PINNED",
+      "evidence": "GitHub actions/runner v2.337.0 release asset digest published 2026-08-26; pinned for the Netcup x86_64 owner-admin runner. Automatic runner updates are disabled; upgrades require a new reviewed pin."
+    },
+    "artemis": {
+      "method": "GIT_COMMIT_FROZEN_UV_LOCK_PLUS_DIAL_HARDENING",
+      "repository": "https://github.com/google/artemis.git",
+      "commit": "371aa6df56880643da57b30da936e9812fb0ec66",
+      "uv_lock_blob_sha1": "dc2d35b8c284055c92ff1cd2560c8201e648bf9f",
+      "python_requirement": ">=3.12",
+      "license": "Apache-2.0",
+      "hardening_script": "deploy/netcup/hermes-control/artemis/harden_artemis.py",
+      "hardening_id": "DIAL_ARTEMIS_SHELL_HARDENING_V1",
+      "raw_mcp_exposed": false,
+      "pin_state": "PINNED_WITH_MANDATORY_LOCAL_HARDENING",
+      "evidence": "Upstream commit and uv.lock Git blob observed 2026-09-23; DIAL shell-boundary patch fails closed on source drift."
+    },
+    "uv": {
+      "method": "GITHUB_RELEASE_ATTESTATION",
+      "repository": "astral-sh/uv",
+      "version": "0.12.17",
+      "asset": "uv-x86_64-unknown-linux-gnu.tar.gz",
+      "verification": "gh attestation verify <asset> --repo astral-sh/uv",
+      "host_architecture": "x86_64",
+      "pin_state": "PINNED_ATTESTED_RELEASE"
+    },
+    "openviking": {
+      "method": "OCI_IMAGE_DIGEST",
+      "image": "ghcr.io/volcengine/openviking",
+      "version": "v0.4.21.1",
+      "x86_64_digest": "sha256:4f33751b4541d79fa2a53284d7e9e1bf6cf0a7504849f3d3a2f1629cc629e52c",
+      "multi_platform_manifest_digest": "sha256:13a78525aa255f0cdb026bfdc1ab8c3a9b2baa49148aa10df061e6c2b689c15f",
+      "license": "AGPL-3.0",
+      "deployment": "SEPARATE_SUBORDINATE_SERVICE_BOUNDARY",
+      "bind": "127.0.0.1:1933",
+      "bot": "DISABLED",
+      "pin_state": "PINNED",
+      "evidence": "GHCR v0.4.21.1 x86_64 image digest observed 2026-09-23."
     }
   }
 }

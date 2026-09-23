@@ -83,9 +83,16 @@ describe('DIAL Claude chat control surface', () => {
     expect(missionControllerTick({ root }).action).toBe('NOOP');
     resumeDialMission({ root });
     const greenGate = () => ({ unblocked: true, checks: {} });
-    const dispatched = missionControllerTick({ root, developmentGate: greenGate });
+    const engineeringKnowledgeResolver = () => ({
+      activation_id: 'activation-test',
+      execution_allowed: true,
+      resolution_state: 'READY',
+      selected_skills: [],
+      selected_resources: [],
+    });
+    const dispatched = missionControllerTick({ root, developmentGate: greenGate, engineeringKnowledgeResolver });
     expect(dispatched.action).toBe('ENQUEUED');
-    expect(missionControllerTick({ root, developmentGate: greenGate }).action).toBe('NOOP');
+    expect(missionControllerTick({ root, developmentGate: greenGate, engineeringKnowledgeResolver }).action).toBe('NOOP');
     expect(missionStatus(root).packet_counts.queued).toBe(1);
   });
 

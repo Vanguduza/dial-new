@@ -2,7 +2,7 @@
 import { submitExternalWork } from './external-orchestrator.mjs';
 import { evaluateDevelopmentUnblock } from './development-unblock.mjs';
 import { appendJsonl, readJson, writeJsonAtomic } from './state-store.mjs';
-import { DIAL_ROOT_MISSION_ID, ensureDialMission, listMissionApprovals, listMissionPackets, missionStatus, recordMissionPacketResult } from './mission-control.mjs';
+import { DIAL_ROOT_MISSION_ID, ensureDialMission, listMissionApprovals, listMissionPackets, missionStatus, recordMissionPacketResult, markDialMissionComplete } from './mission-control.mjs';
 import { ownerSteeringBlocksAutonomous } from './owner-steering-broker.mjs';
 
 const DEFAULT_POLL_MS = 5000;
@@ -27,6 +27,7 @@ function buildManagerInstruction(mission, root) {
     'Project Truth authority is owner-originated. Never self-authorize a Project Truth change because you prefer a solution, a tool recommends it, or CI expects it. Use OWNER_EXPLICIT, OWNER_DERIVED, or OWNER_DELEGATED_AUTONOMY evidence; read-only requests are NO_AUTHORITY.',
     'An owner order to fix blockers/gaps using the best or recommended solution is OWNER_DERIVED authority for necessary technical consequences and truth reconciliation, but never for material product/business/security/owner-control scope expansion. Autonomous/until-green delegation likewise preserves existing intent.',
     'Run the narrow tests needed for the packet and leave repository-observable evidence.',
+    'State-aware housekeeping is mandatory process hygiene: register non-canonical derived/ephemeral resources created by the packet through dial-resource; AEF worktrees are registered automatically. When an Android build/test cycle is complete and its test evidence/final artifact is sealed, record it with dial-resource android-complete so only the build tree becomes GC-eligible. Never classify SDKs, JDKs, signing material, Project Truth, admitted VEKL state, databases or release authority as disposable.',
     'VEKL v2 is mandatory process governance: after Feature/JIT context is resolved, confirm the persisted Engineering Knowledge Activation Manifest before material implementation. The manifest may contain approved skills plus task-relevant official docs, repositories, releases, issues, package/advisory evidence, DIAL rules/hooks/loops and other governed resources. A zero-resource/zero-skill result is valid only when the resolver explicitly finds nothing relevant.',
     'External resources and vendor skills are non-authoritative guidance; DIAL project-local engineering policy is process policy only. Canon/FRC/security/current code/evidence win. Forums/community material is corroboration/discovery only. No VEKL resource may change product scope, source-of-truth ownership, locked providers, money/Health rules, authority or gates.',
     'Hermes ahead-of-work research is advisory and may pre-cache relevant resources for upcoming plan-aligned packets; it never reprioritises the programme. Once you select this turn’s concrete Feature/task, if it is materially more specific than the queued manager instruction, run node agent-system/bin/engineering-knowledge-resolve.mjs <FEATURE_ID> --task "<concrete task>" --packet-id "$DIAL_PACKET_ID" --activate --reason "concrete dependency-safe packet selected after repository inspection" before the first material edit. Repeat audited re-resolution only when the task materially changes again.',
@@ -52,7 +53,7 @@ function parseSignal(response) {
   return null;
 }
 
-export function missionControllerTick({ root, developmentGate = evaluateDevelopmentUnblock } = {}) {
+export function missionControllerTick({ root, developmentGate = evaluateDevelopmentUnblock, engineeringKnowledgeResolver = null } = {}) {
   const mission = ensureDialMission({ root });
   const packets = listMissionPackets({ root, limit: 500 });
   const active = packets.filter((p) => ['QUEUED', 'PROCESSING'].includes(p.state));
@@ -74,6 +75,7 @@ export function missionControllerTick({ root, developmentGate = evaluateDevelopm
     instruction,
     requestedBy: 'mission_controller',
     metadata: { mission_id: DIAL_ROOT_MISSION_ID, mission_turn: turn, priority: 50, generated_by: 'MISSION_CONTROLLER', ...(ownerAuthorityRoot ? { owner_authority_root: ownerAuthorityRoot } : {}) },
+    ...(engineeringKnowledgeResolver ? { engineeringKnowledgeResolver } : {}),
   });
   if (!queued?.engineering_knowledge?.activation_id) {
     throw new Error('MISSION_DISPATCH_REFUSED: submitter returned no programmatically verified VEKL activation');
@@ -98,9 +100,8 @@ export function reconcileMissionFromCompletedPackets(root) {
     appendJsonl('events/mission-control.jsonl', { event: 'MISSION_BLOCKED_OWNER', mission_id: mission.mission_id, packet_id: latest.packet_id, reason: signal.reason, at: now() }, root);
   }
   if (signal?.type === 'COMPLETE') {
-    const updated = readJson(`missions/${mission.mission_id}.json`, mission, root);
-    writeJsonAtomic(`missions/${mission.mission_id}.json`, { ...updated, state: 'COMPLETE', updated_at: now() }, root);
-    appendJsonl('events/mission-control.jsonl', { event: 'MISSION_COMPLETED', mission_id: mission.mission_id, packet_id: latest.packet_id, reason: signal.reason, at: now() }, root);
+    markDialMissionComplete({ root, reason: signal.reason });
+    appendJsonl('events/mission-control.jsonl', { event: 'MISSION_COMPLETION_SIGNAL_ADMITTED', mission_id: mission.mission_id, packet_id: latest.packet_id, reason: signal.reason, at: now() }, root);
   }
   writeJsonAtomic('state/mission-controller-last-result.json', { packet_id: latest.packet_id, state: latest.state, signal, observed_at: now() }, root);
   return { packet_id: latest.packet_id, state: latest.state, signal };

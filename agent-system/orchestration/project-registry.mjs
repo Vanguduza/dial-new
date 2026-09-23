@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { appendJsonl, ensureControlLayout, readJson, writeJsonAtomic } from './state-store.mjs';
+import { registerResource, markResourceGcEligible, listResources } from './resource-lifecycle-registry.mjs';
 
 export const PROJECT_REGISTRY_REL = 'operations/project-registry.json';
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -30,6 +31,8 @@ export function defaultDialProject(repoDir = process.env.DIAL_REPO_DIR || DEFAUL
     manager_policy: 'GPT-5.6_SOL_THEN_CLAUDE_SONNET_5',
     development_authority: 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY',
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
+    lifecycle_state: 'ACTIVE',
+    housekeeping: { delete_local_repo_when_complete: false },
     services: DIAL_SERVICES,
     created_at: now(),
     updated_at: now(),
@@ -44,8 +47,11 @@ export function ensureProjectRegistry(root, { dialRepoDir = process.env.DIAL_REP
     if (!dial) return existing;
     const priorServices = Array.isArray(dial.services) ? dial.services : [];
     const services = [...new Set([...priorServices, ...DIAL_SERVICES])];
-    if (services.length === priorServices.length && services.every((item, index) => item === priorServices[index])) return existing;
-    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, updated_at: now() } : item);
+    const lifecycleState = dial.lifecycle_state || 'ACTIVE';
+    const housekeeping = { delete_local_repo_when_complete: false, ...(dial.housekeeping || {}) };
+    const noServiceChange = services.length === priorServices.length && services.every((item, index) => item === priorServices[index]);
+    if (noServiceChange && dial.lifecycle_state === lifecycleState && JSON.stringify(dial.housekeeping || {}) === JSON.stringify(housekeeping)) return existing;
+    const projects = existing.projects.map((item) => item.slug === 'dial' ? { ...item, services, lifecycle_state: lifecycleState, housekeeping, updated_at: now() } : item);
     const next = { ...existing, projects, updated_at: now() };
     writeJsonAtomic(PROJECT_REGISTRY_REL, next, root);
     appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_REGISTRY_RECONCILED', project: 'dial', added_services: services.filter((item) => !priorServices.includes(item)), at: now() }, root);
@@ -65,7 +71,7 @@ export function getProject(slug, root) {
   return project;
 }
 
-export function registerProject({ slug, name, repoDir, projectKind = 'software', managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [] } = {}, root) {
+export function registerProject({ slug, name, repoDir, projectKind = 'software', managerPolicy = 'PROJECT_SPECIFIC_LOCKED_POLICY', services = [], deleteLocalRepoWhenComplete = false } = {}, root) {
   const key = validateSlug(slug);
   const registry = ensureProjectRegistry(root);
   const repo = normalizeRepo(repoDir);
@@ -79,6 +85,11 @@ export function registerProject({ slug, name, repoDir, projectKind = 'software',
     manager_policy: String(managerPolicy || 'PROJECT_SPECIFIC_LOCKED_POLICY').trim().slice(0, 200),
     development_authority: key === 'dial' ? 'EXTERNAL_HERMES_PRODUCTION_GREEN_ONLY' : 'PROJECT_POLICY_REQUIRED',
     auxiliary_operations_authority: 'NON_AUTHORITATIVE',
+    lifecycle_state: previous?.lifecycle_state || 'ACTIVE',
+    housekeeping: {
+      ...(previous?.housekeeping || {}),
+      delete_local_repo_when_complete: key === 'dial' ? false : Boolean(deleteLocalRepoWhenComplete),
+    },
     services: Array.isArray(services) ? services.map(String).filter(Boolean).slice(0, 30) : [],
     created_at: previous?.created_at ?? now(),
     updated_at: now(),
@@ -86,7 +97,43 @@ export function registerProject({ slug, name, repoDir, projectKind = 'software',
   const projects = [...registry.projects.filter((item) => item.slug !== key), project].sort((a, b) => a.slug.localeCompare(b.slug));
   writeJsonAtomic(PROJECT_REGISTRY_REL, { ...registry, projects, updated_at: now() }, root);
   appendJsonl('events/project-registry.jsonl', { event: previous ? 'PROJECT_REGISTRY_UPDATED' : 'PROJECT_REGISTERED', project: key, repo_dir: repo, at: now() }, root);
+  if (project.housekeeping?.delete_local_repo_when_complete === true) {
+    registerResource({
+      root,
+      project: key,
+      type: 'GIT_REPOSITORY',
+      path: repo,
+      resourceClass: 'DERIVED',
+      reconstructability: 'GITHUB_REMOTE',
+      retentionTrigger: 'PROJECT_COMPLETE',
+      metadata: { delete_after_project_complete: true, project_complete: false },
+      state: 'ACTIVE',
+    });
+  }
   return project;
+}
+
+export function markProjectComplete({ slug, evidenceRefs = [] } = {}, root) {
+  const key = validateSlug(slug);
+  const registry = ensureProjectRegistry(root);
+  const prior = registry.projects.find((item) => item.slug === key);
+  if (!prior) throw new Error(`unknown project: ${key}`);
+  const completed = { ...prior, lifecycle_state: 'COMPLETE', completed_at: now(), updated_at: now() };
+  const projects = registry.projects.map((item) => item.slug === key ? completed : item);
+  writeJsonAtomic(PROJECT_REGISTRY_REL, { ...registry, projects, updated_at: now() }, root);
+  appendJsonl('events/project-registry.jsonl', { event: 'PROJECT_COMPLETED', project: key, repo_dir: completed.repo_dir, at: completed.completed_at }, root);
+  if (completed.housekeeping?.delete_local_repo_when_complete === true) {
+    const resource = listResources({ root, project: key }).find((r) => r.type === 'GIT_REPOSITORY' && path.resolve(r.path || '') === path.resolve(completed.repo_dir));
+    if (!resource) throw new Error('project repository lifecycle resource missing');
+    markResourceGcEligible({
+      root,
+      resourceId: resource.resource_id,
+      reason: 'PROJECT_COMPLETE',
+      evidenceRefs: [...evidenceRefs, `project:${key}:COMPLETE`],
+      metadata: { project_complete: true, delete_after_project_complete: true },
+    });
+  }
+  return completed;
 }
 
 function argValue(args, name) { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; }
@@ -95,7 +142,8 @@ function main() {
   if (command === 'init') return console.log(JSON.stringify(ensureProjectRegistry(), null, 2));
   if (command === 'list') return console.log(JSON.stringify(listProjects(), null, 2));
   if (command === 'show') return console.log(JSON.stringify(getProject(args[0] || 'dial'), null, 2));
-  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY' }), null, 2));
+  if (command === 'register') return console.log(JSON.stringify(registerProject({ slug: argValue(args, '--slug'), name: argValue(args, '--name'), repoDir: argValue(args, '--repo'), projectKind: argValue(args, '--kind') || 'software', managerPolicy: argValue(args, '--manager-policy') || 'PROJECT_SPECIFIC_LOCKED_POLICY', deleteLocalRepoWhenComplete: args.includes('--delete-local-repo-when-complete') }), null, 2));
+  if (command === 'complete') return console.log(JSON.stringify(markProjectComplete({ slug: args[0] || argValue(args, '--slug'), evidenceRefs: [] }), null, 2));
   throw new Error(`unknown project registry command: ${command}`);
 }
 if (import.meta.url === `file://${process.argv[1]}`) { try { main(); } catch (error) { console.error(error.stack || error); process.exitCode = 1; } }

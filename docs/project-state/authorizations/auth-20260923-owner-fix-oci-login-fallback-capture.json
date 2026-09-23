@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-fix-oci-login-fallback-capture",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "8422dcfca477efecea72cab6dd974e5d37d12a3bb5669420b79c662c774ad7fb",
+  "owner_instruction_excerpt": "Fix the fall back capture issue",
+  "base_sha": "4cd233c5995ab3a3697778a8cb7fe9dc564bf424",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260923-oci-login-fallback-capture",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T08:09:13Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    ".github/workflows/netcup-admin-oidc.yml",
+    "deploy/netcup/hermes-control/oci-edge-login.sh",
+    "deploy/netcup/hermes-control/oci-edge-capture.py",
+    "tests/netcup-oci-edge-capture.test.mjs",
+    "tests/fixtures/fake-oci-cli-listener.py",
+    "vitest.config.ts",
+    "docs/project-state/authorizations/auth-20260923-owner-fix-oci-login-fallback-capture.json"
+  ],
+  "change_classes": [
+    "oci_login_callback_capture_page",
+    "oci_login_false_success_removed"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

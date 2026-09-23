@@ -156,7 +156,12 @@
     "agent:screen-feature-graph": "node agent-system/bin/build-screen-feature-graph.mjs --check",
     "test:screen-feature-graph": "vitest run tests/screen-feature-graph.test.ts",
     "agent:frontend-generation-check": "node agent-system/orchestration/frontend-generation-architecture-check.mjs",
-    "test:frontend-generation": "vitest run tests/frontend-generation-architecture.test.ts"
+    "test:frontend-generation": "vitest run tests/frontend-generation-architecture.test.ts",
+    "agent:housekeeping:status": "node agent-system/orchestration/housekeeping-gc.mjs status",
+    "agent:housekeeping:sweep": "node agent-system/orchestration/housekeeping-gc.mjs sweep",
+    "agent:housekeeping:dry-run": "node agent-system/orchestration/housekeeping-gc.mjs sweep --dry-run",
+    "agent:resource:list": "node agent-system/orchestration/resource-lifecycle-registry.mjs list",
+    "test:housekeeping": "vitest run tests/orchestration-housekeeping.test.mjs"
   },
   "dependencies": {
     "@google/stitch-sdk": "0.3.5",
