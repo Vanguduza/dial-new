@@ -54,6 +54,23 @@ case "$MODE" in
     bash "$REPO/deploy/oracle/hermes-codex/install-control-plane.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-owner-remote-commander.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh"
+    set +e
+    bash "$REPO/deploy/netcup/hermes-control/install-openviking-memory-plane.sh"
+    openviking_rc=$?
+    set -e
+    if [[ "$openviking_rc" == 3 ]]; then
+      echo "OPENVIKING_ACTIVATION=PENDING_MODEL_CONFIG"
+    elif [[ "$openviking_rc" != 0 ]]; then
+      echo "OPENVIKING_ACTIVATION=FAILED:$openviking_rc" >&2
+      exit "$openviking_rc"
+    fi
+    android_missing=()
+    for dep in adb scrcpy ffmpeg; do command -v "$dep" >/dev/null 2>&1 || android_missing+=("$dep"); done
+    if [[ "${#android_missing[@]}" == 0 ]]; then
+      bash "$REPO/deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh"
+    else
+      echo "ARTEMIS_ACTIVATION=PENDING_HOST_DEPS:${android_missing[*]}"
+    fi
     if [[ -s "$CONTROL/secrets/xkiro-api.key" ]]; then
       DIAL_REPO_DIR="$REPO" bash "$REPO/deploy/oracle/hermes-codex/install-haif.sh"
     fi
