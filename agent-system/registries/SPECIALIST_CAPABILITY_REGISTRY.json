@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_id": "SPECIALIST_CAPABILITY_REGISTRY",
-  "registry_version": "1.0.0",
+  "registry_version": "1.1.0",
   "decision_ref": "DEC-032",
   "record": "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_ADAPTIVE_MODEL_HARNESS_VEKL_EXECUTION_ARCHITECTURE_CANONICAL.md",
   "authority_note": "Specialist capabilities are TOOLS a harness x model pair may invoke. They are not peer coding workers and never hold worker roles, performance scores or repository write authority. Relocating Stitch here (DEC-032 §11, §32) removes a card from the worker pool that only ever survived hard eligibility by being filtered out.",
@@ -125,15 +125,17 @@
         "repository_write": false,
         "project_truth_write": false
       },
-      "output_class": "TEST_EVIDENCE_CANDIDATE",
+      "output_class": "EVIDENCE",
       "governed_by": [
         "agent-system/registries/ANDROID_TESTING_PLANE.json",
         "agent-system/orchestration/android-testing-mcp.mjs",
         "agent-system/orchestration/android-testing-plane.mjs"
       ],
-      "trust_class": "INTERNAL_GOVERNED_SUBORDINATE",
+      "trust_class": "INTERNAL",
       "attachment_rule": "ANDROID_DEVICE_OR_UI_EXECUTION_REQUIRES_EXPLICIT_TASK_TOOL_GRANT",
-      "never_a_harness_or_manager": true
+      "never_a_harness_or_manager": true,
+      "memory_admission_class": "TEST_EVIDENCE_CANDIDATE",
+      "trust_note": "The local specialist is governed by Hermes. Device/app content and generated execution observations are evidence, never authority."
     }
   ],
   "attachment_policy": {
