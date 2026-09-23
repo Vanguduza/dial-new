@@ -91,6 +91,7 @@ jobs:
           push_file deploy/netcup/hermes-control/github-oidc-control.mjs /usr/local/lib/dial-control/github-oidc-control.mjs 0755 "/home/ubuntu/.local/bin/node --check"
           push_file deploy/netcup/hermes-control/prepare-oci-recovery.sh /usr/local/lib/dial-control/prepare-oci-recovery.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/oci-edge-login.sh /usr/local/lib/dial-control/oci-edge-login.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/oci-edge-capture.py /usr/local/lib/dial-control/oci-edge-capture.py 0755 "python3 -m py_compile"
           push_file deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh /usr/local/lib/dial-control/oci-enroll-oracle-estate.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/install-housekeeping-final-estate.sh /usr/local/lib/dial-control/install-housekeeping-final-estate.sh 0755 "bash -n"
           push_file deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh /usr/local/lib/dial-control/zero-touch-enroll-peer.sh 0755 "bash -n"
@@ -217,8 +218,8 @@ jobs:
             if [[ "$OPERATION" == start_oci_edge_login ]]; then
               echo ""
               echo "### Next"
-              echo "1. Open OCI_EDGE_AUTH_URL and sign in to the tenancy you will name in finish_oci_edge_login."
-              echo "2. OCI redirects to http://localhost:8181/#... — replace only the http://localhost:8181 prefix with OCI_EDGE_CALLBACK_URL, keeping the /#... suffix."
+              echo "1. Open OCI_EDGE_SIGNIN_PAGE. Tap 'Sign in to OCI' and sign in to the tenancy you will name in finish_oci_edge_login."
+              echo "2. The browser then fails to open http://localhost:8181/#... — copy that whole address and paste it into the sign-in page. It says 'Captured' only once Dial Control has saved the session."
               echo "3. Run finish_oci_edge_login with oci_tenancy_ocid. A login to any other tenancy is refused and destroyed."
               echo ""
               echo "This page is public: it shows the login URL and callback host, never the token."

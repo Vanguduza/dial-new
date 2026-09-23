@@ -37,6 +37,7 @@ SESSION_DIR="$SESSION_ROOT/$PROFILE"
 RECOVERY_PUB="$ADMIN_HOME/.oci/netcup-hermes-recovery_public.pem"
 RECOVERY_KEY="$ADMIN_HOME/.oci/netcup-hermes-recovery.pem"
 BRIDGE_MAX_SECONDS="${DIAL_OCI_EDGE_MAX_SECONDS:-1800}"
+CAPTURE_PORT=8182
 CLOUDFLARED_VERSION=2026.9.1
 CLOUDFLARED_SHA256=03f1f25d1cc93b9ad6c60569d44060bc4f17ed97075760ed8cfca4b12dcd68cc
 
@@ -130,7 +131,7 @@ start() {
   # A new login replaces any previous, unfinished one. Never two listeners.
   destroy_session
   install -d -m 0700 -o "$ADMIN_USER" -g "$ADMIN_USER" "$ADMIN_HOME/.oci" "$STATE" "$SESSION_ROOT"
-  fuser -k 8181/tcp >/dev/null 2>&1 || true
+  fuser -k 8181/tcp "$CAPTURE_PORT/tcp" >/dev/null 2>&1 || true
 
   local stamp; stamp="$(date +%s%N)"
   # RuntimeMaxSec: the CLI itself never gives up waiting, so the bridge must.
@@ -153,8 +154,25 @@ start() {
   [[ -n "$auth_url" ]] || { destroy_session; die "OCI authorization URL did not appear" 33; }
   [[ "$(ss -ltnH 'sport = :8181' 2>/dev/null | wc -l)" -ge 1 ]] || { destroy_session; die "OCI callback listener is not active" 34; }
 
+  # The tunnel exposes the capture page, never the CLI listener directly: the CLI's own page
+  # reports success even when the #fragment (and so the token) was lost on the way.
+  [[ -r "$LIB/oci-edge-capture.py" ]] || { destroy_session; die "capture page missing" 37; }
+  systemd-run --unit="dial-oci-edge-capture-$stamp" \
+    --property=User="$ADMIN_USER" --property=Group="$ADMIN_USER" \
+    --property=RuntimeMaxSec="$BRIDGE_MAX_SECONDS" \
+    --setenv=DIAL_OCI_CAPTURE_PORT="$CAPTURE_PORT" \
+    --setenv=DIAL_OCI_CLI_CALLBACK=http://127.0.0.1:8181 \
+    --setenv=DIAL_OCI_SESSION_TOKEN_FILE="$SESSION_DIR/token" \
+    --setenv=DIAL_OCI_AUTH_URL="$auth_url" \
+    /usr/bin/python3 "$LIB/oci-edge-capture.py" >/dev/null
+  for i in $(seq 1 15); do
+    [[ "$(ss -ltnH "sport = :$CAPTURE_PORT" 2>/dev/null | wc -l)" -ge 1 ]] && break
+    sleep 1
+  done
+  [[ "$(ss -ltnH "sport = :$CAPTURE_PORT" 2>/dev/null | wc -l)" -ge 1 ]] || { destroy_session; die "capture page did not start" 38; }
+
   systemd-run --unit="dial-oci-edge-tunnel-$stamp" --property=RuntimeMaxSec="$BRIDGE_MAX_SECONDS" \
-    /bin/bash -c "exec '$cf_bin' tunnel --no-autoupdate --url http://127.0.0.1:8181 >'$STATE/tunnel.log' 2>&1" >/dev/null
+    /bin/bash -c "exec '$cf_bin' tunnel --no-autoupdate --url http://127.0.0.1:$CAPTURE_PORT >'$STATE/tunnel.log' 2>&1" >/dev/null
 
   local callback=""
   for i in $(seq 1 45); do
@@ -166,6 +184,7 @@ start() {
 
   say "OCI_EDGE_AUTH_URL=$auth_url"
   say "OCI_EDGE_CALLBACK_URL=$callback"
+  say "OCI_EDGE_SIGNIN_PAGE=$callback/"
   say "OCI_EDGE_BRIDGE_EXPIRES_IN_SECONDS=$BRIDGE_MAX_SECONDS"
   say "OCI_EDGE_BRIDGE=GREEN"
 }
@@ -181,7 +200,9 @@ status() {
     say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"
     # Same values start printed; repeated so they can be recovered from the job log.
     say "OCI_EDGE_AUTH_URL=$(grep -Eo 'https://login\.[^[:space:]]+' "$STATE/oci.log" 2>/dev/null | head -1 || true)"
-    say "OCI_EDGE_CALLBACK_URL=$(grep -Eo 'https://[a-z0-9-]+\.trycloudflare\.com' "$STATE/tunnel.log" 2>/dev/null | head -1 || true)"
+    local cb; cb="$(grep -Eo 'https://[a-z0-9-]+\.trycloudflare\.com' "$STATE/tunnel.log" 2>/dev/null | head -1 || true)"
+    say "OCI_EDGE_CALLBACK_URL=$cb"
+    say "OCI_EDGE_SIGNIN_PAGE=$cb/"
   else
     say "OCI_EDGE_SESSION=ABSENT"
   fi
