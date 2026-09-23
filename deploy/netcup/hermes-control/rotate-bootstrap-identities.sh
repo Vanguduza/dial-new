@@ -18,10 +18,9 @@ BOOT_PUB="$(cat "$BOOT_PUB_FILE")"
 declare -A PEERS=(
   [oracle-admin]=10.77.0.2
   [vekl-worker]=10.77.0.3
-  [van-trading-core]=10.77.0.4
-  [old-dial-hermes-control]=10.77.0.5
+  [old-dial-hermes-control]=10.77.0.4
 )
-for name in oracle-admin vekl-worker van-trading-core old-dial-hermes-control; do
+for name in oracle-admin vekl-worker old-dial-hermes-control; do
   ip="${PEERS[$name]}"
   runuser -u ubuntu -- ssh -i "$BOOT" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip"     "mkdir -p ~/.ssh; chmod 700 ~/.ssh; grep -qxF '$NEW_PUB' ~/.ssh/authorized_keys 2>/dev/null || printf '%s\n' '$NEW_PUB' >>~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys"
   runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip" true
@@ -41,14 +40,8 @@ Host vekl-worker
   IdentityFile ~/.ssh/dial-oracle-admin
   IdentitiesOnly yes
   StrictHostKeyChecking accept-new
-Host van-trading-core
+Host van-trading-core old-dial-hermes-control
   HostName 10.77.0.4
-  User ubuntu
-  IdentityFile ~/.ssh/dial-oracle-admin
-  IdentitiesOnly yes
-  StrictHostKeyChecking accept-new
-Host old-dial-hermes-control
-  HostName 10.77.0.5
   User ubuntu
   IdentityFile ~/.ssh/dial-oracle-admin
   IdentitiesOnly yes
@@ -64,7 +57,7 @@ wg genkey >"$NEXT_WG"
 chmod 0600 "$NEXT_WG"
 NEW_WG_PUB="$(wg pubkey <"$NEXT_WG")"
 
-for name in oracle-admin vekl-worker van-trading-core old-dial-hermes-control; do
+for name in oracle-admin vekl-worker old-dial-hermes-control; do
   ip="${PEERS[$name]}"
   runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 ubuntu@"$ip"     "sudo sed -i 's|PublicKey = $OLD_WG_PUB|PublicKey = $NEW_WG_PUB|' /etc/wireguard/wg-dial.conf; sudo sh -c 'nohup bash -lc "sleep 1; systemctl restart wg-quick@wg-dial" >/dev/null 2>&1 &'"
 done
@@ -77,7 +70,7 @@ chmod 0600 /etc/wireguard/dial-netcup.key
 chmod 0644 /etc/wireguard/dial-netcup.pub
 sleep 8
 
-for name in oracle-admin vekl-worker van-trading-core old-dial-hermes-control; do
+for name in oracle-admin vekl-worker old-dial-hermes-control; do
   ip="${PEERS[$name]}"
   ping -c 1 -W 3 "$ip" >/dev/null
   runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 ubuntu@"$ip" true

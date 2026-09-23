@@ -433,8 +433,17 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/install-github-oidc-control.sh');
 
     expect(hub).not.toContain('\\\\nOLD_PUB=');
-    expect(hub).toContain('AllowedIPs = 10.77.0.5/32');
-    expect(peer).toContain('old-dial-hermes-control|dial-hermes-control');
+    expect(hub).not.toContain('10.77.0.5');
+    expect(hub).toContain('ORACLE_A1_WG_PUBLIC_KEY');
+    expect(hub).toContain('10.77.0.4 old-dial-hermes-control van-trading-core');
+    expect(peer).toContain('van-trading-core|old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.4/32');
+    expect(workflow).not.toContain('OCI_INSTANCE_OLD_CONTROL');
+    expect(workflow).not.toContain('[van-trading-core]="$OCI_INSTANCE_VAN_TRADING_CORE"');
+    expect(workflow).toContain('[old-dial-hermes-control]="$OCI_INSTANCE_VAN_TRADING_CORE"');
+    expect(workflow).toContain('for HOST_ID in oracle-admin vekl-worker old-dial-hermes-control; do');
+    expect(workflow).toContain('for HOST_ID in oracle-admin vekl-worker; do');
+    expect(workflow).toContain('a1_transition=${KEYS[old-dial-hermes-control]}');
+    expect(workflow).toContain('VAN/VATI authority is not mutated by DIAL');
 
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);

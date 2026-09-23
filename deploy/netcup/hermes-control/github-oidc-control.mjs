@@ -132,7 +132,7 @@ function peerCheck() {
   const key=fs.existsSync('/home/ubuntu/.ssh/dial-oracle-admin')
     ? '/home/ubuntu/.ssh/dial-oracle-admin'
     : '/home/ubuntu/.ssh/dial-bootstrap-oracle';
-  const peers=['10.77.0.2','10.77.0.3','10.77.0.4','10.77.0.5'];
+  const peers=['10.77.0.2','10.77.0.3','10.77.0.4'];
   const out=[];
   for(const ip of peers){
     const p=command('ping -c 1 -W 2 '+ip);
@@ -223,7 +223,7 @@ async function dispatch(body, claims) {
       return {installed:true,probe:'PASS'};
     }
     case 'configure-overlay': {
-      for(const k of ['oracle_admin','vekl_worker','van_trading_core','old_control']){
+      for(const k of ['oracle_admin','vekl_worker','a1_transition']){
         if(!validWgKey(body?.peers?.[k])) throw new Error('invalid WireGuard public key for '+k);
       }
       const r=command(
@@ -231,8 +231,7 @@ async function dispatch(body, claims) {
         {env:{
           ORACLE_ADMIN_WG_PUBLIC_KEY:body.peers.oracle_admin,
           VEKL_WORKER_WG_PUBLIC_KEY:body.peers.vekl_worker,
-          VAN_TRADING_CORE_WG_PUBLIC_KEY:body.peers.van_trading_core,
-          OLD_CONTROL_WG_PUBLIC_KEY:body.peers.old_control,
+          ORACLE_A1_WG_PUBLIC_KEY:body.peers.a1_transition,
         }}
       );
       requireOk(r,'configure-overlay');
@@ -296,7 +295,7 @@ async function dispatch(body, claims) {
     case 'certify': {
       const verify=ubuntu("DIAL_CONTROL_OVERLAY_IP=10.77.0.1 DIAL_REPO_DIR=/home/ubuntu/dial-new /home/ubuntu/dial-new/ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json",30*60*1000);
       requireOk(verify,'certify-core');
-      const peers=peerCheck().filter((x)=>x.ip!=='10.77.0.5');
+      const peers=peerCheck();
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
       const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});

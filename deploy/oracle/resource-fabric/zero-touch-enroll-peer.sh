@@ -16,8 +16,7 @@ PUB="/etc/wireguard/${HOST_ID}.pub"
 case "$HOST_ID" in
   oracle-admin) ADDR=10.77.0.2/32 ;;
   vekl-worker) ADDR=10.77.0.3/32 ;;
-  van-trading-core) ADDR=10.77.0.4/32 ;;
-  old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.5/32 ;;
+  van-trading-core|old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.4/32 ;;
   *) echo "REFUSE: unsupported host $HOST_ID" >&2; exit 2 ;;
 esac
 

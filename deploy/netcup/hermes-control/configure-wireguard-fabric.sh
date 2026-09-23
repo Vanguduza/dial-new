@@ -6,14 +6,13 @@ NETCUP_ADDR="${NETCUP_WG_ADDRESS:-10.77.0.1/24}"
 PORT="${DIAL_WG_PORT:-51820}"
 ADMIN_PUB="${ORACLE_ADMIN_WG_PUBLIC_KEY:-}"
 VEKL_PUB="${VEKL_WORKER_WG_PUBLIC_KEY:-}"
-TRADING_PUB="${VAN_TRADING_CORE_WG_PUBLIC_KEY:-}"
-OLD_PUB="${OLD_CONTROL_WG_PUBLIC_KEY:-}"
+A1_PUB="${ORACLE_A1_WG_PUBLIC_KEY:-}"
 KEY=/etc/wireguard/dial-netcup.key
 CONF=/etc/wireguard/wg-dial.conf
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
 [[ -s "$KEY" ]] || { echo "REFUSE: $KEY missing; image bootstrap should have created it" >&2; exit 2; }
-for v in ADMIN_PUB VEKL_PUB TRADING_PUB OLD_PUB; do
+for v in ADMIN_PUB VEKL_PUB A1_PUB; do
   [[ -n "${!v}" ]] || { echo "REFUSE: $v missing" >&2; exit 2; }
 done
 
@@ -35,14 +34,9 @@ PublicKey = $VEKL_PUB
 AllowedIPs = 10.77.0.3/32
 
 [Peer]
-# van-trading-core
-PublicKey = $TRADING_PUB
+# Oracle A1 transition peer: old control during migration, VAN/VATI after cutover
+PublicKey = $A1_PUB
 AllowedIPs = 10.77.0.4/32
-
-[Peer]
-# temporary old Oracle dial-hermes-control during migration
-PublicKey = $OLD_PUB
-AllowedIPs = 10.77.0.5/32
 EOF
 chmod 0600 "$CONF"
 
@@ -57,8 +51,7 @@ grep -vE '(^|[[:space:]])(oracle-admin|vekl-worker|van-trading-core|old-dial-her
 cat >>"$tmp" <<'EOF'
 10.77.0.2 oracle-admin
 10.77.0.3 vekl-worker
-10.77.0.4 van-trading-core
-10.77.0.5 old-dial-hermes-control
+10.77.0.4 old-dial-hermes-control van-trading-core
 EOF
 install -m 0644 "$tmp" /etc/hosts
 rm -f "$tmp"
