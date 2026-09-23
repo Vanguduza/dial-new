@@ -276,27 +276,25 @@ jobs:
             openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
           fi
           FP="$(openssl rsa -pubout -outform DER -in "$KEY" 2>/dev/null | openssl md5 -c | awk '{print $2}')"
-          cat >"$CONFIG" <<EOF
-[DEFAULT]
-user=REPLACE_WITH_DEDICATED_OCI_USER_OCID
-fingerprint=$FP
-tenancy=REPLACE_WITH_TENANCY_OCID
-region=af-johannesburg-1
-key_file=$KEY
-EOF
+          printf '%s\n' \
+            '[DEFAULT]' \
+            'user=REPLACE_WITH_DEDICATED_OCI_USER_OCID' \
+            "fingerprint=$FP" \
+            'tenancy=REPLACE_WITH_TENANCY_OCID' \
+            'region=af-johannesburg-1' \
+            "key_file=$KEY" >"$CONFIG"
           chown ubuntu:ubuntu "$KEY" "$PUB" "$CONFIG"
           chmod 0600 "$KEY" "$CONFIG"
           chmod 0644 "$PUB"
           install -d -m 0755 /etc/dial
           if [[ ! -f "$ESTATE" ]]; then
-            cat >"$ESTATE" <<'EOF'
-# Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.
-# A1 is one physical transition peer; there is intentionally no fourth old-control OCID.
-DIAL_OCI_COMPARTMENT=
-VAN_TRADING_CORE_OCID=
-VEKL_WORKER_OCID=
-ORACLE_ADMIN_OCID=
-EOF
+            printf '%s\n' \
+              '# Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.' \
+              '# A1 is one physical transition peer; there is intentionally no fourth old-control OCID.' \
+              'DIAL_OCI_COMPARTMENT=' \
+              'VAN_TRADING_CORE_OCID=' \
+              'VEKL_WORKER_OCID=' \
+              'ORACLE_ADMIN_OCID=' >"$ESTATE"
           fi
           chmod 0600 "$ESTATE"
           echo OCI_RECOVERY_IDENTITY=PREPARED
