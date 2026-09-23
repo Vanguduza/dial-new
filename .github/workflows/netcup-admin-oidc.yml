@@ -28,6 +28,10 @@ on:
         description: OCI tenancy OCID. Required by configure_and_discover_oci and finish_oci_edge_login (the login must belong to it).
         required: false
         type: string
+      oci_a1_instance_ocid:
+        description: Optional. The authoritative Ampere A1 instance when finish_oci_edge_login lists more than one CANDIDATE.
+        required: false
+        type: string
       oci_region:
         description: OCI recovery region
         required: false
@@ -129,6 +133,7 @@ jobs:
           OCI_USER_OCID: ${{ inputs.oci_user_ocid }}
           OCI_TENANCY_OCID: ${{ inputs.oci_tenancy_ocid }}
           OCI_REGION: ${{ inputs.oci_region }}
+          OCI_A1_OCID: ${{ inputs.oci_a1_instance_ocid }}
         run: |
           set -euo pipefail
           OUT="$RUNNER_TEMP/admin-command.txt"
@@ -168,7 +173,11 @@ jobs:
                 abort_oci_edge_login)  ARGS="abort" ;;
                 finish_oci_edge_login)
                   [[ "$OCI_TENANCY_OCID" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Valid oci_tenancy_ocid required: the login is refused unless it belongs to this tenancy"; exit 3; }
-                  ARGS="finish $(printf '%q' "$OCI_TENANCY_OCID") $REGION_Q" ;;
+                  ARGS="finish $(printf '%q' "$OCI_TENANCY_OCID") $REGION_Q"
+                  if [[ -n "$OCI_A1_OCID" ]]; then
+                    [[ "$OCI_A1_OCID" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Invalid oci_a1_instance_ocid"; exit 3; }
+                    ARGS="$ARGS $(printf '%q' "$OCI_A1_OCID")"
+                  fi ;;
               esac
               cat >"$OUT" <<EOF
           set -Eeuo pipefail

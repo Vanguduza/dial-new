@@ -101,9 +101,11 @@ EOF
   fi
 }
 
+# discover_instance <logical> <shape> <pin-ocid-or-empty> <display-name>...
+# A pinned OCID is the owner's choice when more than one instance carries the expected names.
 discover_instance() {
-  local logical="$1" expected_shape="$2"
-  shift 2
+  local logical="$1" expected_shape="$2" pin="$3"
+  shift 3
   local tmp
   tmp="$(mktemp)"
   for compartment in "${COMPARTMENTS[@]}"; do
@@ -113,19 +115,30 @@ discover_instance() {
         --display-name "$display_name" \
         --all \
         --output json 2>/dev/null |
-        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape] | @tsv' >>"$tmp" || true
+        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape, ."lifecycle-state", ."time-created"] | @tsv' >>"$tmp" || true
     done
   done
   sort -u "$tmp" -o "$tmp"
+  if [[ -n "$pin" ]]; then
+    awk -F'\t' -v pin="$pin" '$1 == pin' "$tmp" >"$tmp.pin"
+    mv "$tmp.pin" "$tmp"
+    [[ -s "$tmp" ]] || {
+      echo "REFUSE: pinned $logical OCID $pin is not a non-terminated $expected_shape instance with the expected names" >&2
+      rm -f "$tmp"
+      return 25
+    }
+  fi
   local count
   count="$(awk 'NF {n++} END {print n+0}' "$tmp")"
   [[ "$count" -eq 1 ]] || {
     echo "REFUSE: expected exactly one $logical OCI instance across accessible compartments; found $count" >&2
+    # Non-secret identifiers, so the owner can choose which one is authoritative.
+    awk -F'\t' -v l="$logical" 'NF {printf "CANDIDATE %s ocid=%s name=%s shape=%s state=%s created=%s\n", l, $1, $3, $4, $5, $6}' "$tmp" >&2
     rm -f "$tmp"
     return 20
   }
   local id compartment display shape
-  IFS=$'\t' read -r id compartment display shape <"$tmp"
+  IFS=$'\t' read -r id compartment display shape _ <"$tmp"
   rm -f "$tmp"
   # An instance in the root compartment reports the tenancy OCID as its compartment.
   [[ "$id" == ocid1.instance.* && ( "$compartment" == ocid1.compartment.* || "$compartment" == ocid1.tenancy.* ) ]] || {
@@ -181,9 +194,9 @@ discover() {
   [[ "${#COMPARTMENTS[@]}" -ge 1 ]] || { echo "REFUSE: no OCI compartments visible" >&2; exit 12; }
 
   local admin vekl a1
-  admin="$(discover_instance oracle-admin VM.Standard.E2.1.Micro "${OCI_DISPLAY_ORACLE_ADMIN:-oracle-admin}")"
-  vekl="$(discover_instance vekl-worker VM.Standard.E2.1.Micro "${OCI_DISPLAY_VEKL_WORKER:-vekl-worker}")"
-  a1="$(discover_instance a1-transition VM.Standard.A1.Flex \
+  admin="$(discover_instance oracle-admin VM.Standard.E2.1.Micro "" "${OCI_DISPLAY_ORACLE_ADMIN:-oracle-admin}")"
+  vekl="$(discover_instance vekl-worker VM.Standard.E2.1.Micro "" "${OCI_DISPLAY_VEKL_WORKER:-vekl-worker}")"
+  a1="$(discover_instance a1-transition VM.Standard.A1.Flex "${OCI_A1_TRANSITION_OCID:-}" \
     "${OCI_DISPLAY_A1_PRIMARY:-dial-hermes-control}" \
     "${OCI_DISPLAY_A1_FINAL:-van-trading-core}")"
 

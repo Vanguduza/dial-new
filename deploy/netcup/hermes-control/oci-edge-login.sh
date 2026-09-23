@@ -3,7 +3,8 @@
 #
 #   oci-edge-login.sh start  [region]                 open the browser-login bridge
 #   oci-edge-login.sh status                          PENDING_OWNER_LOGIN | SESSION_READY | ABSENT
-#   oci-edge-login.sh finish <tenancy-ocid> [region]  session -> dedicated user + API key, then teardown
+#   oci-edge-login.sh finish <tenancy-ocid> [region] [a1-instance-ocid]
+#                                                     session -> dedicated user + API key, then teardown
 #   oci-edge-login.sh abort                           revoke/remove the session and stop the bridge
 #
 # Facts this relies on, read from the pinned oci-cli 3.93.0 source (oci_cli/cli_setup_bootstrap.py,
@@ -227,18 +228,27 @@ ensure_named() { # ensure_named <kind> <tenancy> <name> <description> [extra cre
   printf '%s\n' "$id"
 }
 
+KEEP_SESSION=0
+# A session is destroyed on every exit except one: discovery found more than one candidate and
+# needs the owner's choice. Nothing has been written to IAM at that point, and the session still
+# expires on its own TTL, so keeping it spares a second browser login for the retry.
+finish_exit() {
+  if [[ "$KEEP_SESSION" == 1 ]]; then stop_bridge; else destroy_session; fi
+}
+
 finish() {
-  local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}"
+  local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
   [[ "$region" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || die "invalid region"
+  [[ -z "$a1_pin" || "$a1_pin" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "invalid A1 instance OCID"
 
   if ! session_present; then
     if bridge_active; then say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"; exit 20; fi
     say "OCI_EDGE_SESSION=ABSENT"; exit 21
   fi
 
-  # From here on, the session is destroyed on every exit path, success or failure.
-  trap 'destroy_session' EXIT
+  # From here on the session is destroyed on every exit path, except an ambiguous discovery.
+  trap 'finish_exit' EXIT
 
   local sub tenant exp
   read -r sub tenant exp < <(token_claims) || die "session token unreadable" 22
@@ -254,9 +264,19 @@ finish() {
 
   # Inventory first, with the owner's session: the policy is scoped to the estate compartment,
   # so the compartment must be known before any IAM object is written.
+  local rc=0
   as_admin env OCI_CLI_CONFIG_FILE="$SESSION_CONFIG" OCI_CLI_PROFILE="$PROFILE" OCI_CLI_AUTH=security_token \
     OCI_RECOVERY_TENANCY_OCID="$tenant" OCI_RECOVERY_REGION="$region" OCI_RECOVERY_DISCOVERY_AUTH=session \
-    bash "$LIB/prepare-oci-recovery.sh" discover
+    OCI_A1_TRANSITION_OCID="$a1_pin" \
+    bash "$LIB/prepare-oci-recovery.sh" discover || rc=$?
+  if [[ "$rc" == 20 ]]; then
+    KEEP_SESSION=1
+    say "OCI_EDGE_SESSION=KEPT_FOR_RETRY"
+    say "session_seconds_left=$(( exp - $(date +%s) ))"
+    say "OWNER_DECISION_REQUIRED=choose the authoritative instance from the CANDIDATE lines, then re-run finish with it"
+    exit 27
+  fi
+  [[ "$rc" == 0 ]] || die "estate discovery failed ($rc)" "$rc"
   # shellcheck source=/dev/null
   source "$ESTATE"
   [[ "${DIAL_OCI_COMPARTMENT:-}" == ocid1.compartment.* || "${DIAL_OCI_COMPARTMENT:-}" == ocid1.tenancy.* ]] ||
@@ -337,7 +357,7 @@ finish() {
   say "OCI_RECOVERY_DURABLE_PROBE=GREEN"
 
   # Final discovery with the durable key; only this writes the recovery-ready marker.
-  as_admin bash "$LIB/prepare-oci-recovery.sh" discover
+  as_admin env OCI_A1_TRANSITION_OCID="$a1_pin" bash "$LIB/prepare-oci-recovery.sh" discover
   say "recovery_user=$user"
   say "OCI_EDGE_LOGIN=FINISHED"
 }
@@ -345,7 +365,7 @@ finish() {
 case "$MODE" in
   start)  start "${2:-}" ;;
   status) status ;;
-  finish) finish "${2:-}" "${3:-}" ;;
+  finish) finish "${2:-}" "${3:-}" "${4:-}" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
-  *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region]|abort}" >&2; exit 2 ;;
+  *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [a1-instance-ocid]|abort}" >&2; exit 2 ;;
 esac

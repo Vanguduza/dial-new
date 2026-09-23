@@ -25,7 +25,11 @@ case "$1 $2 $3" in
     case "$name" in
       oracle-admin) echo '{"data":[{"id":"ocid1.instance.oc1..admin","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"oracle-admin","shape":"VM.Standard.E2.1.Micro","lifecycle-state":"RUNNING"}]}' ;;
       vekl-worker)  echo '{"data":[{"id":"ocid1.instance.oc1..vekl","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"vekl-worker","shape":"VM.Standard.E2.1.Micro","lifecycle-state":"RUNNING"}]}' ;;
-      dial-hermes-control) echo '{"data":[{"id":"ocid1.instance.oc1..a1","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"dial-hermes-control","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING"}]}' ;;
+      dial-hermes-control) echo '{"data":[{"id":"ocid1.instance.oc1..a1","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"dial-hermes-control","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-08-01T00:00:00Z"}]}' ;;
+      van-trading-core)
+        if [[ "${FAKE_SECOND_A1:-0}" == 1 ]]; then
+          echo '{"data":[{"id":"ocid1.instance.oc1..a1second","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-09-20T00:00:00Z"}]}'
+        else echo '{"data":[]}'; fi ;;
       *) echo '{"data":[]}' ;;
     esac ;;
   "iam user list-groups") [[ -f "$S/iam/member" ]] && echo '{"data":[{"id":"ocid1.group.oc1..g"}]}' || echo '{"data":[]}' ;;

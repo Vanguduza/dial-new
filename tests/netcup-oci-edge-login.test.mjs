@@ -154,6 +154,42 @@ describe('oci-edge-login finish', () => {
     expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
   });
 
+  it('keeps the session and lists candidates when two A1 instances match, without touching IAM', () => {
+    const ctx = setup();
+    ctx.env.FAKE_SECOND_A1 = '1';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.code).toBe(27);
+    expect(r.out).toContain('OCI_EDGE_SESSION=KEPT_FOR_RETRY');
+    expect(r.err).toContain('CANDIDATE a1-transition ocid=ocid1.instance.oc1..a1 name=dial-hermes-control');
+    expect(r.err).toContain('CANDIDATE a1-transition ocid=ocid1.instance.oc1..a1second name=van-trading-core');
+    expect(calls(ctx)).not.toMatch(/iam (user|group|policy|dynamic-group)/);
+    expect(calls(ctx)).not.toContain('session terminate');
+    expect(sessionGone(ctx)).toBe(false);
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
+  });
+
+  it('finishes with the owner-pinned A1 instance on the retry, reusing the kept session', () => {
+    const ctx = setup();
+    ctx.env.FAKE_SECOND_A1 = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(27);
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1second');
+    expect(r.err).not.toMatch(/REFUSE/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
+    expect(fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8')).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1second');
+    expect(fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8')).toContain("instance.id = 'ocid1.instance.oc1..a1second'");
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
+  it('refuses a pinned A1 OCID that is not one of the candidates, and destroys the session', () => {
+    const ctx = setup();
+    ctx.env.FAKE_SECOND_A1 = '1';
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..notthere');
+    expect(r.code).toBe(25);
+    expect(r.err).toContain('pinned a1-transition OCID');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
   it('rejects a malformed tenancy argument', () => {
     const ctx = setup();
     expect(run(ctx, 'finish', 'ocid1.tenancy.oc1..x; rm -rf /').code).toBe(2);
