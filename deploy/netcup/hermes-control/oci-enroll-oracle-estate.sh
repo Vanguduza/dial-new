@@ -75,6 +75,9 @@ declare -A KEYS=()
 
 TMPDIR="$(mktemp -d /tmp/dial-oci-enroll.XXXXXX)"
 trap 'rm -rf "$TMPDIR"' EXIT
+# The OCI CLI runs as ubuntu (see OCI=...), but this script runs as root with umask 077: a
+# root-owned 0700 directory makes every file:// argument read as "did not exist" to the CLI.
+chown ubuntu:ubuntu "$TMPDIR"
 
 for HOST_ID in "${HOSTS[@]}"; do
   INSTANCE_ID="${INSTANCE_IDS[$HOST_ID]}"
@@ -83,6 +86,7 @@ for HOST_ID in "${HOSTS[@]}"; do
   TARGET="$TMPDIR/target-$HOST_ID.json"
   jq -n --arg text "$CMD" '{source:{sourceType:"TEXT",text:$text},output:{outputType:"TEXT"}}' >"$CONTENT"
   jq -n --arg instance "$INSTANCE_ID" '{instanceId:$instance}' >"$TARGET"
+  chown ubuntu:ubuntu "$CONTENT" "$TARGET"
 
   COMMAND_ID="$("${OCI[@]}" instance-agent command create \
     --compartment-id "$DIAL_OCI_COMPARTMENT" \

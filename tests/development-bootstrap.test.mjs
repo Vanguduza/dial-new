@@ -478,6 +478,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(ociEnroll).not.toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
     expect(ociEnroll).toContain('retained_oracle_instances:3');
+    // The CLI runs as ubuntu; a root-owned 0700 temp dir made every file:// argument 'did not exist' (converge run #178).
+    expect(ociEnroll).toContain('chown ubuntu:ubuntu "$TMPDIR"');
+    expect(ociEnroll).toContain('chown ubuntu:ubuntu "$CONTENT" "$TARGET"');
     expect(ociEnroll).toContain('oracle-peer-keys.json');
     expect(prepareOci).toContain('github-oci-ready');
     expect(prepareOci).toContain('oracle_targets=3');
