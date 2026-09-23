@@ -155,6 +155,8 @@ def matching_row(s):
  p=par(s); d=cdig(s)
  for r in rows_at(s):
   if r.get('source_parent')==p and r.get('diff_sha256')==d and sorted(r.get('changed_files',[]))==sorted(f): return r
+ if os.getenv('GITHUB_ACTIONS') == 'true':
+  print('PROJECT_TRUTH_DIGEST_DIAGNOSTIC='+json.dumps({'commit':s,'source_parent':p,'diff_sha256':d,'changed_files':sorted(f)},sort_keys=True),file=sys.stderr)
  return None
 
 def verify_authorized_commit(s):
