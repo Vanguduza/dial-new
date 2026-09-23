@@ -2,55 +2,240 @@
 set -Eeuo pipefail
 umask 077
 
+MODE="${1:-prepare}"
 OCI_DIR="$HOME/.oci"
 KEY="$OCI_DIR/netcup-hermes-recovery.pem"
 PUB="$OCI_DIR/netcup-hermes-recovery_public.pem"
 CONFIG="$OCI_DIR/config"
 ESTATE=/etc/dial/oracle-estate.env
+REGION="${OCI_RECOVERY_REGION:-af-johannesburg-1}"
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
-mkdir -p "$OCI_DIR"; chmod 0700 "$OCI_DIR"
 
-if [[ ! -s "$KEY" ]]; then
-  openssl genrsa -out "$KEY" 2048 >/dev/null 2>&1
-  chmod 0600 "$KEY"
-  openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
-  chmod 0644 "$PUB"
-fi
+config_value() {
+  local name="$1"
+  [[ -f "$CONFIG" ]] || return 0
+  awk -F= -v key="$name" '$1 == key {sub(/^[^=]*=/,""); print; exit}' "$CONFIG"
+}
 
-fingerprint="$(openssl rsa -pubout -outform DER -in "$KEY" 2>/dev/null | openssl md5 -c | awk '{print $2}')"
+ensure_key() {
+  mkdir -p "$OCI_DIR"
+  chmod 0700 "$OCI_DIR"
+  if [[ ! -s "$KEY" ]]; then
+    openssl genrsa -out "$KEY" 2048 >/dev/null 2>&1
+    chmod 0600 "$KEY"
+    openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
+    chmod 0644 "$PUB"
+  elif [[ ! -s "$PUB" ]]; then
+    openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
+    chmod 0644 "$PUB"
+  fi
+}
 
-if [[ ! -f "$CONFIG" ]]; then
+fingerprint() {
+  openssl rsa -pubout -outform DER -in "$KEY" 2>/dev/null | openssl md5 -c | awk '{print $2}'
+}
+
+write_config() {
+  local user="${OCI_RECOVERY_USER_OCID:-$(config_value user)}"
+  local tenancy="${OCI_RECOVERY_TENANCY_OCID:-$(config_value tenancy)}"
+  [[ -n "$user" && "$user" != REPLACE_* ]] || user=REPLACE_WITH_DEDICATED_OCI_USER_OCID
+  [[ -n "$tenancy" && "$tenancy" != REPLACE_* ]] || tenancy=REPLACE_WITH_TENANCY_OCID
   cat >"$CONFIG" <<EOF
 [DEFAULT]
-user=REPLACE_WITH_DEDICATED_OCI_USER_OCID
-fingerprint=REPLACE_AFTER_PUBLIC_KEY_UPLOAD
-tenancy=REPLACE_WITH_TENANCY_OCID
-region=af-johannesburg-1
+user=$user
+fingerprint=$(fingerprint)
+tenancy=$tenancy
+region=$REGION
 key_file=$KEY
 EOF
   chmod 0600 "$CONFIG"
-fi
+}
 
-sudo install -d -m 0755 /etc/dial
-if [[ ! -f "$ESTATE" ]]; then
-  sudo tee "$ESTATE" >/dev/null <<'EOF'
+config_ready() {
+  local user tenancy fp
+  user="$(config_value user)"
+  tenancy="$(config_value tenancy)"
+  fp="$(config_value fingerprint)"
+  [[ "$user" == ocid1.user.* ]] &&
+    [[ "$tenancy" == ocid1.tenancy.* ]] &&
+    [[ -n "$fp" ]] &&
+    [[ -s "$KEY" ]]
+}
+
+inventory_ready() {
+  [[ -s "$ESTATE" ]] || return 1
+  grep -q '^DIAL_OCI_COMPARTMENT=ocid1\.compartment\.' "$ESTATE" &&
+    grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
+    grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
+    grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
+}
+
+prepare() {
+  ensure_key
+  write_config
+  sudo install -d -m 0755 /etc/dial
+  if [[ ! -f "$ESTATE" ]]; then
+    sudo tee "$ESTATE" >/dev/null <<'EOF'
 # Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.
+# The A1 is one physical transition peer: old DIAL control during migration,
+# then VAN/VATI host after cutover. There is intentionally no fourth old-control OCID.
 DIAL_OCI_COMPARTMENT=
 VAN_TRADING_CORE_OCID=
 VEKL_WORKER_OCID=
 ORACLE_ADMIN_OCID=
 EOF
-  sudo chmod 0600 "$ESTATE"
-fi
+    sudo chmod 0600 "$ESTATE"
+  fi
+  echo "OCI_RECOVERY_IDENTITY=PREPARED"
+  echo "public_key_begin"
+  cat "$PUB"
+  echo "public_key_end"
+  echo "fingerprint=$(fingerprint)"
+  if config_ready; then
+    echo "OCI_RECOVERY_CONFIG=READY"
+  else
+    echo "OCI_RECOVERY_CONFIG=OWNER_ACTION_REQUIRED"
+  fi
+}
 
-echo "OCI_RECOVERY_IDENTITY=PREPARED"
-echo "public_key=$PUB"
-echo "fingerprint=$fingerprint"
-echo
-echo "OWNER ACTION REQUIRED:"
-echo "1. In OCI create/use a dedicated recovery user and upload the public key above."
-echo "2. Give its group recovery permissions in the compartment containing the three Oracle VMs."
-echo "3. Fill user/tenancy/fingerprint in $CONFIG."
-echo "4. Fill compartment + the three instance OCIDs in $ESTATE."
-echo "5. Test: oci compute instance list --compartment-id <compartment-ocid>"
+discover_instance() {
+  local logical="$1" expected_shape="$2"
+  shift 2
+  local tmp
+  tmp="$(mktemp)"
+  for compartment in "${COMPARTMENTS[@]}"; do
+    for display_name in "$@"; do
+      oci compute instance list \
+        --compartment-id "$compartment" \
+        --display-name "$display_name" \
+        --all \
+        --output json 2>/dev/null |
+        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape] | @tsv' >>"$tmp" || true
+    done
+  done
+  sort -u "$tmp" -o "$tmp"
+  local count
+  count="$(awk 'NF {n++} END {print n+0}' "$tmp")"
+  [[ "$count" -eq 1 ]] || {
+    echo "REFUSE: expected exactly one $logical OCI instance across accessible compartments; found $count" >&2
+    rm -f "$tmp"
+    return 20
+  }
+  local id compartment display shape
+  IFS=$'\t' read -r id compartment display shape <"$tmp"
+  rm -f "$tmp"
+  [[ "$id" == ocid1.instance.* && "$compartment" == ocid1.compartment.* ]] || {
+    echo "REFUSE: invalid OCI identity returned for $logical" >&2
+    return 21
+  }
+  [[ "$shape" == "$expected_shape" ]] || {
+    echo "REFUSE: $logical resolved to unexpected shape $shape; expected $expected_shape" >&2
+    return 22
+  }
+  printf '%s\t%s\t%s\t%s\n' "$id" "$compartment" "$display" "$shape"
+}
+
+discover() {
+  ensure_key
+  config_ready || {
+    echo "REFUSE: OCI recovery config needs dedicated user and tenancy OCIDs before discovery" >&2
+    exit 10
+  }
+  command -v oci >/dev/null 2>&1 || { echo "REFUSE: OCI CLI missing" >&2; exit 11; }
+  command -v jq >/dev/null 2>&1 || { echo "REFUSE: jq missing" >&2; exit 11; }
+
+  oci iam region list --limit 1 >/dev/null
+  local tenancy
+  tenancy="$(config_value tenancy)"
+
+  mapfile -t COMPARTMENTS < <(
+    {
+      printf '%s\n' "$tenancy"
+      oci iam compartment list \
+        --compartment-id "$tenancy" \
+        --compartment-id-in-subtree true \
+        --access-level ACCESSIBLE \
+        --all \
+        --output json |
+        jq -r '.data[].id'
+    } | awk 'NF && !seen[$0]++'
+  )
+  [[ "${#COMPARTMENTS[@]}" -ge 1 ]] || { echo "REFUSE: no OCI compartments visible" >&2; exit 12; }
+
+  local admin vekl a1
+  admin="$(discover_instance oracle-admin VM.Standard.E2.1.Micro "${OCI_DISPLAY_ORACLE_ADMIN:-oracle-admin}")"
+  vekl="$(discover_instance vekl-worker VM.Standard.E2.1.Micro "${OCI_DISPLAY_VEKL_WORKER:-vekl-worker}")"
+  a1="$(discover_instance a1-transition VM.Standard.A1.Flex \
+    "${OCI_DISPLAY_A1_PRIMARY:-dial-hermes-control}" \
+    "${OCI_DISPLAY_A1_FINAL:-van-trading-core}")"
+
+  local admin_id admin_comp vekl_id vekl_comp a1_id a1_comp
+  IFS=$'\t' read -r admin_id admin_comp _ _ <<<"$admin"
+  IFS=$'\t' read -r vekl_id vekl_comp _ _ <<<"$vekl"
+  IFS=$'\t' read -r a1_id a1_comp _ _ <<<"$a1"
+
+  [[ "$admin_id" != "$vekl_id" && "$admin_id" != "$a1_id" && "$vekl_id" != "$a1_id" ]] || {
+    echo "REFUSE: Oracle physical instance identities are not unique" >&2
+    exit 23
+  }
+  [[ "$admin_comp" == "$vekl_comp" && "$admin_comp" == "$a1_comp" ]] || {
+    echo "REFUSE: Oracle recovery targets span multiple compartments; bounded recovery expects one compartment" >&2
+    exit 24
+  }
+
+  local tmp
+  tmp="$(mktemp)"
+  cat >"$tmp" <<EOF
+# Auto-discovered non-secret OCI inventory.
+# A1 remains one physical transition peer; DIAL does not create a fourth old-control target.
+DIAL_OCI_COMPARTMENT=$admin_comp
+VAN_TRADING_CORE_OCID=$a1_id
+VEKL_WORKER_OCID=$vekl_id
+ORACLE_ADMIN_OCID=$admin_id
+EOF
+  sudo install -m 0600 "$tmp" "$ESTATE"
+  rm -f "$tmp"
+
+  echo "OCI_RECOVERY_DISCOVERY=GREEN"
+  echo "oracle_targets=3"
+  echo "a1_physical_targets=1"
+  echo "estate_file=$ESTATE"
+}
+
+status() {
+  ensure_key
+  echo "OCI_RECOVERY_KEY_PRESENT=true"
+  if config_ready; then echo "OCI_RECOVERY_CONFIG=READY"; else echo "OCI_RECOVERY_CONFIG=OWNER_ACTION_REQUIRED"; fi
+  if inventory_ready; then echo "OCI_RECOVERY_INVENTORY=READY"; else echo "OCI_RECOVERY_INVENTORY=NOT_READY"; fi
+}
+
+case "$MODE" in
+  prepare)
+    prepare
+    ;;
+  configure)
+    ensure_key
+    [[ "${OCI_RECOVERY_USER_OCID:-}" == ocid1.user.* ]] || { echo "REFUSE: OCI_RECOVERY_USER_OCID required" >&2; exit 13; }
+    [[ "${OCI_RECOVERY_TENANCY_OCID:-}" == ocid1.tenancy.* ]] || { echo "REFUSE: OCI_RECOVERY_TENANCY_OCID required" >&2; exit 13; }
+    write_config
+    echo "OCI_RECOVERY_CONFIG=READY"
+    ;;
+  discover)
+    discover
+    ;;
+  configure-and-discover)
+    ensure_key
+    [[ "${OCI_RECOVERY_USER_OCID:-}" == ocid1.user.* ]] || { echo "REFUSE: OCI_RECOVERY_USER_OCID required" >&2; exit 13; }
+    [[ "${OCI_RECOVERY_TENANCY_OCID:-}" == ocid1.tenancy.* ]] || { echo "REFUSE: OCI_RECOVERY_TENANCY_OCID required" >&2; exit 13; }
+    write_config
+    discover
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 {prepare|configure|discover|configure-and-discover|status}" >&2
+    exit 2
+    ;;
+esac
