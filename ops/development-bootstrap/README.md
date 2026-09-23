@@ -57,6 +57,15 @@ Verdict law: `GREEN` requires every MANDATORY and REQUIRED check to pass with no
 no owner/external gate on a mandatory component; otherwise `AMBER`, or `RED` when a mandatory
 check fails or cannot be certified.
 
+## Physical host binding
+
+The logical role `dial-hermes-control` is provider-neutral. As of the owner-authorized
+2026-09-21 migration its physical backing is Netcup RS 1000 G12 (x86_64, 4 CPU,
+8 GB RAM). `vekl-worker` and `oracle-admin` remain Oracle E2.1 Micro nodes.
+Cross-cloud private endpoints are runtime configuration; provider public IPs never become
+authority identity. Provider-specific bootstrap/migration entrypoints live under
+`deploy/netcup/hermes-control/`.
+
 ## Where it runs
 
 - `provider-container` (Claude Code Remote / Codex cloud): repository gates, self-tests,

@@ -1,0 +1,103 @@
+name: ARTEMIS and OpenViking subordinate qualification
+
+on:
+  pull_request:
+    paths:
+      - "agent-system/orchestration/android-testing-*.mjs"
+      - "agent-system/orchestration/artemis-subordinate-client.mjs"
+      - "agent-system/orchestration/artemis-console-proxy.mjs"
+      - "agent-system/orchestration/openviking-*.mjs"
+      - "agent-system/orchestration/shared-*.mjs"
+      - "agent-system/registries/ANDROID_TESTING_PLANE.json"
+      - "agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json"
+      - "deploy/netcup/hermes-control/artemis/**"
+      - "deploy/netcup/hermes-control/image-bootstrap.sh"
+      - "deploy/netcup/hermes-control/netcup-custom-script.sh"
+      - "deploy/netcup/hermes-control/postboot-converge.sh"
+      - "deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh"
+      - "deploy/netcup/hermes-control/install-openviking-memory-plane.sh"
+      - "tests/orchestration-android-testing-plane.test.mjs"
+      - "tests/orchestration-artemis-console-proxy.test.mjs"
+      - "tests/orchestration-openviking-shared-context.test.mjs"
+      - ".github/workflows/artemis-openviking-subordinate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  subordinate-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.2"
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Parse Hermes subordinate JavaScript
+        run: |
+          node --check agent-system/orchestration/artemis-subordinate-client.mjs
+          node --check agent-system/orchestration/artemis-console-proxy.mjs
+          node --check agent-system/orchestration/android-testing-plane.mjs
+          node --check agent-system/orchestration/android-testing-mcp.mjs
+          node --check agent-system/orchestration/android-testing-supervisor.mjs
+          node --check agent-system/orchestration/openviking-shared-context.mjs
+          node --check agent-system/orchestration/openviking-projector.mjs
+
+      - name: Parse ARTEMIS internal bridge
+        run: python3 -m py_compile deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
+
+      - name: Validate Netcup subordinate bootstrap pin
+        run: |
+          set -euo pipefail
+          actual="$(git hash-object deploy/netcup/hermes-control/image-bootstrap.sh)"
+          expected="$(sed -n 's/^EXPECTED_IMAGE_BLOB=//p' deploy/netcup/hermes-control/netcup-custom-script.sh | head -1)"
+          test -n "$expected"
+          test "$actual" = "$expected"
+          grep -Eq 'adb fastboot ffmpeg scrcpy docker\.io' deploy/netcup/hermes-control/image-bootstrap.sh
+          grep -q 'install-openviking-memory-plane.sh' deploy/netcup/hermes-control/postboot-converge.sh
+          grep -q 'install-artemis-android-testing-plane.sh' deploy/netcup/hermes-control/postboot-converge.sh
+
+      - name: Verify pinned ARTEMIS upstream contract and DIAL hardening
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          git -C "$tmp" init -q
+          git -C "$tmp" remote add origin https://github.com/google/artemis.git
+          git -C "$tmp" fetch --depth=1 origin 371aa6df56880643da57b30da936e9812fb0ec66
+          git -C "$tmp" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$tmp" rev-parse HEAD)" = "371aa6df56880643da57b30da936e9812fb0ec66"
+          test "$(git -C "$tmp" hash-object uv.lock)" = "dc2d35b8c284055c92ff1cd2560c8201e648bf9f"
+          python3 deploy/netcup/hermes-control/artemis/harden_artemis.py "$tmp"
+          python3 - "$tmp" <<'PY'
+          import ast, pathlib, sys
+          root=pathlib.Path(sys.argv[1])
+          expected={
+            "mcp_server/tools/task_runner.py":{"mobile_run_task"},
+            "mcp_server/tools/task_manager.py":{"mobile_manage_task"},
+            "mcp_server/tools/device_state.py":{"mobile_get_device_state"},
+            "mcp_server/tools/inspect_trace.py":{"mobile_inspect_trace"},
+            "mcp_server/tools/diagnose.py":{"mobile_diagnose"},
+          }
+          for rel,names in expected.items():
+              tree=ast.parse((root/rel).read_text(encoding="utf-8"),filename=rel)
+              found={n.name for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}
+              missing=names-found
+              if missing:
+                  raise SystemExit(f"{rel}: missing pinned ARTEMIS MCP tools {sorted(missing)}")
+          PY
+
+      - name: Validate Android plane and specialist authority
+        run: |
+          node -e "const r=require('./agent-system/registries/ANDROID_TESTING_PLANE.json'); if(r.authority!=='HERMES_CONTROL_AUTHORITY'||r.authority_invariants?.artemis_is_subordinate!==true||r.authority_invariants?.raw_upstream_mcp_exposed!==false||r.authority_invariants?.managed_direct_artemis_ui_registered!==false||r.authority_invariants?.van_embedded_console_preserves_hermes_authority!==true||r.access?.van_console_proxy!=='dial-artemis-console-proxy.service'||r.security?.van_console_mutations!=='HERMES_GOVERNED_OWNER_ALLOWLIST') process.exit(1)"
+          node -e "const r=require('./agent-system/registries/SPECIALIST_CAPABILITY_REGISTRY.json'); const a=r.capabilities.find(x=>x.id==='artemis-android'); if(!a||a.authority_class!=='HERMES_SUBORDINATE_EXECUTOR'||a.access?.raw_upstream_mcp!==false||a.never_a_harness_or_manager!==true) process.exit(1)"
+
+      - name: Run subordinate plane tests
+        run: npx vitest run tests/orchestration-android-testing-plane.test.mjs tests/orchestration-artemis-console-proxy.test.mjs tests/orchestration-openviking-shared-context.test.mjs

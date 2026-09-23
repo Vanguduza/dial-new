@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-hermes-source-separate-a1-topology",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "9d2f2c715a78672dd9b79391ee444cad2c5906fdcf6139d4361b981598ef764c",
+  "owner_instruction_excerpt": "dial hermes control is the clone source and is terminated once cloning is done; van trading core, oracle-admin and vekl worker remain on Oracle connected to Netcup",
+  "base_sha": "8d979c4c0e4fa4e2d7fd4e64637f7ffd22e8503d",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260923-hermes-source-topology",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T09:01:11Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    "deploy/hybrid/estate-topology.json",
+    "deploy/netcup/hermes-control/prepare-oci-recovery.sh",
+    "deploy/netcup/hermes-control/oci-edge-login.sh",
+    "deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh",
+    "deploy/netcup/hermes-control/configure-wireguard-fabric.sh",
+    "deploy/netcup/hermes-control/github-oidc-control.mjs",
+    "deploy/netcup/hermes-control/rotate-bootstrap-identities.sh",
+    "deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh",
+    "deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    ".github/workflows/netcup-admin-oidc.yml",
+    "tests/development-bootstrap.test.mjs",
+    "tests/netcup-oci-edge-login.test.mjs",
+    "tests/fixtures/fake-oci-cli.sh",
+    "docs/project-state/authorizations/auth-20260923-owner-hermes-source-separate-a1-topology.json"
+  ],
+  "change_classes": [
+    "estate_topology_owner_correction",
+    "migration_source_separate_a1",
+    "source_retirement_without_rename",
+    "certification_requires_source_termination"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

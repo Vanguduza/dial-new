@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260921-owner-provider-runtimes-real-install",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "c722e1e5ebde4d66412c5363289a7e565b8bc901fded4e681cf0ef8af3bc6c1a",
+  "owner_instruction_excerpt": "Why is the actual Claude Code and Antigravity not being installed?",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "chatgpt",
+    "request_id": "chatgpt-20260921-provider-runtime-real-install",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-21T19:25:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    "deploy/oracle/hermes-codex/bootstrap-host.sh",
+    "deploy/netcup/hermes-control/image-bootstrap.sh",
+    "docs/project-state/authorizations/auth-20260921-owner-provider-runtimes-real-install.json"
+  ],
+  "change_classes": [
+    "bootstrap_correctness",
+    "provider_runtime_real_install",
+    "postcondition_hardening"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
