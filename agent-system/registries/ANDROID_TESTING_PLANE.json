@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V2",
   "authority": "HERMES_CONTROL_AUTHORITY",
   "host": "dial-control",
@@ -18,7 +18,8 @@
     "raw_upstream_ui_enabled_by_default": false,
     "project_truth_can_be_advanced_by_artemis": false,
     "test_evidence_is_authoritative_before_reconciliation": false,
-    "managed_direct_artemis_ui_registered": false
+    "managed_direct_artemis_ui_registered": false,
+    "van_embedded_console_preserves_hermes_authority": true
   },
   "access": {
     "hermes_mcp": "dial_android_testing",
@@ -30,7 +31,11 @@
     "trace_ownership_required_for_management": true,
     "direct_arbitrary_shell": false,
     "adb_transport": "PRE_ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE",
-    "async_supervisor": "/var/lib/dial-control via dial-artemis-supervisor.timer"
+    "async_supervisor": "/var/lib/dial-control via dial-artemis-supervisor.timer",
+    "van_console_proxy": "dial-artemis-console-proxy.service",
+    "van_console_proxy_port": 9135,
+    "van_console_proxy_auth": "BEARER_SECRET_OUTSIDE_GIT",
+    "raw_artemis_ui": "LOOPBACK_ONLY_127.0.0.1:9146"
   },
   "upstream_native_capabilities_consumed_internally": {
     "mobile_run_task": "android_task_start",
@@ -68,7 +73,9 @@
     "SYNCHRONOUS_CERTIFICATION_RUN_WITH_BUILD_INSTALL_EVIDENCE",
     "HERMES_60_SECOND_ASYNC_TASK_SUPERVISION_AND_TERMINAL_EVIDENCE_SEALING",
     "BUG_REPRODUCTION",
-    "PERFORMANCE_AND_STABILITY_PROFILING"
+    "PERFORMANCE_AND_STABILITY_PROFILING",
+    "VAN_EMBEDDED_ARTEMIS_WEB_OBSERVATION",
+    "HERMES_AUTHENTICATED_ARTEMIS_CONSOLE_PROXY"
   ],
   "routing": {
     "flash": "ROUTINE_DETERMINISTIC_UI_PATHS",
@@ -103,11 +110,14 @@
     "apk_path_must_remain_inside_repository": true,
     "trace_management_requires_hermes_owned_trace": true,
     "secrets_in_evidence": "PROHIBITED",
-    "managed_parallel_artemis_web_control_surface": "PROHIBITED"
+    "managed_parallel_artemis_web_control_surface": "PROHIBITED",
+    "van_embedded_web_console": "ALLOWED_ONLY_VIA_HERMES_AUTHENTICATED_PROXY",
+    "van_console_mutations": "BLOCKED_AT_PROXY_USE_HERMES_ANDROID_TESTING_BROKER"
   },
   "readiness": {
     "engineering": "IMPLEMENTED",
     "live_host_install": "PENDING_LIVE_DIAL_CONTROL",
-    "physical_device_certification": "PENDING_ADMITTED_CONNECTED_DEVICE"
+    "physical_device_certification": "PENDING_ADMITTED_CONNECTED_DEVICE",
+    "van_embedded_console_engineering": "IMPLEMENTED_PENDING_VAN_GATEWAY_WIRING"
   }
 }

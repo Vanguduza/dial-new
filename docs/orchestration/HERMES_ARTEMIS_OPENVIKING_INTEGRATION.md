@@ -109,6 +109,16 @@ Every asynchronous task is recorded under `/var/lib/dial-control/android-testing
 
 The managed ARTEMIS web console is not registered at all. The installer removes/disables any prior `dial-artemis-ui.service`, so the estate has no supported parallel ARTEMIS control surface. Hermes is the supported control boundary.
 
+## VAN embedded ARTEMIS console
+
+The upstream ARTEMIS Showcase/Admin web surface is now prepared as a **loopback-only subordinate service** on Netcup and is reachable only through the Hermes-authenticated console proxy. The raw ARTEMIS UI is never bound to the public interface and is never exposed directly to VAN.
+
+The console proxy binds to the DIAL private overlay on port `9135`, authenticates every browser-proxy request with a secret stored outside Git, strips browser Origin/forwarding headers before reaching ARTEMIS, and keeps the upstream server on `127.0.0.1:9146`.
+
+The first integration mode is deliberately `OBSERVE_ONLY`: GET/HEAD/OPTIONS traffic is proxied so VAN can embed ARTEMIS live device state, task/trace views, replay material and diagnostics, while direct upstream task mutation is rejected with `hermes_governed_control_required`. Task start/stop/instruction injection/diagnosis continue through `dial_android_testing`, preserving ARTEMIS as a Hermes subordinate rather than creating a second control authority.
+
+The VAN Android/Gateway side may mint a short-lived owner-device-bound web session and proxy this private service into an in-app WebView. The private Netcup bearer token must remain server-side; it is never sent to Android.
+
 ## OpenViking memory plane
 
 ### Deployment boundary
@@ -204,8 +214,10 @@ OpenViking:
 ARTEMIS:
 - converges when `adb`, `scrcpy`, and `ffmpeg` are already present,
 - installs the Hermes-only ARTEMIS bridge and governed MCP,
-- removes/disables the managed direct ARTEMIS web console so Hermes remains the only supported control surface,
+- starts the raw ARTEMIS web server on loopback only and exposes an authenticated private-overlay proxy for VAN in observe-only mode; mutation remains on the Hermes Android broker,
 - otherwise reports the host dependency gap instead of silently auto-installing unpinned packages.
+
+The Netcup image bootstrap now installs the Android host dependencies (`adb`, `scrcpy`, `ffmpeg`) and Docker required by the OpenViking container, and adds the service user to the Docker group before zero-touch postboot activation.
 
 This preserves the development-system supply-chain rule: a missing external dependency is a visible qualification gap, not permission to execute an unreviewed `curl | bash` installer.
 

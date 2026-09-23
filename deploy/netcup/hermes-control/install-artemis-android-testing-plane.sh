@@ -11,6 +11,9 @@ ARTEMIS_DIR="$ARTEMIS_ROOT/$ARTEMIS_COMMIT"
 UV_VERSION="0.12.17"
 UV_ASSET="uv-x86_64-unknown-linux-gnu.tar.gz"
 UNIT_DIR="$HOME/.config/systemd/user"
+ARTEMIS_UI_PORT="${DIAL_ARTEMIS_UI_PORT:-9146}"
+ARTEMIS_CONSOLE_PORT="${DIAL_ARTEMIS_CONSOLE_PORT:-9135}"
+ARTEMIS_CONSOLE_TOKEN_FILE="$CONTROL_HOME/secrets/artemis-console.token"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "dial-control" ]] || fail "must run on Netcup dial-control"
@@ -19,8 +22,8 @@ for cmd in git gh python3 adb scrcpy ffmpeg node; do command -v "$cmd" >/dev/nul
 python3 -c 'import sys; assert sys.version_info >= (3,12)' || fail "Python 3.12+ required"
 
 sudo install -d -m 0755 /opt/hermes-mobile-fabric "$ARTEMIS_ROOT"
-mkdir -p "$CONTROL_HOME/config" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" "$UNIT_DIR"
-chmod 700 "$CONTROL_HOME/android-testing" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" 2>/dev/null || true
+mkdir -p "$CONTROL_HOME/config" "$CONTROL_HOME/secrets" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" "$UNIT_DIR"
+chmod 700 "$CONTROL_HOME/secrets" "$CONTROL_HOME/android-testing" "$CONTROL_HOME/android-testing/evidence" "$CONTROL_HOME/android-testing/leases" "$CONTROL_HOME/android-testing/tasks" "$CONTROL_HOME/android-testing/observations" 2>/dev/null || true
 
 install_uv(){
   if command -v uv >/dev/null 2>&1 && [[ "$(uv --version 2>/dev/null | awk '{print $2}')" == "$UV_VERSION" ]]; then return 0; fi
@@ -63,6 +66,13 @@ node --check "$REPO_DIR/agent-system/orchestration/artemis-subordinate-client.mj
 node --check "$REPO_DIR/agent-system/orchestration/android-testing-plane.mjs"
 node --check "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs"
 node --check "$REPO_DIR/agent-system/orchestration/android-testing-supervisor.mjs"
+node --check "$REPO_DIR/agent-system/orchestration/artemis-console-proxy.mjs"
+
+if [[ ! -s "$ARTEMIS_CONSOLE_TOKEN_FILE" ]]; then
+  umask 077
+  openssl rand -hex 32 > "$ARTEMIS_CONSOLE_TOKEN_FILE"
+fi
+chmod 600 "$ARTEMIS_CONSOLE_TOKEN_FILE"
 
 if [[ ! -s "$CONTROL_HOME/config/android-testing-devices.json" ]]; then
   cat > "$CONTROL_HOME/config/android-testing-devices.json" <<'JSON'
@@ -144,11 +154,66 @@ finally:
     if os.path.exists(tmp): os.unlink(tmp)
 PY
 
+CONSOLE_BIND="${DIAL_ARTEMIS_CONSOLE_BIND:-${DIAL_PRIVATE_MCP_BIND:-${DIAL_CONTROL_OVERLAY_IP:-}}}"
+if [[ -z "$CONSOLE_BIND" && -s "$CONTROL_HOME/config/development-network.env" ]]; then
+  # shellcheck disable=SC1090
+  source "$CONTROL_HOME/config/development-network.env"
+  CONSOLE_BIND="${DIAL_ARTEMIS_CONSOLE_BIND:-${DIAL_PRIVATE_MCP_BIND:-${DIAL_CONTROL_OVERLAY_IP:-}}}"
+fi
+CONSOLE_BIND="${CONSOLE_BIND:-127.0.0.1}"
+
+cat > "$UNIT_DIR/dial-artemis-ui.service" <<UNIT
+[Unit]
+Description=ARTEMIS loopback web observation console subordinate to DIAL Hermes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=$ARTEMIS_DIR
+Environment=ARTEMIS_STANDALONE=1
+Environment=ARTEMIS_TASK_INGRESS=dial-hermes-subordinate
+Environment=ARTEMIS_SERVER_HOST=127.0.0.1
+Environment=ANTIGRAVITY_SIDECAR_WEB_PORT=$ARTEMIS_UI_PORT
+ExecStart=$ARTEMIS_DIR/.venv/bin/python -m apps.admin_console.server --host 127.0.0.1 --port $ARTEMIS_UI_PORT
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
+UNIT
+
+cat > "$UNIT_DIR/dial-artemis-console-proxy.service" <<UNIT
+[Unit]
+Description=Hermes-authenticated ARTEMIS console proxy for VAN
+After=network-online.target dial-artemis-ui.service
+Wants=network-online.target dial-artemis-ui.service
+
+[Service]
+Type=simple
+WorkingDirectory=$REPO_DIR
+Environment=DIAL_ARTEMIS_CONSOLE_BIND=$CONSOLE_BIND
+Environment=DIAL_ARTEMIS_CONSOLE_PORT=$ARTEMIS_CONSOLE_PORT
+Environment=DIAL_ARTEMIS_UI_UPSTREAM=http://127.0.0.1:$ARTEMIS_UI_PORT
+Environment=DIAL_ARTEMIS_CONSOLE_TOKEN_FILE=$ARTEMIS_CONSOLE_TOKEN_FILE
+ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/artemis-console-proxy.mjs
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=$REPO_DIR $ARTEMIS_DIR $ARTEMIS_CONSOLE_TOKEN_FILE
+ReadWritePaths=$CONTROL_HOME
+
+[Install]
+WantedBy=default.target
+UNIT
+
 systemctl --user daemon-reload
-systemctl --user disable --now dial-artemis-ui.service >/dev/null 2>&1 || true
-rm -f "$UNIT_DIR/dial-artemis-ui.service"
-systemctl --user daemon-reload
-systemctl --user enable --now dial-artemis-supervisor.timer >/dev/null
+systemctl --user enable --now dial-artemis-ui.service dial-artemis-console-proxy.service dial-artemis-supervisor.timer >/dev/null
 
 node "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs" </dev/null >/dev/null 2>&1 || true
 echo "ARTEMIS_INSTALL=GREEN"
@@ -156,7 +221,10 @@ echo "ARTEMIS_COMMIT=$ARTEMIS_COMMIT"
 echo "ARTEMIS_LOCK_BLOB=$ARTEMIS_LOCK_BLOB"
 echo "ARTEMIS_ROLE=HERMES_SUBORDINATE_ANDROID_EXECUTOR"
 echo "RAW_ARTEMIS_MCP=NOT_EXPOSED"
-echo "ARTEMIS_DIRECT_CONSOLE=DISABLED_NOT_REGISTERED"
+echo "ARTEMIS_RAW_DIRECT_CONSOLE=NOT_EXPOSED"
+echo "ARTEMIS_VAN_CONSOLE_PROXY=ENABLED_OBSERVE_ONLY"
+echo "ARTEMIS_CONSOLE_BIND=$CONSOLE_BIND:$ARTEMIS_CONSOLE_PORT"
+echo "ARTEMIS_CONSOLE_TOKEN_FILE=$ARTEMIS_CONSOLE_TOKEN_FILE"
 echo "HERMES_MCP=dial_android_testing"
 echo "ARTEMIS_SUPERVISOR_TIMER=dial-artemis-supervisor.timer"
 echo "DEVICE_ADMISSION_FILE=$CONTROL_HOME/config/android-testing-devices.json"

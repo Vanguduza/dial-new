@@ -47,7 +47,7 @@ image_apt_retry install -y --no-install-recommends \
   python3 python3-venv python3-pip python3-yaml pipx sqlite3 ripgrep openssl \
   build-essential cmake ninja-build pkg-config shellcheck \
   wireguard wireguard-tools ufw age rclone tmux htop lsof tree \
-  openjdk-17-jdk-headless openjdk-21-jdk-headless adb fastboot \
+  openjdk-17-jdk-headless openjdk-21-jdk-headless adb fastboot ffmpeg scrcpy docker.io \
   postgresql-client redis-tools gh
 stage BASE_PACKAGES_READY
 
@@ -55,6 +55,8 @@ if ! id "$ADMIN" >/dev/null 2>&1; then
   useradd -m -s /bin/bash "$ADMIN"
 fi
 usermod -aG sudo "$ADMIN"
+getent group docker >/dev/null 2>&1 && usermod -aG docker "$ADMIN" || true
+systemctl enable --now docker >/dev/null 2>&1 || true
 install -m 0440 /dev/stdin /etc/sudoers.d/90-dial-admin <<EOF
 $ADMIN ALL=(ALL) NOPASSWD:ALL
 EOF

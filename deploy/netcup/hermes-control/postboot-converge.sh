@@ -68,6 +68,7 @@ case "$MODE" in
     for dep in adb scrcpy ffmpeg; do command -v "$dep" >/dev/null 2>&1 || android_missing+=("$dep"); done
     if [[ "${#android_missing[@]}" == 0 ]]; then
       bash "$REPO/deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh"
+      echo "ARTEMIS_VAN_CONSOLE_PROXY=BOOTSTRAPPED"
     else
       echo "ARTEMIS_ACTIVATION=PENDING_HOST_DEPS:${android_missing[*]}"
     fi
