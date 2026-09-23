@@ -1,6 +1,6 @@
 # OIDC diagnostics retry v2
 name: Dial Control GitHub OIDC admin
-# oidc-diagnostic-trigger
+# oidc-diagnostic-trigger-3
 
 on:
   push:
