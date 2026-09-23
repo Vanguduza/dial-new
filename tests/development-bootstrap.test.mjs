@@ -304,6 +304,14 @@ describe('DIAL development bootstrap closure', () => {
     expect(adminWorkflow).toContain('id-token: write');
     expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');
     expect(adminWorkflow).toContain('admin-command');
+    expect(adminWorkflow).not.toContain('push:');
+    expect(adminWorkflow).toContain('prepare_oci_recovery');
+    expect(adminWorkflow).toContain('configure_and_discover_oci');
+    expect(adminWorkflow).toContain('DIAL_CONTROL_RUNTIME_REFRESH=SCHEDULED');
+    expect(adminWorkflow).toContain('prepare-oci-recovery.sh configure-and-discover');
+    expect(controller).toContain('/usr/local/lib/dial-control/configure-wireguard-fabric.sh');
+    expect(controller).toContain('/usr/local/lib/dial-control/rotate-bootstrap-identities.sh');
+    expect(controller).toContain('/usr/local/lib/dial-control/retire-oracle-a1-control-role.sh');
 
     expect(controller).toContain('/.github/workflows/netcup-zero-touch-converge.yml@');
     expect(controller).toContain('/.github/workflows/netcup-admin-oidc.yml@');
