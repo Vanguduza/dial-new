@@ -33,13 +33,16 @@ function config(root = DEFAULT_CONTROL_HOME, env = process.env) {
 function headers(cfg) {
   const out = {
     'Content-Type': 'application/json',
-    'X-OpenViking-Account': process.env.DIAL_OPENVIKING_ACCOUNT || 'default',
-    'X-OpenViking-User': cfg.user,
     'User-Agent': 'dial-spmrf-openviking/1',
   };
+  const authMode = String(process.env.DIAL_OPENVIKING_AUTH_MODE || 'api_key').toLowerCase();
   if (cfg.apiKey) {
     out.Authorization = `Bearer ${cfg.apiKey}`;
     out['X-API-Key'] = cfg.apiKey;
+  }
+  if (authMode === 'trusted') {
+    out['X-OpenViking-Account'] = process.env.DIAL_OPENVIKING_ACCOUNT || 'default';
+    out['X-OpenViking-User'] = cfg.user;
   }
   return out;
 }
