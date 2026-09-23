@@ -283,10 +283,11 @@ jobs:
               echo "OCI_EDGE_CALLBACK_LISTENER=GREEN"
               exit 0
             fi
-            if ! systemctl is-active --quiet dial-oci-browser-bootstrap.service; then
+            UNIT="$(cat "$LOGDIR/unit-name" 2>/dev/null || true)"
+            if [[ -z "$UNIT" ]] || ! systemctl is-active --quiet "$UNIT.service"; then
               echo "OCI_EDGE_BOOTSTRAP_LOCAL_FAILURE"
               cat "$LOGDIR/output.log" 2>/dev/null || true
-              systemctl status dial-oci-browser-bootstrap.service --no-pager -l 2>&1 || true
+              [[ -n "$UNIT" ]] && systemctl status "$UNIT.service" --no-pager -l 2>&1 || true
               exit 20
             fi
             sleep 1
