@@ -88,7 +88,7 @@ function validWgKey(v){ return /^[A-Za-z0-9+/]{43}=$/.test(String(v||'')); }
 function ubuntu(cmd, timeout=20*60*1000) {
   const uid=command('id -u ubuntu').stdout.trim();
   return command(
-    'runuser -u ubuntu -- env HOME=/home/ubuntu XDG_RUNTIME_DIR=/run/user/'+uid+
+    '/usr/sbin/runuser -u ubuntu -- env HOME=/home/ubuntu XDG_RUNTIME_DIR=/run/user/'+uid+
     ' DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'+uid+'/bus '+
     ' PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin '+cmd,
     {timeout}
@@ -136,7 +136,7 @@ function peerCheck() {
   const out=[];
   for(const ip of peers){
     const p=command('ping -c 1 -W 2 '+ip);
-    const s=command("runuser -u ubuntu -- ssh -i "+key+" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new ubuntu@"+ip+" 'hostname'");
+    const s=command("/usr/sbin/runuser -u ubuntu -- ssh -i "+key+" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new ubuntu@"+ip+" 'hostname'");
     out.push({ip,ping:p.ok,ssh:s.ok,hostname:s.stdout.trim(),ssh_error:s.stderr.trim()});
   }
   return out;
