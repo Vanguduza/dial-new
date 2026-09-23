@@ -18,7 +18,7 @@ ARTEMIS_CONSOLE_TOKEN_FILE="$CONTROL_HOME/secrets/artemis-console.token"
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 [[ "$(hostname)" == "dial-control" ]] || fail "must run on Netcup dial-control"
 [[ "$(uname -m)" == "x86_64" ]] || fail "this qualified installer is x86_64 only"
-for cmd in git gh python3 adb scrcpy ffmpeg node openssl; do command -v "$cmd" >/dev/null 2>&1 || fail "required host dependency missing: $cmd"; done
+for cmd in git gh python3 adb scrcpy ffmpeg node openssl curl; do command -v "$cmd" >/dev/null 2>&1 || fail "required host dependency missing: $cmd"; done
 NODE_BIN="$(command -v node)"
 [[ -x "$NODE_BIN" ]] || fail "resolved node binary is not executable: $NODE_BIN"
 python3 -c 'import sys; assert sys.version_info >= (3,12)' || fail "Python 3.12+ required"
@@ -215,6 +215,40 @@ UNIT
 
 systemctl --user daemon-reload
 systemctl --user enable --now dial-artemis-ui.service dial-artemis-console-proxy.service dial-artemis-supervisor.timer >/dev/null
+
+for unit in dial-artemis-ui.service dial-artemis-console-proxy.service dial-artemis-supervisor.timer; do
+  systemctl --user is-active --quiet "$unit" || {
+    systemctl --user --no-pager --full status "$unit" >&2 || true
+    fail "$unit did not become active"
+  }
+done
+
+ui_ready=0
+for _ in $(seq 1 60); do
+  if curl --fail --silent --show-error --max-time 2 "http://127.0.0.1:$ARTEMIS_UI_PORT/" >/dev/null 2>&1; then
+    ui_ready=1
+    break
+  fi
+  sleep 2
+done
+[[ "$ui_ready" == 1 ]] || {
+  systemctl --user --no-pager --full status dial-artemis-ui.service >&2 || true
+  fail "ARTEMIS loopback UI did not become healthy"
+}
+
+proxy_ready=0
+for _ in $(seq 1 30); do
+  if curl --fail --silent --show-error --max-time 2 "http://$CONSOLE_BIND:$ARTEMIS_CONSOLE_PORT/health" >/dev/null 2>&1; then
+    proxy_ready=1
+    break
+  fi
+  sleep 1
+done
+[[ "$proxy_ready" == 1 ]] || {
+  systemctl --user --no-pager --full status dial-artemis-console-proxy.service >&2 || true
+  fail "ARTEMIS VAN console proxy did not become healthy"
+}
+echo "ARTEMIS_CONSOLE_HEALTH=GREEN"
 
 node "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs" </dev/null >/dev/null 2>&1 || true
 echo "ARTEMIS_INSTALL=GREEN"
