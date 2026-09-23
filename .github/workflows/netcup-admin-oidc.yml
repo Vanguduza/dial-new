@@ -82,21 +82,8 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          RAW_COMMAND="$(cat <<'CMD'
-          set -Eeuo pipefail
-          REF='adc21907a676d83bb2271c92e5f903549c9f9d43'
-          TMP="$(mktemp /tmp/prepare-oci-recovery.XXXXXX)"
-          trap 'rm -f "$TMP"' EXIT
-          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/prepare-oci-recovery.sh" \
-            -o "$TMP"
-          bash -n "$TMP"
-          install -d -m 0755 /usr/local/lib/dial-control
-          install -m 0755 "$TMP" /usr/local/lib/dial-control/prepare-oci-recovery.sh
-          runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
-            bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
-          CMD
-          )"
+          SCRIPT_B64="$(base64 -w0 deploy/netcup/hermes-control/prepare-oci-recovery.sh)"
+          RAW_COMMAND="set -Eeuo pipefail; install -d -m 0755 /usr/local/lib/dial-control; printf '%s' '$SCRIPT_B64' | base64 -d >/usr/local/lib/dial-control/prepare-oci-recovery.sh; chmod 0755 /usr/local/lib/dial-control/prepare-oci-recovery.sh; bash -n /usr/local/lib/dial-control/prepare-oci-recovery.sh; runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
