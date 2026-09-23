@@ -17,7 +17,8 @@
     "raw_upstream_mcp_exposed": false,
     "raw_upstream_ui_enabled_by_default": false,
     "project_truth_can_be_advanced_by_artemis": false,
-    "test_evidence_is_authoritative_before_reconciliation": false
+    "test_evidence_is_authoritative_before_reconciliation": false,
+    "managed_direct_artemis_ui_registered": false
   },
   "access": {
     "hermes_mcp": "dial_android_testing",
@@ -28,7 +29,8 @@
     "async_device_lock": "ARTEMIS_PER_DEVICE_EXECUTION_LOCK",
     "trace_ownership_required_for_management": true,
     "direct_arbitrary_shell": false,
-    "adb_transport": "PRE_ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE"
+    "adb_transport": "PRE_ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE",
+    "async_supervisor": "/var/lib/dial-control via dial-artemis-supervisor.timer"
   },
   "upstream_native_capabilities_consumed_internally": {
     "mobile_run_task": "android_task_start",
@@ -63,7 +65,8 @@
     "ACCESSIBILITY_HELPER_WITH_UIAUTOMATOR_FALLBACK",
     "VIDEO_AND_COMPRESSED_HISTORY_ANALYSIS",
     "LONG_HORIZON_AND_CONTINUOUS_MONITORING",
-    "SYNCHRONOUS_CERTIFICATION_RUN_WITH_BUILD_INSTALL_EVIDENCE"
+    "SYNCHRONOUS_CERTIFICATION_RUN_WITH_BUILD_INSTALL_EVIDENCE",
+    "HERMES_60_SECOND_ASYNC_TASK_SUPERVISION_AND_TERMINAL_EVIDENCE_SEALING"
   ],
   "routing": {
     "flash": "ROUTINE_DETERMINISTIC_UI_PATHS",
@@ -97,7 +100,8 @@
     "avd_admission": "MANDATORY_FOR_LAUNCH",
     "apk_path_must_remain_inside_repository": true,
     "trace_management_requires_hermes_owned_trace": true,
-    "secrets_in_evidence": "PROHIBITED"
+    "secrets_in_evidence": "PROHIBITED",
+    "managed_parallel_artemis_web_control_surface": "PROHIBITED"
   },
   "readiness": {
     "engineering": "IMPLEMENTED",
