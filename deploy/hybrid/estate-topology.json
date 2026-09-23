@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "estate_id": "DIAL_VAN_HYBRID_ESTATE_V1",
+  "total_vms": 4,
+  "note": "Four-VM owner estate: Netcup Dial Control plus exactly three Oracle VMs. The Oracle A1 is one physical transition host: it is the old Oracle DIAL/Hermes control source only during migration, then its old control installation/state is deleted and the same VM remains as van-trading-core. DIAL resource-fabric hosts.json governs the DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository.",
+  "vms": [
+    {
+      "host_id": "dial-hermes-control",
+      "provider": "netcup",
+      "shape": "RS 1000 G12",
+      "architecture": "x86_64",
+      "roles": [
+        "DIAL_CONTROL_AUTHORITY",
+        "HERMES",
+        "DIAL_DEVELOPMENT_SYSTEM",
+        "PRIMARY_ORACLE_RECOVERER",
+        "GITHUB_ADMIN_RUNNER",
+        "ANDROID_TESTING_PLANE",
+        "OPENVIKING_CONTEXT_STORE"
+      ],
+      "lifecycle": "PRIMARY_ACTIVE",
+      "display_name": "Dial Control",
+      "physical_hostname": "dial-control",
+      "compatibility_aliases": [
+        "dial-hermes-control"
+      ]
+    },
+    {
+      "host_id": "van-trading-core",
+      "provider": "oracle",
+      "shape": "VM.Standard.A1.Flex",
+      "architecture": "arm64",
+      "roles": [
+        "VAN_TRADING_CORE",
+        "VATI",
+        "VAN_RUNTIME_DEPENDENCIES",
+        "BURST_COMPUTE_WHEN_SAFE"
+      ],
+      "authority_boundary": "VATI_RETAINS_TRADING_RISK_AND_EXECUTION_AUTHORITY",
+      "lifecycle": "ACTIVE"
+    },
+    {
+      "host_id": "vekl-worker",
+      "provider": "oracle",
+      "shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "roles": [
+        "BACKGROUND_COORDINATOR",
+        "VEKL_LIGHT"
+      ],
+      "lifecycle": "ACTIVE"
+    },
+    {
+      "host_id": "oracle-admin",
+      "provider": "oracle",
+      "shape": "VM.Standard.E2.1.Micro",
+      "architecture": "x86_64",
+      "roles": [
+        "RECOVERY_CONTROL_ONLY",
+        "OCI_RECOVERY",
+        "BREAK_GLASS"
+      ],
+      "lifecycle": "COLD_RECOVERY_ACTIVE"
+    }
+  ],
+  "retired_after_cutover": [
+    {
+      "host_id": "old-oracle-dial-hermes-control",
+      "physical_instance": "same Oracle A1 VM that becomes van-trading-core",
+      "disposition": "DELETE_OLD_DIAL_HERMES_CONTROL_ROLE_INSTALLATION_AND_STATE; RETAIN_PHYSICAL_VM_AS_VAN_TRADING_CORE",
+      "condition": "Only after the final Hermes/control delta is cloned to Netcup, Netcup CORE_DEVELOPMENT verification is green, the private overlay is verified, identities are rotated, and Dial Control is active.",
+      "preserved_on_a1": [
+        "SSH",
+        "WIREGUARD",
+        "GENERAL_PROVIDER_USER_CREDENTIALS",
+        "VAN_VATI_OWNED_PATHS"
+      ],
+      "deleted_from_a1": [
+        "/var/lib/dial-control",
+        "/home/ubuntu/.hermes",
+        "/home/ubuntu/dial-new",
+        "former DIAL/Hermes control user units"
+      ],
+      "final_host_id": "van-trading-core",
+      "final_overlay_address": "10.77.0.4"
+    }
+  ],
+  "control_paths": {
+    "netcup_to_oracle": [
+      "DIAL_MCP_OVER_PRIVATE_OVERLAY",
+      "SSH_OVER_PRIVATE_OVERLAY_OR_DIRECT_WHERE_ALLOWED",
+      "OCI_API_AND_RUN_COMMAND_OUT_OF_BAND"
+    ],
+    "owner_to_netcup": [
+      "DESKTOP_COMMANDER",
+      "GITHUB_ACTIONS_NETCUP_ADMIN",
+      "SSH",
+      "NETCUP_CONSOLE"
+    ]
+  },
+  "network": {
+    "private_overlay": {
+      "technology": "WIREGUARD",
+      "hub": "dial-control",
+      "cidr": "10.77.0.0/24",
+      "addresses": {
+        "oracle-admin": "10.77.0.2",
+        "vekl-worker": "10.77.0.3",
+        "van-trading-core": "10.77.0.4",
+        "dial-control": "10.77.0.1"
+      },
+      "rule": "Each Oracle VM is an independent outbound peer to Netcup; oracle-admin is not a transit dependency."
+    },
+    "application_planes": [
+      "DIAL_MCP",
+      "SSH",
+      "VAN_TRADING_COMMANDER_MCP",
+      "HERMES_ANDROID_TESTING_MCP",
+      "OPENVIKING_LOOPBACK_CONTEXT"
+    ],
+    "out_of_band_plane": "OCI_API_AND_RUN_COMMAND",
+    "owner_recovery_plane": "GITHUB_ACTIONS_NETCUP_ADMIN"
+  },
+  "lifecycle_rules": {
+    "oracle_a1_transition": "old-dial-hermes-control is a temporary compatibility identity for the same A1 physical VM; it must never be enrolled as a separate fourth Oracle peer.",
+    "source_retirement": "Final zero-touch certification is forbidden until the A1 hostname/role is van-trading-core and the former DIAL/Hermes control state is absent."
+  },
+  "subordinate_planes": {
+    "android_testing": {
+      "host": "dial-control",
+      "authority": "HERMES_SUBORDINATE",
+      "executor": "ARTEMIS",
+      "raw_external_mcp": false
+    },
+    "memory_semantic": {
+      "host": "dial-control",
+      "authority": "NON_AUTHORITATIVE_CONTEXT",
+      "store": "OpenViking",
+      "source": "ADMITTED_SPMRF_PROJECT_MEMORY"
+    }
+  }
+}

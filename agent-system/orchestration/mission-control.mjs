@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { appendJsonl, ensureControlLayout, readJson, resolveControlPath, writeJsonAtomic } from './state-store.mjs';
+import { markMissionResourcesEligible } from './resource-lifecycle-registry.mjs';
 
 export const DIAL_ROOT_MISSION_ID = 'dial-development-root';
 export const MISSION_STATES = Object.freeze(['PAUSED', 'RUNNING', 'BLOCKED_OWNER', 'WAITING_RUNTIME', 'COMPLETE']);
@@ -114,7 +115,18 @@ export function markDialMissionBlocked({ root, reason, blockerType = 'OWNER_DECI
 
 export function markDialMissionComplete({ root, reason = 'mission complete' } = {}) {
   const mission = ensureDialMission({ root });
-  return saveMission({ ...mission, state: 'COMPLETE' }, root, 'MISSION_COMPLETED', { reason: clean(reason, 1000) });
+  const completed = saveMission({ ...mission, state: 'COMPLETE' }, root, 'MISSION_COMPLETED', { reason: clean(reason, 1000) });
+  try {
+    markMissionResourcesEligible({
+      root,
+      missionId: completed.mission_id,
+      reason: 'MISSION_COMPLETE',
+      evidenceRefs: [`mission:${completed.mission_id}:COMPLETE`],
+    });
+  } catch (error) {
+    appendJsonl('events/housekeeping.jsonl', { event: 'MISSION_RESOURCE_CLOSURE_FAILED', mission_id: completed.mission_id, reason: clean(error?.message || error, 1000), at: now() }, root);
+  }
+  return completed;
 }
 
 export function missionExecutionAllowed(job, root) {

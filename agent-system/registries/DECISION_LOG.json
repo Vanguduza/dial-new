@@ -916,5 +916,37 @@
       "No n8n estate has been stood up. The contract is qualified; the runtime is UNVERIFIED_FROM_REPOSITORY until an Oracle/owner deployment exists and a descriptor records it."
     ],
     "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that keeps the VEKL corpus and the runtime estates distinct, keeps runtime node policy a projection of corpus knowledge rather than a second allowlist, keeps money, identity, fulfilment and Project Truth outside runtime authority, keeps every externally visible effect idempotent, and keeps dev and prod credentials and stores separate"
+  },
+  {
+    "decision_id": "DEC-039",
+    "decided_on": "2026-09-22",
+    "decided_by": "product owner",
+    "status": "LOCKED",
+    "area": "DEVELOPMENT SYSTEM / INFRASTRUCTURE / HOUSEKEEPING / RESOURCE LIFECYCLE",
+    "title": "Hermes state-aware housekeeping deletes only lifecycle-complete reconstructable development resources",
+    "decision": "Adopt a Hermes-authoritative Resource Lifecycle and state-aware housekeeping fabric across Dial Control, vekl-worker, van-trading-core and oracle-admin. Resource deletion is driven by authoritative project/mission/admission/lease state rather than age. A resource must be explicitly GC_ELIGIBLE and pass host-role, protected-class/path/semantic, AEF lease, active-process, evidence and reconstructability proofs immediately before deletion. AEF worktrees register at lease issuance and become collectible only after deterministic integration admission and lease release. Local repository retirement is opt-in per project and additionally requires a clean tree, no stash/additional worktrees, GitHub origin, successful fetch/prune and proof that every local branch tip is reachable from origin. Android build trees become collectible only after build completion and sealed test evidence while Android SDK, JDK, Gradle wrapper/signing/toolchain foundations remain protected.",
+    "consequence": "Mission/resource closure includes resource closure. Event-driven systemd path activation is primary and a 30-minute timer is reconciliation only. Each destructive run emits receipts; revoked/failed worktrees default to quarantine; disk pressure can accelerate already-safe collection but never grants deletion authority. Host profiles remain asymmetric: dial-control and vekl-worker may collect derived/ephemeral/cache resources, van-trading-core adds hard protection for VATI/trading/n8n/active-browser semantics, and oracle-admin may collect only ephemeral/cache state. The capability is installed during Netcup/control bootstrap and distributed automatically to the existing Oracle estate by GitHub zero-touch convergence.",
+    "record": "docs/orchestration/DIAL_STATE_AWARE_HOUSEKEEPING.md",
+    "enforced_by": [
+      "agent-system/registries/HOUSEKEEPING_POLICY.json",
+      "agent-system/orchestration/resource-lifecycle-registry.mjs",
+      "agent-system/orchestration/housekeeping-gc.mjs",
+      "agent-system/orchestration/worker-lease-manager.mjs",
+      "agent-system/orchestration/integration-admission.mjs",
+      "agent-system/orchestration/mission-control.mjs",
+      "agent-system/orchestration/mission-controller.mjs",
+      "agent-system/orchestration/project-registry.mjs",
+      "deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh",
+      "deploy/oracle/hermes-codex/systemd/dial-housekeeping.path",
+      "deploy/oracle/hermes-codex/systemd/dial-housekeeping.service",
+      "deploy/oracle/hermes-codex/systemd/dial-housekeeping.timer",
+      ".github/workflows/netcup-zero-touch-converge.yml",
+      "tests/orchestration-housekeeping.test.mjs"
+    ],
+    "evidence_refs": [
+      "docs/project-state/authorizations/auth-20260922-owner-state-aware-housekeeping-fabric.json"
+    ],
+    "activation_blocker_refs": [],
+    "reopens_if": "the product owner supersedes this with an equal-or-stronger mechanism that preserves state-aware rather than age-authoritative deletion, Project Truth/AEF authority, reconstructability proof, universal-tool protection, host-role separation, fail-closed behavior and auditable deletion receipts"
   }
 ]

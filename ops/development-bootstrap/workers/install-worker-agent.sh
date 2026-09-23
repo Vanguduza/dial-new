@@ -78,5 +78,9 @@ WantedBy=timers.target
 EOT
 systemctl --user daemon-reload
 systemctl --user enable --now dial-worker-agent.timer dial-structural-snapshot.timer
+
+DIAL_HOUSEKEEPING_HOST_ID=vekl-worker DIAL_SERVICE_USER="$USER" \
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh"
+
 echo "worker agent installed; add to the control host's ~/.ssh/config a Host entry and on this host an authorized_keys line:"
 echo "  command=\"$HOME/.local/bin/dial-worker-job\",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ssh-ed25519 <control-host-public-key>"

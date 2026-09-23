@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V1",
+  "authority": "HERMES_CONTROL_AUTHORITY",
+  "host": "dial-control",
+  "role": "SUBORDINATE_ANDROID_VERIFICATION_EXECUTOR",
+  "upstream": {
+    "project": "google/artemis",
+    "commit": "371aa6df56880643da57b30da936e9812fb0ec66",
+    "uv_lock_blob": "dc2d35b8c284055c92ff1cd2560c8201e648bf9f",
+    "license": "Apache-2.0",
+    "hardening": "DIAL_ARTEMIS_SHELL_HARDENING_V1"
+  },
+  "access": {
+    "raw_upstream_mcp_exposed": false,
+    "hermes_mcp": "dial_android_testing",
+    "device_allowlist": "/var/lib/dial-control/config/android-testing-devices.json",
+    "exclusive_device_lease": true,
+    "direct_arbitrary_shell": false,
+    "adb_transport": "PRE-ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE"
+  },
+  "pipeline": [
+    "OPTIONAL_REPOSITORY_GRADLE_BUILD",
+    "APK_SHA256_BIND",
+    "ADB_INSTALL",
+    "ARTEMIS_EXERCISE",
+    "SCREENSHOT_CAPTURE",
+    "LOGCAT_CAPTURE",
+    "STRUCTURED_EVIDENCE",
+    "SPMRF_TEST_EVIDENCE_CANDIDATE"
+  ],
+  "evidence": {
+    "root": "/var/lib/dial-control/android-testing/evidence",
+    "project_authority": "NON_AUTHORITATIVE_TEST_EVIDENCE_UNTIL_RECONCILED",
+    "admission": "HERMES_OR_SYSTEM_RECONCILIATION_REQUIRED",
+    "physical_device_claim": "FORBIDDEN_UNLESS_LIVE_DEVICE_RUN_EVIDENCE_EXISTS"
+  },
+  "security": {
+    "package_name_validation": "MANDATORY",
+    "url_shell_quoting": "MANDATORY",
+    "upstream_shell_hardening_gate": "FAIL_CLOSED",
+    "device_serial_validation": "MANDATORY",
+    "apk_path_must_remain_inside_repository": true,
+    "secrets_in_evidence": "PROHIBITED"
+  },
+  "readiness": {
+    "engineering": "IMPLEMENTED",
+    "live_host_install": "PENDING_LIVE_DIAL_CONTROL",
+    "physical_device_certification": "PENDING_ADMITTED_CONNECTED_DEVICE"
+  }
+}
