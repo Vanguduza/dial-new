@@ -14,7 +14,9 @@
         "HERMES",
         "DIAL_DEVELOPMENT_SYSTEM",
         "PRIMARY_ORACLE_RECOVERER",
-        "GITHUB_ADMIN_RUNNER"
+        "GITHUB_ADMIN_RUNNER",
+        "ANDROID_TESTING_PLANE",
+        "OPENVIKING_CONTEXT_STORE"
       ],
       "lifecycle": "PRIMARY_ACTIVE",
       "display_name": "Dial Control",
@@ -105,7 +107,9 @@
     "application_planes": [
       "DIAL_MCP",
       "SSH",
-      "VAN_TRADING_COMMANDER_MCP"
+      "VAN_TRADING_COMMANDER_MCP",
+      "HERMES_ANDROID_TESTING_MCP",
+      "OPENVIKING_LOOPBACK_CONTEXT"
     ],
     "out_of_band_plane": "OCI_API_AND_RUN_COMMAND",
     "owner_recovery_plane": "GITHUB_ACTIONS_NETCUP_ADMIN"
@@ -123,5 +127,19 @@
     "lifecycle": "TRANSIENT_MIGRATION_SOURCE",
     "overlay_address": "10.77.0.5",
     "estate_inventory_key": "DIAL_HERMES_CONTROL_SOURCE_OCID"
+  },
+  "subordinate_planes": {
+    "android_testing": {
+      "host": "dial-control",
+      "authority": "HERMES_SUBORDINATE",
+      "executor": "ARTEMIS",
+      "raw_external_mcp": false
+    },
+    "memory_semantic": {
+      "host": "dial-control",
+      "authority": "NON_AUTHORITATIVE_CONTEXT",
+      "store": "OpenViking",
+      "source": "ADMITTED_SPMRF_PROJECT_MEMORY"
+    }
   }
 }

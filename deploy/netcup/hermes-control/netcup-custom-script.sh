@@ -16,7 +16,7 @@ IMAGE_BOOTSTRAP=/usr/local/sbin/dial-control-image-bootstrap.sh
 RUNNER=/usr/local/sbin/dial-control-bootstrap-runner
 SERVICE=/etc/systemd/system/dial-control-bootstrap.service
 LOG=/var/log/dial-control-bootstrap.log
-EXPECTED_IMAGE_BLOB=249e86695d841cae4eeebdced0427e1ce149d978
+EXPECTED_IMAGE_BLOB=31f8ce2b6e04ae1ae8219ba89bd5363e013f0f13
 
 install -d -m 0755 /usr/local/sbin /etc/systemd/system /etc/systemd/resolved.conf.d
 install -d -m 0700 /var/lib/dial-control/bootstrap

@@ -20,6 +20,11 @@ import { searchSharedMemory, sharedMemoryCursor } from './shared-project-memory.
 import { readJson, writeJsonAtomic } from './state-store.mjs';
 import { reviewCheckpointStatus } from './review-fabric.mjs';
 import { resolveProjectRepository } from './project-repository-resolver.mjs';
+import {
+  openVikingHealth,
+  openVikingProjectionStatus,
+  searchOpenVikingProjectContext,
+} from './openviking-shared-context.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -83,6 +88,7 @@ function renderSections(sections) {
     'canonical_feature_context',
     'handoff',
     'shared_memory',
+    'openviking_semantic_memory',
     'review_state',
     'vekl_graph',
     'instruction',
@@ -152,6 +158,23 @@ export async function resolveSharedProjectContext({
   }, root);
   const reviewState = activeReview(projectId, root);
   const canonical = projectId === 'dial' ? canonicalFeatureContext(effectiveRepoDir, resolvedFeature) : '';
+  const openVikingProjection = openVikingProjectionStatus(projectId, root);
+  const openVikingHealthState = await openVikingHealth({ root });
+  const openViking = openVikingHealthState.available
+    ? await searchOpenVikingProjectContext({
+        project: projectId,
+        query: projectMemoryQuery(userMessage, resolvedFeature),
+        root,
+        maxTokens: profile === 'DEEP_AUDIT' ? 5200 : profile === 'ARCHITECTURE' ? 3600 : profile === 'REVIEW' ? 2200 : 2800,
+        sessionId: `${harnessId}:${projectId}`,
+      })
+    : {
+        available: false,
+        reason: 'OPENVIKING_UNAVAILABLE',
+        context: '',
+        projection: openVikingProjection,
+        authority: 'NON_AUTHORITATIVE_SEMANTIC_PROJECTION',
+      };
 
   const identity = buildContextCacheIdentity({
     project: projectId,
@@ -163,6 +186,8 @@ export async function resolveSharedProjectContext({
     contextProfile: profile,
     skillActivationHash,
     repositoryUnderstandingHash: understanding.understanding_hash,
+    openVikingProjectionCursor: openVikingProjection.last_projected_sequence || 0,
+    openVikingAvailable: openVikingHealthState.available,
   });
 
   let current = getCachedContext({
@@ -233,6 +258,14 @@ export async function resolveSharedProjectContext({
           refs: item.record.refs,
         })),
       },
+      openviking_semantic_memory: {
+        available: Boolean(openViking.available),
+        projection_cursor: openVikingProjection.last_projected_sequence || 0,
+        target_authority: 'NON_AUTHORITATIVE_SEMANTIC_PROJECTION_OF_ADMITTED_SPMRF_ONLY',
+        authority_warning: 'OpenViking is a retrieval/index projection only. The source SPMRF record remains canonical for continuity, and no memory can override Project Truth, repository evidence, registries, VEKL, or checkpoints.',
+        reason: openViking.reason || null,
+        context: openViking.context || '',
+      },
       review_state: reviewState ? {
         checkpoint_id: reviewState.checkpoint_id,
         repository_sha: reviewState.repository_sha,
@@ -274,6 +307,8 @@ export async function resolveSharedProjectContext({
       repository_sha: git.commit,
       feature_id: resolvedFeature,
       memory_cursor: memoryCursor.sequence,
+      openviking_projection_cursor: openVikingProjection.last_projected_sequence || 0,
+      openviking_available: Boolean(openVikingHealthState.available),
       understanding_hash: understanding.understanding_hash,
       delivered_mode: delivery.mode,
       delivered_at: new Date().toISOString(),

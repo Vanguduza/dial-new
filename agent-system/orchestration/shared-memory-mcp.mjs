@@ -14,6 +14,11 @@ import {
 import { handoff } from './supervisor.mjs';
 import { readJson } from './state-store.mjs';
 import { resolveProjectRepository } from './project-repository-resolver.mjs';
+import {
+  openVikingHealth,
+  openVikingProjectionStatus,
+  searchOpenVikingProjectContext,
+} from './openviking-shared-context.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = path.resolve(here, '../..');
@@ -50,6 +55,28 @@ const TOOLS = [
         tiers: { type: 'array', items: { type: 'string', enum: ['HOT', 'WARM', 'COLD'] } },
         limit: { type: 'integer', minimum: 1, maximum: 100 },
       },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'project_memory_semantic_search',
+    description: 'Search the OpenViking semantic projection of already-admitted SPMRF memory for one project. This is a subordinate retrieval view only and never project authority.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project: { type: 'string' },
+        query: { type: 'string' },
+        max_tokens: { type: 'integer', minimum: 256, maximum: 6000 },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'project_memory_semantic_status',
+    description: 'Read OpenViking health plus the local projection cursor. No secret values are returned.',
+    inputSchema: {
+      type: 'object',
+      properties: { project: { type: 'string' } },
       additionalProperties: false,
     },
   },
@@ -211,6 +238,24 @@ async function invoke(name, args = {}) {
       admittedOnly: true,
       limit: args.limit || 20,
     }, root);
+  }
+  if (name === 'project_memory_semantic_search') {
+    return searchOpenVikingProjectContext({
+      project: args.project || defaultProject,
+      query: args.query || '',
+      maxTokens: args.max_tokens || 2400,
+      root,
+      sessionId: `${defaultHarness}:${args.project || defaultProject}`,
+    });
+  }
+  if (name === 'project_memory_semantic_status') {
+    const project = args.project || defaultProject;
+    return {
+      project,
+      health: await openVikingHealth({ root }),
+      projection: openVikingProjectionStatus(project, root),
+      authority: 'NON_AUTHORITATIVE_SEMANTIC_PROJECTION',
+    };
   }
   if (name === 'project_memory_cursor') return sharedMemoryCursor(args.project || defaultProject, root);
   if (name === 'project_memory_write_candidate') {

@@ -28,6 +28,8 @@ export function buildContextCacheIdentity({
   contextProfile = 'IMPLEMENTATION',
   skillActivationHash = null,
   repositoryUnderstandingHash = null,
+  openVikingProjectionCursor = null,
+  openVikingAvailable = null,
 } = {}) {
   const body = {
     schema_version: 1,
@@ -40,6 +42,8 @@ export function buildContextCacheIdentity({
     context_profile: profile(contextProfile),
     skill_activation_hash: skillActivationHash ?? null,
     repository_understanding_hash: repositoryUnderstandingHash ?? null,
+    openviking_projection_cursor: openVikingProjectionCursor ?? null,
+    openviking_available: openVikingAvailable == null ? null : Boolean(openVikingAvailable),
   };
   return { ...body, context_fingerprint: hashObject(body) };
 }

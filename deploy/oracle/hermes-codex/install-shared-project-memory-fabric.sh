@@ -13,7 +13,7 @@ START=1
 [[ "${1:-}" == "--no-start" ]] && START=0
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "must run on dial-hermes-control"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-control}" ]] || fail "must run on dial-control"
 for f in   "$REPO_DIR/agent-system/orchestration/shared-memory-mcp.mjs"   "$REPO_DIR/agent-system/orchestration/review-coordinator.mjs"   "$REPO_DIR/agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json"; do
   [[ -f "$f" ]] || fail "missing SPMRF component: $f"
 done

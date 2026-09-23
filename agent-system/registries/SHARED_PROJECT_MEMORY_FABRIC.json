@@ -8,7 +8,8 @@
     "All harnesses consume the same external project memory and context-capsule interfaces.",
     "Handover is snapshot-plus-delta by default; full repository rediscovery is exceptional.",
     "Reviews target immutable clean checkpoints and cannot be satisfied by the authoring harness.",
-    "Cached context is content-addressed and invalidated by authority/repository/VEKL/memory fingerprints."
+    "Cached context is content-addressed and invalidated by authority/repository/VEKL/memory fingerprints.",
+    "OpenViking is a semantic projection and session-memory substrate only; it never becomes Project Truth, VEKL, or SPMRF authority."
   ],
   "storage": {
     "backend": "CONTROL_HOME_CONTENT_ADDRESSED_V1",
@@ -17,6 +18,20 @@
       "status": "FUTURE_OPTIONAL_PROJECTION",
       "authority": "NON_AUTHORITATIVE_PROJECTION",
       "rule": "A future Postgres/pgvector projection may accelerate semantic retrieval but cannot become a second source of truth."
+    },
+    "openviking": {
+      "status": "INTEGRATED_SUBORDINATE_CONTEXT_DATABASE",
+      "authority": "NON_AUTHORITATIVE_SEMANTIC_PROJECTION",
+      "deployment_host": "dial-control",
+      "bind": "127.0.0.1:1933",
+      "source_for_project_memory": "ADMITTED_SPMRF_ONLY",
+      "project_scope": "viking://user/<user>/memories/dial-projects/<project>",
+      "native_hermes_provider": "ENABLED_AFTER_LOCAL_HEALTH_PROOF",
+      "all_harness_access": "VIA_DIAL_SHARED_PROJECT_MEMORY_MCP",
+      "direct_harness_authority": false,
+      "failure_semantics": "FAIL_OPEN_TO_LOCAL_SPMRF_WITH_DEGRADED_SEMANTIC_RECALL",
+      "write_rule": "Harnesses write project-memory candidates to SPMRF; only admitted records are projected.",
+      "delete_rule": "Deleting or changing a projection never mutates Project Truth or the source SPMRF record."
     }
   },
   "harnesses": [
@@ -148,12 +163,21 @@
       "graph_revision_hash",
       "memory_cursor",
       "feature_id",
-      "context_profile"
+      "context_profile",
+      "openviking_projection_cursor",
+      "openviking_available"
     ]
   },
   "canonical_integration": {
     "repository_target": "master",
     "integration_branch": "gpt/hermes-full-commander-chatgpt-control-20260921-clean",
     "authorization_id": "auth-20260921-owner-spmrf-final-integration"
+  },
+  "semantic_retrieval": {
+    "preferred": "OPENVIKING_PROJECT_SCOPED_CONTEXT_MODE",
+    "fallback": "SPMRF_LOCAL_ADMITTED_LEXICAL_RETRIEVAL",
+    "authority": "NON_AUTHORITATIVE_CONTEXT",
+    "provenance_required": true,
+    "secret_material_prohibited": true
   }
 }
