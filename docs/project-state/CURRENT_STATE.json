@@ -9,14 +9,14 @@
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
     ".github/workflows/netcup-admin-oidc.yml",
-    "deploy/netcup/hermes-control/oci-edge-login.sh",
-    "tests/fixtures/fake-oci-cli.sh",
-    "tests/netcup-oci-edge-login.test.mjs"
+    "deploy/netcup/hermes-control/grant-ocarun-sudo.sh",
+    "docs/project-state/authorizations/auth-20260923-owner-grant-ocarun-sudo.json",
+    "tests/development-bootstrap.test.mjs"
   ],
-  "content_diff_sha256": "d15f145075b6e651653ab0db013d04f2147771ba1d0ea9b13b4e8ca83bec43cf",
-  "observed_at_utc": "2026-09-23T12:04:57.165167+00:00",
+  "content_diff_sha256": "ff12be9c6776be28ca24ddfebc2cd547a32c4d1130c5eb397790e4c110bd0f76",
+  "observed_at_utc": "2026-09-23T12:23:14.094749+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "fda50a803cf028569428030b1324efe393f56fae",
+  "source_parent": "154cfd722f60773a0199cf8d570b2874324c2a2d",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

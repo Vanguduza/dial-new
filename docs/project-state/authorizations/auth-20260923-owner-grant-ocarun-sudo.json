@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-grant-ocarun-sudo",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "a2ff51cc17928313ff5711adf4e77257e5b65e1c50ad9380cc04b0a8d997613a",
+  "owner_instruction_excerpt": "use github admin privileges to give ocarun passwordless sudo on all vms while we wait for sign in to complete",
+  "base_sha": "154cfd722f60773a0199cf8d570b2874324c2a2d",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260923-grant-ocarun-sudo",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T12:22:40Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    "deploy/netcup/hermes-control/grant-ocarun-sudo.sh",
+    ".github/workflows/netcup-admin-oidc.yml",
+    "tests/development-bootstrap.test.mjs",
+    "docs/project-state/authorizations/auth-20260923-owner-grant-ocarun-sudo.json"
+  ],
+  "change_classes": [
+    "estate_ocarun_passwordless_sudo_grant",
+    "run_command_enrollment_unblock",
+    "sudoers_dropin_validated_before_install"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

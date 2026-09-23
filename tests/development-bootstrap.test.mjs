@@ -323,6 +323,15 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('/usr/local/lib/dial-control/configure-wireguard-fabric.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/rotate-bootstrap-identities.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/retire-oracle-a1-control-role.sh');
+    // ocarun sudo grant: a bounded, owner-requested estate operation that validates the sudoers
+    // drop-in before it can affect the live tree, and never installs a candidate visudo rejects.
+    const grantSudo = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/grant-ocarun-sudo.sh'), 'utf8');
+    expect(grantSudo).toContain('sudo -n visudo -cf "$tmp"');
+    expect(grantSudo).toContain('ocarun ALL=(ALL) NOPASSWD:ALL');
+    expect(grantSudo).toContain('/etc/sudoers.d/90-dial-ocarun');
+    expect(grantSudo).toContain('TREE_INVALID_ROLLED_BACK');
+    expect(adminWorkflow).toContain('grant_ocarun_sudo');
+    expect(adminWorkflow).toContain('/usr/local/lib/dial-control/grant-ocarun-sudo.sh');
     expect(controller).toContain("case 'oci-enroll-estate'");
     expect(controller).toContain('/usr/local/lib/dial-control/oci-enroll-oracle-estate.sh');
     expect(controller).toContain("case 'install-housekeeping-estate'");
@@ -523,6 +532,7 @@ describe('DIAL development bootstrap closure', () => {
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh')]);
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/grant-ocarun-sudo.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/prepare-oci-recovery.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/install-housekeeping-final-estate.sh')]);

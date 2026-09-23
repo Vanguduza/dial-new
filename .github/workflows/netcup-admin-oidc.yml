@@ -17,6 +17,7 @@ on:
           - abort_oci_edge_login
           - rediscover_oci_estate
           - enable_oci_run_command
+          - grant_ocarun_sudo
           - custom
       command:
         description: Custom root command. Used only when operation=custom. Never place secrets here.
@@ -108,6 +109,7 @@ jobs:
           push_file deploy/netcup/hermes-control/configure-wireguard-fabric.sh /usr/local/lib/dial-control/configure-wireguard-fabric.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/rotate-bootstrap-identities.sh /usr/local/lib/dial-control/rotate-bootstrap-identities.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh 0755 "bash -n"
+          push_file deploy/netcup/hermes-control/grant-ocarun-sudo.sh /usr/local/lib/dial-control/grant-ocarun-sudo.sh 0755 "bash -n"
 
           admin_exec "set -Eeuo pipefail; systemd-run --unit=dial-github-oidc-refresh --on-active=2s /bin/systemctl restart dial-github-oidc-control.service >/dev/null; echo DIAL_CONTROL_RUNTIME_REFRESH=SCHEDULED"
           ok=false
@@ -202,6 +204,13 @@ jobs:
           /usr/local/lib/dial-control/oci-edge-login.sh $ARGS
           EOF
               ;;
+            grant_ocarun_sudo)
+              cat >"$OUT" <<'EOF'
+          set -Eeuo pipefail
+          test -x /usr/local/lib/dial-control/grant-ocarun-sudo.sh
+          /usr/local/lib/dial-control/grant-ocarun-sudo.sh
+          EOF
+              ;;
             custom)
               [[ -n "$CUSTOM_COMMAND" ]] || { echo "::error::Custom command is empty"; exit 3; }
               printf '%s' "$CUSTOM_COMMAND" >"$OUT"
@@ -223,7 +232,7 @@ jobs:
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           # The OCI login operations print only OCIDs, states and login/callback URLs, never tokens or keys.
-          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate || "$OPERATION" == enable_oci_run_command ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
+          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate || "$OPERATION" == enable_oci_run_command || "$OPERATION" == grant_ocarun_sudo ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
           {
             echo "## Dial Control GitHub OIDC admin receipt"
             echo "- operation: \`$OPERATION\`"
