@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-orca-mandatory-van-devcc-astra",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "3bf039c806fbb7c0afe5f2c746356a4af7343671ceb2775c849f169f7f4f6ece",
+  "owner_instruction_excerpt": "Orca is the Orca AI shown in the attached image. Not optional: a deterministic self-hosted setup where Orca and the existing worktree setup are integrated and complement each other, ending with one DIAL development system code setup. VAN screens are built in the VAN project but design and logic are finalised here (permission to access the VAN repository). Astra is OpenAI's flagship GPT Astra from the Pro subscription.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude_code",
+    "request_id": "claude-code-20260923-orca-mandatory-van-devcc-astra",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T16:35:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "claude/plan-audit-review-p8i1uc",
+  "authorized_paths": [
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_2_CONSOLIDATION.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_3_OWNER_DECIDED.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/VAN_DEVELOPMENT_CONTROL_CENTRE_DESIGN_REV_1.md",
+    "docs/project-state/**"
+  ],
+  "change_classes": [
+    "architecture_owner_decision_record",
+    "execution_workspace_runtime_design",
+    "van_development_surface_design",
+    "manager_runtime_chain_design",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": true,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": true,
+  "reusable": false,
+  "revoked": false
+}

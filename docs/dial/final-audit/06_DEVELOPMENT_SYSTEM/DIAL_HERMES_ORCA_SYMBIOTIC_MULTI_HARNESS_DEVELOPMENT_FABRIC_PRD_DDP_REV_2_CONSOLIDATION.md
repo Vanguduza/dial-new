@@ -15,6 +15,8 @@
 | Canonical decisions written | **none** — §7 lists the decisions that must be locked, with recommendations |
 | FORENSIC_BUILD_READY / BUILD_READY / RUNTIME_QUALIFIED / PRODUCTION_QUALIFIED / OWNER_ACCEPTED | `false` / `false` / `false` / `false` / `false` |
 
+> **Superseded in part (2026-09-23):** owner decisions recorded in Rev 3 (`…_REV_3_OWNER_DECIDED.md`) replace this file's recommendations OD-1 (Astra identified), OD-2 (Orca = `stablyai/orca`), OD-3 (Orca mandatory, one integrated code path, with no native fallback path) and OD-4 (VAN design finalised in DIAL). Rev 2's evidence, findings and Checkpoint 0 procedure still apply.
+
 > This document does not change a registry, decision or gate. It establishes how Rev 1 is best achieved against what the repository actually contains, corrects the Rev 1 statements that repository evidence contradicts, and replaces Rev 1's DU list and implementation order with a consolidated one. Where this file and Rev 1 disagree, this file carries the repository evidence; where they agree, Rev 1's wording stands.
 
 ---
