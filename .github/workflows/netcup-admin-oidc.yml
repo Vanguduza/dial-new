@@ -195,6 +195,8 @@ jobs:
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          # The OCI login operations print only OCIDs, states and login/callback URLs, never tokens or keys.
+          if [[ "$OPERATION" == *oci_edge_login* ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
           {
             echo "## Dial Control GitHub OIDC admin receipt"
             echo "- operation: \`$OPERATION\`"

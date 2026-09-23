@@ -179,6 +179,9 @@ status() {
     say "session_seconds_left=$(( exp - $(date +%s) ))"
   elif bridge_active; then
     say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"
+    # Same values start printed; repeated so they can be recovered from the job log.
+    say "OCI_EDGE_AUTH_URL=$(grep -Eo 'https://login\.[^[:space:]]+' "$STATE/oci.log" 2>/dev/null | head -1 || true)"
+    say "OCI_EDGE_CALLBACK_URL=$(grep -Eo 'https://[a-z0-9-]+\.trycloudflare\.com' "$STATE/tunnel.log" 2>/dev/null | head -1 || true)"
   else
     say "OCI_EDGE_SESSION=ABSENT"
   fi
