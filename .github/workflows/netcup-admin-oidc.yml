@@ -156,7 +156,7 @@ jobs:
             prepare_oci_recovery)
               cat >"$OUT" <<EOF
           set -Eeuo pipefail
-          REF='$GITHUB_SHA'
+          REF='__DIAL_EDGE_BOOTSTRAP_REF__'
           TMP="\$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
           trap 'rm -f "\$TMP"' EXIT
           curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
@@ -194,6 +194,7 @@ jobs:
         run: |
           set -euo pipefail
           RAW_COMMAND="$(cat "$RUNNER_TEMP/admin-command.txt")"
+          RAW_COMMAND="$(printf '%s' "$RAW_COMMAND" | sed "s/__DIAL_EDGE_BOOTSTRAP_REF__/$GITHUB_SHA/g")"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
