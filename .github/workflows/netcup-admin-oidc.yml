@@ -47,7 +47,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: dial-control-oci-key-handoff
+  group: dial-control-oci-key-handoff-v3
   cancel-in-progress: true
 
 env:
@@ -263,11 +263,48 @@ jobs:
           set -Eeuo pipefail
           RAW_COMMAND="$(cat <<'CMD'
           set -Eeuo pipefail
-          test -x /usr/local/lib/dial-control/prepare-oci-recovery.sh
-          runuser -u ubuntu -- env \
-            HOME=/home/ubuntu \
-            PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
-            bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
+          OCI_DIR=/home/ubuntu/.oci
+          KEY="$OCI_DIR/netcup-hermes-recovery.pem"
+          PUB="$OCI_DIR/netcup-hermes-recovery_public.pem"
+          CONFIG="$OCI_DIR/config"
+          ESTATE=/etc/dial/oracle-estate.env
+          install -d -m 0700 -o ubuntu -g ubuntu "$OCI_DIR"
+          if [[ ! -s "$KEY" ]]; then
+            openssl genrsa -out "$KEY" 2048 >/dev/null 2>&1
+          fi
+          if [[ ! -s "$PUB" ]]; then
+            openssl rsa -pubout -in "$KEY" -out "$PUB" >/dev/null 2>&1
+          fi
+          FP="$(openssl rsa -pubout -outform DER -in "$KEY" 2>/dev/null | openssl md5 -c | awk '{print $2}')"
+          cat >"$CONFIG" <<EOF
+[DEFAULT]
+user=REPLACE_WITH_DEDICATED_OCI_USER_OCID
+fingerprint=$FP
+tenancy=REPLACE_WITH_TENANCY_OCID
+region=af-johannesburg-1
+key_file=$KEY
+EOF
+          chown ubuntu:ubuntu "$KEY" "$PUB" "$CONFIG"
+          chmod 0600 "$KEY" "$CONFIG"
+          chmod 0644 "$PUB"
+          install -d -m 0755 /etc/dial
+          if [[ ! -f "$ESTATE" ]]; then
+            cat >"$ESTATE" <<'EOF'
+# Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.
+# A1 is one physical transition peer; there is intentionally no fourth old-control OCID.
+DIAL_OCI_COMPARTMENT=
+VAN_TRADING_CORE_OCID=
+VEKL_WORKER_OCID=
+ORACLE_ADMIN_OCID=
+EOF
+          fi
+          chmod 0600 "$ESTATE"
+          echo OCI_RECOVERY_IDENTITY=PREPARED
+          echo public_key_begin
+          cat "$PUB"
+          echo public_key_end
+          echo "fingerprint=$FP"
+          echo OCI_RECOVERY_CONFIG=OWNER_ACTION_REQUIRED
           CMD
           )"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
