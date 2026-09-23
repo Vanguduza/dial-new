@@ -1,0 +1,173 @@
+name: Republish Netcup Rive installer as verified bot PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  republish:
+    if: >-
+      github.repository == 'Vanguduza/dial-new' &&
+      github.actor == 'Vanguduza' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'gpt/install-van-rive-netcup-20260923'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BOT_BRANCH: gpt/install-van-rive-netcup-bot-20260923
+      BOT_AUTH_ID: auth-20260923-owner-install-van-rive-netcup-bot
+
+    steps:
+      - name: Checkout installer PR head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          path: source
+
+      - name: Checkout protected master
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: master
+          fetch-depth: 0
+          path: base
+
+      - name: Build Project Truth-valid installer tree
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$GITHUB_WORKSPACE/base"
+          BASE_SHA="$(git rev-parse HEAD)"
+          git checkout -B "$BOT_BRANCH" "$BASE_SHA"
+          install -d .github/workflows docs/project-state/authorizations
+          cp "$GITHUB_WORKSPACE/source/.github/workflows/netcup-admin-oidc.yml" \
+             .github/workflows/netcup-admin-oidc.yml
+
+          cat >"docs/project-state/authorizations/$BOT_AUTH_ID.json" <<EOF
+          {
+            "schema_version": 1,
+            "authorization_id": "$BOT_AUTH_ID",
+            "project": "dial",
+            "authority": "OWNER_EXPLICIT",
+            "owner_instruction_sha256": "8b4b6748cd51f5d8d5b32c4810111857c9f04331f4098a5ca2865a8bdd5baf6c",
+            "owner_instruction_excerpt": "Install the rive build system on netcup using github",
+            "source": {
+              "kind": "owner_session_instruction",
+              "channel": "chatgpt",
+              "request_id": "chatgpt-20260923-install-van-rive-netcup",
+              "owner_attested": true
+            },
+            "issued_at_utc": "2026-09-23T06:50:00Z",
+            "base_sha": "$BASE_SHA",
+            "branch_scope": "$BOT_BRANCH",
+            "authorized_paths": [
+              ".github/workflows/netcup-admin-oidc.yml"
+            ],
+            "change_classes": [
+              "netcup_rive_install",
+              "github_oidc_deployment",
+              "character_forge_tooling",
+              "project_truth_reconciliation"
+            ],
+            "material_scope_expansion": false,
+            "feature_removal": false,
+            "business_model_change": false,
+            "security_authority_change": false,
+            "owner_control_boundary_change": false,
+            "legal_position_change": false,
+            "money_or_custody_model_change": false,
+            "locked_provider_change": false,
+            "reusable": false,
+            "revoked": false
+          }
+          EOF
+
+          git add \
+            .github/workflows/netcup-admin-oidc.yml \
+            "docs/project-state/authorizations/$BOT_AUTH_ID.json"
+          USER=github-actions python3 scripts/project_truth_local.py record
+          git diff --cached --check
+
+      - name: Create verified bot commit and pull request
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$GITHUB_WORKSPACE/base"
+          BASE_SHA="$(git rev-parse HEAD)"
+          repo="$GITHUB_REPOSITORY"
+
+          if gh api "repos/$repo/git/ref/heads/$BOT_BRANCH" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/$repo/git/refs/heads/$BOT_BRANCH" \
+              -f sha="$BASE_SHA" -F force=true >/dev/null
+          else
+            gh api -X POST "repos/$repo/git/refs" \
+              -f ref="refs/heads/$BOT_BRANCH" -f sha="$BASE_SHA" >/dev/null
+          fi
+
+          python3 - "$repo" "$BOT_BRANCH" "$BASE_SHA" "$RUNNER_TEMP/create-commit.json" <<'PY'
+          import base64
+          import json
+          import pathlib
+          import sys
+          
+          repo, branch, expected, output = sys.argv[1:]
+          paths = [
+              ".github/workflows/netcup-admin-oidc.yml",
+              "docs/project-state/authorizations/auth-20260923-owner-install-van-rive-netcup-bot.json",
+              "docs/project-state/CHANGE_LEDGER.jsonl",
+              "docs/project-state/CURRENT_STATE.json",
+          ]
+          additions = []
+          for path in paths:
+              payload = base64.b64encode(pathlib.Path(path).read_bytes()).decode("ascii")
+              additions.append({"path": path, "contents": payload})
+          
+          request = {
+              "query": "mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid url}}}",
+              "variables": {
+                  "input": {
+                      "branch": {"repositoryNameWithOwner": repo, "branchName": branch},
+                      "message": {"headline": "ops: install VAN Rive build system on Dial Control"},
+                      "expectedHeadOid": expected,
+                      "fileChanges": {"additions": additions},
+                  }
+              },
+          }
+          pathlib.Path(output).write_text(json.dumps(request), encoding="utf-8")
+          PY
+
+          gh api graphql --input "$RUNNER_TEMP/create-commit.json" \
+            >"$RUNNER_TEMP/create-commit-response.json"
+          COMMIT_SHA="$(jq -er '.data.createCommitOnBranch.commit.oid' "$RUNNER_TEMP/create-commit-response.json")"
+
+          verified="$(gh api "repos/$repo/commits/$COMMIT_SHA" --jq '.commit.verification.verified')"
+          reason="$(gh api "repos/$repo/commits/$COMMIT_SHA" --jq '.commit.verification.reason')"
+          echo "bot commit: $COMMIT_SHA verified=$verified reason=$reason"
+          [[ "$verified" == "true" ]] || {
+            echo "::error::GitHub bot commit was not verified (reason=$reason)"
+            exit 1
+          }
+
+          existing="$(gh api "repos/$repo/pulls?state=open&head=Vanguduza:$BOT_BRANCH&base=master" \
+            --jq '.[0].number // empty')"
+          if [[ -z "$existing" ]]; then
+            pr_json="$(gh api -X POST "repos/$repo/pulls" \
+              -f title='Install VAN Rive build system on Dial Control' \
+              -f head="$BOT_BRANCH" \
+              -f base=master \
+              -f body='Bot-republished, Project-Truth-authorized installer commit. The bot commit must be GitHub-Verified; @Vanguduza remains the required CODEOWNER reviewer.')"
+            existing="$(jq -r '.number' <<<"$pr_json")"
+          fi
+
+          {
+            echo "## Verified bot republisher"
+            echo "- branch: $BOT_BRANCH"
+            echo "- commit: $COMMIT_SHA"
+            echo "- verified: $verified"
+            echo "- PR: #$existing"
+          } >>"$GITHUB_STEP_SUMMARY"
