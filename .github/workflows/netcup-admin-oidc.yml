@@ -3,9 +3,31 @@ name: Dial Control GitHub OIDC admin
 on:
   workflow_dispatch:
     inputs:
-      command:
-        description: Root command to execute on Dial Control. Do not place secrets here.
+      operation:
+        description: Bounded Dial Control admin operation
         required: true
+        default: prepare_oci_recovery
+        type: choice
+        options:
+          - prepare_oci_recovery
+          - configure_and_discover_oci
+          - custom
+      command:
+        description: Custom root command. Used only when operation=custom. Never place secrets here.
+        required: false
+        type: string
+      oci_user_ocid:
+        description: Dedicated OCI recovery user OCID. Used only by configure_and_discover_oci.
+        required: false
+        type: string
+      oci_tenancy_ocid:
+        description: OCI tenancy OCID. Used only by configure_and_discover_oci.
+        required: false
+        type: string
+      oci_region:
+        description: OCI recovery region
+        required: false
+        default: af-johannesburg-1
         type: string
       acknowledge_root:
         description: Type I_UNDERSTAND_ROOT
@@ -40,20 +62,81 @@ jobs:
             exit 2
           }
 
-      - name: Execute audited Dial Control command
+      - name: Build bounded admin command
         shell: bash
         env:
-          RAW_COMMAND: ${{ inputs.command }}
+          OPERATION: ${{ inputs.operation }}
+          CUSTOM_COMMAND: ${{ inputs.command }}
+          OCI_USER_OCID: ${{ inputs.oci_user_ocid }}
+          OCI_TENANCY_OCID: ${{ inputs.oci_tenancy_ocid }}
+          OCI_REGION: ${{ inputs.oci_region }}
         run: |
           set -euo pipefail
-          [[ -n "$RAW_COMMAND" ]] || { echo "::error::Command is empty"; exit 2; }
-          [[ ${#RAW_COMMAND} -le 32768 ]] || { echo "::error::Command is too long"; exit 2; }
+          OUT="$RUNNER_TEMP/admin-command.txt"
+          case "$OPERATION" in
+            prepare_oci_recovery)
+              cat >"$OUT" <<EOF
+          set -Eeuo pipefail
+          REF='$GITHUB_SHA'
+          BASE="https://raw.githubusercontent.com/Vanguduza/dial-new/\$REF"
+          TMP="\$(mktemp -d /tmp/dial-admin-refresh.XXXXXX)"
+          trap 'rm -rf "\$TMP"' EXIT
+          fetch(){ curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 "\$BASE/\$1" -o "\$TMP/\$2"; }
+          fetch deploy/netcup/hermes-control/github-oidc-control.mjs github-oidc-control.mjs
+          fetch deploy/netcup/hermes-control/configure-wireguard-fabric.sh configure-wireguard-fabric.sh
+          fetch deploy/netcup/hermes-control/rotate-bootstrap-identities.sh rotate-bootstrap-identities.sh
+          fetch deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh retire-oracle-a1-control-role.sh
+          fetch deploy/netcup/hermes-control/prepare-oci-recovery.sh prepare-oci-recovery.sh
+          /home/ubuntu/.local/bin/node --check "\$TMP/github-oidc-control.mjs"
+          for f in configure-wireguard-fabric.sh rotate-bootstrap-identities.sh retire-oracle-a1-control-role.sh prepare-oci-recovery.sh; do bash -n "\$TMP/\$f"; done
+          install -d -m 0755 /usr/local/lib/dial-control
+          install -m 0755 "\$TMP/github-oidc-control.mjs" /usr/local/lib/dial-control/github-oidc-control.mjs
+          install -m 0755 "\$TMP/configure-wireguard-fabric.sh" /usr/local/lib/dial-control/configure-wireguard-fabric.sh
+          install -m 0755 "\$TMP/rotate-bootstrap-identities.sh" /usr/local/lib/dial-control/rotate-bootstrap-identities.sh
+          install -m 0755 "\$TMP/retire-oracle-a1-control-role.sh" /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh
+          install -m 0755 "\$TMP/prepare-oci-recovery.sh" /usr/local/lib/dial-control/prepare-oci-recovery.sh
+          runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
+          systemd-run --unit=dial-github-oidc-refresh --on-active=3s /bin/systemctl restart dial-github-oidc-control.service >/dev/null
+          echo DIAL_CONTROL_RUNTIME_REFRESH=SCHEDULED
+          EOF
+              ;;
+            configure_and_discover_oci)
+              [[ "$OCI_USER_OCID" == ocid1.user.* ]] || { echo "::error::Valid oci_user_ocid required"; exit 3; }
+              [[ "$OCI_TENANCY_OCID" == ocid1.tenancy.* ]] || { echo "::error::Valid oci_tenancy_ocid required"; exit 3; }
+              [[ "$OCI_REGION" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || { echo "::error::Valid OCI region required"; exit 3; }
+              USER_Q="$(printf '%q' "$OCI_USER_OCID")"
+              TENANCY_Q="$(printf '%q' "$OCI_TENANCY_OCID")"
+              REGION_Q="$(printf '%q' "$OCI_REGION")"
+              cat >"$OUT" <<EOF
+          set -Eeuo pipefail
+          test -x /usr/local/lib/dial-control/prepare-oci-recovery.sh
+          runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin OCI_RECOVERY_USER_OCID=$USER_Q OCI_RECOVERY_TENANCY_OCID=$TENANCY_Q OCI_RECOVERY_REGION=$REGION_Q bash /usr/local/lib/dial-control/prepare-oci-recovery.sh configure-and-discover
+          install -d -m 0700 /var/lib/dial-control/github-oidc
+          date -u +%FT%TZ >/var/lib/dial-control/github-oidc/github-oci-ready
+          echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
+          EOF
+              ;;
+            custom)
+              [[ -n "$CUSTOM_COMMAND" ]] || { echo "::error::Custom command is empty"; exit 3; }
+              printf '%s' "$CUSTOM_COMMAND" >"$OUT"
+              ;;
+            *) echo "::error::Unsupported operation: $OPERATION"; exit 3 ;;
+          esac
+          [[ -s "$OUT" ]] || { echo "::error::Admin command was not built"; exit 3; }
+          [[ "$(wc -c <"$OUT")" -le 32768 ]] || { echo "::error::Admin command exceeds controller limit"; exit 3; }
+
+      - name: Execute audited Dial Control command
+        shell: bash
+        run: |
+          set -euo pipefail
+          RAW_COMMAND="$(cat "$RUNNER_TEMP/admin-command.txt")"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           {
             echo "## Dial Control GitHub OIDC admin receipt"
+            echo "- operation: `${{ inputs.operation }}`"
             echo "- actor: $GITHUB_ACTOR"
             echo "- run: $GITHUB_RUN_ID"
             echo "- command SHA-256: $(jq -r '.result.command_sha256' <<<"$RESPONSE")"
@@ -69,3 +152,29 @@ jobs:
             jq -r '.result.stderr' <<<"$RESPONSE"
             echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Verify refreshed controller
+        if: ${{ inputs.operation == 'prepare_oci_recovery' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=false
+          for attempt in $(seq 1 18); do
+            sleep 5
+            if RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}' 2>/dev/null)" &&
+               jq -e '.ok == true and (.result | has("source_retirement_preflight")) and (.result | has("a1_control_retired"))' <<<"$RESPONSE" >/dev/null 2>&1; then
+              ok=true
+              break
+            fi
+          done
+          [[ "$ok" == true ]] || { echo "::error::Refreshed controller did not return its current contract"; exit 4; }
+          echo DIAL_CONTROL_CONTROLLER_REFRESH=GREEN
+
+      - name: Verify local OCI recovery authority
+        if: ${{ inputs.operation == 'configure_and_discover_oci' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
+          jq -e '.ok == true and .result.recovery_ready == true' <<<"$RESPONSE" >/dev/null
+          echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
