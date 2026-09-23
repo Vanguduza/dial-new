@@ -264,13 +264,18 @@ jobs:
           RAW_COMMAND="$(cat <<'CMD'
           set -Eeuo pipefail
           REF='${{ github.sha }}'
-          TMP="$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
+          TMP="$(mktemp /tmp/prepare-oci-recovery.XXXXXX.sh)"
           trap 'rm -f "$TMP"' EXIT
-          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
-            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/owner-oci-handoff.sh" \
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            --connect-timeout 10 --max-time 45 --retry 3 --retry-delay 2 \
+            "https://raw.githubusercontent.com/Vanguduza/dial-new/$REF/deploy/netcup/hermes-control/prepare-oci-recovery.sh" \
             -o "$TMP"
           bash -n "$TMP"
-          bash "$TMP" prepare "$REF"
+          install -m 0755 "$TMP" /usr/local/lib/dial-control/prepare-oci-recovery.sh
+          runuser -u ubuntu -- env \
+            HOME=/home/ubuntu \
+            PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin \
+            bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
           CMD
           )"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
@@ -291,4 +296,3 @@ jobs:
             grep '^fingerprint=' <<<"$OUT"
             echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
-
