@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
-  "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V1",
+  "schema_version": 2,
+  "plane_id": "DIAL_HERMES_ANDROID_TESTING_PLANE_V2",
   "authority": "HERMES_CONTROL_AUTHORITY",
   "host": "dial-control",
-  "role": "SUBORDINATE_ANDROID_VERIFICATION_EXECUTOR",
+  "role": "SUBORDINATE_ANDROID_AUTONOMOUS_TEST_AND_DIAGNOSTIC_EXECUTOR",
   "upstream": {
     "project": "google/artemis",
     "commit": "371aa6df56880643da57b30da936e9812fb0ec66",
@@ -11,18 +11,70 @@
     "license": "Apache-2.0",
     "hardening": "DIAL_ARTEMIS_SHELL_HARDENING_V1"
   },
-  "access": {
+  "authority_invariants": {
+    "hermes_is_control_authority": true,
+    "artemis_is_subordinate": true,
     "raw_upstream_mcp_exposed": false,
-    "hermes_mcp": "dial_android_testing",
-    "device_allowlist": "/var/lib/dial-control/config/android-testing-devices.json",
-    "exclusive_device_lease": true,
-    "direct_arbitrary_shell": false,
-    "adb_transport": "PRE-ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE"
+    "raw_upstream_ui_enabled_by_default": false,
+    "project_truth_can_be_advanced_by_artemis": false,
+    "test_evidence_is_authoritative_before_reconciliation": false
   },
-  "pipeline": [
+  "access": {
+    "hermes_mcp": "dial_android_testing",
+    "internal_bridge": "deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py",
+    "device_allowlist": "/var/lib/dial-control/config/android-testing-devices.json",
+    "avd_allowlist": "/var/lib/dial-control/config/android-testing-devices.json#avds",
+    "sync_exclusive_device_lease": true,
+    "async_device_lock": "ARTEMIS_PER_DEVICE_EXECUTION_LOCK",
+    "trace_ownership_required_for_management": true,
+    "direct_arbitrary_shell": false,
+    "adb_transport": "PRE_ESTABLISHED_GOVERNED_ADB_DEVICE_OR_SECURE_DEVICE_BRIDGE"
+  },
+  "upstream_native_capabilities_consumed_internally": {
+    "mobile_run_task": "android_task_start",
+    "mobile_manage_task": "android_task_manage",
+    "mobile_get_device_state": "android_device_state",
+    "mobile_inspect_trace": "android_trace_inspect",
+    "mobile_diagnose": "android_diagnose"
+  },
+  "capabilities": [
+    "CROSS_APP_ANDROID_UI_AUTOMATION",
+    "FLASH_REACTIVE_EXECUTION",
+    "PRO_PLANNED_EXECUTION",
+    "STRICT_OR_CHECKPOINT_VERIFICATION",
+    "EXPLORER_FLASH_PRO_ULTRA",
+    "ASYNC_TASK_EXECUTION",
+    "LIVE_TASK_STATUS_AND_PROGRESS",
+    "MIDFLIGHT_INSTRUCTION_INJECTION",
+    "CONTINUOUS_LOOP_GRACEFUL_RELEASE",
+    "FORCE_STOP",
+    "LIVE_SCREENSHOT_OBSERVATION",
+    "ACCESSIBILITY_AND_OCR_HIERARCHY_OBSERVATION",
+    "TRACE_SUMMARY_AND_SEARCH",
+    "PER_STEP_SCREENSHOTS_AND_ACTION_OVERLAYS",
+    "PER_STEP_REPLAY_DETAILS",
+    "ADB_AND_LOG_DIAGNOSTICS_INSIDE_ARTEMIS_PRO",
+    "ENVIRONMENT_AND_DEVICE_DIAGNOSIS",
+    "SAFE_SELF_HEAL",
+    "CREDENTIAL_PROBE",
+    "END_TO_END_DEVICE_PROBE",
+    "ALLOWLISTED_AVD_LAUNCH",
+    "MULTI_DEVICE_PARALLEL_EXECUTION",
+    "ACCESSIBILITY_HELPER_WITH_UIAUTOMATOR_FALLBACK",
+    "VIDEO_AND_COMPRESSED_HISTORY_ANALYSIS",
+    "LONG_HORIZON_AND_CONTINUOUS_MONITORING",
+    "SYNCHRONOUS_CERTIFICATION_RUN_WITH_BUILD_INSTALL_EVIDENCE"
+  ],
+  "routing": {
+    "flash": "ROUTINE_DETERMINISTIC_UI_PATHS",
+    "pro": "EXPLORATION_RECOVERY_ADB_LOG_DIAGNOSIS_CHECKPOINT_VERIFICATION_LONG_HORIZON_CONTINUOUS_MONITORING",
+    "certification": "android_test_run"
+  },
+  "certification_pipeline": [
     "OPTIONAL_REPOSITORY_GRADLE_BUILD",
     "APK_SHA256_BIND",
     "ADB_INSTALL",
+    "ARTEMIS_DOCTOR_PREFLIGHT",
     "ARTEMIS_EXERCISE",
     "SCREENSHOT_CAPTURE",
     "LOGCAT_CAPTURE",
@@ -31,6 +83,7 @@
   ],
   "evidence": {
     "root": "/var/lib/dial-control/android-testing/evidence",
+    "async_terminal_seal": true,
     "project_authority": "NON_AUTHORITATIVE_TEST_EVIDENCE_UNTIL_RECONCILED",
     "admission": "HERMES_OR_SYSTEM_RECONCILIATION_REQUIRED",
     "physical_device_claim": "FORBIDDEN_UNLESS_LIVE_DEVICE_RUN_EVIDENCE_EXISTS"
@@ -40,7 +93,10 @@
     "url_shell_quoting": "MANDATORY",
     "upstream_shell_hardening_gate": "FAIL_CLOSED",
     "device_serial_validation": "MANDATORY",
+    "device_admission": "MANDATORY_FOR_INTERACTION",
+    "avd_admission": "MANDATORY_FOR_LAUNCH",
     "apk_path_must_remain_inside_repository": true,
+    "trace_management_requires_hermes_owned_trace": true,
     "secrets_in_evidence": "PROHIBITED"
   },
   "readiness": {
