@@ -87,6 +87,28 @@ export function openVikingProjectionStatus(project, root = DEFAULT_CONTROL_HOME)
     updated_at: null,
   }, root);
 }
+async function ensureProjectionRoot(project, root = DEFAULT_CONTROL_HOME) {
+  const cfg = config(root);
+  const base = `viking://user/${cfg.user}/memories/dial-projects`;
+  const target = openVikingProjectRoot(project, root);
+  for (const [uri, description] of [
+    [base, 'DIAL governed project-memory semantic projections'],
+    [target, `DIAL project semantic projection: ${slug(project, 'project')}`],
+  ]) {
+    try {
+      await request('/api/v1/fs/mkdir', {
+        method: 'POST',
+        root,
+        timeoutMs: 10000,
+        body: { uri, description },
+      });
+    } catch (error) {
+      if (![400, 409].includes(Number(error?.status))) throw error;
+    }
+  }
+  return target;
+}
+
 function projectionDocument(entry, record) {
   return [
     '---',
@@ -129,6 +151,7 @@ export async function projectAdmittedMemoryToOpenViking({
   const projectId = slug(project, 'project');
   const index = loadSharedMemoryIndex(projectId, root);
   const state = openVikingProjectionStatus(projectId, root);
+  const targetRoot = await ensureProjectionRoot(projectId, root);
   const pending = (index.entries || [])
     .filter((entry) => Number(entry.sequence) > Number(state.last_scanned_sequence || 0))
     .slice(0, Math.max(1, Math.min(Number(limit) || 100, 500)));
@@ -140,7 +163,7 @@ export async function projectAdmittedMemoryToOpenViking({
     if (entry.admission_state !== 'ADMITTED') continue;
     const record = readSharedMemoryObject(entry.object_rel, root);
     if (!record || record.admission_state !== 'ADMITTED') continue;
-    const uri = `${openVikingProjectRoot(projectId, root)}/${String(entry.sequence).padStart(8, '0')}-${entry.memory_id}.md`;
+    const uri = `${targetRoot}/${String(entry.sequence).padStart(8, '0')}-${entry.memory_id}.md`;
     try {
       await request('/api/v1/content/write', {
         method: 'POST',
