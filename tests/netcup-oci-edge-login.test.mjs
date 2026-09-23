@@ -186,4 +186,8 @@ describe('admin workflow OCI login posture', () => {
     expect(wf).toContain('oci-edge-login.sh /usr/local/lib/dial-control/oci-edge-login.sh 0755');
     expect(wf).toMatch(/finish_oci_edge_login\)\n\s+\[\[ "\$OCI_TENANCY_OCID" =~/);
   });
+  it('stages refreshed helpers with their real extension last, so node --check accepts the .mjs', () => {
+    expect(wf).toContain('stage="${dst%.*}.tmp.${dst##*.}"');
+    expect(wf).not.toContain("'$dst.tmp'");
+  });
 });

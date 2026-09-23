@@ -72,8 +72,10 @@ jobs:
           }
           push_file() {
             local src="$1" dst="$2" mode="$3" checker="$4"
-            local name tmp data sha chunk
+            local name tmp data sha chunk stage
             name="$(basename "$dst")"
+            # Keep the real extension last: node --check rejects "x.mjs.tmp" (ERR_UNKNOWN_FILE_EXTENSION).
+            stage="${dst%.*}.tmp.${dst##*.}"
             tmp="/tmp/dial-runtime-refresh-$name.b64"
             data="$(base64 -w0 "$src")"
             sha="$(sha256sum "$src" | awk '{print $1}')"
@@ -83,7 +85,7 @@ jobs:
               data="${data:10000}"
               admin_exec "set -Eeuo pipefail; printf '%s' '$chunk' >>'$tmp'"
             done
-            admin_exec "set -Eeuo pipefail; install -d -m 0755 /usr/local/lib/dial-control; base64 -d '$tmp' >'$dst.tmp'; echo '$sha  $dst.tmp' | sha256sum -c -; $checker '$dst.tmp'; install -m '$mode' '$dst.tmp' '$dst'; rm -f '$dst.tmp' '$tmp'"
+            admin_exec "set -Eeuo pipefail; install -d -m 0755 /usr/local/lib/dial-control; base64 -d '$tmp' >'$stage'; echo '$sha  $stage' | sha256sum -c -; $checker '$stage'; install -m '$mode' '$stage' '$dst'; rm -f '$stage' '$tmp'"
           }
 
           push_file deploy/netcup/hermes-control/github-oidc-control.mjs /usr/local/lib/dial-control/github-oidc-control.mjs 0755 "/home/ubuntu/.local/bin/node --check"
