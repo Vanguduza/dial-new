@@ -167,6 +167,9 @@ async function dispatch(body, claims) {
         oidc_unit_active:command('systemctl is-active dial-github-oidc-control.service').ok,
         oidc_ready:true,
         recovery_ready:fs.existsSync(path.join(ROOT,'github-oci-ready')),
+        oci_estate_inventory:fs.existsSync('/etc/dial/oracle-estate.env'),
+        oci_peers_enrolled:fs.existsSync(path.join(ROOT,'oracle-peer-keys.json')),
+        housekeeping_estate:fs.existsSync(path.join(ROOT,'housekeeping-estate-installed')),
         overlay_verified:fs.existsSync(path.join(ROOT,'overlay-verified')),
         rotated:fs.existsSync(path.join(ROOT,'identities-rotated')),
         migration_prepare:fs.existsSync(path.join(CONTROL,'state/migration-prepare-complete')),
@@ -224,6 +227,21 @@ async function dispatch(body, claims) {
       fs.writeFileSync(path.join(ROOT,'github-oci-ready'),now()+'\n',{mode:0o600});
       return {installed:true,probe:'PASS'};
     }
+    case 'oci-enroll-estate': {
+      if(!fs.existsSync(path.join(ROOT,'github-oci-ready'))) throw new Error('local OCI recovery authority is not ready');
+      const helper='/usr/local/lib/dial-control/oci-enroll-oracle-estate.sh';
+      if(!fs.existsSync(helper)) throw new Error('OCI estate enrollment helper missing');
+      const r=command("bash '"+helper+"'",{timeout:20*60*1000});
+      requireOk(r,'oci-enroll-estate');
+      const keysPath=path.join(ROOT,'oracle-peer-keys.json');
+      if(!fs.existsSync(keysPath)) throw new Error('OCI peer key receipt missing');
+      const receipt=JSON.parse(fs.readFileSync(keysPath,'utf8'));
+      for(const k of ['oracle_admin','vekl_worker','a1_transition']){
+        if(!validWgKey(receipt?.peers?.[k])) throw new Error('invalid persisted peer key '+k);
+      }
+      if(receipt.physical_oracle_instances!==3 || receipt.a1_physical_instances!==1) throw new Error('OCI estate physical identity count invalid');
+      return {receipt,stdout:r.stdout};
+    }
     case 'configure-overlay': {
       for(const k of ['oracle_admin','vekl_worker','a1_transition']){
         if(!validWgKey(body?.peers?.[k])) throw new Error('invalid WireGuard public key for '+k);
@@ -246,6 +264,14 @@ async function dispatch(body, claims) {
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('overlay verification failed'),{result:{peers}});
       fs.writeFileSync(path.join(ROOT,'overlay-verified'),now()+'\n',{mode:0o600});
       return {peers};
+    }
+    case 'install-housekeeping-estate': {
+      if(!fs.existsSync(path.join(ROOT,'overlay-verified'))) throw new Error('housekeeping requires verified overlay');
+      const helper='/usr/local/lib/dial-control/install-housekeeping-final-estate.sh';
+      if(!fs.existsSync(helper)) throw new Error('housekeeping estate helper missing');
+      const r=command("bash '"+helper+"'",{timeout:20*60*1000});
+      requireOk(r,'install-housekeeping-estate');
+      return r;
     }
     case 'rotate-identities': {
       const rotateScript='/usr/local/lib/dial-control/rotate-bootstrap-identities.sh';
