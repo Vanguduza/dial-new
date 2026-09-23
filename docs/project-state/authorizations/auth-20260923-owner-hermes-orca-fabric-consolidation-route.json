@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260923-owner-hermes-orca-fabric-consolidation-route",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "c3b40aba0f0a4065076216ca4603a1f352a8a58b51028a9d292562b087971123",
+  "owner_instruction_excerpt": "Audit, review and improve this plan [DIAL Hermes-Orca Symbiotic Multi-Harness Development Fabric PRD-DDP Rev 1]. The blueprint is supposed to be the new canonical setup; establish the best way to achieve it through consolidation with the current implementation or an improved setup according to your recommendations.",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude_code",
+    "request_id": "claude-code-20260923-hermes-orca-fabric-consolidation",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-23T16:10:00Z",
+  "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "branch_scope": "claude/plan-audit-review-p8i1uc",
+  "authorized_paths": [
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_1.md",
+    "docs/dial/final-audit/06_DEVELOPMENT_SYSTEM/DIAL_HERMES_ORCA_SYMBIOTIC_MULTI_HARNESS_DEVELOPMENT_FABRIC_PRD_DDP_REV_2_CONSOLIDATION.md",
+    "docs/project-state/**"
+  ],
+  "change_classes": [
+    "architecture_blueprint_provenance",
+    "architecture_consolidation_proposal",
+    "project_truth_reconciliation"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
