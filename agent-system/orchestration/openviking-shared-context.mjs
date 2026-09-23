@@ -213,7 +213,7 @@ export async function projectAdmittedMemoryToOpenViking({
   }
   const finalState = {
     ...state,
-    last_scanned_sequence: Math.max(scanned, Number(index.sequence || 0)),
+    last_scanned_sequence: scanned,
     last_projected_sequence: lastProjected,
     projected_count: Number(state.projected_count || 0) + projected,
     last_error: null,
