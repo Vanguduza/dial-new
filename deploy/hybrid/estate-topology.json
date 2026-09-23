@@ -14,7 +14,9 @@
         "HERMES",
         "DIAL_DEVELOPMENT_SYSTEM",
         "PRIMARY_ORACLE_RECOVERER",
-        "GITHUB_ADMIN_RUNNER"
+        "GITHUB_ADMIN_RUNNER",
+        "ANDROID_TESTING_PLANE",
+        "OPENVIKING_CONTEXT_STORE"
       ],
       "lifecycle": "PRIMARY_ACTIVE",
       "display_name": "Dial Control",
@@ -112,7 +114,9 @@
     "application_planes": [
       "DIAL_MCP",
       "SSH",
-      "VAN_TRADING_COMMANDER_MCP"
+      "VAN_TRADING_COMMANDER_MCP",
+      "HERMES_ANDROID_TESTING_MCP",
+      "OPENVIKING_LOOPBACK_CONTEXT"
     ],
     "out_of_band_plane": "OCI_API_AND_RUN_COMMAND",
     "owner_recovery_plane": "GITHUB_ACTIONS_NETCUP_ADMIN"
@@ -120,5 +124,19 @@
   "lifecycle_rules": {
     "oracle_a1_transition": "old-dial-hermes-control is a temporary compatibility identity for the same A1 physical VM; it must never be enrolled as a separate fourth Oracle peer.",
     "source_retirement": "Final zero-touch certification is forbidden until the A1 hostname/role is van-trading-core and the former DIAL/Hermes control state is absent."
+  },
+  "subordinate_planes": {
+    "android_testing": {
+      "host": "dial-control",
+      "authority": "HERMES_SUBORDINATE",
+      "executor": "ARTEMIS",
+      "raw_external_mcp": false
+    },
+    "memory_semantic": {
+      "host": "dial-control",
+      "authority": "NON_AUTHORITATIVE_CONTEXT",
+      "store": "OpenViking",
+      "source": "ADMITTED_SPMRF_PROJECT_MEMORY"
+    }
   }
 }
