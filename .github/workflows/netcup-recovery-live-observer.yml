@@ -11,6 +11,7 @@ on:
 permissions:
   actions: read
   contents: read
+  id-token: write
   statuses: write
 
 concurrency:
@@ -22,6 +23,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Read Dial Control OIDC status
+        id: control_status
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh '{"action":"status"}')"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          echo "recovery_ready=$(jq -r '.result.recovery_ready // false' <<<"$RESPONSE")" >>"$GITHUB_OUTPUT"
+          echo "certified=$(jq -r '.result.certified // false' <<<"$RESPONSE")" >>"$GITHUB_OUTPUT"
+          echo "overlay_verified=$(jq -r '.result.overlay_verified // false' <<<"$RESPONSE")" >>"$GITHUB_OUTPUT"
+          echo "control_active=$(jq -r '.result.control_active // false' <<<"$RESPONSE")" >>"$GITHUB_OUTPUT"
+
       - name: Broadcast recovery progress
         shell: bash
         env:
