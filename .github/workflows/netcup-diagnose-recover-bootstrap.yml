@@ -283,18 +283,35 @@ jobs:
             fi
 
             echo "Activating Netcup rescue system on stopped VM..."
-            set +e
-            RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
-              -H "Authorization: Bearer $(access_token)" \
-              -H "Content-Type: application/json" \
-              -H "accept: application/json" \
-              "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
-            rc=$?
-            set -e
-            echo "rescue_activate_http=$RESCUE_HTTP curl_rc=$rc"
-            cat /tmp/rescue-activate.json 2>/dev/null || true
-            [[ "$rc" -eq 0 && "$RESCUE_HTTP" =~ ^20[0-9]$ ]] || {
-              echo "::error::Rescue activation failed"
+            rescue_activate_ok=false
+            for attempt in $(seq 1 24); do
+              set +e
+              RESCUE_HTTP="$(curl -sS -o /tmp/rescue-activate.json -w '%{http_code}' -X POST \
+                -H "Authorization: Bearer $(access_token)" \
+                -H "Content-Type: application/json" \
+                -H "accept: application/json" \
+                "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/rescuesystem")"
+              rc=$?
+              set -e
+              echo "rescue_activate_http=$RESCUE_HTTP curl_rc=$rc attempt=$attempt"
+              if [[ "$rc" -eq 0 && "$RESCUE_HTTP" =~ ^20[0-9]$ ]]; then
+                rescue_activate_ok=true
+                break
+              fi
+              if [[ "$rc" -eq 0 && "$RESCUE_HTTP" == "409" ]]; then
+                rescue_error="$(jq -r '.code // empty' /tmp/rescue-activate.json 2>/dev/null || true)"
+                if [[ "$rescue_error" == "server.lock.error" ]]; then
+                  echo "Netcup server mutation lock still active; retrying rescue activation..."
+                  sleep 5
+                  continue
+                fi
+              fi
+              cat /tmp/rescue-activate.json 2>/dev/null || true
+              break
+            done
+            [[ "$rescue_activate_ok" == true ]] || {
+              cat /tmp/rescue-activate.json 2>/dev/null || true
+              echo "::error::Rescue activation failed after bounded lock retries"
               exit 30
             }
             activated_rescue_now=true
