@@ -16,7 +16,6 @@ on:
 
 permissions:
   contents: read
-  statuses: write
 
 concurrency:
   group: netcup-dial-control-scp-mutation
@@ -58,19 +57,6 @@ jobs:
           } >>"$GITHUB_OUTPUT"
           printf 'NETCUP_RECOVERY_APPROVAL_URL=%s\n' "$VERIFY_URL"
           printf 'NETCUP_RECOVERY_USER_CODE=%s\n' "$USER_CODE"
-          STATUS_PAYLOAD="$(jq -nc \
-            --arg state pending \
-            --arg context 'netcup-recovery/live' \
-            --arg description "AUTH_REQUIRED code=$USER_CODE" \
-            --arg target_url "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
-            '{state:$state,context:$context,description:$description,target_url:$target_url}')"
-          curl -sS --fail-with-body -X POST \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -H "Content-Type: application/json" \
-            --data "$STATUS_PAYLOAD" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" >/dev/null || true
           {
             echo "## Netcup recovery authorization required"
             echo ""
@@ -119,29 +105,6 @@ jobs:
           AUTH_STATE="$RUNNER_TEMP/netcup-scp-auth"
           install -d -m 0700 "$AUTH_STATE"
 
-          broadcast() {
-            local state="$1" description="$2" payload target
-            target="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            description="${description:0:135}"
-            payload="$(jq -nc \
-              --arg state "$state" \
-              --arg context 'netcup-recovery/live' \
-              --arg description "$description" \
-              --arg target_url "$target" \
-              '{state:$state,context:$context,description:$description,target_url:$target_url}')"
-            if ! curl -sS --fail-with-body -X POST \
-              -H "Authorization: Bearer ${{ github.token }}" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              -H "Content-Type: application/json" \
-              --data "$payload" \
-              "https://api.github.com/repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" >/dev/null; then
-              echo "::warning::Could not publish netcup-recovery/live status"
-            fi
-            printf 'RECOVERY_BROADCAST state=%s description=%s\n' "$state" "$description"
-            return 0
-          }
-
           persist_token_response() {
             local response="$1" access refresh expires
             access="$(jq -r '.access_token // empty' <<<"$response" 2>/dev/null || true)"
@@ -158,7 +121,6 @@ jobs:
           }
 
           persist_token_response "$RESPONSE"
-          broadcast pending "AUTH_OK Netcup token accepted"
 
           access_token() {
             local now expires refresh response
@@ -215,7 +177,6 @@ jobs:
             exit 21
           }
           echo "NETCUP_SERVER_ID=$SERVER_ID"
-          broadcast pending "SCP_RESOLVED server_id=$SERVER_ID"
 
           SERVER="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID")"
           INTERFACES="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/interfaces")"
@@ -453,15 +414,12 @@ jobs:
           "${SCP[@]}" "$RUNNER_TEMP/rescue-prestage-control-plane.sh" root@"$NETCUP_DIAL_CONTROL_IP":/tmp/rescue-prestage-control-plane.sh >/dev/null
           "${SSH[@]}" "bash /tmp/rescue-prestage-control-plane.sh '$ROOTDEV' '$DIAL_CONTROL_PAYLOAD_REF' '$DIAL_CONTROL_IMAGE_BLOB' '$DIAL_BOOTSTRAP_REPAIR_REF'"
           echo "INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN"
-          broadcast pending "PRESTAGE_GREEN filesystem control plane installed"
 
-          broadcast pending "RESCUE_STOPPING prestage complete"
           echo "Stopping rescue boot..."
           api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" '{"state":"OFF"}' >/tmp/rescue-stop.json || \
             api_patch "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID?stateOption=POWEROFF" '{"state":"OFF"}' >/tmp/rescue-stop.json
           wait_state SHUTOFF || { echo "::error::Rescue VM did not stop"; exit 34; }
 
-          broadcast pending "RESCUE_DEACTIVATING"
           echo "Deactivating rescue system..."
           curl -sS --fail-with-body -X DELETE \
             -H "Authorization: Bearer $(access_token)" \
@@ -478,7 +436,6 @@ jobs:
             exit 35
           }
 
-          broadcast pending "NORMAL_BOOT_REQUESTED"
           echo "Starting repaired Ubuntu..."
           normal_start_ok=false
           for attempt in $(seq 1 60); do
@@ -545,8 +502,6 @@ jobs:
             if [[ "$state_now" == RUNNING && "$ssh_now" == true && "$health_ok" == true ]]; then
               accepted=true
               echo "DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN state=$state_now guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
-              repo_now="$(jq -r '.repo_head // "null"' <<<"$health_json" 2>/dev/null || echo null)"
-              broadcast success "ACCEPTED state=$state_now ssh=$ssh_now health=$health_ok repo=${repo_now:0:12}"
               break
             fi
             if [[ "$state_now" == CRASHED ]]; then
@@ -565,10 +520,8 @@ jobs:
               break
             fi
             if (( attempt % 6 == 0 )); then
-              repo_now="$(jq -r '.repo_head // "null"' <<<"$health_json" 2>/dev/null || echo null)"
-              echo "POST_RESCUE_ACCEPTANCE_WAIT attempt=$attempt/120 state=$state_now running_seen=$running_seen shutoff_streak=$shutoff_streak guest_agent=$guest_now ssh=$ssh_now health=$health_ok repo_head=$repo_now"
+              echo "POST_RESCUE_ACCEPTANCE_WAIT attempt=$attempt/120 state=$state_now running_seen=$running_seen shutoff_streak=$shutoff_streak guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
               jq '{ok,host,bootstrap_ref,bootstrap_phase,repo_head}' <<<"$health_json" 2>/dev/null || true
-              broadcast pending "WAIT $attempt/120 state=$state_now guest=$guest_now ssh=$ssh_now health=$health_ok repo=${repo_now:0:12}"
             fi
             sleep 5
           done
@@ -578,11 +531,8 @@ jobs:
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
-            repo_now="$(jq -r '.repo_head // "null"' <<<"$health_json" 2>/dev/null || echo null)"
-            broadcast failure "FAILED reason=${terminal_reason:-TIMEOUT} state=$state_now ssh=$ssh_now health=$health_ok repo=${repo_now:0:12}"
             echo "::error::POST_RESCUE_ACCEPTANCE_FAILED: exact SSH + CONTROL_PLANE_READY health contract not reached (terminal_reason=${terminal_reason:-TIMEOUT})"
             exit 40
           fi
-          broadcast success "RECOVERY_GREEN exact control-plane contract satisfied"
           echo "DIAL_CONTROL_RECOVERY=GREEN"
           exit 0
