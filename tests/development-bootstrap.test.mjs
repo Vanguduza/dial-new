@@ -317,7 +317,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('function repoHead()');
     expect(controller).toContain("fs.readFileSync(path.join(gitDir,'HEAD'),'utf8')");
     expect(controller).toContain('git -c safe.directory=/home/ubuntu/dial-new -C /home/ubuntu/dial-new rev-parse HEAD');
-    expect(controller).toContain('const repoHead=repoHead()');
+    expect(controller).not.toContain('const repoHead=repoHead()');
+    expect(controller).toContain('const currentRepoHead=repoHead()');
     expect(controller).toContain('PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin');
 
     const provisioningStage = customScript.split("cat >\"$RUNNER\" <<'RUNNER_EOF'")[0];

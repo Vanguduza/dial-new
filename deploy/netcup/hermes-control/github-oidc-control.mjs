@@ -150,13 +150,13 @@ async function dispatch(body, claims) {
       const receipt=receiptExists ? fs.readFileSync(receiptPath,'utf8') : '';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
       const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
-      const repoHead=repoHead();
+      const currentRepoHead=repoHead();
       return {
         host:command('hostname').stdout.trim(),
         bootstrap_receipt:receiptExists,
         bootstrap_ref:bootstrapRef,
         bootstrap_phase:bootstrapPhase,
-        repo_head:repoHead,
+        repo_head:currentRepoHead,
         bootstrap_stage:fs.existsSync(path.join(CONTROL,'bootstrap/stage'))
           ? fs.readFileSync(path.join(CONTROL,'bootstrap/stage'),'utf8').trim()
           : null,
@@ -326,9 +326,9 @@ const server=http.createServer(async (req,res)=>{
       const receipt=fs.existsSync(receiptPath)?fs.readFileSync(receiptPath,'utf8'):'';
       const bootstrapRef=(receipt.match(/^bootstrap_ref=([0-9a-f]{40})$/m)||[])[1]||null;
       const bootstrapPhase=(receipt.match(/^bootstrap_phase=([^\n]+)$/m)||[])[1]||null;
-      const repoHead=repoHead();
+      const currentRepoHead=repoHead();
       res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});
-      res.end(JSON.stringify({ok:true,host:command('hostname').stdout.trim(),bootstrap_ref:bootstrapRef,bootstrap_phase:bootstrapPhase,repo_head:repoHead}));
+      res.end(JSON.stringify({ok:true,host:command('hostname').stdout.trim(),bootstrap_ref:bootstrapRef,bootstrap_phase:bootstrapPhase,repo_head:currentRepoHead}));
       return;
     }
     if(req.method!=='POST'||req.url!=='/v1/action'){res.writeHead(404);res.end('not found');return;}
