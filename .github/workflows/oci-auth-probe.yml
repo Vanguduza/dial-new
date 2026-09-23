@@ -1,0 +1,42 @@
+name: Probe existing OCI recovery credential
+
+on:
+  push:
+    branches: [gpt/netcup-hermes-control-integrated-20260921]
+    paths:
+      - .github/workflows/oci-auth-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_RECOVERY_USER_OCID }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_RECOVERY_TENANCY_OCID }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_RECOVERY_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_RECOVERY_PRIVATE_KEY }}
+      OCI_CLI_REGION: ${{ vars.OCI_RECOVERY_REGION }}
+    steps:
+      - name: Check credential configuration without printing values
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in OCI_CLI_USER OCI_CLI_TENANCY OCI_CLI_FINGERPRINT OCI_CLI_KEY_CONTENT OCI_CLI_REGION; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::$name is not configured"
+              exit 1
+            fi
+          done
+          echo 'OCI_RECOVERY_CREDENTIAL_FIELDS=PRESENT'
+      - name: Probe OCI API with existing recovery credential
+        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
+        with:
+          command: iam region list --limit 1
+          query: data[0].name
+          silent: 'True'
+      - name: Record authentication result
+        run: echo 'OCI_RECOVERY_API_PROBE=GREEN' >> "$GITHUB_STEP_SUMMARY"
