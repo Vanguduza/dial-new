@@ -304,7 +304,7 @@ async function dispatch(body, claims) {
     }
     case 'retire-a1-control-role': {
       if(!fs.existsSync(path.join(CONTROL,'state/source-retirement-preflight-complete'))) throw new Error('source retirement preflight has not completed');
-      const r=command("bash '"+REPO+"/deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh'",{timeout:20*60*1000});
+      const r=command("bash /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh",{timeout:20*60*1000});
       requireOk(r,'retire-a1-control-role');
       if(!fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) throw new Error('A1 retirement marker missing after retirement');
       return r;
