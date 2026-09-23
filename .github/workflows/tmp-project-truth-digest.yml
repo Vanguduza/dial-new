@@ -1,0 +1,31 @@
+name: Temporary Project Truth Digest
+on:
+  push:
+    branches:
+      - tmp/project-truth-digest-runner-20260923
+permissions:
+  contents: read
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Compute candidate Project Truth digest
+        run: |
+          set -euo pipefail
+          BASE=1405daaa4b21b9ae35374282b191475e5bcc3ff6
+          git fetch --no-tags origin refs/heads/tmp/project-truth-closure-candidate-20260923:refs/remotes/origin/project-truth-closure-candidate
+          CAND=refs/remotes/origin/project-truth-closure-candidate
+          echo "PROJECT_TRUTH_CHANGED_FILES_BEGIN"
+          git diff --name-only --no-renames "$BASE" "$CAND" -- . \
+            ':(exclude)docs/project-state/CHANGE_LEDGER.jsonl' \
+            ':(exclude)docs/project-state/CURRENT_STATE.json' \
+            ':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl'
+          echo "PROJECT_TRUTH_CHANGED_FILES_END"
+          git diff --binary --no-ext-diff --no-renames "$BASE" "$CAND" -- . \
+            ':(exclude)docs/project-state/CHANGE_LEDGER.jsonl' \
+            ':(exclude)docs/project-state/CURRENT_STATE.json' \
+            ':(exclude)docs/project-state/LOCAL_CHANGE_LEDGER.jsonl' \
+            | sha256sum | awk '{print "PROJECT_TRUTH_DIFF_SHA256="$1}'
