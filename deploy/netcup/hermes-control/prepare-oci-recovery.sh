@@ -65,11 +65,12 @@ config_ready() {
 }
 
 inventory_ready() {
-  [[ -s "$ESTATE" ]] || return 1
-  grep -Eq '^DIAL_OCI_COMPARTMENT=ocid1\.(compartment|tenancy)\.' "$ESTATE" &&
-    grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
-    grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
-    grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
+  # The inventory is root-only (0600) and this script runs as the admin user.
+  sudo test -s "$ESTATE" || return 1
+  sudo grep -Eq '^DIAL_OCI_COMPARTMENT=ocid1\.(compartment|tenancy)\.' "$ESTATE" &&
+    sudo grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
+    sudo grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
+    sudo grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
 }
 
 prepare() {
@@ -79,12 +80,13 @@ prepare() {
   if [[ ! -f "$ESTATE" ]]; then
     sudo tee "$ESTATE" >/dev/null <<'EOF'
 # Non-secret OCI instance inventory used by Netcup recovery/GitHub admin.
-# The A1 is one physical transition peer: old DIAL control during migration,
-# then VAN/VATI host after cutover. There is intentionally no fourth old-control OCID.
+# Retained Oracle peers: van-trading-core (A1), vekl-worker, oracle-admin.
+# dial-hermes-control is a separate A1: the migration source, terminated after cloning.
 DIAL_OCI_COMPARTMENT=
 VAN_TRADING_CORE_OCID=
 VEKL_WORKER_OCID=
 ORACLE_ADMIN_OCID=
+DIAL_HERMES_CONTROL_SOURCE_OCID=
 EOF
     sudo chmod 0600 "$ESTATE"
   fi
@@ -100,9 +102,11 @@ EOF
   fi
 }
 
+# discover_instance <logical> <shape> <pin-ocid-or-empty> <display-name>...
+# A pinned OCID is the owner's choice when more than one instance carries the expected names.
 discover_instance() {
-  local logical="$1" expected_shape="$2"
-  shift 2
+  local logical="$1" expected_shape="$2" pin="$3"
+  shift 3
   local tmp
   tmp="$(mktemp)"
   for compartment in "${COMPARTMENTS[@]}"; do
@@ -112,19 +116,34 @@ discover_instance() {
         --display-name "$display_name" \
         --all \
         --output json 2>/dev/null |
-        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape] | @tsv' >>"$tmp" || true
+        jq -r '.data[] | select(."lifecycle-state" != "TERMINATED") | [.id, ."compartment-id", ."display-name", .shape, ."lifecycle-state", ."time-created"] | @tsv' >>"$tmp" || true
     done
   done
   sort -u "$tmp" -o "$tmp"
+  if [[ -n "$pin" ]]; then
+    awk -F'\t' -v pin="$pin" '$1 == pin' "$tmp" >"$tmp.pin"
+    mv "$tmp.pin" "$tmp"
+    [[ -s "$tmp" ]] || {
+      echo "REFUSE: pinned $logical OCID $pin is not a non-terminated $expected_shape instance with the expected names" >&2
+      rm -f "$tmp"
+      return 25
+    }
+  fi
   local count
   count="$(awk 'NF {n++} END {print n+0}' "$tmp")"
+  if [[ "$count" -eq 0 && "${ALLOW_ABSENT:-0}" == 1 ]]; then
+    rm -f "$tmp"
+    return 0
+  fi
   [[ "$count" -eq 1 ]] || {
     echo "REFUSE: expected exactly one $logical OCI instance across accessible compartments; found $count" >&2
+    # Non-secret identifiers, so the owner can choose which one is authoritative.
+    awk -F'\t' -v l="$logical" 'NF {printf "CANDIDATE %s ocid=%s name=%s shape=%s state=%s created=%s\n", l, $1, $3, $4, $5, $6}' "$tmp" >&2
     rm -f "$tmp"
     return 20
   }
   local id compartment display shape
-  IFS=$'\t' read -r id compartment display shape <"$tmp"
+  IFS=$'\t' read -r id compartment display shape _ <"$tmp"
   rm -f "$tmp"
   # An instance in the root compartment reports the tenancy OCID as its compartment.
   [[ "$id" == ocid1.instance.* && ( "$compartment" == ocid1.compartment.* || "$compartment" == ocid1.tenancy.* ) ]] || {
@@ -163,7 +182,7 @@ discover() {
   command -v oci >/dev/null 2>&1 || { echo "REFUSE: OCI CLI missing" >&2; exit 11; }
   command -v jq >/dev/null 2>&1 || { echo "REFUSE: jq missing" >&2; exit 11; }
 
-  oci iam region list --limit 1 >/dev/null
+  oci iam region list >/dev/null
 
   mapfile -t COMPARTMENTS < <(
     {
@@ -179,23 +198,32 @@ discover() {
   )
   [[ "${#COMPARTMENTS[@]}" -ge 1 ]] || { echo "REFUSE: no OCI compartments visible" >&2; exit 12; }
 
-  local admin vekl a1
-  admin="$(discover_instance oracle-admin VM.Standard.E2.1.Micro "${OCI_DISPLAY_ORACLE_ADMIN:-oracle-admin}")"
-  vekl="$(discover_instance vekl-worker VM.Standard.E2.1.Micro "${OCI_DISPLAY_VEKL_WORKER:-vekl-worker}")"
-  a1="$(discover_instance a1-transition VM.Standard.A1.Flex \
-    "${OCI_DISPLAY_A1_PRIMARY:-dial-hermes-control}" \
-    "${OCI_DISPLAY_A1_FINAL:-van-trading-core}")"
+  # Owner topology (2026-09-23): the retained Oracle peers are van-trading-core (A1), vekl-worker
+  # and oracle-admin. dial-hermes-control is a SEPARATE A1, the migration source that is
+  # cloned to Netcup and then terminated; it may already be gone, so it is optional.
+  local admin vekl a1 src
+  admin="$(discover_instance oracle-admin VM.Standard.E2.1.Micro "" "${OCI_DISPLAY_ORACLE_ADMIN:-oracle-admin}")"
+  vekl="$(discover_instance vekl-worker VM.Standard.E2.1.Micro "" "${OCI_DISPLAY_VEKL_WORKER:-vekl-worker}")"
+  a1="$(discover_instance van-trading-core VM.Standard.A1.Flex "${OCI_A1_TRANSITION_OCID:-}" \
+    "${OCI_DISPLAY_VAN_TRADING_CORE:-van-trading-core}")"
+  src="$(ALLOW_ABSENT=1 discover_instance hermes-source VM.Standard.A1.Flex "" \
+    "${OCI_DISPLAY_HERMES_SOURCE:-dial-hermes-control}")"
 
-  local admin_id admin_comp vekl_id vekl_comp a1_id a1_comp
+  local admin_id admin_comp vekl_id vekl_comp a1_id a1_comp src_id="" src_comp=""
   IFS=$'\t' read -r admin_id admin_comp _ _ <<<"$admin"
   IFS=$'\t' read -r vekl_id vekl_comp _ _ <<<"$vekl"
   IFS=$'\t' read -r a1_id a1_comp _ _ <<<"$a1"
+  [[ -z "$src" ]] || IFS=$'\t' read -r src_id src_comp _ _ <<<"$src"
 
   [[ "$admin_id" != "$vekl_id" && "$admin_id" != "$a1_id" && "$vekl_id" != "$a1_id" ]] || {
     echo "REFUSE: Oracle physical instance identities are not unique" >&2
     exit 23
   }
-  [[ "$admin_comp" == "$vekl_comp" && "$admin_comp" == "$a1_comp" ]] || {
+  [[ -z "$src_id" || ( "$src_id" != "$a1_id" && "$src_id" != "$admin_id" && "$src_id" != "$vekl_id" ) ]] || {
+    echo "REFUSE: the migration source resolved to a retained peer" >&2
+    exit 23
+  }
+  [[ "$admin_comp" == "$vekl_comp" && "$admin_comp" == "$a1_comp" && ( -z "$src_comp" || "$src_comp" == "$admin_comp" ) ]] || {
     echo "REFUSE: Oracle recovery targets span multiple compartments; bounded recovery expects one compartment" >&2
     exit 24
   }
@@ -204,11 +232,12 @@ discover() {
   tmp="$(mktemp)"
   cat >"$tmp" <<EOF
 # Auto-discovered non-secret OCI inventory.
-# A1 remains one physical transition peer; DIAL does not create a fourth old-control target.
+# Retained: van-trading-core, vekl-worker, oracle-admin. The source is empty once terminated.
 DIAL_OCI_COMPARTMENT=$admin_comp
 VAN_TRADING_CORE_OCID=$a1_id
 VEKL_WORKER_OCID=$vekl_id
 ORACLE_ADMIN_OCID=$admin_id
+DIAL_HERMES_CONTROL_SOURCE_OCID=$src_id
 EOF
   sudo install -m 0600 "$tmp" "$ESTATE"
   rm -f "$tmp"
@@ -225,7 +254,7 @@ EOF
 
   echo "OCI_RECOVERY_DISCOVERY=GREEN"
   echo "oracle_targets=3"
-  echo "a1_physical_targets=1"
+  echo "hermes_source_present=$([[ -n "$src_id" ]] && echo true || echo false)"
   echo "estate_file=$ESTATE"
 }
 

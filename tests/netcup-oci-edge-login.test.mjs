@@ -154,6 +154,92 @@ describe('oci-edge-login finish', () => {
     expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
   });
 
+  it('records van-trading-core and the separate dial-hermes-control source, and enrolls both for Run Command', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const estate = fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8');
+    expect(estate).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van');
+    expect(estate).toContain('DIAL_HERMES_CONTROL_SOURCE_OCID=ocid1.instance.oc1..a1src');
+    const rule = fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8');
+    expect(rule).toContain("instance.id = 'ocid1.instance.oc1..a1van'");
+    expect(rule).toContain("instance.id = 'ocid1.instance.oc1..a1src'");
+  });
+
+  it('works once the source has been terminated: van-trading-core stays, the source drops out', () => {
+    const ctx = setup();
+    ctx.env.FAKE_NO_SOURCE = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const estate = fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8');
+    expect(estate).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van');
+    expect(estate).toMatch(/^DIAL_HERMES_CONTROL_SOURCE_OCID=$/m);
+    expect(fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8')).not.toContain('a1src');
+  });
+
+  it('keeps the session and lists candidates when two van-trading-core instances match, without touching IAM', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DUP_VAN = '1';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.code).toBe(27);
+    expect(r.out).toContain('OCI_EDGE_SESSION=KEPT_FOR_RETRY');
+    expect(r.err).toContain('CANDIDATE van-trading-core ocid=ocid1.instance.oc1..a1van name=van-trading-core');
+    expect(r.err).toContain('CANDIDATE van-trading-core ocid=ocid1.instance.oc1..a1van2 name=van-trading-core');
+    expect(calls(ctx)).not.toMatch(/iam (user|group|policy|dynamic-group)/);
+    expect(calls(ctx)).not.toContain('session terminate');
+    expect(sessionGone(ctx)).toBe(false);
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
+  });
+
+  it('finishes with the owner-pinned van-trading-core on the retry, reusing the kept session', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DUP_VAN = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(27);
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1van2');
+    expect(r.err).not.toMatch(/REFUSE/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
+    expect(fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8')).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van2');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
+  it('refuses a pinned OCID that is not a van-trading-core candidate, and destroys the session', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DUP_VAN = '1';
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1src');
+    expect(r.code).toBe(25);
+    expect(r.err).toContain('pinned van-trading-core OCID');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
+  it('keeps the session and asks for an email when an identity domain rejects the user, without claiming CREATED', () => {
+    const ctx = setup();
+    ctx.env.FAKE_REQUIRE_EMAIL = '1';
+    const r = run(ctx, 'finish', TENANCY);
+    expect(r.code).toBe(40);
+    expect(r.out).toContain('OCI_EDGE_SESSION=KEPT_FOR_RETRY');
+    expect(r.out).toContain('OWNER_INPUT_REQUIRED');
+    expect(r.err).not.toContain('iam_user=CREATED');
+    expect(sessionGone(ctx)).toBe(false);
+    expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
+  });
+
+  it('creates the recovery user with the supplied primary email and finishes on the retry', () => {
+    const ctx = setup();
+    ctx.env.FAKE_REQUIRE_EMAIL = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(40);
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', '', 'owner+dial-netcup-recovery@example.com');
+    expect(r.err).not.toMatch(/REFUSE/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
+    expect(fs.readFileSync(path.join(ctx.state, 'iam/user-email'), 'utf8').trim()).toBe('owner+dial-netcup-recovery@example.com');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
+  it('rejects a malformed recovery user email before touching OCI', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY, 'af-johannesburg-1', '', 'x@y.com; rm -rf /').code).toBe(2);
+    expect(calls(ctx)).toBe('');
+  });
+
   it('rejects a malformed tenancy argument', () => {
     const ctx = setup();
     expect(run(ctx, 'finish', 'ocid1.tenancy.oc1..x; rm -rf /').code).toBe(2);

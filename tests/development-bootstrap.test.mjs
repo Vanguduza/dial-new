@@ -458,23 +458,30 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('deploy/netcup/hermes-control/install-github-oidc-control.sh');
 
     expect(hub).not.toContain('\\\\nOLD_PUB=');
-    expect(hub).not.toContain('10.77.0.5');
-    expect(hub).toContain('ORACLE_A1_WG_PUBLIC_KEY');
-    expect(hub).toContain('10.77.0.4 old-dial-hermes-control van-trading-core');
-    expect(peer).toContain('van-trading-core|old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.4/32');
+    // Owner topology 2026-09-23: van-trading-core (A1) is retained at .4; dial-hermes-control is a
+    // SEPARATE A1 migration source at .5 until it is retired and terminated.
+    expect(hub).toContain('VAN_TRADING_CORE_WG_PUBLIC_KEY');
+    expect(hub).toContain('HERMES_SOURCE_WG_PUBLIC_KEY');
+    expect(hub).not.toContain('ORACLE_A1_WG_PUBLIC_KEY');
+    expect(hub).toContain('10.77.0.4 van-trading-core');
+    expect(hub).not.toContain('10.77.0.4 old-dial-hermes-control');
+    expect(hub).toContain("echo '10.77.0.5 old-dial-hermes-control'");
+    expect(peer).toContain('van-trading-core) ADDR=10.77.0.4/32');
+    expect(peer).toContain('old-dial-hermes-control|dial-hermes-control) ADDR=10.77.0.5/32');
     expect(workflow).not.toContain('OCI_INSTANCE_OLD_CONTROL');
     expect(workflow).not.toContain('OCI_RECOVERY_COMPARTMENT_OCID');
     expect(workflow).not.toContain('instance-agent command create');
-    expect(workflow).toContain('.result.receipt.physical_oracle_instances == 3');
-    expect(workflow).toContain('.result.receipt.a1_physical_instances == 1');
-    expect(ociEnroll).toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
-    expect(ociEnroll).toContain('for HOST_ID in oracle-admin vekl-worker old-dial-hermes-control; do');
-    expect(ociEnroll).toContain('physical_oracle_instances:3');
-    expect(ociEnroll).toContain('a1_physical_instances:1');
+    expect(workflow).toContain('.result.receipt.retained_oracle_instances == 3');
+    expect(workflow).toContain('.result.receipt.peers.van_trading_core');
+    expect(workflow).not.toContain('a1_transition');
+    expect(ociEnroll).toContain('[van-trading-core]="$VAN_TRADING_CORE_OCID"');
+    expect(ociEnroll).not.toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
+    expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
+    expect(ociEnroll).toContain('retained_oracle_instances:3');
     expect(ociEnroll).toContain('oracle-peer-keys.json');
     expect(prepareOci).toContain('github-oci-ready');
     expect(prepareOci).toContain('oracle_targets=3');
-    expect(prepareOci).toContain('a1_physical_targets=1');
+    expect(prepareOci).toContain('DIAL_HERMES_CONTROL_SOURCE_OCID=$src_id');
     expect(housekeepingEstate).toContain('for HOST_ID in oracle-admin vekl-worker; do');
     expect(housekeepingEstate).not.toContain('van-trading-core]=');
     expect(housekeepingEstate).toContain('overlay-verified');
@@ -485,19 +492,26 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain("case 'retire-a1-control-role'");
     expect(controller).toContain("final certification requires retired A1 control role");
     expect(controller).toContain("a1.hostname!=='van-trading-core'");
+    expect(controller).toContain('dial-hermes-control must be terminated before certification');
+    expect(controller).toContain("const SOURCE_IP='10.77.0.5'");
     expect(retireA1).toContain('migration-cutover-complete');
     expect(retireA1).toContain('netcup-control-active');
     expect(retireA1).toContain('source-retirement-preflight-complete');
-    expect(retireA1).toContain('rm -rf /var/lib/dial-control');
-    expect(retireA1).toContain('rm -rf "$HOME/.hermes" "$HOME/dial-new"');
-    expect(retireA1).toContain('ROLE=VAN_TRADING_CORE');
-    expect(retireA1).toContain('test -s /etc/wireguard/wg-dial.conf');
-    expect(retireA1).toContain('provider_user_credentials_preserved=true');
+    // Retirement acts only on the separate source: no deletion, no rename into van-trading-core.
+    expect(retireA1).toContain('refusing to act on any other peer');
+    expect(retireA1).toContain('answers as van-trading-core');
+    expect(retireA1).not.toContain('rm -rf /var/lib/dial-control');
+    expect(retireA1).not.toContain('ROLE=VAN_TRADING_CORE');
+    expect(retireA1).not.toContain('hostnamectl set-hostname');
+    expect(retireA1).toContain('NEXT_OWNER_ACTION=terminate OCI instance dial-hermes-control');
     expect(hybridEstate.total_vms).toBe(4);
     expect(hybridEstate.vms.filter((x) => x.provider === 'oracle')).toHaveLength(3);
     expect(hybridEstate.vms.map((x) => x.host_id)).toContain('van-trading-core');
-    expect(hybridEstate.retired_after_cutover[0].physical_instance).toContain('same Oracle A1 VM');
-    expect(hybridEstate.retired_after_cutover[0].final_host_id).toBe('van-trading-core');
+    expect(hybridEstate.migration_source.oci_display_name).toBe('dial-hermes-control');
+    expect(hybridEstate.migration_source.overlay_address).toBe('10.77.0.5');
+    expect(hybridEstate.retired_after_cutover[0].physical_instance).toContain('never van-trading-core');
+    expect(hybridEstate.retired_after_cutover[0].disposition).toContain('OWNER_TERMINATES_INSTANCE');
+    expect(hybridEstate.retired_after_cutover[0].final_host_id).toBeNull();
 
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "estate_id": "DIAL_VAN_HYBRID_ESTATE_V1",
   "total_vms": 4,
-  "note": "Four-VM owner estate: Netcup Dial Control plus exactly three Oracle VMs. The Oracle A1 is one physical transition host: it is the old Oracle DIAL/Hermes control source only during migration, then its old control installation/state is deleted and the same VM remains as van-trading-core. DIAL resource-fabric hosts.json governs the DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository.",
+  "note": "Four-VM owner estate after migration: Netcup Dial Control plus exactly three retained Oracle VMs (van-trading-core, vekl-worker, oracle-admin), all peers of the Netcup WireGuard hub. During migration a fifth, transient Oracle A1 exists: dial-hermes-control, the old Oracle DIAL/Hermes control source. Hermes and its files are cloned from it to Netcup, its control units are retired, and the owner then terminates the instance. It is a separate physical VM, never the same VM as van-trading-core (owner topology decision 2026-09-23). DIAL resource-fabric hosts.json governs the DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository.",
   "vms": [
     {
       "host_id": "dial-hermes-control",
@@ -65,24 +65,13 @@
   ],
   "retired_after_cutover": [
     {
-      "host_id": "old-oracle-dial-hermes-control",
-      "physical_instance": "same Oracle A1 VM that becomes van-trading-core",
-      "disposition": "DELETE_OLD_DIAL_HERMES_CONTROL_ROLE_INSTALLATION_AND_STATE; RETAIN_PHYSICAL_VM_AS_VAN_TRADING_CORE",
+      "host_id": "old-dial-hermes-control",
+      "physical_instance": "separate Oracle A1 VM named dial-hermes-control; never van-trading-core",
+      "disposition": "CLONE_HERMES_INSTALLATION_AND_FILES_TO_NETCUP; STOP_AND_DISABLE_CONTROL_UNITS; REMOVE_FROM_OVERLAY; OWNER_TERMINATES_INSTANCE",
       "condition": "Only after the final Hermes/control delta is cloned to Netcup, Netcup CORE_DEVELOPMENT verification is green, the private overlay is verified, identities are rotated, and Dial Control is active.",
-      "preserved_on_a1": [
-        "SSH",
-        "WIREGUARD",
-        "GENERAL_PROVIDER_USER_CREDENTIALS",
-        "VAN_VATI_OWNED_PATHS"
-      ],
-      "deleted_from_a1": [
-        "/var/lib/dial-control",
-        "/home/ubuntu/.hermes",
-        "/home/ubuntu/dial-new",
-        "former DIAL/Hermes control user units"
-      ],
-      "final_host_id": "van-trading-core",
-      "final_overlay_address": "10.77.0.4"
+      "data_on_source": "KEPT_UNTIL_TERMINATION_AS_FALLBACK",
+      "certification_requires": "OCI lifecycle-state TERMINATED or TERMINATING for DIAL_HERMES_CONTROL_SOURCE_OCID",
+      "final_host_id": null
     }
   ],
   "control_paths": {
@@ -107,9 +96,13 @@
         "oracle-admin": "10.77.0.2",
         "vekl-worker": "10.77.0.3",
         "van-trading-core": "10.77.0.4",
-        "dial-control": "10.77.0.1"
+        "dial-control": "10.77.0.1",
+        "old-dial-hermes-control": "10.77.0.5"
       },
-      "rule": "Each Oracle VM is an independent outbound peer to Netcup; oracle-admin is not a transit dependency."
+      "rule": "Each Oracle VM is an independent outbound peer to Netcup; oracle-admin is not a transit dependency.",
+      "transient_addresses": {
+        "old-dial-hermes-control": "10.77.0.5 until retired and terminated"
+      }
     },
     "application_planes": [
       "DIAL_MCP",
@@ -122,8 +115,18 @@
     "owner_recovery_plane": "GITHUB_ACTIONS_NETCUP_ADMIN"
   },
   "lifecycle_rules": {
-    "oracle_a1_transition": "old-dial-hermes-control is a temporary compatibility identity for the same A1 physical VM; it must never be enrolled as a separate fourth Oracle peer.",
-    "source_retirement": "Final zero-touch certification is forbidden until the A1 hostname/role is van-trading-core and the former DIAL/Hermes control state is absent."
+    "oracle_a1_transition": "old-dial-hermes-control is the separate dial-hermes-control A1 (migration source), enrolled as a transient overlay peer at 10.77.0.5 only until retired; it is never the van-trading-core VM and is terminated by the owner after cloning.",
+    "source_retirement": "Final zero-touch certification is forbidden until van-trading-core (10.77.0.4) answers as itself, the migration source is no longer an overlay peer, and OCI reports DIAL_HERMES_CONTROL_SOURCE_OCID as TERMINATED or TERMINATING."
+  },
+  "migration_source": {
+    "host_id": "old-dial-hermes-control",
+    "oci_display_name": "dial-hermes-control",
+    "provider": "oracle",
+    "shape": "VM.Standard.A1.Flex",
+    "architecture": "arm64",
+    "lifecycle": "TRANSIENT_MIGRATION_SOURCE",
+    "overlay_address": "10.77.0.5",
+    "estate_inventory_key": "DIAL_HERMES_CONTROL_SOURCE_OCID"
   },
   "subordinate_planes": {
     "android_testing": {
