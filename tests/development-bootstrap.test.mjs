@@ -395,6 +395,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(recoveryWorkflow).toContain('INSTALLED_FILESYSTEM_CONTROL_PLANE_PRESTAGE=GREEN');
     expect(recoveryWorkflow).toContain('DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN');
     expect(recoveryWorkflow).toContain('POST_RESCUE_ACCEPTANCE_FAILED');
+    expect(recoveryWorkflow).not.toContain('Normal Ubuntu entered terminal state $state_now');
+    expect(recoveryWorkflow).toContain('SHUTOFF_AFTER_RUNNING');
+    expect(recoveryWorkflow).toContain('60-second boot grace period');
+    expect(recoveryWorkflow).toContain('shutoff_streak=0');
+    expect(recoveryWorkflow).toContain('running_seen=false');
     expect(recoveryWorkflow).toContain('/healthz');
     expect(recoveryWorkflow).not.toContain('DIAL_CONTROL_RECOVERY=NOT_REQUIRED_OIDC_ALREADY_UP');
     expect(recoveryWorkflow).not.toContain('dial-root-verify.sh');

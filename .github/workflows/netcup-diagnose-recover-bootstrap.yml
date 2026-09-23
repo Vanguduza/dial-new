@@ -468,6 +468,9 @@ jobs:
           }
 
           accepted=false
+          running_seen=false
+          shutoff_streak=0
+          terminal_reason=""
           for attempt in $(seq 1 120); do
             SERVER_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" || echo '{}')"
             GUEST_NOW="$(api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" || echo '{}')"
@@ -487,17 +490,37 @@ jobs:
               health_ok=true
             fi
 
+            if [[ "$state_now" == RUNNING ]]; then
+              running_seen=true
+              shutoff_streak=0
+            elif [[ "$state_now" == SHUTOFF ]]; then
+              shutoff_streak=$((shutoff_streak + 1))
+            else
+              shutoff_streak=0
+            fi
+
             if [[ "$state_now" == RUNNING && "$ssh_now" == true && "$health_ok" == true ]]; then
               accepted=true
               echo "DIAL_CONTROL_POST_RESCUE_ACCEPTANCE=GREEN state=$state_now guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
               break
             fi
-            if [[ "$state_now" == CRASHED || "$state_now" == SHUTOFF ]]; then
-              echo "::error::Normal Ubuntu entered terminal state $state_now"
+            if [[ "$state_now" == CRASHED ]]; then
+              terminal_reason="CRASHED"
+              echo "::error::Normal Ubuntu entered terminal state CRASHED"
+              break
+            fi
+            if [[ "$state_now" == SHUTOFF && "$running_seen" == true && "$shutoff_streak" -ge 3 ]]; then
+              terminal_reason="SHUTOFF_AFTER_RUNNING"
+              echo "::error::Normal Ubuntu remained SHUTOFF for $shutoff_streak consecutive polls after RUNNING"
+              break
+            fi
+            if [[ "$state_now" == SHUTOFF && "$running_seen" == false && "$attempt" -ge 12 && "$shutoff_streak" -ge 3 ]]; then
+              terminal_reason="SHUTOFF_BOOT_TIMEOUT"
+              echo "::error::Normal Ubuntu remained SHUTOFF after the 60-second boot grace period"
               break
             fi
             if (( attempt % 6 == 0 )); then
-              echo "POST_RESCUE_ACCEPTANCE_WAIT attempt=$attempt/120 state=$state_now guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
+              echo "POST_RESCUE_ACCEPTANCE_WAIT attempt=$attempt/120 state=$state_now running_seen=$running_seen shutoff_streak=$shutoff_streak guest_agent=$guest_now ssh=$ssh_now health=$health_ok"
               jq '{ok,host,bootstrap_ref,bootstrap_phase,repo_head}' <<<"$health_json" 2>/dev/null || true
             fi
             sleep 5
@@ -508,9 +531,8 @@ jobs:
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID" | jq '{serverLiveInfo,rescueSystemActive}' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/guest-agent/status" | jq '.' || true
             api_get "$NETCUP_SCP_API_BASE_URL/v1/servers/$SERVER_ID/logs?limit=50&offset=0" | jq '[.[] | {date,type,logKey,message}]' || true
-            echo "::error::POST_RESCUE_ACCEPTANCE_FAILED: exact SSH + CONTROL_PLANE_READY health contract not reached within 10 minutes"
+            echo "::error::POST_RESCUE_ACCEPTANCE_FAILED: exact SSH + CONTROL_PLANE_READY health contract not reached (terminal_reason=${terminal_reason:-TIMEOUT})"
             exit 40
           fi
-
           echo "DIAL_CONTROL_RECOVERY=GREEN"
           exit 0
