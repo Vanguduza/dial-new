@@ -9,13 +9,13 @@
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
     "deploy/netcup/hermes-control/oci-edge-login.sh",
-    "deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh",
+    "tests/fixtures/fake-oci-cli.sh",
     "tests/netcup-oci-edge-login.test.mjs"
   ],
-  "content_diff_sha256": "b3d856bd15e744b3884e164ebd971bfca829cda28d2bdcb3072cc60af4a69dc0",
-  "observed_at_utc": "2026-09-23T10:01:11.322155+00:00",
+  "content_diff_sha256": "11e7a32ca9d52db4cb262712534acff439f2d06d1e54c6e06c9e299cb6d97ef4",
+  "observed_at_utc": "2026-09-23T10:19:18.333628+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "40a1807d3d46fcd6333411dc0ccc4bf84c33559b",
+  "source_parent": "1b571b8ef10f4657f97804cd39e35a7da9e1e1a2",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

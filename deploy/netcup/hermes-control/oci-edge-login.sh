@@ -285,6 +285,10 @@ finish() {
   [[ "$sub" == ocid1.user.* ]] || die "session subject is not a user" 22
   oci_session iam region list >/dev/null || die "session was not accepted by OCI" 24
   say "OCI_EDGE_SESSION=VERIFIED"
+  # From here the session is known-good (right tenancy, not expiring). Any later failure is ours to
+  # fix, so keep it for the retry instead of costing the owner another browser login; it still
+  # expires on its own TTL. Success below destroys it explicitly.
+  KEEP_SESSION=1
 
   # The recovery key pair is generated on this host by prepare-oci-recovery.sh; ensure it exists.
   as_admin bash "$LIB/prepare-oci-recovery.sh" status >/dev/null
@@ -365,7 +369,8 @@ finish() {
       --statements "$statements" --wait-for-state ACTIVE >/dev/null
     say "iam_policy=CREATED"
   else
-    oci_session iam policy update --policy-id "$policy" --statements "$statements" --force >/dev/null
+    # oci-cli 3.93.0 requires --version-date whenever --statements is updated; "" means current behaviour.
+    oci_session iam policy update --policy-id "$policy" --statements "$statements" --version-date "" --force >/dev/null
     say "iam_policy=RECONCILED"
   fi
 
@@ -404,6 +409,7 @@ finish() {
   durable_discover "$a1_pin" || drc=$?
   [[ "$drc" == 0 ]] || die "durable discovery failed ($drc); the key is registered, run rediscover_oci_estate" "$drc"
   say "recovery_user=$user"
+  KEEP_SESSION=0
   say "OCI_EDGE_LOGIN=FINISHED"
 }
 

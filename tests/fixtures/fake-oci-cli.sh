@@ -60,7 +60,11 @@ case "$1 $2 $3" in
       echo '{"data":{}}'
     fi ;;
   "iam dynamic-group update") opt --matching-rule "$@" >"$S/iam/dg-rule"; echo '{"data":{}}' ;;
-  "iam policy update") opt --statements "$@" >"$S/iam/policy-statements"; echo '{"data":{}}' ;;
+  "iam policy update")
+    # oci-cli 3.93.0: "If updating either statements or version date, both parameters must be specified."
+    has_vd=0; for a in "$@"; do [[ "$a" == --version-date ]] && has_vd=1; done
+    [[ "$has_vd" == 1 ]] || { echo "If updating either statements or version date, both parameters must be specified." >&2; exit 1; }
+    opt --statements "$@" >"$S/iam/policy-statements"; echo '{"data":{}}' ;;
   "iam user create")
     # Identity-domain tenancies reject a user without a primary email (IdcsConversionError).
     if [[ "${FAKE_REQUIRE_EMAIL:-0}" == 1 && -z "$(opt --email "$@")" ]]; then

@@ -204,13 +204,14 @@ describe('oci-edge-login finish', () => {
     expect(sessionGone(ctx)).toBe(true);
   });
 
-  it('refuses a pinned OCID that is not a van-trading-core candidate, and destroys the session', () => {
+  it('refuses a pinned OCID that is not a van-trading-core candidate, keeping the verified session for the retry', () => {
     const ctx = setup();
     ctx.env.FAKE_DUP_VAN = '1';
     const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1src');
     expect(r.code).toBe(25);
     expect(r.err).toContain('pinned van-trading-core OCID');
-    expect(sessionGone(ctx)).toBe(true);
+    expect(calls(ctx)).not.toMatch(/iam (user|group|policy|dynamic-group)/);
+    expect(sessionGone(ctx)).toBe(false);
   });
 
   it('keeps the session and asks for an email when an identity domain rejects the user, without claiming CREATED', () => {
@@ -269,7 +270,6 @@ describe('oci-edge-login finish', () => {
     const ctx = setup();
     ctx.env.FAKE_DURABLE_LIST_FAILS = '1000';
     expect(run(ctx, 'finish', TENANCY).code).toBe(26);
-    expect(sessionGone(ctx)).toBe(true);
     ctx.env.FAKE_DURABLE_LIST_FAILS = '0';
     const r = run(ctx, 'rediscover');
     expect(r.err).not.toMatch(/REFUSE/);
@@ -283,6 +283,21 @@ describe('oci-edge-login finish', () => {
     const ctx = setup({ session: false });
     const r = run(ctx, 'rediscover');
     expect(r.code).toBe(21);
+  });
+
+  it('keeps a verified session when a later IAM step fails, so the retry needs no new login', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);      // policy exists now
+    const again = setup();
+    again.env.FAKE_DURABLE_LIST_FAILS = '1000';            // a failure after verification
+    expect(run(again, 'finish', TENANCY).code).toBe(26);
+    expect(sessionGone(again)).toBe(false);
+    again.env.FAKE_DURABLE_LIST_FAILS = '0';
+    fs.writeFileSync(path.join(again.state, 'durable-list-fails'), '0');
+    const r = run(again, 'finish', TENANCY);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('iam_policy=RECONCILED');
+    expect(sessionGone(again)).toBe(true);
   });
 
   it('rejects a malformed tenancy argument', () => {
