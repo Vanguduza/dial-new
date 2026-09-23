@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 umask 077
 
-REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
+REPO="${DIAL_RUNTIME_ROOT:-/usr/local/lib/dial-control/runtime}"
 KEY=/home/ubuntu/.ssh/dial-oracle-admin
 [[ -s "$KEY" ]] || KEY=/home/ubuntu/.ssh/dial-bootstrap-oracle
 
