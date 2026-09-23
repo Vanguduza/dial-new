@@ -262,6 +262,71 @@ finish_exit() {
   if [[ "$KEEP_SESSION" == 1 ]]; then stop_bridge; else destroy_session; fi
 }
 
+# Shared by every operation that uses the owner's browser session. Refuses (and destroys) a
+# session for another tenancy, one about to expire, or one OCI rejects; then keeps a verified
+# session across later failures so a retry needs no new login. Sets SESSION_SUB/TENANT/EXP.
+verify_session() {
+  local expected_tenancy="$1"
+  if ! session_present; then
+    if bridge_active; then say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"; exit 20; fi
+    say "OCI_EDGE_SESSION=ABSENT"; exit 21
+  fi
+  trap 'finish_exit' EXIT
+  read -r SESSION_SUB SESSION_TENANT SESSION_EXP < <(token_claims) || die "session token unreadable" 22
+  [[ "$SESSION_TENANT" == "$expected_tenancy" ]] || die "session belongs to a different tenancy; destroyed" 22
+  (( SESSION_EXP - $(date +%s) >= 120 )) || die "session expires in under two minutes; start a new login" 23
+  [[ "$SESSION_SUB" == ocid1.user.* ]] || die "session subject is not a user" 22
+  oci_session iam region list >/dev/null || die "session was not accepted by OCI" 24
+  say "OCI_EDGE_SESSION=VERIFIED"
+  KEEP_SESSION=1
+}
+
+# Owner-session operation: enable the Compute Instance Run Command plugin on every estate VM.
+# The recovery user deliberately cannot change instance configuration. Each VM's current agent
+# config is read and only Run Command (and management plugins, which it belongs to) is switched
+# on; every other plugin keeps its desired state.
+enable_run_command() {
+  local expected_tenancy="${1:-}"
+  [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
+  verify_session "$expected_tenancy"
+  [[ -s "$ESTATE" ]] || die "estate inventory missing; run finish or rediscover first" 26
+  # shellcheck source=/dev/null
+  source "$ESTATE"
+  local name id current desired tmp
+  tmp="$(mktemp -d)"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp" 2>/dev/null || true
+  for name in oracle-admin vekl-worker van-trading-core dial-hermes-control; do
+    case "$name" in
+      oracle-admin) id="${ORACLE_ADMIN_OCID:-}" ;;
+      vekl-worker) id="${VEKL_WORKER_OCID:-}" ;;
+      van-trading-core) id="${VAN_TRADING_CORE_OCID:-}" ;;
+      dial-hermes-control) id="${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" ;;
+    esac
+    [[ "$id" == ocid1.instance.* ]] || { say "run_command_${name//-/_}=SKIPPED_ABSENT"; continue; }
+    current="$(oci_session compute instance get --instance-id "$id" --query 'data."agent-config"')"
+    desired="$(jq -c '{
+        isMonitoringDisabled: (."is-monitoring-disabled" // false),
+        isManagementDisabled: false,
+        areAllPluginsDisabled: false,
+        pluginsConfig: ([(."plugins-config" // [])[] | {name, desiredState: ."desired-state"}
+                         | select(.name != "Compute Instance Run Command")]
+                        + [{name: "Compute Instance Run Command", desiredState: "ENABLED"}])
+      }' <<<"$current")"
+    if jq -e '(."is-management-disabled" // false) == false and (."are-all-plugins-disabled" // false) == false
+              and ([(."plugins-config" // [])[] | select(.name == "Compute Instance Run Command" and ."desired-state" == "ENABLED")] | length) == 1' \
+         <<<"$current" >/dev/null; then
+      say "run_command_${name//-/_}=ALREADY_ENABLED"
+      continue
+    fi
+    printf '%s' "$desired" >"$tmp/$name.json"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp/$name.json" 2>/dev/null || true
+    oci_session compute instance update --instance-id "$id" --agent-config "file://$tmp/$name.json" --force >/dev/null
+    say "run_command_${name//-/_}=ENABLED"
+  done
+  rm -rf "$tmp"
+  KEEP_SESSION=0
+  say "OCI_RUN_COMMAND_ENABLE=FINISHED"
+  say "NEXT_OWNER_ACTION=grant ocarun passwordless sudo on each VM (/etc/sudoers.d/90-dial-ocarun); OCI cannot do this"
+}
+
 finish() {
   local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}" user_email="${4:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
@@ -270,25 +335,8 @@ finish() {
   # Identity-domain tenancies require a primary email on every user (IdcsConversionError otherwise).
   [[ -z "$user_email" || "$user_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || die "invalid recovery user email"
 
-  if ! session_present; then
-    if bridge_active; then say "OCI_EDGE_SESSION=PENDING_OWNER_LOGIN"; exit 20; fi
-    say "OCI_EDGE_SESSION=ABSENT"; exit 21
-  fi
-
-  # From here on the session is destroyed on every exit path, except an ambiguous discovery.
-  trap 'finish_exit' EXIT
-
-  local sub tenant exp
-  read -r sub tenant exp < <(token_claims) || die "session token unreadable" 22
-  [[ "$tenant" == "$expected_tenancy" ]] || die "session belongs to a different tenancy; destroyed" 22
-  (( exp - $(date +%s) >= 120 )) || die "session expires in under two minutes; start a new login" 23
-  [[ "$sub" == ocid1.user.* ]] || die "session subject is not a user" 22
-  oci_session iam region list >/dev/null || die "session was not accepted by OCI" 24
-  say "OCI_EDGE_SESSION=VERIFIED"
-  # From here the session is known-good (right tenancy, not expiring). Any later failure is ours to
-  # fix, so keep it for the retry instead of costing the owner another browser login; it still
-  # expires on its own TTL. Success below destroys it explicitly.
-  KEEP_SESSION=1
+  verify_session "$expected_tenancy"
+  local sub="$SESSION_SUB" tenant="$SESSION_TENANT" exp="$SESSION_EXP"
 
   # The recovery key pair is generated on this host by prepare-oci-recovery.sh; ensure it exists.
   as_admin bash "$LIB/prepare-oci-recovery.sh" status >/dev/null
@@ -418,6 +466,7 @@ case "$MODE" in
   status) status ;;
   finish) finish "${2:-}" "${3:-}" "${4:-}" "${5:-}" ;;
   rediscover) rediscover "${2:-}" ;;
+  enable-run-command) enable_run_command "${2:-}" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
   *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]|abort}" >&2; exit 2 ;;
 esac

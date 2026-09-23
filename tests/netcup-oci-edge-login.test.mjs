@@ -300,6 +300,41 @@ describe('oci-edge-login finish', () => {
     expect(sessionGone(again)).toBe(true);
   });
 
+  it('enables Run Command on every estate VM with the owner session, preserving other plugins', () => {
+    const ctx = setup();
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);           // estate inventory exists
+    const again = setup();
+    const w = (id, cfg) => fs.writeFileSync(path.join(again.state, `agent-${id}.json`), JSON.stringify(cfg));
+    w('ocid1.instance.oc1..admin', { 'is-management-disabled': false, 'are-all-plugins-disabled': false,
+      'plugins-config': [{ name: 'Compute Instance Run Command', 'desired-state': 'ENABLED' }] });
+    w('ocid1.instance.oc1..vekl', { 'is-management-disabled': true, 'are-all-plugins-disabled': false,
+      'plugins-config': [{ name: 'Bastion', 'desired-state': 'ENABLED' }, { name: 'Compute Instance Run Command', 'desired-state': 'ENABLED' }] });
+    w('ocid1.instance.oc1..a1src', { 'is-management-disabled': false, 'plugins-config': [{ name: 'Bastion', 'desired-state': 'ENABLED' }] });
+    const r = run(again, 'enable-run-command', TENANCY);
+    expect(r.err).not.toMatch(/REFUSED/);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('run_command_oracle_admin=ALREADY_ENABLED');
+    expect(r.out).toContain('run_command_vekl_worker=ENABLED');
+    expect(r.out).toContain('run_command_van_trading_core=ENABLED');
+    expect(r.out).toContain('run_command_dial_hermes_control=ENABLED');
+    const vekl = JSON.parse(fs.readFileSync(path.join(again.state, 'agent-update-ocid1.instance.oc1..vekl.json'), 'utf8'));
+    expect(vekl.isManagementDisabled).toBe(false);
+    expect(vekl.pluginsConfig).toContainEqual({ name: 'Bastion', desiredState: 'ENABLED' });
+    expect(vekl.pluginsConfig).toContainEqual({ name: 'Compute Instance Run Command', desiredState: 'ENABLED' });
+    const src = JSON.parse(fs.readFileSync(path.join(again.state, 'agent-update-ocid1.instance.oc1..a1src.json'), 'utf8'));
+    expect(src.pluginsConfig).toContainEqual({ name: 'Bastion', desiredState: 'ENABLED' });
+    expect(fs.existsSync(path.join(again.state, 'agent-update-ocid1.instance.oc1..admin.json'))).toBe(false);
+    expect(sessionGone(again)).toBe(true);
+  });
+
+  it('refuses enable-run-command with a session for another tenancy', () => {
+    const ctx = setup({ tenant: OTHER_TENANCY });
+    const r = run(ctx, 'enable-run-command', TENANCY);
+    expect(r.code).toBe(22);
+    expect(calls(ctx)).not.toContain('compute instance update');
+    expect(sessionGone(ctx)).toBe(true);
+  });
+
   it('rejects a malformed tenancy argument', () => {
     const ctx = setup();
     expect(run(ctx, 'finish', 'ocid1.tenancy.oc1..x; rm -rf /').code).toBe(2);

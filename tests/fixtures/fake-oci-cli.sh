@@ -48,6 +48,13 @@ case "$1 $2 $3" in
         else echo '{"data":[{"id":"ocid1.instance.oc1..a1van","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-09-20T00:00:00Z"}]}'; fi ;;
       *) echo '{"data":[]}' ;;
     esac ;;
+  "compute instance get")
+    id="$(opt --instance-id "$@")"
+    if [[ -f "$S/agent-$id.json" ]]; then cat "$S/agent-$id.json"
+    else echo '{"is-management-disabled": false, "is-monitoring-disabled": false, "are-all-plugins-disabled": false, "plugins-config": null}'; fi ;;
+  "compute instance update")
+    id="$(opt --instance-id "$@")"; ac="$(opt --agent-config "$@")"
+    cat "${ac#file://}" >"$S/agent-update-$id.json"; echo '{"data":{}}' ;;
   "iam user list-groups") [[ -f "$S/iam/member" ]] && echo '{"data":[{"id":"ocid1.group.oc1..g"}]}' || echo '{"data":[]}' ;;
   "iam group add-user") touch "$S/iam/member"; echo '{"data":{}}' ;;
   "iam user update-user-capabilities") echo '{"data":{}}' ;;

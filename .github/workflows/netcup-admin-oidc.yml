@@ -16,6 +16,7 @@ on:
           - finish_oci_edge_login
           - abort_oci_edge_login
           - rediscover_oci_estate
+          - enable_oci_run_command
           - custom
       command:
         description: Custom root command. Used only when operation=custom. Never place secrets here.
@@ -170,13 +171,16 @@ jobs:
           /usr/local/lib/dial-control/owner-oci-handoff.sh configure-and-discover $USER_Q $TENANCY_Q $REGION_Q
           EOF
               ;;
-            start_oci_edge_login|oci_edge_login_status|finish_oci_edge_login|abort_oci_edge_login|rediscover_oci_estate)
+            start_oci_edge_login|oci_edge_login_status|finish_oci_edge_login|abort_oci_edge_login|rediscover_oci_estate|enable_oci_run_command)
               [[ "$OCI_REGION" =~ ^[a-z]{2}-[a-z]+-[0-9]+$ ]] || { echo "::error::Valid OCI region required"; exit 3; }
               REGION_Q="$(printf '%q' "$OCI_REGION")"
               case "$OPERATION" in
                 start_oci_edge_login)  ARGS="start $REGION_Q" ;;
                 oci_edge_login_status) ARGS="status" ;;
                 abort_oci_edge_login)  ARGS="abort" ;;
+                enable_oci_run_command)
+                  [[ "$OCI_TENANCY_OCID" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Valid oci_tenancy_ocid required"; exit 3; }
+                  ARGS="enable-run-command $(printf '%q' "$OCI_TENANCY_OCID")" ;;
                 rediscover_oci_estate)
                   [[ -z "$OCI_A1_OCID" || "$OCI_A1_OCID" =~ ^ocid1\.instance\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || { echo "::error::Invalid oci_a1_instance_ocid"; exit 3; }
                   ARGS="rediscover $(printf '%q' "${OCI_A1_OCID:-}")" ;;
@@ -219,7 +223,7 @@ jobs:
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
           jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
           # The OCI login operations print only OCIDs, states and login/callback URLs, never tokens or keys.
-          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
+          if [[ "$OPERATION" == *oci_edge_login* || "$OPERATION" == rediscover_oci_estate || "$OPERATION" == enable_oci_run_command ]]; then jq -r '.result.stdout' <<<"$RESPONSE"; fi
           {
             echo "## Dial Control GitHub OIDC admin receipt"
             echo "- operation: \`$OPERATION\`"
