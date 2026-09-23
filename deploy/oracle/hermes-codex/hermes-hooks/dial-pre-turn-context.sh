@@ -16,4 +16,9 @@ cat >"$PAYLOAD"
 node "$DIAL_REPO_DIR/agent-system/orchestration/supervisor.mjs" capture \
   >/dev/null 2>>"$DIAL_CONTROL_HOME/events/pre-turn-hook.err" || true
 
-exec node "$DIAL_REPO_DIR/agent-system/orchestration/context-broker.mjs" --hook <"$PAYLOAD"
+# Resolve the common Hermes-owned project brain. The resolver returns a full
+# capsule only when required; otherwise it sends the delta from this harness'
+# last valid context fingerprint.
+export DIAL_HARNESS_ID="${DIAL_HARNESS_ID:-chatgpt-hermes}"
+export DIAL_PROJECT_ID="${DIAL_PROJECT_ID:-dial}"
+exec node "$DIAL_REPO_DIR/agent-system/orchestration/shared-context-resolver.mjs" --hook <"$PAYLOAD"
