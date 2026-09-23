@@ -64,6 +64,7 @@ sudo ln -sfn "$ARTEMIS_DIR" "$ARTEMIS_ROOT/current"
 node --check "$REPO_DIR/agent-system/orchestration/artemis-subordinate-client.mjs"
 node --check "$REPO_DIR/agent-system/orchestration/android-testing-plane.mjs"
 node --check "$REPO_DIR/agent-system/orchestration/android-testing-mcp.mjs"
+node --check "$REPO_DIR/agent-system/orchestration/android-testing-supervisor.mjs"
 
 if [[ ! -s "$CONTROL_HOME/config/android-testing-devices.json" ]]; then
   cat > "$CONTROL_HOME/config/android-testing-devices.json" <<'JSON'
@@ -76,6 +77,38 @@ if [[ ! -s "$CONTROL_HOME/config/android-testing-devices.json" ]]; then
 JSON
   chmod 600 "$CONTROL_HOME/config/android-testing-devices.json"
 fi
+
+cat > "$UNIT_DIR/dial-artemis-supervisor.service" <<UNIT
+[Unit]
+Description=DIAL Hermes ARTEMIS subordinate task supervisor
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=DIAL_CONTROL_HOME=$CONTROL_HOME
+Environment=DIAL_REPO_DIR=$REPO_DIR
+Environment=DIAL_ARTEMIS_ROOT=$ARTEMIS_DIR
+Environment=DIAL_ARTEMIS_BIN=$ARTEMIS_DIR/.venv/bin/artemis
+Environment=DIAL_ARTEMIS_PYTHON=$ARTEMIS_DIR/.venv/bin/python
+Environment=DIAL_ARTEMIS_BRIDGE=$REPO_DIR/deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
+Environment=DIAL_ADB_BIN=adb
+ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/android-testing-supervisor.mjs
+UNIT
+
+cat > "$UNIT_DIR/dial-artemis-supervisor.timer" <<UNIT
+[Unit]
+Description=Poll Hermes-owned ARTEMIS tasks and seal terminal evidence
+
+[Timer]
+OnBootSec=45s
+OnUnitActiveSec=60s
+AccuracySec=10s
+Persistent=true
+Unit=dial-artemis-supervisor.service
+
+[Install]
+WantedBy=timers.target
+UNIT
 
 cat > "$UNIT_DIR/dial-artemis-ui.service" <<UNIT
 [Unit]
@@ -133,6 +166,7 @@ finally:
 PY
 
 systemctl --user daemon-reload
+systemctl --user enable --now dial-artemis-supervisor.timer >/dev/null
 if [[ "$CONSOLE_ENABLED" == "1" ]]; then
   systemctl --user enable dial-artemis-ui.service >/dev/null
   systemctl --user restart dial-artemis-ui.service
@@ -148,6 +182,7 @@ echo "ARTEMIS_ROLE=HERMES_SUBORDINATE_ANDROID_EXECUTOR"
 echo "RAW_ARTEMIS_MCP=NOT_EXPOSED"
 echo "ARTEMIS_DIRECT_CONSOLE=$([[ "$CONSOLE_ENABLED" == "1" ]] && echo ENABLED_EXPLICITLY || echo DISABLED_BY_DEFAULT)"
 echo "HERMES_MCP=dial_android_testing"
+echo "ARTEMIS_SUPERVISOR_TIMER=dial-artemis-supervisor.timer"
 echo "DEVICE_ADMISSION_FILE=$CONTROL_HOME/config/android-testing-devices.json"
 admitted_count="$(python3 - "$CONTROL_HOME/config/android-testing-devices.json" <<'PY'
 import json,sys
