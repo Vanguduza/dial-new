@@ -267,7 +267,14 @@ jobs:
           rm -f "$LOGDIR/output.log" "$LOGDIR/exit-code"
           fuser -k 8181/tcp >/dev/null 2>&1 || true
           test -x /usr/local/bin/oci
-          systemd-run             --unit=dial-oci-browser-bootstrap             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=WorkingDirectory=/home/ubuntu             /bin/bash -c 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
+          UNIT="dial-oci-browser-bootstrap-$(date +%s%N)"
+          printf '%s\n' "$UNIT" >"$LOGDIR/unit-name"
+          systemd-run --collect --unit="$UNIT" \
+            --property=User=ubuntu \
+            --property=Group=ubuntu \
+            --property=Environment=HOME=/home/ubuntu \
+            --property=WorkingDirectory=/home/ubuntu \
+            /bin/bash -c 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"' >/dev/null
           for attempt in $(seq 1 30); do
             URL="$(grep -Eo 'https://login\.[^[:space:]]+' "$LOGDIR/output.log" 2>/dev/null | head -1 || true)"
             LISTENER="$(ss -ltnH 'sport = :8181' | wc -l)"
