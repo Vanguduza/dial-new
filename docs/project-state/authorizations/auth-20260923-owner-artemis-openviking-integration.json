@@ -15,6 +15,7 @@
   "base_sha": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
   "branch_scope": "gpt/netcup-hermes-artemis-openviking-clean-20260923",
   "authorized_paths": [
+    ".github/workflows/verify.yml",
     "agent-system/orchestration/android-testing-mcp.mjs",
     "agent-system/orchestration/android-testing-plane.mjs",
     "agent-system/orchestration/openviking-projector.mjs",
@@ -37,7 +38,8 @@
     "ops/development-bootstrap/rev5.1/REV5_1_BOOTSTRAP_POLICY.json",
     "ops/development-bootstrap/supply-chain/PINS.json",
     "tests/orchestration-android-testing-plane.test.mjs",
-    "tests/orchestration-openviking-shared-context.test.mjs"
+    "tests/orchestration-openviking-shared-context.test.mjs",
+    "vitest.config.ts"
   ],
   "change_classes": [
     "android_testing_plane",
