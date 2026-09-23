@@ -251,22 +251,11 @@ jobs:
   edge-bootstrap:
     if: ${{ github.event_name == 'push' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Read previous OCI bootstrap diagnostics
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          RAW_COMMAND='set +e; echo OCI_BIN_ROOT=$(command -v oci || true); echo OCI_BIN_UBUNTU=$(runuser -u ubuntu -- bash -lc "command -v oci" 2>/dev/null || true); echo ---OUTPUT---; tail -n 120 /var/lib/dial-control/oci-browser-bootstrap/output.log 2>/dev/null || true; echo ---EXIT---; cat /var/lib/dial-control/oci-browser-bootstrap/exit-code 2>/dev/null || true; echo ---UNIT---; UNIT=$(cat /var/lib/dial-control/oci-browser-bootstrap/unit-name 2>/dev/null || true); [[ -n "$UNIT" ]] && systemctl status "$UNIT.service" --no-pager -l 2>&1 | tail -n 80 || true; echo ---PORT---; ss -ltnp "sport = :8181" || true'
-          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
-          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
-          jq -r '.result.stdout' <<<"$RESPONSE"
-
-      - name: Start OCI browser bootstrap on Dial Control
+      - name: Start OCI bootstrap and publish Edge authorization URL
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -274,47 +263,93 @@ jobs:
           set -Eeuo pipefail
           LOGDIR=/var/lib/dial-control/oci-browser-bootstrap
           install -d -m 0700 -o ubuntu -g ubuntu "$LOGDIR"
+          systemctl stop dial-oci-browser-bootstrap.service >/dev/null 2>&1 || true
           rm -f "$LOGDIR/output.log" "$LOGDIR/exit-code"
           fuser -k 8181/tcp >/dev/null 2>&1 || true
-          UNIT="dial-oci-browser-bootstrap-${GITHUB_RUN_ID:-manual}"
-          printf '%s\n' "$UNIT" >"$LOGDIR/unit-name"
-          systemctl reset-failed "$UNIT.service" >/dev/null 2>&1 || true
-          systemd-run             --unit="$UNIT"             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=Environment=PATH=/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin             --property=WorkingDirectory=/home/ubuntu             /bin/bash -lc 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
-          echo OCI_EDGE_BOOTSTRAP_STARTED=TRUE
+          test -x /usr/local/bin/oci
+          systemd-run             --unit=dial-oci-browser-bootstrap             --property=User=ubuntu             --property=Group=ubuntu             --property=Environment=HOME=/home/ubuntu             --property=WorkingDirectory=/home/ubuntu             /bin/bash -c 'set -o pipefail; printf "N/A\nN/A\n" | /usr/local/bin/oci setup bootstrap --region af-johannesburg-1 --profile-name DIAL_RECOVERY --config-location /home/ubuntu/.oci/config > /var/lib/dial-control/oci-browser-bootstrap/output.log 2>&1; rc=$?; printf "%s\n" "$rc" > /var/lib/dial-control/oci-browser-bootstrap/exit-code; exit "$rc"'             >/dev/null
+          for attempt in $(seq 1 30); do
+            URL="$(grep -Eo 'https://login\.[^[:space:]]+' "$LOGDIR/output.log" 2>/dev/null | head -1 || true)"
+            LISTENER="$(ss -ltnH 'sport = :8181' | wc -l)"
+            if [[ -n "$URL" && "$LISTENER" -ge 1 ]]; then
+              echo "OCI_EDGE_AUTH_URL=$URL"
+              echo "OCI_EDGE_CALLBACK_LISTENER=GREEN"
+              exit 0
+            fi
+            if ! systemctl is-active --quiet dial-oci-browser-bootstrap.service; then
+              echo "OCI_EDGE_BOOTSTRAP_LOCAL_FAILURE"
+              cat "$LOGDIR/output.log" 2>/dev/null || true
+              systemctl status dial-oci-browser-bootstrap.service --no-pager -l 2>&1 || true
+              exit 20
+            fi
+            sleep 1
+          done
+          echo "OCI_EDGE_BOOTSTRAP_URL_TIMEOUT"
+          cat "$LOGDIR/output.log" 2>/dev/null || true
+          exit 21
           CMD
           )"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
           RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true and (.result.stdout | contains("OCI_EDGE_BOOTSTRAP_STARTED=TRUE"))' <<<"$RESPONSE" >/dev/null
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          OUT="$(jq -r '.result.stdout' <<<"$RESPONSE")"
+          printf '%s\n' "$OUT"
+          URL="$(grep '^OCI_EDGE_AUTH_URL=' <<<"$OUT" | cut -d= -f2-)"
+          [[ "$URL" == https://login.* ]] || { echo "::error::OCI Edge auth URL missing"; exit 22; }
+          echo "OCI_EDGE_AUTH_URL=$URL" >>"$GITHUB_ENV"
+          {
+            echo "## OCI Edge browser authentication"
+            echo "- callback listener: GREEN"
+            echo "- URL:"
+            echo "$URL"
+            echo "- Keep a local forward from Android localhost:8181 to Dial Control localhost:8181 while authorizing in Edge."
+          } >>"$GITHUB_STEP_SUMMARY"
 
-      - name: Read browser authorization URL
+  edge-bootstrap-monitor:
+    needs: edge-bootstrap
+    if: ${{ always() && needs.edge-bootstrap.result == 'success' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Wait for Edge authentication and verify OCI profile
         shell: bash
         run: |
           set -Eeuo pipefail
-          sleep 4
-          found=false
-          for attempt in $(seq 1 12); do
-            RAW_COMMAND='set -Eeuo pipefail; LOG=/var/lib/dial-control/oci-browser-bootstrap/output.log; test -f "$LOG"; grep -Eo "https://login\.[^[:space:]]+" "$LOG" | head -1 || true; echo LISTENER=$(ss -ltnH "sport = :8181" | wc -l); systemctl is-active dial-oci-browser-bootstrap.service || true'
-            COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
-            BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-            RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-            jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
-            OUT="$(jq -r '.result.stdout' <<<"$RESPONSE")"
-            URL="$(grep -Eo 'https://login\.[^[:space:]]+' <<<"$OUT" | head -1 || true)"
-            if [[ -n "$URL" ]] && grep -q 'LISTENER=1' <<<"$OUT"; then
-              echo "OCI_EDGE_AUTH_URL=$URL"
-              echo "OCI_EDGE_CALLBACK_LISTENER=GREEN"
-              {
-                echo "## OCI Edge browser authentication"
-                echo "- callback listener: GREEN"
-                echo "- URL:"
-                echo "$URL"
-                echo "- Edge must reach Dial Control's localhost:8181 through a temporary local port forward."
-              } >>"$GITHUB_STEP_SUMMARY"
-              found=true
-              break
+          RAW_COMMAND="$(cat <<'CMD'
+          set -Eeuo pipefail
+          LOGDIR=/var/lib/dial-control/oci-browser-bootstrap
+          for attempt in $(seq 1 120); do
+            if [[ -s "$LOGDIR/exit-code" ]]; then
+              RC="$(cat "$LOGDIR/exit-code")"
+              if [[ "$RC" != 0 ]]; then
+                echo "OCI_EDGE_BOOTSTRAP_FAILED rc=$RC"
+                tail -n 160 "$LOGDIR/output.log" 2>/dev/null || true
+                exit "$RC"
+              fi
+              test -s /home/ubuntu/.oci/config
+              runuser -u ubuntu -- env HOME=/home/ubuntu /usr/local/bin/oci iam region list --config-file /home/ubuntu/.oci/config --profile DIAL_RECOVERY >/dev/null
+              USER_OCID="$(awk -F= '/^user=/{print $2;exit}' /home/ubuntu/.oci/config)"
+              TENANCY_OCID="$(awk -F= '/^tenancy=/{print $2;exit}' /home/ubuntu/.oci/config)"
+              REGION="$(awk -F= '/^region=/{print $2;exit}' /home/ubuntu/.oci/config)"
+              [[ "$USER_OCID" == ocid1.user.* ]]
+              [[ "$TENANCY_OCID" == ocid1.tenancy.* ]]
+              echo "OCI_EDGE_BOOTSTRAP=GREEN"
+              echo "OCI_USER_OCID=$USER_OCID"
+              echo "OCI_TENANCY_OCID=$TENANCY_OCID"
+              echo "OCI_REGION=$REGION"
+              exit 0
             fi
             sleep 5
           done
-          [[ "$found" == true ]] || { echo "::error::OCI browser bootstrap URL/listener did not become ready"; exit 4; }
+          echo "OCI_EDGE_BOOTSTRAP_AUTH_TIMEOUT"
+          exit 30
+          CMD
+          )"
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true and (.result.stdout | contains("OCI_EDGE_BOOTSTRAP=GREEN"))' <<<"$RESPONSE" >/dev/null
+          jq -r '.result.stdout' <<<"$RESPONSE"
