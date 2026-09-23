@@ -1,4 +1,5 @@
 name: Dial Control GitHub OIDC admin
+# oidc-diagnostic-trigger
 
 on:
   push:
