@@ -3,17 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260923-owner-install-van-rive-netcup"
+    "auth-20260923-owner-bot-republish-netcup-rive"
   ],
   "branch": "gpt/install-van-rive-netcup-20260923",
   "changed_files": [
-    ".github/workflows/netcup-admin-oidc.yml",
-    "docs/project-state/authorizations/auth-20260923-owner-install-van-rive-netcup.json"
+    ".github/workflows/bot-republish-netcup-rive.yml",
+    "docs/project-state/authorizations/auth-20260923-owner-bot-republish-netcup-rive.json"
   ],
-  "content_diff_sha256": "439a96c0eb17e70a4a189a56bdf66ccaf897f0611a4d1d3afd918bbc93e03ee1",
-  "observed_at_utc": "2026-09-23T05:03:00+00:00",
+  "content_diff_sha256": "7855171846c5b970a7ac5488af9fd270995754bb9dba90df77f686cb2d3fa0fb",
+  "observed_at_utc": "2026-09-23T06:50:00+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "1405daaa4b21b9ae35374282b191475e5bcc3ff6",
+  "source_parent": "722e3382379f1c9775c2a9866f7252e2ddb06e7a",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
