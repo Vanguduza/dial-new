@@ -47,6 +47,36 @@ jobs:
       - name: Parse ARTEMIS internal bridge
         run: python3 -m py_compile deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
 
+      - name: Verify pinned ARTEMIS upstream contract and DIAL hardening
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          git -C "$tmp" init -q
+          git -C "$tmp" remote add origin https://github.com/google/artemis.git
+          git -C "$tmp" fetch --depth=1 origin 371aa6df56880643da57b30da936e9812fb0ec66
+          git -C "$tmp" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$tmp" rev-parse HEAD)" = "371aa6df56880643da57b30da936e9812fb0ec66"
+          test "$(git -C "$tmp" hash-object uv.lock)" = "dc2d35b8c284055c92ff1cd2560c8201e648bf9f"
+          python3 deploy/netcup/hermes-control/artemis/harden_artemis.py "$tmp"
+          python3 - "$tmp" <<'PY'
+          import ast, pathlib, sys
+          root=pathlib.Path(sys.argv[1])
+          expected={
+            "mcp_server/tools/task_runner.py":{"mobile_run_task"},
+            "mcp_server/tools/task_manager.py":{"mobile_manage_task"},
+            "mcp_server/tools/device_state.py":{"mobile_get_device_state"},
+            "mcp_server/tools/inspect_trace.py":{"mobile_inspect_trace"},
+            "mcp_server/tools/diagnose.py":{"mobile_diagnose"},
+          }
+          for rel,names in expected.items():
+              tree=ast.parse((root/rel).read_text(encoding="utf-8"),filename=rel)
+              found={n.name for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}
+              missing=names-found
+              if missing:
+                  raise SystemExit(f"{rel}: missing pinned ARTEMIS MCP tools {sorted(missing)}")
+          PY
+
       - name: Validate Android plane and specialist authority
         run: |
           node -e "const r=require('./agent-system/registries/ANDROID_TESTING_PLANE.json'); if(r.authority!=='HERMES_CONTROL_AUTHORITY'||r.authority_invariants?.artemis_is_subordinate!==true||r.authority_invariants?.raw_upstream_mcp_exposed!==false||r.authority_invariants?.managed_direct_artemis_ui_registered!==false) process.exit(1)"
