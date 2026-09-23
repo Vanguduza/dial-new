@@ -128,11 +128,28 @@ function requireOk(result, label) {
   }
   return result;
 }
+// Retained Oracle peers: oracle-admin .2, vekl-worker .3, van-trading-core .4. The migration
+// source (dial-hermes-control, a separate A1) is .5 only while enrolled and not yet retired.
+const SOURCE_IP='10.77.0.5';
+function sourceActive() {
+  if(fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) return false;
+  try {
+    const receipt=JSON.parse(fs.readFileSync(path.join(ROOT,'oracle-peer-keys.json'),'utf8'));
+    return validWgKey(receipt?.peers?.hermes_source);
+  } catch { return false; }
+}
+function estateValue(name) {
+  try {
+    const m=fs.readFileSync('/etc/dial/oracle-estate.env','utf8').match(new RegExp('^'+name+'=(.*)$','m'));
+    return m ? m[1].trim() : '';
+  } catch { return ''; }
+}
 function peerCheck() {
   const key=fs.existsSync('/home/ubuntu/.ssh/dial-oracle-admin')
     ? '/home/ubuntu/.ssh/dial-oracle-admin'
     : '/home/ubuntu/.ssh/dial-bootstrap-oracle';
   const peers=['10.77.0.2','10.77.0.3','10.77.0.4'];
+  if(sourceActive()) peers.push(SOURCE_IP);
   const out=[];
   for(const ip of peers){
     const p=command('ping -c 1 -W 2 '+ip);
@@ -236,16 +253,19 @@ async function dispatch(body, claims) {
       const keysPath=path.join(ROOT,'oracle-peer-keys.json');
       if(!fs.existsSync(keysPath)) throw new Error('OCI peer key receipt missing');
       const receipt=JSON.parse(fs.readFileSync(keysPath,'utf8'));
-      for(const k of ['oracle_admin','vekl_worker','a1_transition']){
+      for(const k of ['oracle_admin','vekl_worker','van_trading_core']){
         if(!validWgKey(receipt?.peers?.[k])) throw new Error('invalid persisted peer key '+k);
       }
-      if(receipt.physical_oracle_instances!==3 || receipt.a1_physical_instances!==1) throw new Error('OCI estate physical identity count invalid');
+      if(receipt.peers.hermes_source!==undefined && !validWgKey(receipt.peers.hermes_source)) throw new Error('invalid persisted peer key hermes_source');
+      if(receipt.schema_version!==2 || receipt.retained_oracle_instances!==3) throw new Error('OCI estate physical identity count invalid');
       return {receipt,stdout:r.stdout};
     }
     case 'configure-overlay': {
-      for(const k of ['oracle_admin','vekl_worker','a1_transition']){
+      for(const k of ['oracle_admin','vekl_worker','van_trading_core']){
         if(!validWgKey(body?.peers?.[k])) throw new Error('invalid WireGuard public key for '+k);
       }
+      const src=body?.peers?.hermes_source||'';
+      if(src && !validWgKey(src)) throw new Error('invalid WireGuard public key for hermes_source');
       const hubScript='/usr/local/lib/dial-control/configure-wireguard-fabric.sh';
       if(!fs.existsSync(hubScript)) throw new Error('installed WireGuard hub helper missing');
       const r=command(
@@ -253,7 +273,8 @@ async function dispatch(body, claims) {
         {env:{
           ORACLE_ADMIN_WG_PUBLIC_KEY:body.peers.oracle_admin,
           VEKL_WORKER_WG_PUBLIC_KEY:body.peers.vekl_worker,
-          ORACLE_A1_WG_PUBLIC_KEY:body.peers.a1_transition,
+          VAN_TRADING_CORE_WG_PUBLIC_KEY:body.peers.van_trading_core,
+          HERMES_SOURCE_WG_PUBLIC_KEY:fs.existsSync(path.join(CONTROL,'state/a1-control-retired')) ? '' : src,
         }}
       );
       requireOk(r,'configure-overlay');
@@ -327,8 +348,8 @@ async function dispatch(body, claims) {
       requireOk(verify,'source-retirement-netcup-core');
       const peers=peerCheck();
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('source retirement preflight peer failure'),{result:{peers}});
-      const a1=peers.find((x)=>x.ip==='10.77.0.4');
-      if(!a1 || !a1.ssh) throw new Error('A1 transition peer unavailable');
+      const source=peers.find((x)=>x.ip===SOURCE_IP);
+      if(!source || !source.ssh) throw new Error('migration source dial-hermes-control (10.77.0.5) unavailable');
       fs.writeFileSync(path.join(CONTROL,'state/source-retirement-preflight-complete'),now()+'\n',{mode:0o600});
       return {ready:true,verify:verify.stdout,peers};
     }
@@ -354,11 +375,17 @@ async function dispatch(body, claims) {
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
       const a1=peers.find((x)=>x.ip==='10.77.0.4');
       if(!a1 || a1.hostname!=='van-trading-core') throw Object.assign(new Error('A1 final identity is not van-trading-core'),{result:{a1}});
-      const retired=ubuntu("ssh -o BatchMode=yes -o ConnectTimeout=8 van-trading-core 'set -e; test ! -e /var/lib/dial-control; test ! -e \"$HOME/.hermes\"; test ! -e \"$HOME/dial-new\"; grep -q \"^ROLE=VAN_TRADING_CORE$\" /etc/dial/host-role; test -f /var/lib/van/estate-transition/dial-hermes-control-retired'");
-      requireOk(retired,'certify-a1-retirement');
+      if(peers.some((x)=>x.ip===SOURCE_IP)) throw new Error('migration source is still an overlay peer');
+      // Owner topology: dial-hermes-control is terminated once cloning is done.
+      const sourceOcid=estateValue('DIAL_HERMES_CONTROL_SOURCE_OCID');
+      if(sourceOcid){
+        const st=ubuntu("oci compute instance get --instance-id '"+sourceOcid.replace(/[^A-Za-z0-9._-]/g,'')+"' --query 'data.\"lifecycle-state\"' --raw-output",120000);
+        requireOk(st,'certify-source-termination-state');
+        if(!['TERMINATED','TERMINATING'].includes(st.stdout.trim())) throw Object.assign(new Error('dial-hermes-control must be terminated before certification (owner action)'),{result:{source_ocid:sourceOcid,state:st.stdout.trim()}});
+      }
       const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
-      return {verify:verify.stdout,peers,a1_retired:true,a1_final_role:'VAN_TRADING_CORE',github_admin_runner:runner.ok,github_oidc_admin:true};
+      return {verify:verify.stdout,peers,a1_retired:true,hermes_source_terminated:true,github_admin_runner:runner.ok,github_oidc_admin:true};
     }
     case 'admin-command': {
       if(!String(claims.workflow_ref||'').includes('/.github/workflows/netcup-admin-oidc.yml@')) throw new Error('admin workflow refused');

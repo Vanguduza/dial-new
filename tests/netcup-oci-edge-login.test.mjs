@@ -154,39 +154,59 @@ describe('oci-edge-login finish', () => {
     expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
   });
 
-  it('keeps the session and lists candidates when two A1 instances match, without touching IAM', () => {
+  it('records van-trading-core and the separate dial-hermes-control source, and enrolls both for Run Command', () => {
     const ctx = setup();
-    ctx.env.FAKE_SECOND_A1 = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const estate = fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8');
+    expect(estate).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van');
+    expect(estate).toContain('DIAL_HERMES_CONTROL_SOURCE_OCID=ocid1.instance.oc1..a1src');
+    const rule = fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8');
+    expect(rule).toContain("instance.id = 'ocid1.instance.oc1..a1van'");
+    expect(rule).toContain("instance.id = 'ocid1.instance.oc1..a1src'");
+  });
+
+  it('works once the source has been terminated: van-trading-core stays, the source drops out', () => {
+    const ctx = setup();
+    ctx.env.FAKE_NO_SOURCE = '1';
+    expect(run(ctx, 'finish', TENANCY).code).toBe(0);
+    const estate = fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8');
+    expect(estate).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van');
+    expect(estate).toMatch(/^DIAL_HERMES_CONTROL_SOURCE_OCID=$/m);
+    expect(fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8')).not.toContain('a1src');
+  });
+
+  it('keeps the session and lists candidates when two van-trading-core instances match, without touching IAM', () => {
+    const ctx = setup();
+    ctx.env.FAKE_DUP_VAN = '1';
     const r = run(ctx, 'finish', TENANCY);
     expect(r.code).toBe(27);
     expect(r.out).toContain('OCI_EDGE_SESSION=KEPT_FOR_RETRY');
-    expect(r.err).toContain('CANDIDATE a1-transition ocid=ocid1.instance.oc1..a1 name=dial-hermes-control');
-    expect(r.err).toContain('CANDIDATE a1-transition ocid=ocid1.instance.oc1..a1second name=van-trading-core');
+    expect(r.err).toContain('CANDIDATE van-trading-core ocid=ocid1.instance.oc1..a1van name=van-trading-core');
+    expect(r.err).toContain('CANDIDATE van-trading-core ocid=ocid1.instance.oc1..a1van2 name=van-trading-core');
     expect(calls(ctx)).not.toMatch(/iam (user|group|policy|dynamic-group)/);
     expect(calls(ctx)).not.toContain('session terminate');
     expect(sessionGone(ctx)).toBe(false);
     expect(fs.existsSync(path.join(ctx.state, 'github-oci-ready'))).toBe(false);
   });
 
-  it('finishes with the owner-pinned A1 instance on the retry, reusing the kept session', () => {
+  it('finishes with the owner-pinned van-trading-core on the retry, reusing the kept session', () => {
     const ctx = setup();
-    ctx.env.FAKE_SECOND_A1 = '1';
+    ctx.env.FAKE_DUP_VAN = '1';
     expect(run(ctx, 'finish', TENANCY).code).toBe(27);
-    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1second');
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1van2');
     expect(r.err).not.toMatch(/REFUSE/);
     expect(r.code).toBe(0);
     expect(r.out).toContain('OCI_EDGE_LOGIN=FINISHED');
-    expect(fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8')).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1second');
-    expect(fs.readFileSync(path.join(ctx.state, 'iam/dg-rule'), 'utf8')).toContain("instance.id = 'ocid1.instance.oc1..a1second'");
+    expect(fs.readFileSync(path.join(ctx.state, 'oracle-estate.env'), 'utf8')).toContain('VAN_TRADING_CORE_OCID=ocid1.instance.oc1..a1van2');
     expect(sessionGone(ctx)).toBe(true);
   });
 
-  it('refuses a pinned A1 OCID that is not one of the candidates, and destroys the session', () => {
+  it('refuses a pinned OCID that is not a van-trading-core candidate, and destroys the session', () => {
     const ctx = setup();
-    ctx.env.FAKE_SECOND_A1 = '1';
-    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..notthere');
+    ctx.env.FAKE_DUP_VAN = '1';
+    const r = run(ctx, 'finish', TENANCY, 'af-johannesburg-1', 'ocid1.instance.oc1..a1src');
     expect(r.code).toBe(25);
-    expect(r.err).toContain('pinned a1-transition OCID');
+    expect(r.err).toContain('pinned van-trading-core OCID');
     expect(sessionGone(ctx)).toBe(true);
   });
 

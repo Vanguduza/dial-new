@@ -273,7 +273,7 @@ finish() {
     KEEP_SESSION=1
     say "OCI_EDGE_SESSION=KEPT_FOR_RETRY"
     say "session_seconds_left=$(( exp - $(date +%s) ))"
-    say "OWNER_DECISION_REQUIRED=choose the authoritative instance from the CANDIDATE lines, then re-run finish with it"
+    say "OWNER_DECISION_REQUIRED=choose the authoritative van-trading-core instance from the CANDIDATE lines, then re-run finish with it"
     exit 27
   fi
   [[ "$rc" == 0 ]] || die "estate discovery failed ($rc)" "$rc"
@@ -297,7 +297,11 @@ finish() {
 
   # Run Command executes only on instances that are themselves allowed to fetch commands.
   local rule dg
-  rule="ANY {instance.id = '$ORACLE_ADMIN_OCID', instance.id = '$VEKL_WORKER_OCID', instance.id = '$VAN_TRADING_CORE_OCID'}"
+  # The three retained peers, plus the migration source only while it still exists: cloning
+  # needs it enrolled; once terminated it drops out on the next finish/reconcile.
+  rule="ANY {instance.id = '$ORACLE_ADMIN_OCID', instance.id = '$VEKL_WORKER_OCID', instance.id = '$VAN_TRADING_CORE_OCID'"
+  [[ -z "${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" ]] || rule+=", instance.id = '$DIAL_HERMES_CONTROL_SOURCE_OCID'"
+  rule+="}"
   dg="$(ensure_named dynamic-group "$tenant" "$RUNCOMMAND_DG" "DIAL Oracle estate Run Command targets" --matching-rule "$rule")"
   oci_session iam dynamic-group update --dynamic-group-id "$dg" --matching-rule "$rule" --force >/dev/null
 

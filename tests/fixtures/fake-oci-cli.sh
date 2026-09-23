@@ -25,11 +25,15 @@ case "$1 $2 $3" in
     case "$name" in
       oracle-admin) echo '{"data":[{"id":"ocid1.instance.oc1..admin","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"oracle-admin","shape":"VM.Standard.E2.1.Micro","lifecycle-state":"RUNNING"}]}' ;;
       vekl-worker)  echo '{"data":[{"id":"ocid1.instance.oc1..vekl","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"vekl-worker","shape":"VM.Standard.E2.1.Micro","lifecycle-state":"RUNNING"}]}' ;;
-      dial-hermes-control) echo '{"data":[{"id":"ocid1.instance.oc1..a1","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"dial-hermes-control","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-08-01T00:00:00Z"}]}' ;;
+      # Owner topology: two separate A1s. dial-hermes-control is the migration source
+      # (absent once terminated: FAKE_NO_SOURCE=1); van-trading-core is retained.
+      dial-hermes-control)
+        if [[ "${FAKE_NO_SOURCE:-0}" == 1 ]]; then echo '{"data":[]}'
+        else echo '{"data":[{"id":"ocid1.instance.oc1..a1src","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"dial-hermes-control","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-08-01T00:00:00Z"}]}'; fi ;;
       van-trading-core)
-        if [[ "${FAKE_SECOND_A1:-0}" == 1 ]]; then
-          echo '{"data":[{"id":"ocid1.instance.oc1..a1second","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-09-20T00:00:00Z"}]}'
-        else echo '{"data":[]}'; fi ;;
+        if [[ "${FAKE_DUP_VAN:-0}" == 1 ]]; then
+          echo '{"data":[{"id":"ocid1.instance.oc1..a1van","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-09-20T00:00:00Z"},{"id":"ocid1.instance.oc1..a1van2","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"STOPPED","time-created":"2026-09-21T00:00:00Z"}]}'
+        else echo '{"data":[{"id":"ocid1.instance.oc1..a1van","compartment-id":"'"$FAKE_COMPARTMENT"'","display-name":"van-trading-core","shape":"VM.Standard.A1.Flex","lifecycle-state":"RUNNING","time-created":"2026-09-20T00:00:00Z"}]}'; fi ;;
       *) echo '{"data":[]}' ;;
     esac ;;
   "iam user list-groups") [[ -f "$S/iam/member" ]] && echo '{"data":[{"id":"ocid1.group.oc1..g"}]}' || echo '{"data":[]}' ;;

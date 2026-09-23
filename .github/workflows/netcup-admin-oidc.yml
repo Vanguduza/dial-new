@@ -29,7 +29,7 @@ on:
         required: false
         type: string
       oci_a1_instance_ocid:
-        description: Optional. The authoritative Ampere A1 instance when finish_oci_edge_login lists more than one CANDIDATE.
+        description: Optional. The authoritative van-trading-core instance when finish_oci_edge_login lists more than one CANDIDATE.
         required: false
         type: string
       oci_region:

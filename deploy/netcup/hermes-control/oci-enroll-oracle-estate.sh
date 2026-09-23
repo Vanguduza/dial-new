@@ -33,6 +33,16 @@ done
 [[ "$ORACLE_ADMIN_OCID" != "$VEKL_WORKER_OCID" &&
    "$ORACLE_ADMIN_OCID" != "$VAN_TRADING_CORE_OCID" &&
    "$VEKL_WORKER_OCID" != "$VAN_TRADING_CORE_OCID" ]] || die "Oracle physical instances are not unique"
+# The migration source (dial-hermes-control, a separate A1) is enrolled only while it exists and
+# has not been retired; it is cloned to Netcup and then terminated.
+SOURCE_OCID="${DIAL_HERMES_CONTROL_SOURCE_OCID:-}"
+[[ -f /var/lib/dial-control/state/a1-control-retired ]] && SOURCE_OCID=""
+if [[ -n "$SOURCE_OCID" ]]; then
+  [[ "$SOURCE_OCID" == ocid1.instance.* ]] || die "invalid migration source OCID"
+  for id in "$ORACLE_ADMIN_OCID" "$VEKL_WORKER_OCID" "$VAN_TRADING_CORE_OCID"; do
+    [[ "$SOURCE_OCID" != "$id" ]] || die "migration source resolved to a retained peer"
+  done
+fi
 
 OCI=(runuser -u ubuntu -- env
   HOME=/home/ubuntu
@@ -54,14 +64,19 @@ SSH_B64="$(printf '%s' "$NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY" | base64 -w0)"
 declare -A INSTANCE_IDS=(
   [oracle-admin]="$ORACLE_ADMIN_OCID"
   [vekl-worker]="$VEKL_WORKER_OCID"
-  [old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"
+  [van-trading-core]="$VAN_TRADING_CORE_OCID"
 )
+HOSTS=(oracle-admin vekl-worker van-trading-core)
+if [[ -n "$SOURCE_OCID" ]]; then
+  INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"
+  HOSTS+=(old-dial-hermes-control)
+fi
 declare -A KEYS=()
 
 TMPDIR="$(mktemp -d /tmp/dial-oci-enroll.XXXXXX)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
-for HOST_ID in oracle-admin vekl-worker old-dial-hermes-control; do
+for HOST_ID in "${HOSTS[@]}"; do
   INSTANCE_ID="${INSTANCE_IDS[$HOST_ID]}"
   CMD="set -Eeuo pipefail; printf '%s' '$SCRIPT_B64' | base64 -d >/tmp/dial-zero-touch-enroll.sh; chmod 700 /tmp/dial-zero-touch-enroll.sh; DIAL_HOST_ID='$HOST_ID' NETCUP_PUBLIC_IP='$NETCUP_PUBLIC_IP' NETCUP_WG_PUBLIC_KEY=\$(printf '%s' '$WG_B64' | base64 -d) NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY=\$(printf '%s' '$SSH_B64' | base64 -d) bash /tmp/dial-zero-touch-enroll.sh"
   CONTENT="$TMPDIR/content-$HOST_ID.json"
@@ -101,22 +116,23 @@ install -d -m 0700 "$CONTROL_ROOT"
 jq -n \
   --arg admin "${KEYS[oracle-admin]}" \
   --arg vekl "${KEYS[vekl-worker]}" \
-  --arg a1 "${KEYS[old-dial-hermes-control]}" \
+  --arg van "${KEYS[van-trading-core]}" \
+  --arg src "${KEYS[old-dial-hermes-control]:-}" \
   --arg at "$(date -u +%FT%TZ)" \
   '{
-    schema_version:1,
+    schema_version:2,
     enrolled_at_utc:$at,
-    physical_oracle_instances:3,
-    a1_physical_instances:1,
-    peers:{
+    retained_oracle_instances:3,
+    hermes_source_enrolled:($src != ""),
+    peers:({
       oracle_admin:$admin,
       vekl_worker:$vekl,
-      a1_transition:$a1
-    }
+      van_trading_core:$van
+    } + (if $src != "" then {hermes_source:$src} else {} end))
   }' >"$OUT"
 chmod 0600 "$OUT"
 
 echo "OCI_ORACLE_PEERS_ENROLLED=GREEN"
-echo "oracle_physical_instances=3"
-echo "a1_physical_instances=1"
+echo "retained_oracle_instances=3"
+echo "hermes_source_enrolled=$([[ -n "${KEYS[old-dial-hermes-control]:-}" ]] && echo true || echo false)"
 echo "peer_keys_file=$OUT"
