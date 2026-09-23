@@ -103,11 +103,11 @@ It has separate `devices` and `avds` allowlists, both empty on first install. Th
 
 For device interaction, the serial must be admitted. If the caller omits a serial, Hermes auto-selects only when exactly one connected admitted device is ready; with multiple ready devices the caller must choose. Synchronous certification uses the DIAL exclusive lease, while asynchronous ARTEMIS work uses ARTEMIS per-device execution locks.
 
-Every asynchronous task is recorded under `/var/lib/dial-control/android-testing/tasks`. Status control and trace inspection are refused for trace IDs that were not created through the Hermes broker. When a Hermes-owned task becomes completed, failed or cancelled, the broker seals a DIAL evidence bundle and creates only an SPMRF `TEST_EVIDENCE` candidate.
+Every asynchronous task is recorded under `/var/lib/dial-control/android-testing/tasks`. Status control and trace inspection are refused for trace IDs that were not created through the Hermes broker. A `dial-artemis-supervisor.timer` polls Hermes-owned tasks every 60 seconds, satisfying ARTEMIS's fallback-poll discipline even when no interactive harness is watching. When a Hermes-owned task becomes completed, failed or cancelled, the broker seals a DIAL evidence bundle and creates only an SPMRF `TEST_EVIDENCE` candidate.
 
 `android_diagnose` can launch only explicitly allowlisted AVDs. Safe ARTEMIS self-heal actions stay behind the Hermes broker. The Android plane does not create an unrestricted internet-facing ADB listener.
 
-The ARTEMIS local web console may be installed for diagnostics, but it is disabled by default so it cannot become a parallel control plane.
+The managed ARTEMIS web console is not registered at all. The installer removes/disables any prior `dial-artemis-ui.service`, so the estate has no supported parallel ARTEMIS control surface. Hermes is the supported control boundary.
 
 ## OpenViking memory plane
 
@@ -204,7 +204,7 @@ OpenViking:
 ARTEMIS:
 - converges when `adb`, `scrcpy`, and `ffmpeg` are already present,
 - installs the Hermes-only ARTEMIS bridge and governed MCP,
-- keeps the direct ARTEMIS web console disabled unless explicitly enabled,
+- removes/disables the managed direct ARTEMIS web console so Hermes remains the only supported control surface,
 - otherwise reports the host dependency gap instead of silently auto-installing unpinned packages.
 
 This preserves the development-system supply-chain rule: a missing external dependency is a visible qualification gap, not permission to execute an unreviewed `curl | bash` installer.
