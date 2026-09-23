@@ -126,10 +126,16 @@ jobs:
           OUT="$RUNNER_TEMP/admin-command.txt"
           case "$OPERATION" in
             prepare_oci_recovery)
-              cat >"$OUT" <<'EOF'
+              cat >"$OUT" <<EOF
           set -Eeuo pipefail
-          test -x /usr/local/lib/dial-control/prepare-oci-recovery.sh
-          runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare
+          REF='$GITHUB_SHA'
+          TMP="\$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
+          trap 'rm -f "\$TMP"' EXIT
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
+            "https://raw.githubusercontent.com/Vanguduza/dial-new/\$REF/deploy/netcup/hermes-control/owner-oci-handoff.sh" \
+            -o "\$TMP"
+          bash -n "\$TMP"
+          bash "\$TMP" prepare "\$REF"
           EOF
               ;;
             configure_and_discover_oci)
@@ -141,11 +147,8 @@ jobs:
               REGION_Q="$(printf '%q' "$OCI_REGION")"
               cat >"$OUT" <<EOF
           set -Eeuo pipefail
-          test -x /usr/local/lib/dial-control/prepare-oci-recovery.sh
-          runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin OCI_RECOVERY_USER_OCID=$USER_Q OCI_RECOVERY_TENANCY_OCID=$TENANCY_Q OCI_RECOVERY_REGION=$REGION_Q bash /usr/local/lib/dial-control/prepare-oci-recovery.sh configure-and-discover
-          install -d -m 0700 /var/lib/dial-control/github-oidc
-          date -u +%FT%TZ >/var/lib/dial-control/github-oidc/github-oci-ready
-          echo OCI_RECOVERY_LOCAL_AUTHORITY=GREEN
+          test -x /usr/local/lib/dial-control/owner-oci-handoff.sh
+          /usr/local/lib/dial-control/owner-oci-handoff.sh configure-and-discover $USER_Q $TENANCY_Q $REGION_Q
           EOF
               ;;
             custom)
