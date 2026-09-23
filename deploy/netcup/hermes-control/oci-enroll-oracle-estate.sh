@@ -26,7 +26,7 @@ source "$ESTATE"
 : "${VEKL_WORKER_OCID:?VEKL_WORKER_OCID missing}"
 : "${VAN_TRADING_CORE_OCID:?VAN_TRADING_CORE_OCID missing}"
 
-[[ "$DIAL_OCI_COMPARTMENT" == ocid1.compartment.* ]] || die "invalid compartment OCID"
+[[ "$DIAL_OCI_COMPARTMENT" == ocid1.compartment.* || "$DIAL_OCI_COMPARTMENT" == ocid1.tenancy.* ]] || die "invalid compartment OCID"
 for id in "$ORACLE_ADMIN_OCID" "$VEKL_WORKER_OCID" "$VAN_TRADING_CORE_OCID"; do
   [[ "$id" == ocid1.instance.* ]] || die "invalid instance OCID"
 done
