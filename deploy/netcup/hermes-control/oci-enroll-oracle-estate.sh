@@ -4,7 +4,7 @@ umask 077
 
 OCI_CONFIG="${OCI_CONFIG:-/home/ubuntu/.oci/config}"
 ESTATE="${DIAL_ORACLE_ESTATE:-/etc/dial/oracle-estate.env}"
-PEER_SCRIPT="${DIAL_ZERO_TOUCH_PEER_SCRIPT:-/usr/local/lib/dial-control/zero-touch-enroll-peer.sh}"
+PEER_SCRIPT="${DIAL_ZERO_TOUCH_PEER_SCRIPT:-/usr/local/lib/dial-control/runtime/deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh}"
 CONTROL_ROOT="${DIAL_GITHUB_OIDC_ROOT:-/var/lib/dial-control/github-oidc}"
 OUT="$CONTROL_ROOT/oracle-peer-keys.json"
 NETCUP_PUBLIC_IP="${NETCUP_PUBLIC_IP:-62.83.35.103}"
