@@ -60,6 +60,25 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
+      - name: Diagnose GitHub OIDC claims and controller refusal
+        if: ${{ github.event_name == 'push' }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          BODY='{"action":"status"}'
+          HASH="$(printf '%s' "$BODY" | sha256sum | awk '{print $1}')"
+          AUDIENCE="dial-control:$HASH"
+          ENCODED_AUDIENCE="$(jq -nr --arg v "$AUDIENCE" '$v|@uri')"
+          SEP='?'; [[ "$ACTIONS_ID_TOKEN_REQUEST_URL" == *\?* ]] && SEP='&'
+          TOKEN="$(curl --proto '=https' --tlsv1.2 -fsS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}${SEP}audience=${ENCODED_AUDIENCE}" | jq -er '.value')"
+          PAYLOAD="$(cut -d. -f2 <<<"$TOKEN" | tr '_-' '/+' | awk '{l=length($0)%4; if(l==2)$0=$0"=="; else if(l==3)$0=$0"="; print}' | base64 -d 2>/dev/null)"
+          echo "$PAYLOAD" | jq '{actor,repository,ref,workflow_ref,event_name,job_workflow_ref,run_id,run_attempt}'
+          TMP="$RUNNER_TEMP/controller-response.json"
+          CODE="$(curl -sS -o "$TMP" -w '%{http_code}' -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' --data-binary "$BODY" "$DIAL_CONTROL_OIDC_URL")"
+          echo "CONTROLLER_HTTP=$CODE"
+          jq -c '{ok,error,result:(if (.result|type)=="object" then {ok:.result.ok,status:.result.status,signal:.result.signal,error:.result.error} else .result end)}' "$TMP" 2>/dev/null || { echo "CONTROLLER_BODY_NON_JSON"; head -c 800 "$TMP"; echo; }
+          [[ "$CODE" =~ ^2[0-9][0-9]$ ]] || exit 7
+
       - name: Refresh bounded Dial Control runtime helpers
         if: ${{ inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
