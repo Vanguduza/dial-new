@@ -314,7 +314,13 @@ describe('DIAL development bootstrap closure', () => {
     expect(adminWorkflow).toContain('id-token: write');
     expect(adminWorkflow).toContain('I_UNDERSTAND_ROOT');
     expect(adminWorkflow).toContain('admin-command');
-    expect(adminWorkflow).not.toContain('push:');
+    expect(adminWorkflow).toContain('push:');
+    expect(adminWorkflow).toContain('- .github/workflows/netcup-admin-oidc.yml');
+    expect(adminWorkflow).toContain("github.event_name == 'workflow_dispatch'");
+    expect(adminWorkflow).toContain("github.event_name == 'push'");
+    expect(adminWorkflow).toContain("github.actor == 'Vanguduza'");
+    expect(adminWorkflow).toContain('edge-bootstrap:');
+    expect(adminWorkflow).toContain('Prepare dedicated OCI recovery key on Dial Control');
     expect(controller).toContain('/usr/local/lib/dial-control/configure-wireguard-fabric.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/rotate-bootstrap-identities.sh');
     expect(controller).toContain('/usr/local/lib/dial-control/retire-oracle-a1-control-role.sh');
