@@ -333,6 +333,18 @@ enable_run_command() {
 # then relaunched with the same name, shape, subnet, private IP and owner SSH key. First-boot
 # cloud-init installs /etc/sudoers.d/90-dial-ocarun; the Run Command and Bastion plugins are enabled
 # at launch. If the relaunch fails, the old boot volume is relaunched so the host comes back as it was.
+# Run Command executes only on instances that are themselves allowed to fetch commands. Membership
+# is by instance OCID, so it is rebuilt from the estate inventory whenever an instance changes: the
+# retained peers, plus the migration source only while it still exists. Needs a verified session.
+reconcile_runcommand_dg() {
+  local tenant="$1" rule dg
+  rule="ANY {instance.id = '$ORACLE_ADMIN_OCID', instance.id = '$VEKL_WORKER_OCID', instance.id = '$VAN_TRADING_CORE_OCID'"
+  [[ -z "${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" ]] || rule+=", instance.id = '$DIAL_HERMES_CONTROL_SOURCE_OCID'"
+  rule+="}"
+  dg="$(ensure_named dynamic-group "$tenant" "$RUNCOMMAND_DG" "DIAL Oracle estate Run Command targets" --matching-rule "$rule")"
+  oci_session iam dynamic-group update --dynamic-group-id "$dg" --matching-rule "$rule" --force >/dev/null
+}
+
 rebuild_instance() {
   local expected_tenancy="${1:-}" name="${2:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
@@ -418,6 +430,11 @@ rebuild_instance() {
   rm -rf "$tmp"
   [[ "$state" == RUNNING ]] || die "new $name $new is $state, not RUNNING"
   sed -i "s|$old|$new|" "$ESTATE"
+  # The new OCID must join the Run Command dynamic group, or its agent never fetches commands.
+  # shellcheck source=/dev/null
+  source "$ESTATE"
+  reconcile_runcommand_dg "$expected_tenancy"
+  say "rebuild_${name//-/_}_runcommand_dg=RECONCILED"
   jq --arg n "$new" '. + {new_instance:$n}' "$STATE/rebuild-$name.json" >"$STATE/rebuild-$name.json.next" && mv "$STATE/rebuild-$name.json.next" "$STATE/rebuild-$name.json"
   KEEP_SESSION=1   # the next rebuild can reuse this verified session
   say "rebuild_${name//-/_}_new=$new state=RUNNING"
@@ -482,15 +499,7 @@ finish() {
     oci_session iam group add-user --user-id "$user" --group-id "$group" >/dev/null
   fi
 
-  # Run Command executes only on instances that are themselves allowed to fetch commands.
-  local rule dg
-  # The three retained peers, plus the migration source only while it still exists: cloning
-  # needs it enrolled; once terminated it drops out on the next finish/reconcile.
-  rule="ANY {instance.id = '$ORACLE_ADMIN_OCID', instance.id = '$VEKL_WORKER_OCID', instance.id = '$VAN_TRADING_CORE_OCID'"
-  [[ -z "${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" ]] || rule+=", instance.id = '$DIAL_HERMES_CONTROL_SOURCE_OCID'"
-  rule+="}"
-  dg="$(ensure_named dynamic-group "$tenant" "$RUNCOMMAND_DG" "DIAL Oracle estate Run Command targets" --matching-rule "$rule")"
-  oci_session iam dynamic-group update --dynamic-group-id "$dg" --matching-rule "$rule" --force >/dev/null
+  reconcile_runcommand_dg "$tenant"
 
   # Least privilege, compartment-scoped. Resource-type and permission names are the documented
   # OCI ones as recalled; docs.oracle.com is unreachable from the authoring environment. The

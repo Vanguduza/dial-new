@@ -355,6 +355,9 @@ describe('oci-edge-login finish', () => {
     const estate = fs.readFileSync(path.join(again.state, 'oracle-estate.env'), 'utf8');
     expect(estate).toContain('VEKL_WORKER_OCID=ocid1.instance.oc1..new-vekl-worker');
     expect(estate).not.toContain('ocid1.instance.oc1..vekl\n');
+    // The new OCID joins the Run Command dynamic group, or the new host never fetches commands.
+    expect(r.out).toContain('rebuild_vekl_worker_runcommand_dg=RECONCILED');
+    expect(fs.readFileSync(path.join(again.state, 'iam/dg-rule'), 'utf8')).toContain("instance.id = 'ocid1.instance.oc1..new-vekl-worker'");
   });
 
   it('refuses to rebuild anything but oracle-admin or vekl-worker, before any OCI call', () => {
