@@ -263,7 +263,7 @@ jobs:
           set -Eeuo pipefail
           RAW_COMMAND="$(cat <<'CMD'
           set -Eeuo pipefail
-          REF='$GITHUB_SHA'
+          REF='${{ github.sha }}'
           TMP="$(mktemp /tmp/owner-oci-handoff.XXXXXX.sh)"
           trap 'rm -f "$TMP"' EXIT
           curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
