@@ -1,0 +1,53 @@
+name: ARTEMIS and OpenViking subordinate qualification
+
+on:
+  pull_request:
+    paths:
+      - "agent-system/orchestration/android-testing-*.mjs"
+      - "agent-system/orchestration/artemis-subordinate-client.mjs"
+      - "agent-system/orchestration/openviking-*.mjs"
+      - "agent-system/orchestration/shared-*.mjs"
+      - "agent-system/registries/ANDROID_TESTING_PLANE.json"
+      - "agent-system/registries/SHARED_PROJECT_MEMORY_FABRIC.json"
+      - "deploy/netcup/hermes-control/artemis/**"
+      - "deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh"
+      - "deploy/netcup/hermes-control/install-openviking-memory-plane.sh"
+      - "tests/orchestration-android-testing-plane.test.mjs"
+      - "tests/orchestration-openviking-shared-context.test.mjs"
+      - ".github/workflows/artemis-openviking-subordinate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  subordinate-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.2"
+          cache: npm
+
+      - name: Install repository dependencies
+        run: npm ci
+
+      - name: Parse Hermes subordinate JavaScript
+        run: |
+          node --check agent-system/orchestration/artemis-subordinate-client.mjs
+          node --check agent-system/orchestration/android-testing-plane.mjs
+          node --check agent-system/orchestration/android-testing-mcp.mjs
+          node --check agent-system/orchestration/openviking-shared-context.mjs
+          node --check agent-system/orchestration/openviking-projector.mjs
+
+      - name: Parse ARTEMIS internal bridge
+        run: python3 -m py_compile deploy/netcup/hermes-control/artemis/dial_artemis_mcp_bridge.py
+
+      - name: Validate Android plane registry
+        run: node -e "const r=require('./agent-system/registries/ANDROID_TESTING_PLANE.json'); if(r.authority!=='HERMES_CONTROL_AUTHORITY'||r.authority_invariants?.artemis_is_subordinate!==true||r.authority_invariants?.raw_upstream_mcp_exposed!==false) process.exit(1)"
+
+      - name: Run subordinate plane tests
+        run: npx vitest run tests/orchestration-android-testing-plane.test.mjs tests/orchestration-openviking-shared-context.test.mjs
