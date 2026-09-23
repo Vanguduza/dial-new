@@ -172,6 +172,8 @@ async function dispatch(body, claims) {
         migration_prepare:fs.existsSync(path.join(CONTROL,'state/migration-prepare-complete')),
         migration_cutover:fs.existsSync(path.join(CONTROL,'state/migration-cutover-complete')),
         control_active:fs.existsSync(path.join(CONTROL,'state/netcup-control-active')),
+        source_retirement_preflight:fs.existsSync(path.join(CONTROL,'state/source-retirement-preflight-complete')),
+        a1_control_retired:fs.existsSync(path.join(CONTROL,'state/a1-control-retired')),
         github_admin_runner:command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'").ok,
         certified:fs.existsSync(path.join(CONTROL,'state/zero-touch-certified')),
         bootstrap_ssh_public_key:fs.existsSync('/home/ubuntu/.ssh/dial-bootstrap-oracle.pub')
@@ -285,6 +287,28 @@ async function dispatch(body, claims) {
       fs.writeFileSync(path.join(CONTROL,'state/netcup-control-active'),now()+'\n',{mode:0o600});
       return r;
     }
+    case 'source-retirement-preflight': {
+      for(const marker of ['migration-cutover-complete','netcup-control-active']){
+        if(!fs.existsSync(path.join(CONTROL,'state',marker))) throw new Error('source retirement preflight missing '+marker);
+      }
+      if(!fs.existsSync(path.join(ROOT,'overlay-verified'))) throw new Error('source retirement preflight requires verified overlay');
+      if(!fs.existsSync(path.join(ROOT,'identities-rotated'))) throw new Error('source retirement preflight requires rotated identities');
+      const verify=ubuntu("DIAL_CONTROL_OVERLAY_IP=10.77.0.1 DIAL_REPO_DIR=/home/ubuntu/dial-new /home/ubuntu/dial-new/ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json",30*60*1000);
+      requireOk(verify,'source-retirement-netcup-core');
+      const peers=peerCheck();
+      if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('source retirement preflight peer failure'),{result:{peers}});
+      const a1=peers.find((x)=>x.ip==='10.77.0.4');
+      if(!a1 || !a1.ssh) throw new Error('A1 transition peer unavailable');
+      fs.writeFileSync(path.join(CONTROL,'state/source-retirement-preflight-complete'),now()+'\n',{mode:0o600});
+      return {ready:true,verify:verify.stdout,peers};
+    }
+    case 'retire-a1-control-role': {
+      if(!fs.existsSync(path.join(CONTROL,'state/source-retirement-preflight-complete'))) throw new Error('source retirement preflight has not completed');
+      const r=command("bash '"+REPO+"/deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh'",{timeout:20*60*1000});
+      requireOk(r,'retire-a1-control-role');
+      if(!fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) throw new Error('A1 retirement marker missing after retirement');
+      return r;
+    }
     case 'ensure-github-admin-runner': {
       const auth=ubuntu("gh auth status",2*60*1000);
       requireOk(auth,'github-auth');
@@ -293,13 +317,18 @@ async function dispatch(body, claims) {
       return r;
     }
     case 'certify': {
+      if(!fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) throw new Error('final certification requires retired A1 control role');
       const verify=ubuntu("DIAL_CONTROL_OVERLAY_IP=10.77.0.1 DIAL_REPO_DIR=/home/ubuntu/dial-new /home/ubuntu/dial-new/ops/development-bootstrap/bootstrap.sh --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json",30*60*1000);
       requireOk(verify,'certify-core');
       const peers=peerCheck();
       if(!peers.every((x)=>x.ping&&x.ssh)) throw Object.assign(new Error('final peer certification failed'),{result:{peers}});
+      const a1=peers.find((x)=>x.ip==='10.77.0.4');
+      if(!a1 || a1.hostname!=='van-trading-core') throw Object.assign(new Error('A1 final identity is not van-trading-core'),{result:{a1}});
+      const retired=ubuntu("ssh -o BatchMode=yes -o ConnectTimeout=8 van-trading-core 'set -e; test ! -e /var/lib/dial-control; test ! -e \"$HOME/.hermes\"; test ! -e \"$HOME/dial-new\"; grep -q \"^ROLE=VAN_TRADING_CORE$\" /etc/dial/host-role; test -f /var/lib/van/estate-transition/dial-hermes-control-retired'");
+      requireOk(retired,'certify-a1-retirement');
       const runner=command("systemctl list-units --type=service --state=running --no-legend | grep -q 'actions.runner.*dial-control-admin'");
       fs.writeFileSync(path.join(CONTROL,'state/zero-touch-certified'),now()+'\n',{mode:0o600});
-      return {verify:verify.stdout,peers,github_admin_runner:runner.ok,github_oidc_admin:true};
+      return {verify:verify.stdout,peers,a1_retired:true,a1_final_role:'VAN_TRADING_CORE',github_admin_runner:runner.ok,github_oidc_admin:true};
     }
     case 'admin-command': {
       if(!String(claims.workflow_ref||'').includes('/.github/workflows/netcup-admin-oidc.yml@')) throw new Error('admin workflow refused');
