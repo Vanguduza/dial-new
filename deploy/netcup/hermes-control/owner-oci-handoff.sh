@@ -14,7 +14,8 @@ valid_ref(){ [[ "$1" =~ ^[0-9a-f]{40}$ ]]; }
 
 fetch_exact() {
   local ref="$1" rel="$2" out="$3"
-  curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 5 --retry-all-errors \
+  curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+    --retry 5 --retry-all-errors --connect-timeout 10 --max-time 60 \
     "https://raw.githubusercontent.com/Vanguduza/dial-new/$ref/$rel" -o "$out"
 }
 
@@ -93,7 +94,7 @@ case "$MODE" in
       HOME=/home/ubuntu \
       PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
       bash "$ROOT/prepare-oci-recovery.sh" prepare
-    systemd-run --unit=dial-github-oidc-refresh --on-active=3s \
+    systemd-run --unit="dial-github-oidc-refresh-$(date +%s%N)" --on-active=3s \
       /bin/systemctl restart dial-github-oidc-control.service >/dev/null
     echo "DIAL_CONTROL_CONTROLLER_REFRESH=SCHEDULED"
     ;;
