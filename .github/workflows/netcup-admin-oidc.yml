@@ -239,7 +239,7 @@ jobs:
           install -d -m 0700 -o ubuntu -g ubuntu /home/ubuntu/.oci/edge-session
 
           fuser -k 8181/tcp >/dev/null 2>&1 || true
-          pkill -f 'cloudflared tunnel --url http://127.0.0.1:8181' >/dev/null 2>&1 || true
+          pkill -x cloudflared >/dev/null 2>&1 || true
 
           SESSION_WRAPPER="$LOGDIR/run-session.sh"
           cat >"$SESSION_WRAPPER" <<EOF
