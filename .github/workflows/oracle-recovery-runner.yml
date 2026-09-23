@@ -7,12 +7,12 @@ on:
         description: Bounded recovery action
         required: true
         type: choice
-        options: [probe, status, restart-recovery-agent, restart-commander]
+        options: [probe, status, restart-recovery-agent, restart-host-agent]
       target:
-        description: Recovery target
+        description: Canonical Oracle recovery target
         required: true
         type: choice
-        options: [oracle-admin, vekl-worker, dial-control]
+        options: [oracle-admin, vekl-worker, dial-hermes-control]
       reason:
         description: Auditable operator reason (never executed)
         required: true
@@ -44,12 +44,12 @@ jobs:
         run: |
           case "$ACTION" in
             probe|status) echo 'destructive=false' >> "$GITHUB_OUTPUT" ;;
-            restart-recovery-agent|restart-commander) echo 'destructive=true' >> "$GITHUB_OUTPUT" ;;
+            restart-recovery-agent|restart-host-agent) echo 'destructive=true' >> "$GITHUB_OUTPUT" ;;
             *) exit 64 ;;
           esac
           case "$TARGET" in
-            oracle-admin) echo 'runner_label=vekl-worker-recovery' >> "$GITHUB_OUTPUT" ;;
-            vekl-worker|dial-control) echo 'runner_label=oracle-admin-recovery' >> "$GITHUB_OUTPUT" ;;
+            oracle-admin) echo 'runner_label=dial-hermes-control-recovery' >> "$GITHUB_OUTPUT" ;;
+            vekl-worker|dial-hermes-control) echo 'runner_label=oracle-admin-recovery' >> "$GITHUB_OUTPUT" ;;
             *) exit 64 ;;
           esac
 
