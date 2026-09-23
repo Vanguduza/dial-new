@@ -197,6 +197,10 @@ EOF
   sudo install -m 0600 "$tmp" "$ESTATE"
   rm -f "$tmp"
 
+  sudo install -d -m 0700 /var/lib/dial-control/github-oidc
+  printf '%s\n' "$(date -u +%FT%TZ)" | sudo tee /var/lib/dial-control/github-oidc/github-oci-ready >/dev/null
+  sudo chmod 0600 /var/lib/dial-control/github-oidc/github-oci-ready
+
   echo "OCI_RECOVERY_DISCOVERY=GREEN"
   echo "oracle_targets=3"
   echo "a1_physical_targets=1"
