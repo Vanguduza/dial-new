@@ -86,6 +86,14 @@ jobs:
           RAW_COMMAND="set -Eeuo pipefail; install -d -m 0755 /usr/local/lib/dial-control; printf '%s' '$SCRIPT_B64' | base64 -d >/usr/local/lib/dial-control/prepare-oci-recovery.sh; chmod 0755 /usr/local/lib/dial-control/prepare-oci-recovery.sh; bash -n /usr/local/lib/dial-control/prepare-oci-recovery.sh; runuser -u ubuntu -- env HOME=/home/ubuntu PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin bash /usr/local/lib/dial-control/prepare-oci-recovery.sh prepare"
           COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
           BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
-          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
-          jq -e '.ok == true and (.result.stdout | contains("OCI_RECOVERY_IDENTITY=PREPARED"))' <<<"$RESPONSE" >/dev/null
-          jq -r '.result.stdout' <<<"$RESPONSE"
+          HASH="$(printf '%s' "$BODY" | sha256sum | awk '{print $1}')"
+          AUDIENCE="dial-control:$HASH"
+          ENCODED_AUDIENCE="$(jq -nr --arg v "$AUDIENCE" '$v|@uri')"
+          SEP='?'; [[ "$ACTIONS_ID_TOKEN_REQUEST_URL" == *\?* ]] && SEP='&'
+          TOKEN="$(curl --proto '=https' --tlsv1.2 -fsS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}${SEP}audience=${ENCODED_AUDIENCE}" | jq -er '.value')"
+          HTTP="$(curl -sS -o "$RUNNER_TEMP/admin-response.json" -w '%{http_code}' --connect-timeout 10 --max-time 1800 -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' --data-binary "$BODY" "$DIAL_CONTROL_OIDC_URL")"
+          echo "controller_http=$HTTP"
+          jq . "$RUNNER_TEMP/admin-response.json" || cat "$RUNNER_TEMP/admin-response.json"
+          [[ "$HTTP" == 200 ]]
+          jq -e '.ok == true and (.result.stdout | contains("OCI_RECOVERY_IDENTITY=PREPARED"))' "$RUNNER_TEMP/admin-response.json" >/dev/null
+          jq -r '.result.stdout' "$RUNNER_TEMP/admin-response.json"
