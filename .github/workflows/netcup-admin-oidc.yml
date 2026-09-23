@@ -219,7 +219,18 @@ jobs:
           OCI_BIN="$(command -v oci || true)"
           CF_BIN="$(command -v cloudflared || true)"
           [[ -x "$OCI_BIN" ]] || { echo "REFUSE: OCI CLI missing"; exit 31; }
-          [[ -x "$CF_BIN" ]] || { echo "REFUSE: cloudflared missing"; exit 32; }
+          if [[ ! -x "$CF_BIN" ]]; then
+            TMP_CF="$(mktemp /tmp/cloudflared.XXXXXX)"
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 120 --retry 3 --retry-delay 2 \
+              "https://github.com/cloudflare/cloudflared/releases/download/2026.9.1/cloudflared-linux-amd64" \
+              -o "$TMP_CF"
+            echo "03f1f25d1cc93b9ad6c60569d44060bc4f17ed97075760ed8cfca4b12dcd68cc  $TMP_CF" | sha256sum -c -
+            install -m 0755 "$TMP_CF" /usr/local/bin/cloudflared
+            rm -f "$TMP_CF"
+            CF_BIN=/usr/local/bin/cloudflared
+          fi
+          [[ -x "$CF_BIN" ]] || { echo "REFUSE: cloudflared install failed"; exit 32; }
 
           install -d -m 0700 -o ubuntu -g ubuntu "$LOGDIR"
           rm -f "$LOGDIR/oci.log" "$LOGDIR/tunnel.log" "$LOGDIR/session-complete"
