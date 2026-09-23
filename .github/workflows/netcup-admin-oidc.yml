@@ -52,14 +52,14 @@ env:
 
 jobs:
   admin:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
+    if: ${{ github.repository == 'Vanguduza/dial-new' && github.actor == 'Vanguduza' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Refresh bounded Dial Control runtime helpers
-        if: ${{ inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
+        if: ${{ github.event_name == 'push' || inputs.operation == 'prepare_oci_recovery' || inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -110,6 +110,7 @@ jobs:
           echo DIAL_CONTROL_RUNTIME_REFRESH=GREEN
 
       - name: Validate explicit root acknowledgement
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -119,6 +120,7 @@ jobs:
           }
 
       - name: Build bounded admin command
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         env:
           OPERATION: ${{ inputs.operation }}
@@ -166,6 +168,7 @@ jobs:
           [[ "$(wc -c <"$OUT")" -le 32768 ]] || { echo "::error::Admin command exceeds controller limit"; exit 3; }
 
       - name: Execute audited Dial Control command
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -193,6 +196,28 @@ jobs:
             echo '~~~'
           } >>"$GITHUB_STEP_SUMMARY"
 
+      - name: Prepare OCI recovery identity for browser handoff
+        if: ${{ github.event_name == 'push' }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RAW_COMMAND="$(cat <<'CMD'
+          set -Eeuo pipefail
+          test -x /usr/local/lib/dial-control/owner-oci-handoff.sh
+          /usr/local/lib/dial-control/owner-oci-handoff.sh prepare '$GITHUB_SHA'
+          CMD
+          )"
+          COMMAND_B64="$(printf '%s' "$RAW_COMMAND" | base64 -w0)"
+          BODY="$(jq -cn --arg c "$COMMAND_B64" '{action:"admin-command",ack:"I_UNDERSTAND_ROOT",command_b64:$c}')"
+          RESPONSE="$(bash deploy/netcup/hermes-control/github-oidc-call.sh "$BODY")"
+          jq -e '.ok == true' <<<"$RESPONSE" >/dev/null
+          jq -r '.result.stdout' <<<"$RESPONSE"
+          {
+            echo "## OCI recovery browser handoff"
+            echo '~~~text'
+            jq -r '.result.stdout' <<<"$RESPONSE"
+            echo '~~~'
+          } >>"$GITHUB_STEP_SUMMARY"
       - name: Verify local OCI recovery authority
         if: ${{ inputs.operation == 'configure_and_discover_oci' }}
         shell: bash
