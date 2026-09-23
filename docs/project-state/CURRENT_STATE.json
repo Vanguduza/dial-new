@@ -8,18 +8,17 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    ".github/workflows/netcup-admin-oidc.yml",
-    "deploy/netcup/hermes-control/oci-edge-capture.py",
+    "deploy/netcup/hermes-control/github-oidc-control.mjs",
     "deploy/netcup/hermes-control/oci-edge-login.sh",
-    "docs/project-state/authorizations/auth-20260923-owner-fix-oci-login-fallback-capture.json",
-    "tests/fixtures/fake-oci-cli-listener.py",
-    "tests/netcup-oci-edge-capture.test.mjs",
-    "vitest.config.ts"
+    "deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh",
+    "deploy/netcup/hermes-control/prepare-oci-recovery.sh",
+    "docs/project-state/authorizations/auth-20260923-owner-finish-oci-login-cli-option-fixes.json",
+    "tests/fixtures/fake-oci-cli.sh"
   ],
-  "content_diff_sha256": "328c9504d76afcbf16c273ade73fd878ee0deefb67c59649c691437db8619a61",
-  "observed_at_utc": "2026-09-23T08:09:22.219581+00:00",
+  "content_diff_sha256": "94d2428e5d18f54fe6bc477cc5bd8e1815052343955efd6783e6e5089f9ac7d2",
+  "observed_at_utc": "2026-09-23T08:19:25.154335+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "4cd233c5995ab3a3697778a8cb7fe9dc564bf424",
+  "source_parent": "73a061765ac5235ac665dd3113976ca0a9653673",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

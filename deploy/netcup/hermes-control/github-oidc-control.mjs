@@ -222,7 +222,7 @@ async function dispatch(body, claims) {
       fs.writeFileSync('/home/ubuntu/.oci/config',config,{mode:0o600});
       command("chown -R ubuntu:ubuntu /home/ubuntu/.oci && chmod 700 /home/ubuntu/.oci && chmod 600 /home/ubuntu/.oci/config /home/ubuntu/.oci/netcup-recovery.pem");
       fs.rmSync(encrypted,{force:true}); fs.rmSync(clear,{force:true});
-      const probe=ubuntu("oci iam region list --limit 1 >/dev/null",120000);
+      const probe=ubuntu("oci iam region list >/dev/null",120000);
       requireOk(probe,'oci-recovery-probe');
       fs.writeFileSync(path.join(ROOT,'github-oci-ready'),now()+'\n',{mode:0o600});
       return {installed:true,probe:'PASS'};

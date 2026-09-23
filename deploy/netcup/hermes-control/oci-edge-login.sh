@@ -269,7 +269,7 @@ finish() {
   oci_session iam user update-user-capabilities --user-id "$user" \
     --can-use-console-password false --can-use-api-keys true --can-use-auth-tokens false \
     --can-use-smtp-credentials false --can-use-customer-secret-keys false \
-    --can-use-db-credentials false --can-use-o-auth false >/dev/null
+    --can-use-db-credentials false --can-use-o-auth2-client-credentials false >/dev/null
   if ! oci_session iam user list-groups --compartment-id "$tenant" --user-id "$user" --all |
        jq -e --arg g "$group" '[.data[]?.id] | index($g)' >/dev/null; then
     oci_session iam group add-user --user-id "$user" --group-id "$group" >/dev/null

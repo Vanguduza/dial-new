@@ -65,11 +65,12 @@ config_ready() {
 }
 
 inventory_ready() {
-  [[ -s "$ESTATE" ]] || return 1
-  grep -Eq '^DIAL_OCI_COMPARTMENT=ocid1\.(compartment|tenancy)\.' "$ESTATE" &&
-    grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
-    grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
-    grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
+  # The inventory is root-only (0600) and this script runs as the admin user.
+  sudo test -s "$ESTATE" || return 1
+  sudo grep -Eq '^DIAL_OCI_COMPARTMENT=ocid1\.(compartment|tenancy)\.' "$ESTATE" &&
+    sudo grep -q '^ORACLE_ADMIN_OCID=ocid1\.instance\.' "$ESTATE" &&
+    sudo grep -q '^VEKL_WORKER_OCID=ocid1\.instance\.' "$ESTATE" &&
+    sudo grep -q '^VAN_TRADING_CORE_OCID=ocid1\.instance\.' "$ESTATE"
 }
 
 prepare() {
@@ -163,7 +164,7 @@ discover() {
   command -v oci >/dev/null 2>&1 || { echo "REFUSE: OCI CLI missing" >&2; exit 11; }
   command -v jq >/dev/null 2>&1 || { echo "REFUSE: jq missing" >&2; exit 11; }
 
-  oci iam region list --limit 1 >/dev/null
+  oci iam region list >/dev/null
 
   mapfile -t COMPARTMENTS < <(
     {

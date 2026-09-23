@@ -12,6 +12,11 @@ while [[ $i -lt ${#args[@]} ]]; do
 done
 set -- "${rest[@]}"
 opt() { local k="$1"; shift; while [[ $# -gt 0 ]]; do [[ "$1" == "$k" ]] && { echo "$2"; return; }; shift; done; }
+# Options the pinned oci-cli 3.93.0 rejects (checked against its --help); click exits 2.
+if [[ "$1 $2 $3" == "iam region list" && $# -gt 3 ]]; then echo "Error: No such option '$4'." >&2; exit 2; fi
+if [[ "$1 $2 $3" == "iam user update-user-capabilities" ]]; then
+  for a in "$@"; do [[ "$a" == --can-use-o-auth ]] && { echo "Error: No such option '--can-use-o-auth'." >&2; exit 2; }; done
+fi
 case "$1 $2 $3" in
   "iam region list"*|"iam compartment list"*|"instance-agent command list"*) echo '{"data":[]}' ;;
   "session terminate"*) : ;;

@@ -40,7 +40,7 @@ OCI=(runuser -u ubuntu -- env
   PATH=/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
   oci)
 
-"${OCI[@]}" iam region list --limit 1 >/dev/null
+"${OCI[@]}" iam region list >/dev/null
 
 NETCUP_WG_PUBLIC_KEY="$(cat "$WG_PUB_FILE")"
 NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY="$(cat "$SSH_PUB_FILE")"
