@@ -30,5 +30,8 @@ if [[ "$HTTP_CODE" =~ ^2[0-9][0-9]$ ]]; then
   exit 0
 fi
 echo "DIAL_CONTROL_OIDC_HTTP_ERROR=$HTTP_CODE" >&2
-jq -c '{ok,error,result:(if (.result|type)=="object" then {ok:.result.ok,status:.result.status,signal:.result.signal,error:.result.error} else .result end)}' "$TMP_RESPONSE" 2>/dev/null >&2 || true
+echo "DIAL_CONTROL_OIDC_RESPONSE_BODY_BEGIN" >&2
+cat "$TMP_RESPONSE" >&2 || true
+echo >&2
+echo "DIAL_CONTROL_OIDC_RESPONSE_BODY_END" >&2
 exit 22
