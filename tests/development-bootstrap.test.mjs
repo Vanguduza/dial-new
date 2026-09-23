@@ -280,6 +280,8 @@ describe('DIAL development bootstrap closure', () => {
     const rescuePrestager = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/rescue-prestage-control-plane.sh'), 'utf8');
     const hub = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh'), 'utf8');
     const peer = fs.readFileSync(path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh'), 'utf8');
+    const retireA1 = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh'), 'utf8');
+    const hybridEstate = JSON.parse(fs.readFileSync(path.join(repoDir, 'deploy/hybrid/estate-topology.json'), 'utf8'));
 
     expect(workflow).toContain("cron: '*/5 * * * *'");
     expect(workflow).toContain('cancel-in-progress: false');
@@ -443,10 +445,30 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).toContain('for HOST_ID in oracle-admin vekl-worker old-dial-hermes-control; do');
     expect(workflow).toContain('for HOST_ID in oracle-admin vekl-worker; do');
     expect(workflow).toContain('a1_transition=${KEYS[old-dial-hermes-control]}');
-    expect(workflow).toContain('VAN/VATI authority is not mutated by DIAL');
+    expect(workflow).toContain('source-retirement-preflight');
+    expect(workflow).toContain('retire-a1-control-role');
+    expect(workflow).toContain('old Hermes control installation/state retired after verified clone');
+    expect(controller).toContain("case 'source-retirement-preflight'");
+    expect(controller).toContain("case 'retire-a1-control-role'");
+    expect(controller).toContain("final certification requires retired A1 control role");
+    expect(controller).toContain("a1.hostname!=='van-trading-core'");
+    expect(retireA1).toContain('migration-cutover-complete');
+    expect(retireA1).toContain('netcup-control-active');
+    expect(retireA1).toContain('source-retirement-preflight-complete');
+    expect(retireA1).toContain('rm -rf /var/lib/dial-control');
+    expect(retireA1).toContain('rm -rf "$HOME/.hermes" "$HOME/dial-new"');
+    expect(retireA1).toContain('ROLE=VAN_TRADING_CORE');
+    expect(retireA1).toContain('test -s /etc/wireguard/wg-dial.conf');
+    expect(retireA1).toContain('provider_user_credentials_preserved=true');
+    expect(hybridEstate.total_vms).toBe(4);
+    expect(hybridEstate.vms.filter((x) => x.provider === 'oracle')).toHaveLength(3);
+    expect(hybridEstate.vms.map((x) => x.host_id)).toContain('van-trading-core');
+    expect(hybridEstate.retired_after_cutover[0].physical_instance).toContain('same Oracle A1 VM');
+    expect(hybridEstate.retired_after_cutover[0].final_host_id).toBe('van-trading-core');
 
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
+    execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/rescue-prestage-control-plane.sh')]);
