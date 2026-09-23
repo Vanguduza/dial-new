@@ -16,7 +16,7 @@ import { loadSharedMemoryIndex, readSharedMemoryObject } from '../agent-system/o
 const roots=[];
 const envNames=[
   'DIAL_ARTEMIS_BIN','DIAL_ADB_BIN','DIAL_ANDROID_DEVICE_SERIALS','DIAL_ANDROID_AVDS',
-  'DIAL_ARTEMIS_ROOT','DIAL_ARTEMIS_BRIDGE','DIAL_ARTEMIS_BRIDGE_RUNNER','DIAL_ARTEMIS_PYTHON',
+  'DIAL_ARTEMIS_ROOT','DIAL_ARTEMIS_BRIDGE','DIAL_ARTEMIS_BRIDGE_RUNNER','DIAL_ARTEMIS_PYTHON','DIAL_TEST_SYMLINK_ESCAPE',
 ];
 const oldEnv=Object.fromEntries(envNames.map(name=>[name,process.env[name]]));
 
@@ -70,7 +70,7 @@ fs.writeFileSync(path.join(traceDir,'stdout.log'),'stdout ok\\n'); fs.writeFileS
 let result;
 if(tool==='mobile_run_task') result={trace_id:trace,status:'running',device_serial:input.device_serial,stdout_log:path.join(traceDir,'stdout.log'),stderr_log:path.join(traceDir,'stderr.log'),notes_dir:path.join(traceDir,'notes')};
 else if(tool==='mobile_manage_task') result={trace_id:trace,status:input.action==='stop'?'cancelled':'completed',device_serial:'SERIAL-1',stdout_log:path.join(traceDir,'stdout.log'),stderr_log:path.join(traceDir,'stderr.log'),test_summary:{passed:1,failed:0}};
-else if(tool==='mobile_get_device_state'){ if(input.view_type==='hierarchy') result='[0] Settings text=Battery'; else { const p=path.join(root,'live.jpg'); fs.writeFileSync(p,'JPEG-DATA'); result='file://'+p; } }
+else if(tool==='mobile_get_device_state'){ if(input.view_type==='hierarchy') result='[0] Settings text=Battery'; else { const p=path.join(root,'live.jpg'); if(process.env.DIAL_TEST_SYMLINK_ESCAPE==='1') { try{fs.unlinkSync(p)}catch{} fs.symlinkSync('/etc/hosts',p); } else fs.writeFileSync(p,'JPEG-DATA'); result='file://'+p; } }
 else if(tool==='mobile_inspect_trace') result={action:input.action,trace_id:input.trace_id,steps:3};
 else if(tool==='mobile_diagnose') result={verdict:'ready',device:{serial:input.device_serial||null},emulator:input.launch_avd?{avd_name:input.launch_avd,status:'starting'}:null};
 else { console.log(JSON.stringify({ok:false,error:'unknown'})); process.exit(1);}
@@ -153,6 +153,16 @@ describe('Hermes Android testing plane',()=>{
     const task=JSON.parse(fs.readFileSync(path.join(root,'android-testing','tasks',`${started.trace_id}.json`),'utf8'));
     expect(task.evidence.sealed_at).toBeTruthy();
     expect(task.evidence.memory_candidate.memory_id).toMatch(/^mem-/);
+  });
+
+  it('refuses ARTEMIS evidence paths that escape the pinned root through symlinks',()=>{
+    const root=temp('android-plane-control-');
+    makeRepo();
+    makeHarness();
+    process.env.DIAL_TEST_SYMLINK_ESCAPE='1';
+    const screenshot=getAndroidDeviceState({deviceSerial:'SERIAL-1',viewType:'screenshot',root});
+    expect(screenshot.artifact).toBeUndefined();
+    expect(String(screenshot.result)).toMatch(/live\.jpg/);
   });
 
   it('routes device observation and diagnosis through admitted Hermes policy',()=>{
