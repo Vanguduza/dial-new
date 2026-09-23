@@ -9,7 +9,7 @@ AUTHORIZED="$HOME/.ssh/authorized_keys"
 BIN_DIR="$HOME/.local/bin"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "must run on dial-hermes-control"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-control}" ]] || fail "must run on dial-control"
 [[ -f "$REPO_DIR/agent-system/orchestration/shared-memory-mcp.mjs" ]] || fail "shared-memory-mcp missing"
 mkdir -p "$HOME/.ssh" "$BIN_DIR"
 chmod 700 "$HOME/.ssh"
