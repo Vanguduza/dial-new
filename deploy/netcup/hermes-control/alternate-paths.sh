@@ -66,15 +66,20 @@ run_command_probe() { # <instance-ocid> -> prints hostname reported by the agent
   tmp="$(mktemp -d)"; chown ubuntu:ubuntu "$tmp"
   jq -n '{source:{sourceType:"TEXT",text:"hostname"},output:{outputType:"TEXT"}}' >"$tmp/c.json"
   jq -n --arg i "$instance" '{instanceId:$i}' >"$tmp/t.json"; chown ubuntu:ubuntu "$tmp"/*.json
+  # stdout carries only the id; OCI CLI warnings go to stderr and are kept apart for the diagnosis.
   id="$("${OCI[@]}" instance-agent command create --compartment-id "$DIAL_OCI_COMPARTMENT" \
         --content "file://$tmp/c.json" --target "file://$tmp/t.json" --timeout-in-seconds 120 \
-        --query data.id --raw-output 2>/dev/null)" || { rm -rf "$tmp"; return 1; }
-  for _ in $(seq 1 24); do
+        --query data.id --raw-output 2>"$tmp/create.err")" || true
+  if [[ "$id" != ocid1.instanceagentcommand.* ]]; then
+    RC_DETAIL="create_failed:$(grep -v -i warning "$tmp/create.err" | tr '\n' ' ' | cut -c1-160)"; rm -rf "$tmp"; return 1
+  fi
+  for _ in $(seq 1 30); do
     json="$("${OCI[@]}" instance-agent command-execution get --command-id "$id" --instance-id "$instance" 2>/dev/null)" || true
-    state="$(jq -r '.data."lifecycle-state" // empty' <<<"$json")"
+    state="$(jq -r '.data."lifecycle-state" // empty' <<<"$json" 2>/dev/null)"
     [[ "$state" == SUCCEEDED || "$state" == FAILED || "$state" == TIMED_OUT || "$state" == CANCELED ]] && break
     sleep 5
   done
+  RC_DETAIL="state=${state:-none} delivery=$(jq -r '.data."delivery-state" // "none"' <<<"$json" 2>/dev/null) exit=$(jq -r '.data.content."exit-code" // "none"' <<<"$json" 2>/dev/null)"
   rm -rf "$tmp"
   [[ "$state" == SUCCEEDED ]] || return 1
   jq -r '.data.content.text // ""' <<<"$json" | tr -d '\n'
@@ -92,11 +97,13 @@ verify() {
     pub="$(public_ip_of "${OVERLAY[$n]}")"
     out="$(ssh_as ubuntu@"${OVERLAY[$n]}" hostname 2>/dev/null || true)"; [[ "$out" == "$n" ]] && overlay=PASS || overlay=FAIL
     out="$(ssh_as -o HostKeyAlias="${OVERLAY[$n]}" ubuntu@"$pub" hostname 2>/dev/null || true)"; [[ "$out" == "$n" ]] && direct=PASS || direct=FAIL
-    rc_host="$(run_command_probe "${OCID[$n]}" || true)"
+    RC_DETAIL=""; rc_host=""
+    rc_host="$(run_command_probe "${OCID[$n]}"; echo "|$RC_DETAIL")" || true
+    rc_detail="${rc_host##*|}"; rc_host="${rc_host%|*}"
     results="$(jq -c --arg n "$n" --arg pub "$pub" --arg o "$overlay" --arg d "$direct" \
       --arg r "$([[ "$rc_host" == "$n" ]] && echo PASS || echo FAIL)" --arg b "$bastion" \
-      '. + [{peer:$n, public_ip:$pub, overlay:$o, direct:$d, run_command:$r, bastion:$b}]' <<<"$results")"
-    echo "peer=$n overlay=$overlay direct=$direct run_command=$([[ "$rc_host" == "$n" ]] && echo PASS || echo FAIL) bastion=$bastion"
+      --arg rd "$rc_detail" '. + [{peer:$n, public_ip:$pub, overlay:$o, direct:$d, run_command:$r, run_command_detail:$rd, bastion:$b}]' <<<"$results")"
+    echo "peer=$n overlay=$overlay direct=$direct run_command=$([[ "$rc_host" == "$n" ]] && echo PASS || echo FAIL) ($rc_detail) bastion=$bastion"
   done
   install -d -m 0700 "$(dirname "$EVIDENCE")"
   jq -n --argjson r "$results" --arg at "$(date -u +%FT%TZ)" \

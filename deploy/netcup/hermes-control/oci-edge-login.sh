@@ -327,6 +327,68 @@ enable_run_command() {
   say "NEXT_OWNER_ACTION=grant ocarun passwordless sudo on each VM (/etc/sudoers.d/90-dial-ocarun); OCI cannot do this"
 }
 
+# Owner-session network hardening (auth-20260924-owner-recommended-recovery-decisions). Runs inside finish
+# with the owner's verified session and never fails it: each step reports its own outcome.
+#   - security lists of the peers' subnet: an ingress tcp/22 rule from 0.0.0.0/0 becomes two rules,
+#     Dial Control's public /32 and the VCN CIDR(s); every other rule is kept verbatim.
+#   - OCI Bastion (STANDARD) on the peers' subnet, client CIDR limited to Dial Control's /32.
+#   - a separate policy lets the recovery group open Bastion sessions and read network config; kept
+#     apart from the recovery policy so a rejected statement cannot break Run Command recovery.
+# CLI parameter and policy names are as recalled (the authoring environment could not reach Oracle's
+# docs); every call is checked here and a failure is reported, not hidden.
+harden_oci_network() {
+  local tenant="$1" netcup_ip="${NETCUP_PUBLIC_IP:-62.83.35.103}" tmp subnet vcn cidrs sl new c="$DIAL_OCI_COMPARTMENT"
+  tmp="$(mktemp -d)"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp" 2>/dev/null || true
+  subnet="$(oci_session compute instance list-vnics --instance-id "$ORACLE_ADMIN_OCID" --query 'data[0]."subnet-id"' --raw-output 2>/dev/null || true)"
+  [[ "$subnet" == ocid1.subnet.* ]] || { say "oci_network_harden=SKIPPED_NO_SUBNET"; rm -rf "$tmp"; return 0; }
+  oci_session network subnet get --subnet-id "$subnet" >"$tmp/subnet.json" 2>/dev/null || { say "oci_network_harden=SUBNET_READ_FAILED"; rm -rf "$tmp"; return 0; }
+  vcn="$(jq -r '.data."vcn-id"' "$tmp/subnet.json")"
+  cidrs="$(oci_session network vcn get --vcn-id "$vcn" 2>/dev/null | jq -c '.data."cidr-blocks" // [.data."cidr-block"]')"
+  for sl in $(jq -r '.data."security-list-ids"[]' "$tmp/subnet.json"); do
+    oci_session network security-list get --security-list-id "$sl" >"$tmp/sl.json" 2>/dev/null || { say "security_list=READ_FAILED"; continue; }
+    # kebab-case (as read) -> camelCase (as the update expects); open tcp/22 rules are replaced.
+    new="$(jq -c --arg ip "$netcup_ip/32" --argjson cidrs "$cidrs" '
+      def camel: if type=="object" then with_entries(.key |= (split("-") | .[0] + (.[1:] | map((.[0:1]|ascii_upcase) + .[1:]) | join(""))) | .value |= camel)
+                 elif type=="array" then map(camel) else . end;
+      def open22: .protocol=="6" and .source=="0.0.0.0/0" and ((.["tcp-options"]["destination-port-range"] // {"min":1,"max":65535}) | .min<=22 and .max>=22);
+      (.data."ingress-security-rules") as $in
+      | if ([$in[] | select(open22)] | length) == 0 then null
+        else ([$in[] | select(open22 | not)] + ([$ip] + $cidrs | map({source: ., protocol: "6", "is-stateless": false, "source-type": "CIDR_BLOCK",
+               "tcp-options": {"destination-port-range": {min: 22, max: 22}}, description: "dial: ssh restricted"}))) | camel end' "$tmp/sl.json")"
+    if [[ "$new" == null ]]; then say "security_list=ALREADY_RESTRICTED"; continue; fi
+    printf '%s' "$new" >"$tmp/rules.json"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp/rules.json" 2>/dev/null || true
+    if oci_session network security-list update --security-list-id "$sl" --ingress-security-rules "file://$tmp/rules.json" --force >/dev/null 2>"$tmp/err"; then
+      say "security_list=SSH_RESTRICTED rules=$(jq length <<<"$new")"
+    else
+      say "security_list=UPDATE_FAILED $(head -c 200 "$tmp/err" | tr '\n' ' ')"
+    fi
+  done
+  if [[ "$(oci_session bastion bastion list --compartment-id "$c" --all 2>/dev/null | jq '[.data[]? | select(.name=="dial-recovery-bastion" and ."lifecycle-state"!="DELETED")] | length')" == 0 ]]; then
+    oci_session bastion bastion create --bastion-type STANDARD --compartment-id "$c" --target-subnet-id "$subnet" \
+      --client-cidr-list "[\"$netcup_ip/32\"]" --name dial-recovery-bastion >/dev/null 2>"$tmp/err" &&
+      say "bastion=CREATED" || say "bastion=CREATE_FAILED $(head -c 200 "$tmp/err" | tr '\n' ' ')"
+  else
+    say "bastion=PRESENT"
+  fi
+  local scope statements pol
+  if [[ "$c" == ocid1.tenancy.* ]]; then scope="tenancy"; else scope="compartment id $c"; fi
+  statements="$(jq -cn --arg g "$RECOVERY_NAME" --arg s "$scope" '[
+    "Allow group \($g) to use bastion in \($s)",
+    "Allow group \($g) to manage bastion-session in \($s)",
+    "Allow group \($g) to read virtual-network-family in \($s)",
+    "Allow group \($g) to read instance-agent-plugins in \($s)",
+    "Allow group \($g) to inspect work-requests in \($s)"]')"
+  pol="$(ocid_by_name policy "$tenant" "$RECOVERY_NAME-bastion")"
+  if [[ -z "$pol" ]]; then
+    oci_session iam policy create --compartment-id "$tenant" --name "$RECOVERY_NAME-bastion" --description "DIAL recovery Bastion sessions (managed by oci-edge-login.sh)" \
+      --statements "$statements" >/dev/null 2>"$tmp/err" && say "bastion_policy=CREATED" || say "bastion_policy=CREATE_FAILED $(head -c 200 "$tmp/err" | tr '\n' ' ')"
+  else
+    oci_session iam policy update --policy-id "$pol" --statements "$statements" --version-date "" --force >/dev/null 2>"$tmp/err" &&
+      say "bastion_policy=RECONCILED" || say "bastion_policy=UPDATE_FAILED $(head -c 200 "$tmp/err" | tr '\n' ' ')"
+  fi
+  rm -rf "$tmp"
+}
+
 # Owner-session operation (auth-20260923-owner-estate-rebuild-hermes-becomes-van): rebuild an E2
 # estate VM with the settings enrollment needs. The old instance is terminated with its boot volume
 # PRESERVED (the E2 Always Free limit is two instances, so it must go before the new one can start),
@@ -504,6 +566,7 @@ finish() {
   fi
 
   reconcile_runcommand_dg "$tenant"
+  harden_oci_network "$tenant" || say "oci_network_harden=ERROR"
 
   # Least privilege, compartment-scoped. Resource-type and permission names are the documented
   # OCI ones as recalled; docs.oracle.com is unreachable from the authoring environment. The
