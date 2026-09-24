@@ -27,7 +27,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_RUN_ID: '35816464668'
-          EXPECTED_PAYLOAD_REF: 'a5e707c673804de9f9ee8a4844ee52aa23bc693a'
+          EXPECTED_PAYLOAD_REF: '7935684a6a72cba181af800d86aa59878c466d6a'
           CONTROL_IP: '62.83.35.103'
         run: |
           set -Eeuo pipefail
