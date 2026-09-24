@@ -145,10 +145,23 @@ function estateValue(name) {
     return m ? m[1].trim() : '';
   } catch { return ''; }
 }
-function peerCheck() {
-  const key=fs.existsSync('/home/ubuntu/.ssh/dial-oracle-admin')
+function peerKey() {
+  return fs.existsSync('/home/ubuntu/.ssh/dial-oracle-admin')
     ? '/home/ubuntu/.ssh/dial-oracle-admin'
     : '/home/ubuntu/.ssh/dial-bootstrap-oracle';
+}
+// migrate-from-oracle-control.sh runs plain `ssh`/`rsync -e ssh` with no identity, so it was refused
+// by the source (publickey, 2026-09-24). Put a shim first on PATH that adds the estate key.
+const MIGRATION_SSH_DIR='/usr/local/lib/dial-control/migration-ssh';
+function migrationEnv() {
+  fs.mkdirSync(MIGRATION_SSH_DIR,{recursive:true,mode:0o755});
+  const shim=path.join(MIGRATION_SSH_DIR,'ssh');
+  fs.writeFileSync(shim+'.tmp','#!/bin/sh\nexec /usr/bin/ssh -i '+peerKey()+' -o IdentitiesOnly=yes "$@"\n',{mode:0o755});
+  fs.renameSync(shim+'.tmp',shim);
+  return 'PATH='+MIGRATION_SSH_DIR+':/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin ';
+}
+function peerCheck() {
+  const key=peerKey();
   const peers=['10.77.0.2','10.77.0.3'];
   if(!vanPending()) peers.push('10.77.0.4');
   if(sourceActive()) peers.push(SOURCE_IP);
@@ -312,7 +325,7 @@ async function dispatch(body, claims) {
       return r;
     }
     case 'migrate-prepare': {
-      const r=ubuntu("OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare");
+      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare");
       requireOk(r,'migrate-prepare');
       fs.mkdirSync(path.join(CONTROL,'state'),{recursive:true});
       fs.writeFileSync(path.join(CONTROL,'state/migration-prepare-complete'),now()+'\n',{mode:0o600});
@@ -334,7 +347,7 @@ async function dispatch(body, claims) {
       return {ready:true,checks:Object.fromEntries(Object.entries(checks).map(([k,v])=>[k,v.ok]))};
     }
     case 'migrate-cutover': {
-      const r=ubuntu("OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover",30*60*1000);
+      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover",30*60*1000);
       requireOk(r,'migrate-cutover');
       fs.mkdirSync(path.join(CONTROL,'state'),{recursive:true});
       fs.writeFileSync(path.join(CONTROL,'state/migration-cutover-complete'),now()+'\n',{mode:0o600});

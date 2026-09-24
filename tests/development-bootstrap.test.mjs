@@ -495,6 +495,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(ociEnroll).toContain('[van-trading-core]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).not.toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
+    // The migration script ssh/rsyncs with no identity; the controller must put the estate-key shim first on PATH.
+    expect(controller).toContain("exec /usr/bin/ssh -i '+peerKey()+' -o IdentitiesOnly=yes");
+    expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare"');
+    expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover"');
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
     expect(housekeepingEstate).toContain('NODE_INSTALLER="${DIAL_PINNED_NODE_INSTALLER:-/usr/local/lib/dial-control/install-pinned-node.sh}"');
     expect(housekeepingEstate).toContain('command -v node >/dev/null 2>&1 || bash /tmp/dial-housekeeping-bundle/deploy/oracle/hermes-codex/install-pinned-node.sh');
