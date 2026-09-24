@@ -56,7 +56,12 @@ copy_identity(){
   for rel in .hermes .codex .claude; do
     if "${SSH[@]}" "test -d \"\$HOME/$rel\"" >/dev/null 2>&1; then
       mkdir -p "$HOME/$rel"
-      tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
+      # ~/.hermes/bin (uv, uvx, tirith) and ~/.hermes/hermes-agent (source + venv with native wheels) are
+      # built for the old host's CPU (aarch64 A1) and fail on Netcup x86_64 with exit 126; the pinned Hermes
+      # installer rebuilds them. Everything else in ~/.hermes is portable state and is copied.
+      excludes=()
+      [[ "$rel" == .hermes ]] && excludes=(--exclude '/bin/' --exclude '/hermes-agent/')
+      tolerate_live rsync -aH -e "$RSYNC_SSH" "${excludes[@]}" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
     fi
   done
   # Keep the dedicated Netcup recovery identity if GitHub already installed it.
