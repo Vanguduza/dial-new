@@ -8,17 +8,15 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/dial-github-admin",
-    "deploy/oracle/hermes-codex/install-control-plane.sh",
-    "deploy/oracle/hermes-codex/install-external-orchestrator.sh",
-    "deploy/oracle/hermes-codex/install-operations-plane.sh",
-    "deploy/oracle/hermes-codex/install-owner-remote-commander.sh",
-    "tests/development-bootstrap.test.mjs"
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    "deploy/netcup/hermes-control/netcup-custom-script.sh"
   ],
-  "content_diff_sha256": "9acb990ed691dcb7c40d07c752d83cdcaffcb9cf750b138746ff42ed0acb1b98",
-  "observed_at_utc": "2026-09-24T05:30:03.507703+00:00",
+  "content_diff_sha256": "9ed4793f44b59c5f92f94c08aa6c673ecee097a2b445faf0743e6f1d227efa94",
+  "observed_at_utc": "2026-09-24T05:30:05.630447+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "b407f99c8af39b6bae646710a72871695b281969",
+  "source_parent": "74c21a6bd3dee0807ac4002eb9b7971af4846ca3",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
