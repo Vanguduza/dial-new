@@ -4,21 +4,19 @@
   ],
   "authorization_ids": [
     "auth-20260921-owner-dial-control-rename",
-    "auth-20260921-owner-netcup-four-vm-integrated-control",
-    "auth-20260924-owner-cutover-external-gates"
+    "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/migrate-from-oracle-control.sh",
-    "ops/development-bootstrap/manifest.json",
-    "scripts/project_truth_local.py",
-    "tests/network-hardening.test.mjs",
-    "tests/project-truth-local.test.mjs"
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    "deploy/netcup/hermes-control/netcup-custom-script.sh"
   ],
-  "content_diff_sha256": "9112ea6b78affc6009a3cf66683928eaa3c5a447404bb118012c79eaca241b46",
-  "observed_at_utc": "2026-09-24T17:29:09.989165+00:00",
+  "content_diff_sha256": "71330dd727f8b0508d241025e7e308c3a5c01a8b4c7850bf39dd73d5693260c5",
+  "observed_at_utc": "2026-09-24T17:30:50.284400+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "594c5fc41abb5114a048b5cc675b0dd2533c86a7",
+  "source_parent": "212980a02442b82c0cd5ad110c2c7a1bee64bd85",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

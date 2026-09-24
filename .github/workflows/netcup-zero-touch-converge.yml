@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DIAL_EXPECTED_BOOTSTRAP_REF: fa0b1c1f794852b7233226746084ca86329fd4cd
+  DIAL_EXPECTED_BOOTSTRAP_REF: 212980a02442b82c0cd5ad110c2c7a1bee64bd85
   DIAL_CONTROL_OIDC_URL: http://62.83.35.103:9134/v1/action
 
 jobs:
