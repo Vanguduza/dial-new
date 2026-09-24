@@ -23,6 +23,17 @@ command -v ssh >/dev/null || die "ssh required"
 
 SSH=(ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new "${OLD_USER}@${OLD_HOST}")
 RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new"
+# PREPARE copies while the old control is live, so files vanishing mid-transfer (rsync 24, e.g.
+# ~/.codex/tmp locks) are expected there; CUTOVER quiesces first and still fails on them.
+tolerate_live(){
+  local rc=0
+  "$@" || rc=$?
+  if [[ "$rc" == 24 && "$MODE" == "--prepare" ]]; then
+    echo "MIGRATION_PREPARE_VANISHED_FILES_TOLERATED" >&2
+    return 0
+  fi
+  return "$rc"
+}
 "${SSH[@]}" 'hostname; test -d /var/lib/dial-control; test -d "$HOME/.hermes"' >/dev/null || die "old control preflight failed"
 
 sudo install -d -m 0700 -o "$USER" -g "$USER" "$EVIDENCE"
@@ -35,7 +46,7 @@ copy_state(){
   # side must read under sudo as well. Assign ownership during the transfer: uids differ between
   # hosts (old ubuntu=1001 is vanforge on Netcup), and preserving numeric ids left the live control home
   # owned by vanforge when a pass stopped before the chown below (2026-09-24).
-  sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
+  tolerate_live sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
     --exclude 'github-oidc/' --exclude 'bootstrap/' \
     "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
   sudo chown -R "$USER:$USER" "$CONTROL_HOME"
@@ -45,43 +56,43 @@ copy_identity(){
   for rel in .hermes .codex .claude; do
     if "${SSH[@]}" "test -d \"\$HOME/$rel\"" >/dev/null 2>&1; then
       mkdir -p "$HOME/$rel"
-      rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
+      tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
     fi
   done
   # Keep the dedicated Netcup recovery identity if GitHub already installed it.
   # Only fall back to the old host's OCI identity when the new host has none.
   if [[ ! -s "$HOME/.oci/config" ]] && "${SSH[@]}" 'test -d "$HOME/.oci"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.oci"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.oci/" "$HOME/.oci/"
+    tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.oci/" "$HOME/.oci/"
   fi
   # Reuse the already-authorized owner Commander device session when present so the
   # new host does not require a second manual device-code pairing.
   if "${SSH[@]}" 'test -d "$HOME/.desktop-commander-device"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.desktop-commander-device"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.desktop-commander-device/" "$HOME/.desktop-commander-device/"
+    tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.desktop-commander-device/" "$HOME/.desktop-commander-device/"
   fi
   # GitHub CLI authentication is migrated so the new host can register its
   # repository-scoped admin runner without another owner login.
   if "${SSH[@]}" 'test -d "$HOME/.config/gh"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/gh"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gh/" "$HOME/.config/gh/"
+    tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gh/" "$HOME/.config/gh/"
   fi
   # Stitch uses Google ADC on the existing control host. Carry the already
   # authorized ADC/config rather than requiring a new browser login.
   if "${SSH[@]}" 'test -d "$HOME/.config/gcloud"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/gcloud"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gcloud/" "$HOME/.config/gcloud/"
+    tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/gcloud/" "$HOME/.config/gcloud/"
   fi
   # Claude may store subscription state beneath XDG config as well as ~/.claude.
   if "${SSH[@]}" 'test -d "$HOME/.config/claude"' >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/claude"
-    rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/claude/" "$HOME/.config/claude/"
+    tolerate_live rsync -aH -e "$RSYNC_SSH" "${OLD_USER}@${OLD_HOST}:.config/claude/" "$HOME/.config/claude/"
   fi
   chmod 0700 "$HOME/.hermes" "$HOME/.codex" "$HOME/.claude" "$HOME/.oci" "$HOME/.desktop-commander-device" "$HOME/.config/gh" "$HOME/.config/gcloud" 2>/dev/null || true
 }
 snapshot_repo(){
   mkdir -p "$CONTROL_HOME/migration/oracle-repo-snapshot"
-  rsync -aH -e "$RSYNC_SSH"     --exclude node_modules --exclude '.cache'     "${OLD_USER}@${OLD_HOST}:dial-new/" "$CONTROL_HOME/migration/oracle-repo-snapshot/"
+  tolerate_live rsync -aH -e "$RSYNC_SSH"     --exclude node_modules --exclude '.cache'     "${OLD_USER}@${OLD_HOST}:dial-new/" "$CONTROL_HOME/migration/oracle-repo-snapshot/"
 }
 
 if [[ "$MODE" == "--prepare" ]]; then
