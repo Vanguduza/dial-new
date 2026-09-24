@@ -359,7 +359,8 @@ async function dispatch(body, claims) {
         claude:ubuntu("claude auth status >/dev/null 2>&1",120000),
         // agy 1.2.9 has no auth-status subcommand ("unexpected argument sign-in", 2026-09-24): the
         // qualified capability evidence is what the bootstrap itself trusts (providers/google.mjs).
-        antigravity:ubuntu("cd /home/ubuntu/dial-new && DIAL_REPO_DIR=/home/ubuntu/dial-new DIAL_CONTROL_HOME="+CONTROL+" node agent-system/orchestration/google-capability-cli.mjs status antigravity | jq -e '.antigravity.authentication.verified == true' >/dev/null",60000),
+        // ubuntu() runs `env ... <cmd>` without a shell, so the command must start with an executable.
+        antigravity:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new DIAL_CONTROL_HOME="+CONTROL+" node /home/ubuntu/dial-new/agent-system/orchestration/google-capability-cli.mjs status antigravity | jq -e '.antigravity.authentication.verified == true' >/dev/null",60000),
         // Before activation the Netcup activation gate keeps every dial-* unit stopped, HAIF included,
         // so its health endpoint cannot answer yet; the tenant starts on activation when its key exists.
         xkiro:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/install-haif.sh >/dev/null && test -s "+CONTROL+"/secrets/xkiro-api.key",120000),

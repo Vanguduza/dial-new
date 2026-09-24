@@ -116,6 +116,8 @@ describe('Netcup and Oracle network hardening', () => {
     expect(pre).not.toContain('127.0.0.1:9141/health');
     expect(pre).toContain('/secrets/xkiro-api.key');
     expect(pre).not.toMatch(/timeout \d+s [A-Z_]+=/);
+    // ubuntu() execs through `env` with no shell: a check must not start with a shell builtin.
+    for (const m of pre.matchAll(/ubuntu\("([^"]*)/g)) expect(m[1], m[1]).not.toMatch(/^(cd|export|source|\.) /);
   });
 
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
