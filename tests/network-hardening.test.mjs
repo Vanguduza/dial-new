@@ -64,6 +64,21 @@ describe('Netcup and Oracle network hardening', () => {
     expect(wf.match(/grep -oE 'ocid1\\.instanceagentcommand\\.\[a-z0-9.-\]\+'/g)).toHaveLength(4);
   });
 
+  it('fails a GitHub recovery probe whose OCI command did not succeed on the host', async () => {
+    // 2026-09-24: probes of van-trading-core and dial-hermes-control were green with OCI state FAILED.
+    const { default: yaml } = await import('yaml').catch(() => ({ default: null }));
+    const text = read('.github/workflows/oracle-recovery.yml');
+    const steps = yaml ? yaml.parse(text).jobs.observe.steps.map((s) => s.name) : [];
+    if (yaml) expect(steps.slice(-2)).toEqual(['Record recovery receipt', 'Require a succeeded probe state']);
+    const observe = text.slice(text.indexOf('  observe:'), text.indexOf('\n  recover:'));
+    const gate = observe.slice(observe.indexOf('Require a succeeded probe state'));
+    expect(gate).toContain('OCI_EXECUTION_STATE: ${{ steps.status.outputs.raw_output }}');
+    expect(gate).toMatch(/SUCCEEDED\) ;;/);
+    expect(gate).toMatch(/\*\)\n\s+echo "Recovery probe failed[^\n]*\n\s+exit 1 ;;/);
+    // The receipt is written before the gate, so a failed probe still leaves its evidence.
+    expect(observe.indexOf('Record recovery receipt')).toBeLessThan(observe.indexOf('Require a succeeded probe state'));
+  });
+
   it('reinstalls the GitHub recovery helper on every Oracle peer pass', () => {
     const s = read('deploy/netcup/hermes-control/harden-oracle-estate.sh');
     expect(s).toContain('deploy/oracle/recovery/dial-github-recovery.sh');

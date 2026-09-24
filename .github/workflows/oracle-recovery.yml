@@ -149,6 +149,24 @@ jobs:
             printf -- '- workflow run: `%s`\n' "$GITHUB_RUN_ID"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # A probe that reached the agent but failed on the host is not a working recovery path; the run must
+      # say so instead of going green (2026-09-24: van-trading-core and dial-hermes-control probes were
+      # green with OCI state FAILED).
+      - name: Require a succeeded probe state
+        shell: bash
+        env:
+          OCI_EXECUTION_STATE: ${{ steps.status.outputs.raw_output }}
+        run: |
+          set -euo pipefail
+          case "$OCI_EXECUTION_STATE" in
+            SUCCEEDED) ;;
+            ACCEPTED|IN_PROGRESS)
+              echo "OCI command is still running; the command id is retained in the workflow receipt." ;;
+            *)
+              echo "Recovery probe failed or returned unexpected state: $OCI_EXECUTION_STATE" >&2
+              exit 1 ;;
+          esac
+
   recover:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.action != '' && inputs.action != 'probe' && inputs.action != 'collect_diagnostics' }}
     runs-on: ubuntu-latest
