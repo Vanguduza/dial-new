@@ -12,12 +12,15 @@ set -Eeuo pipefail
 MODE="${1:-verify}"; shift || true
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 PEER_SCRIPT="$REPO/deploy/oracle/resource-fabric/harden-oracle-peer.sh"
+# The GitHub-side recovery path (oracle-recovery.yml) runs this helper through OCI Run Command. A peer
+# rebuild drops it, and the workflow then FAILS on a healthy agent, so every pass reinstalls it.
+RECOVERY_HELPER="$REPO/deploy/oracle/recovery/dial-github-recovery.sh"
 WG_IF="${DIAL_WG_INTERFACE:-wg-dial}"
 MIGRATION_SOURCE="${DIAL_MIGRATION_SOURCE_IP:-10.77.0.5}"
 KEY=/home/ubuntu/.ssh/dial-oracle-admin; [[ -f "$KEY" ]] || KEY=/home/ubuntu/.ssh/dial-bootstrap-oracle
 
 [[ "$(id -u)" == 0 ]] || { echo "HARDEN_REFUSED: run as root" >&2; exit 2; }
-[[ -f "$PEER_SCRIPT" ]] || { echo "HARDEN_REFUSED: $PEER_SCRIPT missing" >&2; exit 2; }
+[[ -f "$PEER_SCRIPT" && -f "$RECOVERY_HELPER" ]] || { echo "HARDEN_REFUSED: $PEER_SCRIPT or $RECOVERY_HELPER missing" >&2; exit 2; }
 
 netcup_ip="${DIAL_NETCUP_PUBLIC_IP:-$(ip -4 route get 1.1.1.1 | awk '{for(i=1;i<NF;i++) if($i=="src"){print $(i+1); exit}}')}"
 [[ "$netcup_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "HARDEN_REFUSED: cannot determine Dial Control public IP" >&2; exit 2; }
@@ -36,6 +39,8 @@ for ip in "${peers[@]}"; do
   echo "== peer $ip"
   if ! sshp "$ip" true; then echo "PEER_UNREACHABLE $ip"; rc=1; continue; fi
   sshp "$ip" 'cat >/tmp/dial-harden-peer.sh && sudo -n install -m 0755 /tmp/dial-harden-peer.sh /usr/local/sbin/dial-harden-peer && rm -f /tmp/dial-harden-peer.sh' <"$PEER_SCRIPT"
+  sshp "$ip" 'cat >/tmp/dial-github-recovery && sudo -n install -m 0755 -o root -g root /tmp/dial-github-recovery /usr/local/bin/dial-github-recovery && rm -f /tmp/dial-github-recovery' <"$RECOVERY_HELPER" &&
+    echo "GITHUB_RECOVERY_HELPER=INSTALLED $ip" || { echo "GITHUB_RECOVERY_HELPER=FAILED $ip"; rc=1; }
   if [[ "$MODE" == verify ]]; then sshp "$ip" 'sudo -n /usr/local/sbin/dial-harden-peer verify' || rc=1; continue; fi
   sshp "$ip" "sudo -n /usr/local/sbin/dial-harden-peer apply $netcup_ip" || { echo "APPLY_FAILED $ip"; rc=1; continue; }
   sleep 2

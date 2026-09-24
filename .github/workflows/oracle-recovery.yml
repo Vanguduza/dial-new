@@ -52,7 +52,7 @@ jobs:
   observe:
     if: ${{ github.event_name == 'workflow_dispatch' && (inputs.action == 'probe' || inputs.action == 'collect_diagnostics') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
@@ -98,19 +98,35 @@ jobs:
           query: data.id
           silent: 'True'
 
-      - name: Allow command to execute
-        run: sleep 30
-
       - id: status
         name: Read OCI execution status
-        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
-        with:
-          command: >-
-            instance-agent command-execution get
-            --command-id ${{ steps.dispatch.outputs.raw_output }}
-            --instance-id ${{ steps.prepare.outputs.instance_id }}
-          query: data."lifecycle-state"
-          silent: 'True'
+        shell: bash
+        env:
+          COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          INSTANCE_ID: ${{ steps.prepare.outputs.instance_id }}
+        run: |
+          set -uo pipefail
+          # The action returns the queried id JSON-quoted; the OCI CLI it installed is reused here so
+          # the state is polled to a terminal value and an API error is printed instead of swallowed.
+          # The agent pulls commands only every ~3.5-4 min, so the wait covers about two poll cycles.
+          COMMAND_ID="${COMMAND_ID_RAW//\"/}"
+          [[ "$COMMAND_ID" =~ ^ocid1\.instanceagentcommand\.[a-z0-9.-]+$ ]] || { echo "Dispatch did not return a command id" >&2; exit 1; }
+          export PATH="$HOME/.local/bin:$PATH"
+          STATE=none
+          for _ in $(seq 1 45); do
+            if OUT="$(oci instance-agent command-execution get --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" 2>"$RUNNER_TEMP/get.err")"; then
+              STATE="$(jq -r '.data."lifecycle-state"' <<<"$OUT")"
+              DELIVERY="$(jq -r '.data."delivery-state"' <<<"$OUT")"
+              echo "state=$STATE delivery=$DELIVERY"
+            else
+              echo "execution read failed: $(grep -oE '\"(code|message)\": \"[^\"]*\"' "$RUNNER_TEMP/get.err" | tr '\n' ' ')" >&2
+            fi
+            case "$STATE" in SUCCEEDED|FAILED|TIMED_OUT|CANCELED) break ;; esac
+            sleep 10
+          done
+          [[ "$STATE" == SUCCEEDED ]] && jq -r '.data.content.text // ""' <<<"$OUT" | tail -n 40
+          echo "raw_output=$STATE" >> "$GITHUB_OUTPUT"
+          [[ "$STATE" != none ]]
 
       - name: Record recovery receipt
         shell: bash
@@ -128,7 +144,7 @@ jobs:
   recover:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.action != '' && inputs.action != 'probe' && inputs.action != 'collect_diagnostics' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 14
     environment: oracle-recovery
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -180,19 +196,35 @@ jobs:
           query: data.id
           silent: 'True'
 
-      - name: Allow recovery to execute
-        run: sleep 45
-
       - id: status
         name: Verify OCI execution state
-        uses: oracle-actions/run-oci-cli-command@368cc7991534d1b8074846d10e1d84ac4c0d1a28
-        with:
-          command: >-
-            instance-agent command-execution get
-            --command-id ${{ steps.dispatch.outputs.raw_output }}
-            --instance-id ${{ steps.prepare.outputs.instance_id }}
-          query: data."lifecycle-state"
-          silent: 'True'
+        shell: bash
+        env:
+          COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          INSTANCE_ID: ${{ steps.prepare.outputs.instance_id }}
+        run: |
+          set -uo pipefail
+          # The action returns the queried id JSON-quoted; the OCI CLI it installed is reused here so
+          # the state is polled to a terminal value and an API error is printed instead of swallowed.
+          # The agent pulls commands only every ~3.5-4 min, so the wait covers about two poll cycles.
+          COMMAND_ID="${COMMAND_ID_RAW//\"/}"
+          [[ "$COMMAND_ID" =~ ^ocid1\.instanceagentcommand\.[a-z0-9.-]+$ ]] || { echo "Dispatch did not return a command id" >&2; exit 1; }
+          export PATH="$HOME/.local/bin:$PATH"
+          STATE=none
+          for _ in $(seq 1 45); do
+            if OUT="$(oci instance-agent command-execution get --command-id "$COMMAND_ID" --instance-id "$INSTANCE_ID" 2>"$RUNNER_TEMP/get.err")"; then
+              STATE="$(jq -r '.data."lifecycle-state"' <<<"$OUT")"
+              DELIVERY="$(jq -r '.data."delivery-state"' <<<"$OUT")"
+              echo "state=$STATE delivery=$DELIVERY"
+            else
+              echo "execution read failed: $(grep -oE '\"(code|message)\": \"[^\"]*\"' "$RUNNER_TEMP/get.err" | tr '\n' ' ')" >&2
+            fi
+            case "$STATE" in SUCCEEDED|FAILED|TIMED_OUT|CANCELED) break ;; esac
+            sleep 10
+          done
+          [[ "$STATE" == SUCCEEDED ]] && jq -r '.data.content.text // ""' <<<"$OUT" | tail -n 40
+          echo "raw_output=$STATE" >> "$GITHUB_OUTPUT"
+          [[ "$STATE" != none ]]
 
       - name: Require a non-failed recovery state
         shell: bash

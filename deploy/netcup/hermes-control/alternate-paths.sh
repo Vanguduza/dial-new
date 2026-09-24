@@ -61,8 +61,14 @@ configure() {
   echo "ALT_PATHS_CONFIGURED peers=$(enrolled | tr '\n' ' ')"
 }
 
-run_command_probe() { # <instance-ocid> -> prints hostname reported by the agent
-  local instance="$1" tmp id state json
+# The Run Command plugin pulls work on its own schedule (observed 2026-09-24: "scheduling to run
+# PollCommand after 3m26s"), so a command can sit ACCEPTED/VISIBLE for ~4 minutes before the agent
+# sees it. Every peer's command is created first and all are awaited together, for up to two poll cycles.
+RC_WAIT_SECONDS="${DIAL_RC_WAIT_SECONDS:-480}"
+declare -A RC_ID=() RC_DETAIL=() RC_HOST=()
+
+run_command_create() { # <peer> <instance-ocid>
+  local n="$1" instance="$2" tmp id
   tmp="$(mktemp -d)"; chown ubuntu:ubuntu "$tmp"
   jq -n '{source:{sourceType:"TEXT",text:"hostname"},output:{outputType:"TEXT"}}' >"$tmp/c.json"
   jq -n --arg i "$instance" '{instanceId:$i}' >"$tmp/t.json"; chown ubuntu:ubuntu "$tmp"/*.json
@@ -70,19 +76,18 @@ run_command_probe() { # <instance-ocid> -> prints hostname reported by the agent
   id="$("${OCI[@]}" instance-agent command create --compartment-id "$DIAL_OCI_COMPARTMENT" \
         --content "file://$tmp/c.json" --target "file://$tmp/t.json" --timeout-in-seconds 120 \
         --query data.id --raw-output 2>"$tmp/create.err")" || true
-  if [[ "$id" != ocid1.instanceagentcommand.* ]]; then
-    RC_DETAIL="create_failed:$(grep -v -i warning "$tmp/create.err" | tr '\n' ' ' | cut -c1-160)"; rm -rf "$tmp"; return 1
-  fi
-  for _ in $(seq 1 30); do
-    json="$("${OCI[@]}" instance-agent command-execution get --command-id "$id" --instance-id "$instance" 2>/dev/null)" || true
-    state="$(jq -r '.data."lifecycle-state" // empty' <<<"$json" 2>/dev/null)"
-    [[ "$state" == SUCCEEDED || "$state" == FAILED || "$state" == TIMED_OUT || "$state" == CANCELED ]] && break
-    sleep 5
-  done
-  RC_DETAIL="state=${state:-none} delivery=$(jq -r '.data."delivery-state" // "none"' <<<"$json" 2>/dev/null) exit=$(jq -r '.data.content."exit-code" // "none"' <<<"$json" 2>/dev/null)"
+  if [[ "$id" == ocid1.instanceagentcommand.* ]]; then RC_ID[$n]="$id"; RC_DETAIL[$n]="state=ACCEPTED"
+  else RC_DETAIL[$n]="create_failed:$(grep -v -i warning "$tmp/create.err" | tr '\n' ' ' | cut -c1-160)"; fi
   rm -rf "$tmp"
-  [[ "$state" == SUCCEEDED ]] || return 1
-  jq -r '.data.content.text // ""' <<<"$json" | tr -d '\n'
+}
+
+run_command_await() { # <peer> <instance-ocid>; succeeds once the execution is terminal
+  local n="$1" instance="$2" json state
+  json="$("${OCI[@]}" instance-agent command-execution get --command-id "${RC_ID[$n]}" --instance-id "$instance" 2>/dev/null)" || return 1
+  state="$(jq -r '.data."lifecycle-state" // empty' <<<"$json" 2>/dev/null)"
+  RC_DETAIL[$n]="state=${state:-none} delivery=$(jq -r '.data."delivery-state" // "none"' <<<"$json" 2>/dev/null) exit=$(jq -r '.data.content."exit-code" // "none"' <<<"$json" 2>/dev/null)"
+  [[ "$state" == SUCCEEDED ]] && RC_HOST[$n]="$(jq -r '.data.content.text // ""' <<<"$json" | tr -d '\n')"
+  [[ "$state" == SUCCEEDED || "$state" == FAILED || "$state" == TIMED_OUT || "$state" == CANCELED ]]
 }
 
 verify() {
@@ -90,20 +95,31 @@ verify() {
   # shellcheck source=/dev/null
   source "$ESTATE"
   declare -A OCID=([oracle-admin]="${ORACLE_ADMIN_OCID:-}" [vekl-worker]="${VEKL_WORKER_OCID:-}" [van-trading-core]="${VAN_TRADING_CORE_OCID:-}")
-  local n out results='[]' pub overlay direct rc_host bastion
+  local n out results='[]' pub overlay direct rc bastion
   # AVAILABLE only when a bastion exists and this identity may read it; otherwise the owner-granted policy/bastion is missing.
   bastion="$("${OCI[@]}" bastion bastion list --compartment-id "$DIAL_OCI_COMPARTMENT" --all 2>/dev/null | jq -e '[.data[]? | select(."lifecycle-state"=="ACTIVE")] | length > 0' >/dev/null && echo AVAILABLE || echo OWNER_ACTION_REQUIRED)"
-  for n in $(enrolled); do
+  local peers=() pending deadline
+  declare -A RC_DONE=()
+  mapfile -t peers < <(enrolled)
+  for n in "${peers[@]}"; do run_command_create "$n" "${OCID[$n]}"; done
+  deadline=$((SECONDS + RC_WAIT_SECONDS))
+  while :; do
+    pending=0
+    for n in "${peers[@]}"; do
+      [[ -n "${RC_ID[$n]:-}" && -z "${RC_DONE[$n]:-}" ]] || continue
+      if run_command_await "$n" "${OCID[$n]}"; then RC_DONE[$n]=1; else pending=1; fi
+    done
+    (( pending && SECONDS < deadline )) || break
+    sleep 10
+  done
+  for n in "${peers[@]}"; do
     pub="$(public_ip_of "${OVERLAY[$n]}")"
     out="$(ssh_as ubuntu@"${OVERLAY[$n]}" hostname 2>/dev/null || true)"; [[ "$out" == "$n" ]] && overlay=PASS || overlay=FAIL
     out="$(ssh_as -o HostKeyAlias="${OVERLAY[$n]}" ubuntu@"$pub" hostname 2>/dev/null || true)"; [[ "$out" == "$n" ]] && direct=PASS || direct=FAIL
-    RC_DETAIL=""; rc_host=""
-    rc_host="$(run_command_probe "${OCID[$n]}"; echo "|$RC_DETAIL")" || true
-    rc_detail="${rc_host##*|}"; rc_host="${rc_host%|*}"
-    results="$(jq -c --arg n "$n" --arg pub "$pub" --arg o "$overlay" --arg d "$direct" \
-      --arg r "$([[ "$rc_host" == "$n" ]] && echo PASS || echo FAIL)" --arg b "$bastion" \
-      --arg rd "$rc_detail" '. + [{peer:$n, public_ip:$pub, overlay:$o, direct:$d, run_command:$r, run_command_detail:$rd, bastion:$b}]' <<<"$results")"
-    echo "peer=$n overlay=$overlay direct=$direct run_command=$([[ "$rc_host" == "$n" ]] && echo PASS || echo FAIL) ($rc_detail) bastion=$bastion"
+    [[ "${RC_HOST[$n]:-}" == "$n" ]] && rc=PASS || rc=FAIL
+    results="$(jq -c --arg n "$n" --arg pub "$pub" --arg o "$overlay" --arg d "$direct" --arg r "$rc" --arg b "$bastion" \
+      --arg rd "${RC_DETAIL[$n]:-none}" '. + [{peer:$n, public_ip:$pub, overlay:$o, direct:$d, run_command:$r, run_command_detail:$rd, bastion:$b}]' <<<"$results")"
+    echo "peer=$n overlay=$overlay direct=$direct run_command=$rc (${RC_DETAIL[$n]:-none}) bastion=$bastion"
   done
   install -d -m 0700 "$(dirname "$EVIDENCE")"
   jq -n --argjson r "$results" --arg at "$(date -u +%FT%TZ)" \

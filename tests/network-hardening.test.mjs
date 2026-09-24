@@ -49,6 +49,27 @@ describe('Netcup and Oracle network hardening', () => {
     expect(s).toContain('echo OWNER_ACTION_REQUIRED');
   });
 
+  it('waits out the Run Command agent poll interval instead of failing a healthy peer', () => {
+    // 2026-09-24: vekl-worker's hostname command succeeded after 3m22s; the old 150 s probe window called it FAIL.
+    const s = read('deploy/netcup/hermes-control/alternate-paths.sh');
+    const wait = Number(s.match(/RC_WAIT_SECONDS="\$\{DIAL_RC_WAIT_SECONDS:-(\d+)\}"/)[1]);
+    expect(wait).toBeGreaterThanOrEqual(480);
+    const verify = s.slice(s.indexOf('verify() {'));
+    expect(verify.indexOf('run_command_create')).toBeGreaterThan(0);
+    expect(verify.indexOf('run_command_await')).toBeGreaterThan(verify.indexOf('run_command_create'));
+    const wf = read('.github/workflows/oracle-recovery.yml');
+    expect(wf).not.toMatch(/sleep (30|45)\n/);
+    expect(wf.match(/for _ in \$\(seq 1 45\); do/g)).toHaveLength(2);
+    expect(wf).toContain('COMMAND_ID="${COMMAND_ID_RAW//\\"/}"');
+  });
+
+  it('reinstalls the GitHub recovery helper on every Oracle peer pass', () => {
+    const s = read('deploy/netcup/hermes-control/harden-oracle-estate.sh');
+    expect(s).toContain('deploy/oracle/recovery/dial-github-recovery.sh');
+    expect(s).toMatch(/install -m 0755 -o root -g root \/tmp\/dial-github-recovery \/usr\/local\/bin\/dial-github-recovery/);
+    expect(s.indexOf('/usr/local/bin/dial-github-recovery')).toBeLessThan(s.indexOf('if [[ "$MODE" == verify ]]'));
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');
