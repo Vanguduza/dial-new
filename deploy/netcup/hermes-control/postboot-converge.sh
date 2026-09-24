@@ -32,6 +32,8 @@ case "$MODE" in
     ;;
   --activate)
     [[ -s "$CONTROL/github-oidc/READY" ]] || { echo "GitHub OIDC control is not ready" >&2; exit 3; }
+    # Services were installed early behind the activation gate; activation is what lets them start.
+    bash "$REPO/deploy/netcup/hermes-control/activation-gate.sh" open
     sudo ufw allow OpenSSH >/dev/null 2>&1 || true
     sudo ufw allow 9134/tcp >/dev/null 2>&1 || true
     sudo ufw --force enable >/dev/null 2>&1 || true

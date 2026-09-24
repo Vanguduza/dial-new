@@ -522,6 +522,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain('if [[ "$rc" == 24 && "$MODE" == "--prepare" ]]; then');
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain('sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH"');
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).not.toContain('--numeric-ids');
+    // Owner decision: install now, services off. Units are gated on a marker that only activation creates.
+    const gate = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/activation-gate.sh'), 'utf8');
+    expect(gate).toContain('PREFIXES=(dial- hermes- dde-)');
+    expect(gate).toContain('ConditionPathExists=%s');
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/postboot-converge.sh'), 'utf8')).toContain('activation-gate.sh" open');
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
     expect(housekeepingEstate).toContain('NODE_INSTALLER="${DIAL_PINNED_NODE_INSTALLER:-/usr/local/lib/dial-control/install-pinned-node.sh}"');
     expect(housekeepingEstate).toContain('command -v node >/dev/null 2>&1 || bash /tmp/dial-housekeeping-bundle/deploy/oracle/hermes-codex/install-pinned-node.sh');
