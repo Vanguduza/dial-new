@@ -5,7 +5,6 @@ umask 077
 BOOT=/home/ubuntu/.ssh/dial-bootstrap-oracle
 PERM=/home/ubuntu/.ssh/dial-oracle-admin
 BOOT_PUB_FILE=/home/ubuntu/.ssh/dial-bootstrap-oracle.pub
-[[ -s "$BOOT" ]] || { echo "REFUSE: bootstrap ssh key missing" >&2; exit 2; }
 install -d -m 0700 -o ubuntu -g ubuntu /home/ubuntu/.ssh
 
 if [[ ! -s "$PERM" ]]; then
@@ -13,7 +12,7 @@ if [[ ! -s "$PERM" ]]; then
 fi
 chmod 0600 "$PERM"; chown ubuntu:ubuntu "$PERM" "$PERM.pub"
 NEW_PUB="$(cat "$PERM.pub")"
-BOOT_PUB="$(cat "$BOOT_PUB_FILE")"
+BOOT_PUB="$(cat "$BOOT_PUB_FILE" 2>/dev/null || true)"
 
 declare -A PEERS=(
   [oracle-admin]=10.77.0.2
@@ -28,6 +27,19 @@ if [[ ! -f /var/lib/dial-control/state/a1-control-retired ]] &&
   PEERS[old-dial-hermes-control]=10.77.0.5
   NAMES+=(old-dial-hermes-control)
 fi
+# A completed rotation deletes the bootstrap key, so a later converge pass finds only the
+# permanent one. That is success once every peer still accepts it; anything else is refused.
+if [[ ! -s "$BOOT" ]]; then
+  [[ -s "$PERM" ]] || { echo "REFUSE: bootstrap ssh key missing" >&2; exit 2; }
+  for name in "${NAMES[@]}"; do
+    runuser -u ubuntu -- ssh -i "$PERM" -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=8 ubuntu@"${PEERS[$name]}" true ||
+      { echo "REFUSE: bootstrap ssh key missing and $name rejects the permanent key" >&2; exit 2; }
+  done
+  echo "BOOTSTRAP_IDENTITIES_ROTATED=ALREADY"
+  echo "permanent_ssh=$PERM"
+  exit 0
+fi
+
 for name in "${NAMES[@]}"; do
   ip="${PEERS[$name]}"
   # Re-runnable: a peer that already accepts the permanent key has had its bootstrap key removed

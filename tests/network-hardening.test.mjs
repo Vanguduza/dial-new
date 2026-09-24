@@ -148,6 +148,20 @@ describe('Netcup and Oracle network hardening', () => {
     expect(certify).toContain('fromFile.role === resolved.role');
   });
 
+  it('treats a completed rotation as done on a later converge pass, but only when every peer accepts the permanent key', () => {
+    const s = read('deploy/netcup/hermes-control/rotate-bootstrap-identities.sh');
+    // Converge run 36016946411 failed "REFUSE: bootstrap ssh key missing" after the 13:27 rotation had succeeded.
+    const already = s.indexOf('echo "BOOTSTRAP_IDENTITIES_ROTATED=ALREADY"');
+    expect(already).toBeGreaterThan(0);
+    const guard = s.slice(s.indexOf('if [[ ! -s "$BOOT" ]]; then'), already);
+    expect(guard).toContain('[[ -s "$PERM" ]] || { echo "REFUSE: bootstrap ssh key missing"');
+    expect(guard).toMatch(/ssh -i "\$PERM" .* true \|\|\s*\{ echo "REFUSE/);
+    // Nothing that needs the bootstrap key (or regenerates WireGuard keys) runs before that exit.
+    expect(s.indexOf('ssh -i "$BOOT"')).toBeGreaterThan(already);
+    expect(s.indexOf('wg genkey')).toBeGreaterThan(already);
+    expect(s).toContain('BOOT_PUB="$(cat "$BOOT_PUB_FILE" 2>/dev/null || true)"');
+  });
+
   it('keeps re-enrollment working after identity rotation has retired the bootstrap key', () => {
     const s = read('deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh');
     const fallback = s.indexOf('SSH_PUB_FILE=/home/ubuntu/.ssh/dial-oracle-admin.pub');
