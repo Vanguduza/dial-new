@@ -4,7 +4,14 @@ umask 077
 
 OCI_CONFIG="${OCI_CONFIG:-/home/ubuntu/.oci/config}"
 ESTATE="${DIAL_ORACLE_ESTATE:-/etc/dial/oracle-estate.env}"
-PEER_SCRIPT="${DIAL_ZERO_TOUCH_PEER_SCRIPT:-/usr/local/lib/dial-control/runtime/deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh}"
+# Prefer the admin-refreshed helper: the runtime payload copy is frozen at the bootstrap ref and
+# mapped the migration source to van-trading-core's 10.77.0.4 (2026-09-24), so the source never
+# answered on 10.77.0.5.
+PEER_SCRIPT="${DIAL_ZERO_TOUCH_PEER_SCRIPT:-}"
+if [[ -z "$PEER_SCRIPT" ]]; then
+  PEER_SCRIPT=/usr/local/lib/dial-control/zero-touch-enroll-peer.sh
+  [[ -s "$PEER_SCRIPT" ]] || PEER_SCRIPT=/usr/local/lib/dial-control/runtime/deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh
+fi
 CONTROL_ROOT="${DIAL_GITHUB_OIDC_ROOT:-/var/lib/dial-control/github-oidc}"
 OUT="$CONTROL_ROOT/oracle-peer-keys.json"
 NETCUP_PUBLIC_IP="${NETCUP_PUBLIC_IP:-62.83.35.103}"
