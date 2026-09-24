@@ -11,6 +11,13 @@ name: DIAL supply-chain pin watch
 on:
   schedule:
     - cron: '17 5 * * *'
+  # Re-evaluate whenever the watch rules change. Also the only way to run it before this workflow reaches
+  # the default branch, since workflow_dispatch is only offered for default-branch workflows.
+  push:
+    paths:
+      - ops/development-bootstrap/supply-chain/WATCH.json
+      - ops/development-bootstrap/supply-chain/watch-pins.mjs
+      - .github/workflows/supply-chain-watch.yml
   workflow_dispatch:
     inputs:
       only:
@@ -28,7 +35,7 @@ concurrency:
 
 jobs:
   watch:
-    if: ${{ github.repository == 'Vanguduza/dial-new' }}
+    if: ${{ github.repository == 'Vanguduza/dial-new' && !startsWith(github.ref_name, 'supply-chain/') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
