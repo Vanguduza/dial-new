@@ -120,6 +120,17 @@ describe('Netcup and Oracle network hardening', () => {
     for (const m of pre.matchAll(/ubuntu\("([^"]*)/g)) expect(m[1], m[1]).not.toMatch(/^(cd|export|source|\.) /);
   });
 
+  it('rotates identities with one well-formed remote command per peer and survives a re-run', () => {
+    const s = read('deploy/netcup/hermes-control/rotate-bootstrap-identities.sh');
+    // The inner command must stay inside the remote string (escaped quotes), or the hub restarts its own
+    // WireGuard locally and the peer receives an unterminated quote (converge run 35999321364).
+    expect(s).toContain('nohup bash -lc \\"sleep 1; systemctl restart wg-quick@wg-dial\\"');
+    expect(s).not.toMatch(/nohup bash -lc "sleep 1/);
+    // A peer that already accepts the permanent key is not re-authorized with the removed bootstrap key.
+    const loop = s.slice(s.indexOf('for name in "${NAMES[@]}"; do'));
+    expect(loop.indexOf('if ! runuser -u ubuntu -- ssh -i "$PERM"')).toBeLessThan(loop.indexOf('ssh -i "$BOOT"'));
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');

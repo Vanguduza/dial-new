@@ -30,7 +30,11 @@ if [[ ! -f /var/lib/dial-control/state/a1-control-retired ]] &&
 fi
 for name in "${NAMES[@]}"; do
   ip="${PEERS[$name]}"
-  runuser -u ubuntu -- ssh -i "$BOOT" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip"     "mkdir -p ~/.ssh; chmod 700 ~/.ssh; grep -qxF '$NEW_PUB' ~/.ssh/authorized_keys 2>/dev/null || printf '%s\n' '$NEW_PUB' >>~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys"
+  # Re-runnable: a peer that already accepts the permanent key has had its bootstrap key removed
+  # by an earlier (interrupted) pass, so it is not asked to authorize again with that key.
+  if ! runuser -u ubuntu -- ssh -i "$PERM" -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip" true 2>/dev/null; then
+    runuser -u ubuntu -- ssh -i "$BOOT" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip"     "mkdir -p ~/.ssh; chmod 700 ~/.ssh; grep -qxF '$NEW_PUB' ~/.ssh/authorized_keys 2>/dev/null || printf '%s\n' '$NEW_PUB' >>~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys"
+  fi
   runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip" true
   runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new ubuntu@"$ip"     "grep -vxF '$BOOT_PUB' ~/.ssh/authorized_keys >~/.ssh/authorized_keys.next || true; mv ~/.ssh/authorized_keys.next ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys"
 done
@@ -77,7 +81,7 @@ NEW_WG_PUB="$(wg pubkey <"$NEXT_WG")"
 
 for name in "${NAMES[@]}"; do
   ip="${PEERS[$name]}"
-  runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 ubuntu@"$ip"     "sudo sed -i 's|PublicKey = $OLD_WG_PUB|PublicKey = $NEW_WG_PUB|' /etc/wireguard/wg-dial.conf; sudo sh -c 'nohup bash -lc "sleep 1; systemctl restart wg-quick@wg-dial" >/dev/null 2>&1 &'"
+  runuser -u ubuntu -- ssh -i "$PERM" -o BatchMode=yes -o ConnectTimeout=8 ubuntu@"$ip"     "sudo sed -i 's|PublicKey = $OLD_WG_PUB|PublicKey = $NEW_WG_PUB|' /etc/wireguard/wg-dial.conf; sudo sh -c 'nohup bash -lc \"sleep 1; systemctl restart wg-quick@wg-dial\" >/dev/null 2>&1 &'"
 done
 sleep 3
 sed -i "s|^PrivateKey = .*|PrivateKey = $(cat "$NEXT_WG")|" /etc/wireguard/wg-dial.conf

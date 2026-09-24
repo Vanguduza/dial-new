@@ -64,12 +64,16 @@ src_ssh() { runuser -u ubuntu -- ssh "${ID_ARGS[@]}" "${SSH_OPTS[@]}" "ubuntu@$S
 access_old() {
   local pubs; pubs="$([[ -s "$PERM.pub" ]] && cat "$PERM.pub"; [[ -s "$BOOT.pub" ]] && cat "$BOOT.pub")"
   [[ -n "$pubs" ]] || die "no Dial Control public key to authorize"
-  if [[ "$(old_ssh hostname 2>/dev/null || true)" != van-trading-core ]]; then
+  local b64 append; b64="$(printf '%s\n' "$pubs" | base64 -w0)"
+  append="set -e; umask 077; mkdir -p ~/.ssh; touch ~/.ssh/authorized_keys; echo $b64 | base64 -d | while read -r k; do [ -n \"\$k\" ] && { grep -qxF \"\$k\" ~/.ssh/authorized_keys || printf \"%s\\n\" \"\$k\" >>~/.ssh/authorized_keys; }; done; hostname"
+  # Every current Dial Control key is kept authorized (rotation replaces the bootstrap key with the
+  # permanent one and deletes the former; the old van is outside the rotation set).
+  if [[ "$(old_ssh hostname 2>/dev/null || true)" == van-trading-core ]]; then
+    old_ssh "$append" >/dev/null
+  else
     # The old van admits the source's node-hermes-to-trading key; the source relays the append.
     [[ "$(src_ssh hostname 2>/dev/null || true)" == dial-hermes-control ]] || die "migration source unreachable; cannot authorize Dial Control on the old van-trading-core"
-    local b64; b64="$(printf '%s\n' "$pubs" | base64 -w0)"
-    src_ssh "timeout 60 ssh -i ~/.ssh/node-hermes-to-trading -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new ubuntu@$OLD_VAN_IP \
-      'set -e; umask 077; mkdir -p ~/.ssh; touch ~/.ssh/authorized_keys; echo $b64 | base64 -d | while read -r k; do [ -n \"\$k\" ] && { grep -qxF \"\$k\" ~/.ssh/authorized_keys || printf \"%s\n\" \"\$k\" >>~/.ssh/authorized_keys; }; done; hostname'" >/dev/null
+    src_ssh "timeout 60 ssh -i ~/.ssh/node-hermes-to-trading -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new ubuntu@$OLD_VAN_IP '$append'" >/dev/null
   fi
   [[ "$(old_ssh hostname)" == van-trading-core ]] || die "old van-trading-core did not answer as itself through oracle-admin"
   date -u +%FT%TZ >"$STATE/old-van-access-verified"
