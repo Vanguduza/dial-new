@@ -65,6 +65,12 @@ copy_identity(){
       # installer rebuilds them. Everything else in ~/.hermes is portable state and is copied.
       excludes=()
       [[ "$rel" == .hermes ]] && excludes=(--exclude '/bin/' --exclude '/hermes-agent/')
+      # OAuth sign-ins use single-use refresh tokens. Once Dial Control holds its own copy, the two
+      # hosts must never trade them: a refresh on one invalidates the other, and copying the loser's
+      # file back logged Claude out on both hosts (2026-09-24, 13:38 -> 14:05). Dial Control's copy wins.
+      for cred in .credentials.json auth.json; do
+        if [[ -s "$HOME/$rel/$cred" ]]; then excludes+=(--exclude "/$cred"); fi
+      done
       tolerate_live rsync -aH -e "$RSYNC_SSH" "${excludes[@]}" "${OLD_USER}@${OLD_HOST}:$rel/" "$HOME/$rel/"
     fi
   done

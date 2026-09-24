@@ -156,6 +156,14 @@ describe('Netcup and Oracle network hardening', () => {
     expect(read('deploy/netcup/hermes-control/rotate-bootstrap-identities.sh')).toContain('rm -f "$BOOT" "$BOOT_PUB_FILE"');
   });
 
+  it('never copies the source host OAuth credentials over the ones Dial Control holds', () => {
+    const s = read('deploy/netcup/hermes-control/migrate-from-oracle-control.sh');
+    const copy = s.slice(s.indexOf('copy_identity(){'), s.indexOf('snapshot_repo(){'));
+    expect(copy).toContain('for cred in .credentials.json auth.json; do');
+    expect(copy).toContain('if [[ -s "$HOME/$rel/$cred" ]]; then excludes+=(--exclude "/$cred"); fi');
+    expect(copy.indexOf('excludes+=(--exclude "/$cred")')).toBeLessThan(copy.indexOf('"${excludes[@]}"'));
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');
