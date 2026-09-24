@@ -3,21 +3,20 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
+    "auth-20260921-owner-dial-control-rename",
     "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/oracle/hermes-codex/install-chat-control-bridge.sh",
-    "deploy/oracle/hermes-codex/install-engineering-research.sh",
-    "deploy/oracle/hermes-codex/install-haif.sh",
-    "deploy/oracle/hermes-codex/install-operator-gateway.sh",
-    "deploy/oracle/hermes-codex/qualify-control-plane.sh",
-    "tests/network-hardening.test.mjs"
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    "deploy/netcup/hermes-control/netcup-custom-script.sh"
   ],
-  "content_diff_sha256": "cf67ad4539859b48d764d3b29ca627fc530cb519836a0dc4a337365950fbad4a",
-  "observed_at_utc": "2026-09-24T19:53:20.301326+00:00",
+  "content_diff_sha256": "a073e7365873c24b46389bb46dbc4f3d66af283fcca3f3ca8bc14dea324dafb4",
+  "observed_at_utc": "2026-09-24T19:53:20.939251+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "45d223dd1cde9d682cacb0fa8b4f10b9c3774106",
+  "source_parent": "c92d39e7d17d88ac6de416bc5eb3e63c48709f26",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
