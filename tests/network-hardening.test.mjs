@@ -108,6 +108,16 @@ describe('Netcup and Oracle network hardening', () => {
     expect(wf).toContain('rerole-van-trading-core.sh /usr/local/lib/dial-control/rerole-van-trading-core.sh');
   });
 
+  it('proves takeover credentials with checks that can pass before activation', () => {
+    const s = read('deploy/netcup/hermes-control/github-oidc-control.mjs');
+    const pre = s.slice(s.indexOf("case 'activation-preflight'"), s.indexOf("case 'migrate-cutover'"));
+    expect(pre).not.toContain('agy sign-in status');
+    expect(pre).toContain("google-capability-cli.mjs status antigravity | jq -e '.antigravity.authentication.verified == true'");
+    expect(pre).not.toContain('127.0.0.1:9141/health');
+    expect(pre).toContain('/secrets/xkiro-api.key');
+    expect(pre).not.toMatch(/timeout \d+s [A-Z_]+=/);
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');

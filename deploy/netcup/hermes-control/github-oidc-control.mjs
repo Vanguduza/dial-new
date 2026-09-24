@@ -357,9 +357,14 @@ async function dispatch(body, claims) {
       const checks={
         codex:ubuntu("codex login status 2>&1 | grep -q 'Logged in using ChatGPT'",120000),
         claude:ubuntu("claude auth status >/dev/null 2>&1",120000),
-        antigravity:ubuntu("timeout 30s agy sign-in status >/dev/null 2>&1",60000),
-        xkiro:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/install-haif.sh >/dev/null && curl -fsS --max-time 10 http://127.0.0.1:9141/health >/dev/null",120000),
-        stitch:ubuntu("timeout 90s DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/run-stitch-provider.sh auth-check >/dev/null 2>&1",120000),
+        // agy 1.2.9 has no auth-status subcommand ("unexpected argument sign-in", 2026-09-24): the
+        // qualified capability evidence is what the bootstrap itself trusts (providers/google.mjs).
+        antigravity:ubuntu("cd /home/ubuntu/dial-new && DIAL_REPO_DIR=/home/ubuntu/dial-new DIAL_CONTROL_HOME="+CONTROL+" node agent-system/orchestration/google-capability-cli.mjs status antigravity | jq -e '.antigravity.authentication.verified == true' >/dev/null",60000),
+        // Before activation the Netcup activation gate keeps every dial-* unit stopped, HAIF included,
+        // so its health endpoint cannot answer yet; the tenant starts on activation when its key exists.
+        xkiro:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/install-haif.sh >/dev/null && test -s "+CONTROL+"/secrets/xkiro-api.key",120000),
+        // Environment first: `timeout VAR=x cmd` would try to execute "VAR=x".
+        stitch:ubuntu("DIAL_REPO_DIR=/home/ubuntu/dial-new timeout 90s bash /home/ubuntu/dial-new/deploy/oracle/hermes-codex/run-stitch-provider.sh auth-check >/dev/null 2>&1",120000),
       };
       const failed=Object.entries(checks).filter(([,v])=>!v.ok).map(([k])=>k);
       if(failed.length) throw Object.assign(new Error('activation credential preflight failed'),{result:{failed}});
