@@ -80,6 +80,13 @@ apply() {
     iptables -I INPUT 2 -s "$subnet" -p tcp --dport 22 -m comment --comment "$TAG vcn-subnet/bastion" -j ACCEPT
   iptables -C INPUT -s "$netcup_ip/32" -p tcp --dport 22 -m comment --comment "$TAG netcup-direct" -j ACCEPT 2>/dev/null ||
     iptables -I INPUT 3 -s "$netcup_ip/32" -p tcp --dport 22 -m comment --comment "$TAG netcup-direct" -j ACCEPT
+  # van-trading-core: Hermes on Dial Control (10.77.0.1) reaches VAN's commander (9133) over the
+  # overlay as "van-trading-core", the name its certificate carries. VAN's own firewall admits only
+  # VCN addresses, so the overlay source is allowed here, ahead of it.
+  if [[ "$(hostname)" == van-trading-core ]]; then
+    iptables -C INPUT -i "$WG_IF" -s 10.77.0.1/32 -p tcp --dport 9133 -m comment --comment "$TAG van-commander" -j ACCEPT 2>/dev/null ||
+      iptables -I INPUT 4 -i "$WG_IF" -s 10.77.0.1/32 -p tcp --dport 9133 -m comment --comment "$TAG van-commander" -j ACCEPT
+  fi
   # Anything else to tcp/22 falls through to the image's final REJECT; make that explicit in case it is absent.
   iptables -S INPUT | grep -q -- '-j REJECT' || iptables -A INPUT -p tcp --dport 22 -m comment --comment "$TAG ssh-default" -j REJECT
   # IPv6: no peer or fallback uses it for SSH.

@@ -189,6 +189,11 @@ function peerCheck() {
 }
 async function dispatch(body, claims) {
   const action=String(body.action||'');
+  // One-shot migration phases: once the source's control role is retired (and, per the owner's plan,
+  // the source is formatted into van-trading-core) there is nothing left to migrate from, so a later
+  // converge pass skips them instead of failing on the vanished source.
+  const MIGRATION_PHASES=['migrate-prepare','activation-preflight','migrate-cutover','activate','source-retirement-preflight','retire-a1-control-role'];
+  if(MIGRATION_PHASES.includes(action) && fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) return {skipped:true,reason:'migration source already retired'};
   switch(action){
     case 'status': {
       const receiptPath=path.join(CONTROL,'bootstrap/image-bootstrap.receipt');

@@ -71,6 +71,39 @@ describe('Netcup and Oracle network hardening', () => {
     expect(s.indexOf('/usr/local/bin/dial-github-recovery')).toBeLessThan(s.indexOf('if [[ "$MODE" == verify ]]'));
   });
 
+  it('re-roles the retired Hermes source into van-trading-core only after cutover, with VAN captured first', () => {
+    const s = read('deploy/netcup/hermes-control/oci-edge-login.sh');
+    const op = s.slice(s.indexOf('reimage_source_as_van() {'), s.indexOf('finish() {'));
+    // Gates: source retired and a verified path to the old van, before any OCI change.
+    expect(op.indexOf('a1-control-retired')).toBeLessThan(op.indexOf('verify_session'));
+    expect(op).toContain('old-van-access-verified');
+    // Order: consistent VAN capture -> format in place -> Bastion access -> estate swap -> terminate old van.
+    const order = ['capture --final', '--source-details', 'create-managed-ssh', 'VAN_TRADING_CORE_OCID=$src', 'terminate --instance-id "$old_van"'].map((x) => op.indexOf(x));
+    order.forEach((i) => expect(i).toBeGreaterThan(0));
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    // Owner instruction: only the Hermes clone and the VAN backup are kept.
+    expect(op).toContain('isPreserveBootVolumeEnabled:false');
+    expect(op).toContain('--preserve-boot-volume false');
+    expect(op).toContain("[[ \"$(jq -r '.data.\"display-name\"' <<<\"$inst\")\" == dial-hermes-control ]]");
+    // The E2 rebuild keeps its own fallback volume.
+    const rebuild = s.slice(s.indexOf('rebuild_instance() {'), s.indexOf('finish() {'));
+    expect(rebuild).toContain('terminate --instance-id "$old" --preserve-boot-volume true');
+  });
+
+  it('moves VAN with VAN\'s own installer and qualifier, pinned to an exact commit', () => {
+    const s = read('deploy/netcup/hermes-control/rerole-van-trading-core.sh');
+    expect(s).toMatch(/VAN_SHA="\$\{VAN_SHA:-[0-9a-f]{40}\}"/);
+    expect(s).toContain('deploy/van-trading-core/bootstrap.sh --commit-sha=');
+    expect(s).toContain("VAN_EXPECTED_REPOSITORY_SHA='$VAN_SHA'");
+    expect(s).toContain('old-services-stopped-at');
+    expect(s).toContain('sha256sum -c --quiet SHA256SUMS');
+    const peer = read('deploy/oracle/resource-fabric/harden-oracle-peer.sh');
+    expect(peer).toContain('-s 10.77.0.1/32 -p tcp --dport 9133');
+    const wf = read('.github/workflows/netcup-admin-oidc.yml');
+    expect(wf).toContain('reimage-source-as-van-detached');
+    expect(wf).toContain('rerole-van-trading-core.sh /usr/local/lib/dial-control/rerole-van-trading-core.sh');
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');

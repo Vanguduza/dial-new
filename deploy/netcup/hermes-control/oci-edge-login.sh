@@ -507,6 +507,150 @@ rebuild_instance() {
   say "OCI_REBUILD_${name//-/_}=GREEN"
 }
 
+# Owner-session operation (auth-20260923-owner-estate-rebuild-hermes-becomes-van, carried out by
+# auth-20260924-owner-finish-hermes-clone-van-rerole; one owner sign-in): format the retired Hermes
+# source in place and make it van-trading-core, then terminate the old van-trading-core. Owner
+# instruction (2026-09-24): keep only the Hermes clone on Netcup and the VAN backup, so neither old
+# boot volume is preserved.
+#   - "Format, not terminate": the boot volume is replaced from the current Ubuntu 24.04 image
+#     (UpdateInstanceSourceViaImageDetails). The instance OCID, VNIC, private/public IPs and the A1
+#     capacity stay.
+#   - user_data and ssh_authorized_keys cannot change after launch (UpdateInstanceDetails, oci SDK
+#     2.187.0) and the source has neither user_data nor a key Dial Control holds, so access to the
+#     fresh OS comes from an OCI Bastion managed-SSH session (the Bastion plugin injects its key for
+#     ubuntu). Through it Dial Control installs its own key and the ocarun sudo grant, then closes it.
+#   - VAN state is captured (services stopped) just before, so VAN is down only from here to restore.
+#   - The old van-trading-core is terminated only after the checksummed VAN capture is on Dial Control.
+reimage_source_as_van() {
+  local expected_tenancy="${1:-}"
+  [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
+  local control=/var/lib/dial-control/state
+  [[ -f "$control/a1-control-retired" ]] || die "the Hermes source control role is not retired yet" 30
+  [[ -f "$control/old-van-access-verified" ]] || die "Dial Control has no verified path to the old van-trading-core" 30
+  verify_session "$expected_tenancy"
+  [[ -s "$ESTATE" ]] || die "estate inventory missing" 26
+  # shellcheck source=/dev/null
+  source "$ESTATE"
+  local src="${DIAL_HERMES_CONTROL_SOURCE_OCID:-}" old_van="${VAN_TRADING_CORE_OCID:-}" c="$DIAL_OCI_COMPARTMENT"
+  [[ "$src" == ocid1.instance.* && "$old_van" == ocid1.instance.* && "$src" != "$old_van" ]] || die "estate does not hold a distinct source and van-trading-core" 26
+  local inst; inst="$(oci_session compute instance get --instance-id "$src")"
+  [[ "$(jq -r '.data."display-name"' <<<"$inst")" == dial-hermes-control ]] || die "source is not named dial-hermes-control; refusing"
+  [[ "$(jq -r '.data.shape' <<<"$inst")" == VM.Standard.A1.Flex ]] || die "source is not the A1"
+  [[ "$(oci_session compute instance get --instance-id "$old_van" --query 'data."display-name"' --raw-output)" == van-trading-core ]] || die "old van-trading-core OCID does not name van-trading-core; refusing"
+
+  # 1. Consistent VAN capture; VAN is down from here until restore.
+  bash "$LIB/rerole-van-trading-core.sh" capture --final || die "final VAN capture failed; nothing was changed in OCI" 31
+  say "van_capture=FINAL"
+
+  # 2. Bastion, its policy and the restricted security list (idempotent).
+  harden_oci_network "$expected_tenancy" || true
+  local bastion i st
+  for i in $(seq 1 60); do
+    bastion="$(oci_session bastion bastion list --compartment-id "$c" --all 2>/dev/null | jq -r '[.data[]? | select(.name=="dial-recovery-bastion" and ."lifecycle-state"=="ACTIVE")][0].id // empty')"
+    [[ -n "$bastion" ]] && break; sleep 10
+  done
+  [[ "$bastion" == ocid1.bastion.* ]] || die "dial-recovery-bastion did not become ACTIVE" 32
+
+  # 3. Name the host van-trading-core (display name and the VNIC hostname label cloud-init uses).
+  local vnic ip ad old_bv image tmp
+  vnic="$(oci_session compute instance list-vnics --instance-id "$src" --query 'data[0].id' --raw-output)"
+  ip="$(oci_session compute instance list-vnics --instance-id "$src" --query 'data[0]."private-ip"' --raw-output)"
+  ad="$(jq -r '.data."availability-domain"' <<<"$inst")"
+  old_bv="$(oci_session compute boot-volume-attachment list --availability-domain "$ad" --compartment-id "$c" --instance-id "$src" --query 'data[0]."boot-volume-id"' --raw-output)"
+  image="$(oci_session compute image list --compartment-id "$c" --operating-system "Canonical Ubuntu" --operating-system-version "24.04" \
+    --shape VM.Standard.A1.Flex --sort-by TIMECREATED --sort-order DESC --limit 1 --query 'data[0].id' --raw-output)"
+  [[ "$vnic" == ocid1.vnic.* && "$ip" =~ ^[0-9.]+$ && "$old_bv" == ocid1.bootvolume.* && "$image" == ocid1.image.* ]] || die "could not resolve the source VNIC, boot volume or image"
+  install -d -m 0700 "$STATE"
+  jq -n --arg src "$src" --arg bv "$old_bv" --arg ip "$ip" --arg img "$image" --arg van "$old_van" --arg at "$(date -u +%FT%TZ)" \
+    '{instance:$src, old_hermes_boot_volume:$bv, private_ip:$ip, image:$img, old_van_trading_core:$van, started_at_utc:$at}' >"$STATE/rerole-van.json"
+  oci_session network vnic update --vnic-id "$vnic" --hostname-label van-trading-core --force >/dev/null
+  tmp="$(mktemp -d)"; chown "$ADMIN_USER:$ADMIN_USER" "$tmp"
+  jq -n --arg i "$image" '{sourceType:"image", imageId:$i, isPreserveBootVolumeEnabled:false}' >"$tmp/source.json"
+  jq -n '{isMonitoringDisabled:false, isManagementDisabled:false, areAllPluginsDisabled:false,
+    pluginsConfig:[{name:"Compute Instance Run Command",desiredState:"ENABLED"},{name:"Bastion",desiredState:"ENABLED"},
+                   {name:"Compute Instance Monitoring",desiredState:"ENABLED"}]}' >"$tmp/agent.json"
+  chown "$ADMIN_USER:$ADMIN_USER" "$tmp"/*.json
+  oci_session compute instance update --instance-id "$src" --display-name van-trading-core --agent-config "file://$tmp/agent.json" --force >/dev/null
+
+  # 4. Format in place.
+  oci_session compute instance update --instance-id "$src" --source-details "file://$tmp/source.json" --force >/dev/null
+  say "reimage=REQUESTED old_boot_volume=$old_bv"
+  local new_bv=""
+  for i in $(seq 1 120); do
+    sleep 15
+    st="$(oci_session compute instance get --instance-id "$src" --query 'data."lifecycle-state"' --raw-output 2>/dev/null || true)"
+    new_bv="$(oci_session compute boot-volume-attachment list --availability-domain "$ad" --compartment-id "$c" --instance-id "$src" \
+      --query 'data[?"lifecycle-state"=='"'ATTACHED'"'] | [0]."boot-volume-id"' --raw-output 2>/dev/null || true)"
+    [[ "$st" == RUNNING && "$new_bv" == ocid1.bootvolume.* && "$new_bv" != "$old_bv" ]] && break
+  done
+  [[ "$st" == RUNNING && "$new_bv" != "$old_bv" ]] || die "reimage did not complete (state $st)" 33
+  say "reimage=RUNNING new_boot_volume=$new_bv"
+
+  # 5. Access through a Bastion managed-SSH session, then Dial Control's own key + ocarun sudo.
+  local plug=""
+  for i in $(seq 1 80); do
+    plug="$(oci_session instance-agent plugin get --instanceagent-id "$src" --compartment-id "$c" --plugin-name Bastion --query 'data.status' --raw-output 2>/dev/null || true)"
+    [[ "$plug" == RUNNING ]] && break; sleep 15
+  done
+  [[ "$plug" == RUNNING ]] || die "Bastion plugin not RUNNING on the formatted host ($plug)" 34
+  local perm=/home/ubuntu/.ssh/dial-oracle-admin boot=/home/ubuntu/.ssh/dial-bootstrap-oracle key sess region
+  [[ -s "$perm" ]] || as_admin ssh-keygen -q -t ed25519 -N '' -C 'dial-control-oracle-admin' -f "$perm"
+  key="$perm"
+  region="$(awk -F= '/^region/{print $2; exit}' "$SESSION_CONFIG" | tr -d ' ')"
+  sess="$(oci_session bastion session create-managed-ssh --bastion-id "$bastion" --target-resource-id "$src" --target-os-username ubuntu \
+    --target-private-ip "$ip" --ssh-public-key-file "$key.pub" --session-ttl 1800 --display-name dial-van-rerole \
+    --query 'data.id' --raw-output 2>/dev/null || true)"
+  [[ "$sess" == ocid1.bastionsession.* ]] || die "Bastion session was not created" 35
+  for i in $(seq 1 40); do
+    st="$(oci_session bastion session get --session-id "$sess" --query 'data."lifecycle-state"' --raw-output 2>/dev/null || true)"
+    [[ "$st" == ACTIVE ]] && break; sleep 10
+  done
+  [[ "$st" == ACTIVE ]] || die "Bastion session did not become ACTIVE ($st)" 35
+  local known; known="$(mktemp)"; chown "$ADMIN_USER:$ADMIN_USER" "$known"
+  local pubs; pubs="$(cat "$perm.pub"; [[ -s "$boot.pub" ]] && cat "$boot.pub")"
+  local remote
+  remote="$(printf '%s' "set -e; umask 077; mkdir -p ~/.ssh; touch ~/.ssh/authorized_keys
+echo '$(printf '%s\n' "$pubs" | base64 -w0)' | base64 -d | while read -r k; do [ -n \"\$k\" ] && { grep -qxF \"\$k\" ~/.ssh/authorized_keys || printf '%s\n' \"\$k\" >>~/.ssh/authorized_keys; }; done
+printf 'ocarun ALL=(ALL) NOPASSWD:ALL\n' >/tmp/90-dial-ocarun; sudo -n visudo -cf /tmp/90-dial-ocarun >/dev/null
+sudo -n install -o root -g root -m 0440 /tmp/90-dial-ocarun /etc/sudoers.d/90-dial-ocarun; rm -f /tmp/90-dial-ocarun; sudo -n visudo -c >/dev/null
+sudo -n hostnamectl set-hostname van-trading-core; hostname" | base64 -w0)"
+  local out=""
+  for i in $(seq 1 12); do
+    out="$(as_admin ssh -i "$key" -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=accept-new \
+      -o UserKnownHostsFile="$known" -o ProxyCommand="ssh -i $key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$known -W %h:%p -p 22 $sess@host.bastion.$region.oci.oraclecloud.com" \
+      "ubuntu@$ip" "echo $remote | base64 -d | bash" 2>/dev/null || true)"
+    [[ "$(tail -1 <<<"$out")" == van-trading-core ]] && break; sleep 15
+  done
+  oci_session bastion session delete --session-id "$sess" --force >/dev/null 2>&1 || true
+  rm -f "$known"; rm -rf "$tmp"
+  [[ "$(tail -1 <<<"$out")" == van-trading-core ]] || die "could not install Dial Control access on the formatted host; retry this operation (the reimage is done)" 36
+  say "van_access=INSTALLED via=bastion"
+
+  # 6. The formatted host is van-trading-core now; the old one leaves the estate.
+  sed -i -e "s|^VAN_TRADING_CORE_OCID=.*|VAN_TRADING_CORE_OCID=$src|" -e "s|^DIAL_HERMES_CONTROL_SOURCE_OCID=.*|DIAL_HERMES_CONTROL_SOURCE_OCID=|" "$ESTATE"
+  grep -q '^VAN_TRADING_CORE_RETIRED_OCID=' "$ESTATE" && sed -i "s|^VAN_TRADING_CORE_RETIRED_OCID=.*|VAN_TRADING_CORE_RETIRED_OCID=$old_van|" "$ESTATE" ||
+    printf 'VAN_TRADING_CORE_RETIRED_OCID=%s\n' "$old_van" >>"$ESTATE"
+  # shellcheck source=/dev/null
+  source "$ESTATE"
+  reconcile_runcommand_dg "$expected_tenancy"
+  date -u +%FT%TZ >"$control/van-rerole-reimaged"
+  # Enrollment, overlay and identity rotation now include van-trading-core (the formatted host).
+  rm -f "$control/van-trading-core-pending-rebuild"
+  say "estate=SWAPPED van_trading_core=$src van_pending_marker=CLEARED"
+
+  # 7. Terminate the old van-trading-core; the VAN capture on Dial Control is the backup.
+  oci_session compute instance terminate --instance-id "$old_van" --preserve-boot-volume false --force >/dev/null
+  for i in $(seq 1 90); do
+    st="$(oci_session compute instance get --instance-id "$old_van" --query 'data."lifecycle-state"' --raw-output 2>/dev/null || true)"
+    [[ "$st" == TERMINATED ]] && break; sleep 10
+  done
+  [[ "$st" == TERMINATED ]] || die "old van-trading-core did not terminate (state $st)" 37
+  date -u +%FT%TZ >"$control/van-old-terminated"
+  KEEP_SESSION=0
+  say "old_van_trading_core=TERMINATED van_backup=$(readlink -f /var/lib/dial-control/van-migration/final)"
+  say "OCI_VAN_REROLE=GREEN"
+}
+
 finish() {
   local expected_tenancy="${1:-}" region="${2:-af-johannesburg-1}" a1_pin="${3:-}" user_email="${4:-}"
   [[ "$expected_tenancy" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
@@ -641,6 +785,15 @@ case "$MODE" in
   rediscover) rediscover "${2:-}" ;;
   enable-run-command) enable_run_command "${2:-}" ;;
   rebuild-instance) rebuild_instance "${2:-}" "${3:-}" ;;
+  reimage-source-as-van) reimage_source_as_van "${2:-}" ;;
+  # The re-role outlasts one admin request; it runs detached and logs for rerole-van-trading-core.sh status.
+  reimage-source-as-van-detached)
+    [[ "${2:-}" =~ ^ocid1\.tenancy\.[a-z0-9-]+\.[a-z0-9-]*\.[a-z0-9]+$ ]] || die "expected tenancy OCID required"
+    session_present || { say "OCI_EDGE_SESSION=ABSENT"; exit 21; }
+    systemctl reset-failed dial-oci-van-rerole 2>/dev/null || true
+    systemd-run --unit=dial-oci-van-rerole --collect -p StandardOutput=file:/var/log/dial-oci-van-rerole.log -p StandardError=inherit \
+      /bin/bash "$0" reimage-source-as-van "$2" >/dev/null
+    say "OCI_VAN_REROLE=STARTED log=/var/log/dial-oci-van-rerole.log" ;;
   abort)  destroy_session; say "OCI_EDGE_SESSION=ABORTED" ;;
   *) echo "Usage: $0 {start [region]|status|finish <tenancy-ocid> [region] [van-trading-core-ocid] [recovery-user-email]|abort}" >&2; exit 2 ;;
 esac

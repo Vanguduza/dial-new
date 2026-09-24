@@ -2,7 +2,7 @@
   "schema_version": 1,
   "estate_id": "DIAL_VAN_HYBRID_ESTATE_V1",
   "total_vms": 4,
-  "note": "Four-VM owner estate after migration: Netcup Dial Control plus exactly three retained Oracle VMs (van-trading-core, vekl-worker, oracle-admin), all peers of the Netcup WireGuard hub. During migration a fifth, transient Oracle A1 exists: dial-hermes-control, the old Oracle DIAL/Hermes control source. Hermes and its files are cloned from it to Netcup, its control units are retired, and the owner then terminates the instance. It is a separate physical VM, never the same VM as van-trading-core (owner topology decision 2026-09-23). DIAL resource-fabric hosts.json governs the DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository.",
+  "note": "Four-VM owner estate after migration: Netcup Dial Control plus exactly three retained Oracle VMs (van-trading-core, vekl-worker, oracle-admin), all peers of the Netcup WireGuard hub. Owner decision auth-20260923-owner-estate-rebuild-hermes-becomes-van (supersedes auth-20260923-owner-hermes-source-separate-a1-topology): Hermes and its files are cloned from the old Oracle A1 dial-hermes-control to Netcup; that same A1 is then formatted in place (same instance, IPs and capacity) and bootstrapped into van-trading-core with VAN's own installer, VAN state is carried over from the previous van-trading-core A1, and that previous instance is terminated. Owner instruction 2026-09-24: only the Hermes clone on Netcup and the VAN backup are kept; no old boot volume is preserved. DIAL resource-fabric hosts.json governs the DIAL infrastructure nodes; VAN/VATI authority for van-trading-core remains governed by the VAN repository.",
   "vms": [
     {
       "host_id": "dial-hermes-control",
@@ -66,11 +66,17 @@
   "retired_after_cutover": [
     {
       "host_id": "old-dial-hermes-control",
-      "physical_instance": "separate Oracle A1 VM named dial-hermes-control; never van-trading-core",
-      "disposition": "CLONE_HERMES_INSTALLATION_AND_FILES_TO_NETCUP; STOP_AND_DISABLE_CONTROL_UNITS; REMOVE_FROM_OVERLAY; OWNER_TERMINATES_INSTANCE",
-      "condition": "Only after the final Hermes/control delta is cloned to Netcup, Netcup CORE_DEVELOPMENT verification is green, the private overlay is verified, identities are rotated, and Dial Control is active.",
-      "data_on_source": "KEPT_UNTIL_TERMINATION_AS_FALLBACK",
-      "certification_requires": "OCI lifecycle-state TERMINATED or TERMINATING for DIAL_HERMES_CONTROL_SOURCE_OCID",
+      "physical_instance": "Oracle A1 named dial-hermes-control (the Hermes migration source)",
+      "disposition": "CLONE_HERMES_INSTALLATION_AND_FILES_TO_NETCUP; STOP_AND_DISABLE_CONTROL_UNITS; REMOVE_FROM_OVERLAY; FORMAT_IN_PLACE_AS_VAN_TRADING_CORE",
+      "condition": "Only after the final Hermes/control delta is cloned to Netcup, Dial Control is active and the source's control role is retired.",
+      "data_on_source": "NOT_PRESERVED_HERMES_CLONE_ON_NETCUP_IS_THE_COPY",
+      "final_host_id": "van-trading-core"
+    },
+    {
+      "host_id": "previous-van-trading-core",
+      "physical_instance": "the Oracle A1 that ran van-trading-core before the re-role (private IP 10.0.1.233)",
+      "disposition": "FINAL_VAN_STATE_CAPTURED_TO_DIAL_CONTROL; RESTORED_ONTO_FORMATTED_A1; INSTANCE_TERMINATED",
+      "data_on_source": "NOT_PRESERVED_VAN_BACKUP_ON_DIAL_CONTROL_IS_THE_COPY",
       "final_host_id": null
     }
   ],

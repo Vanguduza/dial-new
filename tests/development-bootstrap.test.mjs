@@ -579,9 +579,12 @@ describe('DIAL development bootstrap closure', () => {
     expect(hybridEstate.vms.map((x) => x.host_id)).toContain('van-trading-core');
     expect(hybridEstate.migration_source.oci_display_name).toBe('dial-hermes-control');
     expect(hybridEstate.migration_source.overlay_address).toBe('10.77.0.5');
-    expect(hybridEstate.retired_after_cutover[0].physical_instance).toContain('never van-trading-core');
-    expect(hybridEstate.retired_after_cutover[0].disposition).toContain('OWNER_TERMINATES_INSTANCE');
-    expect(hybridEstate.retired_after_cutover[0].final_host_id).toBeNull();
+    // Owner decision auth-20260923-owner-estate-rebuild-hermes-becomes-van: the retired source is
+    // formatted in place into van-trading-core, and the previous van-trading-core is terminated.
+    expect(hybridEstate.retired_after_cutover[0].disposition).toContain('FORMAT_IN_PLACE_AS_VAN_TRADING_CORE');
+    expect(hybridEstate.retired_after_cutover[0].final_host_id).toBe('van-trading-core');
+    expect(hybridEstate.retired_after_cutover[1].disposition).toContain('INSTANCE_TERMINATED');
+    expect(hybridEstate.retired_after_cutover[1].final_host_id).toBeNull();
 
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/netcup-custom-script.sh')]);
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/configure-wireguard-fabric.sh')]);
