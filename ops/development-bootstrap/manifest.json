@@ -306,17 +306,17 @@
       "id": "rt.antigravity",
       "tooling_kind": "CLI",
       "binary": "agy",
-      "exact_version": "1.2.0",
+      "exact_version": "1.2.9",
       "install_method": "REPO_PINNED_SCRIPT",
       "hosts": [
         "dial-hermes-control"
       ],
       "criticality": "MANDATORY",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
-      "install_semantics": "official Antigravity 1.2.0 release tarball selected by architecture, SHA-256 verified from PINS.json, installs antigravity and agy compatibility alias",
+      "install_semantics": "official Antigravity 1.2.9 release tarball selected by architecture, SHA-256 verified from PINS.json, installs antigravity and agy compatibility alias",
       "config_semantics": ".agents/plugins/dial-governed plus isolated DIAL Antigravity HOME at /var/lib/dial-control/identities/antigravity-worker; owner Google env credentials are explicitly unset",
       "auth_semantics": "OAUTH_BROWSER sign-in for the dedicated antigravity_worker_account in the isolated Antigravity HOME; no owner Google credential inheritance",
-      "probe_semantics": "agy --version == 1.2.0; isolated-home agy models; per-discovered-model live canaries; HCX selection/execution evidence",
+      "probe_semantics": "agy --version == 1.2.9; isolated-home agy models; per-discovered-model live canaries; HCX selection/execution evidence",
       "remediation": "bash deploy/oracle/hermes-codex/install-google-antigravity.sh",
       "pin_ref": "antigravity-cli",
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
@@ -1071,10 +1071,10 @@
       "criticality": "MANDATORY",
       "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
       "owner_required_ref": "DEC-033 / auth-20260915-owner-required-development-capabilities",
-      "install_semantics": "exact agy 1.2.0 via repository-pinned installer and platform SHA-256 pin",
+      "install_semantics": "exact agy 1.2.9 via repository-pinned installer and platform SHA-256 pin",
       "config_semantics": ".agents/plugins/dial-governed; DIAL_ANTIGRAVITY_ENABLED kill switch; isolated /var/lib/dial-control/identities/antigravity-worker HOME with no owner Google env inheritance",
       "auth_semantics": "Dedicated antigravity_worker_account Google OAuth/browser sign-in stored only in isolated Antigravity runtime HOME; DIAL persists status/evidence, never token material",
-      "probe_semantics": "agy --version == 1.2.0; isolated-home agy models; per-model canary matrix; guard denial; receipt; orchestrated Unit execution"
+      "probe_semantics": "agy --version == 1.2.9; isolated-home agy models; per-model canary matrix; guard denial; receipt; orchestrated Unit execution"
     },
     {
       "id": "prov.google-stitch",

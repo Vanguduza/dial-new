@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="1.2.0"
+VERSION="1.2.9"
 BASE_URL="https://github.com/google-antigravity/antigravity-cli/releases/download/${VERSION}"
 INSTALL_DIR="${DIAL_ANTIGRAVITY_INSTALL_DIR:-${HOME}/.local/bin}"
 
 case "$(uname -m)" in
   aarch64|arm64)
     ASSET="agy_cli_linux_arm64.tar.gz"
-    EXPECTED_SHA256="0a8e61f6548865029c4238b9310c686b7a733db5864cae619656abdf48090594"
+    EXPECTED_SHA256="8a63cf4c4f559e2ff91bd46fbdf015ca7937415805d0cff82015b9cb9dbbdfcd"
     ;;
   x86_64|amd64)
     ASSET="agy_cli_linux_x64.tar.gz"
-    EXPECTED_SHA256="d9bfee1ae6e4329562cb87da1f5fc3c886d18594837e73e25c3aae00a49499b9"
+    EXPECTED_SHA256="d9850373f3df866011024a961fa9740cc4adaac060eebe9c70fbf263ac6b2624"
     ;;
   *)
     echo "Unsupported Antigravity CLI architecture: $(uname -m)" >&2

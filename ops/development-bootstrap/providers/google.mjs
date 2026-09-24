@@ -49,8 +49,8 @@ export function certifyGoogle({ role, repoDir, controlHome }) {
     }));
   }
   if (role === 'dial-hermes-control') {
-    const agy = versionProbe('agy', ['--version'], { exact: '1.2.0' });
-    checks.push(check({ id: 'google.antigravity.binary', domain, title: 'Antigravity agy 1.2.0 installed via SHA-256 pinned release (required worker harness)', status: agy.installed ? (agy.satisfies ? STATUS.PASS : STATUS.FAIL) : STATUS.FAIL, criticality: CRITICALITY.MANDATORY, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { command: agy.command, output: agy.raw || 'not installed', owner_required_ref: 'DEC-033' }, remediation: 'bash deploy/oracle/hermes-codex/install-google-antigravity.sh' }));
+    const agy = versionProbe('agy', ['--version'], { exact: '1.2.9' });
+    checks.push(check({ id: 'google.antigravity.binary', domain, title: 'Antigravity agy 1.2.9 installed via SHA-256 pinned release (required worker harness)', status: agy.installed ? (agy.satisfies ? STATUS.PASS : STATUS.FAIL) : STATUS.FAIL, criticality: CRITICALITY.MANDATORY, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { command: agy.command, output: agy.raw || 'not installed', owner_required_ref: 'DEC-033' }, remediation: 'bash deploy/oracle/hermes-codex/install-google-antigravity.sh' }));
   }
   checks.push(check({ id: 'google.gemini-cli', domain, title: 'Gemini / Gemini CLI / other Google AI tooling: not referenced by any canonical DIAL document or registry (REFERENCE_ONLY)', status: STATUS.NOT_APPLICABLE, criticality: CRITICALITY.OPTIONAL, readiness_class: 'REFERENCE_ONLY', evidence: { finding: 'not required' } }));
   return checks;
