@@ -495,6 +495,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(ociEnroll).toContain('[van-trading-core]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).not.toContain('[old-dial-hermes-control]="$VAN_TRADING_CORE_OCID"');
     expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
+    // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
+    expect(housekeepingEstate).toContain('  deploy/oracle/hermes-codex/install-pinned-node.sh\n');
+    expect(housekeepingEstate).toContain('command -v node >/dev/null 2>&1 || bash /tmp/dial-housekeeping-bundle/deploy/oracle/hermes-codex/install-pinned-node.sh');
     // The frozen runtime payload mapped the source to 10.77.0.4; enrollment must ship the refreshed helper.
     expect(ociEnroll).toMatch(/PEER_SCRIPT=\/usr\/local\/lib\/dial-control\/zero-touch-enroll-peer\.sh\n\s*\[\[ -s "\$PEER_SCRIPT" \]\] \|\| PEER_SCRIPT=\/usr\/local\/lib\/dial-control\/runtime\//);
     expect(ociEnroll).toContain('retained_oracle_instances:(if $pending == 1 then 2 else 3 end)');

@@ -8,13 +8,13 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh",
+    "deploy/netcup/hermes-control/install-housekeeping-final-estate.sh",
     "tests/development-bootstrap.test.mjs"
   ],
-  "content_diff_sha256": "91d1fa0bd7366cf625e0f3789c221a5934782c82f8f45970822366d463f7c3bc",
-  "observed_at_utc": "2026-09-24T00:20:19.212722+00:00",
+  "content_diff_sha256": "7314831cc7b38f56d51e52023b860c67a3d7ca1f653904447256cdc6aa0a865b",
+  "observed_at_utc": "2026-09-24T00:46:59.653052+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "60cc18f331cee836efe3f457a6e17728930071ef",
+  "source_parent": "0c85468a23f9515272198783b85007c1c65cd711",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
