@@ -20,7 +20,12 @@ now(){ date -u +%Y-%m-%dT%H:%M:%SZ; }
 cd "$DIAL_REPO_DIR"
 mkdir -p "$QUAL_DIR"; chmod 700 "$QUAL_DIR" 2>/dev/null || true
 HEAD_SHA="$(git rev-parse HEAD)"
-ARCH="$(uname -m)"; [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]] || fail "Oracle qualification host must be ARM64; detected $ARCH"; pass "Oracle host architecture is ARM64 ($ARCH)"
+# The control host's architecture is declared in the canonical topology (Netcup x86_64 since the move off the
+# Oracle A1); qualification checks the host against it rather than assuming ARM64.
+ARCH="$(uname -m)"; case "$ARCH" in aarch64|arm64) ARCH_NORM=arm64 ;; x86_64|amd64) ARCH_NORM=x86_64 ;; *) ARCH_NORM="$ARCH" ;; esac
+DECLARED_ARCH="$(node -e 'const f=require(process.argv[1]);const h=f.hosts.find((x)=>x.host_id==="dial-hermes-control");process.stdout.write(String(h?.architecture||""))' "$DIAL_REPO_DIR/deploy/oracle/resource-fabric/hosts.json")"
+[[ -n "$DECLARED_ARCH" && "$ARCH_NORM" == "$DECLARED_ARCH" ]] || fail "control host architecture $ARCH does not match hosts.json dial-hermes-control architecture '${DECLARED_ARCH:-UNDECLARED}'"
+pass "control host architecture matches hosts.json ($ARCH_NORM)"
 [[ -f package-lock.json ]] || fail "package-lock.json missing"
 [[ -x "$HOME/.hermes/agent-hooks/dial-pre-turn-context.sh" ]] || fail "pre-turn hook not installed"
 [[ -x "$HOME/.hermes/agent-hooks/dial-post-turn-checkpoint.sh" ]] || fail "post-turn hook not installed"

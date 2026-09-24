@@ -232,6 +232,31 @@ describe('Netcup and Oracle network hardening', () => {
     expect(judge({ overall_status: 'AMBER' }).code).not.toBe(0);
   });
 
+  it('runs the control plane on the host Dial Control actually is (pinned Node, x86_64, restricted user namespaces)', async () => {
+    // Activation 18:35: chat-control/mission-controller/owner-steering exited 203/EXEC on /usr/bin/node, absent on Netcup.
+    for (const f of ['install-chat-control-bridge.sh', 'install-operator-gateway.sh', 'install-engineering-research.sh']) {
+      const s = read(`deploy/oracle/hermes-codex/${f}`);
+      expect(s, f).not.toMatch(/ExecStart=\/usr\/bin\/node/);
+      expect(s, f).toContain('NODE_BIN="$(command -v node)"');
+      expect(s.indexOf('NODE_BIN="$(command -v node)"'), f).toBeLessThan(s.indexOf('ExecStart=${NODE_BIN}'));
+    }
+    // HAIF 18:49: PrivateDevices in a user unit fails 218/CAPABILITIES under Ubuntu 24.04 userns restriction (owner decision).
+    const haif = read('deploy/oracle/hermes-codex/install-haif.sh');
+    const dialUnit = haif.slice(haif.indexOf('dial-hermes-haif.service" <<EOF'), haif.indexOf('dde-hermes-haif.service" <<EOF'));
+    const ddeUnit = haif.slice(haif.indexOf('dde-hermes-haif.service" <<EOF'));
+    expect(dialUnit).not.toMatch(/^PrivateDevices=/m);
+    for (const kept of ['NoNewPrivileges=true', 'PrivateTmp=true', 'ProtectSystem=strict', 'ProtectHome=read-only', 'RestrictSUIDSGID=true', 'LockPersonality=true']) expect(dialUnit).toContain(kept);
+    expect(ddeUnit).toMatch(/^PrivateDevices=true$/m);
+    // Qualification 19:3x: "host must be ARM64; detected x86_64". It now checks the host against hosts.json.
+    const q = read('deploy/oracle/hermes-codex/qualify-control-plane.sh');
+    expect(q).not.toContain('must be ARM64');
+    const expr = q.match(/DECLARED_ARCH="\$\(node -e '([^']+)'/)[1];
+    const { spawnSync } = await import('node:child_process');
+    const declared = spawnSync('node', ['-e', expr, path.join(repoDir, 'deploy/oracle/resource-fabric/hosts.json')], { encoding: 'utf8' }).stdout;
+    expect(declared).toBe('x86_64');
+    expect(q).toMatch(/"\$ARCH_NORM" == "\$DECLARED_ARCH" \]\] \|\| fail/);
+  });
+
   it('never repeats migration prepare or cutover over a Netcup that already took over', () => {
     // Every push triggers converge; after the 18:34 cutover a re-run would copy the quiesced source over live state.
     const s = read('deploy/netcup/hermes-control/github-oidc-control.mjs');

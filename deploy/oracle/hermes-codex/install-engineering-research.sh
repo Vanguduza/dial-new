@@ -3,6 +3,8 @@ set -euo pipefail
 umask 077
 
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
+# The pinned Node (Dial Control has no /usr/bin/node; units must name the binary that exists).
+NODE_BIN="$(command -v node)"; [[ -x "$NODE_BIN" ]] || { echo "node is required on PATH" >&2; exit 1; }
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 USER_UNIT_DIR="$HOME/.config/systemd/user"
@@ -30,7 +32,7 @@ Environment=DIAL_ENGINEERING_RESEARCH_TTL_HOURS=12
 Environment=DIAL_ENGINEERING_RESEARCH_RETRY_MINUTES=30
 Environment=PATH=$HOME/.local/bin:$HOME/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node $REPO_DIR/agent-system/orchestration/engineering-presearch.mjs refresh
+ExecStart=${NODE_BIN} $REPO_DIR/agent-system/orchestration/engineering-presearch.mjs refresh
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict

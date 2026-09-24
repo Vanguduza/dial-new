@@ -2,6 +2,8 @@
 set -euo pipefail
 
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
+# The pinned Node (Dial Control has no /usr/bin/node; units must name the binary that exists).
+NODE_BIN="$(command -v node)"; [[ -x "$NODE_BIN" ]] || { echo "node is required on PATH" >&2; exit 1; }
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 HERMES_HOME="${HERMES_HOME:-${HOME}/.hermes}"
 CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
@@ -31,7 +33,7 @@ Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/chat-control-bridge.mjs serve
+ExecStart=${NODE_BIN} ${REPO_DIR}/agent-system/orchestration/chat-control-bridge.mjs serve
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
@@ -58,7 +60,7 @@ Environment=DIAL_REPO_DIR=${REPO_DIR}
 Environment=DIAL_CONTROL_HOME=${CONTROL_HOME}
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/mission-controller.mjs daemon
+ExecStart=${NODE_BIN} ${REPO_DIR}/agent-system/orchestration/mission-controller.mjs daemon
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
