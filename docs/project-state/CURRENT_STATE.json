@@ -1,30 +1,24 @@
 {
   "authority_classes": [
-    "OWNER_DELEGATED_AUTONOMY"
+    "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260924-delegated-supply-chain-pin-refresh"
+    "auth-20260921-owner-dial-control-rename",
+    "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
-  "branch": "supply-chain/pin-updates-20260924",
+  "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/image-bootstrap.sh",
-    "deploy/netcup/hermes-control/install-artemis-android-testing-plane.sh",
-    "deploy/netcup/hermes-control/install-github-oidc-control.sh",
-    "deploy/netcup/hermes-control/rescue-prestage-control-plane.sh",
-    "deploy/oracle/execution-fabric/sandbox/Dockerfile.toolbox",
-    "deploy/oracle/hermes-codex/install-google-antigravity.sh",
-    "deploy/oracle/hermes-codex/install-pinned-node.sh",
-    "deploy/oracle/provisioning/bootstrap.sh",
-    "ops/development-bootstrap/DEVELOPMENT_CAPABILITY_REGISTRY.json",
-    "ops/development-bootstrap/manifest.json",
-    "ops/development-bootstrap/providers/google.mjs",
-    "ops/development-bootstrap/supply-chain/PINS.json",
-    "ops/development-bootstrap/supply-chain/WATCH_REPORT.json"
+    "deploy/netcup/hermes-control/netcup-custom-script.sh",
+    "docs/project-state/authorizations/auth-20260924-delegated-supply-chain-content-pins.json",
+    "ops/development-bootstrap/supply-chain/WATCH.json",
+    "ops/development-bootstrap/supply-chain/watch-pins.mjs",
+    "tests/development-bootstrap.test.mjs",
+    "tests/supply-chain-watch.test.mjs"
   ],
-  "content_diff_sha256": "ca492e279f31a2fb93f7d09040268cf30ce30273c36c5680b2f190c0b46e0715",
-  "observed_at_utc": "2026-09-24T04:34:27.496699+00:00",
+  "content_diff_sha256": "7b09d7037053be5190d551216985ff8147141829f56dbd8e279979bba793b4b4",
+  "observed_at_utc": "2026-09-24T04:37:45.943596+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "80a04206e0ef64fdd680594d3b2926fe8e46a35d",
+  "source_parent": "c969317e4e5e30351ef2d32fce539bbfb28a2726",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

@@ -387,7 +387,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(customScript).toContain('else\n      rc=$?');
     expect(customScript).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
     expect(customScript).toContain('17dce8e76bb80093bc14ceab9db1f97d80acfcf3');
-    expect(customScript).toContain('31f8ce2b6e04ae1ae8219ba89bd5363e013f0f13');
+    // The custom script must pin exactly the image bootstrap in the tree (git blob), whatever its current content.
+    const imageBlob = execFileSync('git', ['hash-object', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')], { encoding: 'utf8' }).trim();
+    expect(customScript).toContain(`EXPECTED_IMAGE_BLOB=${imageBlob}`);
     expect(provisioningStage).not.toContain('apt-get');
     expect(provisioningStage).not.toContain('curl --proto');
 

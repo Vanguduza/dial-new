@@ -165,5 +165,14 @@
         "kind": "none"
       }
     }
-  }
+  },
+  "content_pins": [
+    {
+      "file": "deploy/netcup/hermes-control/image-bootstrap.sh",
+      "pinned_in": "deploy/netcup/hermes-control/netcup-custom-script.sh",
+      "pattern": "^EXPECTED_IMAGE_BLOB=([0-9a-f]{40})$",
+      "hash": "git-blob",
+      "why": "netcup-custom-script.sh refuses an image-bootstrap.sh whose git blob differs; artemis-openviking-subordinate.yml enforces it"
+    }
+  ]
 }

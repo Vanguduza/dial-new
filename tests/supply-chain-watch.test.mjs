@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { advisoriesAffecting, compareVersions, parseVersion, versionInRange, rehashRepoFiles, releaseVersion, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
+import { advisoriesAffecting, compareVersions, gitBlobSha, repinContent, parseVersion, versionInRange, rehashRepoFiles, releaseVersion, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
 
 const repoDir = path.resolve(import.meta.dirname, '..');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
@@ -34,6 +34,16 @@ describe('supply-chain pin watcher', () => {
     const advisories = [{ id: 'GHSA-a', vulnerable: ['>= 0.12.7, < 0.12.18'] }, { id: 'GHSA-b', vulnerable: ['<= 0.9.5'] }];
     expect(advisoriesAffecting(advisories, '0.12.17')).toEqual(['GHSA-a']);
     expect(advisoriesAffecting(advisories, '0.12.18')).toEqual([]);
+  });
+
+  it('re-pins files that are pinned elsewhere by git blob hash', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pinwatch-blob-'));
+    fs.writeFileSync(path.join(dir, 'image.sh'), 'echo v2\n');
+    fs.writeFileSync(path.join(dir, 'custom.sh'), `X=1\nEXPECTED_IMAGE_BLOB=${'0'.repeat(40)}\n`);
+    const pins = [{ file: 'image.sh', pinned_in: 'custom.sh', pattern: '^EXPECTED_IMAGE_BLOB=([0-9a-f]{40})$' }];
+    expect(repinContent(pins, dir)).toEqual(['custom.sh']);
+    expect(fs.readFileSync(path.join(dir, 'custom.sh'), 'utf8')).toContain(`EXPECTED_IMAGE_BLOB=${gitBlobSha(Buffer.from('echo v2\n'))}`);
+    expect(repinContent(pins, dir)).toEqual([]);
   });
 
   it('replaces exact tokens, including v-prefixed versions, but never longer versions or hashes', () => {

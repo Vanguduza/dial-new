@@ -250,6 +250,22 @@ export function rehashRepoFiles(pins, repo = REPO) {
   return changed;
 }
 
+export const gitBlobSha = (buf) => crypto.createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${buf.length}\0`), buf])).digest('hex');
+// Files pinned elsewhere by content (e.g. EXPECTED_IMAGE_BLOB for image-bootstrap.sh). Re-pin after consumers change.
+export function repinContent(contentPins, repo = REPO) {
+  const changed = [];
+  for (const c of contentPins || []) {
+    const want = gitBlobSha(fs.readFileSync(path.join(repo, c.file)));
+    const target = path.join(repo, c.pinned_in);
+    const text = fs.readFileSync(target, 'utf8');
+    const re = new RegExp(c.pattern, 'm');
+    const m = text.match(re);
+    if (!m) throw new Error(`content pin pattern not found in ${c.pinned_in}`);
+    if (m[1] !== want) { fs.writeFileSync(target, text.replace(re, m[0].replace(m[1], want))); changed.push(c.pinned_in); }
+  }
+  return changed;
+}
+
 export async function watch({ apply = false, only = null, today = new Date().toISOString().slice(0, 10) } = {}) {
   const pinsDoc = JSON.parse(fs.readFileSync(PINS_PATH, 'utf8'));
   const watchDoc = JSON.parse(fs.readFileSync(WATCH_PATH, 'utf8'));
@@ -298,6 +314,8 @@ export async function watch({ apply = false, only = null, today = new Date().toI
   }
   if (apply) {
     report.rehashed = rehashRepoFiles(pinsDoc.pins);
+    report.content_repinned = repinContent(watchDoc.content_pins);
+    for (const f of report.content_repinned) touched.add(f);
     fs.writeFileSync(PINS_PATH, `${JSON.stringify(pinsDoc, null, 2)}\n`);
     touched.add(path.relative(REPO, PINS_PATH));
   }
