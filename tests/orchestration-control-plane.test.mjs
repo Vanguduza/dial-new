@@ -150,6 +150,21 @@ describe('federated DIAL doctor', () => {
     expect(native.usable_for_dial_qualification).toBe(false);
   });
 
+  it('treats listed Hermes Doctor issues as DEGRADED whatever the exit code, and real failures as FAIL', () => {
+    // Hermes 0.21.4 (pin refresh af0bd80) exits 1 when any issue remains; 0.21.0 exited 0 with four (Netcup 2026-09-24).
+    const issuesOnly = '  ✓ Config migrated to latest version\n  Found 1 issue(s) to address:\n  1. Run \'hermes setup\' to configure missing API keys for full tool access\n';
+    for (const exitCode of [0, 1]) {
+      const s = summarizeHermesDoctorOutput(issuesOnly, { exitCode });
+      expect([exitCode, s.status, s.usable_for_dial_qualification]).toEqual([exitCode, 'DEGRADED', true]);
+      expect(s.issues).toEqual(["Run 'hermes setup' to configure missing API keys for full tool access"]);
+    }
+    // A ✗ failure line, or a non-zero exit with nothing listed, still fails closed.
+    expect(summarizeHermesDoctorOutput(`  ✗ Config unreadable\n${issuesOnly}`, { exitCode: 1 }).status).toBe('FAIL');
+    expect(summarizeHermesDoctorOutput('  ✗ Config unreadable\n', { exitCode: 0 }).status).toBe('FAIL');
+    expect(summarizeHermesDoctorOutput('Traceback (most recent call last):\n  boom', { exitCode: 1 }).status).toBe('FAIL');
+    expect(summarizeHermesDoctorOutput('No issues found', { exitCode: 0 }).status).toBe('PASS');
+  });
+
   it('persists only structured summary/hash evidence and lets DIAL retain authority', () => {
     const root = temp('dial-doctor');
     const native = summarizeHermesDoctorOutput(

@@ -51,10 +51,12 @@ export function summarizeHermesDoctorOutput(
       ? 'ACTIVE_OR_UNKNOWN'
       : 'NOT_OBSERVED';
 
+  // Hermes 0.21.4 exits 1 whenever any listed issue remains (0.21.0 exited 0 with four). A run with no ✗ failures
+  // whose only problems are listed issues is DEGRADED either way; a non-zero exit with nothing listed stays FAIL.
   let status = 'PASS';
   if (unavailable) status = 'UNAVAILABLE';
   else if (timedOut) status = 'TIMEOUT';
-  else if (exitCode !== 0 || failureCount > 0) status = 'FAIL';
+  else if (failureCount > 0 || (exitCode !== 0 && issueCount === 0)) status = 'FAIL';
   else if (issueCount > 0) status = 'DEGRADED';
 
   return {
