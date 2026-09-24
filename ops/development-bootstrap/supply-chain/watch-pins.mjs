@@ -62,6 +62,20 @@ async function githubReleases(repo) {
   const rows = await gh(`/repos/${repo}/releases?per_page=100`);
   return rows.filter((r) => !r.draft && !r.prerelease && parseVersion(r.tag_name));
 }
+// Some projects tag by date (hermes-agent: tag v2026.9.21, name "Hermes Agent v0.21.4 (v2026.9.21)").
+export function releaseVersion(rel, w) {
+  if (w?.source?.version_from === 'release_name') {
+    const m = String(rel.name || '').match(/\bv?(\d+\.\d+\.\d+(?:\.\d+)?)\b/);
+    return m ? m[1] : null;
+  }
+  return String(rel.tag_name || '').replace(/^v/i, '');
+}
+function pickRelease(rels, pin, w) {
+  const tagged = rels.map((r) => ({ r, v: releaseVersion(r, w) })).filter((x) => parseVersion(x.v));
+  const { inMajor, newest } = selectVersions(tagged.map((x) => x.v), pin.version);
+  if (!inMajor) throw new Error(`no stable release within the pinned major of ${pin.version} (newest ${newest || 'none'})`);
+  return { inMajor, newest, rel: tagged.find((x) => x.v === inMajor).r };
+}
 function excerpt(text, n = 1500) { const t = String(text || '').trim(); return t.length > n ? `${t.slice(0, n)}…` : t; }
 async function releaseNotesFor(repo, version) {
   if (!repo) return null;
@@ -124,8 +138,7 @@ const resolvers = {
   async github_source_archive(pin, w) {
     const repo = w.source.repository;
     const rels = await githubReleases(repo);
-    const { inMajor, newest } = selectVersions(rels.map((r) => r.tag_name.replace(/^v/i, '')), pin.version);
-    const rel = rels.find((r) => r.tag_name.replace(/^v/i, '') === inMajor);
+    const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     const commit = (await gh(`/repos/${repo}/commits/${encodeURIComponent(rel.tag_name)}`)).sha;
     const url = `https://codeload.github.com/${repo}/tar.gz/${commit}`;
     const archive = await sha256Url(url);
@@ -137,8 +150,7 @@ const resolvers = {
   async github_release_assets(pin, w) {
     const repo = w.source.repository;
     const rels = await githubReleases(repo);
-    const { inMajor, newest } = selectVersions(rels.map((r) => r.tag_name.replace(/^v/i, '')), pin.version);
-    const rel = rels.find((r) => r.tag_name.replace(/^v/i, '') === inMajor);
+    const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     const architectures = {}; const tokens = [[pin.version, inMajor]];
     for (const [arch, name] of Object.entries(w.source.assets)) {
       const asset = rel.assets.find((a) => a.name === name);
@@ -154,8 +166,7 @@ const resolvers = {
   async github_release_asset(pin, w) {
     const repo = w.source.repository;
     const rels = await githubReleases(repo);
-    const { inMajor, newest } = selectVersions(rels.map((r) => r.tag_name.replace(/^v/i, '')), pin.version);
-    const rel = rels.find((r) => r.tag_name.replace(/^v/i, '') === inMajor);
+    const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     const name = w.source.asset.replace('{version}', inMajor);
     const asset = rel.assets.find((a) => a.name === name);
     if (!asset) throw new Error(`${repo} ${rel.tag_name} lacks asset ${name}`);
@@ -168,8 +179,7 @@ const resolvers = {
   async github_release_version(pin, w) {
     const repo = w.source.repository;
     const rels = await githubReleases(repo);
-    const { inMajor, newest } = selectVersions(rels.map((r) => r.tag_name.replace(/^v/i, '')), pin.version);
-    const rel = rels.find((r) => r.tag_name.replace(/^v/i, '') === inMajor);
+    const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     return { version: inMajor, newest, set: { version: inMajor }, tokens: [[pin.version, inMajor]],
       advisories: await repoAdvisories(repo), notes: { url: rel.html_url, excerpt: excerpt(rel.body) } };
   },

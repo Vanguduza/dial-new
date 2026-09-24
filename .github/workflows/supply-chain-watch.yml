@@ -29,6 +29,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   group: dial-supply-chain-watch-${{ github.ref_name }}
@@ -97,6 +98,13 @@ jobs:
           } >"$RUNNER_TEMP/body.md"
           if gh pr view "$branch" --json number >/dev/null 2>&1; then
             gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md"
-          else
-            gh pr create --base "$BASE" --head "$branch" --title "Supply chain: pin refresh $(date -u +%Y-%m-%d)" --body-file "$RUNNER_TEMP/body.md"
+          elif ! gh pr create --base "$BASE" --head "$branch" --title "Supply chain: pin refresh $(date -u +%Y-%m-%d)" --body-file "$RUNNER_TEMP/body.md"; then
+            # Repository setting "Allow GitHub Actions to create and approve pull requests" is off: fall back to
+            # an issue that carries the report and a one-click compare link, so the update still reaches the owner.
+            compare="https://github.com/${GITHUB_REPOSITORY}/compare/${BASE}...${branch}?expand=1"
+            { echo "Open the owner-approval PR: $compare"; echo; cat "$RUNNER_TEMP/body.md"; } >"$RUNNER_TEMP/issue.md"
+            title="Supply chain: pin refresh ready ($branch)"
+            existing="$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')"
+            if [[ -n "$existing" ]]; then gh issue edit "$existing" --body-file "$RUNNER_TEMP/issue.md"; else gh issue create --title "$title" --body-file "$RUNNER_TEMP/issue.md"; fi
+            echo "::notice::PR creation by Actions is disabled; opened an issue with the compare link instead."
           fi

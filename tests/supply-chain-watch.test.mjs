@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { compareVersions, parseVersion, rehashRepoFiles, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
+import { compareVersions, parseVersion, rehashRepoFiles, releaseVersion, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
 
 const repoDir = path.resolve(import.meta.dirname, '..');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
@@ -19,6 +19,12 @@ describe('supply-chain pin watcher', () => {
     const r = selectVersions(['22.23.2', '22.23.3', '22.24.0-rc.1', '24.1.0', '26.10.0'], '22.23.2');
     expect(r).toEqual({ inMajor: '22.23.3', newest: '26.10.0' });
     expect(selectVersions(['0.153.1', '0.156.1', '1.0.0'], '0.153.1').inMajor).toBe('0.156.1');
+  });
+
+  it('reads the product version from the release name for date-tagged projects', () => {
+    const w = { source: { version_from: 'release_name' } };
+    expect(releaseVersion({ tag_name: 'v2026.9.21', name: 'Hermes Agent v0.21.4 (v2026.9.21)' }, w)).toBe('0.21.4');
+    expect(releaseVersion({ tag_name: 'v2.337.0', name: 'v2.337.0' }, {})).toBe('2.337.0');
   });
 
   it('replaces exact tokens, including v-prefixed versions, but never longer versions or hashes', () => {

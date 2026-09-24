@@ -8,12 +8,14 @@
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
     ".github/workflows/supply-chain-watch.yml",
-    "tests/development-bootstrap.test.mjs"
+    "ops/development-bootstrap/supply-chain/WATCH.json",
+    "ops/development-bootstrap/supply-chain/watch-pins.mjs",
+    "tests/supply-chain-watch.test.mjs"
   ],
-  "content_diff_sha256": "74456ad433f3736e3adbabb7099a74475a6757a140ac555a5fe76eef1841a5f9",
-  "observed_at_utc": "2026-09-24T04:24:31.617331+00:00",
+  "content_diff_sha256": "597485175ecb94c1067c044dd237ecea7b4b8faf34993eeb470f950757138958",
+  "observed_at_utc": "2026-09-24T04:31:49.022861+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "66c63536d2f959024b2157b1a5feafe958b4dfcc",
+  "source_parent": "a7367ac864c02775e2313731dc1361838aa7b902",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
