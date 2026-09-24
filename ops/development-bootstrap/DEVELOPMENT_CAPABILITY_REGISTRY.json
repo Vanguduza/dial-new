@@ -69,7 +69,7 @@
       "failure_impact": "manager falls to Sonnet; if both fail, closed",
       "owner": "owner",
       "status": "INTEGRATED",
-      "status_evidence": "Codex 0.153.1 live on control; `codex login status` proves ChatGPT OAuth; exact npm integrity recorded in PINS.json; GPT-5.6 Sol canary succeeded."
+      "status_evidence": "Codex 0.156.1 live on control; `codex login status` proves ChatGPT OAuth; exact npm integrity recorded in PINS.json; GPT-5.6 Sol canary succeeded."
     },
     {
       "id": "cap.claude-runtime",
@@ -95,7 +95,7 @@
       "failure_impact": "no fallback runtime",
       "owner": "owner",
       "status": "INTEGRATED",
-      "status_evidence": "Claude Code 2.1.270 live on control; `claude auth status` proves first-party claude.ai subscription; Fable canary previously succeeded; exact installer pin recorded."
+      "status_evidence": "Claude Code 2.1.281 live on control; `claude auth status` proves first-party claude.ai subscription; Fable canary previously succeeded; exact installer pin recorded."
     },
     {
       "id": "cap.hermes-agent",
@@ -324,7 +324,7 @@
       "required": true,
       "host": "dial-hermes-control",
       "type": "CLI",
-      "install_method": "install-google-antigravity.sh (SHA-256 pinned 1.2.0)",
+      "install_method": "install-google-antigravity.sh (SHA-256 pinned 1.2.9)",
       "version_policy": "exact",
       "config_location": "/var/lib/dial-control/identities/antigravity-worker (isolated runtime HOME) + .agents/plugins/dial-governed",
       "auth_type": "OAUTH_BROWSER",
@@ -340,7 +340,7 @@
       "failure_impact": "development GREEN blocked; Antigravity unavailable to HCX selection",
       "owner": "owner",
       "status": "INTEGRATED",
-      "status_evidence": "Exact Antigravity 1.2.0 is installed under the isolated worker identity; owner Google sign-in is complete; 14 models are live-discovered, all pairings qualified (13 healthy / 1 dynamic-degraded), governed HCX execution and write/network denials are proven, and capacity-limited reroute is proven with lease cleanup and settled compute.",
+      "status_evidence": "Exact Antigravity 1.2.9 is installed under the isolated worker identity; owner Google sign-in is complete; 14 models are live-discovered, all pairings qualified (13 healthy / 1 dynamic-degraded), governed HCX execution and write/network denials are proven, and capacity-limited reroute is proven with lease cleanup and settled compute.",
       "owner_required_ref": "DEC-033"
     },
     {
@@ -527,7 +527,7 @@
       "failure_impact": "control-plane load",
       "owner": "owner",
       "status": "INTEGRATED",
-      "status_evidence": "vekl-worker is live as BACKGROUND_COORDINATOR with Node 22.23.2/npm 10.9.8, coordinator + worker/structural timers, no provider credentials, heavy-local refusal, and sealed structural/capability receipts. Final signed merged-SHA report remains."
+      "status_evidence": "vekl-worker is live as BACKGROUND_COORDINATOR with Node 22.23.3/npm 10.9.8, coordinator + worker/structural timers, no provider credentials, heavy-local refusal, and sealed structural/capability receipts. Final signed merged-SHA report remains."
     },
     {
       "id": "cap.oracle-admin",

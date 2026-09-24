@@ -5,7 +5,7 @@ umask 077
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 PORT="${DIAL_GITHUB_OIDC_PORT:-9134}"
 NODE_BIN="${DIAL_NODE_BIN:-/home/ubuntu/.local/bin/node}"
-EXPECTED_NODE_VERSION="v22.23.2"
+EXPECTED_NODE_VERSION="v22.23.3"
 
 [[ "$(hostname)" == dial-control ]] || { echo "REFUSE: wrong host" >&2; exit 2; }
 [[ -f "$REPO/deploy/netcup/hermes-control/github-oidc-control.mjs" ]] || { echo "controller missing" >&2; exit 2; }

@@ -146,10 +146,10 @@ stage REV51_POLICY_PREFLIGHT_GREEN
 sudo -u "$ADMIN" env HOME="$HOME_DIR" DIAL_REPO_DIR="$REPO" PATH="$HOME_DIR/.local/bin:/usr/local/bin:/usr/bin:/bin" \
   bash -lc '
     set -euo pipefail
-    if [[ ! -x "$HOME/.local/bin/node" ]] || [[ "$("$HOME/.local/bin/node" --version 2>/dev/null || true)" != "v22.23.2" ]]; then
+    if [[ ! -x "$HOME/.local/bin/node" ]] || [[ "$("$HOME/.local/bin/node" --version 2>/dev/null || true)" != "v22.23.3" ]]; then
       bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-pinned-node.sh"
     fi
-    [[ "$("$HOME/.local/bin/node" --version)" == "v22.23.2" ]]
+    [[ "$("$HOME/.local/bin/node" --version)" == "v22.23.3" ]]
   '
 stage PINNED_NODE_READY
 
