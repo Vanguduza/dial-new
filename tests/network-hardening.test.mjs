@@ -148,6 +148,14 @@ describe('Netcup and Oracle network hardening', () => {
     expect(certify).toContain('fromFile.role === resolved.role');
   });
 
+  it('keeps re-enrollment working after identity rotation has retired the bootstrap key', () => {
+    const s = read('deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh');
+    const fallback = s.indexOf('SSH_PUB_FILE=/home/ubuntu/.ssh/dial-oracle-admin.pub');
+    expect(fallback).toBeGreaterThan(0);
+    expect(fallback).toBeLessThan(s.indexOf('die "bootstrap SSH public key missing"'));
+    expect(read('deploy/netcup/hermes-control/rotate-bootstrap-identities.sh')).toContain('rm -f "$BOOT" "$BOOT_PUB_FILE"');
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');

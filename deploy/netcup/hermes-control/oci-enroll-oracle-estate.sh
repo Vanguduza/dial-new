@@ -17,6 +17,11 @@ OUT="$CONTROL_ROOT/oracle-peer-keys.json"
 NETCUP_PUBLIC_IP="${NETCUP_PUBLIC_IP:-62.83.35.103}"
 WG_PUB_FILE="${NETCUP_WG_PUBLIC_KEY_FILE:-/etc/wireguard/dial-netcup.pub}"
 SSH_PUB_FILE="${NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY_FILE:-/home/ubuntu/.ssh/dial-bootstrap-oracle.pub}"
+# Identity rotation retires the one-time bootstrap key (rotate-bootstrap-identities.sh deletes it);
+# from then on the key a peer must trust is the permanent one, so re-enrollment carries that instead.
+if [[ -z "${NETCUP_BOOTSTRAP_SSH_PUBLIC_KEY_FILE:-}" && ! -s "$SSH_PUB_FILE" && -s /home/ubuntu/.ssh/dial-oracle-admin.pub ]]; then
+  SSH_PUB_FILE=/home/ubuntu/.ssh/dial-oracle-admin.pub
+fi
 # Owner plan (auth-20260923-owner-estate-rebuild-hermes-becomes-van): the current van-trading-core is
 # being dropped and dial-hermes-control is re-roled into it after the Hermes clone. While this marker
 # exists van-trading-core is not enrolled; final certification still requires it.
