@@ -6,7 +6,7 @@ umask 077
 # environment. This stage must remain network-free and package-manager-free.
 # The immutable payload revision is pinned here unless explicitly overridden
 # by an equally exact 40-hex revision.
-DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-f1440cc187378b6d0fc710783a320f8bedf9ae03}"
+DIAL_BOOTSTRAP_REF="${DIAL_BOOTSTRAP_REF:-21101e9e777e3d11cc21fb0e07dfc4a1e0befca7}"
 [[ "$DIAL_BOOTSTRAP_REF" =~ ^[0-9a-f]{40}$ ]] || {
   echo "REFUSE: invalid DIAL_BOOTSTRAP_REF" >&2
   exit 2

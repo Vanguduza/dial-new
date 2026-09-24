@@ -8,15 +8,15 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/core-verdict-gate.py",
-    "deploy/netcup/hermes-control/migrate-from-oracle-control.sh",
-    "deploy/netcup/hermes-control/postboot-converge.sh",
-    "tests/network-hardening.test.mjs"
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    "deploy/netcup/hermes-control/netcup-custom-script.sh"
   ],
-  "content_diff_sha256": "0fdda701453eefc888e48f416e0f13a61a59526a80f732c25ac99371ba3dd5fd",
-  "observed_at_utc": "2026-09-24T18:58:24.341247+00:00",
+  "content_diff_sha256": "1f8e2c9ebb71a195aa757fde99584d1767c3a308ea4d523c5f411bb73b58b215",
+  "observed_at_utc": "2026-09-24T18:58:24.919270+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "272fb6aa7798a063b37f92ecc2ae5d51d08e24fd",
+  "source_parent": "21101e9e777e3d11cc21fb0e07dfc4a1e0befca7",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
