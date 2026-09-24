@@ -203,10 +203,12 @@ describe('Netcup and Oracle network hardening', () => {
 
   it('lets the cutover through only when every open CORE item is the activation hold or a named external/auth gate', async () => {
     const { spawnSync } = await import('node:child_process'); const os2 = await import('node:os');
-    const s = read('deploy/netcup/hermes-control/migrate-from-oracle-control.sh');
-    const py = s.slice(s.indexOf("<<'PY'\n", s.indexOf('netcup-core-verification.json" <<')) + 7, s.indexOf('\nPY\n', s.indexOf('netcup-core-verification.json" <<')));
+    // One rule for both the cutover and activation.
+    expect(read('deploy/netcup/hermes-control/migrate-from-oracle-control.sh')).toContain('core-verdict-gate.py" "$EVIDENCE/netcup-core-verification.json" MIGRATION_BLOCKED');
+    expect(read('deploy/netcup/hermes-control/postboot-converge.sh')).toContain('core-verdict-gate.py" "$verification" ACTIVATION_BLOCKED');
+    const gate = path.join(repoDir, 'deploy/netcup/hermes-control/core-verdict-gate.py');
     const dir = fs.mkdtempSync(path.join(os2.tmpdir(), 'cutover-'));
-    const judge = (report) => { const f = path.join(dir, 'v.json'); fs.writeFileSync(f, JSON.stringify(report)); const r = spawnSync('python3', ['-', f], { input: py, encoding: 'utf8' }); return { code: r.status, out: r.stdout + r.stderr }; };
+    const judge = (report) => { const f = path.join(dir, 'v.json'); fs.writeFileSync(f, JSON.stringify(report)); const r = spawnSync('python3', [gate, f, 'MIGRATION_BLOCKED'], { encoding: 'utf8' }); return { code: r.status, out: r.stdout + r.stderr }; };
     const hold = (id) => ({ id, status: 'OWNER_ACTION_REQUIRED', gate: 'NETCUP-ACTIVATION-GATE' });
     const report = (core, checks, overall = 'AMBER') => ({ overall_status: overall, readiness_profiles: { CORE_DEVELOPMENT: core }, checks });
     const held = ['systemd.dial-hermes-runtime.service', 'hermes.development-gate'];
@@ -228,6 +230,22 @@ describe('Netcup and Oracle network hardening', () => {
     expect(judge(report({ status: 'AMBER', failed: [], uncovered: [], open: [...held, 'claude.auth'] }, [...held.map(hold), { id: 'claude.auth', status: 'UNVERIFIED', gate: null }])).out).toContain('open_not_held=claude.auth');
     expect(judge(report({ status: 'AMBER', failed: [], uncovered: [], open: held }, held.map(hold), 'RED')).code).not.toBe(0);
     expect(judge({ overall_status: 'AMBER' }).code).not.toBe(0);
+  });
+
+  it('lets activation reach its later steps and decides it on the full verify, not the fast repair verdict', () => {
+    // Activation 2026-09-24 18:46/18:53: the repair's fast post-apply verdict omits repository gates, is never
+    // GREEN on this role, and under set -e aborted activation before install-control-plane and the full verify ran.
+    const s = read('deploy/netcup/hermes-control/postboot-converge.sh');
+    const repair = s.indexOf('bootstrap.sh" --repair --role dial-hermes-control --profile CORE_DEVELOPMENT ||');
+    expect(repair).toBeGreaterThan(0);
+    expect(s.indexOf('install-control-plane.sh')).toBeGreaterThan(repair);
+    const verify = s.indexOf('bootstrap.sh" --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json >"$verification"');
+    const decide = s.indexOf('core-verdict-gate.py" "$verification" ACTIVATION_BLOCKED');
+    const complete = s.indexOf('echo "NETCUP_CONTROL_ACTIVATION=COMPLETE"');
+    expect(verify).toBeGreaterThan(repair);
+    expect(decide).toBeGreaterThan(verify);
+    expect(complete).toBeGreaterThan(decide);
+    expect(s).toMatch(/^set -Eeuo pipefail$/m);
   });
 
   it('reports the orchestration gate as the activation hold only while Netcup activation is pending', () => {

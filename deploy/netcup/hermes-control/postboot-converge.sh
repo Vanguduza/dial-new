@@ -51,7 +51,11 @@ case "$MODE" in
     export DIAL_PRIVATE_MCP_HEALTH="${DIAL_PRIVATE_MCP_HEALTH:-${DIAL_CONTROL_OVERLAY_IP:+http://$DIAL_CONTROL_OVERLAY_IP:9133/health}}"
     [[ -n "$DIAL_CONTROL_OVERLAY_IP" ]] || { echo "DIAL_CONTROL_OVERLAY_IP required after WireGuard is configured" >&2; exit 3; }
 
-    "$REPO/ops/development-bootstrap/bootstrap.sh" --repair --role dial-hermes-control --profile CORE_DEVELOPMENT
+    # The repair's post-apply verdict runs in --fast mode, which skips the repository gates, so it can never be
+    # GREEN on this role; under set -e it aborted activation before any later step ran. It is best-effort here,
+    # exactly as in migrate-from-oracle-control.sh; the full verify below decides.
+    "$REPO/ops/development-bootstrap/bootstrap.sh" --repair --role dial-hermes-control --profile CORE_DEVELOPMENT ||
+      echo "REPAIR_POST_APPLY=NOT_GREEN (fast verdict omits repository gates; full verify decides)"
     bash "$REPO/deploy/oracle/hermes-codex/install-control-plane.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-owner-remote-commander.sh"
     bash "$REPO/deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh"
@@ -92,7 +96,9 @@ case "$MODE" in
     fi
 
     bash "$REPO/deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh"
-    "$REPO/ops/development-bootstrap/bootstrap.sh" --verify --role dial-hermes-control --profile CORE_DEVELOPMENT
+    verification="$CONTROL/state/netcup-activation-verification.json"
+    "$REPO/ops/development-bootstrap/bootstrap.sh" --verify --role dial-hermes-control --profile CORE_DEVELOPMENT --json >"$verification" || true
+    python3 "$REPO/deploy/netcup/hermes-control/core-verdict-gate.py" "$verification" ACTIVATION_BLOCKED
     echo "NETCUP_CONTROL_ACTIVATION=COMPLETE"
     echo "OLD_ORACLE_CONTROL_RETIREMENT=STILL_BLOCKED_UNTIL_MIGRATION_AND_RECOVERY_PROOFS_PASS"
     echo "REQUIRED_RETIREMENT_PROOFS=GITHUB_OIDC_ADMIN,DIAL_MCP,SSH,OCI_API_RUN_COMMAND,RECIPROCAL_RECOVERY"
