@@ -497,6 +497,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(ociEnroll).toContain('INSTANCE_IDS[old-dial-hermes-control]="$SOURCE_OCID"');
     // The migration script ssh/rsyncs with no identity; the controller must put the estate-key shim first on PATH.
     expect(controller).toContain("exec /usr/bin/ssh -i '+peerKey()+' -o IdentitiesOnly=yes");
+    expect(controller).toContain('fs.chmodSync(MIGRATION_SSH_DIR,0o755);');
+    expect(controller).toContain('fs.chmodSync(shim,0o755);');
     expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare"');
     expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover"');
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.

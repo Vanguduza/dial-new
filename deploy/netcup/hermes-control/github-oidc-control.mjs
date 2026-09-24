@@ -158,6 +158,9 @@ function migrationEnv() {
   const shim=path.join(MIGRATION_SSH_DIR,'ssh');
   fs.writeFileSync(shim+'.tmp','#!/bin/sh\nexec /usr/bin/ssh -i '+peerKey()+' -o IdentitiesOnly=yes "$@"\n',{mode:0o755});
   fs.renameSync(shim+'.tmp',shim);
+  // The service umask (077) masks the modes above; ubuntu must be able to traverse and execute.
+  fs.chmodSync(MIGRATION_SSH_DIR,0o755);
+  fs.chmodSync(shim,0o755);
   return 'PATH='+MIGRATION_SSH_DIR+':/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin ';
 }
 function peerCheck() {
