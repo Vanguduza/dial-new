@@ -132,15 +132,21 @@ jobs:
 
       - name: Record recovery receipt
         shell: bash
+        env:
+          TARGET_HOST: ${{ inputs.target }}
+          RECOVERY_ACTION: ${{ inputs.action }}
+          COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          OCI_EXECUTION_STATE: ${{ steps.status.outputs.raw_output }}
         run: |
+          # Values arrive through env and print with printf: backticks inside double quotes would run them.
           {
-            echo "### Oracle recovery receipt"
-            echo "- target: `${{ inputs.target }}`"
-            echo "- action: `${{ inputs.action }}`"
-            echo "- OCI command: `${{ steps.dispatch.outputs.raw_output }}`"
-            echo "- execution state: `${{ steps.status.outputs.raw_output }}`"
-            echo "- initiated by: `${{ github.actor }}`"
-            echo "- workflow run: `${{ github.run_id }}`"
+            echo '### Oracle recovery receipt'
+            printf -- '- target: `%s`\n' "$TARGET_HOST"
+            printf -- '- action: `%s`\n' "$RECOVERY_ACTION"
+            printf -- '- OCI command: `%s`\n' "$(printf '%s' "$COMMAND_ID_RAW" | grep -oE 'ocid1\.instanceagentcommand\.[a-z0-9.-]+' | head -n1)"
+            printf -- '- execution state: `%s`\n' "$OCI_EXECUTION_STATE"
+            printf -- '- initiated by: `%s`\n' "$GITHUB_ACTOR"
+            printf -- '- workflow run: `%s`\n' "$GITHUB_RUN_ID"
           } >> "$GITHUB_STEP_SUMMARY"
 
   recover:
@@ -247,14 +253,20 @@ jobs:
 
       - name: Record recovery receipt
         shell: bash
+        env:
+          TARGET_HOST: ${{ inputs.target }}
+          RECOVERY_ACTION: ${{ inputs.action }}
+          COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          OCI_EXECUTION_STATE: ${{ steps.status.outputs.raw_output }}
         run: |
+          # Values arrive through env and print with printf: backticks inside double quotes would run them.
           {
-            echo "### Oracle recovery receipt"
-            echo "- target: `${{ inputs.target }}`"
-            echo "- action: `${{ inputs.action }}`"
-            echo "- approval environment: `oracle-recovery`"
-            echo "- OCI command: `${{ steps.dispatch.outputs.raw_output }}`"
-            echo "- execution state: `${{ steps.status.outputs.raw_output }}`"
-            echo "- initiated by: `${{ github.actor }}`"
-            echo "- workflow run: `${{ github.run_id }}`"
+            echo '### Oracle recovery receipt'
+            printf -- '- target: `%s`\n' "$TARGET_HOST"
+            printf -- '- action: `%s`\n' "$RECOVERY_ACTION"
+            printf -- '- approval environment: `oracle-recovery`\n'
+            printf -- '- OCI command: `%s`\n' "$(printf '%s' "$COMMAND_ID_RAW" | grep -oE 'ocid1\.instanceagentcommand\.[a-z0-9.-]+' | head -n1)"
+            printf -- '- execution state: `%s`\n' "$OCI_EXECUTION_STATE"
+            printf -- '- initiated by: `%s`\n' "$GITHUB_ACTOR"
+            printf -- '- workflow run: `%s`\n' "$GITHUB_RUN_ID"
           } >> "$GITHUB_STEP_SUMMARY"
