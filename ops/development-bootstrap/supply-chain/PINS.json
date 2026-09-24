@@ -222,6 +222,35 @@
       "bot": "DISABLED",
       "pin_state": "PINNED",
       "evidence": "GHCR v0.4.21.1 x86_64 image digest observed 2026-09-23."
+    },
+    "gh-cli": {
+      "method": "BINARY_TARBALL_SHA256",
+      "version": "2.101.0",
+      "architectures": {
+        "arm64": {
+          "url": "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_arm64.tar.gz",
+          "sha256": "b57e8063f18862647c9d22727c32e9da1b963f8bf9db648fe123a6975695640f",
+          "binary_path": "gh_2.101.0_linux_arm64/bin/gh"
+        },
+        "x64": {
+          "url": "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz",
+          "sha256": "9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8",
+          "binary_path": "gh_2.101.0_linux_amd64/bin/gh"
+        }
+      },
+      "pin_state": "PINNED",
+      "evidence": "cli/cli v2.101.0 release assets downloaded on Dial Control 2026-09-24; SHA-256 measured and equal to the official gh_2.101.0_checksums.txt. Ubuntu's apt gh 2.45.0 has no `gh attestation`, which the uv attestation check (Artemis) requires."
+    },
+    "google-cloud-cli": {
+      "method": "APT_SIGNED_REPO",
+      "package": "google-cloud-cli",
+      "version": "586.0.0-0",
+      "keyring_url": "https://packages.cloud.google.com/apt/doc/apt-key.gpg",
+      "keyring_sha256": "3ecc63922b7795eb23fdc449ff9396f9114cb3cf186d6f5b53ad4cc3ebfbb11f",
+      "keyring_fingerprint": "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3",
+      "repo_line": "deb [arch=<arch> signed-by=/usr/share/keyrings/google-cloud-cli.gpg] https://packages.cloud.google.com/apt cloud-sdk main",
+      "pin_state": "PINNED",
+      "evidence": "Google Cloud apt key downloaded on Dial Control 2026-09-24: SHA-256 measured, fingerprint 35BAA0B3...DC6315A3 (Artifact Registry Repository Signer, google.com) as Google publishes; newest google-cloud-cli in cloud-sdk main binary-amd64 Packages = 586.0.0-0. Required by run-stitch-provider.sh ADC mode, which previously had no installer."
     }
   }
 }

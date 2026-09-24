@@ -46,6 +46,28 @@ describe('supply-chain pin watcher', () => {
     expect(repinContent(pins, dir)).toEqual([]);
   });
 
+  it('pins gh from the official release with a per-architecture binary path the converger installs', async () => {
+    const { pinReady } = await import('../ops/development-bootstrap/converge/converge.mjs');
+    const pins = JSON.parse(fs.readFileSync(path.join(repoDir, 'ops/development-bootstrap/supply-chain/PINS.json'), 'utf8')).pins;
+    const gh = pins['gh-cli'];
+    expect(pinReady(gh)).toEqual({ ready: true, missing: [] });
+    for (const [arch, goarch] of [['x64', 'amd64'], ['arm64', 'arm64']]) {
+      expect(gh.architectures[arch].url).toBe(`https://github.com/cli/cli/releases/download/v${gh.version}/gh_${gh.version}_linux_${goarch}.tar.gz`);
+      expect(gh.architectures[arch].binary_path).toBe(`gh_${gh.version}_linux_${goarch}/bin/gh`);
+    }
+  });
+
+  it('pins gcloud from the Google signed apt repository by keyring hash and exact package version', async () => {
+    const { pinReady } = await import('../ops/development-bootstrap/converge/converge.mjs');
+    const pins = JSON.parse(fs.readFileSync(path.join(repoDir, 'ops/development-bootstrap/supply-chain/PINS.json'), 'utf8')).pins;
+    const g = pins['google-cloud-cli'];
+    expect(pinReady(g)).toEqual({ ready: true, missing: [] });
+    expect(g.repo_line).toContain('signed-by=/usr/share/keyrings/google-cloud-cli.gpg');
+    expect(g.version).toMatch(/^\d+\.\d+\.\d+-\d+$/);
+    const watch = JSON.parse(fs.readFileSync(path.join(repoDir, 'ops/development-bootstrap/supply-chain/WATCH.json'), 'utf8'));
+    expect(watch.pins['google-cloud-cli'].source.kind).toBe('apt_packages_index');
+  });
+
   it('replaces exact tokens, including v-prefixed versions, but never longer versions or hashes', () => {
     const text = 'NODE="22.23.2" node-v22.23.2-linux v22.23.2 122.23.2 22.23.21 22.23.2.1 x22.23.2 aa11';
     const { text: out, count } = replaceTokens(text, [['22.23.2', '22.23.3'], ['aa11', 'bb22']]);

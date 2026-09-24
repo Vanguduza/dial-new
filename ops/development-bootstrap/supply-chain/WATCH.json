@@ -164,6 +164,27 @@
       "source": {
         "kind": "none"
       }
+    },
+    "gh-cli": {
+      "auto": true,
+      "source": {
+        "kind": "github_release_assets",
+        "repository": "cli/cli",
+        "assets": {
+          "x64": "gh_{version}_linux_amd64.tar.gz",
+          "arm64": "gh_{version}_linux_arm64.tar.gz"
+        }
+      },
+      "consumers": []
+    },
+    "google-cloud-cli": {
+      "auto": true,
+      "source": {
+        "kind": "apt_packages_index",
+        "index_url": "https://packages.cloud.google.com/apt/dists/cloud-sdk/main/binary-amd64/Packages",
+        "package": "google-cloud-cli"
+      },
+      "consumers": []
     }
   },
   "content_pins": [

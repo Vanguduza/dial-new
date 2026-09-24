@@ -356,6 +356,41 @@
       "auth_semantics": "NONE: Exa official MCP endpoint currently requires no API key; DIAL stores no Exa credential",
       "probe_semantics": "stdio initialize -> exact two-tool allowlist -> real web_search_exa canary against official remote MCP",
       "pin_ref": "exa-remote-bridge"
+    },
+    {
+      "id": "rt.gh",
+      "tooling_kind": "CLI",
+      "binary": "gh",
+      "install_method": "BINARY_TARBALL_SHA256",
+      "pin_ref": "gh-cli",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "official cli/cli release tarball selected by architecture, SHA-256 verified from PINS.json, gh copied to ~/.local/bin ahead of the apt gh on the service PATH",
+      "config_semantics": "none; GitHub authentication is the migrated or owner gh login",
+      "auth_semantics": "EXISTING_GH_LOGIN",
+      "probe_semantics": "gh --version == pinned; gh attestation available (uv release attestation verification)",
+      "remediation": "bootstrap --apply"
+    },
+    {
+      "id": "rt.gcloud",
+      "tooling_kind": "CLI",
+      "binary": "gcloud",
+      "minimum_version": "586.0.0",
+      "install_method": "APT_SIGNED_REPO",
+      "pin_ref": "google-cloud-cli",
+      "hosts": [
+        "dial-hermes-control"
+      ],
+      "criticality": "REQUIRED",
+      "readiness_class": "CORE_DEVELOPMENT_REQUIRED",
+      "install_semantics": "Google Cloud signed apt repository; keyring SHA-256 pinned in PINS.json before apt trusts it; google-cloud-cli installed at the exact pinned version",
+      "config_semantics": "Stitch uses an isolated CLOUDSDK_CONFIG at /var/lib/dial-control/secrets/gcloud-stitch; no owner gcloud config is inherited",
+      "auth_semantics": "OAUTH_BROWSER once: CLOUDSDK_CONFIG=<isolated> gcloud auth login --update-adc (or the migrated ADC)",
+      "probe_semantics": "gcloud --version >= pinned; Stitch auth-check mints an ADC access token",
+      "remediation": "bootstrap --apply"
     }
   ],
   "services": [
@@ -520,7 +555,7 @@
       "installer": "deploy/oracle/execution-fabric/phase5-install-providers.sh",
       "workload": "HERMES_RUNTIME",
       "repo_rw_expected": false,
-      "note": "provider-first fabric §14: the signed venue-decision guard must be active or every local execution fails closed",
+      "note": "provider-first fabric \u00a714: the signed venue-decision guard must be active or every local execution fails closed",
       "check_ids": [
         "systemd.dial-venue-guard.service"
       ]
@@ -730,7 +765,7 @@
       "note": "provider-first local sandbox image; pinned tag, never :latest"
     }
   ],
-  "containers_note": "Provider-first execution uses one pinned local sandbox image on the control host (fabric §8). No other container workloads exist; :latest tags are a finding.",
+  "containers_note": "Provider-first execution uses one pinned local sandbox image on the control host (fabric \u00a78). No other container workloads exist; :latest tags are a finding.",
   "mcp_servers": [
     {
       "id": "mcp.dial-oracle-status",
@@ -1332,7 +1367,7 @@
     {
       "id": "cred.venue-signing-key",
       "tooling_kind": "CREDENTIAL",
-      "purpose": "Signed venue decisions (fabric §14.1)",
+      "purpose": "Signed venue decisions (fabric \u00a714.1)",
       "auth_type": "NON_INTERACTIVE_SECRET",
       "location": "/var/lib/dial-control/secrets/venue-ed25519.pem",
       "required_mode": "600",
@@ -1645,7 +1680,7 @@
       "id": "net.cloudflare-access",
       "tooling_kind": "NETWORK",
       "target": null,
-      "purpose": "authenticated public MCP ingress for remote provider containers (fabric §2.4/§11); private VCN MCP remains separate",
+      "purpose": "authenticated public MCP ingress for remote provider containers (fabric \u00a72.4/\u00a711); private VCN MCP remains separate",
       "hosts": [
         "dial-hermes-control"
       ],

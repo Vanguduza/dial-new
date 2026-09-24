@@ -165,7 +165,7 @@ function binaryTarballAction({ item, pin }) {
     missing_pin: [...ready.missing, ...(artifact ? [] : [`architectures.${arch}`])], requires_root: false,
     steps: ready.ready && artifact ? [
       { kind: 'DOWNLOAD_VERIFY', url: artifact.url, sha256: artifact.sha256, dest },
-      { kind: 'BINARY_TARBALL_INSTALL', archive: dest, source_binary: pin.binary_path, binary: item.binary, aliases: pin.aliases || [] },
+      { kind: 'BINARY_TARBALL_INSTALL', archive: dest, source_binary: artifact.binary_path || pin.binary_path, binary: item.binary, aliases: pin.aliases || [] },
       { kind: 'VERSION_ASSERT', binary: item.binary, exact: pin.version },
     ] : [],
     owner_record: `record exact release archive URL/SHA-256 for ${item.id} under pins["${item.pin_ref}"]`,

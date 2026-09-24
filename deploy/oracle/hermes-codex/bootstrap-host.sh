@@ -39,6 +39,10 @@ cd "$DIAL_REPO_DIR"
 if ! command -v node >/dev/null 2>&1 || ! node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 22 ? 0 : 1)'; then
   bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-pinned-node.sh"
 fi
+# The canonical installers run repository code (agent-system/orchestration imports pg and friends), so
+# install the repository's own dependencies from its lockfile first. Install scripts stay off: only
+# esbuild/workerd/fsevents declare them and none is needed by the control host.
+(cd "$DIAL_REPO_DIR" && npm ci --ignore-scripts --no-audit --no-fund)
 node "$DIAL_REPO_DIR/ops/development-bootstrap/bootstrap.mjs" --apply --role dial-hermes-control --profile CORE_DEVELOPMENT --repo "$DIAL_REPO_DIR"
 
 sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control

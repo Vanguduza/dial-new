@@ -167,12 +167,16 @@ const resolvers = {
     const rels = await githubReleases(repo);
     const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     const architectures = {}; const tokens = [[pin.version, inMajor]];
-    for (const [arch, name] of Object.entries(w.source.assets)) {
+    for (const [arch, template] of Object.entries(w.source.assets)) {
+      const name = template.replaceAll('{version}', inMajor);
       const asset = rel.assets.find((a) => a.name === name);
       if (!asset) throw new Error(`${repo} ${rel.tag_name} lacks asset ${name}`);
       const sum = await sha256Url(asset.browser_download_url);
       if (asset.digest && asset.digest !== `sha256:${sum}`) throw new Error(`${name} digest disagrees with GitHub (${asset.digest})`);
-      architectures[arch] = { url: asset.browser_download_url, sha256: sum };
+      // Keep per-architecture extras (e.g. gh's binary_path) with the version moved to the candidate.
+      const extra = Object.fromEntries(Object.entries(pin.architectures?.[arch] || {})
+        .filter(([k]) => !['url', 'sha256'].includes(k)).map(([k, v]) => [k, replaceTokens(String(v), [[pin.version, inMajor]]).text]));
+      architectures[arch] = { ...extra, url: asset.browser_download_url, sha256: sum };
       if (pin.architectures?.[arch]?.sha256) tokens.push([pin.architectures[arch].sha256, sum]);
     }
     return { version: inMajor, newest, set: { version: inMajor, architectures }, tokens,
@@ -197,6 +201,23 @@ const resolvers = {
     const { inMajor, newest, rel } = pickRelease(rels, pin, w);
     return { version: inMajor, newest, set: { version: inMajor }, tokens: [[pin.version, inMajor]],
       advisories: await repoAdvisories(repo), notes: { url: rel.html_url, excerpt: excerpt(rel.body) } };
+  },
+  // Vendor apt repository (keyring pinned separately): compare on the upstream version, keep the Debian revision.
+  async apt_packages_index(pin, w) {
+    const text = await (await get(w.source.index_url)).text();
+    const full = [];
+    let current = null;
+    for (const line of text.split('\n')) {
+      if (line.startsWith('Package: ')) current = line.slice(9).trim();
+      else if (line.startsWith('Version: ') && current === w.source.package) full.push(line.slice(9).trim());
+    }
+    const upstream = (v) => v.split('-')[0];
+    const { inMajor, newest } = selectVersions(full.map(upstream), upstream(pin.version));
+    if (!inMajor) throw new Error(`no ${w.source.package} release within the pinned major of ${pin.version}`);
+    const pick = (base) => full.filter((v) => upstream(v) === base).sort().at(-1);
+    const version = pick(inMajor);
+    return { version, newest: newest && pick(newest), set: { version }, tokens: [[pin.version, version]], advisories: [],
+      notes: { url: 'https://cloud.google.com/sdk/docs/release-notes', excerpt: '' } };
   },
   async ghcr_image(pin, w) {
     const image = w.source.image;
@@ -281,7 +302,9 @@ export async function watch({ apply = false, only = null, today = new Date().toI
     try {
       const r = await resolvers[w.source.kind](pin, w);
       Object.assign(entry, { candidate: r.version, newest_overall: r.newest, release_notes: r.notes, advisories: r.advisories });
-      if (r.newest && r.version && compareVersions(r.newest, r.version) > 0 && parseVersion(r.newest)[0] !== parseVersion(r.version)[0]) {
+      // Debian revisions (586.0.0-0) are compared on the upstream part; elsewhere '-' still means prerelease.
+      const norm = (v) => (w.source.kind === 'apt_packages_index' ? String(v).split('-')[0] : v);
+      if (r.newest && r.version && compareVersions(norm(r.newest), norm(r.version)) > 0 && parseVersion(norm(r.newest))[0] !== parseVersion(norm(r.version))[0]) {
         entry.newer_major = { version: r.newest, action: 'PROPOSE_ONLY', release_notes: await releaseNotesFor(w.repository || w.source.repository, String(r.newest).replace(/^v/i, '')) };
       }
       // npm advisories are queried for the exact candidate (affects=<pkg>@<version>), so any hit blocks it.
@@ -290,7 +313,7 @@ export async function watch({ apply = false, only = null, today = new Date().toI
       entry.advisories_fixed_by_candidate = advisoriesAffecting(r.advisories, pin.version).filter((id) => !advisoriesAffecting(r.advisories, r.version).includes(id));
       entry.advisories_affecting_candidate = advisoriesAffecting(r.advisories, r.version);
       const candidateAffected = (exactQuery && (r.advisories || []).some((a) => a.id !== 'LOOKUP_FAILED')) || entry.advisories_affecting_candidate.length > 0;
-      if (!r.version || compareVersions(r.version, pin.version) <= 0) { entry.action = 'UP_TO_DATE'; continue; }
+      if (!r.version || compareVersions(norm(r.version), norm(pin.version)) <= 0) { entry.action = 'UP_TO_DATE'; continue; }
       if (!w.auto) { entry.action = 'REVIEW_REQUIRED'; entry.reason = w.review_reason; continue; }
       if (candidateAffected) { entry.action = 'BLOCKED_ADVISORY'; continue; }
       entry.action = apply ? 'UPDATED' : 'UPDATE_AVAILABLE';
