@@ -307,8 +307,15 @@ describe('DIAL development bootstrap closure', () => {
     expect(workflow).toContain('install-housekeeping-estate');
     expect(workflow).toContain('ensure-github-admin-runner');
     expect(workflow).toContain('Final zero-touch certification');
-    expect(recoveryWorkflow).toContain('DIAL_CONTROL_PAYLOAD_REF: 17dce8e76bb80093bc14ceab9db1f97d80acfcf3');
-    expect(workflow).toContain('DIAL_EXPECTED_BOOTSTRAP_REF: 17dce8e76bb80093bc14ceab9db1f97d80acfcf3');
+    // One payload ref everywhere: converge readiness, rescue recovery, fresh-image default and the live observer.
+    const payloadRef = (workflow.match(/DIAL_EXPECTED_BOOTSTRAP_REF: ([0-9a-f]{40})/) || [])[1];
+    expect(payloadRef).toMatch(/^[0-9a-f]{40}$/);
+    expect(recoveryWorkflow).toContain(`DIAL_CONTROL_PAYLOAD_REF: ${payloadRef}`);
+    expect(customScript).toContain(`DIAL_BOOTSTRAP_REF:-${payloadRef}}`);
+    expect(fs.readFileSync(path.join(repoDir, '.github/workflows/netcup-recovery-live-observer.yml'), 'utf8')).toContain(`EXPECTED_PAYLOAD_REF: '${payloadRef}'`);
+    // Rescue recovery stages the payload's own image bootstrap, identified by its git blob at that ref.
+    const payloadImageBlob = execFileSync('git', ['-C', repoDir, 'rev-parse', `${payloadRef}:deploy/netcup/hermes-control/image-bootstrap.sh`], { encoding: 'utf8' }).trim();
+    expect(recoveryWorkflow).toContain(`DIAL_CONTROL_IMAGE_BLOB: ${payloadImageBlob}`);
     expect(workflow).toContain('seq 1 120');
     expect(workflow).not.toContain('seq 1 660');
     expect(workflow).toContain('.result.bootstrap_ref == $expected');
@@ -386,7 +393,6 @@ describe('DIAL development bootstrap closure', () => {
     expect(customScript).toContain('1.1.1.1 1.0.0.1');
     expect(customScript).toContain('else\n      rc=$?');
     expect(customScript).toContain("DIAL_CONTROL_DISPLAY_NAME='Dial Control'");
-    expect(customScript).toContain('17dce8e76bb80093bc14ceab9db1f97d80acfcf3');
     // The custom script must pin exactly the image bootstrap in the tree (git blob), whatever its current content.
     const imageBlob = execFileSync('git', ['hash-object', path.join(repoDir, 'deploy/netcup/hermes-control/image-bootstrap.sh')], { encoding: 'utf8' }).trim();
     expect(customScript).toContain(`EXPECTED_IMAGE_BLOB=${imageBlob}`);

@@ -8,17 +8,16 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
     "deploy/netcup/hermes-control/netcup-custom-script.sh",
-    "docs/project-state/authorizations/auth-20260924-delegated-supply-chain-content-pins.json",
-    "ops/development-bootstrap/supply-chain/WATCH.json",
-    "ops/development-bootstrap/supply-chain/watch-pins.mjs",
-    "tests/development-bootstrap.test.mjs",
-    "tests/supply-chain-watch.test.mjs"
+    "tests/development-bootstrap.test.mjs"
   ],
-  "content_diff_sha256": "7b09d7037053be5190d551216985ff8147141829f56dbd8e279979bba793b4b4",
-  "observed_at_utc": "2026-09-24T04:37:45.943596+00:00",
+  "content_diff_sha256": "31796016891da147ef40fe5964af6da8599d742fbdd791e18296da1cc5648d00",
+  "observed_at_utc": "2026-09-24T04:38:22.939881+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "c969317e4e5e30351ef2d32fce539bbfb28a2726",
+  "source_parent": "2b2ef11189b3393dd3f7de6a33f9891ab2d042eb",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }
