@@ -114,7 +114,8 @@ function npmExactAction({ item, pin }) {
 }
 
 function installerSha256Action({ item, pin }) {
-  const probe = versionProbe(item.binary, ['--version'], { minimum: item.minimum_version });
+  // An exact pin (claude-code 2.1.281) must converge to that version; a minimum alone left 2.1.270 in place.
+  const probe = versionProbe(item.binary, ['--version'], pin?.version ? { exact: pin.version } : { minimum: item.minimum_version });
   const ready = pinReady(pin);
   const dest = path.join(os.tmpdir(), `dial-installer-${item.pin_ref}.sh`);
   return {
