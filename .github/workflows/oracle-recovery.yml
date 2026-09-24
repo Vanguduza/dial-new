@@ -1,6 +1,12 @@
 name: Oracle bounded recovery
 
 on:
+  # Registration only (owner decision auth-20260924-owner-recommended-recovery-decisions): GitHub
+  # dispatches a workflow by file name once it has seen it. A push to this file registers it;
+  # every job below is guarded to workflow_dispatch, so a push runs nothing.
+  push:
+    branches: [gpt/netcup-hermes-control-integrated-20260921]
+    paths: [.github/workflows/oracle-recovery.yml]
   workflow_dispatch:
     inputs:
       target:
@@ -44,7 +50,7 @@ env:
 
 jobs:
   observe:
-    if: ${{ inputs.action == 'probe' || inputs.action == 'collect_diagnostics' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.action == 'probe' || inputs.action == 'collect_diagnostics') }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -120,7 +126,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   recover:
-    if: ${{ inputs.action != 'probe' && inputs.action != 'collect_diagnostics' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.action != '' && inputs.action != 'probe' && inputs.action != 'collect_diagnostics' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: oracle-recovery

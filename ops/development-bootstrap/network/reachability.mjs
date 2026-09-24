@@ -34,6 +34,25 @@ export function evaluateTailscaleState(doc = {}) {
   };
 }
 
+// Owner-approved equivalent of the secondary recovery overlay (auth-20260924-owner-recommended-recovery-decisions):
+// per Oracle peer, direct SSH from Dial Control's public address AND OCI Run Command, both proven live by
+// deploy/netcup/hermes-control/alternate-paths.sh and independent of WireGuard and Cloudflare. Stale, partial
+// or missing evidence is never accepted.
+export const ALT_PATHS_EVIDENCE = '/var/lib/dial-control/state/alternate-paths.json';
+export const ALT_PATHS_REQUIRED_PEERS = Object.freeze(['oracle-admin', 'vekl-worker']);
+export function evaluateAlternatePathsEvidence(doc, { now = Date.now(), maxAgeHours = 26, requiredPeers = ALT_PATHS_REQUIRED_PEERS } = {}) {
+  if (!doc || doc.schema !== 'dial.alternate-paths.v1') return { ok: false, reason: 'no alternate-paths evidence' };
+  const observed = Date.parse(doc.observed_at_utc || '');
+  if (!Number.isFinite(observed)) return { ok: false, reason: 'evidence has no observation time' };
+  const ageHours = (now - observed) / 3600000;
+  if (ageHours < 0 || ageHours > maxAgeHours) return { ok: false, reason: `evidence is ${ageHours.toFixed(1)} h old (max ${maxAgeHours})`, age_hours: ageHours };
+  const peers = Array.isArray(doc.peers) ? doc.peers : [];
+  const missing = requiredPeers.filter((p) => !peers.some((x) => x.peer === p));
+  const failing = peers.filter((x) => !(x.overlay === 'PASS' && x.direct === 'PASS' && x.run_command === 'PASS')).map((x) => x.peer);
+  const ok = missing.length === 0 && failing.length === 0 && peers.length > 0;
+  return { ok, reason: ok ? 'every peer has overlay + direct SSH + OCI Run Command proven' : `missing=[${missing.join(',')}] failing=[${failing.join(',')}]`, age_hours: ageHours, peers: peers.map((x) => ({ peer: x.peer, overlay: x.overlay, direct: x.direct, run_command: x.run_command })) };
+}
+
 export async function certifyNetwork({ role, manifest, controlHome = null }) {
   const domain = 'Network';
   const deps = itemsForRole(manifest.network_dependencies, role);
@@ -44,6 +63,16 @@ export async function certifyNetwork({ role, manifest, controlHome = null }) {
       let parsed = null;
       try { parsed = JSON.parse(r.output || '{}'); } catch {}
       const ev = evaluateTailscaleState(parsed || {});
+      if (!ev.ok && role === 'dial-hermes-control') {
+        let doc = null;
+        try { doc = JSON.parse(fs.readFileSync(ALT_PATHS_EVIDENCE, 'utf8')); } catch {}
+        const alt = evaluateAlternatePathsEvidence(doc);
+        if (alt.ok) {
+          checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: OWNER_APPROVED_EQUIVALENT (direct SSH + OCI Run Command per peer)`, status: STATUS.PASS, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { mode: 'OWNER_APPROVED_EQUIVALENT', decision: 'auth-20260924-owner-recommended-recovery-decisions', evidence_file: ALT_PATHS_EVIDENCE, ...alt, tailscale: ev } }));
+          continue;
+        }
+        ev.equivalent = alt;
+      }
       const status = ev.ok ? STATUS.PASS : ev.needs_login ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL;
       checks.push(check({ id: `net.${dep.id.replace(/^net\./, '')}`, domain, title: `${dep.purpose}: ${ev.backend_state || 'UNAVAILABLE'}`, status, criticality: dep.criticality, readiness_class: dep.readiness_class, evidence: { command: r.command, exit: r.status, ...ev }, gate: ev.ok ? null : (dep.gate || 'EXTERNAL-GATE-SECONDARY-RECOVERY-OVERLAY-001'), remediation: dep.owner_action || 'authenticate Tailscale or configure the owner-approved equivalent secondary recovery overlay' }));
       continue;

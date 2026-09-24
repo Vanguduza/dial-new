@@ -48,5 +48,28 @@ describe('Netcup and Oracle network hardening', () => {
     expect(s).toMatch(/select\(\."lifecycle-state"=="ACTIVE"\)\] \| length > 0/);
     expect(s).toContain('echo OWNER_ACTION_REQUIRED');
   });
+
+  it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
+    const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
+    const now = Date.parse('2026-09-24T08:00:00Z');
+    const pass = (peer) => ({ peer, overlay: 'PASS', direct: 'PASS', run_command: 'PASS' });
+    const doc = { schema: 'dial.alternate-paths.v1', observed_at_utc: '2026-09-24T07:00:00Z', peers: [pass('oracle-admin'), pass('vekl-worker')] };
+    expect(evaluateAlternatePathsEvidence(doc, { now }).ok).toBe(true);
+    expect(evaluateAlternatePathsEvidence({ ...doc, peers: [pass('oracle-admin'), { ...pass('vekl-worker'), run_command: 'FAIL' }] }, { now }).ok).toBe(false);
+    expect(evaluateAlternatePathsEvidence({ ...doc, peers: [pass('oracle-admin')] }, { now }).ok).toBe(false);
+    expect(evaluateAlternatePathsEvidence({ ...doc, observed_at_utc: '2026-09-22T00:00:00Z' }, { now }).ok).toBe(false);
+    expect(evaluateAlternatePathsEvidence({ ...doc, schema: 'other' }, { now }).ok).toBe(false);
+    expect(evaluateAlternatePathsEvidence(null).ok).toBe(false);
+  });
+
+  it('registers the GitHub recovery workflows without letting a push run any job', async () => {
+    const yaml = (await import('js-yaml')).default;
+    for (const rel of ['.github/workflows/oracle-recovery.yml', '.github/workflows/netcup-admin.yml']) {
+      const wf = yaml.load(read(rel));
+      expect(Object.keys(wf.on).sort()).toEqual(['push', 'workflow_dispatch']);
+      expect(wf.on.push.paths).toEqual([rel]);
+      for (const [name, job] of Object.entries(wf.jobs)) expect(job.if, `${rel}:${name}`).toMatch(/^\$\{\{ github\.event_name == 'workflow_dispatch' && /);
+    }
+  });
 });
 

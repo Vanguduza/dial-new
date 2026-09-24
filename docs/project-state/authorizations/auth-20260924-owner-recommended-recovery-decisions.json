@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260924-owner-recommended-recovery-decisions",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "b80c5ec5bea16858b15d126423e236e128a7aa3c4d86729c3308fcd4851ab151",
+  "owner_instruction_excerpt": "use your recommended solutions for owner decisions\nDecisions resolved with the recommended option (claude-code session 2026-09-24): (1) register oracle-recovery.yml and netcup-admin.yml via a push trigger on their own path with every job guarded to workflow_dispatch; (2) GitHub-side OCI recovery gets its own API key on the existing least-privilege dial-netcup-recovery user, generated in RAM on Dial Control and stored as repository secrets without being printed; (3) OCI security-list tightening and OCI Bastion prepared for the next owner OCI sign-in; (4) the owner-approved equivalent of the secondary recovery overlay is the proven OCI-native pair per peer (direct SSH from Dial Control's address + OCI Run Command), independent of WireGuard and Cloudflare, instead of Tailscale; (5) replacing Dial Control's broad gh token with a fine-grained token remains an owner action; (6) one-time identity rotation stays in the converge cutover.",
+  "base_sha": "f877ebe6d2fd8a8b5c024d291df4aea158d10a24",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260924-recommended-recovery-decisions",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-24T07:15:00Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    ".github/workflows/oracle-recovery.yml",
+    ".github/workflows/netcup-admin.yml",
+    ".github/workflows/netcup-zero-touch-converge.yml",
+    ".github/workflows/netcup-diagnose-recover-bootstrap.yml",
+    ".github/workflows/netcup-recovery-live-observer.yml",
+    "deploy/netcup/hermes-control/*",
+    "deploy/oracle/resource-fabric/*",
+    "ops/development-bootstrap/network/*",
+    "ops/development-bootstrap/manifest.json",
+    "docs/project-state/authorizations/auth-20260924-*.json",
+    "tests/network-hardening.test.mjs",
+    "tests/development-bootstrap.test.mjs"
+  ],
+  "change_classes": [
+    "github_recovery_workflow_registration",
+    "github_oci_recovery_credential_provisioning",
+    "secondary_recovery_overlay_owner_approved_equivalent",
+    "oci_network_and_bastion_preparation",
+    "netcup_payload_repin_to_branch_head"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}
