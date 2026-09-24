@@ -107,8 +107,12 @@ describe('DIAL development bootstrap closure', () => {
     const pins = loadPins();
     const sha256 = (rel) => crypto.createHash('sha256').update(fs.readFileSync(path.join(repoDir, rel))).digest('hex');
     expect(pinReady(pins.pins.node)).toEqual({ ready: true, missing: [] });
-    expect(pins.pins.node.architectures.arm64.sha256).toBe('fff4078c5def658577f92c88db7db3bc0072924bfb93fe52c1e744a54e94abb8');
-    expect(pins.pins.node.architectures.x64.sha256).toBe('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
+    // Values move with the supply-chain watch; what must hold is that the installer carries exactly the pin.
+    const nodeInstaller = fs.readFileSync(path.join(repoDir, 'deploy/oracle/hermes-codex/install-pinned-node.sh'), 'utf8');
+    expect(nodeInstaller).toContain(`NODE_VERSION="${pins.pins.node.version}"`);
+    expect(nodeInstaller).toContain(`NODE_SHA256="${pins.pins.node.architectures.arm64.sha256}"`);
+    expect(nodeInstaller).toContain(`NODE_SHA256="${pins.pins.node.architectures.x64.sha256}"`);
+    expect(pins.pins.node.architectures.x64.url).toBe(`https://nodejs.org/dist/v${pins.pins.node.version}/node-v${pins.pins.node.version}-linux-x64.tar.xz`);
     expect(pinReady(pins.pins['hermes-agent'])).toEqual({ ready: true, missing: [] });
     expect(planConvergence({ manifest: loadManifest(), role: 'dial-hermes-control', pins }).find((action) => action.item === 'rt.node').method).toBe('RELEASE_TARBALL_SHA256');
     expect(supplyChainStatus({ manifest: loadManifest(), role: 'dial-hermes-control', pins }).pins_missing).toEqual([]);
@@ -436,10 +440,10 @@ describe('DIAL development bootstrap closure', () => {
     expect(rescuePrestager).toContain('MOUNTS+=("$ROOT$target")');
     expect(rescuePrestager).not.toContain('findmnt --verify --verbose --tab-file "$ROOT/etc/fstab"');
     expect(rescuePrestager).toContain("oci-cli==3.93.0");
-    expect(rescuePrestager).toContain('d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307');
+    expect(rescuePrestager).toContain(loadPins().pins.node.architectures.x64.sha256);
     const oidcInstaller = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/install-github-oidc-control.sh'), 'utf8');
     expect(oidcInstaller).toContain('/home/ubuntu/.local/bin/node');
-    expect(oidcInstaller).toContain('EXPECTED_NODE_VERSION="v22.23.2"');
+    expect(oidcInstaller).toContain(`EXPECTED_NODE_VERSION="v${loadPins().pins.node.version}"`);
     expect(oidcInstaller).not.toContain('ExecStart=/usr/local/bin/node');
     expect(recoveryWorkflow).toContain('mountpoint -q /mnt/dial-root');
     expect(recoveryWorkflow).toContain('findmnt -n -o SOURCE --target /mnt/dial-root');

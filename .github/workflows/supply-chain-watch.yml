@@ -18,6 +18,7 @@ on:
       - ops/development-bootstrap/supply-chain/WATCH.json
       - ops/development-bootstrap/supply-chain/watch-pins.mjs
       - .github/workflows/supply-chain-watch.yml
+      - tests/supply-chain-watch.test.mjs
   workflow_dispatch:
     inputs:
       only:
