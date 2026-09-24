@@ -232,6 +232,17 @@ describe('Netcup and Oracle network hardening', () => {
     expect(judge({ overall_status: 'AMBER' }).code).not.toBe(0);
   });
 
+  it('never repeats migration prepare or cutover over a Netcup that already took over', () => {
+    // Every push triggers converge; after the 18:34 cutover a re-run would copy the quiesced source over live state.
+    const s = read('deploy/netcup/hermes-control/github-oidc-control.mjs');
+    const guard = s.indexOf("const PRE_CUTOVER_PHASES=['migrate-prepare','activation-preflight','migrate-cutover'];");
+    expect(guard).toBeGreaterThan(0);
+    expect(s.slice(guard, guard + 400)).toContain("fs.existsSync(path.join(CONTROL,'state/migration-cutover-complete'))) return {skipped:true");
+    // It sits before the dispatch, and activation/retirement are not in it.
+    expect(guard).toBeLessThan(s.indexOf('  switch(action){'));
+    for (const phase of ['activate', 'source-retirement-preflight', 'retire-a1-control-role']) expect(s.slice(guard, guard + 120)).not.toContain(`'${phase}'`);
+  });
+
   it('lets activation reach its later steps and decides it on the full verify, not the fast repair verdict', () => {
     // Activation 2026-09-24 18:46/18:53: the repair's fast post-apply verdict omits repository gates, is never
     // GREEN on this role, and under set -e aborted activation before install-control-plane and the full verify ran.

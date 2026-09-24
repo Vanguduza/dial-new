@@ -194,6 +194,10 @@ async function dispatch(body, claims) {
   // converge pass skips them instead of failing on the vanished source.
   const MIGRATION_PHASES=['migrate-prepare','activation-preflight','migrate-cutover','activate','source-retirement-preflight','retire-a1-control-role'];
   if(MIGRATION_PHASES.includes(action) && fs.existsSync(path.join(CONTROL,'state/a1-control-retired'))) return {skipped:true,reason:'migration source already retired'};
+  // After the cutover Netcup holds the live state; repeating prepare/cutover would copy the quiesced source over it.
+  // Activation and retirement still run, so a later converge pass can finish the migration.
+  const PRE_CUTOVER_PHASES=['migrate-prepare','activation-preflight','migrate-cutover'];
+  if(PRE_CUTOVER_PHASES.includes(action) && fs.existsSync(path.join(CONTROL,'state/migration-cutover-complete'))) return {skipped:true,reason:'migration cutover already complete'};
   switch(action){
     case 'status': {
       const receiptPath=path.join(CONTROL,'bootstrap/image-bootstrap.receipt');
