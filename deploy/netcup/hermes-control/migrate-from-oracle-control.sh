@@ -150,7 +150,19 @@ except Exception as e:
     raise SystemExit("MIGRATION_BLOCKED: unreadable Netcup verification: "+str(e))
 status=d.get("overall_status") or d.get("status") or d.get("verdict")
 if status not in ("GREEN","PASS","VERIFIED_SUCCESS"):
-    raise SystemExit("MIGRATION_BLOCKED: Netcup CORE_DEVELOPMENT is not green: "+str(status))
+    # Before cutover the activation gate holds Netcup's Hermes services, so they (and the orchestration gate
+    # they feed) cannot be green yet. AMBER is accepted only when nothing in CORE_DEVELOPMENT failed, nothing
+    # required is uncovered, and every open item is that hold. Post-activation certification enforces all of it.
+    core=(d.get("readiness_profiles") or {}).get("CORE_DEVELOPMENT") or {}
+    gates={c.get("id"):c.get("gate") for c in d.get("checks") or []}
+    open_items=core.get("open") or []
+    held=[i for i in open_items if gates.get(i)=="NETCUP-ACTIVATION-GATE"]
+    if not (status=="AMBER" and core.get("status")=="AMBER" and not core.get("failed") and not core.get("uncovered") and open_items and held==open_items):
+        raise SystemExit("MIGRATION_BLOCKED: Netcup CORE_DEVELOPMENT is not green: "+str(status)
+                         +" failed="+",".join(core.get("failed") or [])
+                         +" uncovered="+",".join(core.get("uncovered") or [])
+                         +" open_not_held="+",".join(i for i in open_items if i not in held))
+    print("NETCUP_CORE_DEVELOPMENT=GREEN_EXCEPT_ACTIVATION_HOLD held="+",".join(held))
 PY
 
 printf '%s\n' "$(date -u +%FT%TZ)" >"$EVIDENCE/cutover-verified-at"

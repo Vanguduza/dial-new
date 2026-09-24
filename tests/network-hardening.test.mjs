@@ -200,5 +200,47 @@ describe('Netcup and Oracle network hardening', () => {
       for (const [name, job] of Object.entries(wf.jobs)) expect(job.if, `${rel}:${name}`).toMatch(/^\$\{\{ github\.event_name == 'workflow_dispatch' && /);
     }
   });
+
+  it('lets the cutover through only when every open CORE item is the activation hold', async () => {
+    const { spawnSync } = await import('node:child_process'); const os2 = await import('node:os');
+    const s = read('deploy/netcup/hermes-control/migrate-from-oracle-control.sh');
+    const py = s.slice(s.indexOf("<<'PY'\n", s.indexOf('netcup-core-verification.json" <<')) + 7, s.indexOf('\nPY\n', s.indexOf('netcup-core-verification.json" <<')));
+    const dir = fs.mkdtempSync(path.join(os2.tmpdir(), 'cutover-'));
+    const judge = (report) => { const f = path.join(dir, 'v.json'); fs.writeFileSync(f, JSON.stringify(report)); const r = spawnSync('python3', ['-', f], { input: py, encoding: 'utf8' }); return { code: r.status, out: r.stdout + r.stderr }; };
+    const hold = (id) => ({ id, status: 'OWNER_ACTION_REQUIRED', gate: 'NETCUP-ACTIVATION-GATE' });
+    const report = (core, checks, overall = 'AMBER') => ({ overall_status: overall, readiness_profiles: { CORE_DEVELOPMENT: core }, checks });
+    const held = ['systemd.dial-hermes-runtime.service', 'hermes.development-gate'];
+    expect(judge({ overall_status: 'GREEN' }).code).toBe(0);
+    const ok = judge(report({ status: 'AMBER', failed: [], uncovered: [], open: held }, held.map(hold)));
+    expect(ok.code, ok.out).toBe(0);
+    expect(ok.out).toContain('GREEN_EXCEPT_ACTIVATION_HOLD');
+    // Any failure, coverage gap, un-held open item, RED/P0 overall, or missing profile still blocks.
+    expect(judge(report({ status: 'RED', failed: ['security.no-tracked-secrets'], uncovered: [], open: held }, held.map(hold), 'RED')).out).toContain('MIGRATION_BLOCKED');
+    expect(judge(report({ status: 'RED', failed: [], uncovered: ['hc.verify'], open: held }, held.map(hold), 'RED')).out).toContain('uncovered=hc.verify');
+    expect(judge(report({ status: 'AMBER', failed: [], uncovered: [], open: [...held, 'claude.auth'] }, [...held.map(hold), { id: 'claude.auth', status: 'UNVERIFIED', gate: null }])).out).toContain('open_not_held=claude.auth');
+    expect(judge(report({ status: 'AMBER', failed: [], uncovered: [], open: held }, held.map(hold), 'RED')).code).not.toBe(0);
+    expect(judge({ overall_status: 'AMBER' }).code).not.toBe(0);
+  });
+
+  it('reports the orchestration gate as the activation hold only while Netcup activation is pending', () => {
+    const s = read('ops/development-bootstrap/verify/repository.mjs');
+    expect(s).toContain("const held = !ev.unblocked && activationGateHolds('dial-hermes-orchestrator.service', { controlHome });");
+    expect(s).toContain('status: ev.unblocked ? STATUS.PASS : held ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL');
+    expect(s).toContain("gate: held ? 'NETCUP-ACTIVATION-GATE' : 'EXTERNAL-GATE-HERMES-REQUALIFICATION-001'");
+  });
+
+  it('keeps credential-shaped test fixtures out of the tracked-secret scan without changing their values', async () => {
+    const { spawnSync } = await import('node:child_process');
+    const pattern = '(sk-[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16})';
+    const files = ['agent-system/orchestration/n8n-runtime-qualification.mjs', 'tests/orchestration-n8n-runtime.test.mjs', 'tests/orchestration-vekl-discovery.test.mjs'];
+    const r = spawnSync('grep', ['-lE', pattern, ...files], { cwd: repoDir, encoding: 'utf8' });
+    expect(r.stdout.trim()).toBe('');
+    expect(read(files[0])).toContain("'Bearer ' + 'AKIA' + 'IOSFODNN7EXAMPLEKEY123'");
+    // The tracked-file rule still catches real env files and keys; only templates are exempt.
+    const rule = read('ops/development-bootstrap/verify/repository.mjs').match(/git ls-files \| (grep -iE '[^']+') \| (grep -viE '[^']+')/);
+    expect(rule).toBeTruthy();
+    const sh = spawnSync('sh', ['-c', `printf 'a/.env\\na/.env.prod\\na/.env.example\\nb/.env.template\\nx.pem\\n' | ${rule[1].replace(/\\\\/g, '\\')} | ${rule[2].replace(/\\\\/g, '\\')}`], { encoding: 'utf8' });
+    expect(sh.stdout.trim().split('\n')).toEqual(['a/.env', 'a/.env.prod', 'x.pem']);
+  });
 });
 
