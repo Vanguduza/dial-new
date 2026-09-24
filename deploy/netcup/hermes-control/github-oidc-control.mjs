@@ -161,6 +161,12 @@ function migrationEnv() {
   // The service umask (077) masks the modes above; ubuntu must be able to traverse and execute.
   fs.chmodSync(MIGRATION_SSH_DIR,0o755);
   fs.chmodSync(shim,0o755);
+  // copy_state runs `sudo rsync`, where sudo's secure_path bypasses the shim and root has no key.
+  // A host-scoped ssh_config drop-in covers root too.
+  const dropin='/etc/ssh/ssh_config.d/60-dial-migration-source.conf';
+  fs.writeFileSync(dropin+'.tmp','Host old-dial-hermes-control\n  IdentityFile '+peerKey()+'\n  IdentitiesOnly yes\n',{mode:0o644});
+  fs.renameSync(dropin+'.tmp',dropin);
+  fs.chmodSync(dropin,0o644);
   return 'PATH='+MIGRATION_SSH_DIR+':/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin ';
 }
 function peerCheck() {

@@ -499,6 +499,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain("exec /usr/bin/ssh -i '+peerKey()+' -o IdentitiesOnly=yes");
     expect(controller).toContain('fs.chmodSync(MIGRATION_SSH_DIR,0o755);');
     expect(controller).toContain('fs.chmodSync(shim,0o755);');
+    expect(controller).toContain("'Host old-dial-hermes-control\\n  IdentityFile '+peerKey()+'\\n  IdentitiesOnly yes\\n'");
     expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare"');
     expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover"');
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
