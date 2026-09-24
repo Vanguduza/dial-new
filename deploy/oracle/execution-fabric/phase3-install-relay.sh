@@ -35,6 +35,6 @@ systemctl --user daemon-reload
 systemctl --user enable --now dial-remote-mcp-relay.service
 sleep 1
 activation_gated || systemctl --user is-active --quiet dial-remote-mcp-relay.service
-curl -fsS http://127.0.0.1:9131/health >/dev/null
+activation_gated || curl -fsS http://127.0.0.1:9131/health >/dev/null
 [[ -s "$CONTROL/secrets/remote-mcp-capability" ]]
 echo "REMOTE_MCP_RELAY=GREEN"

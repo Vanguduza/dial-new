@@ -212,9 +212,14 @@ bash "$REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
 
 GATEWAY_UNIT="$(systemctl --user list-unit-files --type=service --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
 [[ -n "$GATEWAY_UNIT" ]] || fail "Hermes gateway systemd unit not found"
-systemctl --user restart "$GATEWAY_UNIT"
-sleep 3
-systemctl --user is-active --quiet "$GATEWAY_UNIT" || fail "Hermes gateway did not return active after local MCP activation"
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
+if activation_gated; then
+  echo "Hermes gateway restart deferred by the Netcup activation gate."
+else
+  systemctl --user restart "$GATEWAY_UNIT"
+  sleep 3
+  systemctl --user is-active --quiet "$GATEWAY_UNIT" || fail "Hermes gateway did not return active after local MCP activation"
+fi
 
 echo 'Hermes local MCP plane installed.'
 echo '- Claude Code -> dial-oracle-control (typed DIAL MCP)'

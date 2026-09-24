@@ -43,5 +43,6 @@ systemctl --user daemon-reload
 systemctl --user enable --now dial-private-mcp-bind.service
 sleep 1
 activation_gated || systemctl --user is-active --quiet dial-private-mcp-bind.service
+if activation_gated; then echo "PHASE3_PRIVATE_MCP_INSTALLED_ACTIVATION_GATED ${BIND}:${PORT}"; exit 0; fi
 curl -fsS "http://${BIND}:${PORT}/health" >/tmp/private-mcp-health.json
 printf 'PHASE3_PRIVATE_MCP_BOUND %s:%s health=%s\n' "$BIND" "$PORT" "$(tr '\n' ' ' </tmp/private-mcp-health.json)"
