@@ -169,6 +169,11 @@ function migrationEnv() {
   fs.chmodSync(dropin,0o644);
   return 'PATH='+MIGRATION_SSH_DIR+':/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/bin:/usr/bin:/bin ';
 }
+// The /home/ubuntu/dial-new checkout is not refreshed; the admin workflow refreshes this copy.
+function migrationScript() {
+  const refreshed='/usr/local/lib/dial-control/migrate-from-oracle-control.sh';
+  return fs.existsSync(refreshed) ? refreshed : '/home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh';
+}
 function peerCheck() {
   const key=peerKey();
   const peers=['10.77.0.2','10.77.0.3'];
@@ -334,7 +339,7 @@ async function dispatch(body, claims) {
       return r;
     }
     case 'migrate-prepare': {
-      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --prepare");
+      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash "+migrationScript()+" --prepare");
       requireOk(r,'migrate-prepare');
       fs.mkdirSync(path.join(CONTROL,'state'),{recursive:true});
       fs.writeFileSync(path.join(CONTROL,'state/migration-prepare-complete'),now()+'\n',{mode:0o600});
@@ -356,7 +361,7 @@ async function dispatch(body, claims) {
       return {ready:true,checks:Object.fromEntries(Object.entries(checks).map(([k,v])=>[k,v.ok]))};
     }
     case 'migrate-cutover': {
-      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash /home/ubuntu/dial-new/deploy/netcup/hermes-control/migrate-from-oracle-control.sh --cutover",30*60*1000);
+      const r=ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash "+migrationScript()+" --cutover",30*60*1000);
       requireOk(r,'migrate-cutover');
       fs.mkdirSync(path.join(CONTROL,'state'),{recursive:true});
       fs.writeFileSync(path.join(CONTROL,'state/migration-cutover-complete'),now()+'\n',{mode:0o600});

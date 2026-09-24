@@ -31,7 +31,9 @@ new_head="$(cd "$NEW_REPO" && git rev-parse HEAD)"
 printf '{"mode":"%s","old_host":"%s","old_repo_head":"%s","new_repo_head":"%s","started_at":"%s"}\n'   "$MODE" "$OLD_HOST" "$old_head" "$new_head" "$(date -u +%FT%TZ)" >"$EVIDENCE/session.json"
 
 copy_state(){
-  sudo rsync -aH --numeric-ids -e "$RSYNC_SSH" \
+  # Some control state is owned by service users (n8n-dev secrets are opc:opc 0400), so the old
+  # side must read under sudo as well.
+  sudo rsync -aH --numeric-ids -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
     --exclude 'github-oidc/' --exclude 'bootstrap/' \
     "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
   sudo chown -R "$USER:$USER" "$CONTROL_HOME"
