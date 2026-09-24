@@ -504,6 +504,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(controller).toContain('ubuntu(migrationEnv()+"OLD_DIAL_CONTROL_HOST=old-dial-hermes-control DIAL_REPO_DIR=/home/ubuntu/dial-new bash "+migrationScript()+" --cutover"');
     // Service-owned control state (n8n-dev secrets, opc 0400) must be read under sudo on the old host.
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain("--rsync-path='sudo -n rsync'");
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain('sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH"');
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).not.toContain('--numeric-ids');
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
     expect(housekeepingEstate).toContain('NODE_INSTALLER="${DIAL_PINNED_NODE_INSTALLER:-/usr/local/lib/dial-control/install-pinned-node.sh}"');
     expect(housekeepingEstate).toContain('command -v node >/dev/null 2>&1 || bash /tmp/dial-housekeeping-bundle/deploy/oracle/hermes-codex/install-pinned-node.sh');

@@ -32,8 +32,10 @@ printf '{"mode":"%s","old_host":"%s","old_repo_head":"%s","new_repo_head":"%s","
 
 copy_state(){
   # Some control state is owned by service users (n8n-dev secrets are opc:opc 0400), so the old
-  # side must read under sudo as well.
-  sudo rsync -aH --numeric-ids -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
+  # side must read under sudo as well. Assign ownership during the transfer: uids differ between
+  # hosts (old ubuntu=1001 is vanforge on Netcup), and preserving numeric ids left the live control home
+  # owned by vanforge when a pass stopped before the chown below (2026-09-24).
+  sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
     --exclude 'github-oidc/' --exclude 'bootstrap/' \
     "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
   sudo chown -R "$USER:$USER" "$CONTROL_HOME"
