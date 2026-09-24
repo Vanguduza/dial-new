@@ -3,18 +3,18 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260921-owner-dial-control-rename",
     "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "deploy/netcup/hermes-control/migrate-from-oracle-control.sh",
+    "ops/development-bootstrap/lib/probes.mjs",
+    "ops/development-bootstrap/supply-chain/PINS.json",
     "tests/development-bootstrap.test.mjs"
   ],
-  "content_diff_sha256": "6fd9f9c4bcb7b4219c7dff9d37faa30611ef0727c55c1f3cbff61a6580ad6b97",
-  "observed_at_utc": "2026-09-24T03:36:08.949074+00:00",
+  "content_diff_sha256": "8e4e0c69852ec95cc6cb455954afaebde17b0e1ff01c84704fa0f70523de308a",
+  "observed_at_utc": "2026-09-24T04:12:01.419450+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "f905d968012676320f8fa97aead7992512ff3ca3",
+  "source_parent": "ec2290bc56892f21bb7514c491e4dbcba37049a1",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

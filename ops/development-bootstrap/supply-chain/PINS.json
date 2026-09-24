@@ -132,7 +132,7 @@
       "method": "REPO_PINNED_SCRIPT",
       "version": "1.2.0",
       "script": "deploy/oracle/hermes-codex/install-google-antigravity.sh",
-      "script_sha256": "238163a335c891a7e68667830c47e323eede971cb1a705b881b5218a3e80cc04",
+      "script_sha256": "ba9322da89c6c0967d0c0a6a6bcbac7124f3e6e5e89346bac7d4f48f32711b2a",
       "architectures": {
         "arm64": {
           "url": "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.0/agy_cli_linux_arm64.tar.gz",

@@ -28,6 +28,8 @@ describe('DIAL development bootstrap closure', () => {
     expect(parseToolVersion('jq', 'jq-1.7').text).toBe('1.7.0');
     expect(parseToolVersion('ssh', 'OpenSSH_9.6p1 Ubuntu-3ubuntu13.14, OpenSSL 3.0.13 30 Jan 2024').text).toBe('9.6.1');
     expect(parseToolVersion('ssh', 'OpenSSL 3.0.13')).toBeNull();
+    expect(parseToolVersion('dial-exa-mcp', 'dial-exa-remote-bridge/1').text).toBe('1');
+    expect(parseToolVersion('dial-exa-mcp', 'dial-exa-remote-bridge/')).toBeNull();
     expect(parseSemver('v22.23.2').text).toBe('22.23.2');
   });
 

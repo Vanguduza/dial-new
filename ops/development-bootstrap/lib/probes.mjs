@@ -66,6 +66,12 @@ export function parseToolVersion(binary, text) {
     m = value.match(/(?:^|\s)jq-(\d+)\.(\d+)(?:\.(\d+))?(?:\s|$)/i);
     return m ? { major: +m[1], minor: +m[2], patch: +(m[3] || 0), text: `${m[1]}.${m[2]}.${m[3] || 0}` } : null;
   }
+  if (binary === 'dial-exa-mcp') {
+    // The repository-owned bridge reports `dial-exa-remote-bridge/<N>` and is pinned as version "N";
+    // parseSemver needs X.Y, so the exact pin could never match (2026-09-24).
+    m = value.match(/(?:^|\s)dial-exa-remote-bridge\/(\d+)(?:\s|$)/);
+    return m ? { major: +m[1], minor: 0, patch: 0, text: m[1] } : null;
+  }
   return parseSemver(value);
 }
 
