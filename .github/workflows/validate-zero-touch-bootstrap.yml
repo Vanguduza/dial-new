@@ -14,6 +14,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          # The payload binding test resolves the pinned payload commit, which is not the checkout head.
+          fetch-depth: 0
 
       - name: Parse workflow YAML
         run: |

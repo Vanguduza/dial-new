@@ -122,7 +122,7 @@ describe('DIAL development bootstrap closure', () => {
     expect(sha256(pins.pins.whatsapp_pair_runtime.baileys.vendor_file)).toBe(pins.pins.whatsapp_pair_runtime.baileys.sha256);
     const dockerfile = fs.readFileSync(path.join(repoDir, 'deploy/oracle/execution-fabric/sandbox/Dockerfile.toolbox'), 'utf8');
     expect(dockerfile).toContain(`FROM ${pins.pins.toolbox_base.image}@${pins.pins.toolbox_base.digest}`);
-  });
+  }, 60_000); // planConvergence/supplyChainStatus spawn a version probe per manifest item: ~7s on a bare runner.
 
   it('keeps executable installer paths free of pipe-to-shell, floating latest, and editable installs', () => {
     const files = [
