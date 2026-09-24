@@ -58,15 +58,12 @@ old_ssh() {
 }
 src_ssh() { runuser -u ubuntu -- ssh "${ID_ARGS[@]}" "${SSH_OPTS[@]}" "ubuntu@$SOURCE_IP" "$@"; }
 
-ensure_perm_key() {
-  # Same identity rotate-bootstrap-identities.sh creates; generated here only if rotation has not run yet.
-  [[ -s "$PERM" ]] || runuser -u ubuntu -- ssh-keygen -q -t ed25519 -N '' -C 'dial-control-oracle-admin' -f "$PERM"
-  mapfile -t ID_ARGS < <(keys)
-}
-
+# The permanent key is created only by rotate-bootstrap-identities.sh: the estate reads its existence as
+# "identities rotated" (peerKey() in github-oidc-control.mjs), so this never creates it. Whichever keys
+# exist are authorized; the old van is not in the rotation set, so both stay valid there.
 access_old() {
-  ensure_perm_key
-  local pubs; pubs="$(cat "$PERM.pub"; [[ -s "$BOOT.pub" ]] && cat "$BOOT.pub")"
+  local pubs; pubs="$([[ -s "$PERM.pub" ]] && cat "$PERM.pub"; [[ -s "$BOOT.pub" ]] && cat "$BOOT.pub")"
+  [[ -n "$pubs" ]] || die "no Dial Control public key to authorize"
   if [[ "$(old_ssh hostname 2>/dev/null || true)" != van-trading-core ]]; then
     # The old van admits the source's node-hermes-to-trading key; the source relays the append.
     [[ "$(src_ssh hostname 2>/dev/null || true)" == dial-hermes-control ]] || die "migration source unreachable; cannot authorize Dial Control on the old van-trading-core"

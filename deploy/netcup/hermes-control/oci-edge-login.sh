@@ -594,8 +594,9 @@ reimage_source_as_van() {
   done
   [[ "$plug" == RUNNING ]] || die "Bastion plugin not RUNNING on the formatted host ($plug)" 34
   local perm=/home/ubuntu/.ssh/dial-oracle-admin boot=/home/ubuntu/.ssh/dial-bootstrap-oracle key sess region
-  [[ -s "$perm" ]] || as_admin ssh-keygen -q -t ed25519 -N '' -C 'dial-control-oracle-admin' -f "$perm"
-  key="$perm"
+  # Never create the permanent key here (its existence means "identities rotated"); use what exists.
+  key="$perm"; [[ -s "$key" ]] || key="$boot"
+  [[ -s "$key" && -s "$key.pub" ]] || die "no Dial Control SSH identity to install on the formatted host" 35
   region="$(awk -F= '/^region/{print $2; exit}' "$SESSION_CONFIG" | tr -d ' ')"
   sess="$(oci_session bastion session create-managed-ssh --bastion-id "$bastion" --target-resource-id "$src" --target-os-username ubuntu \
     --target-private-ip "$ip" --ssh-public-key-file "$key.pub" --session-ttl 1800 --display-name dial-van-rerole \
@@ -607,7 +608,7 @@ reimage_source_as_van() {
   done
   [[ "$st" == ACTIVE ]] || die "Bastion session did not become ACTIVE ($st)" 35
   local known; known="$(mktemp)"; chown "$ADMIN_USER:$ADMIN_USER" "$known"
-  local pubs; pubs="$(cat "$perm.pub"; [[ -s "$boot.pub" ]] && cat "$boot.pub")"
+  local pubs; pubs="$([[ -s "$perm.pub" ]] && cat "$perm.pub"; [[ -s "$boot.pub" ]] && cat "$boot.pub")"
   local remote
   remote="$(printf '%s' "set -e; umask 077; mkdir -p ~/.ssh; touch ~/.ssh/authorized_keys
 echo '$(printf '%s\n' "$pubs" | base64 -w0)' | base64 -d | while read -r k; do [ -n \"\$k\" ] && { grep -qxF \"\$k\" ~/.ssh/authorized_keys || printf '%s\n' \"\$k\" >>~/.ssh/authorized_keys; }; done

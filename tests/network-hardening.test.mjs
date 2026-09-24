@@ -97,6 +97,10 @@ describe('Netcup and Oracle network hardening', () => {
     expect(s).toContain("VAN_EXPECTED_REPOSITORY_SHA='$VAN_SHA'");
     expect(s).toContain('old-services-stopped-at');
     expect(s).toContain('sha256sum -c --quiet SHA256SUMS');
+    // The permanent key means "identities rotated" to the estate; only rotation may create it.
+    for (const rel of ['deploy/netcup/hermes-control/rerole-van-trading-core.sh', 'deploy/netcup/hermes-control/oci-edge-login.sh']) {
+      expect(read(rel)).not.toMatch(/ssh-keygen[^\n]*dial-control-oracle-admin/);
+    }
     const peer = read('deploy/oracle/resource-fabric/harden-oracle-peer.sh');
     expect(peer).toContain('-s 10.77.0.1/32 -p tcp --dport 9133');
     const wf = read('.github/workflows/netcup-admin-oidc.yml');
