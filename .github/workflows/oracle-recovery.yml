@@ -103,14 +103,16 @@ jobs:
         shell: bash
         env:
           COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          COMMAND_ID_JSON: ${{ steps.dispatch.outputs.output }}
           INSTANCE_ID: ${{ steps.prepare.outputs.instance_id }}
         run: |
           set -uo pipefail
-          # The action returns the queried id JSON-quoted; the OCI CLI it installed is reused here so
-          # the state is polled to a terminal value and an API error is printed instead of swallowed.
+          # The action's outputs are not a bare OCID (quoted/JSON-wrapped; masked in the log), so the id is
+          # extracted by pattern. The OCI CLI the action installed is reused so the state is polled to a
+          # terminal value and an API error is printed instead of swallowed.
           # The agent pulls commands only every ~3.5-4 min, so the wait covers about two poll cycles.
-          COMMAND_ID="${COMMAND_ID_RAW//\"/}"
-          [[ "$COMMAND_ID" =~ ^ocid1\.instanceagentcommand\.[a-z0-9.-]+$ ]] || { echo "Dispatch did not return a command id" >&2; exit 1; }
+          COMMAND_ID="$(printf '%s\n%s' "$COMMAND_ID_RAW" "$COMMAND_ID_JSON" | grep -oE 'ocid1\.instanceagentcommand\.[a-z0-9.-]+' | head -n1 || true)"
+          [[ -n "$COMMAND_ID" ]] || { echo "Dispatch did not return a command id (raw_output ${#COMMAND_ID_RAW} chars, output ${#COMMAND_ID_JSON} chars)" >&2; exit 1; }
           export PATH="$HOME/.local/bin:$PATH"
           STATE=none
           for _ in $(seq 1 45); do
@@ -201,14 +203,16 @@ jobs:
         shell: bash
         env:
           COMMAND_ID_RAW: ${{ steps.dispatch.outputs.raw_output }}
+          COMMAND_ID_JSON: ${{ steps.dispatch.outputs.output }}
           INSTANCE_ID: ${{ steps.prepare.outputs.instance_id }}
         run: |
           set -uo pipefail
-          # The action returns the queried id JSON-quoted; the OCI CLI it installed is reused here so
-          # the state is polled to a terminal value and an API error is printed instead of swallowed.
+          # The action's outputs are not a bare OCID (quoted/JSON-wrapped; masked in the log), so the id is
+          # extracted by pattern. The OCI CLI the action installed is reused so the state is polled to a
+          # terminal value and an API error is printed instead of swallowed.
           # The agent pulls commands only every ~3.5-4 min, so the wait covers about two poll cycles.
-          COMMAND_ID="${COMMAND_ID_RAW//\"/}"
-          [[ "$COMMAND_ID" =~ ^ocid1\.instanceagentcommand\.[a-z0-9.-]+$ ]] || { echo "Dispatch did not return a command id" >&2; exit 1; }
+          COMMAND_ID="$(printf '%s\n%s' "$COMMAND_ID_RAW" "$COMMAND_ID_JSON" | grep -oE 'ocid1\.instanceagentcommand\.[a-z0-9.-]+' | head -n1 || true)"
+          [[ -n "$COMMAND_ID" ]] || { echo "Dispatch did not return a command id (raw_output ${#COMMAND_ID_RAW} chars, output ${#COMMAND_ID_JSON} chars)" >&2; exit 1; }
           export PATH="$HOME/.local/bin:$PATH"
           STATE=none
           for _ in $(seq 1 45); do

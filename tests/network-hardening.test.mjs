@@ -60,7 +60,7 @@ describe('Netcup and Oracle network hardening', () => {
     const wf = read('.github/workflows/oracle-recovery.yml');
     expect(wf).not.toMatch(/sleep (30|45)\n/);
     expect(wf.match(/for _ in \$\(seq 1 45\); do/g)).toHaveLength(2);
-    expect(wf).toContain('COMMAND_ID="${COMMAND_ID_RAW//\\"/}"');
+    expect(wf.match(/grep -oE 'ocid1\\.instanceagentcommand\\.\[a-z0-9.-\]\+'/g)).toHaveLength(2);
   });
 
   it('reinstalls the GitHub recovery helper on every Oracle peer pass', () => {
