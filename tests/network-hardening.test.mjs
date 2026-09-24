@@ -253,6 +253,18 @@ describe('Netcup and Oracle network hardening', () => {
     }
   });
 
+  it('holds the Antigravity installer to the supply-chain pin rather than a stale literal', async () => {
+    // af0bd80 refreshed the pin 1.2.0 -> 1.2.9; G16 still demanded "1.2.0" and failed npm run verify on Netcup.
+    const { spawnSync } = await import('node:child_process');
+    const pin = JSON.parse(read('ops/development-bootstrap/supply-chain/PINS.json')).pins['antigravity-cli'].version;
+    expect(read('deploy/oracle/hermes-codex/install-google-antigravity.sh')).toContain(`VERSION="${pin}"`);
+    expect(read('agent-system/orchestration/google-capability-program-check.mjs')).not.toMatch(/VERSION=\\?"1\.2\.0/);
+    const r = spawnSync('node', ['agent-system/orchestration/google-capability-program-check.mjs'], { cwd: repoDir, encoding: 'utf8' });
+    const g16 = JSON.parse(r.stdout).gates.find((g) => g.id === 'G16');
+    expect(g16.ok, g16.detail).toBe(true);
+    expect(g16.detail).toContain(`(${pin})`);
+  });
+
   it('keeps credential-shaped test fixtures out of the tracked-secret scan without changing their values', async () => {
     const { spawnSync } = await import('node:child_process');
     const pattern = '(sk-[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16})';

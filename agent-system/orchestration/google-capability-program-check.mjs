@@ -29,7 +29,10 @@ gate('G04', ['GMPC-F050','GMPC-F051','GMPC-F052','GMPC-F053','GMPC-F060','GMPC-F
 gate('G05', gmpcPolicy.browser_cookie_automation === 'FORBIDDEN' && gmpcPolicy.ui_scraping_as_api === 'FORBIDDEN', 'Pomelli browser/session automation forbidden');
 gate('G06', exists('.agents/plugins/dial-governed/plugin.json') && exists('.agents/plugins/dial-governed/hooks.json'), 'Antigravity workspace plugin and hooks present');
 gate('G07', exists('agent-system/orchestration/providers/google/antigravity-adapter.mjs') && exists('agent-system/orchestration/providers/google/antigravity-hook.mjs'), 'Antigravity governed adapter present');
-gate('G16', exists('deploy/oracle/hermes-codex/install-google-antigravity.sh') && text('deploy/oracle/hermes-codex/install-google-antigravity.sh').includes('VERSION=\"1.2.0\"') && text('deploy/oracle/hermes-codex/install-google-antigravity.sh').includes('sha256sum -c'), 'Antigravity Oracle install is exact-version and digest pinned');
+// The exact version comes from the supply-chain pin, so a pin refresh (1.2.0 -> 1.2.9, af0bd80) keeps this gate
+// meaningful instead of failing on a stale literal.
+const antigravityPin = json('ops/development-bootstrap/supply-chain/PINS.json').pins?.['antigravity-cli']?.version;
+gate('G16', exists('deploy/oracle/hermes-codex/install-google-antigravity.sh') && /^\d+\.\d+\.\d+$/.test(antigravityPin || '') && text('deploy/oracle/hermes-codex/install-google-antigravity.sh').includes(`VERSION="${antigravityPin}"`) && text('deploy/oracle/hermes-codex/install-google-antigravity.sh').includes('sha256sum -c'), `Antigravity Oracle install is exact-version (${antigravityPin || 'UNPINNED'}) and digest pinned`);
 gate('G17', exists('agent-system/orchestration/hcx-worker-executor.mjs') && text('agent-system/orchestration/hcx-worker-executor.mjs').includes('HCX_RESULT_ENVELOPE_STALE') && text('agent-system/orchestration/hcx-worker-executor.mjs').includes('DIAL_FENCING_TOKEN'), 'selected Antigravity worker has a current-envelope, fenced HCX execution path');
 gate('G08', text('agent-system/orchestration/providers/google/stitch-adapter.mjs').includes("https://stitch.googleapis.com/mcp"), 'Stitch uses fixed official MCP host');
 gate('G09', json('package.json').dependencies?.['@google/stitch-sdk'] === '0.3.5', 'Stitch SDK is exact pinned');
