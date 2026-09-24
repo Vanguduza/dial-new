@@ -131,6 +131,23 @@ describe('Netcup and Oracle network hardening', () => {
     expect(loop.indexOf('if ! runuser -u ubuntu -- ssh -i "$PERM"')).toBeLessThan(loop.indexOf('ssh -i "$BOOT"'));
   });
 
+  it('accepts a canonical role file under an explicit --role override, and still rejects a missing or contradicting one', async () => {
+    const fs2 = await import('node:fs'); const os2 = await import('node:os');
+    const { resolveHostRole } = await import('../ops/development-bootstrap/roles/role-guard.mjs');
+    const dir = fs2.mkdtempSync(path.join(os2.tmpdir(), 'role-'));
+    const file = path.join(dir, 'host-role');
+    fs2.writeFileSync(file, 'ROLE=CONTROL_AUTHORITY\n', { mode: 0o644 });
+    // The override outranks the file, which is why certify now resolves the file separately.
+    expect(resolveHostRole({ env: { DIAL_HOST_ROLE: 'dial-hermes-control' }, roleFile: file, hostname: 'dial-control' }).source).toBe('env');
+    const fromFile = resolveHostRole({ env: { DIAL_HOST_ROLE: '' }, roleFile: file, hostname: 'dial-control' });
+    expect([fromFile.source, fromFile.role_file_format, fromFile.role]).toEqual(['role_file', 'CANONICAL', 'dial-hermes-control']);
+    fs2.writeFileSync(file, 'ROLE=BACKGROUND_COORDINATOR\n');
+    expect(resolveHostRole({ env: { DIAL_HOST_ROLE: '' }, roleFile: file, hostname: 'dial-control' }).role).toBe('UNKNOWN');
+    const certify = read('ops/development-bootstrap/verify/certify.mjs');
+    expect(certify).toContain("resolveHostRole({ env: { ...process.env, DIAL_HOST_ROLE: '' }, roles, hosts })");
+    expect(certify).toContain('fromFile.role === resolved.role');
+  });
+
   it('accepts the owner-approved overlay equivalent only on fresh, complete per-peer proof', async () => {
     const { evaluateAlternatePathsEvidence } = await import('../ops/development-bootstrap/network/reachability.mjs');
     const now = Date.parse('2026-09-24T08:00:00Z');
