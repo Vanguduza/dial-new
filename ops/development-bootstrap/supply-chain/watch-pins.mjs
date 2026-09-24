@@ -41,6 +41,21 @@ export function selectVersions(available, current) {
   return { inMajor: inMajor.at(-1) || null, newest: stable.at(-1) || null };
 }
 
+// GitHub advisory ranges: comma-separated comparators such as ">= 0.12.7, < 0.12.18" or "<= 0.9.5".
+export function versionInRange(version, range) {
+  const parts = String(range || '').split(',').map((x) => x.trim()).filter(Boolean);
+  if (!parts.length || !parseVersion(version)) return false;
+  return parts.every((part) => {
+    const m = part.match(/^(<=|>=|<|>|=)?\s*v?(\S+)$/);
+    if (!m || !parseVersion(m[2])) return false;
+    const c = compareVersions(version, m[2]);
+    return { '<': c < 0, '<=': c <= 0, '>': c > 0, '>=': c >= 0, '=': c === 0, undefined: c === 0 }[m[1]];
+  });
+}
+export function advisoriesAffecting(advisories, version) {
+  return (advisories || []).filter((a) => (a.vulnerable || []).some((r) => versionInRange(version, r))).map((a) => a.id);
+}
+
 // ---------- network ----------
 const UA = { 'user-agent': 'dial-supply-chain-watch' };
 function ghHeaders() {
@@ -256,7 +271,9 @@ export async function watch({ apply = false, only = null, today = new Date().toI
       // npm advisories are queried for the exact candidate (affects=<pkg>@<version>), so any hit blocks it.
       // Repository advisories carry ranges this watcher does not evaluate; they are reported for review.
       const exactQuery = w.source.kind === 'npm' || w.source.kind === 'claude_installer';
-      const candidateAffected = exactQuery && (r.advisories || []).some((a) => a.id !== 'LOOKUP_FAILED');
+      entry.advisories_fixed_by_candidate = advisoriesAffecting(r.advisories, pin.version).filter((id) => !advisoriesAffecting(r.advisories, r.version).includes(id));
+      entry.advisories_affecting_candidate = advisoriesAffecting(r.advisories, r.version);
+      const candidateAffected = (exactQuery && (r.advisories || []).some((a) => a.id !== 'LOOKUP_FAILED')) || entry.advisories_affecting_candidate.length > 0;
       if (!r.version || compareVersions(r.version, pin.version) <= 0) { entry.action = 'UP_TO_DATE'; continue; }
       if (!w.auto) { entry.action = 'REVIEW_REQUIRED'; entry.reason = w.review_reason; continue; }
       if (candidateAffected) { entry.action = 'BLOCKED_ADVISORY'; continue; }
@@ -289,7 +306,8 @@ export async function watch({ apply = false, only = null, today = new Date().toI
 }
 
 export function summaryMarkdown(report) {
-  const rows = report.entries.map((e) => `| \`${e.pin}\` | ${e.current ?? '–'} | ${e.candidate ?? '–'} | ${e.action}${e.newer_major ? ` · newer major ${e.newer_major.version} (proposal)` : ''} | ${e.release_notes?.url ? `[notes](${e.release_notes.url})` : '–'} | ${(e.advisories || []).filter((a) => a.id !== 'LOOKUP_FAILED').length || 0} |`);
+  const adv = (e) => [e.advisories_fixed_by_candidate?.length ? `fixes ${e.advisories_fixed_by_candidate.join(', ')}` : '', e.advisories_affecting_candidate?.length ? `**affects candidate: ${e.advisories_affecting_candidate.join(', ')}**` : ''].filter(Boolean).join('; ') || '–';
+  const rows = report.entries.map((e) => `| \`${e.pin}\` | ${e.current ?? '–'} | ${e.candidate ?? '–'} | ${e.action}${e.newer_major ? ` · newer major ${e.newer_major.version} (proposal)` : ''} | ${e.release_notes?.url ? `[notes](${e.release_notes.url})` : '–'} | ${adv(e)} |`);
   const review = report.entries.filter((e) => e.action === 'REVIEW_REQUIRED' || e.newer_major || e.action === 'ERROR' || e.action === 'BLOCKED_ADVISORY')
     .map((e) => `- \`${e.pin}\`: ${e.action === 'ERROR' ? `error: ${e.error}` : e.reason || (e.newer_major ? `newer major ${e.newer_major.version} available: review breaking changes at ${e.newer_major.release_notes?.url || 'release notes'} before moving the pin` : e.action)}`);
   return [

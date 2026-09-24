@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { compareVersions, parseVersion, rehashRepoFiles, releaseVersion, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
+import { advisoriesAffecting, compareVersions, parseVersion, versionInRange, rehashRepoFiles, releaseVersion, replaceTokens, selectVersions, summaryMarkdown } from '../ops/development-bootstrap/supply-chain/watch-pins.mjs';
 
 const repoDir = path.resolve(import.meta.dirname, '..');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
@@ -25,6 +25,15 @@ describe('supply-chain pin watcher', () => {
     const w = { source: { version_from: 'release_name' } };
     expect(releaseVersion({ tag_name: 'v2026.9.21', name: 'Hermes Agent v0.21.4 (v2026.9.21)' }, w)).toBe('0.21.4');
     expect(releaseVersion({ tag_name: 'v2.337.0', name: 'v2.337.0' }, {})).toBe('2.337.0');
+  });
+
+  it('evaluates advisory ranges so fixes and still-affected candidates are visible', () => {
+    expect(versionInRange('0.12.17', '>= 0.12.7, < 0.12.18')).toBe(true);
+    expect(versionInRange('0.12.18', '>= 0.12.7, < 0.12.18')).toBe(false);
+    expect(versionInRange('2.337.0', '< 2.296.1')).toBe(false);
+    const advisories = [{ id: 'GHSA-a', vulnerable: ['>= 0.12.7, < 0.12.18'] }, { id: 'GHSA-b', vulnerable: ['<= 0.9.5'] }];
+    expect(advisoriesAffecting(advisories, '0.12.17')).toEqual(['GHSA-a']);
+    expect(advisoriesAffecting(advisories, '0.12.18')).toEqual([]);
   });
 
   it('replaces exact tokens, including v-prefixed versions, but never longer versions or hashes', () => {
