@@ -40,4 +40,13 @@ describe('Netcup and Oracle network hardening', () => {
     const confirm = s.indexOf('dial-harden-peer confirm');
     expect(confirm).toBeGreaterThan(apply);
   });
+
+  it('proves alternate paths per peer and demands two independent non-overlay paths, never faking bastion', () => {
+    const s = read('deploy/netcup/hermes-control/alternate-paths.sh');
+    expect(s).toMatch(/length\) >= 2 and \.overlay=="PASS"/);
+    expect(s).toContain('HostKeyAlias');
+    expect(s).toMatch(/select\(\."lifecycle-state"=="ACTIVE"\)\] \| length > 0/);
+    expect(s).toContain('echo OWNER_ACTION_REQUIRED');
+  });
 });
+
