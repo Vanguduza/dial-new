@@ -201,7 +201,7 @@ describe('Netcup and Oracle network hardening', () => {
     }
   });
 
-  it('lets the cutover through only when every open CORE item is the activation hold', async () => {
+  it('lets the cutover through only when every open CORE item is the activation hold or a named external/auth gate', async () => {
     const { spawnSync } = await import('node:child_process'); const os2 = await import('node:os');
     const s = read('deploy/netcup/hermes-control/migrate-from-oracle-control.sh');
     const py = s.slice(s.indexOf("<<'PY'\n", s.indexOf('netcup-core-verification.json" <<')) + 7, s.indexOf('\nPY\n', s.indexOf('netcup-core-verification.json" <<')));
@@ -213,7 +213,15 @@ describe('Netcup and Oracle network hardening', () => {
     expect(judge({ overall_status: 'GREEN' }).code).toBe(0);
     const ok = judge(report({ status: 'AMBER', failed: [], uncovered: [], open: held }, held.map(hold)));
     expect(ok.code, ok.out).toBe(0);
-    expect(ok.out).toContain('GREEN_EXCEPT_ACTIVATION_HOLD');
+    expect(ok.out).toContain('GREEN_EXCEPT_GATED');
+    // Owner/external gates (converge run 36030523028: Cloudflare Access, Google provider integration) are tracked, not failures.
+    const ext = [...held, 'net.cloudflare-access', 'google.dev-antigravity'];
+    const extChecks = [...held.map(hold), { id: 'net.cloudflare-access', status: 'OWNER_ACTION_REQUIRED', gate: 'EXTERNAL-GATE-CLOUDFLARE-ACCESS-001' }, { id: 'google.dev-antigravity', status: 'UNVERIFIED', gate: 'AUTH-GATE-GOOGLE-ANTIGRAVITY-001' }];
+    const okExt = judge(report({ status: 'AMBER', failed: [], uncovered: [], open: ext }, extChecks));
+    expect(okExt.code, okExt.out).toBe(0);
+    expect(okExt.out).toContain('net.cloudflare-access@EXTERNAL-GATE-CLOUDFLARE-ACCESS-001');
+    // A gate name that is neither of those prefixes does not count.
+    expect(judge(report({ status: 'AMBER', failed: [], uncovered: [], open: ['x.y'] }, [{ id: 'x.y', status: 'UNVERIFIED', gate: 'SOME-OTHER-GATE' }])).out).toContain('open_not_held=x.y');
     // Any failure, coverage gap, un-held open item, RED/P0 overall, or missing profile still blocks.
     expect(judge(report({ status: 'RED', failed: ['security.no-tracked-secrets'], uncovered: [], open: held }, held.map(hold), 'RED')).out).toContain('MIGRATION_BLOCKED');
     expect(judge(report({ status: 'RED', failed: [], uncovered: ['hc.verify'], open: held }, held.map(hold), 'RED')).out).toContain('uncovered=hc.verify');
@@ -227,6 +235,22 @@ describe('Netcup and Oracle network hardening', () => {
     expect(s).toContain("const held = !ev.unblocked && activationGateHolds('dial-hermes-orchestrator.service', { controlHome });");
     expect(s).toContain('status: ev.unblocked ? STATUS.PASS : held ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL');
     expect(s).toContain("gate: held ? 'NETCUP-ACTIVATION-GATE' : 'EXTERNAL-GATE-HERMES-REQUALIFICATION-001'");
+  });
+
+  it('links every provider-certified CORE manifest item to a check the certifier produces', () => {
+    // Converge run 36030523028: rt.antigravity, prov.xkiro, prov.google-*, cred.xkiro and cred.stitch had
+    // no check_ids, so their existing checks never covered them and CORE_DEVELOPMENT could not go green.
+    const manifest = JSON.parse(read('ops/development-bootstrap/manifest.json'));
+    const src = ['ops/development-bootstrap/providers/google.mjs', ...fs.readdirSync(path.join(repoDir, 'ops/development-bootstrap/providers')).map((f) => `ops/development-bootstrap/providers/${f}`), ...fs.readdirSync(path.join(repoDir, 'ops/development-bootstrap/verify')).map((f) => `ops/development-bootstrap/verify/${f}`)].filter((f) => f.endsWith('.mjs')).map(read).join('\n');
+    const produced = new Set([...src.matchAll(/id: '([a-z0-9.-]+)'/g)].map((m) => m[1]));
+    const registry = JSON.parse(read('agent-system/registries/EXTERNAL_CAPABILITY_REGISTRY.json'));
+    const caps = registry.capabilities || registry.entries || registry;
+    for (const cap of Array.isArray(caps) ? caps : Object.values(caps)) if (cap.capability_id || cap.id) produced.add(`google.${String(cap.capability_id || cap.id).toLowerCase()}`);
+    for (const id of ['rt.antigravity', 'prov.xkiro', 'prov.google-antigravity', 'prov.google-stitch', 'cred.xkiro', 'cred.stitch']) {
+      const item = ['runtimes', 'providers', 'credentials'].flatMap((k) => manifest[k]).find((x) => x.id === id);
+      expect(item?.check_ids?.length, id).toBeGreaterThan(0);
+      for (const c of item.check_ids) expect(produced.has(c), `${id} -> ${c}`).toBe(true);
+    }
   });
 
   it('keeps credential-shaped test fixtures out of the tracked-secret scan without changing their values', async () => {

@@ -28,13 +28,23 @@ def reproducible_merge(s):
 
 def files_staged(): return [x for x in g('diff','--cached','--name-only','--no-renames','--','.',*X).stdout.splitlines() if x]
 def status_staged(): return [x.split('\t',1) for x in g('diff','--cached','--name-status','--no-renames').stdout.splitlines() if '\t' in x]
-def dig_staged(): return hashlib.sha256(g('diff','--cached','--binary','--no-ext-diff','--no-renames','--','.',*X,b=True).stdout).hexdigest()
+# A diff's "index" lines carry abbreviated blob ids whose length git picks from the clone's object count,
+# so the same commit hashed differently in a small clone and a large one. New rows hash full ids
+# (FULL_INDEX); rows recorded before that are matched against every abbreviation git could have chosen.
+FULL_INDEX='full-index'
+LEGACY_ABBREVS=[()]+[(f'--abbrev={n}',) for n in range(7,17)]
+def dig_staged(fmt=FULL_INDEX):
+ extra=('--full-index',) if fmt==FULL_INDEX else ()
+ return hashlib.sha256(g('diff','--cached','--binary','--no-ext-diff','--no-renames',*extra,'--','.',*X,b=True).stdout).hexdigest()
 def cfiles(s):
  p=par(s); a=('diff','--name-only','--no-renames',p,s,'--','.',*X) if p else ('show','--pretty=','--name-only',s,'--','.',*X)
  return [x for x in g(*a).stdout.splitlines() if x]
-def cdig(s):
- p=par(s); a=('diff','--binary','--no-ext-diff','--no-renames',p,s,'--','.',*X) if p else ('show','--binary','--format=','--no-ext-diff',s,'--','.',*X)
+def cdig(s,extra=('--full-index',)):
+ p=par(s); a=('diff','--binary','--no-ext-diff','--no-renames',*extra,p,s,'--','.',*X) if p else ('show','--binary','--format=','--no-ext-diff',*extra,s,'--','.',*X)
  return hashlib.sha256(g(*a,b=True).stdout).hexdigest()
+def row_digest_matches(row,s):
+ if row.get('diff_format')==FULL_INDEX: return row.get('diff_sha256')==cdig(s)
+ return any(row.get('diff_sha256')==cdig(s,extra) for extra in LEGACY_ABBREVS)
 def rows_at(s):
  c=g('show',f'{s}:docs/project-state/CHANGE_LEDGER.jsonl',check=False); r=[]
  if c.returncode==0:
@@ -132,7 +142,7 @@ def record():
  classes=sorted({a['authority'] for a in chosen})
  d=dig_staged(); parent=target
  entry={'schema_version':2,'kind':'precommit-staged-diff','recorded_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(),
-        'branch':branch,'source_parent':parent,'changed_files':f,'diff_sha256':d,
+        'branch':branch,'source_parent':parent,'changed_files':f,'diff_sha256':d,'diff_format':FULL_INDEX,
         'actor':os.getenv('USER') or os.getenv('USERNAME') or 'unknown','owner_authorized':True,
         'authorization_ids':ids,'authority_classes':classes}
  append_ledger_entry(entry)
@@ -152,14 +162,24 @@ def install_authority():
 def matching_row(s):
  f=cfiles(s)
  if not f:return None
- p=par(s); d=cdig(s)
+ p=par(s)
  for r in rows_at(s):
-  if r.get('source_parent')==p and r.get('diff_sha256')==d and sorted(r.get('changed_files',[]))==sorted(f): return r
+  if r.get('source_parent')==p and sorted(r.get('changed_files',[]))==sorted(f) and row_digest_matches(r,s): return r
  return None
+
+def adds_only_authorizations(s):
+ # The owner records authority by adding an authorization file, often through GitHub where no ledger hook
+ # runs. Such a commit changes nothing substantive; each record is validated wherever a later commit relies
+ # on it. Modifying or deleting a record is never exempt (records are append-only).
+ p=par(s)
+ if not p:return False
+ rows=[x.split('\t',1) for x in g('diff','--name-status','--no-renames',p,s,'--','.',*X).stdout.splitlines() if '\t' in x]
+ return bool(rows) and all(st=='A' and auth_path(path) for st,path in rows)
 
 def verify_authorized_commit(s):
  f=cfiles(s)
  if not f:return []
+ if adds_only_authorizations(s):return []
  row=matching_row(s)
  if not row:return [f'{s}: no matching Project Truth ledger row']
  ids=row.get('authorization_ids') or []
