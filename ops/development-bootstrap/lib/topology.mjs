@@ -24,7 +24,12 @@ export function loadHosts(file = HOSTS_PATH) {
   return parsed;
 }
 
-export function hostEntry(hostId, hosts = loadHosts()) { return (hosts.hosts || []).find((h) => h.host_id === hostId) || null; }
+// A host is named by its canonical host_id or by the physical_hostname hosts.json declares for it
+// (Netcup: host_id dial-hermes-control runs as hostname dial-control).
+export function hostEntry(hostId, hosts = loadHosts()) {
+  const all = hosts.hosts || [];
+  return all.find((h) => h.host_id === hostId) || all.find((h) => h.physical_hostname && h.physical_hostname === hostId) || null;
+}
 export function hostForClass(hostClass, hosts = loadHosts()) {
   const matches = (hosts.hosts || []).filter((h) => h.host_class === hostClass);
   return matches.length === 1 ? matches[0] : null;
@@ -54,7 +59,7 @@ export function compareHostInventory({ entry, facts, memoryTolerance = 0.12 } = 
   const lower = Math.floor(declaredMem * (1 - memoryTolerance));
   if (!(facts.memory_total_mb >= lower && facts.memory_total_mb <= declaredMem * (1 + memoryTolerance))) drift.push({ field: 'memory_total_mb', declared: declaredMem, observed: facts.memory_total_mb, tolerance: memoryTolerance, severity: 'REQUIRED' });
   if (entry.private_ip && !(facts.private_ipv4 || []).includes(entry.private_ip)) drift.push({ field: 'private_ip', declared: entry.private_ip, observed: facts.private_ipv4 || [], severity: 'REQUIRED' });
-  if (entry.host_id !== facts.hostname) drift.push({ field: 'hostname', declared: entry.host_id, observed: facts.hostname, severity: 'REQUIRED' });
+  if (entry.host_id !== facts.hostname && entry.physical_hostname !== facts.hostname) drift.push({ field: 'hostname', declared: entry.physical_hostname || entry.host_id, observed: facts.hostname, severity: 'REQUIRED' });
   return { ok: drift.length === 0, known_host: true, host_id: entry.host_id, host_class: entry.host_class, immutable_role: entry.immutable_role === true, drift };
 }
 
@@ -65,20 +70,17 @@ export function authorityConsistency({ repoDir = REPO_DIR, hosts = loadHosts() }
   const control = hostForClass('CONTROL_AUTHORITY', hosts);
   const qualifier = path.join(repoDir, 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh');
   if (fs.existsSync(qualifier) && control) {
-    const m = fs.readFileSync(qualifier, 'utf8').match(/nproc\)"\s+-eq\s+(\d+)/);
-    if (m && Number(m[1]) !== Number(control.cpu_total)) problems.push({ source: 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh', field: 'cpu_total', declared: Number(m[1]), topology: Number(control.cpu_total) });
-  }
-  const doc = path.join(repoDir, 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md');
-  if (fs.existsSync(doc) && control) {
-    const text = fs.readFileSync(doc, 'utf8');
-    const m = text.match(/\*\*(\d+)\s+OCPU\s*\/\s*(\d+)\s*GB RAM\*\*/);
-    if (m) {
-      // Canon and inventory use host-visible logical CPUs, matching nproc/os.cpus on A1 and E2.
-      const docCpu = Number(m[1]);
-      const docMemMb = Number(m[2]) * 1024;
-      if (docCpu !== Number(control.cpu_total)) problems.push({ source: 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md', field: 'cpu_total', declared: docCpu, topology: control.cpu_total });
-      if (docMemMb !== Number(control.memory_total_mb)) problems.push({ source: 'docs/infrastructure/DIAL_PROVIDER_FIRST_EXECUTION_FABRIC_REV2.md', field: 'memory_total_mb', declared: docMemMb, topology: Number(control.memory_total_mb) });
+    const text = fs.readFileSync(qualifier, 'utf8');
+    if (!text.includes('deploy/oracle/resource-fabric/hosts.json')) {
+      problems.push({
+        source: 'deploy/oracle/execution-fabric/qualify-execution-fabric.sh',
+        field: 'topology_source',
+        declared: 'embedded/static',
+        topology: HOSTS_REL,
+      });
     }
   }
+  // Physical provider/shape/CPU/RAM truth lives only in hosts.json plus live inventory.
+  // Historical architecture documents are explanatory and cannot pin a retired cloud shape.
   return { ok: problems.length === 0, problems, topology_authority: HOSTS_REL, policy_id: hosts.policy_id || null };
 }

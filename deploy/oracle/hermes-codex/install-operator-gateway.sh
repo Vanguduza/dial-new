@@ -2,6 +2,8 @@
 set -euo pipefail
 
 REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)}"
+# The pinned Node (Dial Control has no /usr/bin/node; units must name the binary that exists).
+NODE_BIN="$(command -v node)"; [[ -x "$NODE_BIN" ]] || { echo "node is required on PATH" >&2; exit 1; }
 CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 USER_UNIT_DIR="${HOME}/.config/systemd/user"
 HERMES_HOME="${HERMES_HOME:-${HOME}/.hermes}"
@@ -46,7 +48,7 @@ Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/owner-steering-broker.mjs daemon
+ExecStart=${NODE_BIN} ${REPO_DIR}/agent-system/orchestration/owner-steering-broker.mjs daemon
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
@@ -73,7 +75,7 @@ EnvironmentFile=-${HERMES_WA_CONTROL_ENV}
 Environment=WHATSAPP_REPLY_PREFIX=
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node ${HERMES_DIR}/scripts/whatsapp-bridge/bridge.js --port 3011 --session ${HERMES_WA_SESSION}
+ExecStart=${NODE_BIN} ${HERMES_DIR}/scripts/whatsapp-bridge/bridge.js --port 3011 --session ${HERMES_WA_SESSION}
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
@@ -116,7 +118,7 @@ Environment=HERMES_HOME=${HERMES_HOME}
 Environment=CODEX_HOME=${CODEX_HOME}
 Environment=PATH=${HOME}/.local/bin:${HOME}/.npm-global/bin:/usr/local/bin:/usr/bin:/bin
 UnsetEnvironment=OPENAI_API_KEY CODEX_API_KEY ANTHROPIC_API_KEY
-ExecStart=/usr/bin/node ${REPO_DIR}/agent-system/orchestration/whatsapp-hermes-operator.mjs daemon
+ExecStart=${NODE_BIN} ${REPO_DIR}/agent-system/orchestration/whatsapp-hermes-operator.mjs daemon
 Restart=always
 RestartSec=5
 NoNewPrivileges=true

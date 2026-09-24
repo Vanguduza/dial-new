@@ -2,15 +2,15 @@
 set -euo pipefail
 umask 077
 
-NODE_VERSION="22.23.2"
+NODE_VERSION="22.23.3"
 case "$(uname -m)" in
   aarch64|arm64)
     NODE_ARCH="arm64"
-    NODE_SHA256="fff4078c5def658577f92c88db7db3bc0072924bfb93fe52c1e744a54e94abb8"
+    NODE_SHA256="a44aeb94849a299b22df10b9e622ec2f605c2183501bc40590705131de7c740f"
     ;;
   x86_64|amd64)
     NODE_ARCH="x64"
-    NODE_SHA256="d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307"
+    NODE_SHA256="df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de"
     ;;
   *) echo "ERROR: unsupported Node architecture $(uname -m)" >&2; exit 2 ;;
 esac

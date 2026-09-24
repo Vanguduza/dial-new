@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Netcup pre-cutover: units install and enable, but the activation gate holds their start.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONTROL="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
-BIND="${DIAL_PRIVATE_MCP_BIND:-10.0.0.184}"
+BIND="${DIAL_PRIVATE_MCP_BIND:-${DIAL_CONTROL_OVERLAY_IP:-}}"
 PORT="${DIAL_PRIVATE_MCP_PORT:-9133}"
+[[ -n "$BIND" ]] || { echo "DIAL_PRIVATE_MCP_BIND or DIAL_CONTROL_OVERLAY_IP is required" >&2; exit 2; }
+[[ "$BIND" != "0.0.0.0" && "$BIND" != "::" ]] || { echo "REFUSE: private MCP may not bind all interfaces" >&2; exit 3; }
 NODE="$(command -v node)"
 
 install -d -m 0700 "$CONTROL/state" "$CONTROL/secrets"
@@ -12,7 +16,7 @@ test -f "$CONTROL/secrets/remote-mcp-capability"
 install -d -m 0700 "$HOME/.config/systemd/user"
 cat >"$HOME/.config/systemd/user/dial-private-mcp-bind.service" <<EOF
 [Unit]
-Description=DIAL private VCN MCP bind (control <-> vekl-worker)
+Description=DIAL private cross-cloud MCP bind (control <-> vekl-worker)
 After=dial-remote-mcp-relay.service
 Requires=dial-remote-mcp-relay.service
 [Service]
@@ -38,6 +42,7 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now dial-private-mcp-bind.service
 sleep 1
-systemctl --user is-active --quiet dial-private-mcp-bind.service
+activation_gated || systemctl --user is-active --quiet dial-private-mcp-bind.service
+if activation_gated; then echo "PHASE3_PRIVATE_MCP_INSTALLED_ACTIVATION_GATED ${BIND}:${PORT}"; exit 0; fi
 curl -fsS "http://${BIND}:${PORT}/health" >/tmp/private-mcp-health.json
 printf 'PHASE3_PRIVATE_MCP_BOUND %s:%s health=%s\n' "$BIND" "$PORT" "$(tr '\n' ' ' </tmp/private-mcp-health.json)"

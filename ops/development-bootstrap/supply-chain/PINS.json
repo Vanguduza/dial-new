@@ -11,56 +11,57 @@
   "pins": {
     "node": {
       "method": "RELEASE_TARBALL_SHA256",
-      "version": "22.23.2",
-      "source": "official Node.js v22.23.2 SHASUMS256.txt",
+      "version": "22.23.3",
+      "source": "official Node.js v22.23.3 SHASUMS256.txt",
       "architectures": {
-        "arm64": {
-          "url": "https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-arm64.tar.xz",
-          "sha256": "fff4078c5def658577f92c88db7db3bc0072924bfb93fe52c1e744a54e94abb8"
-        },
         "x64": {
-          "url": "https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-x64.tar.xz",
-          "sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307"
+          "url": "https://nodejs.org/dist/v22.23.3/node-v22.23.3-linux-x64.tar.xz",
+          "sha256": "df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de"
+        },
+        "arm64": {
+          "url": "https://nodejs.org/dist/v22.23.3/node-v22.23.3-linux-arm64.tar.xz",
+          "sha256": "a44aeb94849a299b22df10b9e622ec2f605c2183501bc40590705131de7c740f"
         }
       },
-      "pin_state": "PINNED"
+      "pin_state": "PINNED",
+      "evidence": "watch-pins 2026-09-24: node 22.23.2 -> 22.23.3 within pinned major; verification material measured from the upstream artefact; release notes https://nodejs.org/en/blog/release/v22.23.3"
     },
     "@openai/codex": {
       "method": "NPM_EXACT",
       "package": "@openai/codex",
-      "version": "0.153.1",
-      "integrity": "sha512-d5txIVzNIkZnAmCiqxksAACqm+xUvq83YGKd3YYAF9ISXWkC7hsiPXpSD24ypKOqpvbZiScMSq0e0p4TycczNw==",
+      "version": "0.156.1",
+      "integrity": "sha512-nI1iVl/n2SO2lSvlwEsJx63zdSI4C4Me2gR7AG0OWMJiGSakz2tY2hx43E39Zq5aEoeB5bZjJXzp5Sqhog6vyA==",
       "minimum_version": "0.144.0",
       "pin_state": "PINNED",
-      "evidence": "npm view @openai/codex@0.153.1 dist.integrity on 2026-09-15"
+      "evidence": "watch-pins 2026-09-24: @openai/codex 0.153.1 -> 0.156.1 within pinned major; verification material measured from the upstream artefact; release notes https://github.com/openai/codex/releases/tag/rust-v0.156.1"
     },
     "claude-code": {
       "method": "INSTALLER_SHA256",
       "url": "https://claude.ai/install.sh",
-      "version": "2.1.270",
+      "version": "2.1.281",
       "sha256": "3a68d3406cf674e17bed1733a4dcf37805e2e47d87417700007d7e1aa766a944",
       "install_args_template": [
         "<version>"
       ],
       "pin_state": "PINNED",
-      "evidence": "https://claude.ai/install.sh downloaded and SHA-256 measured on 2026-09-15; target version is explicit"
+      "evidence": "watch-pins 2026-09-24: claude-code 2.1.270 -> 2.1.281 within pinned major; verification material measured from the upstream artefact; release notes https://github.com/anthropics/claude-code/releases/tag/v2.1.281"
     },
     "hermes-agent": {
       "method": "SOURCE_ARCHIVE_SHA256",
-      "url": "https://codeload.github.com/NousResearch/hermes-agent/tar.gz/63279301bcbdc185c1b07b98a9312eb0c862f26d",
-      "version": "0.21.0",
-      "source_commit": "63279301bcbdc185c1b07b98a9312eb0c862f26d",
-      "sha256": "b142bb288c34669265093c187e5fdd37ecd01541c6852a998a851ae450f36701",
+      "url": "https://codeload.github.com/NousResearch/hermes-agent/tar.gz/d337b736aa1e8ebecfab043842d13e4a2d2f48a3",
+      "version": "0.21.4",
+      "source_commit": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3",
+      "sha256": "ba21ce727bcd05bfc60eedfbfcb63b260af99cb5c902d37efa31daa97227da4e",
       "install_command": [
         "<source-dir>/scripts/install.sh",
         "--commit",
-        "63279301bcbdc185c1b07b98a9312eb0c862f26d",
+        "d337b736aa1e8ebecfab043842d13e4a2d2f48a3",
         "--force-commit",
         "--skip-setup",
         "--non-interactive"
       ],
       "pin_state": "PINNED",
-      "evidence": "live Hermes v0.21.0 at commit 63279301; commit fetchable from NousResearch/hermes-agent and codeload archive SHA-256 measured 2026-09-15"
+      "evidence": "watch-pins 2026-09-24: hermes-agent 0.21.0 -> 0.21.4 within pinned major; verification material measured from the upstream artefact; release notes https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.21"
     },
     "@wonderwhy-er/desktop-commander": {
       "method": "NPM_EXACT",
@@ -107,9 +108,9 @@
       "method": "OCI_IMAGE_DIGEST",
       "image": "ubuntu:24.04",
       "digest": "sha256:224a1869083a311ef3f13648a154ba79832fbef6364d31493642ca03082da254",
-      "observed_platform": "linux/arm64",
+      "observed_platform": "multi-platform index (linux/amd64 and linux/arm64 resolved by Docker)",
       "pin_state": "PINNED",
-      "evidence": "RepoDigest on dial-hermes-control 2026-09-15; local sandbox executes on arm64 control host"
+      "evidence": "Official Docker Hub ubuntu:24.04 index digest; multi-platform index rechecked 2026-09-21 so the same pinned index supports Netcup x86_64 and Oracle arm64."
     },
     "whatsapp_pair_runtime": {
       "method": "LOCKFILE_PLUS_VENDORED_TARBALL",
@@ -130,21 +131,21 @@
     },
     "antigravity-cli": {
       "method": "REPO_PINNED_SCRIPT",
-      "version": "1.2.0",
+      "version": "1.2.9",
       "script": "deploy/oracle/hermes-codex/install-google-antigravity.sh",
-      "script_sha256": "238163a335c891a7e68667830c47e323eede971cb1a705b881b5218a3e80cc04",
+      "script_sha256": "a9f1d16e84f0ba329fed4187812905f0fbd9329eed85fd1fad69fc548f135509",
       "architectures": {
-        "arm64": {
-          "url": "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.0/agy_cli_linux_arm64.tar.gz",
-          "sha256": "0a8e61f6548865029c4238b9310c686b7a733db5864cae619656abdf48090594"
-        },
         "x64": {
-          "url": "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.0/agy_cli_linux_x64.tar.gz",
-          "sha256": "d9bfee1ae6e4329562cb87da1f5fc3c886d18594837e73e25c3aae00a49499b9"
+          "url": "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.9/agy_cli_linux_x64.tar.gz",
+          "sha256": "d9850373f3df866011024a961fa9740cc4adaac060eebe9c70fbf263ac6b2624"
+        },
+        "arm64": {
+          "url": "https://github.com/google-antigravity/antigravity-cli/releases/download/1.2.9/agy_cli_linux_arm64.tar.gz",
+          "sha256": "8a63cf4c4f559e2ff91bd46fbdf015ca7937415805d0cff82015b9cb9dbbdfcd"
         }
       },
       "pin_state": "PINNED",
-      "evidence": "repository installer exact version 1.2.0; per-architecture release SHA-256 values are enforced; wrapper forces AGY_CLI_DISABLE_AUTO_UPDATE=true to prevent runtime drift; script hash binds convergence to the reviewed installer body"
+      "evidence": "watch-pins 2026-09-24: antigravity-cli 1.2.0 -> 1.2.9 within pinned major; verification material measured from the upstream artefact; release notes https://github.com/google-antigravity/antigravity-cli/releases/tag/1.2.9"
     },
     "context7-mcp": {
       "method": "REPO_PINNED_SCRIPT",
@@ -176,6 +177,80 @@
       "authentication": "NONE",
       "pin_state": "PINNED",
       "evidence": "Repository-owned bridge v1; fixed official Exa MCP endpoint; live initialize/toolset/search canary observed 2026-09-16. Remote provider version is observed, not locally pinned."
+    },
+    "github_actions_runner": {
+      "method": "OFFICIAL_GITHUB_RELEASE_ASSET_SHA256",
+      "version": "2.337.0",
+      "asset": "actions-runner-linux-x64-2.337.0.tar.gz",
+      "url": "https://github.com/actions/runner/releases/download/v2.337.0/actions-runner-linux-x64-2.337.0.tar.gz",
+      "sha256": "70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613",
+      "pin_state": "PINNED",
+      "evidence": "GitHub actions/runner v2.337.0 release asset digest published 2026-08-26; pinned for the Netcup x86_64 owner-admin runner. Automatic runner updates are disabled; upgrades require a new reviewed pin."
+    },
+    "artemis": {
+      "method": "GIT_COMMIT_FROZEN_UV_LOCK_PLUS_DIAL_HARDENING",
+      "repository": "https://github.com/google/artemis.git",
+      "commit": "371aa6df56880643da57b30da936e9812fb0ec66",
+      "uv_lock_blob_sha1": "dc2d35b8c284055c92ff1cd2560c8201e648bf9f",
+      "python_requirement": ">=3.12",
+      "license": "Apache-2.0",
+      "hardening_script": "deploy/netcup/hermes-control/artemis/harden_artemis.py",
+      "hardening_id": "DIAL_ARTEMIS_SHELL_HARDENING_V1",
+      "raw_mcp_exposed": false,
+      "pin_state": "PINNED",
+      "evidence": "Upstream commit and uv.lock Git blob observed 2026-09-23; DIAL shell-boundary patch fails closed on source drift."
+    },
+    "uv": {
+      "method": "GITHUB_RELEASE_ATTESTATION",
+      "repository": "astral-sh/uv",
+      "version": "0.12.18",
+      "asset": "uv-x86_64-unknown-linux-gnu.tar.gz",
+      "verification": "gh attestation verify <asset> --repo astral-sh/uv",
+      "host_architecture": "x86_64",
+      "pin_state": "PINNED",
+      "evidence": "watch-pins 2026-09-24: uv 0.12.17 -> 0.12.18 within pinned major; verification material measured from the upstream artefact; release notes https://github.com/astral-sh/uv/releases/tag/0.12.18"
+    },
+    "openviking": {
+      "method": "OCI_IMAGE_DIGEST",
+      "image": "ghcr.io/volcengine/openviking",
+      "version": "v0.4.21.1",
+      "x86_64_digest": "sha256:4f33751b4541d79fa2a53284d7e9e1bf6cf0a7504849f3d3a2f1629cc629e52c",
+      "multi_platform_manifest_digest": "sha256:13a78525aa255f0cdb026bfdc1ab8c3a9b2baa49148aa10df061e6c2b689c15f",
+      "license": "AGPL-3.0",
+      "deployment": "SEPARATE_SUBORDINATE_SERVICE_BOUNDARY",
+      "bind": "127.0.0.1:1933",
+      "bot": "DISABLED",
+      "pin_state": "PINNED",
+      "evidence": "GHCR v0.4.21.1 x86_64 image digest observed 2026-09-23."
+    },
+    "gh-cli": {
+      "method": "BINARY_TARBALL_SHA256",
+      "version": "2.101.0",
+      "architectures": {
+        "arm64": {
+          "url": "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_arm64.tar.gz",
+          "sha256": "b57e8063f18862647c9d22727c32e9da1b963f8bf9db648fe123a6975695640f",
+          "binary_path": "gh_2.101.0_linux_arm64/bin/gh"
+        },
+        "x64": {
+          "url": "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz",
+          "sha256": "9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8",
+          "binary_path": "gh_2.101.0_linux_amd64/bin/gh"
+        }
+      },
+      "pin_state": "PINNED",
+      "evidence": "cli/cli v2.101.0 release assets downloaded on Dial Control 2026-09-24; SHA-256 measured and equal to the official gh_2.101.0_checksums.txt. Ubuntu's apt gh 2.45.0 has no `gh attestation`, which the uv attestation check (Artemis) requires."
+    },
+    "google-cloud-cli": {
+      "method": "APT_SIGNED_REPO",
+      "package": "google-cloud-cli",
+      "version": "586.0.0-0",
+      "keyring_url": "https://packages.cloud.google.com/apt/doc/apt-key.gpg",
+      "keyring_sha256": "3ecc63922b7795eb23fdc449ff9396f9114cb3cf186d6f5b53ad4cc3ebfbb11f",
+      "keyring_fingerprint": "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3",
+      "repo_line": "deb [arch=<arch> signed-by=/usr/share/keyrings/google-cloud-cli.gpg] https://packages.cloud.google.com/apt cloud-sdk main",
+      "pin_state": "PINNED",
+      "evidence": "Google Cloud apt key downloaded on Dial Control 2026-09-24: SHA-256 measured, fingerprint 35BAA0B3...DC6315A3 (Artifact Registry Repository Signer, google.com) as Google publishes; newest google-cloud-cli in cloud-sdk main binary-amd64 Packages = 586.0.0-0. Required by run-stitch-provider.sh ADC mode, which previously had no installer."
     }
   }
 }

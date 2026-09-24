@@ -6,26 +6,33 @@ HERMES_CONFIG="${HERMES_CONFIG:-${HOME}/.hermes/config.yaml}"
 fail(){ echo "QUALIFICATION RED: $*" >&2; exit 1; }
 pass(){ echo "✓ $*"; }
 
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "wrong host"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" || "$(hostname)" == dial-control ]] || fail "wrong host"
 [[ -f "$HERMES_CONFIG" ]] || fail "Hermes config missing"
 
 python3 - "$HERMES_CONFIG" <<'PY' || exit 1
-import sys, yaml
+import os, sys, yaml
 cfg=yaml.safe_load(open(sys.argv[1],encoding='utf-8')) or {}
 server=(cfg.get('mcp_servers') or {}).get('dial_local_commander') or {}
-assert server.get('command') == 'npx', server
-assert server.get('args') == ['-y','@wonderwhy-er/desktop-commander@0.2.50'], server
+assert server.get('command') == 'node', server
+args=server.get('args') or []
+assert len(args) == 3, server
+assert args[0].endswith('/agent-system/orchestration/hermes-commander-gateway.mjs'), server
+assert args[1:] == ['--commander-id','dial_hermes_local_commander'], server
 assert server.get('enabled') is True, server
 assert server.get('supports_parallel_tool_calls') is False, server
-include=set((server.get('tools') or {}).get('include') or [])
-required={'read_file','read_multiple_files','list_directory','get_file_info','start_search','get_more_search_results','list_processes','list_sessions','get_config'}
-forbidden={'start_process','interact_with_process','write_file','edit_block','move_file','set_config_value','kill_process','shutdown'}
-assert required <= include, (required-include)
-assert not (forbidden & include), (forbidden & include)
-assert (server.get('tools') or {}).get('resources') is False
-assert (server.get('tools') or {}).get('prompts') is False
+assert server.get('timeout') == 600, server
+tools=server.get('tools')
+assert tools in (None, {}), 'Hermes Commander must not carry a tool allowlist/filter'
 PY
-pass "Hermes owns a pinned read-only local Desktop Commander MCP surface"
+pass "Hermes owns the pinned FULL local Desktop Commander MCP surface through the authority gateway without a capability filter"
+
+FULL_PROBE="$(node "$REPO_DIR/deploy/oracle/hermes-codex/probe-full-local-commander.mjs" 2>&1)" || { echo "$FULL_PROBE" >&2; fail "live full Commander tools/list probe failed"; }
+grep -q '"status": "GREEN"' <<<"$FULL_PROBE" || { echo "$FULL_PROBE" >&2; fail "Commander did not expose the required full tool surface"; }
+pass "Live Commander tools/list proves process, mutation, configuration and inspection capabilities"
+
+AUTHORITY_PROBE="$(node "$REPO_DIR/agent-system/orchestration/probe-commander-authority-gateway.mjs" 2>&1)" || { echo "$AUTHORITY_PROBE" >&2; fail "Commander authority gateway probe failed"; }
+grep -q '"status": "GREEN"' <<<"$AUTHORITY_PROBE" || { echo "$AUTHORITY_PROBE" >&2; fail "Commander authority gateway is not GREEN"; }
+pass "Authority gateway fails closed without a grant and allows owner/registered-automation calls"
 
 GATEWAY_UNIT="$(systemctl --user list-units --type=service --all --no-legend 2>/dev/null | awk 'tolower($1) ~ /hermes.*gateway|gateway.*hermes/ {print $1; exit}')"
 [[ -n "$GATEWAY_UNIT" ]] || fail "Hermes gateway unit not found"
@@ -38,10 +45,13 @@ done < <(pgrep -f 'desktop-commander' || true)
 [[ "$FOUND_CHILD" -eq 1 ]] || fail "no Desktop Commander child process is owned by the Hermes gateway cgroup"
 pass "Hermes gateway actually spawned the subordinate Commander child"
 
-if systemctl --user is-active --quiet dial-desktop-commander.service 2>/dev/null; then
-  fail "legacy independent remote Commander service is active on dial-hermes-control"
+# The owner-facing online Commander is an ingress transport into Hermes and is
+# intentionally allowed to coexist with the Hermes-owned local child Commander.
+if systemctl --user is-active --quiet dial-owner-commander-remote.service 2>/dev/null; then
+  pass "Owner-facing remote Commander transport is active alongside the Hermes subordinate"
+else
+  echo "NOTE: dial-owner-commander-remote.service is not active (pairing may still be pending)." >&2
 fi
-pass "No independent remote Commander bypass is active on dial-hermes-control"
 
 CODEX_MCP="$(codex mcp get dial-oracle-control 2>&1 || true)"
 grep -q 'operator-control-stdio.mjs' <<<"$CODEX_MCP" || fail "Codex DIAL MCP missing"
@@ -60,4 +70,4 @@ pass "Hermes host-local DIAL MCP is healthy"
 node "$REPO_DIR/agent-system/orchestration/operator-control-stdio.mjs" <<<'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}' | grep -q 'dial-oracle-control' || fail "stdio DIAL MCP initialize failed"
 pass "stdio DIAL MCP initializes locally"
 
-echo '{"status":"GREEN","topology":"HERMES_LOCAL_DEVELOPMENT_PLUS_ORACLE_ADMIN_RECOVERY","commander":"HERMES_SUBORDINATE_READ_ONLY","codex":"DIAL_MCP","claude":"DIAL_MCP"}'
+echo '{"status":"GREEN","topology":"MOBILE_CHATGPT_TO_OWNER_COMMANDER_TO_HERMES_TO_FULL_LOCAL_COMMANDER","commander":"HERMES_SUBORDINATE_FULL","codex":"DIAL_MCP","claude":"DIAL_MCP","recovery":"GITHUB_OCI_OUT_OF_BAND"}'

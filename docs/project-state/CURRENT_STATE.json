@@ -3,18 +3,17 @@
     "OWNER_EXPLICIT"
   ],
   "authorization_ids": [
-    "auth-20260919-owner-canonical-frontend-generation-architecture",
-    "auth-20260919-owner-master-merge-full-current-scope"
+    "auth-20260921-owner-netcup-four-vm-integrated-control"
   ],
-  "branch": "gpt/canonical-screen-feature-graph-20260919",
+  "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
-    "agent-system/orchestration/frontend-generation-architecture.mjs",
-    "tests/orchestration-vekl-research-loop.test.mjs"
+    ".github/workflows/oracle-recovery.yml",
+    "tests/network-hardening.test.mjs"
   ],
-  "content_diff_sha256": "59ac22b9beef18e50852e03e7104f841145280f22e931b71b277ebc5db6d1781",
-  "observed_at_utc": "2026-09-19T20:35:02.250576+00:00",
+  "content_diff_sha256": "9eb372df70daa20323d9f38678e99cd61832dcaa7b0befc84927ac1bc5527038",
+  "observed_at_utc": "2026-09-24T20:45:31.312469+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "cf18fa0d4a0ade33d584aaa74a8c2468fd84a442",
+  "source_parent": "1243130d7145226f07543b7dbfe38e633aaec060",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

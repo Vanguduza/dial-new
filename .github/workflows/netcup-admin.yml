@@ -1,0 +1,76 @@
+name: Netcup Hermes Admin
+
+on:
+  # Registration only (owner decision auth-20260924-owner-recommended-recovery-decisions): GitHub
+  # dispatches a workflow by file name once it has seen it. A push to this file registers it;
+  # every job below is guarded to workflow_dispatch, so a push runs nothing.
+  push:
+    branches: [gpt/netcup-hermes-control-integrated-20260921]
+    paths: [.github/workflows/netcup-admin.yml]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Administrative action
+        required: true
+        type: choice
+        options:
+          - status
+          - verify
+          - restart-service
+          - oracle-status
+          - oracle-action
+          - raw-b64
+      service:
+        description: Service for restart-service
+        required: false
+        type: string
+      target:
+        description: Oracle target for oracle-action
+        required: false
+        type: choice
+        options:
+          - van-trading-core
+          - vekl-worker
+          - oracle-admin
+      oracle_action:
+        description: OCI lifecycle action
+        required: false
+        type: choice
+        options:
+          - SOFTRESET
+          - START
+          - STOP
+      command_b64:
+        description: Base64-encoded root shell command for raw-b64; never put secrets here
+        required: false
+        type: string
+      acknowledge_root:
+        description: For raw-b64 type exactly I_UNDERSTAND_ROOT
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netcup-hermes-admin
+  cancel-in-progress: false
+
+jobs:
+  admin:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.actor == 'Vanguduza' && github.ref == 'refs/heads/master' }}
+    runs-on: [self-hosted, linux, x64, netcup-admin, dial-control]
+    environment: netcup-admin
+    timeout-minutes: 20
+    steps:
+      - name: Execute audited admin action
+        shell: bash
+        env:
+          ACTION: ${{ inputs.action }}
+          SERVICE: ${{ inputs.service }}
+          COMMAND_B64: ${{ inputs.command_b64 }}
+          ACK: ${{ inputs.acknowledge_root }}
+          TARGET: ${{ inputs.target }}
+          ORACLE_ACTION: ${{ inputs.oracle_action }}
+        run: |
+          sudo -n /usr/local/sbin/dial-github-admin             "$ACTION" "$SERVICE" "$COMMAND_B64" "$ACK"             "$GITHUB_ACTOR" "$GITHUB_REF_NAME" "$GITHUB_EVENT_NAME" "$GITHUB_RUN_ID" "$GITHUB_SHA"             "$TARGET" "$ORACLE_ACTION"

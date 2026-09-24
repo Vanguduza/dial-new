@@ -1,0 +1,23 @@
+[Unit]
+Description=DIAL state-aware housekeeping executor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=@@SOURCE_ROOT@@
+EnvironmentFile=@@ENV_FILE@@
+ExecStart=@@NODE_BIN@@ @@GC_ENTRY@@ sweep
+TimeoutStartSec=15min
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictSUIDSGID=true
+LockPersonality=true
+UMask=0077

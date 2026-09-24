@@ -2,13 +2,14 @@
 set -euo pipefail
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 CONTROL="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
-OUT="${1:-$CONTROL/state/fabric-rev2-qualifier.json}"
+OUT="${1:-$CONTROL/state/fabric-rev4-qualifier.json}"
+HOSTS_JSON="$REPO/deploy/oracle/resource-fabric/hosts.json"
 cd "$REPO"
 notes=()
 status=GREEN
 fail(){ status=RED; notes+=("$1"); }
 
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "wrong control host"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" || "$(hostname)" == dial-control ]] || fail "wrong control host"
 [[ -f /etc/dial/host-role ]] && grep -q 'ROLE=CONTROL_AUTHORITY' /etc/dial/host-role || fail "host-role missing or not CONTROL_AUTHORITY"
 for slice in dial-hermes.slice dial-survival.slice dial-dev.slice dial-commander.slice; do
   systemctl is-active --quiet "$slice" || fail "$slice inactive"
@@ -27,7 +28,9 @@ done
 [[ -s "$CONTROL/secrets/remote-mcp-capability" ]] || fail "private MCP capability missing"
 command -v docker >/dev/null || fail "docker missing"
 docker image inspect dial/toolbox:2026.09 >/dev/null 2>&1 || fail "toolbox image missing"
-[[ "$(nproc)" -eq 2 ]] || fail "control host CPU shape drifted from 2 OCPU"
+expected_cpu="$(jq -r '.hosts[] | select(.host_id=="dial-hermes-control") | .cpu_total // empty' "$HOSTS_JSON" 2>/dev/null)"
+[[ "$expected_cpu" =~ ^[0-9]+$ ]] || fail "control CPU topology missing from hosts.json"
+[[ "$(nproc)" -eq "$expected_cpu" ]] || fail "control host CPU shape drifted: live=$(nproc) topology=$expected_cpu"
 
 node --check agent-system/orchestration/provider-first-hermes-executor.mjs >/dev/null || fail "provider-first Hermes executor syntax invalid"
 grep -q "executeProviderFirstHermesInstruction" agent-system/orchestration/external-orchestrator.mjs || fail "external orchestrator bypasses provider-first admission"
@@ -48,9 +51,9 @@ status,out,notes=sys.argv[1],sys.argv[2],json.loads(sys.argv[3] or "[]")
 payload={
   "status":status,
   "fabric":"PROVIDER_FIRST_EXECUTION_FABRIC",
-  "revision":"2.0",
+  "revision":"4.0",
   "hostname":os.uname().nodename,
-  "topology":"THREE_NODE_ACTIVE",
+  "topology":"HYBRID_CLOUD_THREE_NODE_ACTIVE",
   "mandatory_hermes_admission":True,
   "unit_tests_required":os.environ.get("DIAL_REQUIRE_FABRIC_UNIT_TESTS","0")=="1",
   "notes":notes,

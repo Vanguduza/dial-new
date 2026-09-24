@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { check, STATUS, CRITICALITY } from '../lib/result.mjs';
 import { git, run, fileMode, readJsonSafe } from '../lib/probes.mjs';
+import { activationGateHolds } from '../systemd/units.mjs';
 
 export function credentialFileModeOk(file, mode) {
   return String(file || '').endsWith('.pub') ? ['644', '600', '400'].includes(String(mode)) : ['600', '400'].includes(String(mode));
@@ -61,7 +62,11 @@ export async function certifyRepository({ role, repoDir, controlHome, manifest, 
   checks.push(check({ id: 'hermes.control-plane-fingerprint', domain: oracleDomain, title: 'current control-plane fingerprint computed', status: fp ? STATUS.PASS : STATUS.FAIL, criticality: CRITICALITY.MANDATORY, evidence: { algorithm: fp?.algorithm, value: fp?.value, paths: manifest.control_plane_fingerprint_paths } }));
   if (role === 'dial-hermes-control') {
     const ev = evaluateDevelopmentUnblock({ repoDir, root: controlHome });
-    checks.push(check({ id: 'hermes.development-gate', domain: oracleDomain, title: `external orchestration gate: ${gate?.status || 'ABSENT'}; development ${ev.unblocked ? 'UNBLOCKED' : 'BLOCKED'}`, status: ev.unblocked ? STATUS.PASS : STATUS.FAIL, criticality: CRITICALITY.MANDATORY, evidence: { failed_checks: Object.entries(ev.checks || {}).filter(([, v]) => !v).map(([k]) => k), qualified_fingerprint: gate?.control_plane_fingerprint?.value || gate?.qualified_control_plane_fingerprint || null, current_fingerprint: fp?.value }, remediation: 'bash deploy/oracle/hermes-codex/qualify-control-plane.sh; soak; finalize-control-plane.sh (requalification after any orchestration/deploy change)', gate: 'EXTERNAL-GATE-HERMES-REQUALIFICATION-001' }));
+    // Before cutover the Netcup activation gate holds the orchestrator, so its heartbeat and requalification
+    // cannot exist yet. That is the same hold the systemd checks report, not a failure; certification after
+    // activation evaluates this gate in full.
+    const held = !ev.unblocked && activationGateHolds('dial-hermes-orchestrator.service', { controlHome });
+    checks.push(check({ id: 'hermes.development-gate', domain: oracleDomain, title: `external orchestration gate: ${gate?.status || 'ABSENT'}; development ${ev.unblocked ? 'UNBLOCKED' : 'BLOCKED'}${held ? ' (held by the Netcup activation gate until cutover)' : ''}`, status: ev.unblocked ? STATUS.PASS : held ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL, criticality: CRITICALITY.MANDATORY, evidence: { failed_checks: Object.entries(ev.checks || {}).filter(([, v]) => !v).map(([k]) => k), qualified_fingerprint: gate?.control_plane_fingerprint?.value || gate?.qualified_control_plane_fingerprint || null, current_fingerprint: fp?.value }, remediation: 'bash deploy/oracle/hermes-codex/qualify-control-plane.sh; soak; finalize-control-plane.sh (requalification after any orchestration/deploy change)', gate: held ? 'NETCUP-ACTIVATION-GATE' : 'EXTERNAL-GATE-HERMES-REQUALIFICATION-001' }));
   } else {
     checks.push(check({ id: 'hermes.development-gate', domain: oracleDomain, title: 'external orchestration gate is certified by the dial-hermes-control role report', status: STATUS.NOT_APPLICABLE, criticality: CRITICALITY.MANDATORY, readiness_class: 'CORE_DEVELOPMENT_REQUIRED', evidence: { note: 'role-local certification avoids cross-host circularity; whole-system aggregation requires the control report' }, gate: null }));
   }
@@ -76,13 +81,16 @@ export async function certifyRepository({ role, repoDir, controlHome, manifest, 
   const sec = 'Security';
   const grep = run('git', ['grep', '-lE', '(sk-[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16})', '--', '.', ':!node_modules', ':!tests/orchestration-operations-plane.test.mjs'], { cwd: repoDir, timeoutMs: 60000 });
   checks.push(check({ id: 'security.no-tracked-secrets', domain: sec, title: 'no secret-pattern strings in tracked files', status: grep.output.trim() ? STATUS.FAIL : STATUS.PASS, criticality: CRITICALITY.MANDATORY, evidence: { command: 'git grep -lE <secret patterns>', files: grep.output ? grep.output.split('\n') : [] }, severity: grep.output.trim() ? 'P0' : null, remediation: 'rotate and purge' }));
-  const tracked = run('sh', ['-c', "git ls-files | grep -iE '(^|/)\\.env($|\\.)|\\.pem$|\\.key$|id_rsa|creds\\.json$' || true"], { cwd: repoDir, timeoutMs: 20000 });
+  const tracked = run('sh', ['-c', "git ls-files | grep -iE '(^|/)\\.env($|\\.)|\\.pem$|\\.key$|id_rsa|creds\\.json$' | grep -viE '(^|/)\\.env\\.(example|sample|template)$' || true"], { cwd: repoDir, timeoutMs: 20000 });
   checks.push(check({ id: 'security.no-tracked-secret-files', domain: sec, title: 'no .env/.pem/.key/creds files tracked', status: tracked.output.trim() ? STATUS.FAIL : STATUS.PASS, criticality: CRITICALITY.MANDATORY, evidence: { command: tracked.command, files: tracked.output ? tracked.output.split('\n') : [] } }));
   if (fs.existsSync(controlHome)) {
     const secretsDir = path.join(controlHome, 'secrets');
     const bad = [];
+    // A credential directory (a provider's own config home) is owner-only at 700, which already shields
+    // what the provider keeps inside it; its contents follow that provider's layout, not these file rules.
     if (fs.existsSync(secretsDir)) for (const f of fs.readdirSync(secretsDir)) {
       const m = fileMode(path.join(secretsDir, f));
+      if (m.isDir) { if (m.mode !== '700') bad.push({ file: f, mode: m.mode, classification: 'SECRET_DIRECTORY' }); continue; }
       const isPublicKey = f.endsWith('.pub');
       if (!credentialFileModeOk(f, m.mode)) bad.push({ file: f, mode: m.mode, classification: isPublicKey ? 'PUBLIC_KEY' : 'SECRET' });
     }

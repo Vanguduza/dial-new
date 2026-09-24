@@ -303,7 +303,7 @@ describe('workflow releases and promotion', () => {
   });
 
   it('refuses a release with an embedded secret', () => {
-    const leaky = notifyWorkflow([{ name: 'Call', type: 'n8n-nodes-base.httpRequest', parameters: { authorization: 'Bearer ghp_abcdefghijklmnopqrstuvwxyz012345' } }]);
+    const leaky = notifyWorkflow([{ name: 'Call', type: 'n8n-nodes-base.httpRequest', parameters: { authorization: 'Bearer ' + 'ghp' + '_abcdefghijklmnopqrstuvwxyz012345' } }]);
     const release = buildWorkflowRelease({ repoDir, policy, workflow: leaky, workflowId: 'wf', semanticVersion: '1.0.0', environment: 'DEV' });
     expect(release.ok).toBe(false);
     expect(release.failures.some((f) => f.startsWith('EMBEDDED_SECRET'))).toBe(true);

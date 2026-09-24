@@ -1,0 +1,9 @@
+[Unit]
+Description=DIAL state-aware housekeeping lifecycle trigger
+
+[Path]
+PathExists=@@TRIGGER_PATH@@
+Unit=dial-housekeeping.service
+
+[Install]
+WantedBy=default.target

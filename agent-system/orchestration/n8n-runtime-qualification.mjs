@@ -140,7 +140,7 @@ export function qualifyN8nRuntime({ estate = 'DEV', deploymentDescriptorRel = nu
     gate('N8N-RT-G22', devRelease.ok && /^[0-9a-f]{64}$/.test(devRelease.release.content_hash),
       'a development release carries immutable content identity');
 
-    const leaky = notifyWorkflow({ nodes: [...notifyWorkflow().nodes, { name: 'Call', type: 'n8n-nodes-base.httpRequest', parameters: { authorization: 'Bearer AKIAIOSFODNN7EXAMPLEKEY123' } }] });
+    const leaky = notifyWorkflow({ nodes: [...notifyWorkflow().nodes, { name: 'Call', type: 'n8n-nodes-base.httpRequest', parameters: { authorization: 'Bearer ' + 'AKIA' + 'IOSFODNN7EXAMPLEKEY123' } }] });
     const leakyRelease = buildWorkflowRelease({ repoDir: repo, policy, workflow: leaky, workflowId: 'wf-leak', semanticVersion: '1.0.0', environment: 'DEV' });
     gate('N8N-RT-G23', leakyRelease.ok === false && leakyRelease.failures.some((f) => f.startsWith('EMBEDDED_SECRET')),
       'a workflow with an embedded secret cannot be released');

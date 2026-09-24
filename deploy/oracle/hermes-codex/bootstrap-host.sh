@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# DIAL Hermes external runtime host bootstrap.
-# Run as the normal SSH user on Ubuntu 24.04 ARM64 with passwordless sudo.
+# DIAL Hermes control-authority host bootstrap (provider-neutral; Netcup/Oracle compatible).
+# Run as the normal service/SSH user on Ubuntu 24.04 x86_64 or ARM64 with passwordless sudo.
 # This script deliberately does NOT authenticate GitHub, Codex, Hermes or Claude.
 
 if [[ "$(uname -s)" != "Linux" ]]; then echo "ERROR: Linux is required" >&2; exit 1; fi
 ARCH="$(uname -m)"
-if [[ "$ARCH" != "aarch64" && "$ARCH" != "arm64" ]]; then echo "WARNING: expected Oracle Ampere ARM64; detected $ARCH" >&2; fi
+case "$ARCH" in
+  x86_64|amd64|aarch64|arm64) ;;
+  *) echo "ERROR: unsupported architecture $ARCH (expected x86_64/amd64/aarch64/arm64)" >&2; exit 1 ;;
+esac
+if [[ -r /etc/os-release ]]; then
+  . /etc/os-release
+  [[ "${ID:-}" == "ubuntu" && "${VERSION_ID:-}" == "24.04" ]] || { echo "ERROR: Ubuntu 24.04 is required; detected ${PRETTY_NAME:-unknown}" >&2; exit 1; }
+fi
 command -v sudo >/dev/null 2>&1 || { echo "ERROR: sudo is required" >&2; exit 1; }
 
 SVC_USER="${DIAL_SERVICE_USER:-$USER}"
@@ -21,13 +28,25 @@ export PATH="$SAFE_PATH" DIAL_REPO_DIR
   exit 1
 }
 
+# Repository-pinned installers (Antigravity, Context7 and other reviewed scripts) are
+# resolved relative to the canonical repository. Fresh-image bootstrap may start from
+# /root or another cwd, so enter the repository explicitly before convergence.
+cd "$DIAL_REPO_DIR"
+
 # Node is the only bootstrap interpreter. Its official release tarball is installed by the same exact
 # architecture pins recorded in supply-chain/PINS.json; every other package/runtime is delegated to the
 # detect-first converger. Authentication remains a separate explicit --auth owner action.
 if ! command -v node >/dev/null 2>&1 || ! node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 22 ? 0 : 1)'; then
   bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-pinned-node.sh"
 fi
-node "$DIAL_REPO_DIR/ops/development-bootstrap/bootstrap.mjs" --apply --role dial-hermes-control --profile CORE_DEVELOPMENT --repo "$DIAL_REPO_DIR"
+# The canonical installers run repository code (agent-system/orchestration imports pg and friends), so
+# install the repository's own dependencies from its lockfile first. Install scripts stay off: only
+# esbuild/workerd/fsevents declare them and none is needed by the control host.
+(cd "$DIAL_REPO_DIR" && npm ci --ignore-scripts --no-audit --no-fund)
+# The post-apply verdict is a report: before cutover it cannot be GREEN (credentials, activation gate). The
+# idempotent state layout below still runs; the verdict's exit code is returned at the end.
+apply_rc=0
+node "$DIAL_REPO_DIR/ops/development-bootstrap/bootstrap.mjs" --apply --role dial-hermes-control --profile CORE_DEVELOPMENT --repo "$DIAL_REPO_DIR" || apply_rc=$?
 
 sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control
 for rel in \
@@ -41,6 +60,9 @@ for rel in \
   sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" "/var/lib/dial-control/$rel"
 done
 sudo loginctl enable-linger "$SVC_USER" || true
+
+DIAL_SERVICE_USER="$SVC_USER" DIAL_HOUSEKEEPING_HOST_ID="${DIAL_HERMES_HOST_ID:-dial-control}" \
+  bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh"
 
 cat <<EOF
 
@@ -64,3 +86,5 @@ through dial-hermes-submit, not through an ad-hoc project-local session.
 
 Do not export OPENAI_API_KEY, CODEX_API_KEY or ANTHROPIC_API_KEY into the subscription-runtime service environment.
 EOF
+
+if [[ "$apply_rc" -ne 0 ]]; then echo "BOOTSTRAP_APPLY_VERDICT_NOT_GREEN rc=$apply_rc (layout installed; see the post-apply verdict above)" >&2; exit "$apply_rc"; fi

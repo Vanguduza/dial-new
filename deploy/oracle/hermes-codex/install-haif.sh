@@ -65,7 +65,8 @@ Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
-PrivateDevices=true
+# PrivateDevices is omitted: a systemd user unit cannot build a private /dev where unprivileged user namespaces
+# are restricted (Ubuntu 24.04 on Dial Control: 218/CAPABILITIES). Owner decision 2026-09-24; all other hardening stays.
 ProtectSystem=strict
 ProtectHome=read-only
 ReadOnlyPaths=$SHARED_HOME/current

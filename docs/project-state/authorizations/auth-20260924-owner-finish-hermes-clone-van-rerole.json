@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "authorization_id": "auth-20260924-owner-finish-hermes-clone-van-rerole",
+  "project": "dial",
+  "authority": "OWNER_EXPLICIT",
+  "owner_instruction_sha256": "79811018f2228c63a6487f9bda17fd07c3fe4f60e75bcc96ed5f0c68b56b419d",
+  "owner_instruction_excerpt": "now finish hermes clone and convertion to van trading core tht fits in the topology as required\none oci sin in\nI authorize reformatting dial-hermes-control and terminating old van-trading-core, keep only the Hermes clone and cutover plus a VAN backup\n(confirmed: Full re-role, keep backups only \u2014 no old boot volume preserved)\nCarries out auth-20260923-owner-estate-rebuild-hermes-becomes-van: finish the Hermes cutover to Netcup; capture VAN state from the old van-trading-core to Dial Control; in one owner OCI sign-in format dial-hermes-control in place as van-trading-core (Bastion session installs Dial Control access), swap the estate and terminate the old van-trading-core; then VAN's own bootstrap (pinned to an exact VAN commit), restore and qualify. VAN authority stays with the VAN repository; DIAL supplies only the topology around it (overlay 10.77.0.4, commander reached as van-trading-core on 9133).",
+  "base_sha": "572ec45e0d2be3973bd819cb305ef19f2b03abaa",
+  "source": {
+    "kind": "owner_session_instruction",
+    "channel": "claude-code",
+    "request_id": "claude-code-20260924-finish-hermes-clone-van-rerole",
+    "owner_attested": true
+  },
+  "issued_at_utc": "2026-09-24T10:40:00Z",
+  "branch_scope": "gpt/netcup-hermes-control-integrated-20260921",
+  "authorized_paths": [
+    ".github/workflows/netcup-admin-oidc.yml",
+    "deploy/hybrid/estate-topology.json",
+    "deploy/netcup/hermes-control/*",
+    "deploy/oracle/resource-fabric/harden-oracle-peer.sh",
+    "docs/project-state/authorizations/auth-20260924-owner-finish-hermes-clone-van-rerole.json",
+    "tests/network-hardening.test.mjs",
+    "tests/development-bootstrap.test.mjs"
+  ],
+  "change_classes": [
+    "hermes_migration_cutover",
+    "migration_source_formatted_as_van_trading_core",
+    "van_state_migration",
+    "terminate_previous_van_trading_core",
+    "estate_topology_owner_correction"
+  ],
+  "material_scope_expansion": false,
+  "feature_removal": false,
+  "business_model_change": false,
+  "security_authority_change": false,
+  "owner_control_boundary_change": false,
+  "legal_position_change": false,
+  "money_or_custody_model_change": false,
+  "locked_provider_change": false,
+  "reusable": false,
+  "revoked": false
+}

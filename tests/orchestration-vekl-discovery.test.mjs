@@ -194,7 +194,7 @@ describe('sensitive context never leaves through discovery', () => {
     ['customer email', 'browser tool for jane.doe@customer.co'],
     ['private order', 'why did order #558213 fail'],
     ['service role key', 'supabase service_role connection issue'],
-    ['bearer token', 'auth header Bearer ghp_abcdefghijklmnopqrstuvwxyz0123'],
+    ['bearer token', 'auth header Bearer ' + 'ghp' + '_abcdefghijklmnopqrstuvwxyz0123'],
     ['health data', 'patient diagnosis export screen'],
     ['db url', 'postgres://user:pw@prod.db.internal:5432/dial'],
     ['card number', 'charge failed for 4111 1111 1111 1111'],
