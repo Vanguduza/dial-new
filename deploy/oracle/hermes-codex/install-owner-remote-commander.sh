@@ -11,7 +11,8 @@ SLICE="dial-owner-commander.slice"
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
 
-[[ "$(hostname)" == "$EXPECTED_HOST" ]] || fail "must run on $EXPECTED_HOST; got $(hostname)"
+# The control role runs on the Oracle A1 (dial-hermes-control) or, after migration, on Netcup (dial-control).
+[[ "$(hostname)" == "$EXPECTED_HOST" || "$(hostname)" == dial-control ]] || fail "must run on $EXPECTED_HOST or dial-control; got $(hostname)"
 command -v npm >/dev/null 2>&1 || fail "npm is required"
 command -v node >/dev/null 2>&1 || fail "node is required"
 [[ -f "$SPEC/package.json" && -f "$SPEC/package-lock.json" ]] || fail "canonical Commander lock files missing"

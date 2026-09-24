@@ -9,6 +9,9 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME HERMES_HOME CODEX_HOME
 fail(){ echo "ERROR: $*" >&2; exit 1; }
+# Netcup activation gate (deploy/netcup/hermes-control/activation-gate.sh): units are installed and enabled
+# but may not start before cutover, so a start that the gate skipped is expected, not a failure.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 warn(){ echo "WARNING: $*" >&2; }
 
 [[ -f "$DIAL_REPO_DIR/package.json" ]] || fail "DIAL repository not found at $DIAL_REPO_DIR"
@@ -212,7 +215,8 @@ EOF
   systemctl --user enable --now "$GATEWAY_UNIT" || warn "Hermes gateway unit $GATEWAY_UNIT could not be enabled yet."
 else
   warn "Hermes gateway systemd unit was not discovered; process-recovery soak will remain blocked until it exists."
-  hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
+  # A gateway started outside systemd would bypass the activation gate and compete with the live one.
+  activation_gated && warn "Hermes gateway start deferred by the Netcup activation gate." || hermes gateway start || warn "Hermes gateway did not start yet; start it after runtime activation."
 fi
 normalize_codex_config
 
@@ -223,14 +227,15 @@ bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-gateway.sh"
 # mandatory provider-first admission boundary, signed venue guard and private
 # three-node MCP runtime before enabling the development orchestrator service.
 bash "$DIAL_REPO_DIR/deploy/oracle/execution-fabric/install-control-runtime.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/execution-fabric/qualify-execution-fabric.sh"
+# Qualification needs running services; behind the activation gate it runs at activation instead.
+activation_gated && warn "Execution fabric qualification deferred by the Netcup activation gate." || bash "$DIAL_REPO_DIR/deploy/oracle/execution-fabric/qualify-execution-fabric.sh"
 
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-external-orchestrator.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-engineering-research.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-operator-status-publisher.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-hermes-local-mcp-plane.sh"
 bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/install-shared-project-memory-fabric.sh"
-bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh"
+activation_gated && warn "Hermes local MCP qualification deferred by the Netcup activation gate." || bash "$DIAL_REPO_DIR/deploy/oracle/hermes-codex/qualify-hermes-local-mcp-plane.sh"
 
 cat <<'EOF'
 

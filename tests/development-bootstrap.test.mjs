@@ -527,6 +527,11 @@ describe('DIAL development bootstrap closure', () => {
     expect(gate).toContain('PREFIXES=(dial- hermes- dde-)');
     expect(gate).toContain('ConditionPathExists=%s');
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/postboot-converge.sh'), 'utf8')).toContain('activation-gate.sh" open');
+    for (const rel of ['install-operations-plane.sh', 'install-external-orchestrator.sh', 'install-control-plane.sh']) {
+      expect(fs.readFileSync(path.join(repoDir, 'deploy/oracle/hermes-codex', rel), 'utf8')).toContain('activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf"');
+    }
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/oracle/hermes-codex/install-control-plane.sh'), 'utf8')).toContain('activation_gated && warn "Hermes gateway start deferred');
+    expect(fs.statSync(path.join(repoDir, 'deploy/netcup/hermes-control/dial-github-admin')).mode & 0o111).not.toBe(0);
     // Rebuilt peers boot without Node; housekeeping must bootstrap the SHA-pinned Node before installing.
     expect(housekeepingEstate).toContain('NODE_INSTALLER="${DIAL_PINNED_NODE_INSTALLER:-/usr/local/lib/dial-control/install-pinned-node.sh}"');
     expect(housekeepingEstate).toContain('command -v node >/dev/null 2>&1 || bash /tmp/dial-housekeeping-bundle/deploy/oracle/hermes-codex/install-pinned-node.sh');

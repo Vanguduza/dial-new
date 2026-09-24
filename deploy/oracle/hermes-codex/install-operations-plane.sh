@@ -6,6 +6,9 @@ DIAL_REPO_DIR="${DIAL_REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." &
 DIAL_CONTROL_HOME="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME
 fail(){ echo "ERROR: $*" >&2; exit 1; }
+# Netcup activation gate (deploy/netcup/hermes-control/activation-gate.sh): units are installed and enabled
+# but may not start before cutover, so a start that the gate skipped is expected, not a failure.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operations-plane.mjs" ]] || fail "operations-plane.mjs is missing"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/operations-api.mjs" ]] || fail "operations-api.mjs is missing"
 for cmd in node systemctl; do command -v "$cmd" >/dev/null || fail "$cmd is required"; done
@@ -63,8 +66,12 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now dial-hermes-operations.service
 sleep 1
-systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service did not start"
-"$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/operations-plane.mjs" status
+if activation_gated; then
+  echo "dial-hermes-operations.service installed; start deferred by the Netcup activation gate"
+else
+  systemctl --user is-active --quiet dial-hermes-operations.service || fail "dial-hermes-operations.service did not start"
+  "$NODE_BIN" "$DIAL_REPO_DIR/agent-system/orchestration/operations-plane.mjs" status
+fi
 cat <<'EOF'
 
 Auxiliary Hermes operations plane installed.

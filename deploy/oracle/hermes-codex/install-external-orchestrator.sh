@@ -10,6 +10,9 @@ CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 export DIAL_REPO_DIR DIAL_CONTROL_HOME HERMES_HOME CODEX_HOME
 
 fail(){ echo "ERROR: $*" >&2; exit 1; }
+# Netcup activation gate (deploy/netcup/hermes-control/activation-gate.sh): units are installed and enabled
+# but may not start before cutover, so a start that the gate skipped is expected, not a failure.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 
 [[ -f "$DIAL_REPO_DIR/package.json" ]] || fail "DIAL repository not found at $DIAL_REPO_DIR"
 [[ -f "$DIAL_REPO_DIR/agent-system/orchestration/external-orchestrator.mjs" ]] || fail "external-orchestrator.mjs is missing"
@@ -74,10 +77,13 @@ systemctl --user daemon-reload
 systemctl --user enable --now dial-hermes-orchestrator.service
 
 sleep 1
-systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service did not start"
-
-status="$(${NODE_BIN} "$DIAL_REPO_DIR/agent-system/orchestration/external-orchestrator.mjs" status)"
-printf '%s\n' "$status"
+if activation_gated; then
+  echo "dial-hermes-orchestrator.service installed; start deferred by the Netcup activation gate"
+else
+  systemctl --user is-active --quiet dial-hermes-orchestrator.service || fail "dial-hermes-orchestrator.service did not start"
+  status="$(${NODE_BIN} "$DIAL_REPO_DIR/agent-system/orchestration/external-orchestrator.mjs" status)"
+  printf '%s\n' "$status"
+fi
 
 echo
 printf '%s\n' "External Hermes orchestration service installed."
