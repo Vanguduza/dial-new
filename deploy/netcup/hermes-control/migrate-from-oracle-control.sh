@@ -47,9 +47,13 @@ copy_state(){
   # hosts (old ubuntu=1001 is vanforge on Netcup), and preserving numeric ids left the live control home
   # owned by vanforge when a pass stopped before the chown below (2026-09-24).
   tolerate_live sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH" --rsync-path='sudo -n rsync' \
-    --exclude 'github-oidc/' --exclude 'bootstrap/' \
+    --exclude 'github-oidc/' --exclude 'bootstrap/' --exclude '/execution/fabric-audit.jsonl' \
     "${OLD_USER}@${OLD_HOST}:/var/lib/dial-control/" "$CONTROL_HOME/"
-  sudo chown -R "$USER:$USER" "$CONTROL_HOME"
+  # The execution-fabric audit is append-only (chattr +a, phase5-install-providers.sh): root can
+  # neither chown it nor rsync-replace it. Dial Control keeps its own audit trail (excluded above;
+  # the old host's stays on the retained source), and only entries with the wrong owner are chowned,
+  # which skips the service user's own append-only files.
+  sudo find "$CONTROL_HOME" -xdev ! -user "$USER" -exec chown -h "$USER:$USER" {} +
   sudo chmod 0700 "$CONTROL_HOME"
 }
 copy_identity(){

@@ -522,6 +522,9 @@ describe('DIAL development bootstrap closure', () => {
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain('if [[ "$rc" == 24 && "$MODE" == "--prepare" ]]; then');
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain('sudo rsync -aH --chown="$USER:$USER" -e "$RSYNC_SSH"');
     expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).not.toContain('--numeric-ids');
+    // Append-only audit files refuse chown/rename even for root (probed on Dial Control 2026-09-24).
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).toContain("--exclude '/execution/fabric-audit.jsonl'");
+    expect(fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/migrate-from-oracle-control.sh'), 'utf8')).not.toContain('sudo chown -R "$USER:$USER" "$CONTROL_HOME"');
     // Owner decision: install now, services off. Units are gated on a marker that only activation creates.
     const gate = fs.readFileSync(path.join(repoDir, 'deploy/netcup/hermes-control/activation-gate.sh'), 'utf8');
     expect(gate).toContain('PREFIXES=(dial- hermes- dde-)');
