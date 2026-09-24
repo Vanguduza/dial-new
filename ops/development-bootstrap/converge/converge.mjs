@@ -60,7 +60,7 @@ export function sudoAvailable() {
 function sha256File(file) { return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'); }
 
 function downloadToFile(url, dest) {
-  return run('curl', ['--proto', '=https', '--tlsv1.2', '--fail', '--silent', '--show-error', '--location', '-o', dest, url], { timeoutMs: 120000 });
+  return run('curl', ['--proto', '=https', '--tlsv1.2', '--fail', '--silent', '--show-error', '--location', '--create-dirs', '-o', dest, url], { timeoutMs: 120000 });
 }
 
 // ---- per-method actions -------------------------------------------------------------------------------
@@ -82,12 +82,15 @@ function aptSignedRepoAction({ item, pin }) {
   const probe = versionProbe(item.binary, item.version_args || ['--version'], { minimum: item.minimum_version });
   const ready = pinReady(pin);
   const keyringName = `${item.pin_ref}.gpg`;
+  // The converger runs as the service user: fetch and verify into the user's own cache; only the root dearmor
+  // step writes under /usr/share/keyrings, with root's gpg home (sudo -E would otherwise keep the user's HOME).
+  const armored = path.join(os.homedir(), '.cache/dial-bootstrap', `${item.pin_ref}-keyring.armored`);
   return {
     id: `converge.${item.id}`, item: item.id, method: 'APT_SIGNED_REPO', package: pin?.package || null, pinned_version: pin?.version || null,
     needed: !(probe.installed && probe.satisfies), pin_ready: ready.ready, missing_pin: ready.missing, requires_root: true,
     steps: ready.ready ? [
-      { kind: 'DOWNLOAD_VERIFY', url: pin.keyring_url, sha256: pin.keyring_sha256, dest: `/usr/share/keyrings/${keyringName}.armored` },
-      { kind: 'ROOT', command: ['gpg', '--batch', '--yes', '--dearmor', '-o', `/usr/share/keyrings/${keyringName}`, `/usr/share/keyrings/${keyringName}.armored`] },
+      { kind: 'DOWNLOAD_VERIFY', url: pin.keyring_url, sha256: pin.keyring_sha256, dest: armored },
+      { kind: 'ROOT', command: ['gpg', '--homedir', '/root/.gnupg', '--batch', '--yes', '--dearmor', '-o', `/usr/share/keyrings/${keyringName}`, armored] },
       { kind: 'ROOT_WRITE', file: `/etc/apt/sources.list.d/dial-${item.pin_ref}.list`, content: `${pin.repo_line.replace('<arch>', os.arch() === 'arm64' ? 'arm64' : 'amd64')}\n` },
       { kind: 'ROOT', command: ['apt-get', 'update'] },
       { kind: 'ROOT', command: ['apt-get', 'install', '-y', '--no-install-recommends', `${pin.package}=${pin.version}`] },

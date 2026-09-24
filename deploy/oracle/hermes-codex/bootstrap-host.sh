@@ -43,7 +43,10 @@ fi
 # install the repository's own dependencies from its lockfile first. Install scripts stay off: only
 # esbuild/workerd/fsevents declare them and none is needed by the control host.
 (cd "$DIAL_REPO_DIR" && npm ci --ignore-scripts --no-audit --no-fund)
-node "$DIAL_REPO_DIR/ops/development-bootstrap/bootstrap.mjs" --apply --role dial-hermes-control --profile CORE_DEVELOPMENT --repo "$DIAL_REPO_DIR"
+# The post-apply verdict is a report: before cutover it cannot be GREEN (credentials, activation gate). The
+# idempotent state layout below still runs; the verdict's exit code is returned at the end.
+apply_rc=0
+node "$DIAL_REPO_DIR/ops/development-bootstrap/bootstrap.mjs" --apply --role dial-hermes-control --profile CORE_DEVELOPMENT --repo "$DIAL_REPO_DIR" || apply_rc=$?
 
 sudo install -d -m 0700 -o "$SVC_USER" -g "$SVC_USER" /var/lib/dial-control
 for rel in \
@@ -83,3 +86,5 @@ through dial-hermes-submit, not through an ad-hoc project-local session.
 
 Do not export OPENAI_API_KEY, CODEX_API_KEY or ANTHROPIC_API_KEY into the subscription-runtime service environment.
 EOF
+
+if [[ "$apply_rc" -ne 0 ]]; then echo "BOOTSTRAP_APPLY_VERDICT_NOT_GREEN rc=$apply_rc (layout installed; see the post-apply verdict above)" >&2; exit "$apply_rc"; fi

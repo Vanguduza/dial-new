@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Netcup pre-cutover: units install and enable, but the activation gate holds their start.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${DIAL_REPO_DIR:-/home/ubuntu/dial-new}"
 CONTROL="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
@@ -81,7 +83,7 @@ chmod 0700 "$HOME/.local/bin/dial-local-sandbox-run"
 systemctl --user daemon-reload
 systemctl --user enable --now dial-venue-guard.service
 sleep 1
-systemctl --user is-active --quiet dial-venue-guard.service
-printf 'PHASE5_PROVIDERS_INSTALLED guard=%s registry=/etc/dial/provider-registry.json\n' "$(systemctl --user is-active dial-venue-guard.service)"
+activation_gated || systemctl --user is-active --quiet dial-venue-guard.service
+printf 'PHASE5_PROVIDERS_INSTALLED guard=%s registry=/etc/dial/provider-registry.json\n' "$(systemctl --user is-active dial-venue-guard.service || true)"
 echo 'PHASE5_CLOUDFLARE_ACCESS=NOT_CONFIGURED owner action required'
 echo 'PHASE5_LIVE_ORCHESTRATOR_ADMISSION=PROVIDER_FIRST_HERMES_EXECUTOR'

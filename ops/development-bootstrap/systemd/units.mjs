@@ -1,6 +1,19 @@
 import { check, STATUS, CRITICALITY } from '../lib/result.mjs';
 import { systemdAvailable, unitState, run } from '../lib/probes.mjs';
 import { itemsForRole } from '../lib/manifest.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+
+// Netcup pre-cutover activation gate (deploy/netcup/hermes-control/activation-gate.sh): dial-*, hermes-* and dde-*
+// user units are installed and enabled but held by ConditionPathExists on the activation marker. An enabled unit
+// held by the gate is owner-gated (the cutover), never PASS; a unit that is not installed/enabled still FAILs.
+export function activationGateHolds(unit, { home = os.homedir(), controlHome = process.env.DIAL_CONTROL_HOME || '/var/lib/dial-control' } = {}) {
+  const m = /^(dial-|hermes-|dde-).*\.(service|timer|path|socket)$/.exec(unit);
+  if (!m) return false;
+  const dropIn = path.join(home, '.config/systemd/user', `${m[1]}.${m[2]}.d`, '10-dial-netcup-activation-gate.conf');
+  return fs.existsSync(dropIn) && !fs.existsSync(path.join(controlHome, 'state/netcup-activated'));
+}
 
 const HARDENING_PROPS = ['NoNewPrivileges', 'ProtectSystem', 'ProtectHome', 'PrivateTmp', 'ReadWritePaths', 'ReadOnlyPaths', 'UnsetEnvironment', 'Environment', 'EnvironmentFiles', 'ConditionResult', 'ActiveState'];
 const SECRET_ENV = ['OPENAI_API_KEY', 'CODEX_API_KEY', 'ANTHROPIC_API_KEY'];
@@ -72,7 +85,9 @@ export function certifySystemd({ role, manifest, repoDir = null }) {
     const st = unitState(s.unit);
     const healthy = st.active === 'active' && (st.enabled === 'enabled' || st.enabled === 'static' || st.enabled === 'linked');
     const conditionGated = st.active === 'inactive' && s.inactive_means === 'OWNER_ACTION_REQUIRED (ConditionPathExists on the device credential until the owner pairs)';
-    checks.push(check({ id: `systemd.${s.unit}`, domain, title: `${s.unit} enabled + active`, status: healthy ? STATUS.PASS : conditionGated ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL, criticality: s.criticality, readiness_class: s.readiness_class, evidence: { command: st.command, active: st.active, enabled: st.enabled }, remediation: `bash ${s.installer}`, gate: conditionGated ? 'AUTH-GATE-DESKTOP-COMMANDER-001' : null }));
+    const activationGated = !healthy && st.active === 'inactive' && st.enabled === 'enabled' && activationGateHolds(s.unit);
+    const gate = conditionGated ? 'AUTH-GATE-DESKTOP-COMMANDER-001' : activationGated ? 'NETCUP-ACTIVATION-GATE' : null;
+    checks.push(check({ id: `systemd.${s.unit}`, domain, title: `${s.unit} enabled + active${activationGated ? ' (held by the Netcup activation gate until cutover)' : ''}`, status: healthy ? STATUS.PASS : gate ? STATUS.OWNER_ACTION_REQUIRED : STATUS.FAIL, criticality: s.criticality, readiness_class: s.readiness_class, evidence: { command: st.command, active: st.active, enabled: st.enabled }, remediation: activationGated ? 'bash deploy/netcup/hermes-control/postboot-converge.sh --activate (owner cutover)' : `bash ${s.installer}`, gate }));
     if (healthy && !s.unit.endsWith('.timer')) {
       const show = run('systemctl', ['--user', 'show', s.unit, ...HARDENING_PROPS.flatMap((p) => ['-p', p])], { timeoutMs: 5000 });
       const h = evaluateUnitHardening({ show: show.output, repoDir, repoRwExpected: s.repo_rw_expected === true, unit: s.unit });

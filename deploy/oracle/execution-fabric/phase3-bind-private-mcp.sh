@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Netcup pre-cutover: units install and enable, but the activation gate holds their start.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONTROL="${DIAL_CONTROL_HOME:-/var/lib/dial-control}"
 BIND="${DIAL_PRIVATE_MCP_BIND:-${DIAL_CONTROL_OVERLAY_IP:-}}"
@@ -40,6 +42,6 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now dial-private-mcp-bind.service
 sleep 1
-systemctl --user is-active --quiet dial-private-mcp-bind.service
+activation_gated || systemctl --user is-active --quiet dial-private-mcp-bind.service
 curl -fsS "http://${BIND}:${PORT}/health" >/tmp/private-mcp-health.json
 printf 'PHASE3_PRIVATE_MCP_BOUND %s:%s health=%s\n' "$BIND" "$PORT" "$(tr '\n' ' ' </tmp/private-mcp-health.json)"

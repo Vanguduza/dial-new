@@ -592,4 +592,37 @@ describe('DIAL development bootstrap closure', () => {
     execFileSync('bash', ['-n', path.join(repoDir, 'deploy/netcup/hermes-control/rescue-prestage-control-plane.sh')]);
   });
 
+
+  it('resolves the Netcup control host by its declared physical hostname and still refuses a mismatched live hostname', async () => {
+    const { resolveHostRole } = await import('../ops/development-bootstrap/roles/role-guard.mjs');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hostrole-'));
+    const roleFile = path.join(dir, 'host-role');
+    fs.writeFileSync(roleFile, 'ROLE=CONTROL_AUTHORITY\nHOSTNAME=dial-control\nNODE_ID=dial-control\nFABRIC=PROVIDER_FIRST_EXECUTION_FABRIC\nREVISION=2.0\n', { mode: 0o644 });
+    expect(resolveHostRole({ env: {}, roleFile, hostname: 'dial-control' })).toMatchObject({ role: 'dial-hermes-control', source: 'role_file' });
+    expect(resolveHostRole({ env: {}, roleFile, hostname: 'vekl-worker' }).role).toBe('UNKNOWN');
+    fs.writeFileSync(roleFile, 'ROLE=BACKGROUND_COORDINATOR\nHOSTNAME=dial-control\n', { mode: 0o644 });
+    expect(resolveHostRole({ env: {}, roleFile, hostname: 'dial-control' }).role).toBe('UNKNOWN');
+  });
+
+  it('reports units held by the Netcup activation gate as owner-gated only while the marker is absent', async () => {
+    const { activationGateHolds } = await import('../ops/development-bootstrap/systemd/units.mjs');
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'gate-home-'));
+    const controlHome = fs.mkdtempSync(path.join(os.tmpdir(), 'gate-ctl-'));
+    expect(activationGateHolds('dial-hermes-runtime.service', { home, controlHome })).toBe(false);
+    const d = path.join(home, '.config/systemd/user/dial-.service.d');
+    fs.mkdirSync(d, { recursive: true });
+    fs.writeFileSync(path.join(d, '10-dial-netcup-activation-gate.conf'), '[Unit]\n');
+    expect(activationGateHolds('dial-hermes-runtime.service', { home, controlHome })).toBe(true);
+    expect(activationGateHolds('ssh.service', { home, controlHome })).toBe(false);
+    fs.mkdirSync(path.join(controlHome, 'state'));
+    fs.writeFileSync(path.join(controlHome, 'state/netcup-activated'), 'T');
+    expect(activationGateHolds('dial-hermes-runtime.service', { home, controlHome })).toBe(false);
+  });
+
+  it('accepts the declared physical hostname in the host inventory comparison and flags any other', () => {
+    const entry = loadHosts().hosts.find((h) => h.host_id === 'dial-hermes-control');
+    const facts = (hostname) => ({ hostname, architecture: 'x86_64', cpu_total: entry.cpu_total, memory_total_mb: entry.memory_total_mb, private_ipv4: [] });
+    expect(compareHostInventory({ entry, facts: facts('dial-control') }).drift).toEqual([]);
+    expect(compareHostInventory({ entry, facts: facts('van-trading-core') }).drift.map((d) => d.field)).toEqual(['hostname']);
+  });
 });

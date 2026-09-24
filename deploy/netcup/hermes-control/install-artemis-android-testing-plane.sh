@@ -217,6 +217,15 @@ UNIT
 systemctl --user daemon-reload
 systemctl --user enable --now dial-artemis-ui.service dial-artemis-console-proxy.service dial-artemis-supervisor.timer >/dev/null
 
+# Netcup pre-cutover: units are installed and enabled but the activation gate holds their start until
+# postboot-converge --activate; health is proven then, not now.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
+if activation_gated; then
+  echo "ARTEMIS_INSTALL=INSTALLED_ACTIVATION_GATED"
+  echo "ARTEMIS_COMMIT=$ARTEMIS_COMMIT"
+  exit 0
+fi
+
 for unit in dial-artemis-ui.service dial-artemis-console-proxy.service dial-artemis-supervisor.timer; do
   systemctl --user is-active --quiet "$unit" || {
     systemctl --user --no-pager --full status "$unit" >&2 || true

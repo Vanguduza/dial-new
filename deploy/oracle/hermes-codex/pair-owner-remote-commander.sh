@@ -8,7 +8,7 @@ CRED_DIR="$HOME/.desktop-commander-device"
 CRED="$CRED_DIR/device.json"
 UNIT="dial-owner-commander-remote.service"
 
-[[ "$(hostname)" == "$EXPECTED_HOST" ]] || { echo "REFUSE: pairing belongs on $EXPECTED_HOST" >&2; exit 3; }
+[[ "$(hostname)" == "$EXPECTED_HOST" || "$(hostname)" == dial-control ]] || { echo "REFUSE: pairing belongs on $EXPECTED_HOST" >&2; exit 3; }
 [[ -x "$BIN" ]] || { echo "Desktop Commander is not installed at $BIN" >&2; exit 2; }
 mkdir -p "$CRED_DIR"; chmod 700 "$CRED_DIR"
 

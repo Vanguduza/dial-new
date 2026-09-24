@@ -30,7 +30,7 @@ fail(){ echo "ERROR: $*" >&2; exit 1; }
 # local Commander registered but the typed client MCPs absent, which is exactly
 # the state the qualifier reports as RED.
 # ---------------------------------------------------------------------------
-[[ "$(hostname)" == "$EXPECTED_HOST" ]] || fail "must run on ${EXPECTED_HOST}; got $(hostname)"
+[[ "$(hostname)" == "$EXPECTED_HOST" || "$(hostname)" == dial-control ]] || fail "must run on ${EXPECTED_HOST}; got $(hostname)"
 command -v npm >/dev/null 2>&1 || fail "npm is required for the pinned local Desktop Commander MCP runtime"
 command -v python3 >/dev/null 2>&1 || fail "python3 is required"
 python3 -c 'import yaml' 2>/dev/null || fail "python3 PyYAML is required (apt-get install -y python3-yaml)"

@@ -9,7 +9,7 @@ notes=()
 status=GREEN
 fail(){ status=RED; notes+=("$1"); }
 
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "wrong control host"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" || "$(hostname)" == dial-control ]] || fail "wrong control host"
 [[ -f /etc/dial/host-role ]] && grep -q 'ROLE=CONTROL_AUTHORITY' /etc/dial/host-role || fail "host-role missing or not CONTROL_AUTHORITY"
 for slice in dial-hermes.slice dial-survival.slice dial-dev.slice dial-commander.slice; do
   systemctl is-active --quiet "$slice" || fail "$slice inactive"

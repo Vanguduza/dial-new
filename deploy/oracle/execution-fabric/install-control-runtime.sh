@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Netcup pre-cutover: units install and enable, but the activation gate holds their start.
+activation_gated(){ [[ -f "$HOME/.config/systemd/user/dial-.service.d/10-dial-netcup-activation-gate.conf" && ! -e "${DIAL_CONTROL_HOME:-/var/lib/dial-control}/state/netcup-activated" ]]; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOST="${DIAL_HERMES_HOST_ID:-dial-hermes-control}"
-[[ "$(hostname)" == "$HOST" ]] || { echo "REFUSE: execution fabric control runtime belongs on $HOST" >&2; exit 3; }
+# hosts.json: host_id dial-hermes-control runs on Netcup as physical_hostname dial-control.
+[[ "$(hostname)" == "$HOST" || "$(hostname)" == dial-control ]] || { echo "REFUSE: execution fabric control runtime belongs on $HOST (physical host dial-control)" >&2; exit 3; }
 
 bash "$HERE/install-host-role.sh" CONTROL_AUTHORITY
 
@@ -23,6 +26,7 @@ bash "$HERE/phase3-bind-private-mcp.sh"
 bash "$HERE/phase4-install-sandbox.sh"
 bash "$HERE/phase5-install-providers.sh"
 
+if activation_gated; then echo "EXECUTION_FABRIC_CONTROL_RUNTIME=INSTALLED_ACTIVATION_GATED"; exit 0; fi
 systemctl --user is-active --quiet dial-remote-mcp-relay.service
 systemctl --user is-active --quiet dial-private-mcp-bind.service
 systemctl --user is-active --quiet dial-venue-guard.service

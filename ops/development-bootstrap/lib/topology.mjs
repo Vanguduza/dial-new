@@ -24,7 +24,12 @@ export function loadHosts(file = HOSTS_PATH) {
   return parsed;
 }
 
-export function hostEntry(hostId, hosts = loadHosts()) { return (hosts.hosts || []).find((h) => h.host_id === hostId) || null; }
+// A host is named by its canonical host_id or by the physical_hostname hosts.json declares for it
+// (Netcup: host_id dial-hermes-control runs as hostname dial-control).
+export function hostEntry(hostId, hosts = loadHosts()) {
+  const all = hosts.hosts || [];
+  return all.find((h) => h.host_id === hostId) || all.find((h) => h.physical_hostname && h.physical_hostname === hostId) || null;
+}
 export function hostForClass(hostClass, hosts = loadHosts()) {
   const matches = (hosts.hosts || []).filter((h) => h.host_class === hostClass);
   return matches.length === 1 ? matches[0] : null;
@@ -54,7 +59,7 @@ export function compareHostInventory({ entry, facts, memoryTolerance = 0.12 } = 
   const lower = Math.floor(declaredMem * (1 - memoryTolerance));
   if (!(facts.memory_total_mb >= lower && facts.memory_total_mb <= declaredMem * (1 + memoryTolerance))) drift.push({ field: 'memory_total_mb', declared: declaredMem, observed: facts.memory_total_mb, tolerance: memoryTolerance, severity: 'REQUIRED' });
   if (entry.private_ip && !(facts.private_ipv4 || []).includes(entry.private_ip)) drift.push({ field: 'private_ip', declared: entry.private_ip, observed: facts.private_ipv4 || [], severity: 'REQUIRED' });
-  if (entry.host_id !== facts.hostname) drift.push({ field: 'hostname', declared: entry.host_id, observed: facts.hostname, severity: 'REQUIRED' });
+  if (entry.host_id !== facts.hostname && entry.physical_hostname !== facts.hostname) drift.push({ field: 'hostname', declared: entry.physical_hostname || entry.host_id, observed: facts.hostname, severity: 'REQUIRED' });
   return { ok: drift.length === 0, known_host: true, host_id: entry.host_id, host_class: entry.host_class, immutable_role: entry.immutable_role === true, drift };
 }
 

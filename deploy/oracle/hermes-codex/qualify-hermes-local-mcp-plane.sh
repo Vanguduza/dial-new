@@ -6,7 +6,7 @@ HERMES_CONFIG="${HERMES_CONFIG:-${HOME}/.hermes/config.yaml}"
 fail(){ echo "QUALIFICATION RED: $*" >&2; exit 1; }
 pass(){ echo "✓ $*"; }
 
-[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" ]] || fail "wrong host"
+[[ "$(hostname)" == "${DIAL_HERMES_HOST_ID:-dial-hermes-control}" || "$(hostname)" == dial-control ]] || fail "wrong host"
 [[ -f "$HERMES_CONFIG" ]] || fail "Hermes config missing"
 
 python3 - "$HERMES_CONFIG" <<'PY' || exit 1
