@@ -8,13 +8,14 @@
   ],
   "branch": "gpt/netcup-hermes-control-integrated-20260921",
   "changed_files": [
+    ".github/workflows/netcup-admin-oidc.yml",
     "deploy/netcup/hermes-control/install-housekeeping-final-estate.sh",
     "tests/development-bootstrap.test.mjs"
   ],
-  "content_diff_sha256": "7314831cc7b38f56d51e52023b860c67a3d7ca1f653904447256cdc6aa0a865b",
-  "observed_at_utc": "2026-09-24T00:46:59.653052+00:00",
+  "content_diff_sha256": "d8581a0d408b2403e5bbba2402b116dd460f27d695cd1a89888c4db765f01873",
+  "observed_at_utc": "2026-09-24T01:13:55.263828+00:00",
   "repository": "Vanguduza/dial-new",
   "schema_version": 2,
-  "source_parent": "0c85468a23f9515272198783b85007c1c65cd711",
+  "source_parent": "7d6a70aa1d30e73de0d90d63845b021e20689c01",
   "state": "AUTHORIZED_PENDING_COMMIT"
 }

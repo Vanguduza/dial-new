@@ -116,6 +116,7 @@ jobs:
           push_file deploy/netcup/hermes-control/oci-enroll-oracle-estate.sh /usr/local/lib/dial-control/oci-enroll-oracle-estate.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/install-housekeeping-final-estate.sh /usr/local/lib/dial-control/install-housekeeping-final-estate.sh 0755 "bash -n"
           push_file deploy/oracle/resource-fabric/zero-touch-enroll-peer.sh /usr/local/lib/dial-control/zero-touch-enroll-peer.sh 0755 "bash -n"
+          push_file deploy/oracle/hermes-codex/install-pinned-node.sh /usr/local/lib/dial-control/install-pinned-node.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/configure-wireguard-fabric.sh /usr/local/lib/dial-control/configure-wireguard-fabric.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/rotate-bootstrap-identities.sh /usr/local/lib/dial-control/rotate-bootstrap-identities.sh 0755 "bash -n"
           push_file deploy/netcup/hermes-control/retire-oracle-a1-control-role.sh /usr/local/lib/dial-control/retire-oracle-a1-control-role.sh 0755 "bash -n"

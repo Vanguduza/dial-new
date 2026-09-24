@@ -17,7 +17,6 @@ FILES=(
   agent-system/orchestration/housekeeping-gc.mjs
   agent-system/registries/HOUSEKEEPING_POLICY.json
   deploy/oracle/hermes-codex/install-state-aware-housekeeping.sh
-  deploy/oracle/hermes-codex/install-pinned-node.sh
   deploy/oracle/hermes-codex/systemd/dial-housekeeping.service
   deploy/oracle/hermes-codex/systemd/dial-housekeeping.path
   deploy/oracle/hermes-codex/systemd/dial-housekeeping.timer
@@ -28,7 +27,14 @@ done
 
 TMPDIR="$(mktemp -d /tmp/dial-housekeeping-estate.XXXXXX)"
 trap 'rm -rf "$TMPDIR"' EXIT
-tar -C "$REPO" -czf "$TMPDIR/bundle.tar.gz" "${FILES[@]}"
+# The runtime payload is a bounded subset without install-pinned-node.sh; the admin workflow
+# refreshes it beside the other helpers.
+NODE_INSTALLER="${DIAL_PINNED_NODE_INSTALLER:-/usr/local/lib/dial-control/install-pinned-node.sh}"
+[[ -s "$NODE_INSTALLER" ]] || die "missing pinned Node installer: $NODE_INSTALLER"
+install -d "$TMPDIR/bundle/deploy/oracle/hermes-codex"
+tar -C "$REPO" -cf - "${FILES[@]}" | tar -C "$TMPDIR/bundle" -xf -
+install -m 0755 "$NODE_INSTALLER" "$TMPDIR/bundle/deploy/oracle/hermes-codex/install-pinned-node.sh"
+tar -C "$TMPDIR/bundle" -czf "$TMPDIR/bundle.tar.gz" .
 
 # Rebuilt peers (auth-20260923-owner-estate-rebuild-hermes-becomes-van) boot from a bare image
 # without Node; install the repo's SHA-pinned Node before the housekeeping installer needs it.
