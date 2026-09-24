@@ -1,0 +1,94 @@
+name: DIAL supply-chain pin watch
+
+# Watches every PINS.json entry declared in ops/development-bootstrap/supply-chain/WATCH.json for new
+# upstream releases (owner decision auth-20260924-owner-netcup-bootstrap-latest-pins-watch):
+#  - newest stable release within the pinned major, with verification material measured from the artefact;
+#  - newer majors, Desktop Commander (hot-patched) and host-derived pins are reported for owner review only;
+#  - release notes and advisories are VEKL reference evidence, never authority.
+# A change becomes installable only when the owner merges the PR this workflow opens
+# (auth-20260924-delegated-supply-chain-pin-refresh). Nothing is installed here.
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+    inputs:
+      only:
+        description: Optional comma-separated pin names to check (default all)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dial-supply-chain-watch-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    if: ${{ github.repository == 'Vanguduza/dial-new' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve and apply latest-within-major pins
+        id: watch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          set -euo pipefail
+          args=(--apply --report ops/development-bootstrap/supply-chain/WATCH_REPORT.json --summary "$RUNNER_TEMP/summary.md")
+          [[ -z "${ONLY:-}" ]] || args+=(--only "$ONLY")
+          node ops/development-bootstrap/supply-chain/watch-pins.mjs "${args[@]}"
+          cat "$RUNNER_TEMP/summary.md" >>"$GITHUB_STEP_SUMMARY"
+          if git diff --quiet -- ops/development-bootstrap/supply-chain/PINS.json; then
+            echo "changed=false" >>"$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify the updated pins
+        if: steps.watch.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx vitest run tests/supply-chain-watch.test.mjs tests/development-bootstrap.test.mjs
+
+      - name: Open or update the owner-approval PR
+        if: steps.watch.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          branch="supply-chain/pin-updates-$(date -u +%Y%m%d)"
+          git config user.name 'dial-supply-chain-watch'
+          git config user.email 'dial-supply-chain-watch@users.noreply.github.com'
+          git switch -c "$branch"
+          git add -A ops/ deploy/ .github/ tests/
+          # The Project Truth pre-commit hook records the ledger entry under the delegated authorization.
+          updated="$(jq -r '.entries[] | select(.action=="UPDATED") | "- \(.pin): \(.current) -> \(.candidate)"' ops/development-bootstrap/supply-chain/WATCH_REPORT.json)"
+          git -c core.hooksPath=.githooks commit \
+            -m "Supply chain: refresh pins to latest within major" \
+            -m "$updated" \
+            -m "Authorization: auth-20260924-delegated-supply-chain-pin-refresh (owner approves by merging)."
+          git push --force-with-lease -u origin "$branch"
+          {
+            cat "$RUNNER_TEMP/summary.md"
+            echo
+            echo "Opened by the DIAL supply-chain watch. CI does not start automatically on PRs opened with the workflow token; re-run checks before merging."
+          } >"$RUNNER_TEMP/body.md"
+          if gh pr view "$branch" --json number >/dev/null 2>&1; then
+            gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --base "$BASE" --head "$branch" --title "Supply chain: pin refresh $(date -u +%Y-%m-%d)" --body-file "$RUNNER_TEMP/body.md"
+          fi
