@@ -13,6 +13,12 @@
 # OIDC controller. Break-glass for this host is the Netcup SCP console, which is not sshd.
 # So SSH is key-only and accepted only on the private overlay; the public surface is the
 # WireGuard port (silent to unauthenticated packets) and the OIDC controller.
+#
+# The controller stays plain HTTP by decision: each request is bound to its body hash through the
+# OIDC audience, single-use (jti replay refusal) and pinned to repository/ref/workflow, so a
+# network attacker cannot forge, alter or replay a command; its responses are published in this
+# public repository's Actions logs anyway. A pinned self-signed key would add no integrity and
+# would lock every workflow out after a rebuild until a new pin was committed.
 set -Eeuo pipefail
 
 MODE="${1:-verify}"
@@ -20,7 +26,6 @@ WG_IF="${DIAL_WG_INTERFACE:-wg-dial}"
 WG_NET="${DIAL_WG_NETWORK:-10.77.0.0/24}"
 WG_PORT="${DIAL_WG_PORT:-51820}"
 OIDC_PORT="${DIAL_GITHUB_OIDC_PORT:-9134}"
-OIDC_TLS_PORT="${DIAL_GITHUB_OIDC_TLS_PORT:-9443}"
 PRIVATE_MCP_PORT="${DIAL_PRIVATE_MCP_PORT:-9133}"
 SSHD_DROPIN=/etc/ssh/sshd_config.d/10-dial-hardening.conf
 
@@ -72,12 +77,11 @@ EOF
   ufw --force default allow outgoing >/dev/null
   ufw allow "$WG_PORT/udp" comment 'dial wireguard hub' >/dev/null
   ufw allow "$OIDC_PORT/tcp" comment 'dial github oidc controller' >/dev/null
-  ufw allow "$OIDC_TLS_PORT/tcp" comment 'dial github oidc controller (tls)' >/dev/null
   ufw allow in on "$WG_IF" from "$WG_NET" to any port 22 proto tcp comment 'ssh over overlay only' >/dev/null
   ufw allow in on "$WG_IF" from "$WG_NET" to any port "$PRIVATE_MCP_PORT" proto tcp comment 'private mcp over overlay' >/dev/null
   # Remove public SSH allowances left by earlier bootstrap steps.
   local r
-  for r in OpenSSH 22/tcp 22; do ufw --force delete allow "$r" >/dev/null 2>&1 || true; done
+  for r in OpenSSH 22/tcp 22 9443/tcp; do ufw --force delete allow "$r" >/dev/null 2>&1 || true; done
   ufw --force enable >/dev/null
   report
 }

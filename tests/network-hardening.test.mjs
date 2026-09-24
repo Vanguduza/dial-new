@@ -11,7 +11,7 @@ describe('Netcup and Oracle network hardening', () => {
     for (const line of ['PasswordAuthentication no', 'KbdInteractiveAuthentication no', 'PermitRootLogin no']) expect(s).toContain(line);
     expect(s).toContain('ufw --force default deny incoming');
     expect(s).toMatch(/ufw allow in on "\$WG_IF" from "\$WG_NET" to any port 22 proto tcp/);
-    expect(s).toMatch(/for r in OpenSSH 22\/tcp 22; do ufw --force delete allow/);
+    expect(s).toMatch(/for r in OpenSSH 22\/tcp 22 9443\/tcp; do ufw --force delete allow/);
     // No public SSH allowance anywhere in the Netcup control path.
     for (const rel of ['deploy/netcup/hermes-control/harden-netcup-host.sh', 'deploy/netcup/hermes-control/postboot-converge.sh']) {
       expect(read(rel)).not.toMatch(/ufw allow (OpenSSH|22\b)/);
