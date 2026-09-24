@@ -34,6 +34,10 @@ describe('supply-chain pin watcher', () => {
     const advisories = [{ id: 'GHSA-a', vulnerable: ['>= 0.12.7, < 0.12.18'] }, { id: 'GHSA-b', vulnerable: ['<= 0.9.5'] }];
     expect(advisoriesAffecting(advisories, '0.12.17')).toEqual(['GHSA-a']);
     expect(advisoriesAffecting(advisories, '0.12.18')).toEqual([]);
+    // Open-ended range with a separate patched version (cli/cli GHSA-vfhh-p7hm-pxfh): fixed releases are not affected.
+    const gh = [{ id: 'GHSA-gh', vulnerable: ['>=v2.28.0'], patched: ['v2.98.0'] }];
+    expect(advisoriesAffecting(gh, '2.97.0')).toEqual(['GHSA-gh']);
+    expect(advisoriesAffecting(gh, '2.101.0')).toEqual([]);
   });
 
   it('re-pins files that are pinned elsewhere by git blob hash', () => {

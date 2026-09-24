@@ -52,8 +52,18 @@ export function versionInRange(version, range) {
     return { '<': c < 0, '<=': c <= 0, '>': c > 0, '>=': c >= 0, '=': c === 0, undefined: c === 0 }[m[1]];
   });
 }
+// Repository advisories often publish an open range (">= v2.28.0") plus a separate patched version ("v2.98.0");
+// a version at or above the patch is not affected.
+function patchedAt(patched) {
+  const m = String(patched || '').match(/v?(\d+(?:\.\d+)+)/);
+  return m ? m[1] : null;
+}
 export function advisoriesAffecting(advisories, version) {
-  return (advisories || []).filter((a) => (a.vulnerable || []).some((r) => versionInRange(version, r))).map((a) => a.id);
+  return (advisories || []).filter((a) => (a.vulnerable || []).some((r, i) => {
+    if (!versionInRange(version, r)) return false;
+    const fixed = patchedAt((a.patched || [])[i]);
+    return !(fixed && compareVersions(version, fixed) >= 0);
+  })).map((a) => a.id);
 }
 
 // ---------- network ----------
@@ -109,8 +119,11 @@ async function repoAdvisories(repo) {
   if (!repo) return [];
   try {
     const rows = await gh(`/repos/${repo}/security-advisories?state=published&per_page=50`);
-    return rows.map((a) => ({ id: a.ghsa_id, severity: a.severity, summary: a.summary, url: a.html_url,
-      vulnerable: (a.vulnerabilities || []).map((v) => v.vulnerable_version_range).filter(Boolean) }));
+    return rows.map((a) => {
+      const vulns = (a.vulnerabilities || []).filter((v) => v.vulnerable_version_range);
+      return { id: a.ghsa_id, severity: a.severity, summary: a.summary, url: a.html_url,
+        vulnerable: vulns.map((v) => v.vulnerable_version_range), patched: vulns.map((v) => v.patched_versions || null) };
+    });
   } catch { return []; }
 }
 
